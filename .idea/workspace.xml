@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="048bf24d-626d-420e-b7b1-9cb8bc505260" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/CardsArt.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/Frame.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/Phone.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/Vector.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/add.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/arrow_forward_ios.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_1.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_3.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_4.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/corner-dark.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/corner-primary.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/corners.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/dot-bg.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/down-circle.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/facebook.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/facebook.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_49.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_account.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_create.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_execute.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_monitor.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_plan.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_trading.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/home.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/instagram.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/instagram.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/logo-2-no-background.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/logo-2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/mega-x.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/megatrader.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/menu-more.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/metrics.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/ninja-trader.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/play.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/promo-1.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/promo-2.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/promo-3.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/quantower.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/shape-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/shape-1.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/tradovate.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/transform-your-trading.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/up-circle.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/vector_down.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/vector_up.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/assets/images/x.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/corner-wrapper.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/corner-wrapper.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/header.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/link.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/navbar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hooks/useDevice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Vue Composition API Component" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/opt/homebrew/Cellar/php@8.1/8.1.18/bin/php" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2ponOx7tRboX7kzZbmgalDIntPh" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showScratchesAndConsoles" value="false" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/dev/megablocks/megatrader.io/src/components&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.typescriptcompiler&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/dev/megablocks/megatrader.io/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;vue.recent.templates&quot;: [
+      &quot;Vue Composition API Component&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/components" />
+      <recent name="$PROJECT_DIR$/public/assets/images" />
+      <recent name="$PROJECT_DIR$/src/assets/images" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PS-243.21565.202" />
+        <option value="bundled-php-predefined-a98d8de5180a-5fbe0c30323e-com.jetbrains.php.sharedIndexes-PS-243.21565.202" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="048bf24d-626d-420e-b7b1-9cb8bc505260" name="Changes" comment="" />
+      <created>1733441268100</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1733441268100</updated>
+      <workItem from="1733441269153" duration="51699000" />
+      <workItem from="1733765246044" duration="11738000" />
+      <workItem from="1733784843526" duration="6612000" />
+      <workItem from="1733861994757" duration="4000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/components/link.tsx</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
