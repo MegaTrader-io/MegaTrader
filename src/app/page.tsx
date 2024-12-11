@@ -3,12 +3,11 @@ import Header from "@/components/header";
 import Link from "@/components/link";
 import Card from "@/components/card";
 
-
 export default function Home() {
     return (
-        <div className="mx-auto max-w-7xl">
+        <div>
             <Header/>
-            <main className="mt-[59px] px-4">
+            <main className="mx-auto max-w-7xl mt-[59px] px-4">
                 <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto]">
                     <div>
                         <div>
@@ -44,7 +43,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <div className="flex justify-evenly w-full gap-8">
+                <section className="flex justify-evenly w-full gap-8">
                     <Card className="w-full !p-4" withCornerRightTop={true}>
                         <div className="grid grid-cols-[1fr_auto]">
                             <div>
@@ -136,9 +135,60 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                <section className="my-10 flex justify-evenly py-12 opacity-30 items-center gap-16">
+                    <Image
+                        src="/assets/images/mega-x.svg"
+                        alt="Trading Platform Interface"
+                        width={151}
+                        height={56}
+                        className="relative"
+                    />
+
+                    <Image
+                        src="/assets/images/ninjatrader.svg"
+                        alt="Trading Platform Interface"
+                        width={281}
+                        height={36}
+                        className="relative"
+                    />
+
+                    <Image
+                        src="/assets/images/tradovate.svg"
+                        alt="Trading Platform Interface"
+                        width={185}
+                        height={56}
+                        className="relative"
+                    />
+
+                    <Image
+                        src="/assets/images/quantower.svg"
+                        alt="Trading Platform Interface"
+                        width={235}
+                        height={52}
+                        className="relative"
+                    />
+                </section>
+
+                <section className="my-10 h-[967px] bg-slate-500 opacity-20">
+                </section>
+
+                <section className="my-10 h-[464px] bg-slate-500 opacity-20">
+                </section>
+
+                <section className="my-10 h-[899px] bg-slate-500 opacity-20">
+                </section>
+
+                <section className="my-10 h-[72px] bg-slate-500 opacity-20">
+                </section>
+
+                <section className="my-10 h-[480px] bg-slate-500 opacity-20">
+                </section>
+
             </main>
-            <footer></footer>
+            <footer className="h-[92px] bg-[#1e1e1e] w-full">
+            </footer>
         </div>
     )
 }

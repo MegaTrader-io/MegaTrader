@@ -4,70 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="048bf24d-626d-420e-b7b1-9cb8bc505260" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/CardsArt.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/Frame.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/Phone.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/Vector.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/add.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/arrow_forward_ios.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_1.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_2.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_3.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/avatar_4.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/corner-dark.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/corner-primary.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/corners.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/dot-bg.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/down-circle.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/facebook.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/facebook.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_49.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_account.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_create.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_execute.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_monitor.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_plan.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/frame_trading.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/home.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/instagram.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/instagram.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/logo-2-no-background.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/logo-2.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/mega-x.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/megatrader.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/menu-more.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/metrics.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/ninja-trader.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/play.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/promo-1.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/promo-2.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/promo-3.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/quantower.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/shape-1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/shape-1.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/tradovate.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/transform-your-trading.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/up-circle.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/vector_down.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/vector_up.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/x.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/assets/images/x.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/corner-wrapper.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/corner-wrapper.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/header.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/link.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/navbar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/hooks/useDevice.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.ts" afterDir="false" />
-    </list>
+    <list default="true" id="048bf24d-626d-420e-b7b1-9cb8bc505260" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -147,6 +84,7 @@
       <workItem from="1733765246044" duration="11738000" />
       <workItem from="1733784843526" duration="6612000" />
       <workItem from="1733861994757" duration="4000" />
+      <workItem from="1733880083745" duration="1509000" />
     </task>
     <servers />
   </component>
