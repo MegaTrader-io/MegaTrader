@@ -3,10 +3,9 @@ import Header from "@/components/header";
 import Link from "@/components/link";
 import Card from "@/components/card";
 
-export default function Home() {
-    return (
-        <div>
-            <Header/>
+const Home = () =>
+    (
+        <>            <Header/>
             <main className="mx-auto max-w-7xl mt-[59px] px-4">
                 <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto]">
                     <div>
@@ -46,7 +45,8 @@ export default function Home() {
                     </div>
                 </section>
                 <section className="flex justify-evenly w-full gap-8">
-                    <Card className="w-[605px] h-[182px] grow shrink p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
+                    <Card
+                        className="w-[605px] h-[182px] grow shrink p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
                         <div className="grid grid-cols-[1fr_auto]">
                             <div>
                                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
@@ -138,7 +138,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <section className="my-10 flex justify-evenly py-12 opacity-30 items-center gap-16">
+                <section className="my-10 flex justify-between py-12 opacity-30 items-center gap-16">
                     <Image
                         src="/assets/images/mega-x.svg"
                         alt="Trading Platform Interface"
@@ -173,31 +173,120 @@ export default function Home() {
                 </section>
                 <section className="my-10 pb-10 grid grid-cols-3 gap-4 px-4 py-8">
                     <div>
-                        <h2 className="text-white text-5xl mb-[68px]">
+                        <h2 className="text-white text-5xl mb-[68px] leading-[60px]">
                             UNLOCK<br/>THE POWER<br/>OF TRADING
                         </h2>
-                        <Card className="grow shrink p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-[325px]">
-                            <Image
-                                src="/assets/images/frame_monitor.svg"
-                                alt="Trading Platform Interface"
-                                width={120}
-                                height={120}
-                                className="mb-16"
-                            />
-                            <div className="text-white text-xl leading-6 font-medium py-2.5">1. CREATE YOUR MEGATRADER
-                                ACCOUNT
-                            </div>
-                            <div className="w-full font-normal text-base leading-6 text-stone-400">Sign up and complete
-                                the
-                                onboarding process
-                            </div>
-                        </Card>
+                        <div className="space-y-[15px]">
+                            <Card
+                                className=" p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-full">
+                                <Image
+                                    src="/assets/images/frame_monitor.svg"
+                                    alt="Trading Platform Interface"
+                                    width={120}
+                                    height={120}
+                                    className="mb-16"
+                                />
+                                <div className="text-white text-xl leading-6 font-medium py-2.5">1. CREATE YOUR
+                                    MEGATRADER
+                                    ACCOUNT
+                                </div>
+                                <div className="max-w-[325px] w-full font-normal text-base leading-6 text-stone-400">Sign up and
+                                    complete
+                                    the
+                                    onboarding process
+                                </div>
+                            </Card>
+                            <Card
+                                className=" p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-full">
+                                <Image
+                                    src="/assets/images/frame_account.svg"
+                                    alt="Trading Platform Interface"
+                                    width={120}
+                                    height={120}
+                                    className="mb-16"
+                                />
+                                <div className="text-white text-xl leading-6 font-medium py-2.5">2. SET YOUR ACCOUNT
+                                    SIZE
+                                </div>
+                                <div className="w-full font-normal text-base leading-6 text-stone-400">
+                                    Choose your account size to match your trading strategy and risk level
+                                </div>
+                            </Card>
+                        </div>
                     </div>
                     <div>
-                        2
+                        <div className="h-[122px]">
+                        </div>
+                        <div className="space-y-[15px]">
+                            <Card
+                                className=" p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-full">
+                                <Image
+                                    src="/assets/images/frame_trading.svg"
+                                    alt="Trading Platform Interface"
+                                    width={120}
+                                    height={120}
+                                    className="mb-16"
+                                />
+                                <div className="text-white text-xl leading-6 font-medium py-2.5">
+                                    3. SELECT YOUR TRADING PLATFORM
+                                </div>
+                                <div className="w-full font-normal text-base leading-6 text-stone-400">
+                                    Pick MegaX or another platform that suits your trading preferences
+                                </div>
+                            </Card>
+                            <Card
+                                className=" p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-full">
+                                <Image
+                                    src="/assets/images/frame_plan.svg"
+                                    alt="Trading Platform Interface"
+                                    width={120}
+                                    height={120}
+                                    className="mb-16"
+                                />
+                                <div className="text-white text-xl leading-6 font-medium py-2.5">
+                                    4. PLAN YOUR TRADES
+                                </div>
+                                <div className="w-full font-normal text-base leading-6 text-stone-400">
+                                    Utilize advanced tools to analyze the market and strategize your trades
+                                </div>
+                            </Card>
+                        </div>
                     </div>
                     <div>
-                        3
+                        <div className="space-y-[15px]">
+                            <Card
+                                className=" p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-full">
+                                <Image
+                                    src="/assets/images/frame_plan.svg"
+                                    alt="Trading Platform Interface"
+                                    width={120}
+                                    height={120}
+                                    className="mb-16"
+                                />
+                                <div className="text-white text-xl leading-6 font-medium py-2.5">
+                                    5. EXECUTE YOUR TRADES
+                                </div>
+                                <div className="max-w-[325px] w-full font-normal text-base leading-6 text-stone-400">
+                                    Benefit from fast and reliable trade execution for a seamless experience
+                                </div>
+                            </Card>
+                            <Card
+                                className=" p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-full">
+                                <Image
+                                    src="/assets/images/frame_monitor.svg"
+                                    alt="Trading Platform Interface"
+                                    width={120}
+                                    height={120}
+                                    className="mb-16"
+                                />
+                                <div className="text-white text-xl leading-6 font-medium py-2.5">
+                                    6. MONITOR AND OPTIMIZE
+                                </div>
+                                <div className="w-full font-normal text-base leading-6 text-stone-400">
+                                    Review your trades and fine-tune your strategies for continuous improvement
+                                </div>
+                            </Card>
+                        </div>
                     </div>
                 </section>
                 <section className="my-10 h-[464px] bg-slate-500 opacity-20">
@@ -209,8 +298,12 @@ export default function Home() {
                 <section className="my-10 h-[480px] bg-slate-500 opacity-20">
                 </section>
             </main>
-            <footer className="h-[92px] bg-[#1e1e1e] w-full">
+            <footer className="pt-8 pb-[18px] bg-[#1e1e1e] w-full">
+                <div className="h-[104px]">
+
+                </div>
             </footer>
-        </div>
+        </>
     )
-}
+
+export default Home;
