@@ -46,7 +46,7 @@ export default function Home() {
                     </div>
                 </section>
                 <section className="flex justify-evenly w-full gap-8">
-                    <Card className="w-full min-w-[613px] !p-4">
+                    <Card className="max-w-[605px] h-[182px] grow shrink basis-0 p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
                         <div className="grid grid-cols-[1fr_auto]">
                             <div>
                                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
@@ -54,7 +54,6 @@ export default function Home() {
                                         className="text-xs text-[#131210] font-medium leading-6 break-words">NEW FEATURE
                                     </div>
                                 </div>
-
                                 <h2 className="text-white text-xl mt-4 leading-6">MEGAX - TRADE SMARTER, TRADE
                                     FASTER</h2>
                                 <p className="text-stone-400 mt-2.5 leading-6">
@@ -177,7 +176,7 @@ export default function Home() {
                         <h2 className="text-white text-5xl mb-[68px]">
                             UNLOCK<br/>THE POWER<br/>OF TRADING
                         </h2>
-                        <Card className="w-[325px] !p-4">
+                        <Card className="single-checkout-widget w-[325px] !p-4">
                             <Image
                                 src="/assets/images/frame_monitor.svg"
                                 alt="Trading Platform Interface"
@@ -192,7 +191,6 @@ export default function Home() {
                                 the
                                 onboarding process
                             </div>
-
                         </Card>
                     </div>
                     <div>
