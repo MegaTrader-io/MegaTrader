@@ -8,16 +8,18 @@ export default function Home() {
         <div>
             <Header/>
             <main className="mx-auto max-w-7xl mt-[59px] px-4">
-                <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto]">
+                <section className="grid grid-cols-1 lg:grid-cols-[1fr_1fr]">
                     <div>
-                        <div>
-                            <h1 className=" relative mb-0">
+                        <div className="max-h-[331px] grid grid-rows-[1fr_1fr]">
+                            <h1 className="relative mb-0">
                                 <span className="text-[#FFB34A] text-7xl font-bold">FUEL YOUR</span><br/>
                                 <span className="text-white text-5xl font-bold">TRADING SUCCESS</span><br/>
-                                <div className="text-stone-400 text-xl font-light max-w-[588px]">We empower you to trade futures confidently, build smarter strategies, and grow with a supportive community.</div><br/>
+                                <div className="text-stone-400 text-xl font-light max-w-[588px] mt-2">We empower you to
+                                    trade futures confidently, build smarter strategies, and grow with a supportive
+                                    community.
+                                </div>
                             </h1>
-
-                            <div className="py-[45px]">
+                            <div className="flex items-center">
                                 <svg width="300" height="50" viewBox="0 0 300 50" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <rect x="0.5" y="0.5" width="299" height="49" rx="9.5" fill="#1E1E1E"
@@ -43,7 +45,6 @@ export default function Home() {
                         />
                     </div>
                 </section>
-
                 <section className="flex justify-evenly w-full gap-8">
                     <Card className="w-full min-w-[200px] !p-4" withCornerRightTop={true}>
                         <div className="grid grid-cols-[1fr_auto]">
