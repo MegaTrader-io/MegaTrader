@@ -44,7 +44,7 @@ export default function Home() {
                 </section>
 
                 <section className="flex justify-evenly w-full gap-8">
-                    <Card className="w-full !p-4" withCornerRightTop={true}>
+                    <Card className="w-full min-w-[200px] !p-4" withCornerRightTop={true}>
                         <div className="grid grid-cols-[1fr_auto]">
                             <div>
                                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">

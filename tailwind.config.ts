@@ -27,7 +27,7 @@ export default {
         },
       },
       clipPath: {
-        'custom-card': 'polygon(0 0, calc(100% - 38px) 0, 100% 38px, 100% 100%, 0 100%)',
+        'custom-card': 'polygon(0 0, calc(100% - 0px) 0, 100% 110px, 100% 100%, 0 100%)',
       },
     },
   },
