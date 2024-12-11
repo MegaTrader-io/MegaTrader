@@ -46,9 +46,9 @@ export default function Home() {
                     </div>
                 </section>
                 <section className="flex justify-evenly w-full gap-8">
-                    <Card className="w-full min-w-[200px] !p-4" withCornerRightTop={true}>
+                    <Card className="w-full min-w-[613px] !p-4" withCornerRightTop={true}>
                         <div className="grid grid-cols-[1fr_auto]">
-                            <div>x
+                            <div>
                                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
                                     <div
                                         className="text-xs text-[#131210] font-medium leading-6 break-words">NEW FEATURE

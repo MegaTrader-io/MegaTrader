@@ -15,9 +15,3 @@ body {
   min-height: 100vh;
   overflow-x: hidden
 }
-
-@layer utilities {
-  .clip-custom-card {
-    clip-path: polygon(0 0, calc(100% - 38px) 0, 100% 38px, 100% 100%, 0 100%);
-  }
-}
