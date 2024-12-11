@@ -26,7 +26,7 @@ function CornerRightTop() {
 }
 
 export default function Card({children, className = '', withCornerRightTop = false}: { children: React.ReactNode, className: string, withCornerRightTop: boolean }) {
-    return <div className={`px-4 py-3 ${withCornerRightTop ?  'clip-custom-card' : ''} bg-[#1e1e1eb3] rounded-xl border border-neutral-700 ${className} relative`}>
+    return <div className={`px-4 py-3 ${withCornerRightTop ?  'clip-custom-card' : ''} bg-[#1e1e1e] rounded-xl border border-neutral-700 ${className} relative`}>
         {withCornerRightTop && <CornerRightTop/>}
         {children}
     </div>

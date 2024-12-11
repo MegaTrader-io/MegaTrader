@@ -11,9 +11,10 @@ export default function Home() {
                 <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto]">
                     <div>
                         <div>
-                            <h1 className="text-white text-5xl font-light leading-[60px] relative mb-0">
-                                TRANSFORM YOUR TRADING<br/>
-                                EXPERIENCE AND BECOME<br/> A FUTURES TRADER
+                            <h1 className=" relative mb-0">
+                                <span className="text-[#FFB34A] text-7xl font-bold">FUEL YOUR</span><br/>
+                                <span className="text-white text-5xl font-bold">TRADING SUCCESS</span><br/>
+                                <div className="text-stone-400 text-xl font-light max-w-[588px]">We empower you to trade futures confidently, build smarter strategies, and grow with a supportive community.</div><br/>
                             </h1>
 
                             <div className="py-[45px]">
@@ -46,7 +47,7 @@ export default function Home() {
                 <section className="flex justify-evenly w-full gap-8">
                     <Card className="w-full min-w-[200px] !p-4" withCornerRightTop={true}>
                         <div className="grid grid-cols-[1fr_auto]">
-                            <div>
+                            <div>x
                                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
                                     <div
                                         className="text-xs text-[#131210] font-medium leading-6 break-words">NEW FEATURE
