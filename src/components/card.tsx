@@ -1,12 +1,11 @@
 import React from "react";
 import '@/app/corner-wrapper.css';
 
-export default function Card({children}: {
+export default function Card({children, className = ''}: {
     children: React.ReactNode,
-    className: string,
-    withCornerRightTop: boolean
+    className?: string
 }) {
-    return <div className={`single-checkout-widget`}>
-        {children}
+    return <div className={`single-checkout-widget ${className}`}>
+        {children || ''}
     </div>
 }

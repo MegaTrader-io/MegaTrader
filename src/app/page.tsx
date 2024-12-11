@@ -46,7 +46,7 @@ export default function Home() {
                     </div>
                 </section>
                 <section className="flex justify-evenly w-full gap-8">
-                    <Card className="w-full min-w-[613px] !p-4" withCornerRightTop={true}>
+                    <Card className="w-full min-w-[613px] !p-4">
                         <div className="grid grid-cols-[1fr_auto]">
                             <div>
                                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
@@ -172,22 +172,44 @@ export default function Home() {
                         className="relative"
                     />
                 </section>
+                <section className="my-10 pb-10 bg-slate-500 grid grid-cols-3 gap-4 px-4 py-8">
+                    <div>
+                        <h2 className="text-white text-5xl mb-[68px]">
+                            UNLOCK<br/>THE POWER<br/>OF TRADING
+                        </h2>
+                        <Card className="w-[325px] !p-4">
+                            <Image
+                                src="/assets/images/frame_monitor.svg"
+                                alt="Trading Platform Interface"
+                                width={120}
+                                height={120}
+                                className="mb-16"
+                            />
+                            <div className="text-white text-xl leading-6 font-medium py-2.5">1. CREATE YOUR MEGATRADER
+                                ACCOUNT
+                            </div>
+                            <div className="w-full font-normal text-base leading-6 text-stone-400">Sign up and complete
+                                the
+                                onboarding process
+                            </div>
 
-                <section className="my-10 h-[967px] bg-slate-500 opacity-20">
+                        </Card>
+                    </div>
+                    <div>
+                        2
+                    </div>
+                    <div>
+                        3
+                    </div>
                 </section>
-
                 <section className="my-10 h-[464px] bg-slate-500 opacity-20">
                 </section>
-
                 <section className="my-10 h-[899px] bg-slate-500 opacity-20">
                 </section>
-
                 <section className="my-10 h-[72px] bg-slate-500 opacity-20">
                 </section>
-
                 <section className="my-10 h-[480px] bg-slate-500 opacity-20">
                 </section>
-
             </main>
             <footer className="h-[92px] bg-[#1e1e1e] w-full">
             </footer>
