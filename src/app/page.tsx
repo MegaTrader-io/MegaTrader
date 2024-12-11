@@ -8,7 +8,7 @@ export default function Home() {
         <div>
             <Header/>
             <main className="mx-auto max-w-7xl mt-[59px] px-4">
-                <section className="grid grid-cols-1 lg:grid-cols-[1fr_1fr]">
+                <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto]">
                     <div>
                         <div className="max-h-[331px] grid grid-rows-[1fr_1fr]">
                             <h1 className="relative mb-0">
