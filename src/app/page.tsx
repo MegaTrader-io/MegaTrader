@@ -172,7 +172,7 @@ export default function Home() {
                         className="relative"
                     />
                 </section>
-                <section className="my-10 pb-10 bg-slate-500 grid grid-cols-3 gap-4 px-4 py-8">
+                <section className="my-10 pb-10 grid grid-cols-3 gap-4 px-4 py-8">
                     <div>
                         <h2 className="text-white text-5xl mb-[68px]">
                             UNLOCK<br/>THE POWER<br/>OF TRADING
