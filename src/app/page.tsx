@@ -46,7 +46,7 @@ export default function Home() {
                     </div>
                 </section>
                 <section className="flex justify-evenly w-full gap-8">
-                    <Card className="max-w-[605px] h-[182px] grow shrink basis-0 p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
+                    <Card className="w-[605px] h-[182px] grow shrink p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
                         <div className="grid grid-cols-[1fr_auto]">
                             <div>
                                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
@@ -176,7 +176,7 @@ export default function Home() {
                         <h2 className="text-white text-5xl mb-[68px]">
                             UNLOCK<br/>THE POWER<br/>OF TRADING
                         </h2>
-                        <Card className="single-checkout-widget w-[325px] !p-4">
+                        <Card className="grow shrink p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 w-[325px]">
                             <Image
                                 src="/assets/images/frame_monitor.svg"
                                 alt="Trading Platform Interface"
