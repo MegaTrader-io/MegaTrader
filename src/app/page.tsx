@@ -33,23 +33,34 @@ function CardPlan({plan}: { plan: PlanInterface }) {
             </div>
         </div>
         <div className="mt-5 mb-2 w-full">
-            <div className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Maximum Loss
+            <div
+                className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Maximum
+                Loss
                 Limit
             </div>
-            <div className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.max_loss_limit}</div>
+            <div
+                className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.max_loss_limit}</div>
         </div>
         <div className="my-2">
-            <div className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Maximum Position
+            <div
+                className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Maximum
+                Position
                 Size
             </div>
-            <div className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.max_position_size}</div>
+            <div
+                className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.max_position_size}</div>
         </div>
         <div className="my-2">
-            <div className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Profit Target</div>
-            <div className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.profit_target}</div>
+            <div
+                className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Profit
+                Target
+            </div>
+            <div
+                className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.profit_target}</div>
         </div>
 
-        <Link as={"button"} className="!bg-[#ffb34a] group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
+        <Link as={"button"}
+              className="!bg-[#ffb34a] group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
             GET PLAN
         </Link>
     </Card>
@@ -97,6 +108,42 @@ function AccountSize() {
             ))}
         </div>
     </section>
+}
+
+function UnlockThePowerOfMegatrader() {
+    return <>
+        <section className="my-8 py-4 grid grid-cols-2">
+            <div>
+                <h2 className="text-left text-5xl text-white mb-10 font-light leading-[60px]">
+                    UNLOCK THE POWER OF MEGATRADER
+                </h2>
+                <div className="space-y-8 mb-[76px]">
+                    <Image
+                        src="/assets/images/plus.svg"
+                        alt="Plus icons"
+                        width={88}
+                        height={24}
+                        className="relative"
+                    />
+                    <p className="text-stone-400 text-xl font-normal">
+                        Experience the full potential of your trading platform with our intuitive and advanced user interface.
+                    </p>
+                    <Link as={"button"}
+                          className="!bg-[#ffb34a] group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
+                        OPEN AN ACCOUNT
+                    </Link>
+                </div>
+
+                <Image
+                    src="/assets/images/metrics2.svg"
+                    alt="Trading Platform Interface"
+                    width={494}
+                    height={447}
+                />
+            </div>
+            <div></div>
+        </section>
+    </>
 }
 
 const Home = () =>
@@ -180,33 +227,13 @@ const Home = () =>
 
                     <div className="w-full max-w-[590px] grid content-end">
                         <div className="flex flex-col h-fit">
-                            <svg width="88" height="24" viewBox="0 0 88 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <mask id="mask0_2130_2878" style={{maskType: "alpha"}} maskUnits="userSpaceOnUse" x="0"
-                                      y="0"
-                                      width="24" height="24">
-                                    <rect width="24" height="24" fill="#D9D9D9"/>
-                                </mask>
-                                <g mask="url(#mask0_2130_2878)">
-                                    <path d="M11 13H5V11H11V5H13V11H19V13H13V19H11V13Z" fill="#A8A29E"/>
-                                </g>
-                                <mask id="mask1_2130_2878" style={{maskType: "alpha"}} maskUnits="userSpaceOnUse" x="32"
-                                      y="0"
-                                      width="24" height="24">
-                                    <rect x="32" width="24" height="24" fill="#D9D9D9"/>
-                                </mask>
-                                <g mask="url(#mask1_2130_2878)">
-                                    <path d="M43 13H37V11H43V5H45V11H51V13H45V19H43V13Z" fill="#A8A29E"/>
-                                </g>
-                                <mask id="mask2_2130_2878" style={{maskType: "alpha"}} maskUnits="userSpaceOnUse" x="64"
-                                      y="0"
-                                      width="24" height="24">
-                                    <rect x="64" width="24" height="24" fill="#D9D9D9"/>
-                                </mask>
-                                <g mask="url(#mask2_2130_2878)">
-                                    <path d="M75 13H69V11H75V5H77V11H83V13H77V19H75V13Z" fill="#A8A29E"/>
-                                </g>
-                            </svg>
+                            <Image
+                                src="/assets/images/plus.svg"
+                                alt="Plus icons"
+                                width={88}
+                                height={24}
+                                className="relative"
+                            />
                             <p className="text-mgt-gray-light text-xl py-4 leading-8">
                                 MegaTrader offers a seamless, powerful platform designed to empower traders with expert
                                 tools and reliable support.
@@ -389,11 +416,47 @@ const Home = () =>
                     </div>
                 </section>
                 <AccountSize/>
-                <section className="my-10 h-[899px] bg-slate-500 opacity-20">
-                </section>
+                <UnlockThePowerOfMegatrader/>
                 <section className="my-10 h-[72px] bg-slate-500 opacity-20">
                 </section>
-                <section className="my-10 h-[480px] bg-slate-500 opacity-20">
+                <section className="my-10 h-[480px]">
+                    <div className="grid grid-cols-3 gap-5">
+                        <Card
+                            className="p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
+                            <h2 className="text-white text-[32px]">
+                                ONE-STEP EVALUATION
+                            </h2>
+                            <div className="text-stone-400 text-base font-normal leading-normal">
+                                Simplify your path to a funded trading account with a streamlined one-step evaluation process. Prove your consistency and trading skills quickly and efficiently, with clear profit targets and defined trading rules.
+                            </div>
+                        </Card>
+                        <Card
+                            className="p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
+                            <h2 className="text-white text-[32px]">
+                                INSTANT PAYOUTS
+                            </h2>
+                            <div className="text-stone-400 text-base font-normal leading-normal">
+                                Enjoy the flexibility of accessing your earnings with instant payout options. Withdraw your profits quickly and efficiently, ensuring you have complete control over your trading income whenever you need it.
+                            </div>
+                        </Card>
+                        <Card
+                            className="p-4 bg-[#1e1e1e]/70 rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
+                            <h2 className="text-white text-[32px]">
+                                ONE-STEP EVALUATION
+                            </h2>
+                            <div className="text-stone-400 text-base font-normal leading-normal mb-4">
+                                Simplify your path to a funded trading account with a streamlined one-step evaluation process. Prove your consistency and trading skills quickly and efficiently, with clear profit targets and defined trading rules.
+                            </div>
+
+                            <Image
+                                src="/assets/images/people.svg"
+                                alt="Trading Platform Interface"
+                                width={411}
+                                height={240}
+                            />
+                        </Card>
+                    </div>
+
                 </section>
             </main>
             <footer className="pt-8 pb-[18px] bg-[#1e1e1e] w-full">
