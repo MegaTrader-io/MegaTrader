@@ -69,7 +69,7 @@ function AccountSize() {
         {
             id: 2,
             level: 'PREMIUM',
-            total_peer_year: '$50k',
+            total_peer_year: '$100k',
             total_peer_month: '$89.99MO',
             max_loss_limit: '$2,000',
             max_position_size: '10 Contracts',
