@@ -3,9 +3,106 @@ import Header from "@/components/header";
 import Link from "@/components/link";
 import Card from "@/components/card";
 
+interface PlanInterface {
+    id: number
+    level: string,
+    total_peer_year: string,
+    total_peer_month: string,
+    max_loss_limit: string,
+    max_position_size: string,
+    profit_target: string,
+}
+
+function CardPlan({plan}: { plan: PlanInterface }) {
+    const isPremium = plan.level === 'PREMIUM';
+    const bgColorYellow = '!bg-[#ffb34a]';
+    const bgColorBlackLight = 'bg-[#1e1e1e]/70';
+
+    return <Card
+        key={plan.id}
+        className={`group ${isPremium ? `isPremium ${bgColorYellow}` : bgColorBlackLight}  p-4  rounded-2xl border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex`}>
+        <div className="text-white group-[.isPremium]:text-[#131210] text-xl font-medium">
+            {plan.level}
+        </div>
+        <div className="grid grid-cols-2 text-white group text-[32px] font-light leading-10">
+            <div className="text-white group-[.isPremium]:text-[#131210]">
+                {plan.total_peer_year}
+            </div>
+            <div className="text-[#ffb34a] group-[.isPremium]:text-[#131210]">
+                {plan.total_peer_month}
+            </div>
+        </div>
+        <div className="mt-5 mb-2 w-full">
+            <div className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Maximum Loss
+                Limit
+            </div>
+            <div className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.max_loss_limit}</div>
+        </div>
+        <div className="my-2">
+            <div className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Maximum Position
+                Size
+            </div>
+            <div className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.max_position_size}</div>
+        </div>
+        <div className="my-2">
+            <div className="text-stone-400 group-[.isPremium]:text-[#131210] text-base font-normal leading-normal">Profit Target</div>
+            <div className=" text-stone-400 group-[.isPremium]:text-[#131210] text-base font-bold leading-normal">{plan.profit_target}</div>
+        </div>
+
+        <Link as={"button"} className="!bg-[#ffb34a] group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
+            GET PLAN
+        </Link>
+    </Card>
+}
+
+function AccountSize() {
+    const PLANS = [
+        {
+            id: 1,
+            level: 'BASIC',
+            total_peer_year: '$50k',
+            total_peer_month: '$89.99MO',
+            max_loss_limit: '$2,000',
+            max_position_size: '5 Contracts',
+            profit_target: '$3,000',
+        },
+        {
+            id: 2,
+            level: 'PREMIUM',
+            total_peer_year: '$50k',
+            total_peer_month: '$89.99MO',
+            max_loss_limit: '$2,000',
+            max_position_size: '10 Contracts',
+            profit_target: '$6,000',
+        },
+        {
+            id: 3,
+            level: 'UNLIMITED',
+            total_peer_year: '$150k',
+            total_peer_month: '$199.99MO',
+            max_loss_limit: '$4,500',
+            max_position_size: '15 Contracts',
+            profit_target: '$9,000',
+        }
+    ]
+
+    return <section className="mt-8 mb-10">
+        <h2 className="text-5xl text-white text-center mb-10 font-light leading-[60px]">
+            CHOOSE YOUR ACCOUNT SIZE
+        </h2>
+
+        <div className="grid grid-cols-3 gap-8">
+            {PLANS.map(plan => (
+                <CardPlan key={plan.id} plan={plan}/>
+            ))}
+        </div>
+    </section>
+}
+
 const Home = () =>
     (
-        <>            <Header/>
+        <>
+            <Header/>
             <main className="mx-auto max-w-7xl mt-[59px] px-4">
                 <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto]">
                     <div>
@@ -171,7 +268,7 @@ const Home = () =>
                         className="relative"
                     />
                 </section>
-                <section className="my-10 pb-10 grid grid-cols-3 gap-4 px-4 py-8">
+                <section className="my-8 grid grid-cols-3 gap-4 px-4 py-8">
                     <div>
                         <h2 className="text-white text-5xl mb-[68px] leading-[60px]">
                             UNLOCK<br/>THE POWER<br/>OF TRADING
@@ -190,7 +287,9 @@ const Home = () =>
                                     MEGATRADER
                                     ACCOUNT
                                 </div>
-                                <div className="max-w-[325px] w-full font-normal text-base leading-6 text-stone-400">Sign up and
+                                <div
+                                    className="max-w-[325px] w-full font-normal text-base leading-6 text-stone-400">Sign
+                                    up and
                                     complete
                                     the
                                     onboarding process
@@ -289,8 +388,7 @@ const Home = () =>
                         </div>
                     </div>
                 </section>
-                <section className="my-10 h-[464px] bg-slate-500 opacity-20">
-                </section>
+                <AccountSize/>
                 <section className="my-10 h-[899px] bg-slate-500 opacity-20">
                 </section>
                 <section className="my-10 h-[72px] bg-slate-500 opacity-20">
