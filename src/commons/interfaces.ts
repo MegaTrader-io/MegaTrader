@@ -1,0 +1,10 @@
+
+export interface PlanInterface {
+    id: number
+    level: string,
+    total_peer_year: string,
+    total_peer_month: string,
+    max_loss_limit: string,
+    max_position_size: string,
+    profit_target: string,
+}
