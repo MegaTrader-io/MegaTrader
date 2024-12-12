@@ -10,6 +10,7 @@ import SponsorLogosSection from "@/components/landing-page/SponsorLogosSection";
 import TradingStepsSection from "@/components/landing-page/TradingStepsSection";
 import BenefitsSection from "@/components/landing-page/BenefitsSection";
 import Subscriptions from "@/components/landing-page/Subscriptions";
+import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 
 function UnlockThePowerOfMegaTrader() {
     return <>
@@ -59,8 +60,7 @@ const Home = () =>
                 <TradingStepsSection/>
                 <Subscriptions/>
                 <UnlockThePowerOfMegaTrader/>
-                <section className="my-10 h-[72px] bg-slate-500 opacity-20">
-                </section>
+                <MarketOverviewSection />
                 <BenefitsSection/>
             </main>
             <Footer/>
