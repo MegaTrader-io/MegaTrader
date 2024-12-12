@@ -10,7 +10,7 @@ const TradingStepsSection = () => {
                 </h2>
                 <div className="space-y-[15px]">
                     <Card
-                        className=" p-4 bg-[#1e1e1e]/70 border border-neutral-700 w-full">
+                        className="w-full">
 
                         <Image
                             src="/assets/images/frame_monitor.svg"
@@ -33,7 +33,7 @@ const TradingStepsSection = () => {
                         </div>
                     </Card>
                     <Card
-                        className=" p-4 bg-[#1e1e1e]/70 border border-neutral-700 w-full">
+                        className="w-full">
                         <Image
                             src="/assets/images/frame_account.svg"
                             alt="Trading Platform Interface"
@@ -55,7 +55,7 @@ const TradingStepsSection = () => {
                 </div>
                 <div className="space-y-[15px]">
                     <Card
-                        className=" p-4 bg-[#1e1e1e]/70 border border-neutral-700 w-full">
+                        className=" w-full">
                         <Image
                             src="/assets/images/frame_trading.svg"
                             alt="Trading Platform Interface"
@@ -71,7 +71,7 @@ const TradingStepsSection = () => {
                         </div>
                     </Card>
                     <Card
-                        className=" p-4 bg-[#1e1e1e]/70 border border-neutral-700 w-full">
+                        className=" w-full">
                         <Image
                             src="/assets/images/frame_plan.svg"
                             alt="Trading Platform Interface"
@@ -91,7 +91,7 @@ const TradingStepsSection = () => {
             <div>
                 <div className="space-y-[15px]">
                     <Card
-                        className=" p-4 bg-[#1e1e1e]/70 border border-neutral-700 w-full">
+                        className=" w-full">
                         <Image
                             src="/assets/images/frame_execute.svg"
                             alt="Trading Platform Interface"
@@ -107,7 +107,7 @@ const TradingStepsSection = () => {
                         </div>
                     </Card>
                     <Card
-                        className=" p-4 bg-[#1e1e1e]/70 border border-neutral-700 w-full">
+                        className=" w-full">
                         <Image
                             src="/assets/images/star.svg"
                             alt="Trading Platform Interface"

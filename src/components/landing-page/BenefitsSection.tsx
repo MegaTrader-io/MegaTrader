@@ -5,7 +5,7 @@ const BenefitsSection = () => {
     return <section className="my-10 h-[480px]">
         <div className="grid grid-cols-3 gap-5">
             <Card
-                className="p-4 bg-[#1e1e1e]/70 border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
+                className="flex-col justify-start items-start gap-2.5 inline-flex">
                 <h2 className="text-white text-[32px]">
                     ONE-STEP EVALUATION
                 </h2>
@@ -16,7 +16,7 @@ const BenefitsSection = () => {
                 </div>
             </Card>
             <Card
-                className="p-4 bg-[#1e1e1e]/70 border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex">
+                className="flex-col justify-start items-start gap-2.5 inline-flex">
                 <h2 className="text-white text-[32px]">
                     INSTANT PAYOUTS
                 </h2>

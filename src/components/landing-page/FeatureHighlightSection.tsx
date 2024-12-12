@@ -5,7 +5,7 @@ import Image from "next/image";
 const FeatureHighlightSection = () => (
     <section className="flex justify-evenly w-full gap-8">
         <Card
-            className="w-[605px] h-[182px] grow shrink p-4 bg-[#1e1e1e]/70 border border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex"
+            className="w-[605px] h-[182px] grow shrink p-4 bg-[#1e1e1e]/70 border border-transparent flex-col justify-start items-start gap-2.5 inline-flex"
         >
             <div className="grid grid-cols-[1fr_auto]">
                 <div>
