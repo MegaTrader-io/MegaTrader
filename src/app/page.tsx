@@ -53,7 +53,7 @@ const Home = () =>
     (
         <>
             <Header/>
-            <main className="mx-auto max-w-7xl mt-[59px] px-4">
+            <main className="mx-auto max-w-7xl mt-[59px] mb-[101px] px-4">
                 <HeroSection/>
                 <FeatureHighlightSection/>
                 <SponsorLogosSection/>
