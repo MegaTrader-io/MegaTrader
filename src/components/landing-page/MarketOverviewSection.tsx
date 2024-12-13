@@ -36,26 +36,27 @@ function ArrowDown() {
 
 const MarketOverviewSection = () => (
     <section className="my-10">
-        <div className="flex gap-3">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
             {[
                 {name: "E-mini S&P 500 (ES)", value: 18680.12, change: "+ $405.53", positive: true},
                 {name: "E-mini NASDAQ 100 (NQ)", value: 20394.16, change: "+ $502.41", positive: true},
                 {name: "Mini-DOW (YM)", value: 2568.12, change: "- $46.78", positive: false},
-                {name: "OMXS30", value: 2509.99, change: "+ $21.40", positive: true},
+                {name: "OMXH30", value: 2509.99, change: "+ $21.40", positive: true},
                 {name: "OMXH25", value: 4407.14, change: "- $12.23", positive: false},
                 {name: "NQUS", value: 3066.24, change: "+ $30.12", positive: true},
+                {name: "NQUS500LC", value: 3066.24, change: "+ $30.12", positive: true},
             ].map((instrument, index) => (
                 <Card
                     key={index}
-                    className="p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent"
+                    className=" p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent inline-table"
                 >
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-[1fr_auto] gap-4">
                         <div>
-                            <h3 className="text-white text-base font-bold">{instrument.name}</h3>
+                            <h3 className="text-white text-base font-bold text-nowrap">{instrument.name}</h3>
                             <p className="text-stone-400 font-normal">{instrument.value.toLocaleString()}</p>
                         </div>
 
-                        <div className="flex justify-center items-center">
+                        <div className="flex justify-center items-center text-nowrap">
                             <p
                                 className={`flex gap-2 text-base font-bold ${
                                     instrument.positive ? "text-green-400" : "text-red-500"
