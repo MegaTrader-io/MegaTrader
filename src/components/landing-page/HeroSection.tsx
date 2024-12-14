@@ -26,15 +26,14 @@ const HeroSection = () => (
                 </div>
             </div>
         </div>
-        <div className="w-full border ml-5 mb-5 border-transparent rounded-3xl bg-black">
+        <div className="w-full">
             <video
-                controls
-                className="w-full p-4  border border-transparent rounded-3xl"
+                className="w-full p-4"
                 autoPlay
                 muted
                 loop
                 width="auto"
-                src="/assets/video.mp4"
+                src="/assets/video2.webm"
             >
                 Tu navegador no soporta el elemento de video.
             </video>
