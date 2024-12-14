@@ -27,15 +27,11 @@ const HeroSection = () => (
             </div>
         </div>
         <div className="w-full">
-            <video
-                className="w-full p-4"
-                autoPlay
-                muted
-                loop
-                width="auto"
-                src="/assets/video2.webm"
-            >
-                Tu navegador no soporta el elemento de video.
+            <video className="w-full p-4" autoPlay loop muted playsInline width="auto">
+                <source src="/assets/video.mov"  type="video/mp4; codecs=hevc"/>
+                <source src="/assets/video.mov"  type="video/quicktime"/>
+                <source src="/assets/video.webm" type="video/webm"/>
+                Your browser does not support this video.
             </video>
         </div>
     </section>
