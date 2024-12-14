@@ -1,9 +1,7 @@
-import Image from "next/image";
-
 const HeroSection = () => (
-    <section className="grid grid-cols-1 lg:grid-cols-[1fr_auto]">
+    <section className="grid grid-cols-1 lg:grid-cols-2">
         <div>
-            <div className="max-h-[331px] grid grid-rows-[1fr_1fr]">
+            <div className="h-full grid grid-rows-[1fr_1fr] pb-5">
                 <h1 className="relative mb-0">
                     <span className="text-[#FFB34A] text-7xl font-bold">FUEL YOUR</span><br/>
                     <span className="text-white text-5xl font-bold">TRADING SUCCESS</span><br/>
@@ -12,7 +10,7 @@ const HeroSection = () => (
                         community.
                     </div>
                 </h1>
-                <div className="flex items-center">
+                <div className="flex items-center h-full">
                     <svg width="300" height="50" viewBox="0 0 300 50" fill="none"
                          xmlns="http://www.w3.org/2000/svg">
                         <rect x="0.5" y="0.5" width="299" height="49" rx="9.5" fill="#1E1E1E"
@@ -28,14 +26,18 @@ const HeroSection = () => (
                 </div>
             </div>
         </div>
-        <div className="px-4 w-full h-[331px]">
-            <Image
-                src="/assets/images/shape-1.svg"
-                alt="Trading Platform Interface"
-                width={391}
-                height={331}
-                className="relative animate-rotate-animation"
-            />
+        <div className="w-full border ml-5 mb-5 border-transparent rounded-3xl bg-black">
+            <video
+                controls
+                className="w-full p-4  border border-transparent rounded-3xl"
+                autoPlay
+                muted
+                loop
+                width="auto"
+                src="/assets/video.mp4"
+            >
+                Tu navegador no soporta el elemento de video.
+            </video>
         </div>
     </section>
 );
