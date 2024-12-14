@@ -21,10 +21,7 @@ export async function generateStaticParams() {
 }
 
 
-const MarketOverviewSection = (props) => {
-
-    console.info('props ?>> ', props);
-
+const MarketOverviewSection = () => {
     return <>
         <section className="my-10">
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
