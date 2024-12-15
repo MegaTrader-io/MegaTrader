@@ -3,8 +3,8 @@ import {Space_Grotesk} from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Mega Trader",
-    description: "Mega Trader",
+    title: "MegaTrader | Master the Path to Becoming a Funded Futures Trader.",
+    description: "MegaTrader | Master the Path to Becoming a Funded Futures Trader.",
 };
 
 const spaceGrotesk = Space_Grotesk({
