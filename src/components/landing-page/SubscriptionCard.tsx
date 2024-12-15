@@ -30,7 +30,7 @@ export default function SubscriptionCard({plan}: { plan: PlanInterface }) {
                 Loss Limit
             </div>
             <div
-                className=" text-stone-400  text-base font-bold leading-normal">{plan.max_loss_limit}</div>
+                className=" text-stone-400 text-xl font-light leading-normal">{plan.max_loss_limit}</div>
         </div>
         <div className="my-2">
             <div
@@ -39,7 +39,7 @@ export default function SubscriptionCard({plan}: { plan: PlanInterface }) {
                 Size
             </div>
             <div
-                className=" text-stone-400  text-base font-bold leading-normal">{plan.max_position_size}</div>
+                className=" text-stone-400  text-xl ffont-light leading-normal">{plan.max_position_size}</div>
         </div>
         <div className="my-2">
             <div
@@ -47,7 +47,7 @@ export default function SubscriptionCard({plan}: { plan: PlanInterface }) {
                 Target
             </div>
             <div
-                className=" text-stone-400  text-base font-bold leading-normal">{plan.profit_target}</div>
+                className=" text-stone-400  text-xl font-light leading-normal">{plan.profit_target}</div>
         </div>
 
         <Link as={"button"}
