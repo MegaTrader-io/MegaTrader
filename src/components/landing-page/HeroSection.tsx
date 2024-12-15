@@ -28,7 +28,7 @@ const HeroSection = () => (
         </div>
         <div className="w-full">
             <video className="w-full p-4" autoPlay loop muted playsInline width="auto">
-                <source src="/assets/principal3.mp4" type="video/quicktime"/>
+                <source src="/assets/video.webm" type="video/quicktime"/>
                 <source src="/assets/video.webm" type="video/webm"/>
                 Your browser does not support this video.
             </video>
