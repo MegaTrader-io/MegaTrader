@@ -15,7 +15,7 @@ export const experimental_ppr = true
 const Home = () => {
     return <>
         <Header/>
-        <main className="mx-auto max-w-7xl mt-[59px] mb-[101px] px-4">
+        <main className="mx-auto max-w-7xl mt-[67px] mb-[101px] px-4">
             <HeroSection/>
             <FeatureHighlightSection/>
             <SponsorLogosSection/>
