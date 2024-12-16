@@ -1,3 +1,5 @@
+"use client"
+
 import {Suspense} from 'react'
 import HeroSection from "@/components/landing-page/HeroSection";
 import Header from "@/components/landing-page/Header";
