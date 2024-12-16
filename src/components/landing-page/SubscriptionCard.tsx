@@ -7,7 +7,7 @@ import {motion} from 'framer-motion'
 
 
 export default function SubscriptionCard({plan}: { plan: PlanInterface }) {
-    const [isHovered, setIsHovered] = useState(false)
+    const setIsHovered = useState(false)[1];
 
     const isPremium = plan.level === 'PREMIUM';
     const isBasic = plan.level === 'BASIC';
