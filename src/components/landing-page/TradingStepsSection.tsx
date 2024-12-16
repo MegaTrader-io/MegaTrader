@@ -3,12 +3,12 @@ import Image from "next/image";
 
 const TradingStepsSection = () => {
     return <>
-        <section className="my-8 grid grid-cols-3 gap-4 px-4 py-8">
+        <section className="mt-8 grid grid-cols-3 gap-4 px-4">
             <div>
                 <h2 className="text-white text-5xl mb-[68px] leading-[60px]">
                     UNLOCK<br/>THE POWER<br/>OF TRADING
                 </h2>
-                <div className="space-y-[15px]">
+                <div className="space-y-[15px] mb-[68px]">
                     <Card
                         className="w-full">
 

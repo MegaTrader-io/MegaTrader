@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
 const MarketOverviewSection = () => {
     return <>
-        <section className="my-10">
+        <section>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                 {[
                     {name: "E-mini S&P 500 (ES)", value: 18680.12, change: "+ $405.53", positive: true},
