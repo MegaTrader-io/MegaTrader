@@ -1,38 +1,56 @@
+import React, {useEffect, useState} from "react";
+
 import Card from "@/components/card";
 import {ArrowDown, ArrowUp} from "@/components/arrows";
+import {SymbolMarketData} from "@/commons/interfaces";
 
-export async function generateStaticParams() {
-    try {
-        const response = await fetch("http://localhost:3000/api/fetch-market-data", {
-            cache: "no-store",
-        });
+const changeValue = (value: number) => {
+    const symbol = value > 0 ? "+" : "-";
 
-        if (!response.ok) {
-            throw new Error("Error fetching market data");
-        }
-
-        const data = await response.json();
-
-        return {props: {data}};
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return {props: {data: null, error: (error as Error).message}};
-    }
-}
-
+    return `${symbol} $ ${Math.abs(value)}`;
+};
 
 const MarketOverviewSection = () => {
+    const [data, setData] = useState<SymbolMarketData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("/api/fetch-market-data");
+                if (!response.ok) {
+                    throw new Error("Error al obtener los datos");
+                }
+                const result = await response.json() as SymbolMarketData[];
+
+                console.info('result', result);
+                setData(result);
+            } catch (err: unknown) {
+                const error = err as { message: string };
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void fetchData();
+    }, []);
+
+    if (loading) return <p>Cargando datos...</p>;
+    if (error) return null;
+
     return <>
         <section>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                 {[
-                    {name: "E-mini S&P 500 (ES)", value: 18680.12, change: "+ $405.53", positive: true},
-                    {name: "E-mini NASDAQ 100 (NQ)", value: 20394.16, change: "+ $502.41", positive: true},
-                    {name: "Mini-DOW (YM)", value: 2568.12, change: "- $46.78", positive: false},
-                    {name: "OMXH30", value: 2509.99, change: "+ $21.40", positive: true},
-                    {name: "OMXH25", value: 4407.14, change: "- $12.23", positive: false},
-                    {name: "NQUS", value: 3066.24, change: "+ $30.12", positive: true},
-                    {name: "NQUS500LC", value: 3066.24, change: "+ $30.12", positive: true},
+                    {name: "E-mini S&P 500 (ES)", price: 18680.12, change: -405.53},
+                    {name: "E-mini NASDAQ 100 (NQ)", price: 20394.16, change: 502.41},
+                    {name: "Mini-DOW (YM)", price: 2568.12, change: 46.78},
+                    {name: "OMXH30", price: 2509.99, change: 21.40},
+                    {name: "OMXH25", price: 4407.14, change: 12.23},
+                    {name: "NQUS", price: 3066.24, change: 30.12},
+                    {name: "NQUS500LC", price: 3066.24, change: 30.12},
                 ].map((instrument, index) => (
                     <Card
                         key={index}
@@ -41,18 +59,18 @@ const MarketOverviewSection = () => {
                         <div className="grid grid-cols-[1fr_auto] gap-4">
                             <div>
                                 <h3 className="text-white text-base font-bold text-nowrap">{instrument.name}</h3>
-                                <p className="text-stone-400 font-normal">{instrument.value.toLocaleString()}</p>
+                                <p className="text-stone-400 font-normal">{instrument.price.toLocaleString()}</p>
                             </div>
 
                             <div className="flex justify-center items-center text-nowrap">
                                 <p
                                     className={`flex gap-2 text-base font-bold ${
-                                        instrument.positive ? "text-green-400" : "text-red-500"
+                                        instrument.change > 0 ? "text-teal-400" : "text-rose-500"
                                     }`}
                                 >
-                                    {instrument.change}
-                                    {instrument.positive && <ArrowUp/>}
-                                    {!instrument.positive && <ArrowDown/>}
+                                    {changeValue(instrument.change)}
+                                    {instrument.change > 0 && <ArrowUp/>}
+                                    {instrument.change < 0 && <ArrowDown/>}
                                 </p>
                             </div>
                         </div>
