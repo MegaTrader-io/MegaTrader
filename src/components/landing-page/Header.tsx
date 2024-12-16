@@ -8,10 +8,10 @@ export default function Header() {
                 className="mx-auto max-w-7xl w-full px-8 lg:px-0 py-6 flex items-center justify-between flex-nowrap relative">
                 <div className="w-auto">
                     <Image
-                        src="../assets/images/megatrader.svg"
+                        src="../assets/images/megatrader2.svg"
                         alt="Logo"
-                        height={42}
-                        width={360}
+                        height={83}
+                        width={338}
                     />
                 </div>
                 <Navbar/>
