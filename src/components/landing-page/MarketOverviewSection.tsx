@@ -52,10 +52,10 @@ const MarketOverviewSection = () => {
             try {
                 const response = await fetch("/api/fetch-market-data");
                 if (!response.ok) {
-                    throw new Error("Error al obtener los datos");
+                    throw new Error("error getting market data");
                 }
                 const result = await response.json() as SymbolMarketData[];
-                setData(result);
+                setData(result.reverse());
             } catch (err: unknown) {
                 const error = err as { message: string };
                 setError(error.message);
@@ -111,7 +111,7 @@ const MarketOverviewSection = () => {
             };
         }
     }, [data]);
-    
+
     // useEffect(() => {
     //     if (carouselRef.current && data.length > 0) {
     //         const carousel = carouselRef.current;

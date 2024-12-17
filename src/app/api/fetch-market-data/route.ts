@@ -61,5 +61,5 @@ export async function GET() {
         body = data;
     }
 
-    return new Response(JSON.stringify(body), {status: 200});
+    return new Response(JSON.stringify(body), {status: 200, headers: {"Content-Type": "application/json"}});
 }
