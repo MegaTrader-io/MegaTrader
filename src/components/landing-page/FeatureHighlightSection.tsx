@@ -3,7 +3,7 @@ import Link from "@/components/link";
 import Image from "next/image";
 
 const FeatureHighlightSection = () => (
-    <section className="flex justify-evenly w-full gap-16">
+    <section className="mt-[15px] flex justify-evenly w-full gap-16">
         <Card
             className="w-[605px] h-[182px] grow shrink flex-col justify-start items-start gap-2.5 inline-flex"
         >

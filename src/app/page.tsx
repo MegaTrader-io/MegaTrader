@@ -16,7 +16,9 @@ export const experimental_ppr = true;
 
 const Home = () => {
     return <>
-        <Header/>
+        <header className="px-4 py-6 mx-auto max-w-7xl w-full">
+            <Header/>
+        </header>
         <main className="mx-auto max-w-7xl mt-[67px] mb-[101px] px-4">
             <HeroSection/>
             <FeatureHighlightSection/>
