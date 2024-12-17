@@ -6,9 +6,40 @@ import {SymbolMarketData} from "@/commons/interfaces";
 
 const changeValue = (value: number) => {
     const symbol = value > 0 ? "+" : "-";
-
-    return `${symbol} $ ${Math.abs(value)}`;
+    return `${symbol} $ ${Math.abs(value).toFixed(2)}`;
 };
+
+const SkeletonCards = () => {
+    return <section>
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => (
+                <Card
+                    key={item}
+                    className="animate-pulse p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent inline-table"
+                >
+                    <div className="grid grid-cols-[1fr_auto] gap-4 w-[278px] h-[48px]">
+                        <div>
+                            <h3 className="h-6  bg-slate-800/70 text-white text-base font-bold text-nowrap"></h3>
+                            <p className="h-6  bg-slate-800/30 text-stone-400 font-normal"></p>
+                        </div>
+
+                        <div className="flex justify-center items-center text-nowrap">
+                            <p
+                                className={`flex gap-2 text-base font-bold`}
+                            >
+                                <span className="bg-slate-800/70 w-[75px] h-6">
+
+                                </span>
+                                <span className="bg-slate-800/70 rounded-full w-6 h-6">
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </Card>
+            ))}
+        </div>
+    </section>
+}
 
 const MarketOverviewSection = () => {
     const [data, setData] = useState<SymbolMarketData[]>([]);
@@ -23,8 +54,6 @@ const MarketOverviewSection = () => {
                     throw new Error("Error al obtener los datos");
                 }
                 const result = await response.json() as SymbolMarketData[];
-
-                console.info('result', result);
                 setData(result);
             } catch (err: unknown) {
                 const error = err as { message: string };
@@ -37,21 +66,15 @@ const MarketOverviewSection = () => {
         void fetchData();
     }, []);
 
-    if (loading) return <p>Cargando datos...</p>;
+    if (loading) return <>
+        <SkeletonCards></SkeletonCards>
+    </>;
     if (error) return null;
 
     return <>
         <section>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
-                {[
-                    {name: "E-mini S&P 500 (ES)", price: 18680.12, change: -405.53},
-                    {name: "E-mini NASDAQ 100 (NQ)", price: 20394.16, change: 502.41},
-                    {name: "Mini-DOW (YM)", price: 2568.12, change: 46.78},
-                    {name: "OMXH30", price: 2509.99, change: 21.40},
-                    {name: "OMXH25", price: 4407.14, change: 12.23},
-                    {name: "NQUS", price: 3066.24, change: 30.12},
-                    {name: "NQUS500LC", price: 3066.24, change: 30.12},
-                ].map((instrument, index) => (
+                {data.map((instrument, index) => (
                     <Card
                         key={index}
                         className=" p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent inline-table"
