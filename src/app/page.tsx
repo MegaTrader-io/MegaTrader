@@ -11,6 +11,7 @@ import BenefitsSection from "@/components/landing-page/BenefitsSection";
 import Subscriptions from "@/components/landing-page/Subscriptions";
 import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 import UnlockThePowerOfMegaTrader from "@/components/landing-page/UnlockThePowerOfMegaTrader";
+import FaqSection from "@/components/landing-page/Faq";
 
 export const experimental_ppr = true;
 
@@ -30,6 +31,7 @@ const Home = () => {
             <Subscriptions/>
             <UnlockThePowerOfMegaTrader/>
             <BenefitsSection/>
+            <FaqSection />
         </main>
         <Footer/>
     </>
