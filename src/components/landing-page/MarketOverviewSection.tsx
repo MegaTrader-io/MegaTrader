@@ -1,39 +1,80 @@
+import React, {useEffect, useState} from "react";
+
 import Card from "@/components/card";
 import {ArrowDown, ArrowUp} from "@/components/arrows";
+import {SymbolMarketData} from "@/commons/interfaces";
 
-export async function generateStaticParams() {
-    try {
-        const response = await fetch("http://localhost:3000/api/fetch-market-data", {
-            cache: "no-store",
-        });
+const changeValue = (value: number) => {
+    const symbol = value > 0 ? "+" : "-";
+    return `${symbol} $ ${Math.abs(value).toFixed(2)}`;
+};
 
-        if (!response.ok) {
-            throw new Error("Error fetching market data");
-        }
+const SkeletonCards = () => {
+    return <section>
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => (
+                <Card
+                    key={item}
+                    className="animate-pulse p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent inline-table"
+                >
+                    <div className="grid grid-cols-[1fr_auto] gap-4 w-[278px] h-[48px]">
+                        <div>
+                            <h3 className="h-6  bg-slate-800/70 text-white text-base font-bold text-nowrap"></h3>
+                            <p className="h-6  bg-slate-800/30 text-stone-400 font-normal"></p>
+                        </div>
 
-        const data = await response.json();
+                        <div className="flex justify-center items-center text-nowrap">
+                            <p
+                                className={`flex gap-2 text-base font-bold`}
+                            >
+                                <span className="bg-slate-800/70 w-[75px] h-6">
 
-        return {props: {data}};
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        return {props: {data: null, error: (error as Error).message}};
-    }
+                                </span>
+                                <span className="bg-slate-800/70 rounded-full w-6 h-6">
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </Card>
+            ))}
+        </div>
+    </section>
 }
 
-
 const MarketOverviewSection = () => {
+    const [data, setData] = useState<SymbolMarketData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("/api/fetch-market-data");
+                if (!response.ok) {
+                    throw new Error("Error al obtener los datos");
+                }
+                const result = await response.json() as SymbolMarketData[];
+                setData(result);
+            } catch (err: unknown) {
+                const error = err as { message: string };
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void fetchData();
+    }, []);
+
+    if (loading) return <>
+        <SkeletonCards></SkeletonCards>
+    </>;
+    if (error) return null;
+
     return <>
         <section>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
-                {[
-                    {name: "E-mini S&P 500 (ES)", value: 18680.12, change: "+ $405.53", positive: true},
-                    {name: "E-mini NASDAQ 100 (NQ)", value: 20394.16, change: "+ $502.41", positive: true},
-                    {name: "Mini-DOW (YM)", value: 2568.12, change: "- $46.78", positive: false},
-                    {name: "OMXH30", value: 2509.99, change: "+ $21.40", positive: true},
-                    {name: "OMXH25", value: 4407.14, change: "- $12.23", positive: false},
-                    {name: "NQUS", value: 3066.24, change: "+ $30.12", positive: true},
-                    {name: "NQUS500LC", value: 3066.24, change: "+ $30.12", positive: true},
-                ].map((instrument, index) => (
+                {data.map((instrument, index) => (
                     <Card
                         key={index}
                         className=" p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent inline-table"
@@ -41,18 +82,18 @@ const MarketOverviewSection = () => {
                         <div className="grid grid-cols-[1fr_auto] gap-4">
                             <div>
                                 <h3 className="text-white text-base font-bold text-nowrap">{instrument.name}</h3>
-                                <p className="text-stone-400 font-normal">{instrument.value.toLocaleString()}</p>
+                                <p className="text-stone-400 font-normal">{instrument.price.toLocaleString()}</p>
                             </div>
 
                             <div className="flex justify-center items-center text-nowrap">
                                 <p
                                     className={`flex gap-2 text-base font-bold ${
-                                        instrument.positive ? "text-green-400" : "text-red-500"
+                                        instrument.change > 0 ? "text-teal-400" : "text-rose-500"
                                     }`}
                                 >
-                                    {instrument.change}
-                                    {instrument.positive && <ArrowUp/>}
-                                    {!instrument.positive && <ArrowDown/>}
+                                    {changeValue(instrument.change)}
+                                    {instrument.change > 0 && <ArrowUp/>}
+                                    {instrument.change < 0 && <ArrowDown/>}
                                 </p>
                             </div>
                         </div>

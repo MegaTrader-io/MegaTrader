@@ -10,3 +10,9 @@ export interface PlanInterface {
     color: string
     buttonColor: string
 }
+
+export interface SymbolMarketData {
+    name: string,
+    price: number,
+    change: number
+}

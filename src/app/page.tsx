@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {Suspense} from 'react'
 import HeroSection from "@/components/landing-page/HeroSection";
@@ -12,7 +12,7 @@ import Subscriptions from "@/components/landing-page/Subscriptions";
 import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 import UnlockThePowerOfMegaTrader from "@/components/landing-page/UnlockThePowerOfMegaTrader";
 
-export const experimental_ppr = true
+export const experimental_ppr = true;
 
 const Home = () => {
     return <>
