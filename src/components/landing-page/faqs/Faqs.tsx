@@ -89,9 +89,9 @@ const FaqsSection = () => {
             <h2 className="text-5xl text-white text-center my-8 font-light leading-[60px]">
                 FREQUENTLY ASKED QUESTIONS
             </h2>
-            <dl className="mt-10 space-y-6 divide-y divide-white/10">
+            <dl className="mt-10 space-y-6 divide-y divide-white/10 bg-[#1e1e1e] rounded-2xl p-4 text-xl">
                 {faqs.map((faq) => (
-                    <Disclosure key={faq.question} as="div" className="pt-6">
+                    <Disclosure key={faq.question} as="div">
                         <dt>
                             <DisclosureButton
                                 className="group flex w-full items-start justify-between text-left text-white">

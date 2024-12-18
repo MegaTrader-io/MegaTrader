@@ -4,7 +4,7 @@ const HeroSection = () => (
             <video className="top-0 w-[1248px] absolute" autoPlay loop muted playsInline
                    width="auto"
                    height="auto">
-                <source src="/assets/comp-3_1-1-for-mac.mov" type="video/quicktime"/>
+                <source src="/assets/centrado-for-mac-1.mov" type="video/quicktime"/>
                 <source src="/assets/1280-for-PC.webm"/>
                 Your browser does not support this video.
             </video>
