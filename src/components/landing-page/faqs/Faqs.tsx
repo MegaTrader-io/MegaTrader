@@ -1,39 +1,88 @@
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/react'
 import {ArrowDownIcon, ArrowUpIcon} from '@heroicons/react/24/outline'
+import React from "react";
 
-interface Faq {
+interface Faqs {
     question: string;
-    answer: string;
+    answer: React.ReactElement|null;
 }
 
-const faqs: Faq[] = [
+function Question1() {
+    return (
+        <>
+            question 1
+        </>
+    )
+}
+
+function Question2() {
+    return (
+        <>
+            question 2
+        </>
+    )
+}
+
+function Question3() {
+    return (
+        <>
+            question 3
+        </>
+    )
+}
+
+function Question4() {
+    return (
+        <>
+            question 4
+        </>
+    )
+}
+
+function Question5() {
+    return (
+        <>
+            question 5
+        </>
+    )
+}
+
+function Question6() {
+    return (
+        <>
+            question 6
+        </>
+    )
+}
+
+const faqs: Faqs[] = [
     {
         question: '1. What is MegaTrader?',
-        answer: 'xxxx'
+        answer: <Question1 />
     },
     {
         question: '2. How does MegaTrader work?',
-        answer: 'xxxx'
+        answer: <Question2 />
     },
     {
         question: '3. Can I trade on multiple accounts?',
-        answer: 'xxxx'
+        answer: <Question3 />
     },
     {
         question: '4. Is MegaTrader focused only on futures trading?',
-        answer: 'xxxx'
+        answer: <Question4 />
     },
     {
         question: '5. How much does it cost to get started with MegaTrader?',
-        answer: 'xxxx'
+        answer: <Question5 />
     },
     {
         question: '6. Is MegaTrader compliant with industry regulations?',
-        answer: 'xxxx'
+        answer: <Question6 />
     },
 ];
 
-const FaqSection = () => {
+const FaqsSection = () => {
     return (
         <section className="mx-auto max-w-[1030px]">
             <h2 className="text-5xl text-white text-center my-8 font-light leading-[60px]">
@@ -63,4 +112,4 @@ const FaqSection = () => {
 }
 
 
-export default FaqSection;
+export default FaqsSection;

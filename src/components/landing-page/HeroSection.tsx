@@ -3,7 +3,7 @@ const HeroSection = () => (
         <video className="top-0 w-[1248px] absolute border border-1 border-red-500" autoPlay loop muted playsInline
                width="auto"
                height="auto">
-            <source src="/assets/1280-for-mac-1.mov" type="video/quicktime"/>
+            <source src="/assets/comp-3v1-1-for-mac.mov" type="video/quicktime"/>
             <source src="/assets/1280-for-PC.webm"/>
             Your browser does not support this video.
         </video>
