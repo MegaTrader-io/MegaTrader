@@ -4,7 +4,7 @@ import React from "react";
 
 interface Faqs {
     question: string;
-    answer: React.ReactElement|null;
+    answer: React.ReactElement | null;
 }
 
 function Question1() {
@@ -17,9 +17,10 @@ function Question1() {
 
 function Question2() {
     return (
-        <>
-            question 2
-        </>
+        <p className="text-base/7 text-gray-300">
+            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
+            cutting-edge tools and capital to maximize their success.
+        </p>
     )
 }
 
@@ -57,28 +58,28 @@ function Question6() {
 
 const faqs: Faqs[] = [
     {
-        question: '1. What is MegaTrader?',
-        answer: <Question1 />
+        question: '1. WHAT IS MEGATRADER?',
+        answer: <Question1/>
     },
     {
-        question: '2. How does MegaTrader work?',
-        answer: <Question2 />
+        question: '2. HOW DOES MEGATRADER WORK?',
+        answer: <Question2/>
     },
     {
-        question: '3. Can I trade on multiple accounts?',
-        answer: <Question3 />
+        question: '3. CAN I TRADE ON MULTIPLE ACCOUNTS?',
+        answer: <Question3/>
     },
     {
-        question: '4. Is MegaTrader focused only on futures trading?',
-        answer: <Question4 />
+        question: '4. IS MEGATRADER FOCUSED ONLY ON FUTURES TRADING?',
+        answer: <Question4/>
     },
     {
-        question: '5. How much does it cost to get started with MegaTrader?',
-        answer: <Question5 />
+        question: '5. HOW MUCH DOES IT COST TO GET STARTED WITH MEGATRADER?',
+        answer: <Question5/>
     },
     {
-        question: '6. Is MegaTrader compliant with industry regulations?',
-        answer: <Question6 />
+        question: '6. IS MEGATRADER COMPLIANT WITH INDUSTRY REGULATIONS?',
+        answer: <Question6/>
     },
 ];
 
@@ -102,7 +103,7 @@ const FaqsSection = () => {
                             </DisclosureButton>
                         </dt>
                         <DisclosurePanel as="dd" className="mt-2 pr-12">
-                            <p className="text-base/7 text-gray-300">{faq.answer}</p>
+                            {faq.answer}
                         </DisclosurePanel>
                     </Disclosure>
                 ))}
