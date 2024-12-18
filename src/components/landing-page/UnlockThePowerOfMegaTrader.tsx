@@ -3,7 +3,7 @@ import Link from "@/components/link";
 
 const UnlockThePowerOfMegaTrader = () => {
     return <>
-        <section className="my-8 py-4 grid grid-cols-2">
+        <section className="mb-8 grid grid-cols-2">
             <div>
                 <h2 className="text-left text-5xl text-white mb-10 font-light leading-[60px]">
                     UNLOCK THE POWER OF MEGATRADER

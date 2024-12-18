@@ -8,7 +8,7 @@ const TradingStepsSection = () => {
                 <h2 className="text-white text-5xl mb-[68px] leading-[60px]">
                     UNLOCK<br/>THE POWER<br/>OF TRADING
                 </h2>
-                <div className="space-y-[15px] mb-[68px]">
+                <div className="space-y-[15px] mb-4">
                     <Card
                         className="w-full">
 
