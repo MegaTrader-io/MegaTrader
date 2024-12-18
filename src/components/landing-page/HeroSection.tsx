@@ -5,7 +5,7 @@ const HeroSection = () => (
                    width="auto"
                    height="auto">
                 <source src="/assets/centrado-for-mac-1.mov" type="video/quicktime"/>
-                <source src="/assets/1280-for-PC.webm"/>
+                <source src="/assets/centrado-for-pc.webm"/>
                 Your browser does not support this video.
             </video>
         </div>
