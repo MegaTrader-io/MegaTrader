@@ -12,7 +12,7 @@ const HeroSection = () => (
 
         <div className="grid grid-cols-1 lg:grid-cols-2">
             <div>
-                <div className="h-full space-y-[25px] mt-[15px]">
+                <div className="h-full space-y-[25px]">
                     <div>
                         <svg width="269" height="49" viewBox="0 0 269 49" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
