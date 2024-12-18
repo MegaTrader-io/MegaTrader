@@ -9,8 +9,9 @@ const PLANS = [
         max_loss_limit: '$2,000',
         max_position_size: '5 Contracts',
         profit_target: '$3,000',
-        color: 'text-[#00e6c3]',
-        buttonColor: '!bg-[#00e6c3] hover:bg-[#00c4a6] !text-black'
+        color: 'text-teal-400',
+        colorItem: 'text-stone-400',
+        buttonColor: 'bg-teal-500 !text-black'
     },
     {
         id: 2,
@@ -20,8 +21,9 @@ const PLANS = [
         max_loss_limit: '$3,000',
         max_position_size: '10 Contracts',
         profit_target: '$6,000',
-        color: 'text-[#ffa500]',
-        buttonColor: 'bg-[#ffa500] hover:bg-[#e69400] !text-black'
+        color: 'text-white',
+        colorItem: 'text-stone-400',
+        buttonColor: 'bg-white !text-black'
     },
     {
         id: 3,
@@ -31,8 +33,9 @@ const PLANS = [
         max_loss_limit: '$4,500',
         max_position_size: '15 Contracts',
         profit_target: '$9,000',
-        color: 'text-[#ffc04d]',
-        buttonColor: 'bg-[#ffc04d] hover:bg-[#ffb31a] !text-black'
+        color: 'text-[#ffb34a]',
+        colorItem: 'text-stone-400',
+        buttonColor: 'bg-[#ffb34a] !text-black'
     }
 ]
 

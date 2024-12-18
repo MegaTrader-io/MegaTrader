@@ -8,6 +8,7 @@ export interface PlanInterface {
     max_position_size: string
     profit_target: string
     color: string
+    colorItem: string
     buttonColor: string
 }
 
