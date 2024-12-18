@@ -1,12 +1,18 @@
 const HeroSection = () => (
     <section>
-        <video className="top-0 w-[1248px] absolute border border-1 border-red-500" autoPlay loop muted playsInline
-               width="auto"
-               height="auto">
-            <source src="/assets/comp-3v1-1-for-mac.mov" type="video/quicktime"/>
-            <source src="/assets/1280-for-PC.webm"/>
-            Your browser does not support this video.
-        </video>
+        <div className="overflow-hidden w-[1248px]">
+            <video style={{
+                top: '71px',
+                right: '246px'
+            }} className="top-0 w-[1248px] absolute border border-1 border-red-500" autoPlay loop muted playsInline
+                   width="auto"
+                   height="auto">
+                <source src="/assets/comp-3v1-1-for-mac.mov" type="video/quicktime"/>
+                <source src="/assets/1280-for-PC.webm"/>
+                Your browser does not support this video.
+            </video>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2">
             <div>
                 <div className="h-full space-y-[25px] mt-[15px]">
