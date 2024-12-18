@@ -4,7 +4,7 @@ const HeroSection = () => (
             <video style={{
                 top: '71px',
                 right: '246px'
-            }} className="top-0 w-[1248px] absolute border border-1 border-red-500" autoPlay loop muted playsInline
+            }} className="top-0 w-[1248px] absolute" autoPlay loop muted playsInline
                    width="auto"
                    height="auto">
                 <source src="/assets/comp-3v1-1-for-mac.mov" type="video/quicktime"/>
