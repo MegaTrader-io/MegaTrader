@@ -11,7 +11,7 @@ import BenefitsSection from "@/components/landing-page/BenefitsSection";
 import Subscriptions from "@/components/landing-page/Subscriptions";
 import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 import UnlockThePowerOfMegaTrader from "@/components/landing-page/UnlockThePowerOfMegaTrader";
-import FaqsSection from "@/components/landing-page/faqs/Faqs";
+import FaqsSection from "@/components/landing-page/Faqs";
 import FlexibleFuturesTradingAndAnalytics from "@/components/landing-page/FlexibleFuturesTradingAndAnalytics";
 
 export const experimental_ppr = true;
