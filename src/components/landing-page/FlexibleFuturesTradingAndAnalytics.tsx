@@ -62,7 +62,7 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                         {Options.map((option, index) => (
                             <Tab
                                 key={option.id}
-                                className="text-left py-3 px-4 text-white w-full rounded-xl border border-stone-400  focus:outline-none data-[selected]:bg-[#f1a035] data-[selected]:border-transparent data-[selected]:text-black "
+                                className="text-left py-3 px-4 text-stone-400 w-full rounded-xl border border-stone-400  focus:outline-none data-[selected]:bg-[#f1a035] data-[selected]:border-transparent data-[selected]:text-black "
                             >
                                 <div className="flex gap-2 items-center font-normal text-nowrap leading-6 text-base">
                                     {selectedIndex === index &&
