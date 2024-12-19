@@ -12,6 +12,7 @@ import Subscriptions from "@/components/landing-page/Subscriptions";
 import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 import UnlockThePowerOfMegaTrader from "@/components/landing-page/UnlockThePowerOfMegaTrader";
 import FaqsSection from "@/components/landing-page/faqs/Faqs";
+import FlexibleFuturesTradingAndAnalytics from "@/components/landing-page/FlexibleFuturesTradingAndAnalytics";
 
 export const experimental_ppr = true;
 
@@ -30,6 +31,7 @@ const Home = () => {
             <TradingStepsSection/>
             <Subscriptions/>
             <UnlockThePowerOfMegaTrader/>
+            <FlexibleFuturesTradingAndAnalytics/>
             <BenefitsSection/>
             <FaqsSection />
         </main>
