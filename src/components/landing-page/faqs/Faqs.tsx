@@ -9,9 +9,10 @@ interface Faqs {
 
 function Question1() {
     return (
-        <>
-            question 1
-        </>
+        <p className="text-base/7 text-gray-300">
+            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
+            cutting-edge tools and capital to maximize their success.
+        </p>
     )
 }
 
@@ -26,33 +27,37 @@ function Question2() {
 
 function Question3() {
     return (
-        <>
-            question 3
-        </>
+        <p className="text-base/7 text-gray-300">
+            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
+            cutting-edge tools and capital to maximize their success.
+        </p>
     )
 }
 
 function Question4() {
     return (
-        <>
-            question 4
-        </>
+        <p className="text-base/7 text-gray-300">
+            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
+            cutting-edge tools and capital to maximize their success.
+        </p>
     )
 }
 
 function Question5() {
     return (
-        <>
-            question 5
-        </>
+        <p className="text-base/7 text-gray-300">
+            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
+            cutting-edge tools and capital to maximize their success.
+        </p>
     )
 }
 
 function Question6() {
     return (
-        <>
-            question 6
-        </>
+        <p className="text-base/7 text-gray-300">
+            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
+            cutting-edge tools and capital to maximize their success.
+        </p>
     )
 }
 
@@ -93,17 +98,24 @@ const FaqsSection = () => {
                 {faqs.map((faq) => (
                     <Disclosure key={faq.question} as="div" className="mb-2">
                         <DisclosureButton
-                            className="group bg-[#1e1e1e] p-4 rounded-2xl flex w-full items-center justify-between text-left  text-white">
-                            <span className="text-white text-xl font-light w-full leading-6 py-2">{faq.question}</span>
-                            <span className="ml-6 flex h-7 items-center">
-                                  <ArrowDownIcon aria-hidden="true" className="size-6 group-data-[open]:hidden"/>
-                                  <ArrowUpIcon aria-hidden="true" className="size-6 group-[&:not([data-open])]:hidden"/>
-                            </span>
+                            className="group bg-[#1e1e1e] p-4 rounded-2xl flex w-full items-center flex-col text-left ">
+                            <div className="flex  w-full items-center justify-between">
+                                <div
+                                    className="text-white text-xl font-light w-full leading-6 py-2">{faq.question}
+                                </div>
+                                <div className="w-6 h-6 items-center  text-white">
+                                    <ArrowDownIcon aria-hidden="true" className="w-6 h-6 group-data-[open]:hidden"/>
+                                    <ArrowUpIcon aria-hidden="true"
+                                                 className="w-6 h-6 group-[&:not([data-open])]:hidden"/>
+                                </div>
+                            </div>
+                            <DisclosurePanel as="div" className="text-base text-white py-2 text-left">
+                                {faq.answer}
+                            </DisclosurePanel>
+
                         </DisclosureButton>
 
-                        <DisclosurePanel as="div">
-                            {faq.answer}
-                        </DisclosurePanel>
+
                     </Disclosure>
                 ))}
             </div>
