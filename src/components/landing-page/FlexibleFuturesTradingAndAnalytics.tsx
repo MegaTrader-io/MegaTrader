@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
-import {Tab, TabGroup, TabList} from "@headlessui/react";
+import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/react";
+import Link from "@/components/link";
 
 interface Option {
     id: number
@@ -52,13 +53,13 @@ const FlexibleFuturesTradingAndAnalytics = () => {
 
     return (
         <section className="py-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl">
-            <h2 className="text-5xl text-white text-center mb-8 font-light leading-[60px]">
+            <h2 className="text-5xl text-white text-center font-light leading-[60px]">
                 FLEXIBLE FUTURES<br/>
                 <span className="text-[#ffb34a] leading-[60px]">TRADING AND ANALYTICS</span>
             </h2>
             <div>
                 <TabGroup onChange={setSelectedIndex}>
-                    <TabList className="flex gap-2 group">
+                    <TabList className="flex gap-2 py-8">
                         {Options.map((option, index) => (
                             <Tab
                                 key={option.id}
@@ -72,7 +73,33 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                             </Tab>
                         ))}
                     </TabList>
+                    <TabPanels
+                        className="w-full bg-[#1e1e1e] rounded-2xl shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] justify-start items-center inline-flex overflow-hidden">
+                        <TabPanel className="grid grid-cols-2 items-center">
+                            <div className="p-8 space-y-8">
+                                <h2 className="text-white text-2xl font-light uppercase leading-7">AUTOMATE & SCALE
+                                    TRADING OPERATIONS WITH EASE.</h2>
+                                <p className="text-stone-400 text-xl font-normal leading-8">
+                                    Track trades, payouts, and performance in real-time. Integrate fiat and crypto
+                                    transactions for efficient futures trading.
+                                </p>
+
+                                <Link href="#" className="bg-[#ffb34a] !text-black">
+                                    GET STARTED
+                                </Link>
+                            </div>
+                            <div>
+                                xx
+                            </div>
+                        </TabPanel>
+                        <TabPanel className="text-white">Content 2</TabPanel>
+                        <TabPanel className="text-white">Content 3</TabPanel>
+                        <TabPanel className="text-white">Content 4</TabPanel>
+                        <TabPanel className="text-white">Content 5</TabPanel>
+                    </TabPanels>
                 </TabGroup>
+
+
             </div>
         </section>
     )
