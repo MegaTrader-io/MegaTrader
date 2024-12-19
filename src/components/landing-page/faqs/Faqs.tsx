@@ -89,25 +89,24 @@ const FaqsSection = () => {
             <h2 className="text-5xl text-white text-center py-8 font-light leading-[60px]">
                 FREQUENTLY ASKED QUESTIONS
             </h2>
-            <dl className="space-y-6 divide-y divide-white/10 bg-[#1e1e1e] rounded-2xl text-xl gap-2 flex-row">
+            <div>
                 {faqs.map((faq) => (
-                    <Disclosure key={faq.question} as="div" className="p-6 gap-2 flex-row">
-                        <dt>
-                            <DisclosureButton
-                                className="group flex w-full items-start justify-between text-left text-white">
-                                <span className="text-base/7 font-semibold">{faq.question}</span>
-                                <span className="ml-6 flex h-7 items-center">
-                      <ArrowDownIcon aria-hidden="true" className="size-6 group-data-[open]:hidden"/>
-                      <ArrowUpIcon aria-hidden="true" className="size-6 group-[&:not([data-open])]:hidden"/>
-                    </span>
-                            </DisclosureButton>
-                        </dt>
-                        <DisclosurePanel as="dd" className="mt-2 pr-12">
+                    <Disclosure key={faq.question} as="div" className="mb-2">
+                        <DisclosureButton
+                            className="group bg-[#1e1e1e] p-4 rounded-2xl flex w-full items-center justify-between text-left  text-white">
+                            <span className="text-white text-xl font-light w-full leading-6 py-2">{faq.question}</span>
+                            <span className="ml-6 flex h-7 items-center">
+                                  <ArrowDownIcon aria-hidden="true" className="size-6 group-data-[open]:hidden"/>
+                                  <ArrowUpIcon aria-hidden="true" className="size-6 group-[&:not([data-open])]:hidden"/>
+                            </span>
+                        </DisclosureButton>
+
+                        <DisclosurePanel as="div">
                             {faq.answer}
                         </DisclosurePanel>
                     </Disclosure>
                 ))}
-            </dl>
+            </div>
         </section>
     )
 }
