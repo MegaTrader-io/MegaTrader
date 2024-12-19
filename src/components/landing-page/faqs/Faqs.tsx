@@ -19,8 +19,8 @@ function Question1() {
 function Question2() {
     return (
         <p className="text-base/7 text-gray-300">
-            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
-            cutting-edge tools and capital to maximize their success.
+            MegaTrader provides funded futures trading accounts to evaluate traders' skills. If you perform
+            successfully, you can earn profits without risking your own capital.
         </p>
     )
 }
@@ -28,8 +28,8 @@ function Question2() {
 function Question3() {
     return (
         <p className="text-base/7 text-gray-300">
-            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
-            cutting-edge tools and capital to maximize their success.
+            Yes! MegaTrader allows you to trade on multiple accounts simultaneously, offering flexibility and
+            scalability for skilled traders.
         </p>
     )
 }
@@ -37,26 +37,31 @@ function Question3() {
 function Question4() {
     return (
         <p className="text-base/7 text-gray-300">
-            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
-            cutting-edge tools and capital to maximize their success.
+            Absolutely. MegaTrader is exclusively dedicated to futures trading, ensuring you have access to
+            specialized tools, resources, and opportunities tailored for this market.
         </p>
     )
 }
 
 function Question5() {
     return (
-        <p className="text-base/7 text-gray-300">
-            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
-            cutting-edge tools and capital to maximize their success.
-        </p>
+        <div className="text-left">
+            <p className="text-base/7 text-gray-300">
+                MegaTrader offers three account options:<br/>
+                You can choose the plan that best fits your trading goals and budget.<br/>
+                - Basic Plan: $89.99/month for a $50k account<br/>
+                - Premium Plan: $149.99/month for a $100k account<br/>
+                - Unlimited Plan: $199.99/month for a $150k account<br/>
+            </p>
+        </div>
     )
 }
 
 function Question6() {
     return (
         <p className="text-base/7 text-gray-300">
-            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
-            cutting-edge tools and capital to maximize their success.
+            Yes! MegaTrader adheres to all industry regulations and compliance standards to provide a safe,
+            secure, and professional trading environment.
         </p>
     )
 }
@@ -105,10 +110,11 @@ const FaqsSection = () => {
                                 </div>
                                 <div className="w-6 h-6 items-center  text-white">
                                     <ArrowDownIcon aria-hidden="true" className="w-6 h-6 group-data-[open]:hidden"/>
-                                    <ArrowUpIcon aria-hidden="true"  className="w-6 h-6 group-[&:not([data-open])]:hidden"/>
+                                    <ArrowUpIcon aria-hidden="true"
+                                                 className="w-6 h-6 group-[&:not([data-open])]:hidden"/>
                                 </div>
                             </div>
-                            <DisclosurePanel as="div" className="text-base text-white py-2 text-left">
+                            <DisclosurePanel as="div" className="text-base text-white py-2 text-left w-full">
                                 {faq.answer}
                             </DisclosurePanel>
                         </DisclosureButton>
