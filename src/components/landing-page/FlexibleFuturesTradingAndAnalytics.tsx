@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
-import {Disclosure, DisclosureButton, DisclosurePanel, Tab, TabGroup, TabList} from "@headlessui/react";
+import {Tab, TabGroup, TabList} from "@headlessui/react";
 
 interface Option {
     id: number
@@ -66,7 +66,8 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                             >
                                 <div className="flex gap-2 items-center font-normal text-nowrap leading-6 text-base">
                                     {selectedIndex === index &&
-                                        <CheckCircleIcon aria-hidden="true" className="w-6 h-6 text-black"/>} {option.title}
+                                        <CheckCircleIcon aria-hidden="true"
+                                                         className="w-6 h-6 text-black"/>} {option.title}
                                 </div>
                             </Tab>
                         ))}
