@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/react";
 import Link from "@/components/link";
+import Image from "next/image";
 
 interface Option {
     id: number
@@ -74,8 +75,8 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                         ))}
                     </TabList>
                     <TabPanels
-                        className="w-full bg-[#1e1e1e] rounded-2xl shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] justify-start items-center inline-flex overflow-hidden">
-                        <TabPanel className="grid grid-cols-2 items-center">
+                        className="h-[396px] w-full bg-[#1e1e1e] rounded-2xl shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] justify-start items-center inline-flex overflow-hidden">
+                        <TabPanel className="grid grid-cols-[511px_1fr] items-center">
                             <div className="p-8 space-y-8">
                                 <h2 className="text-white text-2xl font-light uppercase leading-7">AUTOMATE & SCALE
                                     TRADING OPERATIONS WITH EASE.</h2>
@@ -89,7 +90,12 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                                 </Link>
                             </div>
                             <div>
-                                xx
+                                <Image
+                                    src="/assets/images/frame_monitor.svg"
+                                    alt="AUTOMATE & SCALE TRADING OPERATIONS WITH EASE."
+                                    width={641}
+                                    height={396}
+                                />
                             </div>
                         </TabPanel>
                         <TabPanel className="text-white">Content 2</TabPanel>
