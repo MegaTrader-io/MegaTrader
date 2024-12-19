@@ -19,7 +19,7 @@ function Question1() {
 function Question2() {
     return (
         <p className="text-base/7 text-gray-300">
-            MegaTrader provides funded futures trading accounts to evaluate traders' skills. If you perform
+            MegaTrader provides funded futures trading accounts to evaluate traders{"'"} skills. If you perform
             successfully, you can earn profits without risking your own capital.
         </p>
     )
