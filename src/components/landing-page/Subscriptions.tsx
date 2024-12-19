@@ -40,7 +40,7 @@ const PLANS = [
 ]
 
 const Subscriptions = () => {
-    return <section className="mt-[17] mb-8">
+    return <section className="my-8">
         <h2 className="text-5xl text-white text-center mb-8 font-light leading-[60px]">
             CHOOSE YOUR ACCOUNT SIZE
         </h2>

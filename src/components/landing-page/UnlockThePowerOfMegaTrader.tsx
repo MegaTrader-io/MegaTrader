@@ -3,9 +3,9 @@ import Link from "@/components/link";
 
 const UnlockThePowerOfMegaTrader = () => {
     return <>
-        <section className="mb-8 grid grid-cols-2">
+        <section className="mb-8 grid grid-cols-[511px_1fr] gap-4">
             <div>
-                <h2 className="text-left text-5xl text-white mb-10 font-light leading-[60px]">
+                <h2 className="text-left text-5xl font-light text-white mb-10 leading-[60px]">
                     UNLOCK THE POWER OF MEGATRADER
                 </h2>
                 <div className="space-y-8 mb-[76px]">
@@ -17,11 +17,10 @@ const UnlockThePowerOfMegaTrader = () => {
                         className="relative"
                     />
                     <p className="text-stone-400 text-xl font-normal">
-                        Experience the full potential of your trading platform with our intuitive and advanced user
-                        interface.
+                        Experience the full potential of your trading platform with our intuitive and advanced user interface.
                     </p>
                     <Link as={"button"}
-                          className="!bg-[#ffb34a] group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
+                          className="!bg-[#ffb34a] px-4 group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
                         OPEN AN ACCOUNT
                     </Link>
                 </div>
@@ -33,7 +32,15 @@ const UnlockThePowerOfMegaTrader = () => {
                     height={447}
                 />
             </div>
-            <div></div>
+            <div>
+                <Image
+                    src="/assets/images/account-overview.png"
+                    alt="Plus icons"
+                    width={720}
+                    height={900}
+                    className="relative"
+                />
+            </div>
         </section>
     </>
 }
