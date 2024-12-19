@@ -96,26 +96,22 @@ const FaqsSection = () => {
             </h2>
             <div>
                 {faqs.map((faq) => (
-                    <Disclosure key={faq.question} as="div" className="mb-2">
+                    <Disclosure key={faq.question} as="div" className="mb-2 group">
                         <DisclosureButton
-                            className="group bg-[#1e1e1e] p-4 rounded-2xl flex w-full items-center flex-col text-left ">
+                            className=" bg-[#1e1e1e] p-4 group-data-[open]:border group-data-[open]:border-neutral-700    group-data-[open]:bg-[#131210] rounded-2xl flex w-full items-center flex-col text-left ">
                             <div className="flex  w-full items-center justify-between">
                                 <div
                                     className="text-white text-xl font-light w-full leading-6 py-2">{faq.question}
                                 </div>
                                 <div className="w-6 h-6 items-center  text-white">
                                     <ArrowDownIcon aria-hidden="true" className="w-6 h-6 group-data-[open]:hidden"/>
-                                    <ArrowUpIcon aria-hidden="true"
-                                                 className="w-6 h-6 group-[&:not([data-open])]:hidden"/>
+                                    <ArrowUpIcon aria-hidden="true"  className="w-6 h-6 group-[&:not([data-open])]:hidden"/>
                                 </div>
                             </div>
                             <DisclosurePanel as="div" className="text-base text-white py-2 text-left">
                                 {faq.answer}
                             </DisclosurePanel>
-
                         </DisclosureButton>
-
-
                     </Disclosure>
                 ))}
             </div>
