@@ -7,44 +7,96 @@ import Image from "next/image";
 interface Option {
     id: number
     title: string
-    component: React.ReactElement | null;
-}
-
-function FinanceAndTrading() {
-    return (
-        <div>
-            <h2 className="text-white">
-                Automate & scale trading operations with ease.
-            </h2>
-        </div>
-    )
+    panel: {
+        title: string,
+        content: string,
+        button: {
+            text: string,
+            href: string,
+        },
+        image: {
+            url: string,
+        }
+    }
 }
 
 const Options: Option[] = [
     {
         id: 1,
         title: 'Finance & Trading',
-        component: <FinanceAndTrading/>
+        panel: {
+            title: 'Automate & scale trading operations with ease.',
+            content: 'Track trades, payouts, and performance in real-time. Integrate fiat and crypto transactions for efficient futures trading.',
+            button: {
+                text: 'GET STARTED',
+                href: '#',
+            },
+            image: {
+                url: '/assets/images/frame_monitor.svg'
+            }
+        }
     },
     {
         id: 2,
         title: 'Risk Management',
-        component: <FinanceAndTrading/>
+        panel: {
+            title: 'Manage and analyze your risk exposure across trading accounts.',
+            content: '\n' +
+                'Monitor margin levels, stop-loss setups, and trading draw downs to maximize performance while staying secure.',
+            button: {
+                text: 'Explore Tools',
+                href: '#',
+            },
+            image: {
+                url: '/assets/images/frame_monitor.svg'
+            }
+        }
     },
     {
         id: 3,
         title: 'Compliance & Reporting',
-        component: <FinanceAndTrading/>
+        panel: {
+            title: 'Streamline your compliance processes with automated reporting.',
+            content: 'Access daily trade summaries, account funding details, and customizable financial projections to stay audit-ready.',
+            button: {
+                text: 'Download Reports',
+                href: '#',
+            },
+            image: {
+                url: '/assets/images/frame_monitor.svg'
+            }
+        }
     },
     {
         id: 4,
         title: 'Founders Dashboard',
-        component: <FinanceAndTrading/>
+        panel: {
+            title: 'Empower your leadership team with a founder\'s view of all operations.',
+            content: 'Get insights into trading activity, performance metrics, and account profitability at a glance.',
+            button: {
+                text: 'View Analytics',
+                href: '#',
+            },
+            image: {
+                url: '/assets/images/frame_monitor.svg'
+            }
+        }
     },
     {
         id: 5,
         title: 'Accounts & Contracts',
-        component: <FinanceAndTrading/>
+        panel: {
+            title: 'Simplify the management of trading accounts and contracts.',
+            content: '\n' +
+                'Enable seamless onboarding for new traders, update terms, and monitor contract activity in one intuitive dashboard.',
+            button: {
+                text: 'Manage Accounts',
+                href: '#',
+            },
+            image: {
+                url: '/assets/images/frame_monitor.svg'
+            }
+        }
     }
 ]
 
@@ -64,8 +116,7 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                         {Options.map((option, index) => (
                             <Tab
                                 key={option.id}
-                                className="text-left py-3 px-4 text-stone-400 w-full rounded-xl border border-stone-400  focus:outline-none data-[selected]:bg-[#f1a035] data-[selected]:border-transparent data-[selected]:text-black "
-                            >
+                                className="text-left py-3 px-4 text-stone-400 w-full rounded-xl border border-stone-400  focus:outline-none data-[selected]:bg-[#f1a035] data-[selected]:border-transparent data-[selected]:text-black">
                                 <div className="flex gap-2 items-center font-normal text-nowrap leading-6 text-base">
                                     {selectedIndex === index &&
                                         <CheckCircleIcon aria-hidden="true"
@@ -76,36 +127,30 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                     </TabList>
                     <TabPanels
                         className="h-[396px] w-full bg-[#1e1e1e] rounded-2xl shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] justify-start items-center inline-flex overflow-hidden">
-                        <TabPanel className="grid grid-cols-[511px_1fr] items-center">
-                            <div className="p-8 space-y-8">
-                                <h2 className="text-white text-2xl font-light uppercase leading-7">AUTOMATE & SCALE
-                                    TRADING OPERATIONS WITH EASE.</h2>
-                                <p className="text-stone-400 text-xl font-normal leading-8">
-                                    Track trades, payouts, and performance in real-time. Integrate fiat and crypto
-                                    transactions for efficient futures trading.
-                                </p>
+                        {Options.map(option => (
+                            <TabPanel key={option.id} className="grid grid-cols-[511px_1fr] items-center">
+                                <div className="p-8 space-y-8">
+                                    <h2 className="text-white text-2xl font-light uppercase leading-73123">{option.panel.title}</h2>
+                                    <p className="text-stone-400 text-xl font-normal leading-8">
+                                        {option.panel.content}
+                                    </p>
 
-                                <Link href="#" className="bg-[#ffb34a] !text-black">
-                                    GET STARTED
-                                </Link>
-                            </div>
-                            <div>
-                                <Image
-                                    src="/assets/images/frame_monitor.svg"
-                                    alt="AUTOMATE & SCALE TRADING OPERATIONS WITH EASE."
-                                    width={641}
-                                    height={396}
-                                />
-                            </div>
-                        </TabPanel>
-                        <TabPanel className="text-white">Content 2</TabPanel>
-                        <TabPanel className="text-white">Content 3</TabPanel>
-                        <TabPanel className="text-white">Content 4</TabPanel>
-                        <TabPanel className="text-white">Content 5</TabPanel>
+                                    <Link href={option.panel.button.href} className="bg-[#ffb34a] !text-black">
+                                        {option.panel.button.text}
+                                    </Link>
+                                </div>
+                                <div>
+                                    <Image
+                                        src={option.panel.image.url}
+                                        alt={option.panel.title}
+                                        width={641}
+                                        height={396}
+                                    />
+                                </div>
+                            </TabPanel>
+                        ))}
                     </TabPanels>
                 </TabGroup>
-
-
             </div>
         </section>
     )
