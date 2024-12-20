@@ -8,46 +8,46 @@ const navigationItems = [
     {href: '#pricing', label: 'PRICING', sectionId: 'pricing'},
     {href: '#features', label: 'FEATURES', sectionId: 'features'},
     {href: '#faq', label: 'FAQ', sectionId: 'faq'},
-]
+];
 
 export default function Header() {
-    const [activeSection, setActiveSection] = useState('')
+    const [activeSection, setActiveSection] = useState('home');
 
     useEffect(() => {
         const options = {
             root: null,
             rootMargin: '0px',
-            threshold: 0.5,
-        }
+            threshold: 0.5, // Cambia esto según el comportamiento deseado
+        };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    setActiveSection(entry.target.id)
+                    setActiveSection(entry.target.id);
                 }
-            })
-        }, options)
+            });
+        }, options);
 
         navigationItems.forEach(({sectionId}) => {
-            const element = document.getElementById(sectionId)
-            if (element) observer.observe(element)
-        })
+            const element = document.getElementById(sectionId);
+            if (element) observer.observe(element);
+        });
 
         return () => {
             navigationItems.forEach(({sectionId}) => {
-                const element = document.getElementById(sectionId)
-                if (element) observer.unobserve(element)
-            })
-        }
-    }, [])
+                const element = document.getElementById(sectionId);
+                if (element) observer.unobserve(element);
+            });
+        };
+    }, []);
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-        e.preventDefault()
-        const element = document.querySelector(href)
+        e.preventDefault();
+        const element = document.querySelector(href);
         if (element) {
-            element.scrollIntoView({behavior: 'smooth'})
+            element.scrollIntoView({behavior: 'smooth'});
         }
-    }
+    };
 
     return (
         <div
@@ -72,9 +72,9 @@ export default function Header() {
                         key={item.label}
                         href={item.href}
                         onClick={(e) => handleClick(e, item.href)}
-                        className={`text-xl text-neutral-50 text-nowrap font-light uppercase leading-6 px-4 py-3 hover:bg-[#1e1e1e] hover:rounded-xl hover:border hover:border-neutral-700  ${
+                        className={`text-xl text-neutral-50 text-nowrap font-light uppercase leading-6 px-4 py-3 ${
                             activeSection === item.sectionId
-                                ? ' '
+                                ? 'bg-[#1e1e1e] rounded-xl border border-neutral-700'
                                 : ''
                         }`}
                     >

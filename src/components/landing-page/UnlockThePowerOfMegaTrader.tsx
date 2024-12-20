@@ -17,7 +17,8 @@ const UnlockThePowerOfMegaTrader = () => {
                         className="relative"
                     />
                     <p className="text-stone-400 text-xl font-normal">
-                        Experience the full potential of your trading platform with our intuitive and advanced user interface.
+                        Experience the full potential of your trading platform with our intuitive and advanced user
+                        interface.
                     </p>
                     <Link as={"button"}
                           className="!bg-[#ffb34a] px-4 group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
@@ -34,7 +35,7 @@ const UnlockThePowerOfMegaTrader = () => {
             </div>
             <div>
                 <Image
-                    src="/assets/images/account-overview.png"
+                    src="/assets/images/mac.svg"
                     alt="Plus icons"
                     width={720}
                     height={900}
