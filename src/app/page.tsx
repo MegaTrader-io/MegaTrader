@@ -18,8 +18,10 @@ export const experimental_ppr = true;
 
 const Home = () => {
     return <>
-        <header className="px-4 py-6 mx-auto max-w-7xl w-full">
-            <Header/>
+        <header id="home" className="px-4 py-6  w-full   z-50">
+            <div  className="mx-auto max-w-7xl">
+                <Header/>
+            </div>
         </header>
         <main className="mx-auto max-w-7xl mt-[67px] mb-[101px] px-4">
             <HeroSection/>
@@ -33,7 +35,7 @@ const Home = () => {
             <UnlockThePowerOfMegaTrader/>
             <FlexibleFuturesTradingAndAnalytics/>
             <BenefitsSection/>
-            <FaqsSection />
+            <FaqsSection/>
         </main>
         <Footer/>
     </>

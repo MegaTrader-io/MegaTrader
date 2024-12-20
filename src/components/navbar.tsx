@@ -3,7 +3,7 @@ import Link from "@/components/link";
 
 export default function Navbar() {
     return (
-        <nav className="flex justify-start items-center flex-row gap-3.5">
+        <div className="flex bg-gray-200 items-center gap-3.5">
             <Link href="#">
                 Login
             </Link>
@@ -16,6 +16,6 @@ export default function Navbar() {
                     height={4}
                 />
             </Link>
-        </nav>
+        </div>
     );
 }

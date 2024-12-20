@@ -95,7 +95,7 @@ const faqs: Faqs[] = [
 
 const FaqsSection = () => {
     return (
-        <section className="mx-auto max-w-[1030px]">
+        <section id="faq" className="mx-auto max-w-[1030px]">
             <h2 className="text-5xl text-white text-center py-8 font-light leading-[60px]">
                 FREQUENTLY ASKED QUESTIONS
             </h2>
@@ -103,7 +103,7 @@ const FaqsSection = () => {
                 {faqs.map((faq) => (
                     <Disclosure key={faq.question} as="div" className="mb-2 group">
                         <DisclosureButton
-                            className=" bg-[#1e1e1e] p-4 group-data-[open]:border group-data-[open]:border-neutral-700    group-data-[open]:bg-[#131210] rounded-2xl flex w-full items-center flex-col text-left ">
+                            className=" bg-[#1e1e1e] p-4 group-data-[open]:border group-data-[open]:border-neutral-700 group-data-[open]:bg-[#131210] rounded-2xl flex w-full items-center flex-col text-left ">
                             <div className="flex  w-full items-center justify-between">
                                 <div
                                     className="text-white text-xl font-light w-full leading-6 py-2">{faq.question}

@@ -1,19 +1,106 @@
 import Image from 'next/image'
-import Navbar from "@/components/navbar";
+import Link from "next/link";
+import {useEffect, useState} from "react";
+
+const navigationItems = [
+    {href: '#home', label: 'HOME', sectionId: 'home'},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works'},
+    {href: '#pricing', label: 'PRICING', sectionId: 'pricing'},
+    {href: '#features', label: 'FEATURES', sectionId: 'features'},
+    {href: '#faq', label: 'FAQ', sectionId: 'faq'},
+]
 
 export default function Header() {
+    const [activeSection, setActiveSection] = useState('')
+
+    useEffect(() => {
+        const options = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5,
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setActiveSection(entry.target.id)
+                }
+            })
+        }, options)
+
+        navigationItems.forEach(({sectionId}) => {
+            const element = document.getElementById(sectionId)
+            if (element) observer.observe(element)
+        })
+
+        return () => {
+            navigationItems.forEach(({sectionId}) => {
+                const element = document.getElementById(sectionId)
+                if (element) observer.unobserve(element)
+            })
+        }
+    }, [])
+
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        e.preventDefault()
+        const element = document.querySelector(href)
+        if (element) {
+            element.scrollIntoView({behavior: 'smooth'})
+        }
+    }
+
     return (
         <div
-            className="w-full flex items-center justify-between flex-nowrap relative">
+            className="w-full inline-flex items-center justify-between relative">
             <div className="w-auto">
-                <Image
-                    src="../assets/images/megatrader2.svg"
-                    alt="Logo"
-                    height={83}
-                    width={338}
-                />
+                <Link
+                    href="/"
+                    onClick={(e) => handleClick(e, '#home')}
+                >
+                    <Image
+                        src="../assets/images/megatrader2.svg"
+                        alt="Logo"
+                        height={83}
+                        width={338}
+                    />
+                </Link>
+
             </div>
-            <Navbar/>
+            <nav className="flex justify-start items-center flex-row gap-2" aria-label="Main navigation">
+                {navigationItems.map((item) => (
+                    <Link
+                        key={item.label}
+                        href={item.href}
+                        onClick={(e) => handleClick(e, item.href)}
+                        className={`text-xl text-neutral-50 text-nowrap font-light uppercase leading-6 px-4 py-3 hover:bg-[#1e1e1e] hover:rounded-xl hover:border hover:border-neutral-700  ${
+                            activeSection === item.sectionId
+                                ? ' '
+                                : ''
+                        }`}
+                    >
+                        {item.label}
+                    </Link>
+                ))}
+            </nav>
+            <div className="w-auto">
+                <div className="flex items-center gap-3.5">
+                    <Link href="#"
+                          className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center">
+                        Login
+                    </Link>
+                    <Link className="flex bg-[#292524] rounded-xl border border-neutral-700 w-12 h-12 px-4 py-3 "
+                          href="#">
+                        <Image
+                            src="/assets/images/menu-more.svg"
+                            alt="Menu More"
+                            aria-label="Menu More"
+                            width={24}
+                            height={24}
+                        />
+                    </Link>
+                </div>
+
+            </div>
         </div>
     );
 }
