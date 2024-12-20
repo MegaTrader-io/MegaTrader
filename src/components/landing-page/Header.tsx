@@ -88,16 +88,6 @@ export default function Header() {
                           className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center">
                         Login
                     </Link>
-                    <Link className="flex bg-[#292524] rounded-xl border border-neutral-700 w-12 h-12 px-4 py-3 "
-                          href="#">
-                        <Image
-                            src="/assets/images/menu-more.svg"
-                            alt="Menu More"
-                            aria-label="Menu More"
-                            width={24}
-                            height={24}
-                        />
-                    </Link>
                 </div>
 
             </div>
