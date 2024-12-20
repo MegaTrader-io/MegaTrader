@@ -17,7 +17,7 @@ export default function Header() {
         const options = {
             root: null,
             rootMargin: '0px',
-            threshold: 0.5, // Cambia esto según el comportamiento deseado
+            threshold: 0.5,
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -86,7 +86,7 @@ export default function Header() {
                 <div className="flex items-center gap-3.5">
                     <Link href="#"
                           className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center">
-                        Login
+                        Sign In to Trade
                     </Link>
                 </div>
 
