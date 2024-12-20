@@ -5,6 +5,9 @@ import "./globals.css";
 export const metadata: Metadata = {
     title: "MegaTrader | Master the Path to Becoming a Funded Futures Trader.",
     description: "MegaTrader | Master the Path to Becoming a Funded Futures Trader.",
+    icons: {
+        icon: "/favicon.svg",
+    },
 };
 
 const spaceGrotesk = Space_Grotesk({
