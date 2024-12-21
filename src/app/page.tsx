@@ -19,11 +19,9 @@ export const experimental_ppr = true;
 const Home = () => {
     return <>
         <header id="home" className="px-4 py-6  w-full   z-50">
-            <div  className="mx-auto max-w-7xl">
-                <Header/>
-            </div>
+            <Header/>
         </header>
-        <main className="mx-auto max-w-7xl mt-[67px] mb-[101px] px-4">
+        <main className="mx-auto max-w-7xl mt-[calc(131px)] mb-[101px] px-4">
             <HeroSection/>
             <FeatureHighlightSection/>
             <SponsorLogosSection/>
