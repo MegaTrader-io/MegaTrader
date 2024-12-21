@@ -14,10 +14,10 @@ const navigationItems = [
 export default function Header() {
     const [activeSection, setActiveSection] = useState('home');
     const [hasScrolled, setHasScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
-            console.info('hasScrolled', hasScrolled);
             if (window.scrollY > 10) {
                 setHasScrolled(true);
             } else {
@@ -61,7 +61,7 @@ export default function Header() {
         e.preventDefault();
         const element = document.querySelector(href);
         if (element) {
-            const headerOffset = 131;
+            const headerOffset = isMenuOpen ? 96 : 131;
             const elementPosition = element.getBoundingClientRect().top + window.scrollY;
             const offsetPosition = elementPosition - headerOffset;
 
@@ -69,14 +69,16 @@ export default function Header() {
                 top: offsetPosition,
                 behavior: 'smooth',
             });
+            setIsMenuOpen(false);
         }
     };
 
     return (
         <div
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-[#111]/80  backdrop-blur-3xl  shadow-lg`}
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isMenuOpen ? 'bg-[#131210]' : 'bg-[#111]/80'}  backdrop-blur-3xl shadow-lg`}
         >
-            <div className="w-full max-w-7xl  mx-auto px-4 py-6 flex items-center justify-between">
+            <div className="w-full max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+                {/* Logo */}
                 <div className="w-auto">
                     <Link
                         href="/"
@@ -92,10 +94,37 @@ export default function Header() {
                     </Link>
                 </div>
 
-                <button className="btn-primary block lg:hidden">
+                {/* Icono de hamburguesa */}
+                <button
+                    className="btn-primary block lg:hidden"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
                     <Bars3Icon className="w-6 h-6 text-white"/>
                 </button>
 
+                {/* Navegación móvil */}
+                <div
+                    className={`${
+                        isMenuOpen ? 'block' : 'hidden'
+                    } absolute top-[96px] left-0 w-full h-screen ${isMenuOpen ? 'bg-[#1e1e1e]' : 'bg-[#111]'}  flex flex-col items-center lg:hidden`}
+                >
+                    {navigationItems.map((item) => (
+                        <Link
+                            key={item.label}
+                            href={item.href}
+                            onClick={(e) => handleClick(e, item.href)}
+                            className={`text-xl text-neutral-50 font-light uppercase leading-6 px-4 py-3 transition-all duration-200 ${
+                                activeSection === item.sectionId
+                                    ? 'text-white bg-[#1e1e1e] rounded-lg'
+                                    : 'text-gray-400 hover:text-white'
+                            }`}
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Navegación escritorio */}
                 <nav
                     className="hidden lg:flex justify-start items-center flex-row xl:gap-4"
                     aria-label="Main navigation"
@@ -115,10 +144,14 @@ export default function Header() {
                         </Link>
                     ))}
                 </nav>
+
+                {/* Botón Sign In */}
                 <div className="hidden lg:flex">
                     <div className="flex items-center gap-3.5">
-                        <Link href="#"
-                              className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase text-nowrap flex items-center">
+                        <Link
+                            href="#"
+                            className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase text-nowrap flex items-center"
+                        >
                             Sign In
                         </Link>
                     </div>
