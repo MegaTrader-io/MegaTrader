@@ -11,7 +11,7 @@ const changeValue = (value: number) => {
 
 const SkeletonCards = () => {
     return <section>
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide mb-8">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => (
                 <Card
                     key={item}
@@ -112,44 +112,13 @@ const MarketOverviewSection = () => {
         }
     }, [data]);
 
-    // useEffect(() => {
-    //     if (carouselRef.current && data.length > 0) {
-    //         const carousel = carouselRef.current;
-    //         const itemWidth = carousel.children[0].clientWidth;
-    //         const totalWidth = itemWidth * data.length;
-    //
-    //         carousel.style.setProperty('--item-width', `${itemWidth}px`);
-    //         carousel.style.setProperty('--total-width', `${totalWidth}px`);
-    //
-    //         const clonedItems = Array.from(carousel.children).map(child => child.cloneNode(true));
-    //         clonedItems.forEach(item => carousel.appendChild(item));
-    //
-    //         carousel.scrollLeft = totalWidth;
-    //
-    //         const handleScroll = () => {
-    //             if (carousel.scrollLeft === 0) {
-    //                 carousel.scrollLeft = totalWidth;
-    //             } else if (carousel.scrollLeft === carousel.scrollWidth - carousel.clientWidth) {
-    //                 carousel.scrollLeft = totalWidth;
-    //             }
-    //         };
-    //
-    //         carousel.addEventListener('scroll', handleScroll);
-    //
-    //         return () => {
-    //             carousel.removeEventListener('scroll', handleScroll);
-    //         };
-    //     }
-    // }, [data]);
-
-
     if (loading) return <>
         <SkeletonCards></SkeletonCards>
     </>;
     if (error) return null;
 
     return <>
-        <section>
+        <section className="mb-8">
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                 <div ref={carouselRef} className="flex gap-4 animate-carousel">
                     {data.map((instrument, index) => (

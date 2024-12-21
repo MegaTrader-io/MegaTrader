@@ -95,8 +95,8 @@ const faqs: Faqs[] = [
 
 const FaqsSection = () => {
     return (
-        <section id="faq" className="mx-auto max-w-[1030px]">
-            <h2 className="text-5xl text-white text-center py-8 font-light leading-[60px]">
+        <section id="faq" className="mx-auto max-w-[1030px] mb-8">
+            <h2 className="text-5xl text-white text-center pb-8 font-light leading-[60px]">
                 FREQUENTLY ASKED QUESTIONS
             </h2>
             <div>

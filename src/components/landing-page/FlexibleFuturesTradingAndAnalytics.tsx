@@ -105,7 +105,7 @@ const FlexibleFuturesTradingAndAnalytics = () => {
     const [selectedIndex, setSelectedIndex] = useState(0)
 
     return (
-        <section className="py-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl">
+        <section className="mb-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl">
             <h2 className="text-5xl text-white text-center font-light leading-[60px]">
                 FLEXIBLE FUTURES<br/>
                 <span className="text-mgt-primary leading-[60px]">TRADING AND ANALYTICS</span>
