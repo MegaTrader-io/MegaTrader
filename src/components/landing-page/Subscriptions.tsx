@@ -31,7 +31,7 @@ const PLANS = [
         max_loss_limit: '$4,500',
         max_position_size: '15 Contracts',
         profit_target: '$9,000',
-        color: 'text-[#ffb34a]',
+        color: 'text-mgt-primary',
         colorItem: 'text-stone-400',
     }
 ]

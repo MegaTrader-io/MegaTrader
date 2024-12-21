@@ -108,7 +108,7 @@ const FlexibleFuturesTradingAndAnalytics = () => {
         <section className="py-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl">
             <h2 className="text-5xl text-white text-center font-light leading-[60px]">
                 FLEXIBLE FUTURES<br/>
-                <span className="text-[#ffb34a] leading-[60px]">TRADING AND ANALYTICS</span>
+                <span className="text-mgt-primary leading-[60px]">TRADING AND ANALYTICS</span>
             </h2>
             <div>
                 <TabGroup onChange={setSelectedIndex}>
@@ -135,7 +135,7 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                                         {option.panel.content}
                                     </p>
 
-                                    <Link href={option.panel.button.href} className="bg-[#ffb34a] !text-black">
+                                    <Link href={option.panel.button.href} className="bg-mgt-primary !text-black">
                                         {option.panel.button.text}
                                     </Link>
                                 </div>

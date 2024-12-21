@@ -27,7 +27,7 @@ const HeroSection = () => (
                     </div>
                     <h1 className="relative mb-0">
                         <div className="text-white text-7xl font-bold">FUEL YOUR</div>
-                        <span className=" text-[#FFB34A] text-5xl font-bold">TRADING SUCCESS</span>
+                        <span className=" text-mgt-primary text-5xl font-bold">TRADING SUCCESS</span>
                     </h1>
                     <div className="text-stone-400 text-xl font-light max-w-[588px] mt-2 pb-6">We empower you to trade
                         futures

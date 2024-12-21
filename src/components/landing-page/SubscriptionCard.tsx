@@ -19,7 +19,7 @@ export default function SubscriptionCard({plan}: { plan: PlanInterface }) {
                 key={plan.id}
                 className={`group bg-[#1e1e1e]/70  p-5 border w-full border-neutral-700 flex-col justify-start items-start gap-2.5 inline-flex`}>
                 <div className="relative z-10 w-full">
-                    <h3 className="text-white text-xl font-medium mb-4 uppercase leading-6">{plan.level}</h3>
+                    <h3 className="text-mgt-primary text-xl font-medium mb-4 uppercase leading-6">{plan.level}</h3>
                     <div className="mb-4">
                         <span className={`text-white text-5xl font-light leading-[60px]`}>{plan.total_peer_year}</span>
                     </div>
@@ -60,7 +60,7 @@ export default function SubscriptionCard({plan}: { plan: PlanInterface }) {
                     </ul>
 
                     <Link as={"button"}
-                          className={`w-full !bg-[#ffb34a] !text-black transition-colors duration-300 !leading-6`}>
+                          className={`w-full !bg-mgt-primary !text-black transition-colors duration-300 !leading-6`}>
                         GET PLAN
                     </Link>
                 </div>

@@ -21,7 +21,7 @@ const UnlockThePowerOfMegaTrader = () => {
                         interface.
                     </p>
                     <Link as={"button"}
-                          className="!bg-[#ffb34a] px-4 group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
+                          className="!bg-mgt-primary px-4 group-[.isPremium]:!bg-stone-800 text-slate-950 group-[.isPremium]:text-white">
                         OPEN AN ACCOUNT
                     </Link>
                 </div>

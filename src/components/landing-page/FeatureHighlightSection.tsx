@@ -33,7 +33,7 @@ const FeatureHighlightSection = () => (
                     traders like you.
                 </p>
                 <div className="flex items-center gap-3">
-                    <Link className="!bg-[#ffb34a] text-slate-950">OPEN AN ACCOUNT</Link>
+                    <Link className="!bg-mgt-primary text-slate-950">OPEN AN ACCOUNT</Link>
                     <Link>JOIN DISCORD</Link>
                     <Link className="!px-3">
                         <svg
