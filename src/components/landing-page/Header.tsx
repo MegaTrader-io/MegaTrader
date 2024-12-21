@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
 const navigationItems = [
-    { href: '#home', label: 'HOME', sectionId: 'home' },
-    { href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works' },
-    { href: '#pricing', label: 'PRICING', sectionId: 'pricing' },
-    { href: '#features', label: 'FEATURES', sectionId: 'features' },
-    { href: '#faq', label: 'FAQ', sectionId: 'faq' },
+    {href: '#home', label: 'HOME', sectionId: 'home'},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works'},
+    {href: '#pricing', label: 'PRICING', sectionId: 'pricing'},
+    {href: '#features', label: 'FEATURES', sectionId: 'features'},
+    {href: '#faq', label: 'FAQ', sectionId: 'faq'},
 ];
 
 export default function Header() {
@@ -42,13 +42,13 @@ export default function Header() {
             });
         }, options);
 
-        navigationItems.forEach(({ sectionId }) => {
+        navigationItems.forEach(({sectionId}) => {
             const element = document.getElementById(sectionId);
             if (element) observer.observe(element);
         });
 
         return () => {
-            navigationItems.forEach(({ sectionId }) => {
+            navigationItems.forEach(({sectionId}) => {
                 const element = document.getElementById(sectionId);
                 if (element) observer.unobserve(element);
             });
@@ -59,7 +59,14 @@ export default function Header() {
         e.preventDefault();
         const element = document.querySelector(href);
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const headerOffset = 131;
+            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+            const offsetPosition = elementPosition - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth',
+            });
         }
     };
 
