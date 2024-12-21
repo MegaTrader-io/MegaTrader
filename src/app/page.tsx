@@ -21,7 +21,7 @@ const Home = () => {
         <header id="home" className="px-4 py-6  w-full   z-50">
             <Header/>
         </header>
-        <main className="mx-auto max-w-7xl mt-[229px] px-4">
+        <main className="hidden md:block mx-auto max-w-7xl mt-[229px] px-4">
             <HeroSection/>
             <FeatureHighlightSection/>
             <SponsorLogosSection/>

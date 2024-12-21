@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
     return (
-        <footer className="py-6 bg-[#1e1e1e] w-full">
+        <footer className="hidden md:block py-6 bg-[#1e1e1e] w-full">
             <div className="w-full space-y-2.5">
                 <div className="w-full flex justify-center">
                     <svg width="246" height="64" viewBox="0 0 246 64" fill="none" xmlns="http://www.w3.org/2000/svg">

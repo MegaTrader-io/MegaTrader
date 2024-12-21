@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from "next/link";
 import {useEffect, useState} from "react";
+import {Bars3Icon} from "@heroicons/react/24/solid";
 
 const navigationItems = [
     {href: '#home', label: 'HOME', sectionId: 'home'},
@@ -86,11 +87,17 @@ export default function Header() {
                             alt="Logo"
                             height={83}
                             width={338}
+                            className="w-[197px] h-[47px] lg:w-[338px] lg:h-[83px]"
                         />
                     </Link>
                 </div>
+
+                <button className="btn-primary block lg:hidden">
+                    <Bars3Icon className="w-6 h-6 text-white"/>
+                </button>
+
                 <nav
-                    className="hidden md:flex justify-start items-center flex-row gap-4"
+                    className="hidden lg:flex justify-start items-center flex-row xl:gap-4"
                     aria-label="Main navigation"
                 >
                     {navigationItems.map((item) => (
@@ -108,11 +115,11 @@ export default function Header() {
                         </Link>
                     ))}
                 </nav>
-                <div className="w-auto hidden md:block">
+                <div className="hidden lg:flex">
                     <div className="flex items-center gap-3.5">
                         <Link href="#"
-                              className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center">
-                            Sign In to Trade
+                              className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase text-nowrap flex items-center">
+                            Sign In
                         </Link>
                     </div>
                 </div>
