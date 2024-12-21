@@ -59,7 +59,7 @@ export default function Header() {
         e.preventDefault();
         const element = document.querySelector(href);
         if (element) {
-            const headerOffset = 131;
+            const headerOffset = 131+32;
             const elementPosition = element.getBoundingClientRect().top + window.scrollY;
             const offsetPosition = elementPosition - headerOffset;
 
