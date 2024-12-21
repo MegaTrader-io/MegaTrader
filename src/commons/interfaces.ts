@@ -9,7 +9,6 @@ export interface PlanInterface {
     profit_target: string
     color: string
     colorItem: string
-    buttonColor: string
 }
 
 export interface SymbolMarketData {

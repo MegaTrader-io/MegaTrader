@@ -15,7 +15,6 @@ export default function Header() {
     const [hasScrolled, setHasScrolled] = useState(false);
 
     useEffect(() => {
-        // Detectar scroll para cambiar el fondo del navbar
         const handleScroll = () => {
             if (window.scrollY > 10) {
                 setHasScrolled(true);
