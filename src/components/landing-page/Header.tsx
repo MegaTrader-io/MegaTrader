@@ -17,6 +17,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
+        console.info('hasScrolled', hasScrolled);
         const handleScroll = () => {
             if (window.scrollY > 10) {
                 setHasScrolled(true);
