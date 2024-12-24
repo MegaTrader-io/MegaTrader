@@ -123,6 +123,12 @@ export default function Header() {
                             {item.label}
                         </Link>
                     ))}
+
+                    <Link
+                        href="#"
+                        className={`${isMenuOpen ? 'block' : 'hidden'} text-xl text-neutral-50 font-light uppercase leading-6 px-4 py-3 transition-all duration-200`}>
+                        Sign In
+                    </Link>
                 </div>
 
                 {/* Navegación escritorio */}

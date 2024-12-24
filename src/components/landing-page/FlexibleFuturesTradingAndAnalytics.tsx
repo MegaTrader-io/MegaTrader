@@ -23,78 +23,76 @@ interface Option {
 const Options: Option[] = [
     {
         id: 1,
-        title: 'Finance & Trading',
+        title: 'Trading Edge',
         panel: {
-            title: 'Automate & scale trading operations with ease.',
-            content: 'Track trades, payouts, and performance in real-time. Integrate fiat and crypto transactions for efficient futures trading.',
+            title: 'Unlock Precision Trading',
+            content: 'Leverage advanced tools designed for precision and performance. Real-time insights and analytics put you ahead in the market.',
             button: {
                 text: 'GET STARTED',
                 href: '#',
             },
             image: {
-                url: '/assets/images/frame_monitor.svg'
+                url: '/assets/images/flexible-futures/trading-edge.svg'
             }
         }
     },
     {
         id: 2,
-        title: 'Risk Management',
+        title: 'Market Insights',
         panel: {
-            title: 'Manage and analyze your risk exposure across trading accounts.',
-            content: '\n' +
-                'Monitor margin levels, stop-loss setups, and trading draw downs to maximize performance while staying secure.',
+            title: 'Your Window to the Market',
+            content: 'Gain access to comprehensive data, trends, and insights. Make informed decisions effortlessly with actionable information.',
             button: {
-                text: 'Explore Tools',
+                text: 'GET STARTED',
                 href: '#',
             },
             image: {
-                url: '/assets/images/frame_monitor.svg'
+                url: '/assets/images/flexible-futures/market-insights.svg'
             }
         }
     },
     {
         id: 3,
-        title: 'Compliance & Reporting',
+        title: 'Quick Execution',
         panel: {
-            title: 'Streamline your compliance processes with automated reporting.',
-            content: 'Access daily trade summaries, account funding details, and customizable financial projections to stay audit-ready.',
+            title: 'Speed Meets Reliability',
+            content: 'Execute trades in milliseconds with robust and dependable infrastructure, ensuring you\'re always ahead of the curve.',
             button: {
-                text: 'Download Reports',
+                text: 'GET STARTED',
                 href: '#',
             },
             image: {
-                url: '/assets/images/frame_monitor.svg'
+                url: '/assets/images/flexible-futures/quick-execution.svg'
             }
         }
     },
     {
         id: 4,
-        title: 'Founders Dashboard',
+        title: 'Custom Dashboard',
         panel: {
-            title: 'Empower your leadership team with a founder\'s view of all operations.',
-            content: 'Get insights into trading activity, performance metrics, and account profitability at a glance.',
+            title: 'Tailored for You',
+            content: 'Personalize your workspace to fit your style and needs. Optimize your tools and environment for maximum efficiency.',
             button: {
-                text: 'View Analytics',
+                text: 'GET STARTED',
                 href: '#',
             },
             image: {
-                url: '/assets/images/frame_monitor.svg'
+                url: '/assets/images/flexible-futures/custom-dashboard.svg'
             }
         }
     },
     {
         id: 5,
-        title: 'Accounts & Contracts',
+        title: 'Trade Confidence',
         panel: {
-            title: 'Simplify the management of trading accounts and contracts.',
-            content: '\n' +
-                'Enable seamless onboarding for new traders, update terms, and monitor contract activity in one intuitive dashboard.',
+            title: 'Empowered by Excellence',
+            content: 'Built on a foundation of security, speed, and support, giving you the confidence to navigate the market like a pro.',
             button: {
-                text: 'Manage Accounts',
+                text: 'GET STARTED',
                 href: '#',
             },
             image: {
-                url: '/assets/images/frame_monitor.svg'
+                url: '/assets/images/flexible-futures/trade-confidence.svg'
             }
         }
     }
