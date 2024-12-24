@@ -1,6 +1,6 @@
 const HeroSection = () => (
     <section>
-        <div className="overflow-hidden hidden lg:block">
+        <div className="overflow-hidden hidden xl:block">
             <video className="lg:top-[78px] lg:w-[1248px] lg:absolute" autoPlay loop muted playsInline
                    width="auto"
                    height="auto">
@@ -12,7 +12,7 @@ const HeroSection = () => (
 
         <div className="grid grid-cols-1 lg:grid-cols-2">
             <div>
-                <div className="h-full space-y-[25px]">
+                <div className="h-full space-y-8 lg:space-y-[25px]">
                     <div>
                         <svg width="269" height="49" viewBox="0 0 269 49" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
@@ -25,14 +25,15 @@ const HeroSection = () => (
                                 fill="#FFB34A"/>
                         </svg>
                     </div>
-                    <h1 className="relative mb-0">
+                    <h1 className="relative">
                         <div className="text-white text-7xl font-bold">FUEL YOUR</div>
                         <span className=" text-mgt-primary text-5xl font-bold">TRADING SUCCESS</span>
                     </h1>
-                    <div className="text-stone-400 text-xl font-light max-w-[588px] mt-2 pb-6">We empower you to trade
+                    <div className="text-stone-400 text-xl font-light max-w-[588px] lg:mt-2">We empower you to trade
                         futures
                         confidently, build smarter strategies, and grow with a supportive community.
                     </div>
+                    <div className="hidden lg:block"></div>
                 </div>
             </div>
             <div className="w-full">

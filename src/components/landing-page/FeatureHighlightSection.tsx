@@ -3,9 +3,9 @@ import Link from "@/components/link";
 import Image from "next/image";
 
 const FeatureHighlightSection = () => (
-    <section className="hidden md:flex mt-[15px] justify-evenly w-full gap-16">
+    <section className="xl:flex lg:mt-[15px] justify-evenly w-full gap-16">
         <Card
-            className="w-[605px] h-[182px] grow shrink flex-col justify-start items-start gap-2.5 inline-flex"
+            className="lg:w-[605px] lg:h-[182px] my-8 lg:my-0 grow shrink flex-col justify-start items-start gap-2.5 inline-flex"
         >
             <div>
                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">

@@ -21,7 +21,7 @@ const Home = () => {
         <header id="home" className="px-4 py-6 w-full z-50">
             <Header/>
         </header>
-        <main className="h-[calc(100vh-96px)] lg:h-full mx-auto max-w-7xl mt-24 lg:mt-[229px] px-4">
+        <main className="h-[calc(100vh-96px)] lg:h-full lg:mt-[229px] w-full lg:max-w-7xl mx-auto mt-24 px-4">
             <HeroSection/>
             <FeatureHighlightSection/>
             <SponsorLogosSection/>
