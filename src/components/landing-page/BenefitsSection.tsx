@@ -2,7 +2,7 @@ import Card from "@/components/card";
 import Image from "next/image";
 
 const BenefitsSection = () => {
-    return <section className="mb-8">
+    return <section className="hidden md:block mb-8">
         <div className="grid grid-cols-3 gap-5">
             <Card
                 className="flex-col justify-start items-start gap-2.5 inline-flex">

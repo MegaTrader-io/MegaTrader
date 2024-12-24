@@ -18,10 +18,10 @@ export const experimental_ppr = true;
 
 const Home = () => {
     return <>
-        <header id="home" className="px-4 py-6  w-full   z-50">
+        <header id="home" className="px-4 py-6 w-full z-50">
             <Header/>
         </header>
-        <main className="hidden md:block mx-auto max-w-7xl mt-[229px] px-4">
+        <main className="h-[calc(100vh-96px)] lg:h-full mx-auto max-w-7xl mt-24 lg:mt-[229px] px-4">
             <HeroSection/>
             <FeatureHighlightSection/>
             <SponsorLogosSection/>

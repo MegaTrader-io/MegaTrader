@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 const SponsorLogosSection = () => (
-    <section className="flex justify-between py-12 opacity-30 items-center gap-16">
+    <section className="hidden md:flex justify-between py-12 opacity-30 items-center gap-16">
         <Image
             src="/assets/images/mega-x.svg"
             alt="MegaX Sponsor Logo"

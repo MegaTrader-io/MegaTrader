@@ -118,7 +118,7 @@ const MarketOverviewSection = () => {
     if (error) return null;
 
     return <>
-        <section className="mb-8">
+        <section className="hidden md:block mb-8">
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                 <div ref={carouselRef} className="flex gap-4 animate-carousel">
                     {data.map((instrument, index) => (

@@ -1,7 +1,7 @@
 const HeroSection = () => (
     <section>
-        <div className="overflow-hidden">
-            <video className="top-[78px] w-[1248px] absolute" autoPlay loop muted playsInline
+        <div className="overflow-hidden hidden lg:block">
+            <video className="lg:top-[78px] lg:w-[1248px] lg:absolute" autoPlay loop muted playsInline
                    width="auto"
                    height="auto">
                 <source src="/assets/final-Mac-1.mov" type="video/quicktime"/>
