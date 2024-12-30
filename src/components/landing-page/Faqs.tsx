@@ -1,6 +1,7 @@
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/react'
 import {ArrowDownIcon, ArrowUpIcon} from '@heroicons/react/24/outline'
 import React from "react";
+import clsx from "clsx";
 
 interface Faqs {
     question: string;
@@ -93,10 +94,10 @@ const faqs: Faqs[] = [
     },
 ];
 
-const FaqsSection = () => {
+const FaqsSection = ({className = ''}: { className?: string }) => {
     return (
-        <section id="faq" className="hidden md:block mx-auto max-w-[1030px] mb-8">
-            <h2 className="text-5xl text-white text-center pb-8 font-light leading-[60px]">
+        <section id="faq" className={clsx(`mx-auto max-w-[1030px] mb-8`, className)}>
+            <h2 className="text-[32px] font-light lg:text-5xl text-white text-center pb-8 leading-10 lg:leading-[60px]">
                 FREQUENTLY ASKED QUESTIONS
             </h2>
             <div>

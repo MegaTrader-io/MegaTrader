@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState} from "react";
 import Card from "@/components/card";
 import {ArrowDown, ArrowUp} from "@/components/arrows";
 import {SymbolMarketData} from "@/commons/interfaces";
+import clsx from "clsx";
 
 const changeValue = (value: number) => {
     const symbol = value > 0 ? "+" : "-";
@@ -41,7 +42,7 @@ const SkeletonCards = () => {
     </section>
 }
 
-const MarketOverviewSection = () => {
+const MarketOverviewSection = ({className = ''}: { className?: string }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
     const [data, setData] = useState<SymbolMarketData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -118,7 +119,7 @@ const MarketOverviewSection = () => {
     if (error) return null;
 
     return <>
-        <section className="hidden md:block mb-8">
+        <section className={clsx(`hidden md:block mb-8`, className)}>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                 <div ref={carouselRef} className="flex gap-4 animate-carousel">
                     {data.map((instrument, index) => (

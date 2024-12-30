@@ -1,11 +1,12 @@
 import Card from "@/components/card";
 import Link from "@/components/link";
 import Image from "next/image";
+import clsx from "clsx";
 
-const FeatureHighlightSection = () => (
-    <section className="xl:flex lg:mt-[15px] justify-evenly w-full gap-16">
+const FeatureHighlightSection = ({className = ''}: { className?: string }) => (
+    <section className={clsx('xl:flex lg:mt-[15px] justify-evenly w-full gap-16', className)}>
         <Card
-            className="lg:w-[605px] lg:h-[182px] my-8 lg:my-0 grow shrink flex-col justify-start items-start gap-2.5 inline-flex"
+            className="xl:w-[605px] xl:h-[182px] my-8 lg:my-0 grow shrink flex-col justify-start items-start gap-2.5 inline-flex"
         >
             <div>
                 <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
@@ -32,10 +33,10 @@ const FeatureHighlightSection = () => (
                     Join our platform today and take your trading to the next level. Simple, reliable, and designed for
                     traders like you.
                 </p>
-                <div className="flex items-center gap-3">
+                <div className="grid grid-cols-2 gap-4 md:flex lg:items-center lg:gap-3">
                     <Link className="!bg-mgt-primary text-slate-950">OPEN AN ACCOUNT</Link>
                     <Link>JOIN DISCORD</Link>
-                    <Link className="!px-3">
+                    <Link className="hidden md:block !px-3">
                         <svg
                             width="24"
                             height="24"
@@ -51,10 +52,10 @@ const FeatureHighlightSection = () => (
                                 width="24"
                                 height="24"
                             >
-                                <rect width="24" height="24" fill="#D9D9D9" />
+                                <rect width="24" height="24" fill="#D9D9D9"/>
                             </mask>
                             <g mask="url(#mask0_3161_757)">
-                                <path d="M8 19V5L19 12L8 19Z" fill="white" />
+                                <path d="M8 19V5L19 12L8 19Z" fill="white"/>
                             </g>
                         </svg>
                     </Link>

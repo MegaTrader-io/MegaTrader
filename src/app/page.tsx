@@ -21,19 +21,20 @@ const Home = () => {
         <header id="home" className="px-4 py-6 w-full z-50">
             <Header/>
         </header>
-        <main className="h-[calc(100vh-96px)] lg:h-full lg:mt-[229px] w-full lg:max-w-7xl mx-auto mt-24 px-4">
-            <HeroSection/>
-            <FeatureHighlightSection/>
-            <SponsorLogosSection/>
+        <main
+            className="min-h-[calc(100vh-96px)] lg:h-full lg:mt-8 xl:mt-[229px] w-full lg:max-w-7xl mx-auto mt-24">
+            <HeroSection className="px-4"/>
+            <FeatureHighlightSection className="px-4"/>
+            <SponsorLogosSection className="px-4"/>
             <Suspense fallback={'loading...'}>
-                <MarketOverviewSection/>
+                <MarketOverviewSection className="px-4"/>
             </Suspense>
-            <TradingStepsSection/>
-            <Subscriptions/>
-            <UnlockThePowerOfMegaTrader/>
-            <FlexibleFuturesTradingAndAnalytics/>
-            <BenefitsSection/>
-            <FaqsSection/>
+            <TradingStepsSection className="px-4"/>
+            <Subscriptions className="px-4"/>
+            <UnlockThePowerOfMegaTrader className="lg:px-4"/>
+            <FlexibleFuturesTradingAndAnalytics className="px-4"/>
+            <BenefitsSection className="px-4"/>
+            <FaqsSection className="px-4"/>
         </main>
         <Footer/>
     </>

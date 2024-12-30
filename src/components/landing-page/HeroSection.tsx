@@ -1,5 +1,5 @@
-const HeroSection = () => (
-    <section>
+const HeroSection = ({className = ''}: { className?: string }) => (
+    <section className={className}>
         <div className="overflow-hidden hidden xl:block">
             <video className="lg:top-[78px] lg:w-[1248px] lg:absolute" autoPlay loop muted playsInline
                    width="auto"
@@ -29,7 +29,7 @@ const HeroSection = () => (
                         <div className="text-white text-7xl font-bold">FUEL YOUR</div>
                         <span className=" text-mgt-primary text-5xl font-bold">TRADING SUCCESS</span>
                     </h1>
-                    <div className="text-stone-400 text-xl font-light max-w-[588px] lg:mt-2">We empower you to trade
+                    <div className="text-stone-400 text-xl font-light lg:max-w-[588px] lg:mt-2">We empower you to trade
                         futures
                         confidently, build smarter strategies, and grow with a supportive community.
                     </div>

@@ -1,4 +1,5 @@
 import SubscriptionCard from "@/components/landing-page/SubscriptionCard";
+import clsx from "clsx";
 
 const PLANS = [
     {
@@ -36,13 +37,13 @@ const PLANS = [
     }
 ]
 
-const Subscriptions = () => {
-    return <section id="pricing" className="hidden md:block mb-8">
-        <h2 className="text-5xl text-white text-center mb-8 font-light leading-[60px]">
+const Subscriptions = ({className = ''}: { className?: string }) => {
+    return <section id="pricing" className={clsx('mb-8', className)}>
+        <h2 className="text-[32px] max-w-[328px] mx-auto lg:max-w-full leading-10 lg:text-5xl text-white text-center mb-8 font-light lg:leading-[60px]">
             CHOOSE YOUR ACCOUNT SIZE
         </h2>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-4">
             {PLANS.map(plan => (
                 <SubscriptionCard key={plan.id} plan={plan}/>
             ))}

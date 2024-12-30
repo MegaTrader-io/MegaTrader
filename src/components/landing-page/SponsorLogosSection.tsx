@@ -1,7 +1,9 @@
 import Image from "next/image";
+import clsx from "clsx";
 
-const SponsorLogosSection = () => (
-    <section className="hidden md:flex justify-between py-12 opacity-30 items-center gap-16">
+const SponsorLogosSection = ({className = ''}: { className?: string }) => (
+    <section
+        className={clsx('flex flex-col gap-12 my-8 lg:flex-row lg:flex lg:justify-between lg:py-12 opacity-30 items-center lg:gap-16', className)}>
         <Image
             src="/assets/images/mega-x.svg"
             alt="MegaX Sponsor Logo"

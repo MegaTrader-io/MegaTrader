@@ -3,6 +3,7 @@ import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/react";
 import Link from "@/components/link";
 import Image from "next/image";
+import clsx from "clsx";
 
 interface Option {
     id: number
@@ -99,17 +100,18 @@ const Options: Option[] = [
 ]
 
 
-const FlexibleFuturesTradingAndAnalytics = () => {
+const FlexibleFuturesTradingAndAnalytics = ({className = ''}: { className?: string }) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
 
     return (
-        <section className="hidden md:block mb-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl">
+        <section
+            className={clsx('mb-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl', className)}>
             <h2 className="text-5xl text-white text-center font-light leading-[60px] py-8">
                 FLEXIBLE FUTURES<br/>
-                <span className="text-mgt-primary leading-[60px]">TRADING AND ANALYTICS</span>
+                <span className="text-mgt-primary leading-[60px]">TRADING AND ANALYTICS {selectedIndex}</span>
             </h2>
             <TabGroup onChange={setSelectedIndex}>
-                <TabList className="flex gap-2 pb-8">
+                <TabList className="gap-2 pb-8 hidden lg:flex">
                     {Options.map((option, index) => (
                         <Tab
                             key={option.id}
@@ -122,6 +124,19 @@ const FlexibleFuturesTradingAndAnalytics = () => {
                         </Tab>
                     ))}
                 </TabList>
+
+                <select
+                    className="inline-block mb-8 h-12 px-4 py-3 md:hidden
+                    relative w-full appearance-none rounded-lg sm:py-[calc(theme(spacing[1.5])-1px)] pl-[calc(theme(spacing[3.5])-1px)] pr-[calc(theme(spacing.10)-1px)] sm:pl-[calc(theme(spacing.3)-1px)] sm:pr-[calc(theme(spacing.9)-1px)] [&_optgroup]:font-semibold text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white dark:*:text-white border border-zinc-950/10 data-[hover]:border-zinc-950/20 dark:border-white/10 dark:data-[hover]:border-white/20 bg-transparent dark:bg-white/5 dark:*:bg-zinc-800 focus:outline-none data-[invalid]:border-red-500 data-[invalid]:data-[hover]:border-red-500 data-[invalid]:dark:border-red-600 data-[invalid]:data-[hover]:dark:border-red-600 data-[disabled]:border-zinc-950/20 data-[disabled]:opacity-100 dark:data-[hover]:data-[disabled]:border-white/15 data-[disabled]:dark:border-white/15 data-[disabled]:dark:bg-white/[2.5%]"
+                    value={selectedIndex}
+                    onChange={(e) => setSelectedIndex(Number(e.target.value))}>
+                    {Options.map((option, index) => (
+                        <option key={index} value={index}>
+                            {option.title}
+                        </option>
+                    ))}
+                </select>
+
                 <TabPanels
                     className="h-[396px] w-full bg-[#1e1e1e] rounded-2xl shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] justify-start items-center inline-flex overflow-hidden">
                     {Options.map(option => (

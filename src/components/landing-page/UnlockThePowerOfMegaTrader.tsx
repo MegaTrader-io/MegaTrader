@@ -1,14 +1,18 @@
 import Image from "next/image";
 import Link from "@/components/link";
+import clsx from "clsx";
 
-const UnlockThePowerOfMegaTrader = () => {
+const UnlockThePowerOfMegaTrader = ({className = ''}: { className?: string }) => {
     return <>
-        <section id="features" className="hidden md:grid mb-8 grid-cols-[511px_1fr] gap-4">
+        <section id="features" className={clsx('gap-8 grid mb-8 lg:grid-cols-[511px_1fr] lg:gap-4', className)}>
             <div>
-                <h2 className="text-left text-5xl font-light text-white mb-10 leading-[60px]">
-                    UNLOCK THE POWER OF MEGATRADER
-                </h2>
-                <div className="space-y-8 mb-[76px]">
+                <div className="px-4">
+                    <h2 className="w-[328px] text-left text-[32px] leading-10 lg:w-full lg:text-5xl font-light text-white mb-8 lg:mb-10 lg:leading-[60px]">
+                        UNLOCK THE POWER OF MEGATRADER
+                    </h2>
+                </div>
+
+                <div className="space-y-8 mb-8 lg:mb-[76px] px-4">
                     <Image
                         src="/assets/images/plus.svg"
                         alt="Plus icons"
@@ -33,7 +37,7 @@ const UnlockThePowerOfMegaTrader = () => {
                     height={447}
                 />
             </div>
-            <div>
+            <div className="px-4">
                 <Image
                     src="/assets/images/mac.svg"
                     alt="Plus icons"
