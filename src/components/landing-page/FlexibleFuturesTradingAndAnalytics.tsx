@@ -130,7 +130,7 @@ const FlexibleFuturesTradingAndAnalytics = ({className = ''}: { className?: stri
 
     return (
         <section
-            className={clsx('mb-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl', className)}>
+            className={clsx('mb-8 w-full lg:px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl', className)}>
             <h2 className="text-5xl text-white text-center font-light leading-[60px] py-8">
                 FLEXIBLE FUTURES<br/>
                 <span className="text-mgt-primary leading-[60px]">TRADING AND ANALYTICS</span>

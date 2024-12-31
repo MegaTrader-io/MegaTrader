@@ -45,7 +45,7 @@ const TradingStepsSection = ({className = ''}: { className?: string }) => {
         <section id="how-it-works" className={className}>
             <div className="grid mb-8 gap-8 md:grid-cols-2 lg:grid-cols-3 lg:px-4 lg:gap-4">
                 <div>
-                    <h2 className="text-white text-[32px] leading-10 font-light lg:font-medium lg:text-5xl mb-8 lg:mb-[68px] lg:leading-[60px]">
+                    <h2 className="text-white text-[32px] leading-10 font-light lg:text-5xl mb-8 lg:mb-[68px] lg:leading-[60px]">
                         UNLOCK<br/>THE POWER<br/>OF TRADING
                     </h2>
                     <div className="space-y-8 lg:space-y-[15px]">
