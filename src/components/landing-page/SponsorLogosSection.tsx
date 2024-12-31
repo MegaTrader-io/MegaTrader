@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 const SponsorLogosSection = ({className = ''}: { className?: string }) => (
     <section
-        className={clsx('flex flex-col gap-12 my-8 lg:flex-row lg:flex lg:justify-between lg:py-12 opacity-30 items-center lg:gap-16', className)}>
+        className={clsx('flex flex-col gap-12 my-8 lg:my-auto lg:flex-row lg:flex lg:justify-between lg:py-12 opacity-30 items-center lg:gap-16', className)}>
         <Image
             src="/assets/images/mega-x.svg"
             alt="MegaX Sponsor Logo"
