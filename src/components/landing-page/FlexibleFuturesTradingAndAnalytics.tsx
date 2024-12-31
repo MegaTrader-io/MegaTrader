@@ -99,70 +99,74 @@ const Options: Option[] = [
     }
 ]
 
+function OptionPanel({option}: { option: Option }) {
+    return <div
+        className="lg:h-[396px] w-full bg-[#1e1e1e] rounded-2xl shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] justify-start items-center inline-flex overflow-hidden">
+        <div className="grid lg:grid-cols-[511px_1fr] lg:items-center">
+            <div className="p-8 space-y-8 order-last lg:order-none">
+                <h2 className="text-white text-2xl font-light uppercase leading-7">{option.panel.title}</h2>
+                <p className="text-stone-400 text-xl font-normal leading-loose lg:leading-8">
+                    {option.panel.content}
+                </p>
+
+                <Link href={option.panel.button.href} className="bg-mgt-primary !text-black">
+                    {option.panel.button.text}
+                </Link>
+            </div>
+            <div className="order-first lg:order-none">
+                <Image
+                    className="w-[308px] mx-auto lg:w-[641px]"
+                    src={option.panel.image.url}
+                    alt={option.panel.title}
+                    width={641}
+                    height={396}
+                />
+            </div>
+        </div>
+    </div>
+}
 
 const FlexibleFuturesTradingAndAnalytics = ({className = ''}: { className?: string }) => {
-    const [selectedIndex, setSelectedIndex] = useState(0)
+    const [optionID, setOptionID] = useState(1)
 
     return (
         <section
             className={clsx('mb-8 w-full px-16 bg-gradient-to-b from-[#1e1e1e] to-[#131210] rounded-2xl', className)}>
             <h2 className="text-5xl text-white text-center font-light leading-[60px] py-8">
                 FLEXIBLE FUTURES<br/>
-                <span className="text-mgt-primary leading-[60px]">TRADING AND ANALYTICS {selectedIndex}</span>
+                <span className="text-mgt-primary leading-[60px]">TRADING AND ANALYTICS</span>
             </h2>
-            <TabGroup onChange={setSelectedIndex}>
-                <TabList className="gap-2 pb-8 hidden lg:flex">
-                    {Options.map((option, index) => (
-                        <Tab
-                            key={option.id}
-                            className="text-left py-3 px-4 text-stone-400 w-full rounded-xl border border-stone-400  focus:outline-none data-[selected]:bg-[#f1a035] data-[selected]:border-transparent data-[selected]:text-black">
-                            <div className="flex gap-2 items-center font-normal text-nowrap leading-6 text-base">
-                                {selectedIndex === index &&
-                                    <CheckCircleIcon aria-hidden="true"
-                                                     className="w-6 h-6 text-black"/>} {option.title}
+            <div>
+                <div className="gap-2 pb-8 hidden lg:flex justify-around">
+                    {Options.map((option) => (
+                        <button key={option.id} onClick={() => setOptionID(option.id)}
+                                className={clsx('group gap-2 hidden lg:flex w-full text-left text-stone-400 rounded-xl focus:outline-none', {'is-selected': option.id === optionID})}>
+                            <div
+                                className="py-3 px-4 rounded-xl border border-stone-400 w-full group-[.is-selected]:bg-[#f1a035] group-[.is-selected]:border-transparent group-[.is-selected]:text-black">
+                                <div className="flex gap-2 items-center font-normal text-nowrap leading-6 text-base">
+                                    {option.id === optionID &&
+                                        <CheckCircleIcon aria-hidden="true"
+                                                         className="w-6 h-6 text-black"/>} {option.title}
+                                </div>
                             </div>
-                        </Tab>
+                        </button>
                     ))}
-                </TabList>
+                </div>
 
                 <select
                     className="inline-block mb-8 h-12 px-4 py-3 md:hidden
                     relative w-full appearance-none rounded-lg sm:py-[calc(theme(spacing[1.5])-1px)] pl-[calc(theme(spacing[3.5])-1px)] pr-[calc(theme(spacing.10)-1px)] sm:pl-[calc(theme(spacing.3)-1px)] sm:pr-[calc(theme(spacing.9)-1px)] [&_optgroup]:font-semibold text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white dark:*:text-white border border-zinc-950/10 data-[hover]:border-zinc-950/20 dark:border-white/10 dark:data-[hover]:border-white/20 bg-transparent dark:bg-white/5 dark:*:bg-zinc-800 focus:outline-none data-[invalid]:border-red-500 data-[invalid]:data-[hover]:border-red-500 data-[invalid]:dark:border-red-600 data-[invalid]:data-[hover]:dark:border-red-600 data-[disabled]:border-zinc-950/20 data-[disabled]:opacity-100 dark:data-[hover]:data-[disabled]:border-white/15 data-[disabled]:dark:border-white/15 data-[disabled]:dark:bg-white/[2.5%]"
-                    value={selectedIndex}
-                    onChange={(e) => setSelectedIndex(Number(e.target.value))}>
+                    value={optionID}
+                    onChange={(e) => setOptionID(Number(e.target.value))}>
                     {Options.map((option, index) => (
-                        <option key={index} value={index}>
+                        <option key={index} value={option.id}>
                             {option.title}
                         </option>
                     ))}
                 </select>
 
-                <TabPanels
-                    className="h-[396px] w-full bg-[#1e1e1e] rounded-2xl shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] justify-start items-center inline-flex overflow-hidden">
-                    {Options.map(option => (
-                        <TabPanel key={option.id} className="grid grid-cols-[511px_1fr] items-center">
-                            <div className="p-8 space-y-8">
-                                <h2 className="text-white text-2xl font-light uppercase leading-73123">{option.panel.title}</h2>
-                                <p className="text-stone-400 text-xl font-normal leading-8">
-                                    {option.panel.content}
-                                </p>
-
-                                <Link href={option.panel.button.href} className="bg-mgt-primary !text-black">
-                                    {option.panel.button.text}
-                                </Link>
-                            </div>
-                            <div>
-                                <Image
-                                    src={option.panel.image.url}
-                                    alt={option.panel.title}
-                                    width={641}
-                                    height={396}
-                                />
-                            </div>
-                        </TabPanel>
-                    ))}
-                </TabPanels>
-            </TabGroup>
+                <OptionPanel option={Options.find(o => o.id === optionID)!}/>
+            </div>
         </section>
     )
 }
