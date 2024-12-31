@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
-import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/react";
 import Link from "@/components/link";
 import Image from "next/image";
 import clsx from "clsx";
