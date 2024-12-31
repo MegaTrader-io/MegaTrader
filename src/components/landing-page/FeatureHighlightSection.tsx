@@ -34,7 +34,7 @@ const FeatureHighlightSection = ({className = ''}: { className?: string }) => (
                     traders like you.
                 </p>
                 <div className="grid grid-cols-2 gap-4 md:flex lg:items-center lg:gap-3">
-                    <Link className="!bg-mgt-primary text-slate-950">OPEN AN ACCOUNT</Link>
+                    <Link className="!bg-mgt-primary text-nowrap text-slate-950">OPEN AN ACCOUNT</Link>
                     <Link>JOIN DISCORD</Link>
                     <Link className="hidden md:block !px-3">
                         <svg
