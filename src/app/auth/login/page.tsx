@@ -7,11 +7,10 @@ import Image from "next/image";
 export default async function Login() {
 
     return <div className="flex flex-1">
-        <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div className="flex w-full lg:w-2/5 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
             <div className="mx-auto w-full max-w-sm lg:w-96">
                 <div className="mt-10">
                     <div>
-
                         <div className="w-full mx-auto">
                             <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
                                 SIGN IN
@@ -21,7 +20,7 @@ export default async function Login() {
                                 back! Please enter your details.
                             </h2>
 
-                            <form action="#" method="POST" className="space-y-4 my-8">
+                            <form action="#" method="POST" className="space-y-4 lg:my-8">
                                 <div>
                                     <InputText placeholder="Email" name="email" type="email"/>
                                 </div>
