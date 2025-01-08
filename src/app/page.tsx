@@ -14,8 +14,6 @@ import UnlockThePowerOfMegaTrader from "@/components/landing-page/UnlockThePower
 import FaqsSection from "@/components/landing-page/Faqs";
 import FlexibleFuturesTradingAndAnalytics from "@/components/landing-page/FlexibleFuturesTradingAndAnalytics";
 
-export const experimental_ppr = true;
-
 const Home = () => {
     return <>
         <header id="home" className="px-4 py-6 w-full z-50">

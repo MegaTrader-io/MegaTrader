@@ -16,3 +16,7 @@ export interface SymbolMarketData {
     price: number,
     change: number
 }
+
+export type MgProps = React.HTMLAttributes<HTMLDivElement> & {
+    children: React.ReactNode;
+};

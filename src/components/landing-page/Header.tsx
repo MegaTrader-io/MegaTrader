@@ -156,7 +156,7 @@ export default function Header() {
                 <div className="hidden lg:flex">
                     <div className="flex items-center gap-3.5">
                         <Link
-                            href="#"
+                            href="/auth/login"
                             className="bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase text-nowrap flex items-center"
                         >
                             Sign In

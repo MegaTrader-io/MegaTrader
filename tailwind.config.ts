@@ -23,10 +23,14 @@ export default {
 
             '2xl': '1536px',
             // => @media (min-width: 1536px) { ... }
+
+            '3xl': '1600px',
+            // => @media (min-width: 1600px) { ... }
         },
         extend: {
             fontFamily: {
                 sans: ["var(--font-space-grotesk)", "sans-serif"], // Usa tu variable CSS
+                roboto: ["var(--font-roboto)", "sans-serif"]
             },
             colors: {
                 'mgt-primary': 'var(--mgt-color-primary)',
