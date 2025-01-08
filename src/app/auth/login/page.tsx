@@ -23,10 +23,10 @@ export default async function Login() {
 
                             <form action="#" method="POST" className="space-y-4 my-8">
                                 <div>
-                                    <InputText placeholder={'Email'} name="email" type="email"/>
+                                    <InputText placeholder="Email" name="email" type="email"/>
                                 </div>
                                 <div>
-                                    <InputText placeholder={'Password'} name="password" type="password"/>
+                                    <InputText placeholder="Password" name="password" type="password"/>
                                 </div>
 
                                 <div className="flex items-center justify-between">
@@ -79,10 +79,10 @@ export default async function Login() {
             >
                 <Image
                     className="max-w-screen-xl mx-auto"
-                    src="/assets/images/Account_Overview.png"
+                    src="/assets/images/img_2.png"
                     alt="Trading Platform Interface"
                     layout="fill"
-                    objectFit="contain" // Mantiene las proporciones sin recortar
+                    objectFit="contain"
                     quality={100}
                 />
             </div>
