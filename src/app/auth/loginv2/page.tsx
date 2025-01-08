@@ -1,6 +1,3 @@
-import Badge from "@/components/ui/badge";
-import Image from "next/image";
-
 export default async function Login() {
 
     return <div className="flex min-h-full flex-1">
