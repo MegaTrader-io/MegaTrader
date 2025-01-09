@@ -29,8 +29,8 @@ export default {
         },
         extend: {
             fontFamily: {
-                sans: ["var(--font-space-grotesk)", "sans-serif"], // Usa tu variable CSS
-                roboto: ["var(--font-roboto)", "sans-serif"]
+                sans: ["var(--font-space-grotesk)", "sans-serif"],
+                roboto: ["var(--font-roboto)", "sans-serif"],
             },
             colors: {
                 'mgt-primary': 'var(--mgt-color-primary)',

@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import {Space_Grotesk} from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import {roboto} from '@/app/fonts/roboto'
 
 export const metadata: Metadata = {
     title: "MegaTrader | Master the Path to Becoming a Funded Futures Trader.",
@@ -21,8 +22,8 @@ const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
-        <html lang="en" className={`${spaceGrotesk.variable} dark`}>
-        <body className="antialiased">
+        <html lang="en" className={`${spaceGrotesk.variable} ${roboto.variable} dark`}>
+        <body className="font-sans antialiased">
         {children}
         {isProduction && (
             <>

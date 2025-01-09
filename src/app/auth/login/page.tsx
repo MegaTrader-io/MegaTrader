@@ -16,7 +16,8 @@ export default async function Login() {
                                 SIGN IN
                             </h1>
                             <h2
-                                className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide">Welcome
+                                className={`text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide`}>Dont
+                                Welcome
                                 back! Please enter your details.
                             </h2>
 
@@ -29,8 +30,11 @@ export default async function Login() {
                                 </div>
 
                                 <div className="flex items-center justify-between">
-                                    <InputCheckbox label="Remember me"/>
-                                    <Link href="#" className="text-sm text-orange-400 hover:text-orange-300">
+                                    <InputCheckbox className="text-base"
+                                                   label="Remember me"
+                                                   value="1"
+                                                   name="remember"/>
+                                    <Link href="#" className="text-base text-[#ffd78a] hover:underline">
                                         Forgot Password?
                                     </Link>
                                 </div>
@@ -45,10 +49,10 @@ export default async function Login() {
                             </form>
 
                             <div className="text-center space-y-2">
-                                <a href="javascript:void(0);"
-                                   className="text-center w-full text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide">Don{'\''}t
+                                <Link href="#"
+                                      className={`text-center w-full text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide`}>Don{'\''}t
                                     have an account?
-                                </a>
+                                </Link>
 
                                 <button
                                     className="h-12 w-full  px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex">
