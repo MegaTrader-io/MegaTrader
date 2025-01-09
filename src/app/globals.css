@@ -3,61 +3,55 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --mgt-color-primary: #FFB34A;
-  }
-
-  @font-face {
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url(/fonts/Roboto.woff2) format('woff2');
-  }
+    :root {
+        --mgt-color-primary: #FFB34A;
+        --mgt-color-text-link: #FFD78A;
+        --mgt-color-text-link-hover: var(--mgt-color-primary);
+    }
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAiSURBVHgB7cNBDQAACMSwC07wL3IED/xYkwbonSMVSdJTA27fBj9svgvKAAAAAElFTkSuQmCC) 0% 0%/5px 5px repeat,#131210;
-  color: inherit;
-  font-family: inherit;
-  font-weight: 400;
-  line-height: 1.6;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  overflow-x: hidden
+    margin: 0;
+    padding: 0;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAiSURBVHgB7cNBDQAACMSwC07wL3IED/xYkwbonSMVSdJTA27fBj9svgvKAAAAAElFTkSuQmCC) 0% 0%/5px 5px repeat, #131210;
+    color: inherit;
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 @keyframes carousel {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(-1 * var(--total-width)));
-  }
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-1 * var(--total-width)));
+    }
 }
 
 .animate-carousel {
-  animation: carousel 120s linear infinite;
+    animation: carousel 120s linear infinite;
 }
 
 .animate-carousel:hover {
-  animation-play-state: paused;
+    animation-play-state: paused;
 }
 
 .btn-primary {
-  @apply bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center;
+    @apply bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center;
 }
 
 

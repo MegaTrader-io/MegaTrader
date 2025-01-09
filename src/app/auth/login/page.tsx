@@ -34,13 +34,13 @@ export default async function Login() {
                                                    label="Remember me"
                                                    value="1"
                                                    name="remember"/>
-                                    <Link href="#" className="text-base text-[#ffd78a] hover:underline">
+                                    <Link href="#" className="text-base text-mgt-link hover:text-mgt-link-hover">
                                         Forgot Password?
                                     </Link>
                                 </div>
 
                                 <button
-                                    className="h-12 w-full px-4 py-3 bg-[#ffb34a] rounded-xl border-2 border-[#ffb34a] justify-center items-center gap-2 inline-flex">
+                                    className="h-12 w-full px-4 py-3 bg-mgt-primary rounded-xl border-2 border-mgt-primary justify-center items-center gap-2 inline-flex">
                                     <div
                                         className="text-slate-950 text-base font-normal uppercase leading-normal">Sign
                                         In

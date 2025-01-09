@@ -36,7 +36,9 @@ export default {
                 'mgt-primary': 'var(--mgt-color-primary)',
                 background: "var(--background)",
                 foreground: "var(--foreground)",
-                'mgt-gray-light': '#A8A29E'
+                'mgt-gray-light': '#A8A29E',
+                'mgt-link': 'var(--mgt-color-text-link)',
+                'mgt-link-hover': 'var(--mgt-color-text-link-hover)',
             },
             animation: {
                 'rotate-animation': 'rotate-animation 10s linear infinite',

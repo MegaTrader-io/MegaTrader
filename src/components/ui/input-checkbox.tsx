@@ -29,10 +29,10 @@ export const InputCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(
                         onChange={handleChange}
                     />
                     <div
-                        className={`w-4 h-4 border-[#ffb34a] border-2 rounded-sm flex items-center justify-center ${className}`}
+                        className={`w-4 h-4 border-mgt-primary border-2 rounded-sm flex items-center justify-center ${className}`}
                     >
                         <svg
-                            className={`w-2 h-2 text-[#ffb34a] ${isChecked ? 'block' : 'hidden'}`}
+                            className={`w-2 h-2 text-mgt-primary ${isChecked ? 'block' : 'hidden'}`}
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
