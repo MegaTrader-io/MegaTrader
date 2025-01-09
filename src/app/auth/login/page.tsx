@@ -34,7 +34,8 @@ export default async function Login() {
                                                    label="Remember me"
                                                    value="1"
                                                    name="remember"/>
-                                    <Link href="#" className="text-base text-mgt-link hover:text-mgt-link-hover">
+                                    <Link href="#"
+                                          className="text-base btn-link">
                                         Forgot Password?
                                     </Link>
                                 </div>

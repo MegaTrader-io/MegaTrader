@@ -54,4 +54,6 @@ body {
     @apply bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center;
 }
 
-
+.btn-link {
+    @apply text-mgt-link hover:text-mgt-link-hover hover:underline;
+}
