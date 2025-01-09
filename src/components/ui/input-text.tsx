@@ -1,3 +1,5 @@
+'use client';
+
 import React, {useState} from 'react';
 
 interface InputTextProps extends React.InputHTMLAttributes<HTMLInputElement> {
