@@ -5,7 +5,9 @@ import {InputCheckbox} from "@/components/ui/input-checkbox";
 import Link from "next/link";
 import Badge from "@/components/ui/badge";
 import Image from "next/image";
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
+import {XMarkIcon} from "@heroicons/react/16/solid";
+
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -71,6 +73,7 @@ export default function Login() {
             setIsSubmitting(false);
 
             setFieldErrors({
+                form: "Something went wrong. Please check your email or your password are correct.",
                 email: "These credentials do not match our records.",
             });
         }, 2000);
@@ -81,19 +84,33 @@ export default function Login() {
     return (
         <div className="flex flex-1">
             <div
-                className="flex w-full lg:w-2/5 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-                <div className="mx-auto w-full max-w-sm lg:w-96">
+                className="flex w-full lg:w-2/5 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none  xl:px-24">
+                <div className="mx-auto w-full max-w-[409px]">
                     <div className="mt-10">
                         <div>
-                            <div className="w-full mx-auto">
-                                <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
-                                    SIGN IN
-                                </h1>
-                                <h2
-                                    className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
-                                >
-                                    Welcome back! Please enter your details.
-                                </h2>
+                            <div className="w-full mx-auto space-y-8">
+                                {fieldErrors.form && (
+                                    <div
+                                        className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
+                                        <div className="w-6 h-6 rounded-full bg-mgt-text-error">
+                                            <XMarkIcon className="w-6 h-6"/>
+                                        </div>
+                                        <div
+                                            className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div>
+                                    <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
+                                        SIGN IN
+                                    </h1>
+                                    <h2
+                                        className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
+                                    >
+                                        Welcome back! Please enter your details.
+                                    </h2>
+                                </div>
 
                                 <form onSubmit={submitForm} className="space-y-4 lg:my-8">
                                     <div>
@@ -126,10 +143,6 @@ export default function Login() {
                                             }}
                                         />
                                     </div>
-
-                                    {fieldErrors.form && (
-                                        <div className="text-red-500 text-sm mt-2">{fieldErrors.form}</div>
-                                    )}
 
                                     <div className="flex items-center justify-between">
                                         <InputCheckbox

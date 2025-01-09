@@ -38,6 +38,7 @@ export default {
                 foreground: "var(--foreground)",
                 'mgt-gray-light': '#A8A29E',
                 'mgt-link': 'var(--mgt-color-text-link)',
+                'mgt-text-error': 'var(--mgt-color-text-error)',
                 'mgt-link-hover': 'var(--mgt-color-text-link-hover)',
             },
             animation: {
