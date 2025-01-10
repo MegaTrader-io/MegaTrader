@@ -59,90 +59,86 @@ export default function Login() {
             <div
                 className="flex w-full lg:w-2/5 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none  xl:px-24">
                 <div className="mx-auto w-full max-w-[409px]">
-                    <div className="mt-10">
-                        <div>
-                            <div className="w-full mx-auto space-y-8">
-                                {fieldErrors.form && (
-                                    <div
-                                        className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
-                                        <div className="w-6 h-6 rounded-full bg-mgt-text-error">
-                                            <XMarkIcon className="w-6 h-6"/>
-                                        </div>
-                                        <div
-                                            className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div>
-                                    <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
-                                        Reset password
-                                    </h1>
-                                    <h2
-                                        className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
-                                    >
-                                        Enter and confirm your password.
-                                    </h2>
+                    <div className="w-full mx-auto space-y-8">
+                        {fieldErrors.form && (
+                            <div
+                                className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
+                                <div className="w-6 h-6 rounded-full bg-mgt-text-error">
+                                    <XMarkIcon className="w-6 h-6"/>
                                 </div>
-
-                                <form onSubmit={submitForm} className="space-y-4 lg:my-8">
-                                    <div>
-                                        <InputText
-                                            type="password"
-                                            placeholder="Password"
-                                            name="password"
-                                            value={form.password}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setForm(prev => ({...prev, [e.target.name]: value}));
-                                            }}
-                                            errorMessage={fieldErrors.password}
-                                        />
-                                    </div>
-
-
-                                    <div>
-                                        <InputText
-                                            type="password"
-                                            placeholder="Confirm Password"
-                                            name="confirm_password"
-                                            value={form.confirm_password}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setForm(prev => ({...prev, [e.target.name]: value}));
-                                            }}
-                                            errorMessage={fieldErrors.confirm_password}
-                                        />
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className={`h-12 w-full px-4 disabled:opacity-30 py-3 rounded-xl border-2 justify-center items-center gap-2 inline-flex ${
-                                            isSubmitting
-                                                ? "bg-gray-500 border-gray-500 cursor-not-allowed"
-                                                : "bg-mgt-primary border-mgt-primary"
-                                        }`}
-                                    >
-                                        <div
-                                            className="text-slate-950 text-base font-normal uppercase leading-normal"
-                                        >
-                                            {isSubmitting ? "Loading..." : "Update"}
-                                        </div>
-                                    </button>
-
-                                    <Link
-                                        href="/auth/login"
-                                        className="h-12 w-full px-4 py-3 justify-center items-center gap-2 inline-flex"
-                                    >
-                                        <div
-                                            className="text-neutral-50 text-base font-normal uppercase leading-normal flex">
-                                            <ChevronLeftIcon className="w-6 h-6 text-white"/> Return to login
-                                        </div>
-                                    </Link>
-                                </form>
+                                <div
+                                    className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
+                                </div>
                             </div>
+                        )}
+
+                        <div>
+                            <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
+                                Reset password
+                            </h1>
+                            <h2
+                                className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
+                            >
+                                Enter and confirm your password.
+                            </h2>
                         </div>
+
+                        <form onSubmit={submitForm} className="space-y-4 lg:my-8">
+                            <div>
+                                <InputText
+                                    type="password"
+                                    placeholder="Password"
+                                    name="password"
+                                    value={form.password}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setForm(prev => ({...prev, [e.target.name]: value}));
+                                    }}
+                                    errorMessage={fieldErrors.password}
+                                />
+                            </div>
+
+
+                            <div>
+                                <InputText
+                                    type="password"
+                                    placeholder="Confirm Password"
+                                    name="confirm_password"
+                                    value={form.confirm_password}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setForm(prev => ({...prev, [e.target.name]: value}));
+                                    }}
+                                    errorMessage={fieldErrors.confirm_password}
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className={`h-12 w-full px-4 disabled:opacity-30 py-3 rounded-xl border-2 justify-center items-center gap-2 inline-flex ${
+                                    isSubmitting
+                                        ? "bg-gray-500 border-gray-500 cursor-not-allowed"
+                                        : "bg-mgt-primary border-mgt-primary"
+                                }`}
+                            >
+                                <div
+                                    className="text-slate-950 text-base font-normal uppercase leading-normal"
+                                >
+                                    {isSubmitting ? "Loading..." : "Update"}
+                                </div>
+                            </button>
+
+                            <Link
+                                href="/auth/login"
+                                className="h-12 w-full px-4 py-3 justify-center items-center gap-2 inline-flex"
+                            >
+                                <div
+                                    className="text-neutral-50 text-base font-normal uppercase leading-normal flex">
+                                    <ChevronLeftIcon className="w-6 h-6 text-white"/> Return to login
+                                </div>
+                            </Link>
+                        </form>
                     </div>
                 </div>
             </div>
