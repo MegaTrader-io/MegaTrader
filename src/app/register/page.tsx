@@ -5,66 +5,24 @@ import {InputCheckbox} from "@/components/ui/input-checkbox";
 import Link from "next/link";
 import Badge from "@/components/ui/badge";
 import Image from "next/image";
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import {XMarkIcon} from "@heroicons/react/16/solid";
 
 
 export default function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [emailError, setEmailError] = useState("");
+    const [form, setForm] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirm_password: '',
+    });
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [debouncedEmail, setDebouncedEmail] = useState(email);
-
-    function validateEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedEmail(email);
-        }, 500);
-
-        return () => clearTimeout(handler);
-    }, [email]);
-
-    useEffect(() => {
-        if (!debouncedEmail) {
-            setEmailError("");
-            return;
-        }
-
-        if (!validateEmail(debouncedEmail)) {
-            setEmailError("Ups... The email is not correct");
-        } else {
-            setEmailError("");
-        }
-    }, [debouncedEmail]);
 
     function submitForm(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-
-        if (!email.trim()) {
-            setEmailError("The email field is required");
-            return;
-        }
-
-        if (!password.trim()) {
-            setEmailError("The email field is required");
-            return;
-        }
-
-        if (!validateEmail(email)) {
-            setEmailError("Ups... The email is not correct");
-            return;
-        }
-
-        if (!email || !password) {
-            setFieldErrors({form: "Both fields are required"});
-            return;
-        }
 
         setIsSubmitting(true);
         setFieldErrors({});
@@ -103,56 +61,116 @@ export default function Login() {
 
                                 <div>
                                     <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
-                                        SIGN IN
+                                        Register
                                     </h1>
                                     <h2
                                         className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
                                     >
-                                        Welcome back! Please enter your details.
+                                        Create your account to get started!
                                     </h2>
                                 </div>
 
                                 <form onSubmit={submitForm} className="space-y-4 lg:my-8">
                                     <div>
                                         <InputText
-                                            type="email"
-                                            placeholder="Email"
-                                            name="email"
-                                            value={email}
+                                            type="text"
+                                            placeholder="First Name"
+                                            name="first_name"
+                                            value={form.first_name}
                                             onChange={(e) => {
                                                 const value = e.target.value;
-                                                setEmail(value);
-
-                                                if (!value) {
-                                                    setEmailError("");
-                                                    setFieldErrors((prev) => ({...prev, email: ""}));
-                                                    return;
-                                                }
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
                                             }}
-                                            errorMessage={emailError || fieldErrors.email}
+                                            errorMessage={fieldErrors.first_name}
                                         />
                                     </div>
+
                                     <div>
                                         <InputText
-                                            type="password"
-                                            placeholder="Password"
-                                            name="password"
-                                            value={password}
+                                            type="text"
+                                            placeholder="Last Name"
+                                            name="last_name"
+                                            value={form.last_name}
                                             onChange={(e) => {
-                                                setPassword(e.target.value);
+                                                const value = e.target.value;
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
                                             }}
+                                            errorMessage={fieldErrors.last_name}
                                         />
                                     </div>
+
+                                    <div>
+                                        <InputText
+                                            type="text"
+                                            placeholder="Email"
+                                            name="email"
+                                            value={form.email}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
+                                            }}
+                                            errorMessage={fieldErrors.email}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <InputText
+                                            type="text"
+                                            placeholder="Phone Number"
+                                            name="phone"
+                                            value={form.phone}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
+                                            }}
+                                            errorMessage={fieldErrors.phone}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <InputText
+                                            type="text"
+                                            placeholder="Password"
+                                            name="password"
+                                            value={form.password}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
+                                            }}
+                                            errorMessage={fieldErrors.password}
+                                        />
+                                    </div>
+
+
+                                    <div>
+                                        <InputText
+                                            type="text"
+                                            placeholder="Confirm Password"
+                                            name="confirm_password"
+                                            value={form.password}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
+                                            }}
+                                            errorMessage={fieldErrors.password}
+                                        />
+                                    </div>
+
 
                                     <div className="flex items-center justify-between">
                                         <InputCheckbox
                                             className="text-base"
-                                            label="Remember me"
+                                            label="Agree to our"
                                             value="1"
                                             name="remember"
                                         />
+                                        {' '}
                                         <Link href="#" className="text-base btn-link">
-                                            Forgot Password?
+                                            Privacy Policy
+                                        </Link>
+                                        <span className="text-white">and</span>
+                                        <Link href="#" className="text-base btn-link">
+                                            Refund Policy
                                         </Link>
                                     </div>
 
@@ -168,7 +186,7 @@ export default function Login() {
                                         <div
                                             className="text-slate-950 text-base font-normal uppercase leading-normal"
                                         >
-                                            {isSubmitting ? "Loading..." : "Sign In"}
+                                            {isSubmitting ? "Loading..." : "Register"}
                                         </div>
                                     </button>
                                 </form>
@@ -178,15 +196,17 @@ export default function Login() {
                                         href="#"
                                         className="text-center w-full text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
                                     >
-                                        Don’t have an account?
+                                        Already have an account?
                                     </Link>
 
-                                    <button
-                                        className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex">
+                                    <Link
+                                        href="/auth/login"
+                                        className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex"
+                                    >
                                         <div className="text-neutral-50 text-base font-normal uppercase leading-normal">
-                                            Create account
+                                            Go to Login
                                         </div>
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
