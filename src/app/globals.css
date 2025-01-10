@@ -56,5 +56,5 @@ body {
 }
 
 .btn-link {
-    @apply text-mgt-link hover:text-mgt-link-hover hover:underline;
+    @apply text-mgt-link hover:text-mgt-link-hover underline;
 }
