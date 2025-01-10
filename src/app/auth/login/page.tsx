@@ -84,10 +84,11 @@ export default function Login() {
     return (
         <div className="flex flex-1">
             <div
-                className="flex w-full lg:w-2/5 flex-col px-4 sm:px-6 lg:flex-none  xl:px-24">
+                className="flex w-full lg:w-2/5 flex-col px-4 sm:px-6 lg:flex-none xl:px-24">
 
-                <div className="flex justify-center py-8 lg:py-12">
+                <div className="flex justify-center">
                     <Image
+                        className="py-4 xl:py-8"
                         src="/assets/images/megatrader-original.svg"
                         alt="Trading Platform Interface"
                         width={350}
@@ -96,21 +97,19 @@ export default function Login() {
                     />
                 </div>
 
-                <div className="mx-auto w-full max-w-[409px] h-full">
+                <div className="mx-auto w-full max-w-[409px] xl:h-full xl:justify-center lg:flex lg:items-center">
                     <div className="w-full mx-auto space-y-8">
-                        <div className="min-h-20">
-                            {fieldErrors.form && (
-                                <div
-                                    className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
-                                    <div className="w-6 h-6 rounded-full bg-mgt-text-error">
-                                        <XMarkIcon className="w-6 h-6"/>
-                                    </div>
-                                    <div
-                                        className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
-                                    </div>
+                        {fieldErrors.form && (
+                            <div
+                                className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
+                                <div className="w-6 h-6 rounded-full bg-mgt-text-error">
+                                    <XMarkIcon className="w-6 h-6"/>
                                 </div>
-                            )}
-                        </div>
+                                <div
+                                    className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
+                                </div>
+                            </div>
+                        )}
 
                         <div>
                             <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
