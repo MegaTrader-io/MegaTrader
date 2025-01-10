@@ -1,17 +1,15 @@
 'use client';
 
 import InputText from "@/components/ui/input-text";
-import {InputCheckbox} from "@/components/ui/input-checkbox";
 import Link from "next/link";
 import Badge from "@/components/ui/badge";
 import Image from "next/image";
 import React, {useState, useEffect} from "react";
-import {XMarkIcon} from "@heroicons/react/16/solid";
+import {XMarkIcon, ChevronLeftIcon} from "@heroicons/react/16/solid";
 
 
 export default function Login() {
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,18 +49,8 @@ export default function Login() {
             return;
         }
 
-        if (!password.trim()) {
-            setEmailError("The email field is required");
-            return;
-        }
-
         if (!validateEmail(email)) {
             setEmailError("Ups... The email is not correct");
-            return;
-        }
-
-        if (!email || !password) {
-            setFieldErrors({form: "Both fields are required"});
             return;
         }
 
@@ -73,8 +61,7 @@ export default function Login() {
             setIsSubmitting(false);
 
             setFieldErrors({
-                form: "Something went wrong. Please check your email or your password are correct.",
-                email: "These credentials do not match our records.",
+                form: "Something went wrong. Please make sure this email address exist.",
             });
         }, 2000);
     }
@@ -103,12 +90,13 @@ export default function Login() {
 
                                 <div>
                                     <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
-                                        SIGN IN
+                                        Reset<br/>password
                                     </h1>
                                     <h2
                                         className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
                                     >
-                                        Welcome back! Please enter your details.
+                                        Enter your email here and we will send you an email so you can recover your
+                                        password.
                                     </h2>
                                 </div>
 
@@ -132,29 +120,6 @@ export default function Login() {
                                             errorMessage={emailError || fieldErrors.email}
                                         />
                                     </div>
-                                    <div>
-                                        <InputText
-                                            type="password"
-                                            placeholder="Password"
-                                            name="password"
-                                            value={password}
-                                            onChange={(e) => {
-                                                setPassword(e.target.value);
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="flex items-center justify-between">
-                                        <InputCheckbox
-                                            className="text-base"
-                                            label="Remember me"
-                                            value="1"
-                                            name="remember"
-                                        />
-                                        <Link href="/auth/reset-password" className="text-base btn-link">
-                                            Forgot Password?
-                                        </Link>
-                                    </div>
 
                                     <button
                                         type="submit"
@@ -168,28 +133,20 @@ export default function Login() {
                                         <div
                                             className="text-slate-950 text-base font-normal uppercase leading-normal"
                                         >
-                                            {isSubmitting ? "Loading..." : "Sign In"}
+                                            {isSubmitting ? "Loading..." : "Send email"}
                                         </div>
                                     </button>
-                                </form>
-
-                                <div className="text-center space-y-2">
-                                    <div
-
-                                        className="text-center w-full text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
-                                    >
-                                        Don’t have an account?
-                                    </div>
 
                                     <Link
-                                        href="/register"
-                                        className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex"
+                                        href="/auth/login"
+                                        className="h-12 w-full px-4 py-3 justify-center items-center gap-2 inline-flex"
                                     >
-                                        <div className="text-neutral-50 text-base font-normal uppercase leading-normal">
-                                            Create account
+                                        <div
+                                            className="text-neutral-50 text-base font-normal uppercase leading-normal flex">
+                                            <ChevronLeftIcon className="w-6 h-6 text-white"/> Return to login
                                         </div>
                                     </Link>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
