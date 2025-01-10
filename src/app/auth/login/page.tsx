@@ -86,17 +86,6 @@ export default function Login() {
             <div
                 className="flex w-full lg:w-2/5 flex-col px-4 sm:px-6 lg:flex-none xl:px-24">
 
-                <div className="flex justify-center">
-                    <Image
-                        className="py-4 xl:py-8"
-                        src="/assets/images/megatrader-original.svg"
-                        alt="Trading Platform Interface"
-                        width={350}
-                        height={62}
-                        quality={100}
-                    />
-                </div>
-
                 <div className="mx-auto w-full max-w-[409px] xl:h-full xl:justify-center lg:flex lg:items-center">
                     <div className="w-full mx-auto space-y-8">
                         {fieldErrors.form && (
