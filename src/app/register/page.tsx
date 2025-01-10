@@ -31,8 +31,7 @@ export default function Login() {
             setIsSubmitting(false);
 
             setFieldErrors({
-                form: "Something went wrong. Please check your email or your password are correct.",
-                email: "These credentials do not match our records.",
+                form: "Something went wrong. Please check if your data is correct.",
             });
         }, 2000);
     }
@@ -157,21 +156,26 @@ export default function Login() {
                                     </div>
 
 
-                                    <div className="flex items-center justify-between">
+                                    <div className="inline-flex gap-2 items-center w-full">
                                         <InputCheckbox
-                                            className="text-base"
-                                            label="Agree to our"
                                             value="1"
                                             name="remember"
-                                        />
-                                        {' '}
-                                        <Link href="#" className="text-base btn-link">
-                                            Privacy Policy
-                                        </Link>
-                                        <span className="text-white">and</span>
-                                        <Link href="#" className="text-base btn-link">
-                                            Refund Policy
-                                        </Link>
+                                        >
+                                            <div className="select-none">
+                                                <span className="text-base text-white"> Agree to our</span>
+                                                {' '}
+                                                <Link href="#" className="text-base btn-link flex-inline">
+                                                    Privacy Policy
+                                                </Link>
+                                                {' '}
+                                                <span className="text-white">and</span>
+                                                {' '}
+                                                <Link href="#" className="text-base btn-link flex-inline">
+                                                    Refund Policy
+                                                </Link>
+                                            </div>
+                                        </InputCheckbox>
+
                                     </div>
 
                                     <button
