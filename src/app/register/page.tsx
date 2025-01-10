@@ -146,12 +146,12 @@ export default function Login() {
                                             type="text"
                                             placeholder="Confirm Password"
                                             name="confirm_password"
-                                            value={form.password}
+                                            value={form.confirm_password}
                                             onChange={(e) => {
                                                 const value = e.target.value;
                                                 setForm(prev => ({...prev, [e.target.name]: value}));
                                             }}
-                                            errorMessage={fieldErrors.password}
+                                            errorMessage={fieldErrors.confirm_password}
                                         />
                                     </div>
 
