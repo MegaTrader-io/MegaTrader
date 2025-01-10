@@ -4,61 +4,52 @@ import InputText from "@/components/ui/input-text";
 import Link from "next/link";
 import Badge from "@/components/ui/badge";
 import Image from "next/image";
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import {XMarkIcon, ChevronLeftIcon} from "@heroicons/react/16/solid";
-import {useRouter} from 'next/navigation'
+
 
 export default function Login() {
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [emailError, setEmailError] = useState("");
+    const [form, setForm] = useState({
+        password: '',
+        confirm_password: '',
+    });
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [debouncedEmail, setDebouncedEmail] = useState(email);
-
-    function validateEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedEmail(email);
-        }, 500);
-
-        return () => clearTimeout(handler);
-    }, [email]);
-
-    useEffect(() => {
-        if (!debouncedEmail) {
-            setEmailError("");
-            return;
-        }
-
-        if (!validateEmail(debouncedEmail)) {
-            setEmailError("Ups... The email is not correct");
-        } else {
-            setEmailError("");
-        }
-    }, [debouncedEmail]);
 
     function submitForm(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        if (!email.trim()) {
-            setEmailError("The email field is required");
+        if (!form.password.trim()) {
+            setFieldErrors((prev) => ({...prev, password: "Ups... The email is not correct\""}));
             return;
         }
 
-        if (!validateEmail(email)) {
-            setEmailError("Ups... The email is not correct");
+        if (!form.confirm_password.trim()) {
+            setFieldErrors((prev) => ({
+                ...prev, confirm_password: "Ups... The email is not correct\""
+            }));
+            return;
+        }
+
+        if (form.password !== form.confirm_password) {
+            setFieldErrors(() => ({
+                password: "The passwords do not match.",
+                confirm_password: "The passwords do not match."
+            }));
+
             return;
         }
 
         setIsSubmitting(true);
         setFieldErrors({});
 
-        router.push("/auth/reset-password/change");
+        setTimeout(() => {
+            setIsSubmitting(false);
+
+            setFieldErrors({
+                form: "Something went wrong. Please try again later.",
+            });
+        }, 2000);
     }
 
     // const isFormValid = email && password && !emailError;
@@ -85,34 +76,42 @@ export default function Login() {
 
                                 <div>
                                     <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
-                                        Reset<br/>password
+                                        Reset password
                                     </h1>
                                     <h2
                                         className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
                                     >
-                                        Enter your email here and we will send you an email so you can recover your
-                                        password.
+                                        Enter and confirm your password.
                                     </h2>
                                 </div>
 
                                 <form onSubmit={submitForm} className="space-y-4 lg:my-8">
                                     <div>
                                         <InputText
-                                            type="email"
-                                            placeholder="Email"
-                                            name="email"
-                                            value={email}
+                                            type="password"
+                                            placeholder="Password"
+                                            name="password"
+                                            value={form.password}
                                             onChange={(e) => {
                                                 const value = e.target.value;
-                                                setEmail(value);
-
-                                                if (!value) {
-                                                    setEmailError("");
-                                                    setFieldErrors((prev) => ({...prev, email: ""}));
-                                                    return;
-                                                }
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
                                             }}
-                                            errorMessage={emailError || fieldErrors.email}
+                                            errorMessage={fieldErrors.password}
+                                        />
+                                    </div>
+
+
+                                    <div>
+                                        <InputText
+                                            type="password"
+                                            placeholder="Confirm Password"
+                                            name="confirm_password"
+                                            value={form.confirm_password}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setForm(prev => ({...prev, [e.target.name]: value}));
+                                            }}
+                                            errorMessage={fieldErrors.confirm_password}
                                         />
                                     </div>
 
@@ -128,7 +127,7 @@ export default function Login() {
                                         <div
                                             className="text-slate-950 text-base font-normal uppercase leading-normal"
                                         >
-                                            {isSubmitting ? "Loading..." : "Send email"}
+                                            {isSubmitting ? "Loading..." : "Update"}
                                         </div>
                                     </button>
 
