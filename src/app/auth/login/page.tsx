@@ -84,113 +84,122 @@ export default function Login() {
     return (
         <div className="flex flex-1">
             <div
-                className="flex w-full lg:w-2/5 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none  xl:px-24">
-                <div className="mx-auto w-full max-w-[409px]">
-                    <div className="mt-10">
+                className="flex w-full lg:w-2/5 flex-col px-4 sm:px-6 lg:flex-none  xl:px-24">
+
+                <div className="flex justify-center py-8 lg:py-12">
+                    <Image
+                        src="/assets/images/megatrader-original.svg"
+                        alt="Trading Platform Interface"
+                        width={350}
+                        height={62}
+                        quality={100}
+                    />
+                </div>
+
+                <div className="mx-auto w-full max-w-[409px] h-full">
+                    <div className="w-full mx-auto space-y-8">
+                        <div className="min-h-20">
+                            {fieldErrors.form && (
+                                <div
+                                    className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
+                                    <div className="w-6 h-6 rounded-full bg-mgt-text-error">
+                                        <XMarkIcon className="w-6 h-6"/>
+                                    </div>
+                                    <div
+                                        className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                         <div>
-                            <div className="w-full mx-auto space-y-8">
-                                {fieldErrors.form && (
-                                    <div
-                                        className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
-                                        <div className="w-6 h-6 rounded-full bg-mgt-text-error">
-                                            <XMarkIcon className="w-6 h-6"/>
-                                        </div>
-                                        <div
-                                            className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
-                                        </div>
-                                    </div>
-                                )}
+                            <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
+                                SIGN IN
+                            </h1>
+                            <h2
+                                className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
+                            >
+                                Welcome back! Please enter your details.
+                            </h2>
+                        </div>
 
-                                <div>
-                                    <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
-                                        SIGN IN
-                                    </h1>
-                                    <h2
-                                        className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
-                                    >
-                                        Welcome back! Please enter your details.
-                                    </h2>
-                                </div>
+                        <form onSubmit={submitForm} className="space-y-4 lg:my-8">
+                            <div>
+                                <InputText
+                                    type="email"
+                                    placeholder="Email"
+                                    name="email"
+                                    value={email}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setEmail(value);
 
-                                <form onSubmit={submitForm} className="space-y-4 lg:my-8">
-                                    <div>
-                                        <InputText
-                                            type="email"
-                                            placeholder="Email"
-                                            name="email"
-                                            value={email}
-                                            onChange={(e) => {
-                                                const value = e.target.value;
-                                                setEmail(value);
-
-                                                if (!value) {
-                                                    setEmailError("");
-                                                    setFieldErrors((prev) => ({...prev, email: ""}));
-                                                    return;
-                                                }
-                                            }}
-                                            errorMessage={emailError || fieldErrors.email}
-                                        />
-                                    </div>
-                                    <div>
-                                        <InputText
-                                            type="password"
-                                            placeholder="Password"
-                                            name="password"
-                                            value={password}
-                                            onChange={(e) => {
-                                                setPassword(e.target.value);
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="flex items-center justify-between">
-                                        <InputCheckbox
-                                            className="text-base"
-                                            label="Remember me"
-                                            value="1"
-                                            name="remember"
-                                        />
-                                        <Link href="/auth/reset-password" className="text-base btn-link">
-                                            Forgot Password?
-                                        </Link>
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className={`h-12 w-full px-4 disabled:opacity-30 py-3 rounded-xl border-2 justify-center items-center gap-2 inline-flex ${
-                                            isSubmitting
-                                                ? "bg-gray-500 border-gray-500 cursor-not-allowed"
-                                                : "bg-mgt-primary border-mgt-primary"
-                                        }`}
-                                    >
-                                        <div
-                                            className="text-slate-950 text-base font-normal uppercase leading-normal"
-                                        >
-                                            {isSubmitting ? "Loading..." : "Sign In"}
-                                        </div>
-                                    </button>
-                                </form>
-
-                                <div className="text-center space-y-2">
-                                    <div
-
-                                        className="text-center w-full text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
-                                    >
-                                        Don’t have an account?
-                                    </div>
-
-                                    <Link
-                                        href="/register"
-                                        className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex"
-                                    >
-                                        <div className="text-neutral-50 text-base font-normal uppercase leading-normal">
-                                            Create account
-                                        </div>
-                                    </Link>
-                                </div>
+                                        if (!value) {
+                                            setEmailError("");
+                                            setFieldErrors((prev) => ({...prev, email: ""}));
+                                            return;
+                                        }
+                                    }}
+                                    errorMessage={emailError || fieldErrors.email}
+                                />
                             </div>
+                            <div>
+                                <InputText
+                                    type="password"
+                                    placeholder="Password"
+                                    name="password"
+                                    value={password}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <InputCheckbox
+                                    className="text-base"
+                                    label="Remember me"
+                                    value="1"
+                                    name="remember"
+                                />
+                                <Link href="/auth/reset-password" className="text-base btn-link">
+                                    Forgot Password?
+                                </Link>
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className={`h-12 w-full px-4 disabled:opacity-30 py-3 rounded-xl border-2 justify-center items-center gap-2 inline-flex ${
+                                    isSubmitting
+                                        ? "bg-gray-500 border-gray-500 cursor-not-allowed"
+                                        : "bg-mgt-primary border-mgt-primary"
+                                }`}
+                            >
+                                <div
+                                    className="text-slate-950 text-base font-normal uppercase leading-normal"
+                                >
+                                    {isSubmitting ? "Loading..." : "Sign In"}
+                                </div>
+                            </button>
+                        </form>
+
+                        <div className="text-center space-y-2">
+                            <div
+
+                                className="text-center w-full text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
+                            >
+                                Don’t have an account?
+                            </div>
+
+                            <Link
+                                href="/register"
+                                className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex"
+                            >
+                                <div className="text-neutral-50 text-base font-normal uppercase leading-normal">
+                                    Create account
+                                </div>
+                            </Link>
                         </div>
                     </div>
                 </div>
