@@ -128,7 +128,7 @@ export default function Login() {
 
                                     <div>
                                         <InputText
-                                            type="text"
+                                            type="password"
                                             placeholder="Password"
                                             name="password"
                                             value={form.password}
@@ -143,7 +143,7 @@ export default function Login() {
 
                                     <div>
                                         <InputText
-                                            type="text"
+                                            type="password"
                                             placeholder="Confirm Password"
                                             name="confirm_password"
                                             value={form.confirm_password}
