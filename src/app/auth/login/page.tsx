@@ -186,7 +186,7 @@ export default function Login() {
                                         className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex"
                                     >
                                         <div className="text-neutral-50 text-base font-normal uppercase leading-normal">
-                                            Don’t have an account?
+                                            Create account
                                         </div>
                                     </Link>
                                 </div>
