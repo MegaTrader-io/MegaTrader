@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
-import {EyeSlashIcon} from "@heroicons/react/16/solid";
+import {EyeSlashIcon, EyeIcon} from "@heroicons/react/16/solid";
 
 interface InputTextProps extends React.InputHTMLAttributes<HTMLInputElement> {
     className?: string;
@@ -9,6 +9,7 @@ interface InputTextProps extends React.InputHTMLAttributes<HTMLInputElement> {
     name: string;
     errorMessage?: string;
 }
+
 
 const InputText: React.FC<InputTextProps> = ({
                                                  className = '',
@@ -19,6 +20,8 @@ const InputText: React.FC<InputTextProps> = ({
                                                  ...props
                                              }) => {
     const [type, setType] = useState(props.type || 'text');
+    const EyeIconComponent = props.type === 'password' && type === 'password' ? EyeSlashIcon : EyeIcon;
+
     const [internalValue, setInternalValue] = useState(props.value || '');
     const hasError = Boolean(errorMessage);
 
@@ -53,9 +56,10 @@ const InputText: React.FC<InputTextProps> = ({
                 />
 
                 {props.type === 'password' && (
-                    <EyeSlashIcon className="h-6 w-6 text-[#A8A29E] absolute right-4 cursor-pointer" onClick={() => {
-                        setType(prev => prev === 'password' ? 'text' : 'password');
-                    }}/>
+                    <EyeIconComponent className="h-6 w-6 text-[#A8A29E] absolute right-4 cursor-pointer"
+                                      onClick={() => {
+                                          setType(prev => prev === 'password' ? 'text' : 'password');
+                                      }}/>
                 )}
             </div>
 
