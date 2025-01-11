@@ -58,7 +58,7 @@ export default function Login() {
         setIsSubmitting(true);
         setFieldErrors({});
 
-        router.push("/auth/reset-password/change");
+        router.push("/reset-password/change");
     }
 
     // const isFormValid = email && password && !emailError;

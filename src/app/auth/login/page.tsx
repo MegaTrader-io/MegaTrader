@@ -148,7 +148,7 @@ export default function Login() {
                                     value="1"
                                     name="remember"
                                 />
-                                <Link href="/auth/reset-password" className="text-base btn-link">
+                                <Link href="/reset-password" className="text-base btn-link">
                                     Forgot Password?
                                 </Link>
                             </div>
