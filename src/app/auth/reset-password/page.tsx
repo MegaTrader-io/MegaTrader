@@ -81,14 +81,13 @@ export default function Login() {
                         )}
 
                         <div>
-                            <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
+                            <h1 className="text-white text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">
                                 Reset password
                             </h1>
                             <h2
                                 className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide"
                             >
-                                Enter your email here and we will send you an email so you can recover your
-                                password.
+                                Enter your email here to reset your password.
                             </h2>
                         </div>
 

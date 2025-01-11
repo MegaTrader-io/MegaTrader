@@ -33,7 +33,6 @@ const InputText: React.FC<InputTextProps> = ({
         }
     };
 
-
     return (
         <div className="w-full">
             <div className="flex items-center relative">
