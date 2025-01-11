@@ -201,14 +201,7 @@ export default function Login() {
                     className="h-full w-full mt-[111px] overflow-hidden relative bg-[#151211] rounded-tl-[36px] shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] border-l-8 border-t-8 border-[#474b54]"
                 >
                     <div className="mx-auto w-10/12 h-0">
-                        <Image
-                            src="/assets/images/img_3.png"
-                            alt="Trading Platform Interface"
-                            width={1000}
-                            height={700}
-                            layout="responsive"
-                            quality={100}
-                        />
+                        
                     </div>
                 </div>
             </div>
