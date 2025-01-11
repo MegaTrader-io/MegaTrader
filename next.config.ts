@@ -1,14 +1,12 @@
-import {NextConfig} from 'next';
+import { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-    basePath: '',
     images: {
         remotePatterns: [
             {
                 protocol: 'https',
                 hostname: 'megatrader.io',
-                port: '',
-                pathname: '/**',
+                pathname: '/assets/images/**', // Ajusta a la ruta de tus imágenes
             },
         ],
     },
