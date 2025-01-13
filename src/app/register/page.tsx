@@ -47,7 +47,7 @@ export default function Login() {
                         {fieldErrors.form && (
                             <div
                                 className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
-                                <div className="w-6 h-6 rounded-full bg-mgt-text-error">
+                                <div className="w-6 h-6 rounded-full bg-mgt-error">
                                     <XMarkIcon className="w-6 h-6"/>
                                 </div>
                                 <div

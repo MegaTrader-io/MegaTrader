@@ -95,7 +95,6 @@ export default function Header() {
                     </Link>
                 </div>
 
-                {/* Icono de hamburguesa */}
                 <button
                     className="btn-primary block lg:hidden"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -103,7 +102,6 @@ export default function Header() {
                     <Bars3Icon className="w-6 h-6 text-white"/>
                 </button>
 
-                {/* Navegación móvil */}
                 <div
                     className={`${
                         isMenuOpen ? 'block' : 'hidden'
@@ -125,7 +123,7 @@ export default function Header() {
                     ))}
 
                     <Link
-                        href="#"
+                        href="/auth/login"
                         className={`${isMenuOpen ? 'block' : 'hidden'} text-xl text-neutral-50 font-light uppercase leading-6 px-4 py-3 transition-all duration-200`}>
                         Sign In
                     </Link>

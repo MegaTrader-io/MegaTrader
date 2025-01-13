@@ -5,13 +5,15 @@ import Link from "next/link";
 import Badge from "@/components/ui/badge";
 import Image from "next/image";
 import React, {useState, useEffect} from "react";
-import {XMarkIcon, ChevronLeftIcon} from "@heroicons/react/16/solid";
-import {useRouter} from 'next/navigation'
+import {ChevronLeftIcon} from "@heroicons/react/16/solid";
+import Alert from "@/components/ui/Alert";
+
+const TARGET_EMAIL = "test@megatrader.com";
 
 export default function Login() {
-    const router = useRouter();
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
+    const [successMessage, setSuccessMessage] = useState('');
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [debouncedEmail, setDebouncedEmail] = useState(email);
@@ -58,10 +60,20 @@ export default function Login() {
         setIsSubmitting(true);
         setFieldErrors({});
 
-        router.push("/reset-password/change");
-    }
+        setTimeout(() => {
+            setIsSubmitting(false);
 
-    // const isFormValid = email && password && !emailError;
+            if (email === TARGET_EMAIL) {
+                setEmail('')
+                setSuccessMessage('The email have been sent successfully. Visit your email address, and follow the link to change your password.')
+                return
+            }
+
+            setFieldErrors({
+                form: "Something went wrong. Please make sure this email address exist.",
+            });
+        }, 800);
+    }
 
     return (
         <div className="flex flex-1">
@@ -69,16 +81,10 @@ export default function Login() {
                 <div className="mx-auto w-full max-w-[409px]">
                     <div className="w-full mx-auto space-y-8">
                         {fieldErrors.form && (
-                            <div
-                                className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
-                                <div className="w-6 h-6 rounded-full bg-mgt-text-error">
-                                    <XMarkIcon className="w-6 h-6"/>
-                                </div>
-                                <div
-                                    className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
-                                </div>
-                            </div>
+                            <Alert type="error" message={fieldErrors.form}/>
                         )}
+
+                        {successMessage && (<Alert type="success" message={successMessage}/>)}
 
                         <div>
                             <h1 className="text-white text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">

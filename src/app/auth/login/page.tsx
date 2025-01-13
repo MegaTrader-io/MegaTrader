@@ -6,10 +6,13 @@ import Link from "next/link";
 import Badge from "@/components/ui/badge";
 import Image from "next/image";
 import React, {useState, useEffect} from "react";
-import {XMarkIcon} from "@heroicons/react/16/solid";
+import Alert from "@/components/ui/Alert";
+import {useSearchParams} from "next/navigation";
 
 
 export default function Login() {
+    const searchParams = useSearchParams();
+    const successMessage = searchParams.get("success-message") || "";
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -79,24 +82,16 @@ export default function Login() {
         }, 2000);
     }
 
-    // const isFormValid = email && password && !emailError;
-
     return (
         <div className="flex flex-1">
             <div className="flex w-full lg:w-2/5 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none  xl:px-24">
                 <div className="mx-auto w-full max-w-[409px]">
                     <div className="w-full mx-auto space-y-8">
                         {fieldErrors.form && (
-                            <div
-                                className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
-                                <div className="w-6 h-6 rounded-full bg-mgt-text-error">
-                                    <XMarkIcon className="w-6 h-6"/>
-                                </div>
-                                <div
-                                    className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
-                                </div>
-                            </div>
+                            <Alert type="error" message={fieldErrors.form}/>
                         )}
+
+                        {successMessage && (<Alert type="success" message={successMessage}/>)}
 
                         <div>
                             <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">

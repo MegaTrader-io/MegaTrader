@@ -1,15 +1,23 @@
 'use client';
 
 import InputText from "@/components/ui/input-text";
+import {useRouter} from "next/navigation";
 import Link from "next/link";
 import Badge from "@/components/ui/badge";
 import Image from "next/image";
 import React, {useState} from "react";
-import {XMarkIcon, ChevronLeftIcon} from "@heroicons/react/16/solid";
+import {ChevronLeftIcon} from "@heroicons/react/16/solid";
+import Alert from "@/components/ui/Alert";
+import {useSearchParams} from "next/navigation";
 
+const TARGET_EMAIL = "test@megatrader.com";
 
-export default function Login() {
+export default function ChangePassword() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const email = searchParams.get("email") || "";
     const [form, setForm] = useState({
+        email,
         password: '',
         confirm_password: '',
     });
@@ -46,13 +54,16 @@ export default function Login() {
         setTimeout(() => {
             setIsSubmitting(false);
 
+            if (email === TARGET_EMAIL) {
+                router.push(`/auth/login?success-message=Your password have been changed successfully. Login in to your account.`);
+                return
+            }
+
             setFieldErrors({
                 form: "Something went wrong. Please try again later.",
             });
         }, 2000);
     }
-
-    // const isFormValid = email && password && !emailError;
 
     return (
         <div className="flex flex-1">
@@ -61,15 +72,7 @@ export default function Login() {
                 <div className="mx-auto w-full max-w-[409px]">
                     <div className="w-full mx-auto space-y-8">
                         {fieldErrors.form && (
-                            <div
-                                className="p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden">
-                                <div className="w-6 h-6 rounded-full bg-mgt-text-error">
-                                    <XMarkIcon className="w-6 h-6"/>
-                                </div>
-                                <div
-                                    className="grow shrink basis-0 self-stretch text-rose-400 text-base font-normal leading-normal">{fieldErrors.form}
-                                </div>
-                            </div>
+                            <Alert type="error" message={fieldErrors.form}/>
                         )}
 
                         <div>
