@@ -9,9 +9,8 @@ import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import Alert from "@/components/ui/Alert";
 
 const TARGET_EMAIL = "test@megatrader.com";
-export const dynamic = 'force-dynamic';
 
-export default function Login() {
+export default function ResetPassword() {
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
     const [successMessage, setSuccessMessage] = useState('');
