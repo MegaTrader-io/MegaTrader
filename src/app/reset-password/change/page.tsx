@@ -11,6 +11,7 @@ import Alert from "@/components/ui/Alert";
 import {useSearchParams} from "next/navigation";
 
 const TARGET_EMAIL = "test@megatrader.com";
+export const dynamic = 'force-dynamic';
 
 export default function ChangePassword() {
     const router = useRouter();
