@@ -9,6 +9,7 @@ import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import Alert from "@/components/ui/Alert";
 
 const TARGET_EMAIL = "test@megatrader.com";
+export const dynamic = 'force-dynamic';
 
 export default function Login() {
     const [email, setEmail] = useState("");
