@@ -86,11 +86,11 @@ export default function Header() {
                         onClick={(e) => handleClick(e, '#home')}
                     >
                         <Image
-                            src="../assets/images/megatrader2.svg"
+                            src="../assets/images/megatrader-original.svg"
                             alt="Logo"
-                            height={83}
-                            width={338}
-                            className="w-[197px] h-[47px] lg:w-[338px] lg:h-[83px]"
+                            width={298}
+                            height={96}
+                            className="w-[197px] h-[47px] lg:w-[298px] lg:h-[96px]"
                         />
                     </Link>
                 </div>
