@@ -13,8 +13,8 @@ import {useRouter} from "next/navigation";
 export default function Login() {
     const router = useRouter();
     const [successMessage, setSuccessMessage] = useState("");
-    const [email, setEmail] = useState(TARGET_EMAIL);
-    const [password, setPassword] = useState(TARGET_PASSWORD);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);

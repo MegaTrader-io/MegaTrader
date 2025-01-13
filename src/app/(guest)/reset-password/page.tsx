@@ -10,7 +10,7 @@ import Alert from "@/components/ui/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";
 
 export default function ResetPassword() {
-    const [email, setEmail] = useState(TARGET_EMAIL);
+    const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
     const [successMessage, setSuccessMessage] = useState('');
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
