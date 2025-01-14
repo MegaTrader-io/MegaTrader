@@ -1,9 +1,9 @@
 'use client';
 
-import InputText from "@/components/ui/input-text";
-import {InputCheckbox} from "@/components/ui/input-checkbox";
+import InputText from "@/components/ui/InputText";
+import {InputCheckbox} from "@/components/ui/InputCheckbox";
 import Link from "next/link";
-import Badge from "@/components/ui/badge";
+import Badge from "@/components/ui/Badge";
 import Image from "next/image";
 import React, {useState} from "react";
 import {XMarkIcon} from "@heroicons/react/16/solid";

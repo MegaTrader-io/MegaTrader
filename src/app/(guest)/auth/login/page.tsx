@@ -1,9 +1,9 @@
 'use client';
 
-import InputText from "@/components/ui/input-text";
-import {InputCheckbox} from "@/components/ui/input-checkbox";
+import InputText from "@/components/ui/InputText";
+import {InputCheckbox} from "@/components/ui/InputCheckbox";
 import Link from "next/link";
-import Badge from "@/components/ui/badge";
+import Badge from "@/components/ui/Badge";
 import Image from "next/image";
 import React, {useState, useEffect} from "react";
 import Alert from "@/components/ui/Alert";
@@ -63,7 +63,7 @@ export default function Login() {
 
             if (email === TARGET_EMAIL && password === TARGET_PASSWORD) {
                 router.push(
-                    `/dashboard`
+                    `/account-overview`
                 );
 
                 return;
@@ -73,7 +73,7 @@ export default function Login() {
                 form: "Something went wrong. Please check your email or your password are correct.",
                 email: "These credentials do not match our records.",
             });
-        }, 300);
+        }, 3000);
     }
 
     return (
@@ -157,6 +157,8 @@ export default function Login() {
                                     Create account
                                 </div>
                             </Link>
+
+
                         </div>
                     </div>
                 </div>

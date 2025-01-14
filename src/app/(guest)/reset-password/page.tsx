@@ -1,8 +1,8 @@
 'use client';
 
-import InputText from "@/components/ui/input-text";
+import InputText from "@/components/ui/InputText";
 import Link from "next/link";
-import Badge from "@/components/ui/badge";
+import Badge from "@/components/ui/Badge";
 import Image from "next/image";
 import React, {useState, useEffect} from "react";
 import {ChevronLeftIcon} from "@heroicons/react/16/solid";

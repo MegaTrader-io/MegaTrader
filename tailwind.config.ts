@@ -40,6 +40,9 @@ export default {
                 'mgt-link': 'var(--mgt-color-link)',
                 'mgt-error': 'var(--mgt-color-error)',
                 'mgt-link-hover': 'var(--mgt-color-link-hover)',
+                primary: '#FFB34A',
+                secondary: '#00BCD4',
+                light: '#FFFFFF',
             },
             animation: {
                 'rotate-animation': 'rotate-animation 10s linear infinite',
