@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from "next/link";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Bars3Icon, BellIcon, UserCircleIcon} from "@heroicons/react/24/solid";
 import {usePathname} from "next/navigation";
 
