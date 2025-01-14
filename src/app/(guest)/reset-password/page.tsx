@@ -1,12 +1,12 @@
 'use client';
 
-import InputText from "@/components/ui/InputText";
+import InputText from "@/components/InputText";
 import Link from "next/link";
-import Badge from "@/components/ui/Badge";
+import Badge from "@/components/Badge";
 import Image from "next/image";
 import React, {useState, useEffect} from "react";
 import {ChevronLeftIcon} from "@heroicons/react/16/solid";
-import Alert from "@/components/ui/Alert";
+import Alert from "@/components/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";
 
 export default function ResetPassword() {

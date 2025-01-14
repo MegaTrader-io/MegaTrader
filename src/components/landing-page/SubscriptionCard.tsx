@@ -1,7 +1,7 @@
 import {PlanInterface} from "@/commons/interfaces";
 import React, {useState} from "react";
-import Card from "@/components/card";
-import Link from "@/components/link"
+import Card from "@/components/Card";
+import Link from "@/components/Link"
 import {motion} from 'framer-motion'
 import Image from "next/image";
 

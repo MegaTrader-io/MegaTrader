@@ -1,5 +1,5 @@
-import Card from "@/components/card";
-import Link from "@/components/link";
+import Card from "@/components/Card";
+import Link from "@/components/Link";
 import Image from "next/image";
 import clsx from "clsx";
 

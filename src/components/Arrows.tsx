@@ -11,7 +11,6 @@ export function ArrowUp() {
                     fill="#14B8A6"/>
             </g>
         </svg>
-
     </>
 }
 

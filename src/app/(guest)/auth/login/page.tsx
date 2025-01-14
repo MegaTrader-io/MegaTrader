@@ -1,12 +1,12 @@
 'use client';
 
-import InputText from "@/components/ui/InputText";
-import {InputCheckbox} from "@/components/ui/InputCheckbox";
+import InputText from "@/components/InputText";
+import {InputCheckbox} from "@/components/InputCheckbox";
 import Link from "next/link";
-import Badge from "@/components/ui/Badge";
+import Badge from "@/components/Badge"
 import Image from "next/image";
 import React, {useState, useEffect} from "react";
-import Alert from "@/components/ui/Alert";
+import Alert from "@/components/Alert";
 import {TARGET_EMAIL, TARGET_PASSWORD} from "@/commons/credentials";
 import {useRouter} from "next/navigation";
 

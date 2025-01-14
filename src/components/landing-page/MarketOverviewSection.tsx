@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 
-import Card from "@/components/card";
-import {ArrowDown, ArrowUp} from "@/components/arrows";
+import Card from "@/components/Card";
+import {ArrowDown, ArrowUp} from "@/components/Arrows";
 import {SymbolMarketData} from "@/commons/interfaces";
 import clsx from "clsx";
 

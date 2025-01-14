@@ -1,9 +1,9 @@
 'use client'
 
 import Footer from "@/components/landing-page/Footer";
-import Header from "@/components/ui/Header";
-import Card from "@/components/card";
-import {Button} from "@/components/ui/Button";
+import Header from "@/components/Header";
+import Card from "@/components/Card";
+import {Button} from "@/components/Button";
 import React from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";

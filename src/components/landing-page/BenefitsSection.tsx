@@ -1,4 +1,4 @@
-import Card from "@/components/card";
+import Card from "@/components/Card";
 import Image from "next/image";
 import clsx from "clsx";
 

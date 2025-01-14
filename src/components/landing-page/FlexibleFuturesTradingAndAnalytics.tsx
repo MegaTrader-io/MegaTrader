@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
-import Link from "@/components/link";
+import Link from "@/components/Link";
 import Image from "next/image";
 import clsx from "clsx";
 
