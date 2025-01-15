@@ -17,7 +17,7 @@ const BaseBadge = ({
                        children,
                        ...props
                    }: BadgeProps) => {
-    const baseStyles = 'text-[#131210] font-medium uppercase';
+    const baseStyles = 'text-[#131210] font-medium uppercase justify-center items-center gap-2.5 inline-flex';
     const roundedStyles = {
         'md': {
             'rounded': 'rounded-lg',
@@ -35,16 +35,16 @@ const BaseBadge = ({
 
     const styles = {
         primary: {
-            container: 'bg-primary justify-center items-center gap-2.5 inline-flex',
+            bgColor: 'bg-primary',
         },
         secondary: {
-            container: 'bg-teal-500 justify-center items-center gap-2.5 inline-flex',
+            bgColor: 'bg-teal-500',
         },
         error: {
-            container: 'bg-rose-500 justify-center items-center gap-2.5 inline-flex',
+            bgColor: 'bg-rose-500',
         },
         info: {
-            container: 'bg-blue-500 justify-center items-center gap-2.5 inline-flex',
+            bgColor: 'bg-blue-500',
         }
     }[variant]
 
@@ -55,7 +55,7 @@ const BaseBadge = ({
                   baseStyles,
                   roundedStyles,
                   sizeStyles,
-                  styles.container,
+                  styles.bgColor,
                   className
               )}>
             {children}
