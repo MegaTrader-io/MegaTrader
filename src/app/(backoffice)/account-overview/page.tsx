@@ -6,7 +6,6 @@ import React, {useState} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
-import BaseBadge from "@/components/BaseBadge";
 import Image from "next/image";
 import Badge from "@/components/Badge";
 
