@@ -15,7 +15,7 @@ export function CopyButton({value}: { value: string }) {
                 height={24}
             />
             {copySuccess && (
-                <div className="absolute top-[-16px] right-[-9px] text-xs text-gray-400 flex items-center">
+                <div className="absolute top-[-20px] right-[-9px] text-xs text-gray-400 flex items-center">
                     copied
                 </div>
             )}
