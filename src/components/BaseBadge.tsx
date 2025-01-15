@@ -3,7 +3,7 @@ import {MgProps} from "@/commons/interfaces";
 import clsx from "clsx";
 
 
-interface BadgeProps extends MgProps {
+export interface BadgeProps extends MgProps {
     size?: 'md' | 'sm'
     variant?: 'primary' | 'secondary' | 'error' | 'info';
     shape?: 'rounded' | 'pill';
@@ -17,10 +17,17 @@ const BaseBadge = ({
                        children,
                        ...props
                    }: BadgeProps) => {
-    const baseStyles = 'text-[#131210] font-medium';
-    const roundedStyles = shape === 'rounded'
-        ? 'rounded-2xl'
-        : 'rounded-xl';
+    const baseStyles = 'text-[#131210] font-medium uppercase';
+    const roundedStyles = {
+        'md': {
+            'rounded': 'rounded-lg',
+            'pill': 'rounded-2xl',
+        },
+        'sm': {
+            'rounded': 'rounded',
+            'pill': 'rounded-xl',
+        }
+    }[size][shape]
 
     const sizeStyles = size === 'md'
         ? `h-7 px-3 py-0.5 text-xs`

@@ -2,6 +2,7 @@ import Card from "@/components/Card";
 import Link from "@/components/Link";
 import Image from "next/image";
 import clsx from "clsx";
+import Badge from "@/components/Badge";
 
 const FeatureHighlightSection = ({className = ''}: { className?: string }) => (
     <section className={clsx('xl:flex lg:mt-[15px] justify-evenly w-full gap-16', className)}>
@@ -9,9 +10,7 @@ const FeatureHighlightSection = ({className = ''}: { className?: string }) => (
             className="xl:w-[605px] xl:h-[182px] my-8 lg:my-0 grow shrink flex-col justify-start items-start gap-2.5 inline-flex"
         >
             <div>
-                <div className="bg-teal-500 rounded-lg h-7 px-3 py-0.5 inline-flex">
-                    <div className="text-xs text-[#131210] font-medium leading-6 break-words">NEW FEATURE</div>
-                </div>
+                <Badge>NEW FEATURE</Badge>
                 <h2 className="text-white text-xl mt-4 leading-6">MEGAX - TRADE SMARTER, TRADE FASTER</h2>
                 <p className="text-stone-400 mt-2.5 leading-6">
                     Empowers traders with advanced tools and lightning-fast execution for a seamless futures trading
