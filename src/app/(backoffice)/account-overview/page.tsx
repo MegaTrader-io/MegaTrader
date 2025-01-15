@@ -24,7 +24,7 @@ const accounts: Account[] = [
 
 const credentials = {
     login: 'pGd031d@hkh&Z~r1',
-    password: 'pGd031d@hkh&amp;Z~r1'
+    password: 'pGd031d@hkh&Z~r1'
 }
 
 export default function AccountOverView() {
