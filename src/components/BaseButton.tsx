@@ -86,7 +86,7 @@ const Button: React.FC<ButtonProps> = ({
             text: 'text-gray-900 hover:text-black hover:bg-gray-200 focus:ring-gray-300',
         },
         dark: {
-            filled: 'bg-stone-800 hover:bg-[#1e1e1e] border border-neutral-700 hover:border-transparent text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800',
+            filled: 'bg-stone-800 hover:bg-stone-900 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800',
             text: 'text-gray-900 hover:text-gray-800 hover:bg-gray-300 focus:ring-gray-700',
         },
     };
