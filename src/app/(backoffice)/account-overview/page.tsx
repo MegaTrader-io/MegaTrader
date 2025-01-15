@@ -2,7 +2,8 @@
 
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
+import ClipboardJS from "clipboard";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
@@ -27,19 +28,43 @@ const credentials = {
 }
 
 export default function AccountOverView() {
+    const loginButtonRef = useRef<HTMLButtonElement | null>(null);
+    const passwordButtonRef = useRef<HTMLButtonElement | null>(null);
     const [selectedAccount, setSelectedAccount] = useState(accounts[0]);
 
-    const copyText = async (value: string) => {
-        if (typeof window !== "undefined" && navigator?.clipboard) {
-            try {
-                await navigator.clipboard.writeText(value);
-            } catch (error) {
-                console.error("error:", error);
-            }
-        } else {
-            console.error("navigator.clipboard not available");
-        }
-    };
+    useEffect(() => {
+        const clipboardLogin = new ClipboardJS(loginButtonRef.current as HTMLButtonElement, {
+            text: () => credentials.login,
+        });
+
+        const clipboardPassword = new ClipboardJS(passwordButtonRef.current as HTMLButtonElement, {
+            text: () => credentials.password,
+        });
+
+        clipboardLogin.on("success", (e) => {
+            console.log("Texto copiado (login):", e.text);
+            e.clearSelection();
+        });
+
+        clipboardPassword.on("success", (e) => {
+            console.log("Texto copiado (password):", e.text);
+            e.clearSelection();
+        });
+
+        clipboardLogin.on("error", (e) => {
+            console.error("Error al copiar login:", e.action, e.trigger);
+        });
+
+        clipboardPassword.on("error", (e) => {
+            console.error("Error al copiar password:", e.action, e.trigger);
+        });
+
+        // Limpiar instancias al desmontar
+        return () => {
+            clipboardLogin.destroy();
+            clipboardPassword.destroy();
+        };
+    }, []);
 
     return <>
         <div className="w-full">
@@ -105,8 +130,11 @@ export default function AccountOverView() {
                                 {credentials.login}
                             </div>
 
-                            <button onClick={void copyText(credentials.login)}>
-                                <Image className="w-6 h-6" src='/assets/images/copy.svg' alt={'copy'} width={24}
+                            <button
+                                ref={loginButtonRef}
+                                data-clipboard-text={credentials.login}
+                            >
+                                <Image className="w-6 h-6" src="/assets/images/copy.svg" alt="copy" width={24}
                                        height={24}/>
                             </button>
                         </div>
@@ -122,8 +150,11 @@ export default function AccountOverView() {
                                 {credentials.password}
                             </div>
 
-                            <button onClick={void copyText(credentials.password)}>
-                                <Image className="w-6 h-6" src='/assets/images/copy.svg' alt={'copy'} width={24}
+                            <button
+                                ref={passwordButtonRef}
+                                data-clipboard-text={credentials.password}
+                            >
+                                <Image className="w-6 h-6" src="/assets/images/copy.svg" alt="copy" width={24}
                                        height={24}/>
                             </button>
                         </div>
