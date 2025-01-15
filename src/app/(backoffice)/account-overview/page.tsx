@@ -2,14 +2,14 @@
 
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
-import React, {useEffect, useRef, useState} from "react";
-import ClipboardJS from "clipboard";
+import React, {useState} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
 import Badge from "@/components/Badge";
 import Tooltip from "@/app/(backoffice)/account-overview/_components/Tooltip";
+import {CopyButton} from "@/components/CopyButton";
 
 interface Account {
     id: number
@@ -28,43 +28,7 @@ const credentials = {
 }
 
 export default function AccountOverView() {
-    const loginButtonRef = useRef<HTMLButtonElement | null>(null);
-    const passwordButtonRef = useRef<HTMLButtonElement | null>(null);
     const [selectedAccount, setSelectedAccount] = useState(accounts[0]);
-
-    useEffect(() => {
-        const clipboardLogin = new ClipboardJS(loginButtonRef.current as HTMLButtonElement, {
-            text: () => credentials.login,
-        });
-
-        const clipboardPassword = new ClipboardJS(passwordButtonRef.current as HTMLButtonElement, {
-            text: () => credentials.password,
-        });
-
-        clipboardLogin.on("success", (e) => {
-            console.log("Texto copiado (login):", e.text);
-            e.clearSelection();
-        });
-
-        clipboardPassword.on("success", (e) => {
-            console.log("Texto copiado (password):", e.text);
-            e.clearSelection();
-        });
-
-        clipboardLogin.on("error", (e) => {
-            console.error("Error al copiar login:", e.action, e.trigger);
-        });
-
-        clipboardPassword.on("error", (e) => {
-            console.error("Error al copiar password:", e.action, e.trigger);
-        });
-
-        // Limpiar instancias al desmontar
-        return () => {
-            clipboardLogin.destroy();
-            clipboardPassword.destroy();
-        };
-    }, []);
 
     return <>
         <div className="w-full">
@@ -130,13 +94,7 @@ export default function AccountOverView() {
                                 {credentials.login}
                             </div>
 
-                            <button
-                                ref={loginButtonRef}
-                                data-clipboard-text={credentials.login}
-                            >
-                                <Image className="w-6 h-6" src="/assets/images/copy.svg" alt="copy" width={24}
-                                       height={24}/>
-                            </button>
+                            <CopyButton value={credentials.login}/>
                         </div>
 
                         <div className="gap-2 pl-4 pr-0 py-2 inline-flex items-center relative flex-[0_0_auto]">
@@ -150,13 +108,7 @@ export default function AccountOverView() {
                                 {credentials.password}
                             </div>
 
-                            <button
-                                ref={passwordButtonRef}
-                                data-clipboard-text={credentials.password}
-                            >
-                                <Image className="w-6 h-6" src="/assets/images/copy.svg" alt="copy" width={24}
-                                       height={24}/>
-                            </button>
+                            <CopyButton value={credentials.password}/>
                         </div>
                     </div>
                 </div>
