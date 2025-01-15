@@ -17,7 +17,7 @@ const BaseBadge = ({
                        children,
                        ...props
                    }: BadgeProps) => {
-    const baseStyles = 'text-[#131210] font-medium uppercase justify-center items-center gap-2.5 inline-flex';
+    const baseStyles = 'text-[#131210] leading-normal font-medium uppercase justify-center items-center gap-2.5 inline-flex';
     const roundedStyles = {
         'md': {
             'rounded': 'rounded-lg',

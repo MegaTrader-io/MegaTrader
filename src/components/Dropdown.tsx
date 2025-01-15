@@ -30,8 +30,8 @@ export default function Dropdown<T extends { id: string | number }>({
         <Listbox disabled={disabled} value={selected} onChange={handleChange}>
             <ListboxButton
                 className={clsx(
-                    'relative block w-full pl-4 pr-3 py-3 text-base font-normal leading-normal rounded-xl bg-stone-800 hover:bg-[#1e1e1e] border border-neutral-700 hover:border-transparent text-white  disabled:bg-stone-600 disabled:text-stone-800',
-                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                    'relative block w-full pl-4 pr-3 py-3 text-base font-normal leading-normal rounded-xl bg-stone-800  border border-neutral-700 text-white  disabled:bg-stone-600 disabled:text-stone-800',
+                    'focus:outline-none data-[focus]:outline-0 data-[focus]:-outline-offset-0 data-[focus]:outline-white/25'
                 )}
             >
                 <div className="flex gap-2 items-center uppercase">
