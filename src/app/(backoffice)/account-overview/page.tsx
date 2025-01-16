@@ -2,7 +2,7 @@
 
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
-import React, {RefObject, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
