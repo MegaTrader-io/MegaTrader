@@ -15,7 +15,6 @@ import {Account, Period} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 import EyeComponent from "@/components/EyeComponent";
 import useToggleSecretsKeys from "@/hooks/useToggleSecretsKeys";
-import {Select} from "./_components/Select"
 
 const accounts: Account[] = [
     {
