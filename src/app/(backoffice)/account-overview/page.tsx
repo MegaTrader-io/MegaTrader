@@ -14,7 +14,6 @@ import Objectives from "@/app/(backoffice)/account-overview/_components/Objectiv
 import {Account} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 
-
 const accounts: Account[] = [
     {
         id: 1,
