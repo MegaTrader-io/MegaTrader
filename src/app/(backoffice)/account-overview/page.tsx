@@ -60,11 +60,9 @@ const credentials = {
 
 
 export default function AccountOverView() {
-    const loginMaskRef = useRef<HTMLDivElement>(null);
     const passwordMaskRef = useRef<HTMLDivElement>(null);
     const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[0]);
     const {toggleMask, currentMask} = useToggleSecretsKeys([
-        {element: loginMaskRef.current, value: credentials.login},
         {element: passwordMaskRef.current, value: credentials.password},
     ]);
 
