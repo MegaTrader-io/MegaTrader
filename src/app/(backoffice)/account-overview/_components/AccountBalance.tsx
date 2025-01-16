@@ -9,8 +9,7 @@ function AccountBalance({account}: { account: Account }) {
 
     return (
         <Card>
-            <div className="text-white text-lg font-bold mb-4">ACCOUNT BALANCE</div>
-
+            <div className="text-white text-xl font-light uppercase leading-normal mb-4">ACCOUNT BALANCE</div>
             <div className="gap-4 flex items-center">
                 <div className="flex flex-col items-start relative flex-1 grow">
                     {[
@@ -22,14 +21,13 @@ function AccountBalance({account}: { account: Account }) {
                     ].map(({label, value}, index) => (
                         <div
                             key={index}
-                            className="justify-between px-0 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
+                            className="justify-between h-14 px-0 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
                         >
-                            <div className="relative flex-1 flex text-stone-400">
+                            <div className="relative flex-1 flex text-stone-400 text-base font-normal leading-normal">
                                 {label}
-
                                 {label === 'Weekly Net P&L' && <QuestionIcon/>}
                             </div>
-                            <div className="relative w-fit text-white">{value}</div>
+                            <div className="relative w-fit text-white text-base font-bold leading-normal">{value}</div>
                         </div>
                     ))}
                 </div>
@@ -44,10 +42,10 @@ function AccountBalance({account}: { account: Account }) {
                     ].map(({label, value}, index) => (
                         <div
                             key={index}
-                            className="justify-between px-0 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
+                            className="justify-between h-14 px-0 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
                         >
                             <div className="relative flex-1 text-stone-400">{label}</div>
-                            <div className="relative w-fit text-white">{value}</div>
+                            <div className="relative w-fit text-white text-base font-bold leading-normal">{value}</div>
                         </div>
                     ))}
                 </div>
