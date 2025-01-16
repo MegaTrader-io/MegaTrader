@@ -13,6 +13,7 @@ import {CopyButton} from "@/components/CopyButton";
 import Objectives from "@/app/(backoffice)/account-overview/_components/Objectives";
 import {Account} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
+import EyeComponent from "@/components/EyeComponent";
 
 const accounts: Account[] = [
     {
@@ -110,34 +111,35 @@ export default function AccountOverView() {
                     <Image src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue' width={133}
                            height={40}></Image>
 
-                    <div className="inline-flex items-center relative flex-[0_0_auto]">
+                    <div className="inline-flex items-center">
                         <div
-                            className="gap-2 pl-0 pr-4 py-2 border-r [border-right-style:solid] border-neutral-700 inline-flex items-center relative flex-[0_0_auto]">
+                            className="gap-2 pl-0 pr-4 py-2 border-r border-neutral-700 inline-flex items-center relative">
                             <div
-                                className="relative w-fit mt-[-1.00px] font-body-md-light font-[number:var(--body-md-light-font-weight)] text-white text-[length:var(--body-md-light-font-size)] tracking-[var(--body-md-light-letter-spacing)] leading-[var(--body-md-light-line-height)] whitespace-nowrap [font-style:var(--body-md-light-font-style)]">
+                                className="text-white">
                                 Login :
                             </div>
 
                             <div
-                                className="relative w-[154px] mt-[-1.00px] font-body-md-light font-[number:var(--body-md-light-font-weight)] text-stone-400 text-[length:var(--body-md-light-font-size)] text-center tracking-[var(--body-md-light-letter-spacing)] leading-[var(--body-md-light-line-height)] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-line-clamp:1] [-webkit-box-orient:vertical] [font-style:var(--body-md-light-font-style)]">
+                                className="text-stone-400 text-base font-light leading-normal">
                                 {credentials.login}
                             </div>
 
                             <CopyButton value={credentials.login}/>
                         </div>
 
-                        <div className="gap-2 pl-4 pr-0 py-2 inline-flex items-center relative flex-[0_0_auto]">
+                        <div className="gap-2 pl-4 pr-0 py-2 inline-flex items-center">
                             <div
-                                className="relative w-fit mt-[-1.00px] font-body-md-light font-[number:var(--body-md-light-font-weight)] text-white text-[length:var(--body-md-light-font-size)] tracking-[var(--body-md-light-letter-spacing)] leading-[var(--body-md-light-line-height)] whitespace-nowrap [font-style:var(--body-md-light-font-style)]">
+                                className="text-white">
                                 Password :
                             </div>
 
                             <div
-                                className="relative w-fit mt-[-1.00px] font-body-md-light font-[number:var(--body-md-light-font-weight)] text-stone-400 text-[length:var(--body-md-light-font-size)] tracking-[var(--body-md-light-letter-spacing)] leading-[var(--body-md-light-line-height)] whitespace-nowrap [font-style:var(--body-md-light-font-style)]">
+                                className="text-stone-400 text-base font-light leading-normal">
                                 {credentials.password}
                             </div>
 
                             <CopyButton value={credentials.password}/>
+                            <EyeComponent type={'password'} />
                         </div>
                     </div>
                 </div>
