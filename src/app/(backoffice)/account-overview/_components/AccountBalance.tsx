@@ -8,8 +8,8 @@ function AccountBalance({account}: { account: Account }) {
     const {accountBalance} = account;
 
     return (
-        <Card>
-            <div className="text-white text-xl font-light uppercase leading-normal mb-4">ACCOUNT BALANCE</div>
+        <Card className="space-y-4">
+            <div className="text-white text-xl font-light uppercase leading-normal">ACCOUNT BALANCE</div>
             <div className="gap-4 flex items-center">
                 <div className="flex flex-col items-start relative flex-1 grow">
                     {[
