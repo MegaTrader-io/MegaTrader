@@ -112,15 +112,14 @@ export const TooltipTrigger = React.forwardRef<
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
     if (asChild && React.isValidElement(children)) {
-        return React.cloneElement(
-            children,
-            context.getReferenceProps({
-                ref,
-                ...props,
-                ...children.props,
-                "data-state": context.open ? "open" : "closed"
-            })
-        );
+        const mergedProps = {
+            ref,
+            ...props,
+            ...(typeof children.props === "object" ? children.props : {}),
+            "data-state": context.open ? "open" : "closed",
+        } as React.HTMLProps<HTMLElement>;
+
+        return React.cloneElement(children, mergedProps);
     }
 
     return (
