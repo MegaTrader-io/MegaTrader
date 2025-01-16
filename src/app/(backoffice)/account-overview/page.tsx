@@ -2,7 +2,7 @@
 
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
-import React, {useState} from "react";
+import React, {RefObject, useEffect, useRef, useState} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
@@ -57,8 +57,30 @@ const credentials = {
     password: 'pGd031d@hkh&Z~r1'
 }
 
+function toggleSecretValue(secretType: 'password' | 'text', element: HTMLDivElement, value: string) {
+    element.innerText = secretType === 'text' ? value : '•'.repeat(value.length);
+}
+
 export default function AccountOverView() {
+    const defaultMask = 'password';
+    const loginMaskRef = useRef<HTMLDivElement>(null);
+    const passwordMaskRef = useRef<HTMLDivElement>(null);
     const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[0]);
+
+    function handlerToggleSecretsKeys(type: 'password' | 'text') {
+        [
+            {element: loginMaskRef.current, value: credentials.login},
+            {element: passwordMaskRef.current, value: credentials.password}
+        ].forEach(item => {
+            if (item.element) {
+                toggleSecretValue(type, item.element, credentials.login)
+            }
+        })
+    }
+
+    useEffect(() => {
+        handlerToggleSecretsKeys(defaultMask);
+    }, [])
 
     return <>
         <div className="w-full">
@@ -104,7 +126,6 @@ export default function AccountOverView() {
                 </div>
             </Card>
 
-
             <Tooltip>
                 <div
                     className="flex items-center justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">
@@ -120,8 +141,9 @@ export default function AccountOverView() {
                             </div>
 
                             <div
+                                ref={loginMaskRef}
                                 className="text-stone-400 text-base font-light leading-normal">
-                                {credentials.login}
+                                ••••••••••••
                             </div>
 
                             <CopyButton value={credentials.login}/>
@@ -134,12 +156,13 @@ export default function AccountOverView() {
                             </div>
 
                             <div
+                                ref={passwordMaskRef}
                                 className="text-stone-400 text-base font-light leading-normal">
-                                {credentials.password}
+                                ••••••••••••
                             </div>
 
                             <CopyButton value={credentials.password}/>
-                            <EyeComponent type={'password'} />
+                            <EyeComponent type={defaultMask} onChange={handlerToggleSecretsKeys}/>
                         </div>
                     </div>
                 </div>
