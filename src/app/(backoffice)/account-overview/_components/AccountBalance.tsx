@@ -1,7 +1,6 @@
 import React from "react";
 import Card from "@/components/Card";
 import {Account} from "@/commons/interfaces";
-import {formatCurrency} from "@/commons/utils";
 
 function AccountBalance({account}: { account: Account }) {
     const {accountBalance} = account;
@@ -13,11 +12,11 @@ function AccountBalance({account}: { account: Account }) {
             <div className="gap-4 flex items-center">
                 <div className="flex flex-col items-start relative flex-1 grow">
                     {[
-                        {label: "Current Balance", value: formatCurrency(accountBalance.currentBalance)},
-                        {label: "Current Equity", value: formatCurrency(accountBalance.currentEquity)},
-                        {label: "High", value: formatCurrency(accountBalance.high)},
-                        {label: "Low", value: formatCurrency(accountBalance.low)},
-                        {label: "Weekly Net P&L", value: formatCurrency(accountBalance.weeklyNetPnL)}
+                        {label: "Current Balance", value: accountBalance.currentBalance},
+                        {label: "Current Equity", value: accountBalance.currentEquity},
+                        {label: "High", value: accountBalance.high},
+                        {label: "Low", value: accountBalance.low},
+                        {label: "Weekly Net P&L", value: accountBalance.weeklyNetPnL}
                     ].map(({label, value}, index) => (
                         <div
                             key={index}
@@ -32,10 +31,10 @@ function AccountBalance({account}: { account: Account }) {
                 <div className="flex flex-col items-start relative flex-1 grow">
                     {[
                         {label: "Best Day % of Total Profit", value: accountBalance.bestDayPercentage},
-                        {label: "Best Day", value: formatCurrency(accountBalance.bestDay)},
-                        {label: "Worst Day", value: formatCurrency(accountBalance.worstDay)},
+                        {label: "Best Day", value: accountBalance.bestDay},
+                        {label: "Worst Day", value: accountBalance.worstDay},
                         {label: "Avg. Winning Day", value: accountBalance.avgWinningDay},
-                        {label: "Avg. Losing Day", value: formatCurrency(accountBalance.avgLosingDay)}
+                        {label: "Avg. Losing Day", value: accountBalance.avgLosingDay}
                     ].map(({label, value}, index) => (
                         <div
                             key={index}

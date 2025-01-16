@@ -21,16 +21,16 @@ const accounts: Account[] = [
         name: 'S1SEP2586479132',
         active: true,
         accountBalance: {
-            currentBalance: 145166.78,
-            currentEquity: 145166.78,
-            high: 150000,
-            low: 145166.78,
-            weeklyNetPnL: 0,
+            currentBalance: "$145,166.78",
+            currentEquity: "$145,166.78",
+            high: "$150,000",
+            low: "$145,166.78",
+            weeklyNetPnL: "$0",
             bestDayPercentage: "-",
-            bestDay: -73.40,
-            worstDay: -4524.54,
+            bestDay: "-$73.40",
+            worstDay: "-$4,524.54",
             avgWinningDay: "-",
-            avgLosingDay: -1610.7
+            avgLosingDay: "-$1,610.74"
         }
     },
     {
@@ -38,16 +38,16 @@ const accounts: Account[] = [
         name: 'S1SEP2586479133',
         active: false,
         accountBalance: {
-            currentBalance: 32166.78,
-            currentEquity: 32166.78,
-            high: 150000,
-            low: 145166.78,
-            weeklyNetPnL: 0,
+            currentBalance: "$143,166.78",
+            currentEquity: "$143,166.78",
+            high: "$150,000",
+            low: "$145,166.78",
+            weeklyNetPnL: "$0",
             bestDayPercentage: "-",
-            bestDay: -73.40,
-            worstDay: -4524.54,
+            bestDay: "-$73.40",
+            worstDay: "-$4,524.54",
             avgWinningDay: "-",
-            avgLosingDay: -3210.7
+            avgLosingDay: "-$2,610.74"
         }
     },
 ];

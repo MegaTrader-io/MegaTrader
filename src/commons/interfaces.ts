@@ -22,16 +22,16 @@ export type MgProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 export interface AccountBalance {
-    currentBalance: number,
-    currentEquity: number,
-    high: number,
-    low: number,
-    weeklyNetPnL: number,
+    currentBalance: string,
+    currentEquity: string,
+    high: string,
+    low: string,
+    weeklyNetPnL: string,
     bestDayPercentage: string,
-    bestDay: number,
-    worstDay: number,
+    bestDay: string,
+    worstDay: string,
     avgWinningDay: string,
-    avgLosingDay: number
+    avgLosingDay: string
 }
 
 export interface Account {
