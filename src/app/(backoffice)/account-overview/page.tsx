@@ -10,16 +10,46 @@ import Image from "next/image";
 import Badge from "@/components/Badge";
 import Tooltip from "@/app/(backoffice)/account-overview/_components/Tooltip";
 import {CopyButton} from "@/components/CopyButton";
+import Objectives from "@/app/(backoffice)/account-overview/_components/Objectives";
+import {Account} from "@/commons/interfaces";
+import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 
-interface Account {
-    id: number
-    name: string
-    active: boolean
-}
 
 const accounts: Account[] = [
-    {id: 1, name: 'S1SEP2586479132', active: true},
-    {id: 2, name: 'S1SEP2586479133', active: false},
+    {
+        id: 1,
+        name: 'S1SEP2586479132',
+        active: true,
+        accountBalance: {
+            currentBalance: 145166.78,
+            currentEquity: 145166.78,
+            high: 150000,
+            low: 145166.78,
+            weeklyNetPnL: 0,
+            bestDayPercentage: "-",
+            bestDay: -73.40,
+            worstDay: -4524.54,
+            avgWinningDay: "-",
+            avgLosingDay: -1610.7
+        }
+    },
+    {
+        id: 2,
+        name: 'S1SEP2586479133',
+        active: false,
+        accountBalance: {
+            currentBalance: 32166.78,
+            currentEquity: 32166.78,
+            high: 150000,
+            low: 145166.78,
+            weeklyNetPnL: 0,
+            bestDayPercentage: "-",
+            bestDay: -73.40,
+            worstDay: -4524.54,
+            avgWinningDay: "-",
+            avgLosingDay: -3210.7
+        }
+    },
 ];
 
 const credentials = {
@@ -28,7 +58,7 @@ const credentials = {
 }
 
 export default function AccountOverView() {
-    const [selectedAccount, setSelectedAccount] = useState(accounts[0]);
+    const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[0]);
 
     return <>
         <div className="w-full">
@@ -113,6 +143,11 @@ export default function AccountOverView() {
                     </div>
                 </div>
             </Tooltip>
+        </div>
+
+        <div className="grid grid-cols-[827px_auto] gap-4 w-full">
+            <AccountBalance account={selectedAccount}/>
+            <Objectives/>
         </div>
     </>
 }

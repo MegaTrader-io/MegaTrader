@@ -20,3 +20,23 @@ export interface SymbolMarketData {
 export type MgProps = React.HTMLAttributes<HTMLDivElement> & {
     children: React.ReactNode;
 };
+
+export interface AccountBalance {
+    currentBalance: number,
+    currentEquity: number,
+    high: number,
+    low: number,
+    weeklyNetPnL: number,
+    bestDayPercentage: string,
+    bestDay: number,
+    worstDay: number,
+    avgWinningDay: string,
+    avgLosingDay: number
+}
+
+export interface Account {
+    id: number
+    name: string
+    active: boolean,
+    accountBalance: AccountBalance
+}
