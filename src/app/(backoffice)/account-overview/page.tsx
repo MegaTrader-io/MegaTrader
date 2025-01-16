@@ -159,5 +159,22 @@ export default function AccountOverView() {
             <AccountBalance account={selectedAccount}/>
             <Objectives/>
         </div>
+
+
+        <Card className="w-full">
+            <div className="flex justify-between">
+                <div className="text-white text-xl font-light uppercase leading-normal flex items-center gap-1">
+                    PRO PLAN $150K <Image className="inline" src={'/assets/images/question-icon.svg'}
+                                          alt={'question icon'} width={24} height={24}></Image></div>
+
+                <div>
+                    <select name="period" className="text-neutral-50 text-base h-12 pl-4 pr-3 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex">
+                        <option value="last_10_days">LAST 10 DAYS</option>
+                    </select>
+                </div>
+            </div>
+
+
+        </Card>
     </>
 }
