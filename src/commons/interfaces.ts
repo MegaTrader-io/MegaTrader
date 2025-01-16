@@ -1,4 +1,3 @@
-
 export interface PlanInterface {
     id: number
     level: string
@@ -39,4 +38,9 @@ export interface Account {
     name: string
     active: boolean,
     accountBalance: AccountBalance
+}
+
+export interface Period {
+    id: string
+    text: string
 }

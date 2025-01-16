@@ -11,7 +11,7 @@ import Badge from "@/components/Badge";
 import Tooltip from "@/app/(backoffice)/account-overview/_components/Tooltip";
 import {CopyButton} from "@/components/CopyButton";
 import Objectives from "@/app/(backoffice)/account-overview/_components/Objectives";
-import {Account} from "@/commons/interfaces";
+import {Account, Period} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 import EyeComponent from "@/components/EyeComponent";
 import useToggleSecretsKeys from "@/hooks/useToggleSecretsKeys";
@@ -59,10 +59,16 @@ const credentials = {
     password: 'pGd031d@hkh&Z~r1'
 }
 
+const periods: Period[] = [
+    {id: 'last_10_days', text: 'LAST 10 DAYS'},
+    {id: 'last_30_days', text: 'LAST 30 DAYS'},
+    {id: 'last_60_days', text: 'LAST 60 DAYS'},
+]
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
     const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[0]);
+    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
     const {toggleMask, currentMask} = useToggleSecretsKeys([
         {element: passwordMaskRef.current, value: credentials.password},
     ]);
@@ -166,9 +172,22 @@ export default function AccountOverView() {
                                           alt={'question icon'} width={24} height={24}></Image></div>
 
                 <div>
-                    <Select name="period">
-                        <option value="last_10_days">LAST 10 DAYS</option>
-                    </Select>
+                    <Dropdown
+                        items={periods}
+                        value={selectPeriod}
+                        onChange={setSelectPeriod}
+                        renderButtonContent={(item) => (
+                            <div className="flex gap-2 items-center">
+                                <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
+                                <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
+                            </div>
+                        )}
+                        renderOptionContent={(item) => (
+                            <>
+                                <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
+                            </>
+                        )}
+                    />
                 </div>
             </div>
 
