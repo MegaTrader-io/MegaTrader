@@ -11,7 +11,8 @@ import {
     useRole,
     useInteractions,
     useMergeRefs,
-    FloatingPortal
+    FloatingPortal,
+    arrow
 } from "@floating-ui/react";
 import type {Placement} from "@floating-ui/react";
 
@@ -33,19 +34,22 @@ export function useTooltip({
     const open = controlledOpen ?? uncontrolledOpen;
     const setOpen = setControlledOpen ?? setUncontrolledOpen;
 
+    const arrowRef = React.useRef<HTMLDivElement | null>(null);
+
     const data = useFloating({
         placement,
         open,
         onOpenChange: setOpen,
         whileElementsMounted: autoUpdate,
         middleware: [
-            offset(5),
+            offset(12),
             flip({
                 crossAxis: placement.includes("-"),
                 fallbackAxisSideDirection: "start",
                 padding: 5
             }),
-            shift({padding: 5})
+            shift({padding: 5}),
+            arrow({element: arrowRef})
         ]
     });
 
@@ -67,6 +71,7 @@ export function useTooltip({
         () => ({
             open,
             setOpen,
+            arrowRef,
             ...interactions,
             ...data
         }),
@@ -92,13 +97,9 @@ export function Tooltip({
                             children,
                             ...options
                         }: { children: React.ReactNode } & TooltipOptions) {
-    // This can accept any props as options, e.g. `placement`,
-    // or other positioning options.
     const tooltip = useTooltip(options);
     return (
-        <TooltipContext.Provider value={tooltip}>
-            {children}
-        </TooltipContext.Provider>
+        <TooltipContext.Provider value={tooltip}>{children}</TooltipContext.Provider>
     );
 }
 
@@ -110,7 +111,6 @@ export const TooltipTrigger = React.forwardRef<
     const childrenRef = (children as any).ref;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
-    // `asChild` allows the user to pass any element as the anchor
     if (asChild && React.isValidElement(children)) {
         return React.cloneElement(
             children,
@@ -126,7 +126,6 @@ export const TooltipTrigger = React.forwardRef<
     return (
         <button
             ref={ref}
-            // The user can style the trigger based on the state
             data-state={context.open ? "open" : "closed"}
             {...context.getReferenceProps(props)}
         >
@@ -153,7 +152,39 @@ export const TooltipContent = React.forwardRef<
                     ...style
                 }}
                 {...context.getFloatingProps(props)}
-            />
+                className="px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400"
+            >
+                {props.children}
+                <div
+                    ref={context.arrowRef}
+                    className="absolute -bottom-2"
+                    style={{
+                        left: context.middlewareData.arrow?.x ? context.middlewareData.arrow?.x + 1 : '',
+                        bottom: context.middlewareData.arrow?.y ?? ''
+                    }}
+                >
+                    <svg width="16" height="10" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g filter="url(#filter0_d_4674_1364)">
+                            <path d="M8 8L16 0H0L8 8Z" fill="black"/>
+                        </g>
+                        <defs>
+                            <filter id="filter0_d_4674_1364" x="0" y="0" width="16" height="10"
+                                    filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                                <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+                                <feColorMatrix in="SourceAlpha" type="matrix"
+                                               values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                                <feOffset dy="2"/>
+                                <feComposite in2="hardAlpha" operator="out"/>
+                                <feColorMatrix type="matrix"
+                                               values="0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 1 0"/>
+                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_4674_1364"/>
+                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_4674_1364"
+                                         result="shape"/>
+                            </filter>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
         </FloatingPortal>
     );
 });
