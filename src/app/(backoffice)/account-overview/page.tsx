@@ -14,6 +14,7 @@ import Objectives from "@/app/(backoffice)/account-overview/_components/Objectiv
 import {Account} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 import EyeComponent from "@/components/EyeComponent";
+import useToggleSecretsKeys from "@/hooks/useToggleSecretsKeys";
 
 const accounts: Account[] = [
     {
@@ -57,30 +58,15 @@ const credentials = {
     password: 'pGd031d@hkh&Z~r1'
 }
 
-function toggleSecretValue(secretType: 'password' | 'text', element: HTMLDivElement, value: string) {
-    element.innerText = secretType === 'text' ? value : '•'.repeat(value.length);
-}
 
 export default function AccountOverView() {
-    const defaultMask = 'password';
     const loginMaskRef = useRef<HTMLDivElement>(null);
     const passwordMaskRef = useRef<HTMLDivElement>(null);
     const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[0]);
-
-    function handlerToggleSecretsKeys(type: 'password' | 'text') {
-        [
-            {element: loginMaskRef.current, value: credentials.login},
-            {element: passwordMaskRef.current, value: credentials.password}
-        ].forEach(item => {
-            if (item.element) {
-                toggleSecretValue(type, item.element, credentials.login)
-            }
-        })
-    }
-
-    useEffect(() => {
-        handlerToggleSecretsKeys(defaultMask);
-    }, [])
+    const {toggleMask, currentMask} = useToggleSecretsKeys([
+        {element: loginMaskRef.current, value: credentials.login},
+        {element: passwordMaskRef.current, value: credentials.password},
+    ]);
 
     return <>
         <div className="w-full">
@@ -149,7 +135,7 @@ export default function AccountOverView() {
                             <CopyButton value={credentials.login}/>
                         </div>
 
-                        <div className="gap-2 pl-4 pr-0 py-2 inline-flex items-center">
+                        <div className="gap-2 pl-4 pr-0 py-2 inline-flex items-center text-white">
                             <div
                                 className="text-white">
                                 Password :
@@ -162,7 +148,7 @@ export default function AccountOverView() {
                             </div>
 
                             <CopyButton value={credentials.password}/>
-                            <EyeComponent type={defaultMask} onChange={handlerToggleSecretsKeys}/>
+                            <EyeComponent type={currentMask} onChange={toggleMask}/>
                         </div>
                     </div>
                 </div>
