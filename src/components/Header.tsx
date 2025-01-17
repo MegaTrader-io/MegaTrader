@@ -18,7 +18,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return <div
-        className={`w-full z-50 transition-all duration-300 ${isMenuOpen ? 'bg-[#131210]' : 'bg-[#131210]/70'} shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-[25px]`}>
+        className={`sticky top-0 w-full z-50 transition-all duration-300 ${isMenuOpen ? 'bg-[#131210]' : 'bg-[#131210]/70'} shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-[25px]`}>
         <div className="w-full max-w-7xl mx-auto px-4 py-6 flex items-center justify-between lg:h-[100px]">
             {/* Logo */}
             <div className="w-auto">
