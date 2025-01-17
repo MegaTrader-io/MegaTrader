@@ -7,7 +7,6 @@ import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
-import Badge from "@/components/Badge";
 import Tooltip from "@/app/(backoffice)/account-overview/_components/Tooltip";
 import {CopyButton} from "@/components/CopyButton";
 import Objectives from "@/app/(backoffice)/account-overview/_components/Objectives";
