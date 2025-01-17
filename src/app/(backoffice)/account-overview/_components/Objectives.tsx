@@ -36,27 +36,29 @@ function Objectives() {
                         <CheckCircleIcon className="w-6 h-6 text-primary"/>
                     </div>
                     <div>
-                        <div className="flex flex-col">
+                        <div>
                             <div className="text-white text-base font-light leading-normal">Best day cannot be greater
                                 than 50% of your
-                                total profit
+                                total profit.<span
+                                    className="ml-2 text-mgt-link text-xs font-normal underline leading-tight">Consistency Target
+                            </span>
                             </div>
-                            <div
-                                className="text-mgt-link text-xs font-normal underline leading-tight">Consistency Target
-                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
             <div className="text-white text-xl font-light uppercase leading-normal">RULE</div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 ">
                 <div className="flex items-center">
                     <XCircleIcon className="w-6 h-6 text-mgt-error"/>
                 </div>
                 <div>
                     <div className="flex flex-col">
-                        <div className="text-white text-base font-light leading-normal">Do not let your account balance hit or go below $145,500</div>
-                        <div className="text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</div>
+                        <div className="text-white text-base font-light leading-normal">Do not let your account balance
+                            hit or go below $145,500. <span className="ml-2 text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</span>
+                        </div>
+
                     </div>
                 </div>
             </div>
