@@ -7,7 +7,7 @@ const Layout = ({children,}: {
 }) => {
     return <>
         <Header/>
-        <main className="w-full max-w-7xl mx-auto px-4 my-5 flex items-center justify-between flex-col space-y-8">
+        <main className="w-full max-w-7xl mx-auto px-4 py-8 flex items-center justify-between flex-col space-y-8">
             {children}
         </main>
         <Footer/>
