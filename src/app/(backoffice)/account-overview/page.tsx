@@ -11,63 +11,17 @@ import Badge from "@/components/Badge";
 import Tooltip from "@/app/(backoffice)/account-overview/_components/Tooltip";
 import {CopyButton} from "@/components/CopyButton";
 import Objectives from "@/app/(backoffice)/account-overview/_components/Objectives";
-import {Account, Period} from "@/commons/interfaces";
+import {Account} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 import EyeComponent from "@/components/EyeComponent";
 import useToggleSecretsKeys from "@/hooks/useToggleSecretsKeys";
-
-const accounts: Account[] = [
-    {
-        id: 1,
-        name: 'S1SEP2586479132',
-        active: true,
-        accountBalance: {
-            currentBalance: "$145,166.78",
-            currentEquity: "$145,166.78",
-            high: "$150,000",
-            low: "$145,166.78",
-            weeklyNetPnL: "$0",
-            bestDayPercentage: "-",
-            bestDay: "-$73.40",
-            worstDay: "-$4,524.54",
-            avgWinningDay: "-",
-            avgLosingDay: "-$1,610.74"
-        }
-    },
-    {
-        id: 2,
-        name: 'S1SEP2586479133',
-        active: false,
-        accountBalance: {
-            currentBalance: "$143,166.78",
-            currentEquity: "$143,166.78",
-            high: "$150,000",
-            low: "$145,166.78",
-            weeklyNetPnL: "$0",
-            bestDayPercentage: "-",
-            bestDay: "-$73.40",
-            worstDay: "-$4,524.54",
-            avgWinningDay: "-",
-            avgLosingDay: "-$2,610.74"
-        }
-    },
-];
-
-const credentials = {
-    login: 'pGd031d@hkh&Z~r1',
-    password: 'pGd031d@hkh&Z~r1'
-}
-
-const periods: Period[] = [
-    {id: 'last_10_days', text: 'LAST 10 DAYS'},
-    {id: 'last_30_days', text: 'LAST 30 DAYS'},
-    {id: 'last_60_days', text: 'LAST 60 DAYS'},
-]
+import {accounts, credentials} from "@/commons/data";
+import ProPlanChart from "@/app/(backoffice)/account-overview/_components/ProPlanChart";
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
     const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[0]);
-    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
+
     const {toggleMask, currentMask} = useToggleSecretsKeys([
         {element: passwordMaskRef.current, value: credentials.password},
     ]);
@@ -163,35 +117,6 @@ export default function AccountOverView() {
             <Objectives/>
         </div>
 
-
-        <Card className="w-full space-y-4">
-            <div className="flex justify-between">
-                <div className="text-white text-xl font-light uppercase leading-normal flex items-center gap-1">
-                    PRO PLAN $150K <Image className="inline" src={'/assets/images/question-icon.svg'}
-                                          alt={'question icon'} width={24} height={24}></Image></div>
-
-                <div>
-                    <Dropdown
-                        items={periods}
-                        value={selectPeriod}
-                        onChange={setSelectPeriod}
-                        renderButtonContent={(item) => (
-                            <div className="flex gap-2 items-center">
-                                <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
-                                <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
-                            </div>
-                        )}
-                        renderOptionContent={(item) => (
-                            <>
-                                <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
-                            </>
-                        )}
-                    />
-                </div>
-            </div>
-
-            <div className="bg-gray-600 w-full h-[389px] rounded">
-            </div>
-        </Card>
+        <ProPlanChart/>
     </>
 }

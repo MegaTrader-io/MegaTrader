@@ -12,11 +12,13 @@
     "@floating-ui/react": "^0.27.3",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "apexcharts": "^4.3.0",
     "clipboard": "^2.0.11",
     "framer-motion": "^11.14.4",
     "next": "15.1.2",
     "node-cache": "^5.1.2",
     "react": "^19.0.0",
+    "react-apexcharts": "^1.7.0",
     "react-dom": "^19.0.0",
     "tailwind-clip-path": "^1.0.0"
   },
