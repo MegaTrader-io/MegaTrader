@@ -4,7 +4,7 @@ export const accounts: Account[] = [
     {
         id: 1,
         name: 'S1SEP2586479132',
-        active: true,
+        status: 'active',
         accountBalance: {
             currentBalance: "$145,166.78",
             currentEquity: "$145,166.78",
@@ -20,8 +20,25 @@ export const accounts: Account[] = [
     },
     {
         id: 2,
-        name: 'S1SEP2586479133',
-        active: false,
+        name: 'SHYE36496NCHG33',
+        status: 'inactive',
+        accountBalance: {
+            currentBalance: "$143,166.78",
+            currentEquity: "$143,166.78",
+            high: "$150,000",
+            low: "$145,166.78",
+            weeklyNetPnL: "$0",
+            bestDayPercentage: "-",
+            bestDay: "-$73.40",
+            worstDay: "-$4,524.54",
+            avgWinningDay: "-",
+            avgLosingDay: "-$2,610.74"
+        }
+    },
+    {
+        id: 3,
+        name: 'NJHA810003BGW33',
+        status: 'breach',
         accountBalance: {
             currentBalance: "$143,166.78",
             currentEquity: "$143,166.78",

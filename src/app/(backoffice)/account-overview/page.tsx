@@ -17,6 +17,7 @@ import EyeComponent from "@/components/EyeComponent";
 import useToggleSecretsKeys from "@/hooks/useToggleSecretsKeys";
 import {accounts, credentials} from "@/commons/data";
 import ProPlanChart from "@/app/(backoffice)/account-overview/_components/ProPlanChart";
+import AccountStatus from "@/app/(backoffice)/account-overview/_components/AccountStatus";
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
@@ -36,17 +37,14 @@ export default function AccountOverView() {
                         onChange={setSelectedAccount}
                         renderButtonContent={(item) => (
                             <div className="flex gap-2 items-center">
-                                <Badge shape="pill"
-                                       variant={item.active ? 'secondary' : 'error'}>{item.active ? 'ACTIVE' : 'INACTIVE'}
-                                </Badge>
+                                <AccountStatus status={item.status}/>
                                 <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
                                 <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
                             </div>
                         )}
                         renderOptionContent={(item) => (
                             <>
-                                <Badge shape="pill"
-                                       variant={item.active ? 'secondary' : 'error'}>{item.active ? 'ACTIVE' : 'INACTIVE'}</Badge>
+                                <AccountStatus status={item.status}/>
                                 <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
                             </>
                         )}
@@ -69,7 +67,6 @@ export default function AccountOverView() {
                     </Button>
                 </div>
             </Card>
-
             <Tooltip>
                 <div
                     className="flex items-center justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">

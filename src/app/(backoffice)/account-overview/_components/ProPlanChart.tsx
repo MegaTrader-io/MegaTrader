@@ -83,7 +83,7 @@ const chartConfig = {
                 show: true,
             },
             y: {
-                formatter: (value: number) => `$${value.toFixed(2)}`, // Mostrar valores con formato
+                formatter: (value: number) => `$ ${value.toFixed(2)}`, // Mostrar valores con formato
             },
         },
     } as ApexOptions,
