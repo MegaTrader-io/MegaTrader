@@ -1,6 +1,5 @@
 import React from 'react';
 import Card from "@/components/Card";
-import {ArrowDownIcon} from "@heroicons/react/24/outline";
 
 function FeatureContent() {
     return (
