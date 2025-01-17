@@ -29,13 +29,13 @@ export default function AccountOverView() {
     return <>
         <div className="w-full">
             <Card className="w-full grid grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
-                <div className="w-[256px]">
+                <div className="w-[271px]">
                     <Dropdown
                         items={accounts}
                         value={selectedAccount}
                         onChange={setSelectedAccount}
                         renderButtonContent={(item) => (
-                            <div className="flex gap-2 items-center">
+                            <div className="grid grid-cols-[auto_auto_24px] gap-2">
                                 <AccountStatus status={item.status}/>
                                 <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
                                 <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
