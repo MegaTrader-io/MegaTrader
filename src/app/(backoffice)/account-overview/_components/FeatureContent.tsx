@@ -8,9 +8,9 @@ function FeatureContent() {
 
 
                 <div
-                    className="inline-flex items-center justify-center gap-2 px-3 py-1 relative bg-stone-800 rounded-2xl">
+                    className="px-3 py-1 gap-2 inline-flex items-center justify-center    bg-stone-800 rounded-2xl">
                     <div
-                        className="text-white">
+                        className="text-xs font-medium text-white uppercase leading-normal">
                         AVG. PROFITABILITY PER TRADE
                     </div>
 
@@ -26,9 +26,10 @@ function FeatureContent() {
                         </g>
                     </svg>
 
-                    <div className="flex items-center gap-1 relative">
+                    <div className="flex items-center gap-1">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <mask id="mask0_4398_10486" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <mask id="mask0_4398_10486" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
+                                  y="0" width="24" height="24">
                                 <rect width="24" height="24" fill="#D9D9D9"/>
                             </mask>
                             <g mask="url(#mask0_4398_10486)">
