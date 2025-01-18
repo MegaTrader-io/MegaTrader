@@ -63,9 +63,8 @@ function FeatureContent() {
                     <QuestionIcon className="text-white"/>
                 </div>
 
-
-                <div className="h-[328px] justify-between grid grid-cols-[288px_288px_288px] w-full">
-                    <div className="gap-2 flex  flex-col">
+                <div className="h-[328px] justify-between grid grid-cols-[288px_288px_288px] w-full px-4">
+                    <div className="gap-2 flex flex-col">
                         <div className="flex gap-2 justify-center">
                             <span className="text-stone-400 text-base font-normal">Avg. Winning Trade</span>
                             <ExclamationIcon className="text-[#d9d9d9]"/>
