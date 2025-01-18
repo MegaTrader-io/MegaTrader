@@ -1,8 +1,11 @@
+'use client'
+
 import React, {useState} from 'react';
 import Card from "@/components/Card";
 import QuestionIcon from "@/components/QuestionIcon";
 import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
+import ChartGauge from "@/app/(backoffice)/account-overview/_components/ChartGauge";
 
 
 const Options = [
@@ -70,8 +73,8 @@ function FeatureContent() {
                             <ExclamationIcon className="text-[#d9d9d9]"/>
                         </div>
 
-                        <div className="bg-gray-600 h-72 justify-center items-center flex">
-                            chart
+                        <div className="h-72 justify-center items-center flex">
+                            <ChartGauge />
                         </div>
                     </div>
                     <div className="gap-2 flex  flex-col">

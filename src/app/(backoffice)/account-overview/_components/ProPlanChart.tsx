@@ -56,11 +56,11 @@ const chartConfig = {
                     fontWeight: 400,
                 },
             },
-            categories: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18], // Intervalos del eje X
+            categories: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18],
         },
         yaxis: {
             labels: {
-                formatter: (value: number) => `$${value}`, // Formato en dólares
+                formatter: (value: number) => `$${value}`,
                 style: {
                     colors: "#A8A29E",
                     fontSize: "12px",
@@ -71,7 +71,7 @@ const chartConfig = {
         },
         grid: {
             show: true,
-            borderColor: "#374151", // Color del grid para alinearse con el fondo oscuro
+            borderColor: "#374151",
             strokeDashArray: 5,
         },
         fill: {
@@ -83,7 +83,7 @@ const chartConfig = {
                 show: true,
             },
             y: {
-                formatter: (value: number) => `$ ${value.toFixed(2)}`, // Mostrar valores con formato
+                formatter: (value: number) => `$ ${value.toFixed(2)}`,
             },
         },
     } as ApexOptions,
