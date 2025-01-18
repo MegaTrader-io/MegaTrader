@@ -74,7 +74,7 @@ function FeatureContent() {
                         </div>
 
                         <div className="h-72 justify-center items-center flex">
-                            <ChartGauge />
+                            <ChartGauge value={137.37} maxValue={1083.00}/>
                         </div>
                     </div>
                     <div className="gap-2 flex  flex-col">
