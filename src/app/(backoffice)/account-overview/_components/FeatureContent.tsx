@@ -1,6 +1,5 @@
 import React from 'react';
 import Card from "@/components/Card";
-import Image from "next/image";
 import QuestionIcon from "@/components/QuestionIcon";
 
 function FeatureContent() {
