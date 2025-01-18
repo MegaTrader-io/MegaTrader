@@ -11,6 +11,7 @@ interface ButtonProps {
     icon?: Icon;
     iconPosition?: IconPosition;
     size?: 'md' | 'sm';
+    onClick?: () => void;
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -22,10 +23,12 @@ export const Button: FC<ButtonProps> = ({
                                             className = '',
                                             icon,
                                             iconPosition,
-                                            size = 'md'
+                                            size = 'md',
+                                            onClick
                                         }) => {
     return (
         <BaseButton
+            onClick={onClick}
             type={type}
             variant={variant}
             styleType={styleType}
