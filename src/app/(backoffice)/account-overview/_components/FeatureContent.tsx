@@ -1,10 +1,28 @@
 import React from 'react';
 import Card from "@/components/Card";
 import QuestionIcon from "@/components/QuestionIcon";
+import {Button} from "@/components/Button";
 
 function FeatureContent() {
     return (
         <div className="w-full space-y-4">
+            <div className="flex gap-2">
+                <Button>
+                    Overview
+                </Button>
+                <Button variant={"dark"}>
+                    E-mini S&P 500
+                </Button>
+                <Button variant={"dark"}>
+                    British pound
+                </Button>
+                <Button variant={"dark"}>
+                    Micro E-mini nasdaq 100
+                </Button>
+                <Button variant={"dark"}>
+                    Micro Australian
+                </Button>
+            </div>
             <Card className="w-full space-y-4">
                 <div className="flex justify-between">
                     <div
@@ -46,10 +64,6 @@ function FeatureContent() {
 
                     <QuestionIcon className="text-white"/>
                 </div>
-
-
-
-
             </Card>
         </div>
     );
