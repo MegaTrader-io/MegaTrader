@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState} from "react";
 import dynamic from "next/dynamic";
 import {ApexOptions} from "apexcharts";
 
@@ -8,61 +8,71 @@ function convertAvgWinningTraderValue(value: number, maxValue: number) {
     return (value * 100) / maxValue;
 }
 
-function ChartGauge({value, maxValue}: { value: number, maxValue: number }) {
+function ChartGauge({value, maxValue}: { value: number; maxValue: number }) {
     const [chartConfig] = useState({
         series: [convertAvgWinningTraderValue(value, maxValue)],
         options: {
             chart: {
                 height: 350,
-                type: 'radialBar',
-                offsetY: -10
+                type: "radialBar",
+                offsetY: -10,
             },
+            colors: ["#FFB34A"], // Color base del inicio de la barra
             plotOptions: {
                 radialBar: {
                     startAngle: -135,
                     endAngle: 135,
-                    dataLabels: {
-                        name: {
-                            fontSize: '16px',
-                            color: undefined,
-                            offsetY: 120
-                        },
-                        value: {
-                            offsetY: 30,
-                            fontSize: '20px',
-                            fontWeight: 300,
-                            color: '#FFB34A',
-                            lineHeight: 24,
-                            formatter: function () {
-                                return `$${value.toFixed(2)}`
-                            }
-                        },
+                    hollow: {
+                        size: "55%",
+                        background: "transparent",
                     },
                     track: {
-                        background: '#292525'
-                    }
-                }
+                        background: "#292525", // Color del track inactivo
+                        strokeWidth: "100%",
+                    },
+                    dataLabels: {
+                        showOn: "always",
+                        name: {
+                            show: false,
+                        },
+                        value: {
+                            offsetY: 10,
+                            fontSize: "24px",
+                            fontWeight: 500,
+                            color: "#FFB34A",
+                            formatter: function () {
+                                return `$${value.toFixed(2)}`;
+                            },
+                        },
+                    },
+                },
             },
             fill: {
-                type: 'gradient',
+                type: "gradient",
                 gradient: {
-                    shade: 'dark',
-                    shadeIntensity: 0.15,
-                    inverseColors: false,
+                    shade: "dark",
+                    type: "vertical",
+                    gradientToColors: ["#2DD4BF"],
+                    shadeIntensity: 1,
                     opacityFrom: 1,
                     opacityTo: 1,
-                    stops: [0, 13, 37]
+                    stops: [0, 100],
                 },
             },
             stroke: {
-                dashArray: 4
+                lineCap: "round", // Estilo redondeado en los extremos de la barra
             },
-            labels: [''],
+            labels: [value.toString()],
         } as ApexOptions,
-    })
+    });
 
     return (
-        <ReactApexChart options={chartConfig.options} series={chartConfig.series} type="radialBar" height={'100%'}/>
+        <ReactApexChart
+            options={chartConfig.options}
+            series={chartConfig.series}
+            type="radialBar"
+            height={350}
+        />
     );
 }
 
