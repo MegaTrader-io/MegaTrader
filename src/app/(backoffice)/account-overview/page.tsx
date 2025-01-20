@@ -18,6 +18,7 @@ import {accounts, credentials} from "@/commons/data";
 import ProPlanChart from "@/app/(backoffice)/account-overview/_components/ProPlanChart";
 import AccountStatus from "@/app/(backoffice)/account-overview/_components/AccountStatus";
 import FeatureContent from "@/app/(backoffice)/account-overview/_components/FeatureContent";
+import DailyJournal from "@/app/(backoffice)/account-overview/_components/DailyJournal";
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
@@ -116,5 +117,6 @@ export default function AccountOverView() {
 
         <ProPlanChart/>
         <FeatureContent/>
+        <DailyJournal />
     </>
 }
