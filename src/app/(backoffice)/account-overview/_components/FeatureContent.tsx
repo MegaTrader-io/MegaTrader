@@ -5,7 +5,6 @@ import Card from "@/components/Card";
 import QuestionIcon from "@/components/QuestionIcon";
 import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
-import ChartGauge from "@/app/(backoffice)/account-overview/_components/ChartGauge";
 import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 
 
