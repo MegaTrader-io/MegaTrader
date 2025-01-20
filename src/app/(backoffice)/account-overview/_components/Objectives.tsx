@@ -10,7 +10,7 @@ function Objectives() {
             <div className="space-y-2">
                 <div className="flex gap-2">
                     <div className="flex items-center">
-                        <CheckCircleIcon className="w-6 h-6 text-primary"/>
+                        <CheckCircleIcon className="w-6 h-6 text-secondary"/>
                     </div>
                     <div>
                         <div className="gap-2 flex items-center">
@@ -21,11 +21,11 @@ function Objectives() {
                         </div>
                         <div aria-hidden="true" className="my-2">
                             <div className="overflow-hidden rounded-full bg-neutral-700">
-                                <div style={{width: '37.5%'}} className="h-2 bg-primary"/>
+                                <div style={{width: '37.5%'}} className="h-2 bg-secondary"/>
                             </div>
                         </div>
                         <div className="text-base font-light text-right">
-                            <span className="text-primary">$2,900</span>
+                            <span className="text-secondary">$2,900</span>
                             <span className="text-stone-400 mx-1">/</span>
                             <span className="text-stone-400">$9,000</span>
                         </div>
@@ -33,7 +33,7 @@ function Objectives() {
                 </div>
                 <div className="flex gap-2">
                     <div className="flex items-center">
-                        <CheckCircleIcon className="w-6 h-6 text-primary"/>
+                        <CheckCircleIcon className="w-6 h-6 text-secondary"/>
                     </div>
                     <div>
                         <div>
