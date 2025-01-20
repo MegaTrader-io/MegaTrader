@@ -95,9 +95,9 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerVa
                 x="45"
                 y="270"
                 textAnchor="middle"
-                fontSize="14"
+                fontSize="16"
                 fill="#A8A29E"
-                fontWeight="bold"
+                fontWeight="400"
             >
                 {minValue}
             </text>
@@ -105,9 +105,9 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerVa
                 x="235"
                 y="270"
                 textAnchor="middle"
-                fontSize="14"
+                fontSize="16"
                 fill="#A8A29E"
-                fontWeight="bold"
+                fontWeight="400"
             >
                 {maxValue}
             </text>
