@@ -78,8 +78,8 @@ const Button: React.FC<ButtonProps> = ({
             text: 'text-primary hover:text-yellow-600 hover:bg-yellow-100 focus:ring-primary',
         },
         secondary: {
-            filled: 'bg-teal-500 hover:bg-teal-600 text-white focus:ring-teal-500',
-            text: 'text-teal-500 hover:text-teal-600 hover:bg-teal-100 focus:ring-teal-500',
+            filled: 'bg-secondary hover:bg-teal-600 text-white focus:ring-secondary',
+            text: 'text-secondary hover:text-teal-600 hover:bg-teal-100 focus:ring-secondary',
         },
         light: {
             filled: 'bg-white hover:bg-gray-100 text-gray-900 focus:ring-gray-300',

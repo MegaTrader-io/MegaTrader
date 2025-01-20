@@ -38,7 +38,7 @@ const BaseBadge = ({
             bgColor: 'bg-primary',
         },
         secondary: {
-            bgColor: 'bg-teal-500',
+            bgColor: 'bg-secondary',
         },
         error: {
             bgColor: 'bg-rose-500',
