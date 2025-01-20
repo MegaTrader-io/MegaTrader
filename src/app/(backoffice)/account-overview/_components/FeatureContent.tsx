@@ -74,7 +74,12 @@ function FeatureContent() {
                         </div>
 
                         <div className="h-72 w-full justify-center items-center flex">
-                            <GaugeSVG value={12.68} />
+                            <GaugeSVG
+                                value={12.68}
+                                minValue={'2.60'}
+                                maxValue={'1,083.00'}
+                                centerValue="$137.37"
+                            />
                         </div>
                     </div>
                     <div className="gap-2 flex  flex-col">
@@ -83,7 +88,12 @@ function FeatureContent() {
                             <ExclamationIcon className="text-[#d9d9d9]"/>
                         </div>
                         <div className="h-72 justify-center items-center flex">
-                            <GaugeSVG value={30}/>
+                            <GaugeSVG
+                                value={30}
+                                minValue={'0'}
+                                maxValue={'100'}
+                                centerValue="30%"
+                            />
                         </div>
                     </div>
                     <div className="gap-2 flex  flex-col">
@@ -93,7 +103,12 @@ function FeatureContent() {
                         </div>
 
                         <div className="h-72 justify-center items-center flex">
-                            <GaugeSVG value={4.805603398782868}/>
+                            <GaugeSVG
+                                value={4.805603398782868}
+                                minValue={'-3.24'}
+                                maxValue={'-4,354.50'}
+                                centerValue="-$209.26"
+                            />
                         </div>
                     </div>
                 </div>

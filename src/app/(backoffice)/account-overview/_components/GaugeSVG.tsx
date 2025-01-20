@@ -2,9 +2,12 @@ import React from "react";
 
 type GaugeSVGProps = {
     value: number; // Valor actual (de 0 a 100)
+    minValue: string; // Valor mínimo
+    maxValue: string; // Valor máximo
+    centerValue: string; // Valor que aparece en el centro
 };
 
-const GaugeSVG: React.FC<GaugeSVGProps> = ({ value }) => {
+const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerValue }) => {
     // Calcular el ángulo para la aguja basado en el valor (de -135° a 135°)
     const calculateNeedleRotation = (val: number): number => {
         const minAngle = -135; // Ángulo mínimo
@@ -76,6 +79,38 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value }) => {
                     fill="#FFB34A"
                 />
             </g>
+
+            {/* Valores de texto */}
+            <text
+                x="144"
+                y="200"
+                textAnchor="middle"
+                fontSize="20"
+                fill="#FFB34A"
+                fontWeight="300"
+            >
+                {centerValue}
+            </text>
+            <text
+                x="45"
+                y="270"
+                textAnchor="middle"
+                fontSize="14"
+                fill="#A8A29E"
+                fontWeight="bold"
+            >
+                {minValue}
+            </text>
+            <text
+                x="235"
+                y="270"
+                textAnchor="middle"
+                fontSize="14"
+                fill="#A8A29E"
+                fontWeight="bold"
+            >
+                {maxValue}
+            </text>
 
             {/* ClipPath y gradiente definidos */}
             <defs>
