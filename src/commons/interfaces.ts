@@ -46,3 +46,18 @@ export interface Period {
     id: string
     text: string
 }
+
+
+export interface TooltipData {
+    parameters: {
+        startingBalance: string;
+        maxPositionSize: string;
+        maxDrawdown: string;
+    };
+    accountDetails: {
+        accountNumber: string;
+        platform: string;
+        username: string;
+        password: string;
+    };
+}

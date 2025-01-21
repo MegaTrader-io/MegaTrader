@@ -1,4 +1,4 @@
-import {Account, Period} from "@/commons/interfaces";
+import {Account, Period, TooltipData} from "@/commons/interfaces";
 
 export const accounts: Account[] = [
     {
@@ -64,3 +64,17 @@ export const periods: Period[] = [
     {id: 'last_30_days', text: 'LAST 30 DAYS'},
     {id: 'last_60_days', text: 'LAST 60 DAYS'},
 ]
+
+export const tooltipData: TooltipData = {
+    parameters: {
+        startingBalance: "$50,000",
+        maxPositionSize: "5",
+        maxDrawdown: "$2,000",
+    },
+    accountDetails: {
+        accountNumber: "9008713",
+        platform: "Megatrader",
+        username: "johndoe",
+        password: "Same as your Megatrader account password",
+    },
+};

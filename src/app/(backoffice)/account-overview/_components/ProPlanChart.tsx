@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Image from "next/image";
 import Dropdown from "@/components/Dropdown";
-import { periods } from "@/commons/data";
+import {periods, tooltipData} from "@/commons/data";
 import Card from "@/components/Card";
-import { Period } from "@/commons/interfaces";
+import {Period, TooltipData} from "@/commons/interfaces";
 import dynamic from 'next/dynamic';
-import { ApexOptions } from "apexcharts";
+import {ApexOptions} from "apexcharts";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/Tooltip";
 
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
 const chartConfig = {
     type: "line" as const,
@@ -96,8 +97,8 @@ function ProPlanChart() {
         <Card className="w-full space-y-4">
             <div className="flex justify-between">
                 <div className="text-white text-xl font-light uppercase leading-normal flex items-center gap-1">
-                    PRO PLAN $150K <Image className="inline" src={'/assets/images/question-icon.svg'}
-                                          alt={'question icon'} width={24} height={24}></Image></div>
+                    PRO PLAN $150K <QuestionIcon data={tooltipData}/>
+                </div>
 
                 <div>
                     <Dropdown
@@ -131,4 +132,91 @@ function ProPlanChart() {
     );
 }
 
+interface QuestionIconProps {
+    data: TooltipData;
+}
+
+const QuestionIcon: React.FC<QuestionIconProps> = ({data}) => {
+    return (
+        <Tooltip>
+            <TooltipTrigger>
+                <div className="flex items-center">
+                    <Image
+                        className="inline"
+                        src={"/assets/images/question-icon.svg"}
+                        alt={"question icon"}
+                        width={24}
+                        height={24}
+                    />
+                </div>
+            </TooltipTrigger>
+            <TooltipContent>
+                <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
+                    <div className="text-white text-xs font-bold leading-tight">Parameters</div>
+                    <div className="self-stretch flex-col justify-start items-start flex">
+                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                Starting balance
+                            </div>
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                {data.parameters.startingBalance}
+                            </div>
+                        </div>
+                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                Max Position Size
+                            </div>
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                {data.parameters.maxPositionSize}
+                            </div>
+                        </div>
+                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                Max Drawdown
+                            </div>
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                {data.parameters.maxDrawdown}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="self-stretch h-[0px] border border-neutral-700"></div>
+                    <div className="self-stretch flex-col justify-start items-start flex">
+                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                Account number:
+                            </div>
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                {data.accountDetails.accountNumber}
+                            </div>
+                        </div>
+                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                Platform:
+                            </div>
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                {data.accountDetails.platform}
+                            </div>
+                        </div>
+                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                Username:
+                            </div>
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                {data.accountDetails.username}
+                            </div>
+                        </div>
+                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                Password:
+                            </div>
+                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                {data.accountDetails.password}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </TooltipContent>
+        </Tooltip>
+    );
+};
 export default ProPlanChart;
