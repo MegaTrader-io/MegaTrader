@@ -7,8 +7,6 @@ import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
 import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/Tooltip";
-import Image from "next/image";
-
 
 const Options = [
     {id: 'overview', label: 'Overview'},
