@@ -1,34 +1,31 @@
 import React from "react";
 
 type GaugeSVGProps = {
-    value: number; // Valor actual (de 0 a 100)
-    minValue: string; // Valor mínimo
-    maxValue: string; // Valor máximo
-    centerValue: string; // Valor que aparece en el centro
+    value: number;
+    minValue: string;
+    maxValue: string;
+    centerValue: string;
 };
 
-const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerValue }) => {
-    // Calcular el ángulo para la aguja basado en el valor (de -135° a 135°)
+const GaugeSVG: React.FC<GaugeSVGProps> = ({value, minValue, maxValue, centerValue}) => {
     const calculateNeedleRotation = (val: number): number => {
-        const minAngle = -135; // Ángulo mínimo
-        const maxAngle = 135; // Ángulo máximo
-        const clampedValue = Math.max(0, Math.min(100, val)); // Asegurarse de que el valor esté entre 0 y 100
+        const minAngle = -135;
+        const maxAngle = 135;
+        const clampedValue = Math.max(0, Math.min(100, val));
         return (clampedValue / 100) * (maxAngle - minAngle) + minAngle;
     };
 
     const needleRotation = calculateNeedleRotation(value);
 
-    // Calcular el ángulo dinámico para el clipPath del gradiente
     const calculateClipAngle = (val: number): number => {
-        const minAngle = -135; // Inicio del gradiente
-        const maxAngle = 135; // Fin del gradiente
+        const minAngle = -135;
+        const maxAngle = 135;
         const clampedValue = Math.max(0, Math.min(100, val));
         return (clampedValue / 100) * (maxAngle - minAngle) + minAngle;
     };
 
     const clipAngle = calculateClipAngle(value);
 
-    // Función para obtener coordenadas polares
     const polarToCartesian = (centerX: number, centerY: number, radius: number, angleInDegrees: number) => {
         const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
         return {
@@ -37,7 +34,6 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerVa
         };
     };
 
-    // Calcular puntos de la máscara
     const start = polarToCartesian(144, 144, 144, -135);
     const end = polarToCartesian(144, 144, 144, clipAngle);
 
@@ -58,19 +54,14 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerVa
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
         >
-            {/* ClipPath general para mantener todo contenido */}
             <g clipPath="url(#outerClip)">
-                {/* Fondo circular */}
                 <path
                     d="M235.641 235.641C241.265 241.265 250.446 241.306 255.48 235.149C270.367 216.942 280.616 195.303 285.233 172.093C290.789 144.16 287.938 115.206 277.039 88.8936C266.14 62.581 247.683 40.0913 224.002 24.2684C200.321 8.44545 172.481 0 144 0C115.52 0 87.6786 8.44545 63.9979 24.2684C40.3172 40.0913 21.8604 62.581 10.9614 88.8936C0.0623299 115.206 -2.78935 144.16 2.76692 172.093C7.38361 195.303 17.6328 216.942 32.5196 235.149C37.5536 241.306 46.7354 241.265 52.359 235.641C57.9825 230.017 57.8993 220.948 53.0207 214.667C42.0808 200.583 34.5183 184.094 31.0135 166.474C26.5685 144.128 28.8499 120.965 37.5691 99.9149C46.2883 78.8648 61.0538 60.873 79.9983 48.2147C98.9429 35.5564 121.216 28.8 144 28.8C166.784 28.8 189.057 35.5564 208.002 48.2147C226.946 60.873 241.712 78.8648 250.431 99.9149C259.15 120.965 261.431 144.128 256.986 166.474C253.482 184.094 245.919 200.583 234.979 214.667C230.101 220.948 230.017 230.018 235.641 235.641Z"
                     fill="#292524"
                 />
-
-                {/* Gradiente con máscara dinámica */}
-                <path d={pathData} fill="url(#paint0_linear)" />
+                <path d={pathData} fill="url(#paint0_linear)"/>
             </g>
 
-            {/* Aguja */}
             <g transform={`rotate(${needleRotation} 144 144)`}>
                 <path
                     fillRule="evenodd"
@@ -80,7 +71,6 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerVa
                 />
             </g>
 
-            {/* Valores de texto */}
             <text
                 x="144"
                 y="200"
@@ -112,7 +102,6 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerVa
                 {maxValue}
             </text>
 
-            {/* ClipPath y gradiente definidos */}
             <defs>
                 <clipPath id="outerClip">
                     <path
@@ -127,8 +116,8 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({ value, minValue, maxValue, centerVa
                     y2="288"
                     gradientUnits="userSpaceOnUse"
                 >
-                    <stop offset="0.15" stopColor="#FFB34A" />
-                    <stop offset="1" stopColor="#2DD4BF" />
+                    <stop offset="0.15" stopColor="#FFB34A"/>
+                    <stop offset="1" stopColor="#2DD4BF"/>
                 </linearGradient>
             </defs>
         </svg>

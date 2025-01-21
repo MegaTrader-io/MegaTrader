@@ -63,14 +63,26 @@ function FeatureContent() {
                         </div>
                     </div>
 
-                    <QuestionTooltip />
+                    <QuestionTooltip/>
                 </div>
 
                 <div className="h-[328px] justify-between grid grid-cols-[288px_288px_288px] w-full px-4">
                     <div className="gap-2 flex flex-col">
                         <div className="flex gap-2 justify-center">
                             <span className="text-stone-400 text-base font-normal">Avg. Winning Trade</span>
-                            <ExclamationIcon className="text-[#d9d9d9]"/>
+                            <GenericTooltip>
+                                <>
+                                    <div className="text-white text-xs font-bold leading-tight">Winning trade %</div>
+                                    <p className="leading-tight">
+                                        Number of winning trades out of all your trades (excludes breakeven trades)
+                                    </p>
+                                    <p className="leading-tight">
+                                        <span className="text-white">Tip:</span> Over time, your winning trade
+                                        percentage will likely be near 50%. Knowing that, think about how important your
+                                        average winning trade and average losing trade are - keep the math on your side.
+                                    </p>
+                                </>
+                            </GenericTooltip>
                         </div>
 
                         <div className="h-72 w-full justify-center items-center flex">
@@ -84,8 +96,19 @@ function FeatureContent() {
                     </div>
                     <div className="gap-2 flex  flex-col">
                         <div className="flex gap-2 justify-center">
-                            <span className="text-stone-400 text-base font-normal">Winning Trade %</span>
-                            <ExclamationIcon className="text-[#d9d9d9]"/>
+                            <span className="text-stone-400 text-base font-normal">Avg. Winning trade</span>
+                            <GenericTooltip>
+                                <>
+                                    <div className="text-white text-xs font-bold leading-tight">Avg. Winning trade</div>
+                                    <p className="leading-tight">
+                                        Average profit of all winning trades
+                                    </p>
+                                    <p className="leading-tight">
+                                        <span className="text-white">Tip:</span> To be a successful trader, profits
+                                        should always be larger than losses.
+                                    </p>
+                                </>
+                            </GenericTooltip>
                         </div>
                         <div className="h-72 justify-center items-center flex">
                             <GaugeSVG
@@ -99,7 +122,17 @@ function FeatureContent() {
                     <div className="gap-2 flex  flex-col">
                         <div className="flex gap-2 justify-center">
                             <span className="text-stone-400 text-base font-normal">Avg. Losing Trade</span>
-                            <ExclamationIcon className="text-[#d9d9d9]"/>
+                            <GenericTooltip>
+                                <>
+                                    <div className="text-white text-xs font-bold leading-tight">Avg. Winning trade</div>
+                                    <p className="leading-tight">
+                                        Average loss of all losing trades.
+                                    </p>
+                                    <p className="leading-tight">
+                                        <span className="text-white">Tip:</span> Focusing on smaller risks and getting out of bad trades early is how professional traders stay in the game. When the trade is proven wrong, get out!
+                                    </p>
+                                </>
+                            </GenericTooltip>
                         </div>
 
                         <div className="h-72 justify-center items-center flex">
@@ -149,6 +182,60 @@ function FeatureContent() {
     );
 }
 
+
+function GenericTooltip({children}: { children?: React.ReactElement }) {
+    return <Tooltip>
+        <TooltipTrigger>
+            <ExclamationIcon className="text-[#d9d9d9]"/>
+        </TooltipTrigger>
+        <TooltipContent className="p-3">
+            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
+                {children}
+            </div>
+        </TooltipContent>
+    </Tooltip>
+}
+
+function WinningTradeTooltip() {
+    return <Tooltip>
+        <TooltipTrigger>
+            <QuestionIcon className="text-white"/>
+        </TooltipTrigger>
+        <TooltipContent className="p-3">
+            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
+                <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
+                <p className="leading-tight">
+                    Average winning trades should always be grater than average losing trades, and your reward/risk
+                    ratio
+                    should have a direct correlation to your winning trade percentage. For example: if you apply a 2:1
+                    reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a profitable
+                    trader!
+                </p>
+            </div>
+        </TooltipContent>
+    </Tooltip>
+}
+
+function avgLosingTradeTooltip() {
+    return <Tooltip>
+        <TooltipTrigger>
+            <QuestionIcon className="text-white"/>
+        </TooltipTrigger>
+        <TooltipContent className="p-3">
+            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
+                <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
+                <p className="leading-tight">
+                    Average winning trades should always be grater than average losing trades, and your reward/risk
+                    ratio
+                    should have a direct correlation to your winning trade percentage. For example: if you apply a 2:1
+                    reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a profitable
+                    trader!
+                </p>
+            </div>
+        </TooltipContent>
+    </Tooltip>
+}
+
 function QuestionTooltip() {
     return <Tooltip>
         <TooltipTrigger>
@@ -158,7 +245,8 @@ function QuestionTooltip() {
             <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
                 <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
                 <p className="leading-tight">
-                    Average winning trades should always be grater than average losing trades, and your reward/risk ratio
+                    Average winning trades should always be grater than average losing trades, and your reward/risk
+                    ratio
                     should have a direct correlation to your winning trade percentage. For example: if you apply a 2:1
                     reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a profitable
                     trader!

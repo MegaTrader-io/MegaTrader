@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import dynamic from "next/dynamic";
-import { ApexOptions } from "apexcharts";
+import {ApexOptions} from "apexcharts";
 
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
 function convertAvgWinningTraderValue(value: number, maxValue: number) {
     return (value * 100) / maxValue;
@@ -20,11 +20,11 @@ function ChartGaugeWithNeedle({
         options: {
             chart: {
                 type: "radialBar",
-                width: "100%", // Ajustar al ancho del contenedor padre
-                height: "100%", // Ajustar al alto del contenedor padre
-                offsetY: 0, // Centrar el gráfico
+                width: "100%",
+                height: "100%",
+                offsetY: 0,
             },
-            colors: ["#FFB34A"], // Color base del inicio de la barra
+            colors: ["#FFB34A"],
             plotOptions: {
                 radialBar: {
                     startAngle: -135,
@@ -34,7 +34,7 @@ function ChartGaugeWithNeedle({
                         background: "transparent",
                     },
                     track: {
-                        background: "#292525", // Color del track inactivo
+                        background: "#292525",
                         strokeWidth: "100%",
                     },
                     dataLabels: {
@@ -70,11 +70,10 @@ function ChartGaugeWithNeedle({
         } as ApexOptions,
     });
 
-    // Cálculo del ángulo de la aguja basado en el valor
     const calculateNeedleRotation = (val: number): number => {
-        const startAngle = -135; // Ángulo inicial del gráfico
-        const endAngle = 135; // Ángulo final del gráfico
-        const clampedValue = Math.max(0, Math.min(100, val)); // Asegurarse de que esté entre 0 y 100
+        const startAngle = -135;
+        const endAngle = 135;
+        const clampedValue = Math.max(0, Math.min(100, val));
         return (clampedValue / 100) * (endAngle - startAngle) + startAngle;
     };
 
@@ -90,7 +89,6 @@ function ChartGaugeWithNeedle({
                 position: "relative",
             }}
         >
-            {/* Gráfico Radial */}
             <ReactApexChart
                 options={chartConfig.options}
                 series={chartConfig.series}
@@ -99,7 +97,6 @@ function ChartGaugeWithNeedle({
                 height="100%"
             />
 
-            {/* Aguja SVG */}
             <svg
                 style={{
                     position: "absolute",
@@ -107,11 +104,10 @@ function ChartGaugeWithNeedle({
                     left: 0,
                     width: "100%",
                     height: "100%",
-                    pointerEvents: "none", // No afecta la interacción
+                    pointerEvents: "none",
                 }}
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {/* Contenedor de la Aguja */}
                 <g
                     transform={`rotate(${needleRotation} 50 50)`}
                     style={{
