@@ -41,7 +41,7 @@ function FeatureContent() {
                             AVG. PROFITABILITY PER TRADE
                         </div>
 
-                        <ExclamationIcon className="text-white"/>
+                        <AvgProfitabilityPerTableTooltip/>
 
                         <div className="flex items-center gap-1">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -129,7 +129,9 @@ function FeatureContent() {
                                         Average loss of all losing trades.
                                     </p>
                                     <p className="leading-tight">
-                                        <span className="text-white">Tip:</span> Focusing on smaller risks and getting out of bad trades early is how professional traders stay in the game. When the trade is proven wrong, get out!
+                                        <span className="text-white">Tip:</span> Focusing on smaller risks and getting
+                                        out of bad trades early is how professional traders stay in the game. When the
+                                        trade is proven wrong, get out!
                                     </p>
                                 </>
                             </GenericTooltip>
@@ -210,6 +212,25 @@ function QuestionTooltip() {
                     should have a direct correlation to your winning trade percentage. For example: if you apply a 2:1
                     reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a profitable
                     trader!
+                </p>
+            </div>
+        </TooltipContent>
+    </Tooltip>
+}
+
+function AvgProfitabilityPerTableTooltip() {
+    return <Tooltip>
+        <TooltipTrigger>
+            <ExclamationIcon className="text-white"/>
+        </TooltipTrigger>
+        <TooltipContent className="p-3">
+            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
+                <div className="text-white text-xs font-bold leading-tight">Avg. Profitability per trade</div>
+                <p className="leading-tight">
+                    Average Profitability Per Trade (APPT) is the average amount you can expect to win or lose per trade based on your Average Winning Trade, Average Losing Trade, and Winning Trade %. Average profit or loss includes all fees and commissions.
+                </p>
+                <p className="leading-tight">
+                    <span className="text-white">Tip:</span> This is your average P&L per trade. Keep this number positive to stay profitable.
                 </p>
             </div>
         </TooltipContent>
