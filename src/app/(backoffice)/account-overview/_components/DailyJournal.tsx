@@ -1,12 +1,41 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Card from "@/components/Card";
 import {Table, TableBody, TableHead, TableHeader, TableRow, TableCell} from "@/components/Table";
 import Image from "next/image";
 import {journalData} from "@/commons/data";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
+import {SymbolMarketData} from "@/commons/interfaces";
 
 function DailyJournal() {
+    const [data, setData] = useState<SymbolMarketData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("/api/journal");
+                if (!response.ok) {
+                    throw new Error("error getting market data");
+                }
+                const result = await response.json() as SymbolMarketData[];
+                setData(result.reverse());
+            } catch (err: unknown) {
+                const error = err as { message: string };
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        void fetchData();
+
+        console.info(data);
+        console.info(loading);
+        console.info(error);
+    }, [])
+
     return (
         <Card className="w-full space-y-8">
             <>
