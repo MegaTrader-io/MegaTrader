@@ -1,12 +1,13 @@
 'use client'
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Card from "@/components/Card";
 import QuestionIcon from "@/components/QuestionIcon";
 import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
 import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/Tooltip";
+import {formatCurrency} from "@/commons/utils";
 
 const Options = [
     {id: 'overview', label: 'Overview'},
@@ -16,8 +17,33 @@ const Options = [
     {id: 'micro_australian', label: 'Micro Australian'},
 ]
 
+
 function FeatureContent() {
     const [selection, setSelection] = useState('overview');
+    const [chartMetrics, setChartMetrics] = useState({
+        chart1: {value: 0, min: 0, max: 0},
+        chart2: {value: 0, min: 0, max: 0},
+        chart3: {value: 0, min: 0, max: 0},
+    })
+
+    useEffect(() => {
+        const {chart1, chart2, chart3} = (function () {
+            const chart1 = {value: 0, min: 2.60, max: 1083.00};
+            const chart2 = {value: 0, min: 1, max: 100};
+            const chart3 = {value: 0, min: -3.24, max: -4354.50};
+
+            chart1.value = parseFloat((Math.random() * (chart1.max - chart1.min) + chart1.min).toFixed(2));
+            chart2.value = Math.random() * (chart2.max - chart2.min) + chart2.min;
+            chart3.value = parseFloat((Math.random() * (chart1.max - chart1.min) + chart1.min).toFixed(2));
+
+            return {
+                chart1, chart2, chart3
+            };
+        })();
+
+        setChartMetrics({chart1, chart2, chart3})
+    }, [])
+
 
     return (
         <div className="w-full space-y-4">
@@ -105,16 +131,16 @@ function FeatureContent() {
 
                         <div className="h-72 w-full justify-center items-center flex">
                             <GaugeSVG
-                                value={12.68}
-                                minValue={'2.60'}
-                                maxValue={'1,083.00'}
-                                centerValue="$137.37"
+                                value={chartMetrics.chart1.value === 0 ? 0 : chartMetrics.chart1.value * 100 / chartMetrics.chart1.max}
+                                minValue={formatCurrency(chartMetrics.chart1.min)}
+                                maxValue={formatCurrency(chartMetrics.chart1.max)}
+                                centerValue={`${formatCurrency(chartMetrics.chart1.value)}`}
                             />
                         </div>
                     </div>
                     <div className="gap-2 flex  flex-col">
                         <div className="flex gap-2 justify-center">
-                            <span className="text-stone-400 text-base font-normal">Avg. Winning trade</span>
+                            <span className="text-stone-400 text-base font-normal">Winning Trade %</span>
                             <GenericTooltip>
                                 <>
                                     <div className="text-white text-xs font-bold leading-tight">Avg. Winning trade</div>
@@ -130,10 +156,10 @@ function FeatureContent() {
                         </div>
                         <div className="h-72 justify-center items-center flex">
                             <GaugeSVG
-                                value={30}
-                                minValue={'0'}
-                                maxValue={'100'}
-                                centerValue="30%"
+                                value={chartMetrics.chart2.value}
+                                minValue={chartMetrics.chart2.min.toString()}
+                                maxValue={chartMetrics.chart2.max.toString()}
+                                centerValue={`${chartMetrics.chart2.value.toFixed(0)}%`}
                             />
                         </div>
                     </div>
@@ -157,10 +183,10 @@ function FeatureContent() {
 
                         <div className="h-72 justify-center items-center flex">
                             <GaugeSVG
-                                value={4.805603398782868}
-                                minValue={'-3.24'}
-                                maxValue={'-4,354.50'}
-                                centerValue="-$209.26"
+                                value={Math.abs(chartMetrics.chart3.value === 0 ? 0 : chartMetrics.chart3.value * 100 / chartMetrics.chart3.max)}
+                                minValue={formatCurrency(chartMetrics.chart3.min)}
+                                maxValue={formatCurrency(chartMetrics.chart3.max)}
+                                centerValue={`${formatCurrency(chartMetrics.chart3.value * -1)}`}
                             />
                         </div>
                     </div>
@@ -180,10 +206,13 @@ function FeatureContent() {
                                 <div className="text-white text-xs font-bold leading-tight">Reward-to-risk ratio
                                 </div>
                                 <p className="leading-tight">
-                                    Mesures the potential reward (profit) you achieve per trade VS the risk (losses) you take.
+                                    Mesures the potential reward (profit) you achieve per trade VS the risk (losses) you
+                                    take.
                                 </p>
                                 <p className="leading-tight">
-                                    <span className="text-white">Tip:</span> One of the most important metrics to successful trading! Less risk and more reward increases your probability of continued profitability.
+                                    <span className="text-white">Tip:</span> One of the most important metrics to
+                                    successful trading! Less risk and more reward increases your probability of
+                                    continued profitability.
                                 </p>
                             </>
                         </GenerictExclamationTooltip>
