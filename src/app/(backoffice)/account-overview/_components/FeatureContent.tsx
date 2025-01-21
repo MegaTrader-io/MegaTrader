@@ -124,7 +124,7 @@ function FeatureContent() {
                             <span className="text-stone-400 text-base font-normal">Avg. Losing Trade</span>
                             <GenericTooltip>
                                 <>
-                                    <div className="text-white text-xs font-bold leading-tight">Avg. Winning trade</div>
+                                    <div className="text-white text-xs font-bold leading-tight">Avg. Losing Trade</div>
                                     <p className="leading-tight">
                                         Average loss of all losing trades.
                                     </p>
