@@ -15,6 +15,7 @@ import {
     arrow
 } from "@floating-ui/react";
 import type {Placement} from "@floating-ui/react";
+import clsx from "clsx";
 
 interface TooltipOptions {
     initialOpen?: boolean;
@@ -136,7 +137,7 @@ export const TooltipTrigger = React.forwardRef<
 export const TooltipContent = React.forwardRef<
     HTMLDivElement,
     React.HTMLProps<HTMLDivElement>
->(function TooltipContent({style, ...props}, propRef) {
+>(function TooltipContent({style, className, ...props}, propRef) {
     const context = useTooltipContext();
     const ref = useMergeRefs([context.refs.setFloating, propRef]);
 
@@ -151,7 +152,7 @@ export const TooltipContent = React.forwardRef<
                     ...style
                 }}
                 {...context.getFloatingProps(props)}
-                className="px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400"
+                className={clsx('px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400', className)}
             >
                 {props.children}
                 <div

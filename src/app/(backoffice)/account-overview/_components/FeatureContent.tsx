@@ -6,6 +6,8 @@ import QuestionIcon from "@/components/QuestionIcon";
 import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
 import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/Tooltip";
+import Image from "next/image";
 
 
 const Options = [
@@ -63,7 +65,7 @@ function FeatureContent() {
                         </div>
                     </div>
 
-                    <QuestionIcon className="text-white"/>
+                    <QuestionTooltip />
                 </div>
 
                 <div className="h-[328px] justify-between grid grid-cols-[288px_288px_288px] w-full px-4">
@@ -147,6 +149,25 @@ function FeatureContent() {
             </Card>
         </div>
     );
+}
+
+function QuestionTooltip() {
+    return <Tooltip>
+        <TooltipTrigger>
+            <QuestionIcon className="text-white"/>
+        </TooltipTrigger>
+        <TooltipContent className="p-3">
+            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
+                <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
+                <p className="leading-tight">
+                    Average winning trades should always be grater than average losing trades, and your reward/risk ratio
+                    should have a direct correlation to your winning trade percentage. For example: if you apply a 2:1
+                    reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a profitable
+                    trader!
+                </p>
+            </div>
+        </TooltipContent>
+    </Tooltip>
 }
 
 export default FeatureContent;
