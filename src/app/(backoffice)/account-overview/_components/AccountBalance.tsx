@@ -62,7 +62,9 @@ function QuestionIcon() {
             </div>
         </TooltipTrigger>
         <TooltipContent>
-            I am a tooltip
+            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
+                Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday 3:10 PM CT)
+            </div>
         </TooltipContent>
     </Tooltip>
 }

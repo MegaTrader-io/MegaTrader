@@ -117,6 +117,6 @@ export default function AccountOverView() {
 
         <ProPlanChart/>
         <FeatureContent/>
-        <DailyJournal />
+        <DailyJournal/>
     </>
 }

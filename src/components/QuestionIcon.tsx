@@ -16,7 +16,6 @@ function QuestionIcon({...props}) {
             </g>
         </svg>
         </span>
-
     );
 }
 
