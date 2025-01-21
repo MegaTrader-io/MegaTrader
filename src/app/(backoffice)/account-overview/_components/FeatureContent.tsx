@@ -196,46 +196,6 @@ function GenericTooltip({children}: { children?: React.ReactElement }) {
     </Tooltip>
 }
 
-function WinningTradeTooltip() {
-    return <Tooltip>
-        <TooltipTrigger>
-            <QuestionIcon className="text-white"/>
-        </TooltipTrigger>
-        <TooltipContent className="p-3">
-            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
-                <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
-                <p className="leading-tight">
-                    Average winning trades should always be grater than average losing trades, and your reward/risk
-                    ratio
-                    should have a direct correlation to your winning trade percentage. For example: if you apply a 2:1
-                    reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a profitable
-                    trader!
-                </p>
-            </div>
-        </TooltipContent>
-    </Tooltip>
-}
-
-function avgLosingTradeTooltip() {
-    return <Tooltip>
-        <TooltipTrigger>
-            <QuestionIcon className="text-white"/>
-        </TooltipTrigger>
-        <TooltipContent className="p-3">
-            <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
-                <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
-                <p className="leading-tight">
-                    Average winning trades should always be grater than average losing trades, and your reward/risk
-                    ratio
-                    should have a direct correlation to your winning trade percentage. For example: if you apply a 2:1
-                    reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a profitable
-                    trader!
-                </p>
-            </div>
-        </TooltipContent>
-    </Tooltip>
-}
-
 function QuestionTooltip() {
     return <Tooltip>
         <TooltipTrigger>
