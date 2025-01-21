@@ -82,7 +82,7 @@ const GaugeSVG: React.FC<GaugeSVGProps> = ({value, minValue, maxValue, centerVal
             </g>
             <text
                 x="144"
-                y="200"
+                y="220"
                 textAnchor="middle"
                 fontSize="20"
                 fill="#FFB34A"
