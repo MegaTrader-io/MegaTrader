@@ -61,3 +61,20 @@ export interface TooltipData {
         password: string;
     };
 }
+
+export interface JournalEntry {
+    canEdit: boolean;
+    date: string;
+    netPnl: string;
+    pnlHigh: string;
+    pnlLow: string;
+    totalContracts: number;
+    totalFeesComm: string;
+    totalTrades: number;
+    avgWinningTrades: string;
+    avgLosingTrades: string;
+    winningTradePercentage: number;
+    maxConsecutiveWLTrades: string;
+    avgWLDuration: string;
+    id: number;
+}

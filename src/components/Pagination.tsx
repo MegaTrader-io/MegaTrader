@@ -76,6 +76,7 @@ export function PaginationList({className, ...props}: PaginationListProps) {
 interface PaginationPageProps extends React.HTMLAttributes<HTMLSpanElement> {
     href?: string;
     current?: boolean;
+    disabled?: boolean;
     children: React.ReactNode;
     as?: ElementType;
 }
@@ -85,7 +86,7 @@ export function PaginationPage({
                                    current = false,
                                    children,
                                    as: Component = 'a',
-                                    ...props
+                                   ...props
                                }: PaginationPageProps) {
     return (
         <Component
@@ -93,7 +94,7 @@ export function PaginationPage({
             aria-current={current ? 'page' : undefined}
             className={clsx(
                 className,
-                '',
+                'disabled:opacity-20 disabled:cursor-not-allowed',
                 current && 'before:bg-zinc-950/5 dark:before:bg-white/10'
             )}
             {...props}

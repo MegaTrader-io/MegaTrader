@@ -76,7 +76,10 @@ export default function AccountOverView() {
                         <Image src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue' width={133}
                                height={40}/>
 
-                        <Button variant={'dark'} iconPosition='left' size='sm' icon={<ArrowUpRightIcon className="text-white"/>}>
+                        <Button variant={'dark'}
+                                iconPosition='left'
+                                size='sm'
+                                icon={<ArrowUpRightIcon className="text-white"/>}>
                             Lunch platform
                         </Button>
                     </div>

@@ -2,39 +2,35 @@ import React, {useEffect, useState} from 'react';
 import Card from "@/components/Card";
 import {Table, TableBody, TableHead, TableHeader, TableRow, TableCell} from "@/components/Table";
 import Image from "next/image";
-import {journalData} from "@/commons/data";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
-import {SymbolMarketData} from "@/commons/interfaces";
+import clsx from "clsx";
+import {JournalEntry} from "@/commons/interfaces";
 
 function DailyJournal() {
-    const [data, setData] = useState<SymbolMarketData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [data, setData] = useState<JournalEntry[]>([]);
+
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        per_page: 10,
+        total: 0,
+        last_page: 0,
+    });
+
+    const fetchJournalData = async (page = 1 as number) => {
+        const response = await fetch(`/api/journal?page=${page}&per_page=7`);
+        const result = await response.json();
+        setData(result.data);
+        setPagination(result.meta);
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch("/api/journal");
-                if (!response.ok) {
-                    throw new Error("error getting market data");
-                }
-                const result = await response.json() as SymbolMarketData[];
-                setData(result.reverse());
-            } catch (err: unknown) {
-                const error = err as { message: string };
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+        void fetchJournalData();
+    }, []);
 
-        void fetchData();
-
-        console.info(data);
-        console.info(loading);
-        console.info(error);
-    }, [])
+    const handlePageChange = (page: number) => {
+        void fetchJournalData(page);
+    };
 
     return (
         <Card className="w-full space-y-8">
@@ -58,7 +54,7 @@ function DailyJournal() {
                         </TableRow>
                     </TableHead>
                     <TableBody className="text-xs">
-                        {journalData.map((entry) => (
+                        {data.map((entry) => (
                             <TableRow key={entry.id} className="text-right text-stone-400 text-xs font-normal">
                                 <TableCell className="text-left">
                                     {entry.canEdit && (
@@ -83,7 +79,7 @@ function DailyJournal() {
                                 <TableCell>{entry.avgLosingTrades}</TableCell>
                                 <TableCell>{entry.winningTradePercentage}%</TableCell>
                                 <TableCell>{entry.maxConsecutiveWLTrades}</TableCell>
-                                <TableCell>{entry.avgWLDuration}</TableCell>
+                                <TableCell className="whitespace-pre-wrap w-0">{entry.avgWLDuration}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -91,25 +87,31 @@ function DailyJournal() {
 
                 <Pagination
                     className="mt-6 items-center flex justify-end text-stone-400 text-xs font-normal leading-tight">
-                    Showing 6/10
+                    Showing {pagination.per_page} of {pagination.total}
                     <PaginationList className="text-white flex items-center">
                         <PaginationPage
                             as={'button'}
-                            className="h-7 p-1 bg-stone-800 rounded border border-neutral-700">
+                            className="h-7 p-1 bg-stone-800 rounded border border-neutral-700"
+                            onClick={() => handlePageChange(pagination.current_page - 1)}
+                            disabled={pagination.current_page === 1}>
                             <ChevronLeftIcon className="text-white w-5 h-5 "/>
                         </PaginationPage>
-                        {[1, 2]
-                            .map((link, key) => (
-                                <PaginationPage
-                                    as={'button'}
-                                    className={'w-7 h-7 px-3 py-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex'}
-                                    key={key}>
-                                    {link}
-                                </PaginationPage>
-                            ))}
+                        {Array.from({length: pagination.last_page}, (_, i) => i + 1).map((page) => (
+                            <PaginationPage
+                                as={'button'}
+                                className={clsx('w-7 h-7 px-3 py-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex', {
+                                    'bg-stone-950': pagination.current_page === page
+                                })}
+                                key={page}
+                                onClick={() => handlePageChange(page)}>
+                                {page}
+                            </PaginationPage>
+                        ))}
                         <PaginationPage
                             as={'button'}
-                            className="h-7 p-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex">
+                            className="h-7 p-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex"
+                            onClick={() => handlePageChange(pagination.current_page + 1)}
+                            disabled={pagination.current_page === pagination.last_page}>
                             <ChevronRightIcon className="text-white w-5 h-5"/>
                         </PaginationPage>
                     </PaginationList>
