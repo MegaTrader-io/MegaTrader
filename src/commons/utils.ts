@@ -11,3 +11,11 @@ export function formatCurrency(value: number) {
         return value.toString();
     }
 }
+
+export function sleep(miliseconds = 1800) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(1);
+        }, miliseconds)
+    })
+}

@@ -118,6 +118,7 @@ export function TableHeader({className, ...props}: TableHeaderProps) {
 
 interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
     className?: string;
+    colSpan?: number;
     children?: ReactNode;
 }
 

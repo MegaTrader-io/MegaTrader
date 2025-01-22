@@ -6,30 +6,43 @@ import {Pagination, PaginationList, PaginationPage} from "@/components/Paginatio
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import {JournalEntry} from "@/commons/interfaces";
+import {sleep} from "@/commons/utils";
 
 function DailyJournal() {
+    const [loading, setLoading] = useState(false)
     const [data, setData] = useState<JournalEntry[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const limitPerPage = 7;
 
     const [pagination, setPagination] = useState({
-        current_page: 1,
-        per_page: 10,
+        current_page: currentPage,
+        per_page: limitPerPage,
         total: 0,
         last_page: 0,
     });
 
     const fetchJournalData = async (page = 1 as number) => {
-        const response = await fetch(`/api/journal?page=${page}&per_page=7`);
+        setCurrentPage(page)
+        setLoading(true)
+        await sleep(200);
+        const response = await fetch(`/api/journal?page=${page}&per_page=${limitPerPage}`);
         const result = await response.json();
         setData(result.data);
         setPagination(result.meta);
+        setLoading(false)
     };
 
     useEffect(() => {
-        void fetchJournalData();
+        sleep(500).then(() => {
+            void fetchJournalData();
+        })
     }, []);
 
     const handlePageChange = (page: number) => {
-        void fetchJournalData(page);
+        fetchJournalData(page)
+            .finally(() => {
+
+            })
     };
 
     return (
@@ -54,7 +67,16 @@ function DailyJournal() {
                         </TableRow>
                     </TableHead>
                     <TableBody className="text-xs">
-                        {data.map((entry) => (
+                        {loading && Array(limitPerPage).fill('1').map((_, index) => (
+                            <TableRow key={index}>
+                                <TableCell
+                                    colSpan={13}
+                                    className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
+                                    <div className="bg-slate-800/70 w-full h-full"></div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {!loading && data.map((entry) => (
                             <TableRow key={entry.id} className="text-right text-stone-400 text-xs font-normal">
                                 <TableCell className="text-left">
                                     {entry.canEdit && (
@@ -82,10 +104,19 @@ function DailyJournal() {
                                 <TableCell className="whitespace-pre-wrap w-0">{entry.avgWLDuration}</TableCell>
                             </TableRow>
                         ))}
+                        {!loading && data.length === 0 && (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={13}
+                                    className="text-center font-bold w-full text-zinc-400">
+                                    NO DATA TO DISPLAY
+                                </TableCell>
+                            </TableRow>
+                        )}
                     </TableBody>
                 </Table>
 
-                <Pagination
+                {data.length > 0 && (<Pagination
                     className="mt-6 items-center flex justify-end text-stone-400 text-xs font-normal leading-tight">
                     Showing {pagination.per_page} of {pagination.total}
                     <PaginationList className="text-white flex items-center">
@@ -100,7 +131,7 @@ function DailyJournal() {
                             <PaginationPage
                                 as={'button'}
                                 className={clsx('w-7 h-7 px-3 py-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex', {
-                                    'bg-stone-950': pagination.current_page === page
+                                    'bg-stone-950': currentPage === page
                                 })}
                                 key={page}
                                 onClick={() => handlePageChange(page)}>
@@ -115,7 +146,7 @@ function DailyJournal() {
                             <ChevronRightIcon className="text-white w-5 h-5"/>
                         </PaginationPage>
                     </PaginationList>
-                </Pagination>
+                </Pagination>)}
             </>
         </Card>
     );
