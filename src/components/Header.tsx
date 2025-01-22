@@ -86,19 +86,19 @@ export default function Header() {
                 <div className="flex items-center gap-2">
                     <Link
                         href="#"
-                        className="bg-[#292524] rounded-xl border border-neutral-700 w-12 h-12 text-white uppercase text-nowrap flex items-center justify-center"
+                        className="btn-dark-link rounded-xl w-12 h-12"
                     >
                         <BellIcon className="w-6 h-6 text-white"/>
                     </Link>
                     <Link
                         href="#"
-                        className="bg-[#292524] rounded-xl border border-neutral-700 w-12 h-12 text-white uppercase text-nowrap flex items-center justify-center"
+                        className="btn-dark-link rounded-xl w-12 h-12"
                     >
                         <UserCircleIcon className="w-6 h-6 text-white"/>
                     </Link>
                     <Link
                         href="/auth/login"
-                        className="bg-[#292524] rounded-xl border border-neutral-700 w-12 h-12 text-white uppercase text-nowrap flex items-center justify-center"
+                        className="btn-dark-link rounded-xl w-12 h-12"
                     >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <mask id="mask0_4562_2177" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"

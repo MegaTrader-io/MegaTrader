@@ -55,6 +55,15 @@ body {
     @apply bg-[#292524] rounded-xl border border-neutral-700 h-12 px-4 py-3 text-white uppercase flex items-center;
 }
 
+
 .btn-link {
     @apply text-mgt-link hover:text-mgt-link-hover underline;
+}
+
+.btn-base {
+    @apply uppercase flex items-center justify-center transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1;
+}
+
+.btn-dark-link {
+    @apply btn-base bg-stone-800 hover:bg-stone-900 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800;
 }
