@@ -19,6 +19,7 @@ import ProPlanChart from "@/app/(backoffice)/account-overview/_components/ProPla
 import AccountStatus from "@/app/(backoffice)/account-overview/_components/AccountStatus";
 import FeatureContent from "@/app/(backoffice)/account-overview/_components/FeatureContent";
 import DailyJournal from "@/app/(backoffice)/account-overview/_components/DailyJournal";
+import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
@@ -71,8 +72,14 @@ export default function AccountOverView() {
             <Tooltip>
                 <div
                     className="flex items-center justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">
-                    <Image src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue' width={133}
-                           height={40}></Image>
+                    <div className="flex text-white items-center gap-4">
+                        <Image src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue' width={133}
+                               height={40}/>
+
+                        <Button variant={'dark'} iconPosition='left' size='sm' icon={<ArrowUpRightIcon className="text-white"/>}>
+                            Lunch platform
+                        </Button>
+                    </div>
 
                     <div className="inline-flex items-center">
                         <div
