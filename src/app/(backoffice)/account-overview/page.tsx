@@ -38,7 +38,7 @@ export default function AccountOverView() {
                         value={selectedAccount}
                         onChange={setSelectedAccount}
                         renderButtonContent={(item) => (
-                            <div className="grid grid-cols-[auto_auto_24px] gap-2">
+                            <div className="grid grid-cols-[auto_auto_24px] gap-2 items-center">
                                 <AccountStatus status={item.status}/>
                                 <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
                                 <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
@@ -80,7 +80,7 @@ export default function AccountOverView() {
                                 iconPosition='left'
                                 size='sm'
                                 icon={<ArrowUpRightIcon className="text-white"/>}>
-                            Lunch platform
+                            OPEN PLATFORM
                         </Button>
                     </div>
 

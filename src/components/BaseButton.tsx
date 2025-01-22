@@ -46,7 +46,7 @@ const Button: React.FC<ButtonProps> = ({
                                            onClick,
                                            children,
                                        }) => {
-    const baseStyles = className + ' flex items-center justify-center transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1';
+    const baseStyles = className + ' btn-base';
     let iconClassName = '';
 
     let defaultPaddingMD = 'px-4';

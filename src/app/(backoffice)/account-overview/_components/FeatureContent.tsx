@@ -116,14 +116,13 @@ function FeatureContent() {
                             <span className="text-stone-400 text-base font-normal">Avg. Winning Trade</span>
                             <GenericTooltip>
                                 <>
-                                    <div className="text-white text-xs font-bold leading-tight">Winning trade %</div>
+                                    <div className="text-white text-xs font-bold leading-tight">Avg. Winning trade</div>
                                     <p className="leading-tight">
-                                        Number of winning trades out of all your trades (excludes breakeven trades)
+                                        Average profit of all winning trades
                                     </p>
                                     <p className="leading-tight">
-                                        <span className="text-white">Tip:</span> Over time, your winning trade
-                                        percentage will likely be near 50%. Knowing that, think about how important your
-                                        average winning trade and average losing trade are - keep the math on your side.
+                                        <span className="text-white">Tip:</span> To be a successful trader, profits
+                                        should always be larger than losses.
                                     </p>
                                 </>
                             </GenericTooltip>
@@ -143,13 +142,14 @@ function FeatureContent() {
                             <span className="text-stone-400 text-base font-normal">Winning Trade %</span>
                             <GenericTooltip>
                                 <>
-                                    <div className="text-white text-xs font-bold leading-tight">Avg. Winning trade</div>
+                                    <div className="text-white text-xs font-bold leading-tight">Winning trade %</div>
                                     <p className="leading-tight">
-                                        Average profit of all winning trades
+                                        Number of winning trades out of all your trades (excludes breakeven trades)
                                     </p>
                                     <p className="leading-tight">
-                                        <span className="text-white">Tip:</span> To be a successful trader, profits
-                                        should always be larger than losses.
+                                        <span className="text-white">Tip:</span> Over time, your winning trade
+                                        percentage will likely be near 50%. Knowing that, think about how important your
+                                        average winning trade and average losing trade are - keep the math on your side.
                                     </p>
                                 </>
                             </GenericTooltip>
