@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface PlanInterface {
     id: number
     level: string
@@ -77,4 +79,11 @@ export interface JournalEntry {
     maxConsecutiveWLTrades: string;
     avgWLDuration: string;
     id: number;
+}
+
+export interface Emoji {
+    id: number;
+    name: string;
+    description: string;
+    icon: React.ReactElement;
 }
