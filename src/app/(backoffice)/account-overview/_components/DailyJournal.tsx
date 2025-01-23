@@ -10,7 +10,6 @@ import {sleep} from "@/commons/utils";
 import {PopoverTrigger, Popover, PopoverPortal} from "@radix-ui/react-popover";
 import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/PopoverSurvey";
 
-
 function DailyJournal() {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<JournalEntry[]>([]);
@@ -96,7 +95,7 @@ function DailyJournal() {
                                                     </button>
                                                 </PopoverTrigger>
                                                 <PopoverPortal>
-                                                    <PopoverSurvey />
+                                                    <PopoverSurvey/>
                                                 </PopoverPortal>
                                             </Popover>
                                         </>

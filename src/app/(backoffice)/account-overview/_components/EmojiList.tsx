@@ -14,10 +14,19 @@ export const emojis: Emoji[] = [
     {id: 5, name: "very_sad", description: "Very Sad", icon: <VerySad/>},
 ];
 
-const EmojiList: React.FC = ({emojiId}: { emojiId?: number | null }) => {
-    const [selectedEmoji, setSelectedEmoji] = useState<Emoji | null>(emojis.find(i => i.id === emojiId) || null);
+interface Props {
+    emojiId?: number | undefined,
+    onClick?: (emoji: Emoji) => void
+}
+
+const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick}) => {
+    const [selectedEmoji, setSelectedEmoji] = useState<Emoji | undefined>(emojis.find(i => i.id === emojiId));
 
     const handleSelectEmoji = (emoji: Emoji) => {
+        if (onClick) {
+            onClick(emoji)
+        }
+
         setSelectedEmoji(emoji);
     };
 
