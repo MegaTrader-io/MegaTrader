@@ -1,4 +1,4 @@
-import {Account, Emoji, Period, TooltipData} from "@/commons/interfaces";
+import {Account, Period, TooltipData} from "@/commons/interfaces";
 
 export const accounts: Account[] = [
     {
