@@ -7,6 +7,10 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import {JournalEntry} from "@/commons/interfaces";
 import {sleep} from "@/commons/utils";
+import {PopoverTrigger, Popover, PopoverContent, PopoverPortal} from "@radix-ui/react-popover";
+import * as BasePopover from "@radix-ui/react-popover";
+
+// import Popover from "@/app/(backoffice)/account-overview/_components/Popover";
 
 function DailyJournal() {
     const [loading, setLoading] = useState(false)
@@ -80,14 +84,31 @@ function DailyJournal() {
                             <TableRow key={entry.id} className="text-right text-stone-400 text-xs font-normal">
                                 <TableCell className="text-left">
                                     {entry.canEdit && (
-                                        <button onClick={() => {
-                                            console.info(entry)
-                                        }}>
-                                            <Image src='/assets/images/pencil.svg'
-                                                   alt={'pencil'}
-                                                   width={50}
-                                                   height={28}/>
-                                        </button>
+                                        <>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <button onClick={() => {
+                                                        console.info(entry)
+                                                    }}>
+                                                        <Image src='/assets/images/pencil.svg'
+                                                               alt={'pencil'}
+                                                               width={50}
+                                                               height={28}/>
+                                                    </button>
+                                                </PopoverTrigger>
+                                                <PopoverPortal>
+                                                    <PopoverContent
+                                                        className="w-[260px] rounded bg-white p-5 shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] will-change-[transform,opacity] focus:shadow-[0_10px_38px_-10px_hsla(206,22%,7%,.35),0_10px_20px_-15px_hsla(206,22%,7%,.2)] data-[state=open]:data-[side=bottom]:animate-slideUpAndFade data-[state=open]:data-[side=left]:animate-slideRightAndFade data-[state=open]:data-[side=right]:animate-slideLeftAndFade data-[state=open]:data-[side=top]:animate-slideDownAndFade">
+                                                        <p className="text-[15px] font-medium leading-[19px] text-mauve12">
+                                                            This is your custom content!
+                                                        </p>
+                                                        <button className="btn-primary mt-2">Do something</button>
+
+                                                        <BasePopover.Arrow className="fill-white"/>
+                                                    </PopoverContent>
+                                                </PopoverPortal>
+                                            </Popover>
+                                        </>
                                     ) || '-'}
                                 </TableCell>
                                 <TableCell>{entry.date}</TableCell>
