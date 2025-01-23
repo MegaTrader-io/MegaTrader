@@ -7,9 +7,7 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import {JournalEntry} from "@/commons/interfaces";
 import {sleep} from "@/commons/utils";
-import {PopoverTrigger, Popover, PopoverContent, PopoverPortal} from "@radix-ui/react-popover";
-import * as BasePopover from "@radix-ui/react-popover";
-import {XMarkIcon} from "@heroicons/react/16/solid";
+import {PopoverTrigger, Popover, PopoverPortal} from "@radix-ui/react-popover";
 import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/PopoverSurvey";
 
 
