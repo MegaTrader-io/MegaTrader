@@ -18,7 +18,7 @@
   {
     "survey": {
       "id": 1,
-      "emojiId": 2,
+      "emojiId": 5,
       "simpleQuestion": true,
       "note": "all good"
     },

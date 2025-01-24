@@ -83,14 +83,20 @@ function DailyJournal() {
                                 <TableCell className="text-left">
                                     <Popover>
                                         <PopoverTrigger asChild>
-                                            <button onClick={() => {
-                                                console.info(entry)
-                                            }}>
-                                                <IconSurvey canEdit={!!entry.survey?.id} />
+                                            <button>
+                                                <IconSurvey survey={entry?.survey}/>
                                             </button>
                                         </PopoverTrigger>
                                         <PopoverPortal>
-                                            <PopoverSurvey surveyData={entry.survey}/>
+                                            <PopoverSurvey surveyData={entry.survey} onClick={(survey) => {
+                                                setData((prevData) => prevData.map((item) => {
+                                                    if (item.id === entry.id) {
+                                                        return {...item, survey};
+                                                    }
+
+                                                    return item;
+                                                }));
+                                            }}/>
                                         </PopoverPortal>
                                     </Popover>
                                 </TableCell>

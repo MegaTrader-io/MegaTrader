@@ -16,7 +16,10 @@ const surveyDefaultData = {
     note: null,
 }
 
-function PopoverSurvey({surveyData}: { surveyData?: SurveyState | null }) {
+function PopoverSurvey({surveyData, onClick}: {
+    surveyData?: SurveyState | null,
+    onClick: (survey: SurveyState) => void
+}) {
     const saveBtn = useRef<HTMLButtonElement | null>(null);
     const [survey, setSurvey] = useState<SurveyState>(surveyData || surveyDefaultData)
     const [canEdit, setCanEdit] = useState<boolean>(surveyData?.id === undefined)
@@ -32,6 +35,15 @@ function PopoverSurvey({surveyData}: { surveyData?: SurveyState | null }) {
     }
 
     function saveSurvey() {
+        const isNew: boolean = survey.id === undefined;
+        if (isNew) {
+            console.info('is created');
+            onClick({...survey, id: (new Date()).getTime()} as SurveyState)
+        } else {
+            console.info('is edited');
+            onClick({...survey})
+        }
+
         setCanEdit(value => !value)
         console.info(survey);
         saveBtn.current?.blur();
@@ -80,6 +92,7 @@ function PopoverSurvey({surveyData}: { surveyData?: SurveyState | null }) {
                 <div>
                     <TextArea
                         disabled={!canEdit}
+                        defaultValue={survey.note}
                         onChange={(e) => updateState('note', e.target.value)}
                         className="h-[100px] px-4 py-3 w-full bg-[#1e1e1e]/70 rounded-xl border border-neutral-700 focus:out"
                         placeholder="What's the most important thing I learn today?"

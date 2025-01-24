@@ -1,10 +1,15 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from "next/image";
+import {SurveyState} from "@/commons/interfaces";
 
-function IconSurvey({canEdit}: { canEdit: boolean }) {
+function IconSurvey({survey}: { survey?: SurveyState | null }) {
     const pencilIcon = '/assets/images/pencil.svg';
     const eyeIcon = '/assets/images/eye.svg';
-    const [url] = useState(canEdit ? eyeIcon  : pencilIcon);
+    const [url, setUrl] = useState(pencilIcon);
+
+    useEffect(() => {
+        setUrl(survey && survey.id !== undefined ? eyeIcon : pencilIcon);
+    }, [survey]);
 
     return (
         <Image src={url}
