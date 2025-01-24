@@ -1,4 +1,4 @@
-import React, { JSX, forwardRef } from 'react';
+import React, {JSX, forwardRef} from 'react';
 import clsx from "clsx";
 
 export type Icon = JSX.Element;
@@ -17,7 +17,6 @@ interface ButtonProps {
     children?: React.ReactNode;
 }
 
-// Componente para manejar el contenido interno del botón
 const Content = ({
                      icon,
                      iconPosition,
@@ -35,14 +34,14 @@ const Content = ({
 
     return (
         <>
-            {icon && iconPosition === 'left' && <span className={clsx(iconClassName, { 'mr-2': children })}>{icon}</span>}
+            {icon && iconPosition === 'left' && <span className={clsx(iconClassName, {'mr-2': children})}>{icon}</span>}
             {children}
-            {icon && iconPosition === 'right' && <span className={clsx(iconClassName, { 'ml-2': children })}>{icon}</span>}
+            {icon && iconPosition === 'right' &&
+                <span className={clsx(iconClassName, {'ml-2': children})}>{icon}</span>}
         </>
     );
 };
 
-// Componente principal con soporte para `ref`
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
                                                                type = 'button',
                                                                variant = 'primary',
