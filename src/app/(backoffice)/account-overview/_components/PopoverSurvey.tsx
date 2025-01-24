@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import * as BasePopover from "@radix-ui/react-popover";
 import {PopoverContent} from "@radix-ui/react-popover";

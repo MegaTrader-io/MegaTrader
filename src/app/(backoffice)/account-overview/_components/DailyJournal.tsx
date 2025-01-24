@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Card from "@/components/Card";
 import {Table, TableBody, TableHead, TableHeader, TableRow, TableCell} from "@/components/Table";
-import Image from "next/image";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
