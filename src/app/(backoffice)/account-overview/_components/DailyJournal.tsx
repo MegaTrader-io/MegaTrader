@@ -81,8 +81,6 @@ function DailyJournal() {
                         {!loading && data.map((entry) => (
                             <TableRow key={entry.id} className="text-right text-stone-400 text-xs font-normal">
                                 <TableCell className="text-left">
-
-
                                     <Popover>
                                         <PopoverTrigger asChild>
                                             <button onClick={() => {

@@ -19,7 +19,7 @@ const surveyDefaultData = {
 function PopoverSurvey({surveyData}: { surveyData?: SurveyState | null }) {
     const saveBtn = useRef<HTMLButtonElement | null>(null);
     const [survey, setSurvey] = useState<SurveyState>(surveyData || surveyDefaultData)
-    const [canEdit, setCanEdit] = useState<boolean>(false)
+    const [canEdit, setCanEdit] = useState<boolean>(surveyData?.id === undefined)
 
     function updateState<K extends keyof editableFields>(field: K, value: editableFields[K]) {
         setSurvey(survey => {
