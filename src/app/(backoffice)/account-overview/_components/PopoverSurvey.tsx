@@ -92,7 +92,7 @@ function PopoverSurvey({surveyData, onClick}: {
                 <div>
                     <TextArea
                         disabled={!canEdit}
-                        defaultValue={survey.note}
+                        defaultValue={survey.note || ''}
                         onChange={(e) => updateState('note', e.target.value)}
                         className="h-[100px] px-4 py-3 w-full bg-[#1e1e1e]/70 rounded-xl border border-neutral-700 focus:out"
                         placeholder="What's the most important thing I learn today?"
