@@ -23,6 +23,8 @@ function PopoverSurvey({surveyData, onClick}: {
     const saveBtn = useRef<HTMLButtonElement | null>(null);
     const [survey, setSurvey] = useState<SurveyState>(surveyData || surveyDefaultData)
     const [canEdit, setCanEdit] = useState<boolean>(surveyData?.id === undefined)
+    const [emojiError, setEmojiError] = useState("");
+    const [questionError, setQuestionError] = useState("");
 
     function updateState<K extends keyof editableFields>(field: K, value: editableFields[K]) {
         setSurvey(survey => {
@@ -31,16 +33,30 @@ function PopoverSurvey({surveyData, onClick}: {
     }
 
     function changeEmoji(emoji: Emoji) {
+        setEmojiError('');
+
         updateState('emojiId', emoji.id)
     }
 
     function saveSurvey() {
         const isNew: boolean = survey.id === undefined;
         if (isNew) {
-            console.info('is created');
+            const isInvalidForm = !survey.emojiId || survey.simpleQuestion === undefined;
+
+            if (!survey.emojiId) {
+                setEmojiError('This field is required');
+            }
+
+            if (survey.simpleQuestion === undefined) {
+                setQuestionError('This field is required');
+            }
+
+            if (isInvalidForm) {
+                return
+            }
+
             onClick({...survey, id: (new Date()).getTime()} as SurveyState)
         } else {
-            console.info('is edited');
             onClick({...survey})
         }
 
@@ -61,33 +77,48 @@ function PopoverSurvey({surveyData, onClick}: {
                         <XMarkIcon className="text-white h-6 w-6"/>
                     </BasePopover.Close>
                 </div>
-                <EmojiList emojiId={survey.emojiId} onClick={changeEmoji} disabled={canEdit}/>
+
+                <EmojiList
+                    emojiId={survey.emojiId}
+                    onClick={changeEmoji}
+                    disabled={canEdit}
+                    errorMessage={emojiError}
+                />
+
                 <p className="text-white  text-base font-normal leading-normal">
                     Did I follow my trading plan today?
                 </p>
 
-                <div className="flex gap-2">
-                    <Button
-                        className={clsx('w-full', {'!bg-primary': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion})}
-                        disabled={!canEdit}
-                        onClick={() => {
-                            setSurvey(survey => {
-                                return {...survey, simpleQuestion: true}
-                            })
-                        }}
-                        variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
+                <div>
+                    <div className="flex gap-2">
+                        <Button
+                            className={clsx('w-full', {'!bg-primary': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion})}
+                            disabled={!canEdit}
+                            onClick={() => {
+                                setQuestionError('')
+                                updateState('simpleQuestion', true)
+                            }}
+                            variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
 
+                        <Button
+                            className={clsx('w-full', {'!bg-primary': survey.simpleQuestion !== undefined && !survey.simpleQuestion})}
+                            disabled={!canEdit}
+                            onClick={() => {
+                                setQuestionError('')
+                                updateState('simpleQuestion', false)
+                            }}
+                            variant={survey.simpleQuestion !== undefined && !survey.simpleQuestion ? 'primary' : 'dark'}>No</Button>
+                    </div>
 
-                    <Button
-                        className={clsx('w-full', {'!bg-primary': survey.simpleQuestion !== undefined && !survey.simpleQuestion})}
-                        disabled={!canEdit}
-                        onClick={() => {
-                            setSurvey(survey => {
-                                return {...survey, simpleQuestion: false}
-                            })
-                        }}
-                        variant={survey.simpleQuestion !== undefined && !survey.simpleQuestion ? 'primary' : 'dark'}>No</Button>
+                    {questionError && (
+                        <span
+                            className="text-rose-500 text-xs mt-4 leading-tight"
+                        >
+                    {questionError}
+                </span>
+                    )}
                 </div>
+
 
                 <div>
                     <TextArea

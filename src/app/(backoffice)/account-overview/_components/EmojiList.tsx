@@ -17,11 +17,13 @@ export const emojis: Emoji[] = [
 interface Props {
     emojiId?: number | undefined,
     onClick?: (emoji: Emoji) => void,
-    disabled?: boolean
+    disabled?: boolean,
+    errorMessage?: string;
 }
 
-const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick, disabled = false}) => {
+const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick, disabled = false, errorMessage = ''}) => {
     const [selectedEmoji, setSelectedEmoji] = useState<Emoji | undefined>(emojis.find(i => i.id === emojiId));
+    const hasError = Boolean(errorMessage);
 
     const handleSelectEmoji = (emoji: Emoji) => {
         if (!disabled) {
@@ -36,19 +38,29 @@ const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick, disabled = fa
     };
 
     return (
-        <div className="flex justify-between py-2">
-            {emojis.map((emoji) => (
-                <button
-                    disabled={!disabled}
-                    key={emoji.id}
-                    className={`disabled:cursor-not-allowed disabled:opacity-50 ${
-                        selectedEmoji?.id === emoji.id ? "text-primary" : "text-[#57534E]"
-                    }`}
-                    onClick={() => handleSelectEmoji(emoji)}
+        <div>
+            <div className="flex justify-between py-2">
+                {emojis.map((emoji) => (
+                    <button
+                        disabled={!disabled}
+                        key={emoji.id}
+                        className={`disabled:cursor-not-allowed disabled:opacity-50 ${
+                            selectedEmoji?.id === emoji.id ? "text-primary" : "text-[#57534E]"
+                        }`}
+                        onClick={() => handleSelectEmoji(emoji)}
+                    >
+                        {emoji.icon}
+                    </button>
+                ))}
+            </div>
+
+            {hasError && (
+                <span
+                    className="text-rose-500 text-xs mt-4 leading-tight"
                 >
-                    {emoji.icon}
-                </button>
-            ))}
+                    {errorMessage}
+                </span>
+            )}
         </div>
     );
 };
