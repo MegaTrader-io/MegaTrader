@@ -93,8 +93,8 @@ function PopoverSurvey({surveyData, onClick}: {
                     <div className="flex gap-2">
                         <Button
                             className={clsx('w-full', {
-                                'disabled:bg-primary disabled:opacity-100': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion,
-                                'disabled:bg-stone-800 disabled:text-white disabled:opacity-100': survey.simpleQuestion !== undefined && !survey.simpleQuestion
+                                'disabled:!bg-primary disabled:!opacity-100': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion,
+                                'disabled:!bg-stone-800 disabled:!text-white disabled:!opacity-100': survey.simpleQuestion !== undefined && !survey.simpleQuestion
                             })}
                             disabled={!canEdit}
                             onClick={() => {
@@ -104,8 +104,8 @@ function PopoverSurvey({surveyData, onClick}: {
                             variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
                         <Button
                             className={clsx('w-full', {
-                                'disabled:bg-primary disabled:opacity-100': survey.simpleQuestion !== undefined && !survey.simpleQuestion,
-                                'disabled:bg-stone-800 disabled:text-white disabled:opacity-100': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion
+                                'disabled:!bg-primary disabled:!opacity-100': survey.simpleQuestion !== undefined && !survey.simpleQuestion,
+                                'disabled:!bg-stone-800 disabled:!text-white disabled:!opacity-100': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion
                             })}
                             disabled={!canEdit}
                             onClick={() => {
