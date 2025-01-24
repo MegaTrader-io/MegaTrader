@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import * as BasePopover from "@radix-ui/react-popover";
 import {PopoverContent} from "@radix-ui/react-popover";
@@ -15,19 +15,32 @@ interface SurveyState {
 }
 
 const defaultData = {
-    id: undefined,
     emojiId: undefined,
     simpleQuestion: undefined,
     note: undefined,
 }
 
+type editableFields = Pick<SurveyState, "emojiId" | "simpleQuestion" | "note">
+
 function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState }) {
+    const saveBtn = useRef<HTMLButtonElement | null>(null);
     const [survey, setSurvey] = useState<SurveyState>(surveyData)
+    const [canEdit, setCanEdit] = useState<boolean>(false)
+
+    function updateState<K extends keyof editableFields>(field: K, value: editableFields[K]) {
+        setSurvey(survey => {
+            return {...survey, [field]: value}
+        })
+    }
 
     function changeEmoji(emoji: Emoji) {
-        setSurvey(survey => {
-            return {...survey, emojiId: emoji.id}
-        })
+        updateState('emojiId', emoji.id)
+    }
+
+    function saveSurvey() {
+        setCanEdit(value => !value)
+        console.info(survey);
+        saveBtn.current?.blur();
     }
 
     return (
@@ -38,9 +51,9 @@ function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState })
                     <p className="text-white text-base font-normal leading-normal">
                         How did it feel today?
                     </p>
-                    <div>
+                    <BasePopover.Close aria-label="Close">
                         <XMarkIcon className="text-white h-6 w-6"/>
-                    </div>
+                    </BasePopover.Close>
                 </div>
                 <EmojiList emojiId={survey.emojiId} onClick={changeEmoji}/>
                 <p className="text-white  text-base font-normal leading-normal">
@@ -55,24 +68,32 @@ function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState })
                                 })
                             }}
                             variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
-                    <Button className="w-full"
-                            onClick={() => {
-                                setSurvey(survey => {
-                                    return {...survey, simpleQuestion: false}
-                                })
-                            }}
-                            variant={survey.simpleQuestion !== undefined && !survey.simpleQuestion ? 'primary' : 'dark'}>No</Button>
+                    <Button
+                        ref={saveBtn}
+                        className="w-full"
+                        onClick={() => {
+                            setSurvey(survey => {
+                                return {...survey, simpleQuestion: false}
+                            })
+                        }}
+                        variant={survey.simpleQuestion !== undefined && !survey.simpleQuestion ? 'primary' : 'dark'}>No</Button>
                 </div>
 
                 <div>
                     <TextArea
+                        onChange={(e) => updateState('note', e.target.value)}
                         className="h-[100px] px-4 py-3 w-full bg-[#1e1e1e]/70 rounded-xl border border-neutral-700 focus:out"
                         placeholder="What's the most important thing I learn today?"
                         name="note">
                     </TextArea>
                 </div>
-                <Button className="w-full" size="sm">
-                    SAVE
+                <Button
+                    ref={saveBtn}
+                    onClick={saveSurvey}
+                    styleType={canEdit ? 'filled' : 'text'}
+                    variant={canEdit ? 'primary' : 'dark'}
+                    className="w-full" size="sm">
+                    {canEdit ? 'SAVE' : 'EDIT'}
                 </Button>
             </div>
             <BasePopover.Arrow className="fill-neutral-700"/>

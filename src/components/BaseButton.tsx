@@ -1,11 +1,11 @@
-import React, {JSX} from 'react';
+import React, { JSX, forwardRef } from 'react';
 import clsx from "clsx";
 
 export type Icon = JSX.Element;
 export type IconPosition = 'left' | 'right' | '';
 
 interface ButtonProps {
-    type?: 'button' | 'submit' | 'reset'
+    type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'secondary' | 'light' | 'dark';
     styleType?: 'filled' | 'text';
     size?: 'sm' | 'md';
@@ -17,35 +17,44 @@ interface ButtonProps {
     children?: React.ReactNode;
 }
 
-const Content = ({icon, iconPosition, iconClassName, children}: {
-    icon?: Icon,
-    iconPosition?: IconPosition,
-    iconClassName: string,
-    children?: React.ReactNode
+// Componente para manejar el contenido interno del botón
+const Content = ({
+                     icon,
+                     iconPosition,
+                     iconClassName,
+                     children
+                 }: {
+    icon?: Icon;
+    iconPosition?: IconPosition;
+    iconClassName: string;
+    children?: React.ReactNode;
 }) => {
     if (icon && !children) {
-        return <span className={clsx(iconClassName)}>{icon}</span>
+        return <span className={clsx(iconClassName)}>{icon}</span>;
     }
 
-    return <>
-        {icon && iconPosition === 'left' && <span className={clsx(iconClassName, {'mr-2': children})}>{icon}</span>}
-        {children}
-        {icon && iconPosition === 'right' && <span className={clsx(iconClassName, {'ml-2': children})}>{icon}</span>}
-    </>
-}
+    return (
+        <>
+            {icon && iconPosition === 'left' && <span className={clsx(iconClassName, { 'mr-2': children })}>{icon}</span>}
+            {children}
+            {icon && iconPosition === 'right' && <span className={clsx(iconClassName, { 'ml-2': children })}>{icon}</span>}
+        </>
+    );
+};
 
-const Button: React.FC<ButtonProps> = ({
-                                           type = 'button',
-                                           variant = 'primary',
-                                           styleType = 'filled',
-                                           size = 'md',
-                                           className = '',
-                                           disabled = false,
-                                           icon,
-                                           iconPosition,
-                                           onClick,
-                                           children,
-                                       }) => {
+// Componente principal con soporte para `ref`
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
+                                                               type = 'button',
+                                                               variant = 'primary',
+                                                               styleType = 'filled',
+                                                               size = 'md',
+                                                               className = '',
+                                                               disabled = false,
+                                                               icon,
+                                                               iconPosition,
+                                                               onClick,
+                                                               children,
+                                                           }, ref) => {
     const baseStyles = className + ' btn-base';
     let iconClassName = '';
 
@@ -87,7 +96,7 @@ const Button: React.FC<ButtonProps> = ({
         },
         dark: {
             filled: 'bg-stone-800 hover:bg-stone-900 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800',
-            text: 'text-gray-900 hover:text-gray-800 hover:bg-gray-300 focus:ring-gray-700',
+            text: 'text-primary hover:bg-primary/10 focus:bg-primary focus:text-slate-950 focus:ring-primary',
         },
     };
 
@@ -95,6 +104,7 @@ const Button: React.FC<ButtonProps> = ({
 
     return (
         <button
+            ref={ref}
             type={type}
             onClick={onClick}
             disabled={disabled}
@@ -110,6 +120,8 @@ const Button: React.FC<ButtonProps> = ({
             </Content>
         </button>
     );
-};
+});
+
+Button.displayName = 'Button'; // Es necesario para que React identifique el componente en debuggers
 
 export default Button;
