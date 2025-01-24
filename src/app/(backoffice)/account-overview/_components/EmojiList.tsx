@@ -44,7 +44,8 @@ const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick, disabled = fa
                     <button
                         disabled={!disabled}
                         key={emoji.id}
-                        className={`disabled:cursor-not-allowed disabled:opacity-50 ${
+                        title={emoji.description}
+                        className={`disabled:cursor-not-allowed ${
                             selectedEmoji?.id === emoji.id ? "text-primary" : "text-[#57534E]"
                         }`}
                         onClick={() => handleSelectEmoji(emoji)}

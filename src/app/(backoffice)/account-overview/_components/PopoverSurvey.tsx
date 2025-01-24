@@ -92,16 +92,21 @@ function PopoverSurvey({surveyData, onClick}: {
                 <div>
                     <div className="flex gap-2">
                         <Button
-                            className={clsx('w-full', {'!bg-primary': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion})}
+                            className={clsx('w-full', {
+                                '!bg-primary opacity-100': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion,
+                                '!bg-stone-800 !text-white opacity-100': survey.simpleQuestion !== undefined && !survey.simpleQuestion
+                            })}
                             disabled={!canEdit}
                             onClick={() => {
                                 setQuestionError('')
                                 updateState('simpleQuestion', true)
                             }}
                             variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
-
                         <Button
-                            className={clsx('w-full', {'!bg-primary': survey.simpleQuestion !== undefined && !survey.simpleQuestion})}
+                            className={clsx('w-full', {
+                                '!bg-primary opacity-100': survey.simpleQuestion !== undefined && !survey.simpleQuestion,
+                                '!bg-stone-800 !text-white opacity-100': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion
+                            })}
                             disabled={!canEdit}
                             onClick={() => {
                                 setQuestionError('')
@@ -125,7 +130,9 @@ function PopoverSurvey({surveyData, onClick}: {
                         disabled={!canEdit}
                         defaultValue={survey.note || ''}
                         onChange={(e) => updateState('note', e.target.value)}
-                        className="h-[100px] px-4 py-3 w-full bg-[#1e1e1e]/70 rounded-xl border border-neutral-700 focus:out"
+                        className={clsx('h-[100px] px-4 py-3 w-full bg-[#1e1e1e]/70 rounded-xl border border-neutral-700 focus:out', {
+                            'disabled:bg-[#1e1e1e]/70 disabled:text-stone-400 border-neutral-700': !canEdit
+                        })}
                         placeholder="What's the most important thing I learn today?"
                         name="note">
                     </TextArea>
