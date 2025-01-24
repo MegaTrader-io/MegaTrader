@@ -39,8 +39,9 @@ const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick, disabled = fa
         <div className="flex justify-between py-2">
             {emojis.map((emoji) => (
                 <button
+                    disabled={!disabled}
                     key={emoji.id}
-                    className={` ${
+                    className={`disabled:cursor-not-allowed disabled:opacity-50 ${
                         selectedEmoji?.id === emoji.id ? "text-primary" : "text-[#57534E]"
                     }`}
                     onClick={() => handleSelectEmoji(emoji)}

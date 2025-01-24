@@ -6,6 +6,7 @@ import EmojiList from "@/app/(backoffice)/account-overview/_components/EmojiList
 import Button from "@/components/BaseButton";
 import {Emoji} from "@/commons/interfaces";
 import TextArea from "@/components/TextArea";
+import clsx from "clsx";
 
 interface SurveyState {
     id?: number | undefined,
@@ -61,17 +62,20 @@ function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState })
                 </p>
 
                 <div className="flex gap-2">
-                    <Button className="w-full"
-                            disabled={!canEdit}
-                            onClick={() => {
-                                setSurvey(survey => {
-                                    return {...survey, simpleQuestion: true}
-                                })
-                            }}
-                            variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
                     <Button
+                        className={clsx('w-full', {'!bg-primary': !canEdit && survey.simpleQuestion !== undefined && survey.simpleQuestion})}
                         disabled={!canEdit}
-                        className="w-full"
+                        onClick={() => {
+                            setSurvey(survey => {
+                                return {...survey, simpleQuestion: true}
+                            })
+                        }}
+                        variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
+
+
+                    <Button
+                        className={clsx('w-full', {'!bg-primary': survey.simpleQuestion !== undefined && !survey.simpleQuestion})}
+                        disabled={!canEdit}
                         onClick={() => {
                             setSurvey(survey => {
                                 return {...survey, simpleQuestion: false}
