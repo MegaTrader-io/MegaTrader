@@ -18,7 +18,7 @@
   {
     "survey": {
       "id": 1,
-      "emojiId": 5,
+      "emojiId": 1,
       "simpleQuestion": true,
       "note": "all good"
     },
@@ -90,7 +90,7 @@
     "id": 5
   },
   {
-    "survey":  null,
+    "survey": null,
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -106,7 +106,7 @@
     "id": 6
   },
   {
-    "survey":  null,
+    "survey": null,
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -122,7 +122,7 @@
     "id": 7
   },
   {
-    "survey":  null,
+    "survey": null,
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -138,7 +138,7 @@
     "id": 8
   },
   {
-    "survey":  null,
+    "survey": null,
     "date": "Sep 27",
     "netPnl": "-$234.28",
     "pnlHigh": "$6.90",

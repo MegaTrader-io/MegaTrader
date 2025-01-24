@@ -121,6 +121,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     );
 });
 
-Button.displayName = 'Button'; // Es necesario para que React identifique el componente en debuggers
+Button.displayName = 'Button';
 
 export default Button;
