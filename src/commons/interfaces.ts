@@ -64,8 +64,15 @@ export interface TooltipData {
     };
 }
 
+export interface SurveyState {
+    id?: number | undefined,
+    emojiId?: number | undefined
+    simpleQuestion?: boolean | undefined
+    note?: string | null
+}
+
 export interface JournalEntry {
-    canEdit: boolean;
+    survey: SurveyState | null;
     date: string;
     netPnl: string;
     pnlHigh: string;

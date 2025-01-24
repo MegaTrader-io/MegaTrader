@@ -9,6 +9,7 @@ import {JournalEntry} from "@/commons/interfaces";
 import {sleep} from "@/commons/utils";
 import {PopoverTrigger, Popover, PopoverPortal} from "@radix-ui/react-popover";
 import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/PopoverSurvey";
+import IconSurvey from "@/app/(backoffice)/account-overview/_components/IconSurvey";
 
 function DailyJournal() {
     const [loading, setLoading] = useState(false)
@@ -81,25 +82,20 @@ function DailyJournal() {
                         {!loading && data.map((entry) => (
                             <TableRow key={entry.id} className="text-right text-stone-400 text-xs font-normal">
                                 <TableCell className="text-left">
-                                    {entry.canEdit && (
-                                        <>
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <button onClick={() => {
-                                                        console.info(entry)
-                                                    }}>
-                                                        <Image src='/assets/images/pencil.svg'
-                                                               alt={'pencil'}
-                                                               width={50}
-                                                               height={28}/>
-                                                    </button>
-                                                </PopoverTrigger>
-                                                <PopoverPortal>
-                                                    <PopoverSurvey/>
-                                                </PopoverPortal>
-                                            </Popover>
-                                        </>
-                                    ) || '-'}
+
+
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <button onClick={() => {
+                                                console.info(entry)
+                                            }}>
+                                                <IconSurvey canEdit={!!entry.survey?.id} />
+                                            </button>
+                                        </PopoverTrigger>
+                                        <PopoverPortal>
+                                            <PopoverSurvey surveyData={entry.survey}/>
+                                        </PopoverPortal>
+                                    </Popover>
                                 </TableCell>
                                 <TableCell>{entry.date}</TableCell>
                                 <TableCell>{entry.netPnl}</TableCell>

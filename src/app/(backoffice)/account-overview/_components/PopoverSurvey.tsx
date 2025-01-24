@@ -1,31 +1,24 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import * as BasePopover from "@radix-ui/react-popover";
 import {PopoverContent} from "@radix-ui/react-popover";
 import EmojiList from "@/app/(backoffice)/account-overview/_components/EmojiList";
 import Button from "@/components/BaseButton";
-import {Emoji} from "@/commons/interfaces";
+import {Emoji, SurveyState} from "@/commons/interfaces";
 import TextArea from "@/components/TextArea";
 import clsx from "clsx";
 
-interface SurveyState {
-    id?: number | undefined,
-    emojiId?: number | undefined
-    simpleQuestion?: boolean | undefined
-    note?: string | undefined
-}
-
-const defaultData = {
-    emojiId: undefined,
-    simpleQuestion: undefined,
-    note: undefined,
-}
-
 type editableFields = Pick<SurveyState, "emojiId" | "simpleQuestion" | "note">
 
-function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState }) {
+const surveyDefaultData = {
+    emojiId: undefined,
+    simpleQuestion: undefined,
+    note: null,
+}
+
+function PopoverSurvey({surveyData}: { surveyData?: SurveyState | null }) {
     const saveBtn = useRef<HTMLButtonElement | null>(null);
-    const [survey, setSurvey] = useState<SurveyState>(surveyData)
+    const [survey, setSurvey] = useState<SurveyState>(surveyData || surveyDefaultData)
     const [canEdit, setCanEdit] = useState<boolean>(false)
 
     function updateState<K extends keyof editableFields>(field: K, value: editableFields[K]) {

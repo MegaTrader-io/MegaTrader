@@ -1,6 +1,6 @@
 [
   {
-    "canEdit": false,
+    "survey": null,
     "date": "Average",
     "netPnl": "-$234.28",
     "pnlHigh": "$6.90",
@@ -16,7 +16,12 @@
     "id": 1
   },
   {
-    "canEdit": true,
+    "survey": {
+      "id": 1,
+      "emojiId": 2,
+      "simpleQuestion": true,
+      "note": "all good"
+    },
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -32,7 +37,7 @@
     "id": 2
   },
   {
-    "canEdit": true,
+    "survey": null,
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -48,7 +53,12 @@
     "id": 3
   },
   {
-    "canEdit": true,
+    "survey": {
+      "id": 2,
+      "emojiId": 3,
+      "simpleQuestion": false,
+      "note": null
+    },
     "date": "Sep 27",
     "netPnl": "-$234.28",
     "pnlHigh": "$6.90",
@@ -64,7 +74,7 @@
     "id": 4
   },
   {
-    "canEdit": true,
+    "survey": null,
     "date": "Sep 27",
     "netPnl": "-$234.28",
     "pnlHigh": "$6.90",
@@ -80,7 +90,7 @@
     "id": 5
   },
   {
-    "canEdit": true,
+    "survey":  null,
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -96,7 +106,7 @@
     "id": 6
   },
   {
-    "canEdit": true,
+    "survey":  null,
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -112,7 +122,7 @@
     "id": 7
   },
   {
-    "canEdit": true,
+    "survey":  null,
     "date": "Sep 30",
     "netPnl": "-$73.40",
     "pnlHigh": "-$1",
@@ -128,7 +138,7 @@
     "id": 8
   },
   {
-    "canEdit": true,
+    "survey":  null,
     "date": "Sep 27",
     "netPnl": "-$234.28",
     "pnlHigh": "$6.90",
