@@ -16,13 +16,18 @@ export const emojis: Emoji[] = [
 
 interface Props {
     emojiId?: number | undefined,
-    onClick?: (emoji: Emoji) => void
+    onClick?: (emoji: Emoji) => void,
+    disabled?: boolean
 }
 
-const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick}) => {
+const EmojiList: React.FC<Props> = ({emojiId = undefined, onClick, disabled = false}) => {
     const [selectedEmoji, setSelectedEmoji] = useState<Emoji | undefined>(emojis.find(i => i.id === emojiId));
 
     const handleSelectEmoji = (emoji: Emoji) => {
+        if (!disabled) {
+            return;
+        }
+
         if (onClick) {
             onClick(emoji)
         }

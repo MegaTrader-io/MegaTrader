@@ -55,13 +55,14 @@ function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState })
                         <XMarkIcon className="text-white h-6 w-6"/>
                     </BasePopover.Close>
                 </div>
-                <EmojiList emojiId={survey.emojiId} onClick={changeEmoji}/>
+                <EmojiList emojiId={survey.emojiId} onClick={changeEmoji} disabled={canEdit}/>
                 <p className="text-white  text-base font-normal leading-normal">
                     Did I follow my trading plan today?
                 </p>
 
                 <div className="flex gap-2">
                     <Button className="w-full"
+                            disabled={!canEdit}
                             onClick={() => {
                                 setSurvey(survey => {
                                     return {...survey, simpleQuestion: true}
@@ -69,7 +70,7 @@ function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState })
                             }}
                             variant={survey.simpleQuestion !== undefined && survey.simpleQuestion ? 'primary' : 'dark'}>Yes</Button>
                     <Button
-                        ref={saveBtn}
+                        disabled={!canEdit}
                         className="w-full"
                         onClick={() => {
                             setSurvey(survey => {
@@ -81,6 +82,7 @@ function PopoverSurvey({surveyData = defaultData}: { surveyData?: SurveyState })
 
                 <div>
                     <TextArea
+                        disabled={!canEdit}
                         onChange={(e) => updateState('note', e.target.value)}
                         className="h-[100px] px-4 py-3 w-full bg-[#1e1e1e]/70 rounded-xl border border-neutral-700 focus:out"
                         placeholder="What's the most important thing I learn today?"
