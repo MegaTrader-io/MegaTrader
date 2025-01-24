@@ -147,7 +147,7 @@ function PopoverSurvey({surveyData, onClick}: {
                 </Button>
             </div>
             <BasePopover.Arrow asChild>
-                <svg width="29" height="16" viewBox="0 2 29 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="24" height="9.5" viewBox="0 2 29 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g filter="url(#filter0_d_4706_5076)">
                         <path d="M14.5 14L28.5 0H0.5L14.5 14Z" fill="#131210"/>
                     </g>
