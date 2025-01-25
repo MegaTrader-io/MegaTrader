@@ -67,7 +67,7 @@ function PopoverSurvey({surveyData, onClick}: {
 
     return (
         <PopoverContent
-            className="flex flex-col items-center justify-center gap-2 p-4 relative bg-[#131210] rounded-2xl border border-solid border-neutral-700">
+            className="flex flex-col items-center justify-center gap-2 p-4 relative bg-[#131210] rounded-2xl border border-solid border-[#494949]">
             <div className="space-y-2">
                 <div className="flex justify-between gap-2 w-full">
                     <p className="text-white text-base font-normal leading-normal">
@@ -147,23 +147,19 @@ function PopoverSurvey({surveyData, onClick}: {
                 </Button>
             </div>
             <BasePopover.Arrow asChild>
-                <svg width="24" height="9.5" viewBox="0 2 29 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g filter="url(#filter0_d_4706_5076)">
+                <svg width="29" height="16" viewBox="0 1 29 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g filter="url(#filter0_d_4706_5257)">
                         <path d="M14.5 14L28.5 0H0.5L14.5 14Z" fill="#131210"/>
                     </g>
                     <defs>
-                        <filter id="filter0_d_4706_5076" x="0.5" y="0" width="28" height="16"
-                                filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                        <filter id="filter0_d_4706_5257" x="0.5" y="0" width="28" height="15.5" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
                             <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-                            <feColorMatrix in="SourceAlpha" type="matrix"
-                                           values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-                            <feOffset dy="2"/>
+                            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                            <feOffset dy="1.6"/>
                             <feComposite in2="hardAlpha" operator="out"/>
-                            <feColorMatrix type="matrix"
-                                           values="0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 1 0"/>
-                            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_4706_5076"/>
-                            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_4706_5076"
-                                     result="shape"/>
+                            <feColorMatrix type="matrix" values="0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 1 0"/>
+                            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_4706_5257"/>
+                            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_4706_5257" result="shape"/>
                         </filter>
                     </defs>
                 </svg>
