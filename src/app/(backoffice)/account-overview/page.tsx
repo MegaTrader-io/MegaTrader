@@ -21,7 +21,7 @@ import FeatureContent from "@/app/(backoffice)/account-overview/_components/Feat
 import DailyJournal from "@/app/(backoffice)/account-overview/_components/DailyJournal";
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
 import PopoverMenu from "@/components/backoffice/PopoverMenu";
-import {Bars3Icon, EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
+import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
