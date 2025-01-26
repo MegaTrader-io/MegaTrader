@@ -100,22 +100,27 @@ export default function AccountOverView() {
             </Card>
             <Tooltip>
                 <div
-                    className="flex items-center justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">
-                    <div className="flex text-white items-center gap-4">
-                        <Image src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue' width={133}
-                               height={40}/>
+                    className="flex flex-col gap-[17px] lg:flex-row lg:items-center lg:justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">
+                    <div
+                        className="justify-center flex gap-[17px] flex-col sm:flex-row sm:items-center sm:w-auto sm:justify-between">
+                        <Image
+                            className="mx-auto sm:mx-0"
+                            src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue'
+                            width={133}
+                            height={40}/>
 
                         <Button variant={'dark'}
                                 iconPosition='left'
                                 size='sm'
+                                className="w-full sm:w-auto"
                                 icon={<ArrowUpRightIcon className="text-white"/>}>
                             OPEN PLATFORM
                         </Button>
                     </div>
 
-                    <div className="inline-flex items-center">
+                    <div className="sm:text-right lg:inline-flex lg:items-center">
                         <div
-                            className="gap-2 pl-0 pr-4 py-2 border-r border-neutral-700 inline-flex items-center relative">
+                            className="gap-2 pl-0 pr-4 py-2 sm:border-r border-neutral-700 inline-flex items-center relative">
                             <div
                                 className="text-white">
                                 Login :
@@ -129,7 +134,7 @@ export default function AccountOverView() {
                             <CopyButton value={credentials.login}/>
                         </div>
 
-                        <div className="gap-2 pl-4 pr-0 py-2 inline-flex items-center text-white">
+                        <div className="gap-2 sm:pl-4 pr-0 py-2 inline-flex items-center text-white">
                             <div
                                 className="text-white">
                                 Password :
