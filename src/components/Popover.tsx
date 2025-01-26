@@ -3,7 +3,7 @@ import * as BasePopover from "@radix-ui/react-popover";
 import {Cross2Icon} from "@radix-ui/react-icons";
 
 interface PopoverProps extends PropsWithChildren {
-    trigger: ReactNode; // Lo que se renderizará como botón o trigger del Popover
+    trigger: ReactNode;
 }
 
 const Popover: React.FC<PopoverProps> = ({trigger, children}) => {

@@ -2,23 +2,25 @@
 
 import Image from 'next/image';
 import Link from "next/link";
-import {useState} from "react";
-import {Bars3Icon, BellIcon, UserCircleIcon} from "@heroicons/react/24/solid";
+import React from "react";
+import {BellIcon, UserCircleIcon} from "@heroicons/react/24/solid";
 import {usePathname} from "next/navigation";
+import PopoverMenu from "@/components/backoffice/PopoverMenu";
 
 const navigationItems = [
-    {href: '/account-overview', label: 'ACCOUNT OVERVIEW', sectionId: '/account-overview'},
-    {href: '/affiliates', label: 'AFFILIATES', sectionId: '/affiliates'},
-    {href: '/payouts', label: 'PAYOUTS', sectionId: '/payouts'},
-    {href: '/help-center', label: 'HELP CENTER', sectionId: '/help-center'},
+    {href: '/account-overview', visibleOnDesktop: true, label: 'ACCOUNT OVERVIEW', sectionId: '/account-overview'},
+    {href: '/affiliates', visibleOnDesktop: true, label: 'AFFILIATES', sectionId: '/affiliates'},
+    {href: '/payouts', visibleOnDesktop: true, label: 'PAYOUTS', sectionId: '/payouts'},
+    {href: '/help-center', visibleOnDesktop: true, label: 'HELP CENTER', sectionId: '/help-center'},
+    {href: '/notifications', visibleOnDesktop: false, label: 'NOTIFICATIONS', sectionId: '/notifications'},
+    {href: '/my-profile', visibleOnDesktop: false, label: 'MY PROFILE', sectionId: '/my-profile'},
 ];
 
 export default function Header() {
     const currentPath = usePathname()
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return <div
-        className={`sticky top-0 w-full z-50 transition-all duration-300 ${isMenuOpen ? 'bg-[#131210]' : 'bg-[#131210]/70'} shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-[25px]`}>
+        className={`sticky top-0 w-full z-50 transition-all duration-300 bg-[#131210]/70 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-[25px]`}>
         <div className="w-full max-w-7xl mx-auto px-4 py-6 flex items-center justify-between lg:h-[100px]">
             {/* Logo */}
             <div className="w-auto">
@@ -35,39 +37,36 @@ export default function Header() {
                 </Link>
             </div>
 
-            <button
-                className="btn-primary block lg:hidden"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-                <Bars3Icon className="w-6 h-6 text-white"/>
-            </button>
-
-            <div
-                className={`${
-                    isMenuOpen ? 'block' : 'hidden'
-                } absolute top-[96px] left-0 w-full h-screen ${isMenuOpen ? 'bg-[#1e1e1e]' : 'bg-[#111]'}  flex flex-col items-center lg:hidden`}
-            >
-                {navigationItems.map((item) => (
+            <PopoverMenu className="block lg:hidden">
+                <div className="gap1 flex flex-col">
+                    {navigationItems.map((item) => (
+                        <Link
+                            key={item.label}
+                            href={item.href}
+                            className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 ${
+                                currentPath === item.sectionId
+                                    ? 'px-3 py-1 bg-neutral-300 rounded border border-neutral-300 justify-center items-center gap-2 inline-flex'
+                                    : ' hover:bg-neutral-300'
+                            }`}
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
                     <Link
-                        key={item.label}
-                        href={item.href}
-                        className={`text-base text-neutral-50 font-light uppercase leading-6 px-4 py-3 transition-all duration-200 ${
-                            currentPath === item.sectionId
-                                ? 'text-white bg-[#1e1e1e] rounded-lg'
-                                : 'text-gray-400 hover:text-white'
-                        }`}
+                        href="/auth/login"
+                        className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
                     >
-                        {item.label}
+                        LOG OUT
                     </Link>
-                ))}
-            </div>
+                </div>
+            </PopoverMenu>
 
             {/* desktop */}
             <nav
                 className="hidden lg:flex justify-start items-center flex-row xl:gap-2"
                 aria-label="Main navigation"
             >
-                {navigationItems.map((item) => (
+                {navigationItems.filter(menu => menu.visibleOnDesktop).map((item) => (
                     <Link
                         key={item.label}
                         href={item.href}
