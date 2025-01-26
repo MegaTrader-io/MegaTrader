@@ -22,7 +22,7 @@ function PopoverMenu({className, children}: Props) {
                 </PopoverTrigger>
                 <PopoverPortal>
                     <PopoverContent
-                        className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000]">
+                        className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000] lg:hidden">
                         {children}
                         <PopoverArrow width={26} height={14} className="fill-white"/>
                     </PopoverContent>
