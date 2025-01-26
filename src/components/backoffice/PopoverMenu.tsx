@@ -3,21 +3,19 @@ import {Popover, PopoverContent, PopoverPortal, PopoverTrigger, PopoverArrow} fr
 import {Bars3Icon} from "@heroicons/react/24/solid";
 
 interface Props extends PropsWithChildren {
-    className?: string
+    className?: string,
+    icon?: React.ReactNode
 }
 
-function PopoverMenu({className, children}: Props) {
+function PopoverMenu({className, children, icon}: Props) {
 
     return (
         <div className={className}>
             <Popover>
                 <PopoverTrigger asChild>
-                    <button
-                        className="btn-primary block"
-                        onClick={() => {
-                        }}
-                    >
-                        <Bars3Icon className="w-6 h-6 text-white"/>
+                    <button className="btn-primary block">
+                        {!icon && <Bars3Icon className="w-6 h-6 text-white"/>}
+                        {icon && icon}
                     </button>
                 </PopoverTrigger>
                 <PopoverPortal>

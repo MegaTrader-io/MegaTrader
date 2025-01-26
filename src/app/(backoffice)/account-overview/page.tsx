@@ -20,6 +20,8 @@ import AccountStatus from "@/app/(backoffice)/account-overview/_components/Accou
 import FeatureContent from "@/app/(backoffice)/account-overview/_components/FeatureContent";
 import DailyJournal from "@/app/(backoffice)/account-overview/_components/DailyJournal";
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
+import PopoverMenu from "@/components/backoffice/PopoverMenu";
+import {Bars3Icon, EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
@@ -31,7 +33,7 @@ export default function AccountOverView() {
 
     return <>
         <div className="w-full">
-            <Card className="w-full grid grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
+            <Card className="w-full flex lg:grid lg:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
                 <div className="w-[271px]">
                     <Dropdown
                         items={accounts}
@@ -53,12 +55,13 @@ export default function AccountOverView() {
                     />
                 </div>
 
-                <div className="w-full">
+                {/* desktop */}
+                <div className="hidden lg:block w-full">
                     <Link href="#" className="text-base btn-link">
                         Manage Subscription
                     </Link>
                 </div>
-                <div className="flex gap-2">
+                <div className="hidden md:flex gap-2">
                     <Button variant="dark">
                         RESET
                     </Button>
@@ -67,6 +70,32 @@ export default function AccountOverView() {
                             iconPosition="left">
                         CREATE NEW
                     </Button>
+                </div>
+
+                <div className="text-white md:hidden">
+                    <PopoverMenu className="block lg:hidden"
+                                 icon={<EllipsisHorizontalIcon className="w-6 h-6 text-white"/>}>
+                        <div className="gap1 flex flex-col">
+                            <Link
+                                href={'#'}
+                                className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
+                            >
+                                RESET
+                            </Link>
+                            <Link
+                                href={'#'}
+                                className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
+                            >
+                                CREATE NEW
+                            </Link>
+                            <Link
+                                href={'#'}
+                                className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
+                            >
+                                MANAGE SUBSCRIPTION
+                            </Link>
+                        </div>
+                    </PopoverMenu>
                 </div>
             </Card>
             <Tooltip>

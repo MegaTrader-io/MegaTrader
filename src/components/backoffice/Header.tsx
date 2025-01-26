@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from "next/link";
 import React from "react";
-import {BellIcon, UserCircleIcon} from "@heroicons/react/24/solid";
+import {Bars3Icon, BellIcon, UserCircleIcon} from "@heroicons/react/24/solid";
 import {usePathname} from "next/navigation";
 import PopoverMenu from "@/components/backoffice/PopoverMenu";
 
@@ -37,7 +37,7 @@ export default function Header() {
                 </Link>
             </div>
 
-            <PopoverMenu className="block lg:hidden">
+            <PopoverMenu className="block lg:hidden" icon={<Bars3Icon className="w-6 h-6 text-white"/>}>
                 <div className="gap1 flex flex-col">
                     {navigationItems.map((item) => (
                         <Link
