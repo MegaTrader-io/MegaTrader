@@ -154,7 +154,7 @@ export default function AccountOverView() {
             </Tooltip>
         </div>
 
-        <div className="grid grid-cols-[827px_auto] gap-4 w-full">
+        <div className="hidden lg:grid grid-cols-[827px_auto] gap-4 w-full">
             <AccountBalance account={selectedAccount}/>
             <Objectives/>
         </div>

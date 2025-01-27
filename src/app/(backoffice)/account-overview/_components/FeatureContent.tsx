@@ -46,7 +46,7 @@ function FeatureContent() {
 
 
     return (
-        <div className="w-full space-y-4">
+        <div className="hidden lg:block w-full space-y-4">
             <div className="flex gap-2">
                 {Options.map(option => (
                     <Button key={option.id}

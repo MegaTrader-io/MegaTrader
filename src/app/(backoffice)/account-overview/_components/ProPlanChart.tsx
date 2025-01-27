@@ -94,7 +94,7 @@ function ProPlanChart() {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
     return (
-        <Card className="w-full space-y-4">
+        <Card className="hidden lg:block w-full space-y-4">
             <div className="flex justify-between">
                 <div className="text-white text-xl font-light uppercase leading-normal flex items-center gap-1">
                     PRO PLAN $150K <QuestionIcon data={tooltipData}/>
