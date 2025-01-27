@@ -10,8 +10,8 @@ function AccountBalance({account}: { account: Account }) {
     return (
         <Card className="space-y-4">
             <div className="text-white text-xl font-light uppercase leading-normal">ACCOUNT BALANCE</div>
-            <div className="gap-4 flex items-center">
-                <div className="flex flex-col items-start relative flex-1 grow">
+            <div className="gap-4 lg:flex lg:items-center">
+                <div className="glflex flex-col items-start relative flex-1 grow">
                     {[
                         {label: "Current Balance", value: accountBalance.currentBalance},
                         {label: "Current Equity", value: accountBalance.currentEquity},

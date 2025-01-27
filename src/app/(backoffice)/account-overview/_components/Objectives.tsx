@@ -4,7 +4,7 @@ import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/16/solid";
 
 function Objectives() {
     return (
-        <Card className="space-y-4">
+        <Card className="space-y-4 lg:max-w-[360px]">
             <div className="text-white text-xl font-light uppercase leading-normal">Objectives</div>
 
             <div className="space-y-2">
@@ -56,7 +56,8 @@ function Objectives() {
                 <div>
                     <div className="flex flex-col">
                         <div className="text-white text-base font-light leading-normal">Do not let your account balance
-                            hit or go below $145,500. <span className="ml-2 text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</span>
+                            hit or go below $145,500. <span
+                                className="ml-2 text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</span>
                         </div>
 
                     </div>
