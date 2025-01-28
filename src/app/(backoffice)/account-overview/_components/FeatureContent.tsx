@@ -44,10 +44,14 @@ function FeatureContent() {
         setChartMetrics({chart1, chart2, chart3})
     }, [])
 
+    const changeOption = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = ev.target.value;
+        setSelection(value)
+    }
 
     return (
         <div className="w-full space-y-4">
-            <div className="flex gap-2">
+            <div className="hidden lg:flex gap-2">
                 {Options.map(option => (
                     <Button key={option.id}
                             variant={option.id === selection ? "primary" : 'dark'}
@@ -58,10 +62,35 @@ function FeatureContent() {
                     </Button>
                 ))}
             </div>
+
+            <div className="lg:hidden relative w-full">
+                <select
+                    className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
+                    onChange={changeOption}
+                >
+                    {Options.map(option => (
+                        <option key={option.id} value={option.id}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0"
+                              width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                        </mask>
+                        <g mask="url(#mask0_5269_2288)">
+                            <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
             <Card className="w-full space-y-8">
                 <div className="grid md:flex md:justify-between">
                     <div
-                        className="px-3 mb-4 sm:mb-auto py-1 gap-2 inline-flex items-center justify-center    bg-stone-800 rounded-2xl">
+                        className="px-3 mb-4 sm:mb-auto py-1 gap-2 inline-flex items-center justify-center bg-stone-800 rounded-2xl">
                         <div
                             className="text-xs font-medium text-white uppercase leading-normal">
                             AVG. PROFITABILITY PER TRADE
@@ -101,12 +130,11 @@ function FeatureContent() {
                             </svg>
 
                             <div
-                                className="text-xs font-bold text-rose-500 leading-tight">
+                                className="text-xs font-bold text-rose-500 items-center">
                                 -$127.16
                             </div>
                         </div>
                     </div>
-
                     <QuestionTooltip/>
                 </div>
 
