@@ -94,8 +94,8 @@ function ProPlanChart() {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
     return (
-        <Card className="hidden lg:block w-full space-y-4">
-            <div className="flex justify-between">
+        <Card className="w-full space-y-4">
+            <div className="space-y-4 lg:space-y-0 lg:flex justify-between">
                 <div className="text-white text-xl font-light uppercase leading-normal flex items-center gap-1">
                     PRO PLAN $150K <QuestionIcon data={tooltipData}/>
                 </div>
@@ -106,7 +106,7 @@ function ProPlanChart() {
                         value={selectPeriod}
                         onChange={setSelectPeriod}
                         renderButtonContent={(item) => (
-                            <div className="flex gap-2 items-center">
+                            <div className="flex gap-2 justify-between w-full">
                                 <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
                                 <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
                             </div>
