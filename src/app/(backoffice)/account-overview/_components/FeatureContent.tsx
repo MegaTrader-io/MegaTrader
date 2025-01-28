@@ -96,7 +96,7 @@ function FeatureContent() {
                             AVG. PROFITABILITY PER TRADE
                         </div>
 
-                        <GenerictExclamationTooltip>
+                        <GenericExclamationTooltip>
                             <>
                                 <div className="text-white text-xs font-bold leading-tight">Avg. Profitability per
                                     trade
@@ -114,7 +114,7 @@ function FeatureContent() {
                                     positive to stay profitable.
                                 </p>
                             </>
-                        </GenerictExclamationTooltip>
+                        </GenericExclamationTooltip>
 
                         <div className="flex items-center gap-1">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -230,7 +230,7 @@ function FeatureContent() {
                             REWARD-TO-RISK RATIO
                         </div>
 
-                        <GenerictExclamationTooltip>
+                        <GenericExclamationTooltip>
                             <>
                                 <div className="text-white text-xs font-bold leading-tight">Reward-to-risk ratio
                                 </div>
@@ -244,7 +244,7 @@ function FeatureContent() {
                                     continued profitability.
                                 </p>
                             </>
-                        </GenerictExclamationTooltip>
+                        </GenericExclamationTooltip>
 
                         <div className="flex items-center">
                             <div
@@ -294,7 +294,7 @@ function QuestionTooltip() {
     </Tooltip>
 }
 
-function GenerictExclamationTooltip({children}: { children?: React.ReactElement }) {
+function GenericExclamationTooltip({children}: { children?: React.ReactElement }) {
     return <Tooltip>
         <TooltipTrigger>
             <ExclamationIcon className="text-white"/>
