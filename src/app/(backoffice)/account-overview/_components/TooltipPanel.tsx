@@ -1,7 +1,7 @@
-import Image from "next/image";
+import Image from "next/image"
 import React from "react";
 
-export default function Tooltip({children}: { children: React.ReactNode }) {
+export default function TooltipPanel({children}: { children: React.ReactNode }) {
     return <div className="relative mt-[22px]">
         <div>
             {children}

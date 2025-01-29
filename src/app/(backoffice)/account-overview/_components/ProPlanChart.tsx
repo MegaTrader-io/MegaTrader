@@ -8,7 +8,8 @@ import Card from "@/components/Card";
 import {Period, TooltipData} from "@/commons/interfaces";
 import dynamic from 'next/dynamic';
 import {ApexOptions} from "apexcharts";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/Tooltip";
+import * as BaseTooltip from "@radix-ui/react-tooltip";
+import clsx from "clsx";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
@@ -33,7 +34,7 @@ const chartConfig = {
         dataLabels: {
             enabled: false,
         },
-        colors: ["#FFE7B8"], // Color amarillo suave para la línea
+        colors: ["#FFE7B8"],
         stroke: {
             lineCap: "round",
             curve: "smooth",
@@ -138,85 +139,126 @@ interface QuestionIconProps {
 
 const QuestionIcon: React.FC<QuestionIconProps> = ({data}) => {
     return (
-        <Tooltip>
-            <TooltipTrigger>
-                <div className="flex items-center">
-                    <Image
-                        className="inline"
-                        src={"/assets/images/question-icon.svg"}
-                        alt={"question icon"}
-                        width={24}
-                        height={24}
-                    />
-                </div>
-            </TooltipTrigger>
-            <TooltipContent>
-                <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
-                    <div className="text-white text-xs font-bold leading-tight">Parameters</div>
-                    <div className="self-stretch flex-col justify-start items-start flex">
-                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                Starting balance
-                            </div>
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                {data.parameters.startingBalance}
-                            </div>
-                        </div>
-                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                Max Position Size
-                            </div>
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                {data.parameters.maxPositionSize}
-                            </div>
-                        </div>
-                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                Max Drawdown
-                            </div>
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                {data.parameters.maxDrawdown}
-                            </div>
-                        </div>
+        <BaseTooltip.Provider>
+            <BaseTooltip.Root>
+                <BaseTooltip.Trigger>
+                    <div className="flex items-center">
+                        <Image
+                            className="inline"
+                            src={"/assets/images/question-icon.svg"}
+                            alt={"question icon"}
+                            width={24}
+                            height={24}
+                        />
                     </div>
-                    <div className="self-stretch h-[0px] border border-neutral-700"></div>
-                    <div className="self-stretch flex-col justify-start items-start flex">
-                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                Account number:
+                </BaseTooltip.Trigger>
+                <BaseTooltip.Portal>
+                    <BaseTooltip.Content
+                        sideOffset={10}
+                        className={clsx('px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400')}>
+                        <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
+                            <div className="text-white text-xs font-bold leading-tight">Parameters</div>
+                            <div className="self-stretch flex-col justify-start items-start flex">
+                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                                    <div
+                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                        Starting balance
+                                    </div>
+                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                        {data.parameters.startingBalance}
+                                    </div>
+                                </div>
+                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                                    <div
+                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                        Max Position Size
+                                    </div>
+                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                        {data.parameters.maxPositionSize}
+                                    </div>
+                                </div>
+                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                                    <div
+                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                        Max Drawdown
+                                    </div>
+                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                        {data.parameters.maxDrawdown}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                {data.accountDetails.accountNumber}
+                            <div className="self-stretch h-[0px] border border-neutral-700"></div>
+                            <div className="self-stretch flex-col justify-start items-start flex">
+                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                                    <div
+                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                        Account number:
+                                    </div>
+                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                        {data.accountDetails.accountNumber}
+                                    </div>
+                                </div>
+                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                                    <div
+                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                        Platform:
+                                    </div>
+                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                        {data.accountDetails.platform}
+                                    </div>
+                                </div>
+                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                                    <div
+                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                        Username:
+                                    </div>
+                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                        {data.accountDetails.username}
+                                    </div>
+                                </div>
+                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                                    <div
+                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                                        Password:
+                                    </div>
+                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                                        {data.accountDetails.password}
+                                    </div>
+                                </div>
                             </div>
+
+                            <BaseTooltip.Arrow asChild>
+                                <svg width="16" height="10" viewBox="0 2 16 10"
+                                     className="absolute -top-[1px] -translate-x-1/2" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <g filter="url(#filter0_d_5037_5816)">
+                                        <path d="M8.5 8L16.5 0H0.5L8.5 8Z" fill="black"/>
+                                    </g>
+                                    <defs>
+                                        <filter id="filter0_d_5037_5816" x="0.5" y="0" width="16" height="10"
+                                                filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                                            <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+                                            <feColorMatrix in="SourceAlpha" type="matrix"
+                                                           values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                                                           result="hardAlpha"/>
+                                            <feOffset dy="2"/>
+                                            <feComposite in2="hardAlpha" operator="out"/>
+                                            <feColorMatrix type="matrix"
+                                                           values="0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 0 0.25098 0 0 0 1 0"/>
+                                            <feBlend mode="normal" in2="BackgroundImageFix"
+                                                     result="effect1_dropShadow_5037_5816"/>
+                                            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_5037_5816"
+                                                     result="shape"/>
+                                        </filter>
+                                    </defs>
+                                </svg>
+                            </BaseTooltip.Arrow>
                         </div>
-                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                Platform:
-                            </div>
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                {data.accountDetails.platform}
-                            </div>
-                        </div>
-                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                Username:
-                            </div>
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                {data.accountDetails.username}
-                            </div>
-                        </div>
-                        <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                Password:
-                            </div>
-                            <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                {data.accountDetails.password}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </TooltipContent>
-        </Tooltip>
+                    </BaseTooltip.Content>
+                </BaseTooltip.Portal>
+            </BaseTooltip.Root>
+        </BaseTooltip.Provider>
     );
 };
+
 export default ProPlanChart;

@@ -7,9 +7,9 @@ import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
 import Image from "next/image";
-import Tooltip from "@/app/(backoffice)/account-overview/_components/Tooltip";
 import {CopyButton} from "@/components/CopyButton";
 import Objectives from "@/app/(backoffice)/account-overview/_components/Objectives";
+import TooltipPanel from "@/app/(backoffice)/account-overview/_components/TooltipPanel";
 import {Account} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 import EyeComponent from "@/components/EyeComponent";
@@ -98,7 +98,7 @@ export default function AccountOverView() {
                     </PopoverMenu>
                 </div>
             </Card>
-            <Tooltip>
+            <TooltipPanel>
                 <div
                     className="flex flex-col gap-[17px] lg:flex-row lg:items-center lg:justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">
                     <div
@@ -151,7 +151,7 @@ export default function AccountOverView() {
                         </div>
                     </div>
                 </div>
-            </Tooltip>
+            </TooltipPanel>
         </div>
 
         <div
