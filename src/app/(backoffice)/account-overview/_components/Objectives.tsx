@@ -41,10 +41,10 @@ function Objectives() {
                             <div className="text-white text-base font-light leading-normal">Best day cannot be greater
                                 than 50% of your
                                 total profit.
-                                <div
+                                <p
                                     className="block  lg:inline lg:ml-2 text-mgt-link text-xs font-normal underline leading-tight">Consistency
                                     Target
-                                </div>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -57,11 +57,10 @@ function Objectives() {
                 </div>
                 <div>
                     <div className="flex flex-col">
-                        <div className="text-white text-base font-light leading-normal">Do not let your account balance
-                            hit or go below $145,500. <span
-                                className="ml-2 text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</span>
-                        </div>
-
+                        <span className="text-white text-base font-light leading-normal">Do not let your account balance
+                            hit or go below $145,500.
+                            <p className="block lg:inline g:ml-2 text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</p>
+                        </span>
                     </div>
                 </div>
             </div>

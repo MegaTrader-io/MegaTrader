@@ -318,7 +318,7 @@ function QuestionTooltip() {
 }
 
 function GenericExclamationTooltip({children}: { children?: React.ReactElement }) {
-    return <BaseTooltip.Provider>
+    return <BaseTooltip.Provider delayDuration={0}>
         <BaseTooltip.Root>
             <BaseTooltip.Trigger>
                 <ExclamationIcon className="text-white"/>
