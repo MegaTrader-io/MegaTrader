@@ -12,11 +12,12 @@ function Objectives() {
                     <div className="flex items-center">
                         <CheckCircleIcon className="w-6 h-6 text-secondary"/>
                     </div>
-                    <div>
-                        <div className="gap-2 flex items-center">
+                    <div className="w-full ">
+                        <div className="gap-2 lg:flex lg:items-center">
                             <div className="text-white text-base font-light">Reach and maintain the $9,000+</div>
                             <div
-                                className="text-mgt-link text-xs font-normal underline leading-tight">Profit target
+                                className="text-mgt-link text-xs font-normal inline underline leading-tight">Profit
+                                target
                             </div>
                         </div>
                         <div aria-hidden="true" className="my-2">
@@ -39,11 +40,12 @@ function Objectives() {
                         <div>
                             <div className="text-white text-base font-light leading-normal">Best day cannot be greater
                                 than 50% of your
-                                total profit.<span
-                                    className="ml-2 text-mgt-link text-xs font-normal underline leading-tight">Consistency Target
-                            </span>
+                                total profit.
+                                <div
+                                    className="block  lg:inline lg:ml-2 text-mgt-link text-xs font-normal underline leading-tight">Consistency
+                                    Target
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
