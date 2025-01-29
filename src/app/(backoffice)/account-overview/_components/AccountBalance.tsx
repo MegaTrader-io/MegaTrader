@@ -58,16 +58,16 @@ function AccountBalance({account}: { account: Account }) {
 
 function QuestionIcon() {
     return (
-        <BaseTooltip.Provider>
+        <BaseTooltip.Provider delayDuration={0}>
             <BaseTooltip.Root>
-                <BaseTooltip.Trigger>
-                    <div className="ml-1">
+                <BaseTooltip.Trigger asChild>
+                    <button className="ml-1">
                         <Image src={'/assets/images/question-icon.svg'}
                                alt={'question icon'}
                                width={24}
                                height={24}
                         />
-                    </div>
+                    </button>
                 </BaseTooltip.Trigger>
                 <BaseTooltip.Portal>
                     <BaseTooltip.Content
@@ -76,7 +76,7 @@ function QuestionIcon() {
                         <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
                             Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday 3:10 PM CT)
                         </div>
-                        <TooltipArrow />
+                        <TooltipArrow/>
                     </BaseTooltip.Content>
                 </BaseTooltip.Portal>
             </BaseTooltip.Root>

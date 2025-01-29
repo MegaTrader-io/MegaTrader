@@ -35,9 +35,10 @@ function DailyJournal() {
     };
 
     useEffect(() => {
-        sleep(500).then(() => {
-            void fetchJournalData();
-        })
+        sleep(500)
+            .then(() => {
+                void fetchJournalData();
+            })
     }, []);
 
     const handlePageChange = (page: number) => {

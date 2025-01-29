@@ -42,16 +42,39 @@ export default {
                 'mgt-link-hover': 'var(--mgt-color-link-hover)',
                 primary: '#FFB34A',
                 secondary: '#14B8A6',
-                light: '#FFFFFF',
-            },
-            animation: {
-                'rotate-animation': 'rotate-animation 10s linear infinite',
+                light: '#FFFFFF'
             },
             keyframes: {
                 'rotate-animation': {
                     '0%': {transform: 'rotate(360deg)'},
                     '100%': {transform: 'rotate(0deg)'},
                 },
+                slideDownAndFade: {
+                    from: { opacity: "0", transform: "translateY(-2px)" },
+                    to: { opacity: "1", transform: "translateY(0)" },
+                },
+                slideLeftAndFade: {
+                    from: { opacity: "0", transform: "translateX(2px)" },
+                    to: { opacity: "1", transform: "translateX(0)" },
+                },
+                slideUpAndFade: {
+                    from: { opacity: "0", transform: "translateY(2px)" },
+                    to: { opacity: "1", transform: "translateY(0)" },
+                },
+                slideRightAndFade: {
+                    from: { opacity: "0", transform: "translateX(-2px)" },
+                    to: { opacity: "1", transform: "translateX(0)" },
+                },
+            },
+            animation: {
+                'rotate-animation': 'rotate-animation 10s linear infinite',
+                slideDownAndFade:
+                    "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+                slideLeftAndFade:
+                    "slideLeftAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+                slideUpAndFade: "slideUpAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+                slideRightAndFade:
+                    "slideRightAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
             },
             clipPath: {
                 'custom-card': 'polygon(0 0, calc(100% - 0px) 0, 100% 110px, 100% 100%, 0 100%)',

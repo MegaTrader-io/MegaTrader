@@ -265,7 +265,7 @@ function FeatureContent() {
 
 function GenericTooltip({children}: { children?: React.ReactElement }) {
     return (
-        <BaseTooltip.Provider>
+        <BaseTooltip.Provider delayDuration={0}>
             <BaseTooltip.Root>
                 <BaseTooltip.Trigger>
                     <ExclamationIcon className="text-[#d9d9d9]"/>
@@ -287,7 +287,7 @@ function GenericTooltip({children}: { children?: React.ReactElement }) {
 
 function QuestionTooltip() {
     return (
-        <BaseTooltip.Provider>
+        <BaseTooltip.Provider delayDuration={0}>
             <BaseTooltip.Root>
                 <BaseTooltip.Trigger>
                     <QuestionIcon className="text-white"/>

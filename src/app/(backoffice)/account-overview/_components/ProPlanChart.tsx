@@ -140,7 +140,7 @@ interface QuestionIconProps {
 
 const QuestionIcon: React.FC<QuestionIconProps> = ({data}) => {
     return (
-        <BaseTooltip.Provider>
+        <BaseTooltip.Provider delayDuration={0}>
             <BaseTooltip.Root>
                 <BaseTooltip.Trigger>
                     <div className="flex items-center">
