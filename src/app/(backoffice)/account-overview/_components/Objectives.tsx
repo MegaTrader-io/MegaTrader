@@ -59,7 +59,7 @@ function Objectives() {
                     <div className="flex flex-col">
                         <span className="text-white text-base font-light leading-normal">Do not let your account balance
                             hit or go below $145,500.
-                            <p className="block lg:inline g:ml-2 text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</p>
+                            <p className="block lg:inline lg:ml-2 text-mgt-link text-xs font-normal underline leading-tight">Maximum Loss Limit</p>
                         </span>
                     </div>
                 </div>
