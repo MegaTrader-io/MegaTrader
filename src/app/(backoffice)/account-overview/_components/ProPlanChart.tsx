@@ -8,9 +8,6 @@ import Card from "@/components/Card";
 import {Period, TooltipData} from "@/commons/interfaces";
 import dynamic from 'next/dynamic';
 import {ApexOptions} from "apexcharts";
-import * as BaseTooltip from "@radix-ui/react-tooltip";
-import clsx from "clsx";
-import TooltipArrow from "@/components/TooltipArrow";
 import Tooltip from "@/components/Tooltip";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
