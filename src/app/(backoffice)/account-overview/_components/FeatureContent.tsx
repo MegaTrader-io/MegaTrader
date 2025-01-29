@@ -7,9 +7,7 @@ import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
 import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {formatCurrency} from "@/commons/utils";
-import * as BaseTooltip from "@radix-ui/react-tooltip";
-import clsx from "clsx";
-import TooltipArrow from "@/components/TooltipArrow";
+import Tooltip from "@/components/Tooltip";
 
 const Options = [
     {id: 'overview', label: 'Overview'},
@@ -265,76 +263,49 @@ function FeatureContent() {
 
 function GenericTooltip({children}: { children?: React.ReactElement }) {
     return (
-        <BaseTooltip.Provider delayDuration={0}>
-            <BaseTooltip.Root>
-                <BaseTooltip.Trigger>
-                    <ExclamationIcon className="text-[#d9d9d9]"/>
-                </BaseTooltip.Trigger>
-                <BaseTooltip.Portal>
-                    <BaseTooltip.Content
-                        sideOffset={10}
-                        className={clsx('p-3 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400')}>
-                        <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
-                            {children}
-                        </div>
-                        <TooltipArrow/>
-                    </BaseTooltip.Content>
-                </BaseTooltip.Portal>
-            </BaseTooltip.Root>
-        </BaseTooltip.Provider>
+        <Tooltip
+            content={
+                <div className="py-1 space-y-2">
+                    {children}
+                </div>}>
+            <ExclamationIcon className="text-[#d9d9d9]"/>
+        </Tooltip>
     )
 }
 
 function QuestionTooltip() {
     return (
-        <BaseTooltip.Provider delayDuration={0}>
-            <BaseTooltip.Root>
-                <BaseTooltip.Trigger>
-                    <QuestionIcon className="text-white"/>
-                </BaseTooltip.Trigger>
-                <BaseTooltip.Portal>
-                    <BaseTooltip.Content
-                        sideOffset={10}
-                        className={clsx('p-3 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400')}>
-                        <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
-                            <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
-                            <p className="leading-tight">
-                                Average winning trades should always be grater than average losing trades, and your
-                                reward/risk
-                                ratio
-                                should have a direct correlation to your winning trade percentage. For example: if you
-                                apply a 2:1
-                                reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a
-                                profitable
-                                trader!
-                            </p>
-                        </div>
-                        <TooltipArrow/>
-                    </BaseTooltip.Content>
-                </BaseTooltip.Portal>
-            </BaseTooltip.Root>
-        </BaseTooltip.Provider>
+        <Tooltip
+            content={
+                <div className="py-1 space-y-2">
+                    <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
+                    <p className="leading-tight">
+                        Average winning trades should always be grater than average losing trades, and your
+                        reward/risk
+                        ratio
+                        should have a direct correlation to your winning trade percentage. For example: if you
+                        apply a 2:1
+                        reward to risk ratio and your winning trade percentage is 50%, congratulations, you’re a
+                        profitable
+                        trader!
+                    </p>
+                </div>
+            }>
+            <QuestionIcon className="text-white"/>
+        </Tooltip>
     );
 }
 
 function GenericExclamationTooltip({children}: { children?: React.ReactElement }) {
-    return <BaseTooltip.Provider delayDuration={0}>
-        <BaseTooltip.Root>
-            <BaseTooltip.Trigger>
-                <ExclamationIcon className="text-white"/>
-            </BaseTooltip.Trigger>
-            <BaseTooltip.Portal>
-                <BaseTooltip.Content
-                    sideOffset={10}
-                    className={clsx('p-3 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400')}>
-                    <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight space-y-2">
-                        {children}
-                    </div>
-                    <TooltipArrow/>
-                </BaseTooltip.Content>
-            </BaseTooltip.Portal>
-        </BaseTooltip.Root>
-    </BaseTooltip.Provider>
+    return (
+        <Tooltip
+            content={
+                <div className="py-1 space-y-2">
+                    {children}
+                </div>}>
+            <ExclamationIcon className="text-white"/>
+        </Tooltip>
+    )
 }
 
 export default FeatureContent;
