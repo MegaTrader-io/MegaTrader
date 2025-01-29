@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Card from "@/components/Card";
 import {Account} from "@/commons/interfaces";
 import Image from "next/image";
@@ -57,22 +57,48 @@ function AccountBalance({account}: { account: Account }) {
 }
 
 function QuestionIcon() {
+
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
         <BaseTooltip.Provider delayDuration={0}>
-            <BaseTooltip.Root>
+            <BaseTooltip.Root open={open} onOpenChange={setOpen}>
                 <BaseTooltip.Trigger asChild>
-                    <button className="ml-1">
-                        <Image src={'/assets/images/question-icon.svg'}
-                               alt={'question icon'}
-                               width={24}
-                               height={24}
+                    <button
+                        className="ml-1"
+                        onTouchStart={(e) => {
+                            e.stopPropagation();
+                            handleOpen();
+                        }}
+                        onBlur={handleClose}
+                    >
+                        <Image
+                            src={'/assets/images/question-icon.svg'}
+                            alt={'question icon'}
+                            width={24}
+                            height={24}
                         />
                     </button>
                 </BaseTooltip.Trigger>
                 <BaseTooltip.Portal>
                     <BaseTooltip.Content
                         sideOffset={10}
-                        className={clsx('px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400')}>
+                        className={clsx(
+                            'px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400',
+                            {'hidden': !open}
+                        )}
+                        onPointerDownOutside={handleClose}
+                        onMouseEnter={handleOpen}
+                        onMouseLeave={handleClose}
+                    >
                         <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
                             Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday 3:10 PM CT)
                         </div>
@@ -81,7 +107,7 @@ function QuestionIcon() {
                 </BaseTooltip.Portal>
             </BaseTooltip.Root>
         </BaseTooltip.Provider>
-    )
+    );
 }
 
 export default AccountBalance;
