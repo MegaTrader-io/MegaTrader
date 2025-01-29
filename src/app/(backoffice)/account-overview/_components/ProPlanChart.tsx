@@ -11,6 +11,7 @@ import {ApexOptions} from "apexcharts";
 import * as BaseTooltip from "@radix-ui/react-tooltip";
 import clsx from "clsx";
 import TooltipArrow from "@/components/TooltipArrow";
+import Tooltip from "@/components/Tooltip";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
@@ -139,100 +140,96 @@ interface QuestionIconProps {
 }
 
 const QuestionIcon: React.FC<QuestionIconProps> = ({data}) => {
-    return (
-        <BaseTooltip.Provider delayDuration={0}>
-            <BaseTooltip.Root>
-                <BaseTooltip.Trigger>
-                    <div className="flex items-center">
-                        <Image
-                            className="inline"
-                            src={"/assets/images/question-icon.svg"}
-                            alt={"question icon"}
-                            width={24}
-                            height={24}
-                        />
-                    </div>
-                </BaseTooltip.Trigger>
-                <BaseTooltip.Portal>
-                    <BaseTooltip.Content
-                        sideOffset={10}
-                        className={clsx('px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400')}>
-                        <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
-                            <div className="text-white text-xs font-bold leading-tight">Parameters</div>
-                            <div className="self-stretch flex-col justify-start items-start flex">
-                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                                    <div
-                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                        Starting balance
-                                    </div>
-                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                        {data.parameters.startingBalance}
-                                    </div>
-                                </div>
-                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                                    <div
-                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                        Max Position Size
-                                    </div>
-                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                        {data.parameters.maxPositionSize}
-                                    </div>
-                                </div>
-                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                                    <div
-                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                        Max Drawdown
-                                    </div>
-                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                        {data.parameters.maxDrawdown}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="self-stretch h-[0px] border border-neutral-700"></div>
-                            <div className="self-stretch flex-col justify-start items-start flex">
-                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                                    <div
-                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                        Account number:
-                                    </div>
-                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                        {data.accountDetails.accountNumber}
-                                    </div>
-                                </div>
-                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                                    <div
-                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                        Platform:
-                                    </div>
-                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                        {data.accountDetails.platform}
-                                    </div>
-                                </div>
-                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                                    <div
-                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                        Username:
-                                    </div>
-                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                        {data.accountDetails.username}
-                                    </div>
-                                </div>
-                                <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
-                                    <div
-                                        className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
-                                        Password:
-                                    </div>
-                                    <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
-                                        {data.accountDetails.password}
-                                    </div>
-                                </div>
-                            </div>
+    const template = (data: TooltipData) => {
+        return (
+            <>
+                <div className="text-white text-xs font-bold leading-tight">Parameters</div>
+                <div className="self-stretch flex-col justify-start items-start flex">
+                    <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                        <div
+                            className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                            Starting balance
                         </div>
-                        <TooltipArrow />
-                    </BaseTooltip.Content>
-                </BaseTooltip.Portal>
-            </BaseTooltip.Root>
-        </BaseTooltip.Provider>
+                        <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                            {data.parameters.startingBalance}
+                        </div>
+                    </div>
+                    <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                        <div
+                            className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                            Max Position Size
+                        </div>
+                        <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                            {data.parameters.maxPositionSize}
+                        </div>
+                    </div>
+                    <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                        <div
+                            className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                            Max Drawdown
+                        </div>
+                        <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                            {data.parameters.maxDrawdown}
+                        </div>
+                    </div>
+                </div>
+                <div className="self-stretch h-[0px] border border-neutral-700"></div>
+                <div className="self-stretch flex-col justify-start items-start flex">
+                    <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                        <div
+                            className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                            Account number:
+                        </div>
+                        <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                            {data.accountDetails.accountNumber}
+                        </div>
+                    </div>
+                    <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                        <div
+                            className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                            Platform:
+                        </div>
+                        <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                            {data.accountDetails.platform}
+                        </div>
+                    </div>
+                    <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                        <div
+                            className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                            Username:
+                        </div>
+                        <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                            {data.accountDetails.username}
+                        </div>
+                    </div>
+                    <div className="self-stretch py-2 justify-start items-center gap-2 inline-flex">
+                        <div
+                            className="grow shrink basis-0 text-stone-400 text-xs font-normal leading-tight">
+                            Password:
+                        </div>
+                        <div className="grow shrink basis-0 text-stone-400 text-xs font-bold leading-tight">
+                            {data.accountDetails.password}
+                        </div>
+                    </div>
+                </div>
+            </>
+        );
+    }
+
+    return (
+        <Tooltip
+            className="flex items-center"
+            content={
+                template(data)
+            }>
+            <Image
+                className="inline"
+                src={"/assets/images/question-icon.svg"}
+                alt={"question icon"}
+                width={24}
+                height={24}
+            />
+        </Tooltip>
     );
 };
 
