@@ -4,7 +4,7 @@ import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/16/solid";
 
 function Objectives() {
     return (
-        <Card className="space-y-4 lg:max-w-[360px]">
+        <Card className="space-y-4 lg:max-w-[405px]">
             <div className="text-white text-xl font-light uppercase leading-normal">Objectives</div>
 
             <div className="space-y-2">
