@@ -88,9 +88,9 @@ function FeatureContent() {
             </div>
 
             <Card className="w-full space-y-8">
-                <div className="grid md:flex md:justify-between">
+                <div className="flex justify-between items-center">
                     <div
-                        className="px-3 mb-4 sm:mb-auto py-1 gap-2 inline-flex items-center justify-center bg-stone-800 rounded-2xl">
+                        className="px-3 sm:mb-auto py-1 gap-2 inline-flex items-center justify-center bg-stone-800 rounded-2xl">
                         <div
                             className="text-xs font-medium text-white uppercase leading-normal">
                             AVG. PROFITABILITY PER TRADE
