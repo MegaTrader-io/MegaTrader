@@ -8,6 +8,7 @@ import ExclamationIcon from "@/components/ExclamationIcon";
 import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {formatCurrency} from "@/commons/utils";
 import Tooltip from "@/components/Tooltip";
+import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
 
 const Options = [
     {id: 'overview', label: 'Overview'},
@@ -88,11 +89,10 @@ function FeatureContent() {
             </div>
 
             <Card className="w-full space-y-8">
-                <div className="flex justify-between items-center">
+                <div className="gap-4 flex justify-between items-center">
                     <div
-                        className="px-3 sm:mb-auto py-1 gap-2 inline-flex items-center justify-center bg-stone-800 rounded-2xl">
-                        <div
-                            className="text-xs font-medium text-white uppercase leading-normal">
+                        className="px-3 sm:mb-auto py-1 gap-2 grid grid-cols-[auto_24px_auto] items-center bg-stone-800 rounded-2xl">
+                        <div className="text-xs font-medium text-white truncate uppercase leading-normal">
                             AVG. PROFITABILITY PER TRADE
                         </div>
 
@@ -115,29 +115,10 @@ function FeatureContent() {
                                 </p>
                             </>
                         </GenericExclamationTooltip>
-
-                        <div className="flex items-center gap-1">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <mask id="mask0_4398_10486" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
-                                      y="0" width="24" height="24">
-                                    <rect width="24" height="24" fill="#D9D9D9"/>
-                                </mask>
-                                <g mask="url(#mask0_4398_10486)">
-                                    <path d="M12 18L6 12L7.4 10.6L11 14.2V5H13V14.2L16.6 10.6L18 12L12 18Z"
-                                          fill="#F43F5E"/>
-                                </g>
-                            </svg>
-
-                            <div
-                                className="text-xs font-bold text-rose-500 items-center">
-                                -$127.16
-                            </div>
-                        </div>
+                        <TrendIndicator value={-127.16}/>
                     </div>
                     <QuestionTooltip/>
                 </div>
-
                 <div
                     className="space-y-[35px] md:space-y-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[288px_288px_288px] justify-between w-full px-4">
                     <div className="gap-2 flex flex-col">
@@ -265,7 +246,7 @@ function GenericTooltip({children}: { children?: React.ReactElement }) {
     return (
         <Tooltip
             content={
-                <div className="py-1 space-y-2">
+                <div className="space-y-2">
                     {children}
                 </div>}>
             <ExclamationIcon className="text-[#d9d9d9]"/>
@@ -277,7 +258,7 @@ function QuestionTooltip() {
     return (
         <Tooltip
             content={
-                <div className="py-1 space-y-2">
+                <div className="space-y-2">
                     <div className="text-white text-xs font-bold leading-tight">Keep the math on your side</div>
                     <p className="leading-tight">
                         Average winning trades should always be grater than average losing trades, and your
@@ -300,7 +281,7 @@ function GenericExclamationTooltip({children}: { children?: React.ReactElement }
     return (
         <Tooltip
             content={
-                <div className="py-1 space-y-2">
+                <div className="space-y-2">
                     {children}
                 </div>}>
             <ExclamationIcon className="text-white"/>

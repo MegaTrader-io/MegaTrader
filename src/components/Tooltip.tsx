@@ -38,7 +38,7 @@ const Tooltip: React.FC<Props> = ({children, className, content}) => {
                     <BaseTooltip.Content
                         sideOffset={10}
                         className={clsx(
-                            'px-3 py-2 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400',
+                            'p-3 bg-black rounded-lg border border-neutral-700 box-border w-max max-w-[calc(100vw-10px)] text-stone-400',
                             {'hidden': !open}
                         )}
                         onPointerDownOutside={handleClose}
