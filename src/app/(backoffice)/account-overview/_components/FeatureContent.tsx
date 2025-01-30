@@ -203,11 +203,11 @@ function FeatureContent() {
                 </div>
 
 
-                <div className="w-full">
+                <div className="w-full flex">
                     <div
-                        className="px-3 py-1 gap-2 inline-flex items-center justify-center    bg-stone-800 rounded-2xl">
+                        className="max-w-[300px] px-3 py-1 gap-2 grid grid-cols-[auto_24px_auto] items-center justify-center    bg-stone-800 rounded-2xl">
                         <div
-                            className="text-xs font-medium text-white uppercase leading-normal">
+                            className="text-xs truncate font-medium text-white uppercase leading-normal">
                             REWARD-TO-RISK RATIO
                         </div>
 
@@ -231,7 +231,7 @@ function FeatureContent() {
                         <div className="flex items-center">
                             <div
                                 className="text-white text-xs font-medium uppercase leading-normal">
-                                8383881:1.52
+                                32331233312:32131232.42
                             </div>
                         </div>
                     </div>
