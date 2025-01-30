@@ -4,8 +4,6 @@ import React from 'react';
 import InputText from "@/components/InputText";
 import {Button} from "@/components/Button";
 import {CopyButton} from "@/components/CopyButton";
-import Image from "next/image";
-
 
 function ShareReferralLink() {
     const url = 'https://app.axcera.io/share';
