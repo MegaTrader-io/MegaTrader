@@ -231,7 +231,7 @@ function FeatureContent() {
                         <div className="flex items-center">
                             <div
                                 className="text-white text-xs font-medium uppercase leading-normal">
-                                1:1.52
+                                8383881:1.52
                             </div>
                         </div>
                     </div>
