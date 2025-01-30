@@ -1,8 +1,7 @@
 import BaseButton, {Icon, IconPosition} from './BaseButton';
-import React, {FC} from "react";
+import React, {FC, PropsWithChildren} from "react";
 
-interface ButtonProps {
-    children?: React.ReactNode;
+interface ButtonProps extends PropsWithChildren {
     type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'secondary' | 'light' | 'dark';
     styleType?: 'filled' | 'text';

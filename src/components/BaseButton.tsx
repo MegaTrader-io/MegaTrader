@@ -1,10 +1,10 @@
-import React, {JSX, forwardRef} from 'react';
+import React, {JSX, forwardRef, PropsWithChildren} from 'react';
 import clsx from "clsx";
 
 export type Icon = JSX.Element;
 export type IconPosition = 'left' | 'right' | '';
 
-interface ButtonProps {
+interface ButtonProps extends PropsWithChildren {
     type?: 'button' | 'submit' | 'reset';
     variant?: 'primary' | 'secondary' | 'light' | 'dark';
     styleType?: 'filled' | 'text';
@@ -13,8 +13,7 @@ interface ButtonProps {
     icon?: Icon;
     iconPosition?: IconPosition;
     disabled?: boolean;
-    onClick?: () => void;
-    children?: React.ReactNode;
+    onClick?: () => void
 }
 
 const Content = ({
