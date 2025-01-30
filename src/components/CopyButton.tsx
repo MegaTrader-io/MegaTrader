@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import {useCopy} from "@/hooks/useCopy";
 import clsx from "clsx";
 
