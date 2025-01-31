@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function EarnWithMegatrader() {
     return (
-        <Card className="col-span-7 w-full p-6 text-white">
+        <Card className="lg:col-span-7 w-full p-4 text-white">
             <CardTitle className="mb-2">
                 EARN WITH MEGATRADER
             </CardTitle>
@@ -12,7 +12,7 @@ function EarnWithMegatrader() {
                 Invite friends to Megatrader, if they sign up, you and your friend will get 2 premium features from
                 free!
             </p>
-            <div className="mt-9 grid grid-cols-3 gap-6">
+            <div className="mt-4 md:mt-9 grid md:grid-cols-3 gap-6">
                 {/** panel 1 **/}
                 <div className="text-center space-y-2">
                     <div className="h-14 p-4 bg-stone-800 rounded-[64px] justify-start items-center inline-flex">

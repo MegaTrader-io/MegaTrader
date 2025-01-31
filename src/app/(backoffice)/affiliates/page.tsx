@@ -7,7 +7,7 @@ import InviteYourFriends from "@/app/(backoffice)/affiliates/_components/InviteY
 
 export default function AccountOverView() {
     return <>
-        <div className="grid grid-cols-12 gap-4 w-full">
+        <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-4 w-full">
             <EarnWithMegatrader/>
             <InviteYourFriends/>
         </div>

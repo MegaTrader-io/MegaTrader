@@ -6,7 +6,7 @@ import ShareReferralLink from "@/app/(backoffice)/affiliates/_components/ShareRe
 
 function InviteYourFriends() {
     return (
-        <Card className="col-span-5 w-full p-6 text-white">
+        <Card className="w-full lg:col-span-5 p-4 text-white">
             <CardTitle className="mb-2">
                 INVITE YOUR FRIENDS
             </CardTitle>
