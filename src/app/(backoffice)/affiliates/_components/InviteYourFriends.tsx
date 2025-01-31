@@ -14,12 +14,12 @@ function InviteYourFriends() {
                 Add your friends email addresses and sent them invitations to join!
             </p>
 
-            <div className="flex gap-2 my-4">
+            <div className="grid grid-rows-2 md:flex gap-2 my-4">
                 <InputText
                     value={''}
                     placeholder={'Email addresses...'}
                     name={'email_referral'}/>
-                <Button>
+                <Button className="w-full md:w-auto">
                     SEND
                 </Button>
             </div>
