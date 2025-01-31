@@ -6,8 +6,6 @@ import EarnWithMegatrader from "@/app/(backoffice)/affiliates/_components/EarnWi
 import InviteYourFriends from "@/app/(backoffice)/affiliates/_components/InviteYourFriends";
 import {Button} from "@/components/Button";
 import EarningsOverTime from "@/app/(backoffice)/affiliates/_components/EarningsOverTime";
-import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
-import {CalendarIcon} from "@heroicons/react/24/outline";
 
 export default function AccountOverView() {
     return <>
