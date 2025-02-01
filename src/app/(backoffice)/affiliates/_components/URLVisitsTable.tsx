@@ -34,16 +34,14 @@ const URLVisitsTable = ({visits}: { visits: VisitDataInterface[] }) => {
                         <TableHeader>Converted</TableHeader>
                     </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody className="p-0">
                     {
                         visits.map((entry, index) => (
                             <TableRow key={index} className="text-stone-400 text-xs font-normal leading-tight">
-                                <TableCell>{entry.url}</TableCell>
-                                <TableCell>{entry.referrer}</TableCell>
-                                <TableCell>
-                                    <div className="py-4 flex items-center">
-                                        <ConvertedIcon converted={entry.converted}/>
-                                    </div>
+                                <TableCell className="py-4">{entry.url}</TableCell>
+                                <TableCell className="py-4">{entry.referrer}</TableCell>
+                                <TableCell className="py-4">
+                                    <ConvertedIcon converted={entry.converted}/>
                                 </TableCell>
                             </TableRow>
                         ))
