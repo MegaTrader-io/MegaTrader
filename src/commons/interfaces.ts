@@ -94,3 +94,9 @@ export interface Emoji {
     description: string;
     icon: React.ReactElement;
 }
+
+export interface VisitDataInterface {
+    url: string;
+    referrer: string;
+    converted: boolean;
+}
