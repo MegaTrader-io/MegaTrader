@@ -3,9 +3,6 @@ import {VisitDataInterface} from "@/commons/interfaces";
 import Badge from "@/components/Badge";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 import React from "react";
-import {Popover, PopoverPortal, PopoverTrigger} from "@radix-ui/react-popover";
-import IconSurvey from "@/app/(backoffice)/account-overview/_components/IconSurvey";
-import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/PopoverSurvey";
 
 function ConvertedIcon({converted}: { converted: boolean }) {
     return <>
