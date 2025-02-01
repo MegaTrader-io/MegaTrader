@@ -58,7 +58,6 @@ function TrafficStatsTable() {
             </Card>
         </div>
     )
-        ;
 }
 
 export default TrafficStatsTable;

@@ -1,6 +1,11 @@
 import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import {VisitDataInterface} from "@/commons/interfaces";
 import Badge from "@/components/Badge";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
+import React from "react";
+import {Popover, PopoverPortal, PopoverTrigger} from "@radix-ui/react-popover";
+import IconSurvey from "@/app/(backoffice)/account-overview/_components/IconSurvey";
+import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/PopoverSurvey";
 
 function ConvertedIcon({converted}: { converted: boolean }) {
     return <>
@@ -24,26 +29,30 @@ function ConvertedIcon({converted}: { converted: boolean }) {
 const URLVisitsTable = ({visits}: { visits: VisitDataInterface[] }) => {
     return (
         <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-                <thead>
-                <tr className="border-b border-gray-700 text-white">
-                    <th className="p-2 text-white text-xs font-bold">URL</th>
-                    <th className="p-2 text-white text-xs font-bold">Referring URL</th>
-                    <th className="p-2 text-white text-xs font-bold">Converted</th>
-                </tr>
-                </thead>
-                <tbody>
-                {visits.map((visit, index) => (
-                    <tr key={index} className="border-b border-gray-800">
-                        <td className="py-4 text-stone-400 text-xs font-normal leading-tight">{visit.url}</td>
-                        <td className="py-4 text-stone-400 text-xs font-normal leading-tight">{visit.referrer}</td>
-                        <td className="py-4 flex items-center">
-                            <ConvertedIcon converted={visit.converted}/>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <Table>
+                <TableHead className="text-xs">
+                    <TableRow className="text-white">
+                        <TableHeader>URL</TableHeader>
+                        <TableHeader>Referring URL</TableHeader>
+                        <TableHeader>Converted</TableHeader>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        visits.map((entry, index) => (
+                            <TableRow key={index} className="text-stone-400 text-xs font-normal leading-tight">
+                                <TableCell>{entry.url}</TableCell>
+                                <TableCell>{entry.referrer}</TableCell>
+                                <TableCell>
+                                    <div className="py-4 flex items-center">
+                                        <ConvertedIcon converted={entry.converted}/>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    }
+                </TableBody>
+            </Table>
         </div>
     );
 };
