@@ -152,15 +152,15 @@ export default function Login() {
                         name="remember"
                     >
                         <div className="select-none">
-                            <span className="text-base text-white"> Agree to our</span>
+                            <span className="text-xs sm:text-base text-white"> Agree to our</span>
                             {' '}
-                            <Link href="#" className="text-base btn-link flex-inline">
+                            <Link href="#" className="text-xs sm:text-base btn-link flex-inline">
                                 Privacy Policy
                             </Link>
                             {' '}
-                            <span className="text-white">and</span>
+                            <span className="text-white text-xs sm:text-base">and</span>
                             {' '}
-                            <Link href="#" className="text-base btn-link flex-inline">
+                            <Link href="#" className="text-xs sm:text-base btn-link flex-inline">
                                 Refund Policy
                             </Link>
                         </div>
