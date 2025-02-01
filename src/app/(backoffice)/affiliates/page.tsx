@@ -100,7 +100,7 @@ export default function AccountOverView() {
                 Quick actions
             </CardTitle>
 
-            <div className="flex gap-2">
+            <div className="grid lg:flex gap-2">
                 <Button iconPosition={'left'} icon={<>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <mask id="mask0_5397_318" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0"
