@@ -100,3 +100,8 @@ export interface VisitDataInterface {
     referrer: string;
     converted: boolean;
 }
+
+export interface OptionInterface {
+    id: string;
+    label: string
+}

@@ -90,7 +90,7 @@ export default function Header() {
                         <BellIcon className="w-6 h-6 text-white"/>
                     </Link>
                     <Link
-                        href="#"
+                        href="/profile/identity-verification"
                         className="btn-dark-link rounded-xl w-12 h-12"
                     >
                         <UserCircleIcon className="w-6 h-6 text-white"/>

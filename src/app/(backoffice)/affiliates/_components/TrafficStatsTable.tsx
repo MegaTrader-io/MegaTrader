@@ -2,13 +2,8 @@
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
-import {VisitDataInterface} from "@/commons/interfaces";
+import {OptionInterface, VisitDataInterface} from "@/commons/interfaces";
 import URLVisitsTable from "@/app/(backoffice)/affiliates/_components/URLVisitsTable";
-
-interface OptionInterface {
-    id: string;
-    label: string
-}
 
 const Options: OptionInterface[] = [
     {id: 'url_visits', label: 'Overview'},

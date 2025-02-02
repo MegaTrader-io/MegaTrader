@@ -19,3 +19,15 @@ export function sleep(miliseconds = 1800) {
         }, miliseconds)
     })
 }
+
+export function getInitials(fullName: string) {
+    if (typeof fullName !== 'string' || fullName.trim() === '') {
+        return fullName;
+    }
+
+    return fullName
+        .trim()
+        .split(/\s+/)
+        .map(word => word[0]?.toUpperCase())
+        .join('');
+}
