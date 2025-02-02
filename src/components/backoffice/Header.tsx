@@ -13,7 +13,7 @@ const navigationItems = [
     {href: '/payouts', visibleOnDesktop: true, label: 'PAYOUTS', sectionId: '/payouts'},
     {href: '/help-center', visibleOnDesktop: true, label: 'HELP CENTER', sectionId: '/help-center'},
     {href: '/notifications', visibleOnDesktop: false, label: 'NOTIFICATIONS', sectionId: '/notifications'},
-    {href: '/my-profile', visibleOnDesktop: false, label: 'MY PROFILE', sectionId: '/my-profile'},
+    {href: '/profile/identity-verification', visibleOnDesktop: false, label: 'MY PROFILE', sectionId: '/profile/identity-verification'},
 ];
 
 export default function Header() {
