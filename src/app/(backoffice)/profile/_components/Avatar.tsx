@@ -1,6 +1,6 @@
 import React from 'react';
-import {IUser} from "@/app/(backoffice)/profile/layout";
 import {getInitials} from "@/commons/utils";
+import {IUser} from "@/commons/interfaces";
 
 function Avatar({user}: { user: IUser }) {
     return (
