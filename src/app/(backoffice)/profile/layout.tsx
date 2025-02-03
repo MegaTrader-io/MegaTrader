@@ -61,53 +61,55 @@ const Layout = ({children,}: {
 
     return <>
         <>
-            <div className="flex w-full gap-2">
-                <Links options={Options}/>
-            </div>
-            <div className="grid grid-cols-[1fr_auto] w-full gap-16 !mt-4 items-start">
-                <div className="w-full">
-                    {children}
+            <div className="space-y-4 w-full">
+                <div className="flex gap-2">
+                    <Links options={Options}/>
                 </div>
-                <Card className="w-[519px] space-y-8">
-                    <div className="flex justify-center flex-col items-center gap-4">
-                        <Avatar user={user}/>
-                        <div className="grid grid-rows-3 gap-0.5">
-                            <div
-                                className="text-center text-white text-xl font-light uppercase leading-normal">{user.fullName}
-                            </div>
-                            <div className="flex justify-center">
-                                <Badge shape={'pill'}>
-                                    {user.verified ? 'VERIFIED' : 'NOT VERIFIED'}
-                                </Badge>
-                            </div>
-                            <div
-                                className="text-center text-stone-400 text-base font-normal leading-normal">
-                                Member since: {user.memberSince}
+                <div className="grid grid-cols-[1fr_auto] w-full gap-16 items-start">
+                    <div className="w-full">
+                        {children}
+                    </div>
+                    <Card className="w-[519px] space-y-8">
+                        <div className="flex justify-center flex-col items-center gap-4">
+                            <Avatar user={user}/>
+                            <div className="grid grid-rows-3 gap-0.5">
+                                <div
+                                    className="text-center text-white text-xl font-light uppercase leading-normal">{user.fullName}
+                                </div>
+                                <div className="flex justify-center">
+                                    <Badge shape={'pill'}>
+                                        {user.verified ? 'VERIFIED' : 'NOT VERIFIED'}
+                                    </Badge>
+                                </div>
+                                <div
+                                    className="text-center text-stone-400 text-base font-normal leading-normal">
+                                    Member since: {user.memberSince}
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-stone-400 text-base font-bold leading-normal">
-                                First name
-                                <InputText name={'first_name'} value={user.firstName}/>
-                            </label>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-stone-400 text-base font-bold leading-normal">
+                                    First name
+                                    <InputText name={'first_name'} value={user.firstName}/>
+                                </label>
+                            </div>
+                            <div>
+                                <label className="text-stone-400 text-base font-bold leading-normal">
+                                    Last name
+                                    <InputText name={'last_name'} value={user.lastName}/>
+                                </label>
+                            </div>
+                            <div>
+                                <label className="text-stone-400 text-base font-bold leading-normal">
+                                    Email
+                                    <InputText name={'email'} value={user.email}/>
+                                </label>
+                            </div>
                         </div>
-                        <div>
-                            <label className="text-stone-400 text-base font-bold leading-normal">
-                                Last name
-                                <InputText name={'last_name'} value={user.lastName}/>
-                            </label>
-                        </div>
-                        <div>
-                            <label className="text-stone-400 text-base font-bold leading-normal">
-                                Email
-                                <InputText name={'email'} value={user.email}/>
-                            </label>
-                        </div>
-                    </div>
-                </Card>
+                    </Card>
+                </div>
             </div>
         </>
     </>
