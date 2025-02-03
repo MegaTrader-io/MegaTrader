@@ -68,10 +68,12 @@ function Page() {
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal w-full">
                             Current password
-                            <InputText name={'currentPassword'}
-                                       value={credentials.currentPassword}
-                                       onChange={changeFields}
-                                       errorMessage={errors.currentPassword}/>
+                            <InputText
+                                type="password"
+                                name={'currentPassword'}
+                                value={credentials.currentPassword}
+                                onChange={changeFields}
+                                errorMessage={errors.currentPassword}/>
                         </label>
                     </div>
                     <div>
