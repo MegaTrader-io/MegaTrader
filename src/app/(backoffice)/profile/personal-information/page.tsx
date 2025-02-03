@@ -12,7 +12,7 @@ function Page() {
     const [user, setUser] = useState<IUser>(defaultUser)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [updated, setUpdated] = useState<boolean>(false);
-    const hasErrors = Object.values(errors).filter(error => error !== '').length;
+    const hasErrors = Object.values(errors).filter(error => error !== '').length > 0;
 
     function changeFields(ev: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
         const {name, value} = ev.target;
