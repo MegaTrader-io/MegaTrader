@@ -44,6 +44,7 @@ function Page() {
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
+            setUpdated(false)
             return;
         }
 
@@ -54,7 +55,7 @@ function Page() {
 
     return (
         <div className="w-full space-y-4">
-            {!updated && hasErrors &&
+            {hasErrors &&
                 <Alert className="w-full" type="error" message='Somethig went wrogn. Please try again later.'/>}
             {updated &&
                 <Alert className="w-full" type="success"
