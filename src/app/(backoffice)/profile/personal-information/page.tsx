@@ -6,10 +6,12 @@ import {countries, defaultUser, languages} from "@/commons/data";
 import {IUser} from "@/commons/interfaces";
 import {Button} from "@/components/Button";
 import clsx from "clsx";
+import Alert from "@/components/Alert";
 
 function Page() {
     const [user, setUser] = useState<IUser>(defaultUser)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const hasErrors = Object.values(errors).filter(error => error !== '').length;
 
     function changeFields(ev: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
         const {name, value} = ev.target;
@@ -49,8 +51,9 @@ function Page() {
     }
 
     return (
-        <div className="text-white w-full">
-
+        <div className="w-full space-y-4">
+            {hasErrors &&
+                <Alert className="w-full" type="error" message='Somethig went wrogn. Please try again later.'/>}
             <form onSubmit={onSubmit} className="w-full text-white grid grid-cols-2 gap-4">
                 <div className="space-y-4">
                     <div>
