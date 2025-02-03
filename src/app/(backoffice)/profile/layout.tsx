@@ -64,11 +64,10 @@ const Layout = ({children,}: {
             <div className="flex w-full gap-2">
                 <Links options={Options}/>
             </div>
-            <div className="grid grid-cols-[1fr_auto] w-full gap-16">
+            <div className="grid grid-cols-[1fr_auto] w-full gap-16 !mt-4 items-start">
                 <div className="w-full">
                     {children}
                 </div>
-
                 <Card className="w-[519px] space-y-8">
                     <div className="flex justify-center flex-col items-center gap-4">
                         <Avatar user={user}/>
