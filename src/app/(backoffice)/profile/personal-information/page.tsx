@@ -11,6 +11,7 @@ import Alert from "@/components/Alert";
 function Page() {
     const [user, setUser] = useState<IUser>(defaultUser)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [updated, setUpdated] = useState<boolean>(false);
     const hasErrors = Object.values(errors).filter(error => error !== '').length;
 
     function changeFields(ev: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
@@ -48,12 +49,16 @@ function Page() {
 
         console.info('submit stuff', user);
         setErrors({});
+        setUpdated(true)
     }
 
     return (
         <div className="w-full space-y-4">
-            {hasErrors &&
+            {!updated && hasErrors &&
                 <Alert className="w-full" type="error" message='Somethig went wrogn. Please try again later.'/>}
+            {updated &&
+                <Alert className="w-full" type="success"
+                       message='Great! Your personal information have been updated successfully'/>}
             <form onSubmit={onSubmit} className="w-full text-white grid grid-cols-2 gap-4">
                 <div className="space-y-4">
                     <div>
