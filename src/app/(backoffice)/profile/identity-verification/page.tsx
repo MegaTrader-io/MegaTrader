@@ -48,8 +48,6 @@ const verificationProcesses = [
 ];
 
 function Page() {
-
-
     return (
         <>
             <Card className="w-full bg-primary text-white space-y-4">

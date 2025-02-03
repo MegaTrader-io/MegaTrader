@@ -1,4 +1,4 @@
-import {Account, Period, TooltipData} from "@/commons/interfaces";
+import {Account, IUser, Period, TooltipData} from "@/commons/interfaces";
 
 export const accounts: Account[] = [
     {
@@ -79,3 +79,45 @@ export const tooltipData: TooltipData = {
     },
 };
 
+
+export const defaultUser: IUser = {
+    fullName: 'JOHN DOE',
+    firstName: 'Jane',
+    lastName: 'Doe',
+    email: 'janedoe@gmail.com',
+    zipCode: '',
+    verified: false,
+    memberSince: '21-12-2023',
+    address: '',
+    state: '',
+    city: '',
+    phone: '',
+    country: '',
+    language: '',
+}
+
+export const languages = [
+    {id: 'ar', description: 'Arabic'},
+    {id: 'zh', description: 'Chinese'},
+    {id: 'en', description: 'English'},
+    {id: 'fr', description: 'French'},
+    {id: 'de', description: 'German'},
+    {id: 'it', description: 'Italian'},
+    {id: 'ja', description: 'Japanese'},
+    {id: 'pt', description: 'Portuguese'},
+    {id: 'ru', description: 'Russian'},
+    {id: 'es', description: 'Spanish'}
+];
+
+export const countries = [
+    {id: 'BR', description: 'Brazil'},
+    {id: 'CN', description: 'China'},
+    {id: 'FR', description: 'France'},
+    {id: 'DE', description: 'Germany'},
+    {id: 'IT', description: 'Italy'},
+    {id: 'JP', description: 'Japan'},
+    {id: 'PT', description: 'Portugal'},
+    {id: 'RU', description: 'Russia'},
+    {id: 'ES', description: 'Spain'},
+    {id: 'US', description: 'United States'}
+];

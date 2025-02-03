@@ -105,3 +105,24 @@ export interface OptionInterface {
     id: string;
     label: string
 }
+
+export interface IOption {
+    url: string,
+    label: string
+}
+
+export interface IUser {
+    fullName: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    verified: boolean,
+    zipCode: string,
+    memberSince: string,
+    address: string,
+    state: string,
+    city: string,
+    phone: string,
+    country: string,
+    language: string,
+}

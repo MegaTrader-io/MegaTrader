@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
 import clsx from "clsx";
 import Link from "@/components/Link";
@@ -8,20 +8,8 @@ import Card from "@/components/Card";
 import Avatar from "@/app/(backoffice)/profile/_components/Avatar";
 import Badge from "@/components/Badge";
 import InputText from "@/components/InputText";
-
-interface IOption {
-    url: string,
-    label: string
-}
-
-export interface IUser {
-    fullName: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    verified: boolean,
-    memberSince: string
-}
+import {IOption, IUser} from "@/commons/interfaces";
+import {defaultUser} from "@/commons/data";
 
 const Options: IOption[] = [
     {url: '/profile/identity-verification', label: 'Identity verification'},
@@ -29,15 +17,6 @@ const Options: IOption[] = [
     {url: '/profile/password', label: 'Password'},
     {url: '/profile/two-factor-authentication', label: 'Two factor-authentication'},
 ]
-
-const defaultUser: IUser = {
-    fullName: 'JOHN DOE',
-    firstName: 'Jane',
-    lastName: 'Doe',
-    email: 'janedoe@gmail.com',
-    verified: true,
-    memberSince: '21-12-2023'
-}
 
 function Links({options}: { options: IOption[] }) {
     const currentPath = usePathname()
@@ -57,7 +36,12 @@ function Links({options}: { options: IOption[] }) {
 const Layout = ({children,}: {
     children: React.ReactNode
 }) => {
-    const [user] = useState<IUser>(defaultUser)
+    const currentPath = usePathname()
+    const [user, setUser] = useState<IUser>(defaultUser)
+
+    useEffect(() => {
+        setUser(user => ({...user, verified: currentPath !== '/profile/personal-information'}))
+    }, [currentPath])
 
     return <>
         <>
@@ -77,7 +61,7 @@ const Layout = ({children,}: {
                                     className="text-center text-white text-xl font-light uppercase leading-normal">{user.fullName}
                                 </div>
                                 <div className="flex justify-center">
-                                    <Badge shape={'pill'}>
+                                    <Badge shape={'pill'} variant={user.verified ? 'secondary' : 'error'}>
                                         {user.verified ? 'VERIFIED' : 'NOT VERIFIED'}
                                     </Badge>
                                 </div>
@@ -92,19 +76,19 @@ const Layout = ({children,}: {
                             <div>
                                 <label className="text-stone-400 text-base font-bold leading-normal">
                                     First name
-                                    <InputText name={'first_name'} value={user.firstName}/>
+                                    <InputText readOnly={true} name={'first_name'} value={user.firstName}/>
                                 </label>
                             </div>
                             <div>
                                 <label className="text-stone-400 text-base font-bold leading-normal">
                                     Last name
-                                    <InputText name={'last_name'} value={user.lastName}/>
+                                    <InputText readOnly={true} name={'last_name'} value={user.lastName}/>
                                 </label>
                             </div>
                             <div>
                                 <label className="text-stone-400 text-base font-bold leading-normal">
                                     Email
-                                    <InputText name={'email'} value={user.email}/>
+                                    <InputText readOnly={true} name={'email'} value={user.email}/>
                                 </label>
                             </div>
                         </div>
