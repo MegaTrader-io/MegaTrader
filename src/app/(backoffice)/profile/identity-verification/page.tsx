@@ -51,7 +51,7 @@ function Page() {
     return (
         <>
             <Card className="w-full bg-primary text-white space-y-4">
-                <div className="justify-start items-start space-y-4 lg:space-y-0 md:gap-4 md:grid md:grid-cols-3">
+                <div className="justify-start items-start space-y-4 md:space-y-0 md:gap-4 md:grid-cols-3 lg:grid-cols-1 md:grid xl:grid-cols-3">
                     {blocks.map(block => (
                         <div key={block.title}
                              className="space-y-4">
