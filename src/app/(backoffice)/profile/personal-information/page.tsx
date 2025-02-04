@@ -60,7 +60,7 @@ function Page() {
             {updated &&
                 <Alert className="w-full" type="success"
                        message='Great! Your personal information have been updated successfully'/>}
-            <form onSubmit={onSubmit} className="w-full text-white grid grid-cols-2 gap-4">
+            <form onSubmit={onSubmit} className="w-full text-white md:grid md:grid-cols-2 gap-4">
                 <div className="space-y-4">
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal w-full">
@@ -170,12 +170,6 @@ function Page() {
                             </div>
                         </label>
                     </div>
-
-                    <div>
-                        <Button type='submit' variant={'primary'}>
-                            Save changes
-                        </Button>
-                    </div>
                 </div>
                 <div className="space-y-4">
                     <div>
@@ -207,6 +201,12 @@ function Page() {
                                 errorMessage={errors.phone}/>
                         </label>
                     </div>
+                </div>
+
+                <div className="mt-4 md:mt-0">
+                    <Button type='submit' variant={'primary'}>
+                        Save changes
+                    </Button>
                 </div>
             </form>
         </div>
