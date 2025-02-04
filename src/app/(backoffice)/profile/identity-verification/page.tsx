@@ -51,7 +51,7 @@ function Page() {
     return (
         <>
             <Card className="w-full bg-primary text-white space-y-4">
-                <div className="justify-start items-start gap-4 grid grid-cols-3">
+                <div className="justify-start items-start space-y-4 lg:space-y-0 md:gap-4 md:grid md:grid-cols-3">
                     {blocks.map(block => (
                         <div key={block.title}
                              className="space-y-4">
@@ -67,14 +67,12 @@ function Page() {
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="space-y-3 md:space-y-0 md:flex justify-between items-center">
                     <Link className="btn-dark-link" href={"#"}>
                         Get verified now
                     </Link>
 
-                    <div>
-                        <Image src={'/assets/images/veriff.svg'} alt="veriff" width={118} height={34}/>
-                    </div>
+                    <Image className="mx-auto md:mx-0" src={'/assets/images/veriff.svg'} alt="veriff" width={118} height={34}/>
                 </div>
             </Card>
             <div className="mt-8 w-full space-y-4">
