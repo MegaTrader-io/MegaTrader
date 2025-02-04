@@ -9,7 +9,7 @@ import Avatar from "@/app/(backoffice)/profile/_components/Avatar";
 import Badge from "@/components/Badge";
 import InputText from "@/components/InputText";
 import {IOption, IUser} from "@/commons/interfaces";
-import {countries, defaultUser} from "@/commons/data";
+import {defaultUser} from "@/commons/data";
 
 const Options: IOption[] = [
     {url: '/profile/identity-verification', label: 'Identity verification'},
