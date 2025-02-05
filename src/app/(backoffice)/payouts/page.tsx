@@ -7,6 +7,7 @@ import Card from "@/components/Card";
 import Badge from "@/components/Badge";
 import clsx from "clsx";
 import InputText from "@/components/InputText";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 
 export default function AccountOverView() {
     return <>
@@ -134,6 +135,49 @@ export default function AccountOverView() {
                                        placeholder="Search here"
                                        searchInput={true}/>
                         </div>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHead className="text-xs">
+                                <TableRow className="text-white">
+                                    <TableHeader>Date</TableHeader>
+                                    <TableHeader>Status</TableHeader>
+                                    <TableHeader>Charges</TableHeader>
+                                    <TableHeader>Refunds</TableHeader>
+                                    <TableHeader>Fees</TableHeader>
+                                    <TableHeader className="text-right">Total</TableHeader>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody className="p-0">
+                                <TableRow className="text-stone-400 text-xs font-normal leading-tight">
+                                    <TableCell className="py-4">July 31, 2022</TableCell>
+                                    <TableCell className="py-4">
+                                        <Badge shape={'pill'} variant={'primary'}>PENDING</Badge>
+                                    </TableCell>
+                                    <TableCell className="py-4">$910,00</TableCell>
+                                    <TableCell className="py-4">$00,00</TableCell>
+                                    <TableCell className="py-4">
+                                        <span className="text-rose-400">-$910,00</span>
+                                    </TableCell>
+                                    <TableCell className="py-4 text-right">$546,00</TableCell>
+                                </TableRow>
+                                <TableRow className="text-stone-400 text-xs font-normal leading-tight">
+                                    <TableCell className="py-4">July 30, 2022</TableCell>
+                                    <TableCell className="py-4">
+                                        <Badge shape={'pill'}>PAID</Badge>
+                                    </TableCell>
+                                    <TableCell className="py-4">$910,00</TableCell>
+                                    <TableCell className="py-4">
+                                        <span className="text-rose-400">-$910,00</span>
+                                    </TableCell>
+                                    <TableCell className="py-4">
+                                        $00,00
+                                    </TableCell>
+                                    <TableCell className="py-4 text-right">$546,00</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
                     </div>
                 </Card>
             </div>
