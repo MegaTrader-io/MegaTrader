@@ -1,4 +1,6 @@
-import React from "react";
+'use client'
+
+import React, {useState} from "react";
 import Image from "next/image";
 import {Button} from "@/components/Button";
 import GetStartedNow from "@/app/(backoffice)/payouts/_components/GetStartedNow";
@@ -8,8 +10,10 @@ import Badge from "@/components/Badge";
 import clsx from "clsx";
 import InputText from "@/components/InputText";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
+import ArrowDown, {directionType} from "@/components/ArrowDown";
 
 export default function AccountOverView() {
+    const [direction, setDirection] = useState<directionType>('desc')
     return <>
         <div className="flex w-full justify-between items-center">
             <Image
@@ -141,7 +145,20 @@ export default function AccountOverView() {
                         <Table>
                             <TableHead className="text-xs">
                                 <TableRow className="text-white">
-                                    <TableHeader>Date</TableHeader>
+                                    <TableHeader>
+                                        <div className="flex gap-2 items-center">
+                                            <div>
+                                                Date
+                                            </div>
+                                            <div>
+                                                <div className="cursor-pointer select-none" onClick={() => {
+                                                    setDirection(direction === 'desc' ? 'asc' : 'desc');
+                                                }}>
+                                                    <ArrowDown direction={direction} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TableHeader>
                                     <TableHeader>Status</TableHeader>
                                     <TableHeader>Charges</TableHeader>
                                     <TableHeader>Refunds</TableHeader>
