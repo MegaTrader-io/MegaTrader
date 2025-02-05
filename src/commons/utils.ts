@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export function formatCurrency(value: number) {
     try {
         return new Intl.NumberFormat("en-US", {
@@ -21,7 +23,7 @@ export function sleep(miliseconds = 1800) {
 }
 
 export function getInitials(fullName: string) {
-    if (typeof fullName !== 'string' || fullName.trim() === '') {
+    if (fullName.trim() === '') {
         return fullName;
     }
 
@@ -30,4 +32,15 @@ export function getInitials(fullName: string) {
         .split(/\s+/)
         .map(word => word[0]?.toUpperCase())
         .join('');
+}
+
+export function formatDateTime(
+    datetime: string,
+    format: string = 'MMM DD, YYYY hh:mm:ss A',
+): string {
+    if (!datetime) {
+        return '---'
+    }
+
+    return dayjs(datetime).format(format)
 }
