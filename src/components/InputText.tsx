@@ -1,22 +1,24 @@
 'use client';
 
 import React, {useState} from 'react';
-import {EyeSlashIcon, EyeIcon} from "@heroicons/react/16/solid";
+import {EyeSlashIcon, EyeIcon, MagnifyingGlassIcon} from "@heroicons/react/16/solid";
 
 interface InputTextProps extends React.InputHTMLAttributes<HTMLInputElement> {
     className?: string;
     placeholder?: string;
     name: string;
     errorMessage?: string;
+    searchInput?: boolean
 }
 
 
 const InputText: React.FC<InputTextProps> = ({
+                                                 onChange,
                                                  className = '',
                                                  placeholder = '',
                                                  name,
                                                  errorMessage = '',
-                                                 onChange,
+                                                 searchInput = false,
                                                  ...props
                                              }) => {
     const [type, setType] = useState(props.type || 'text');
@@ -60,8 +62,11 @@ const InputText: React.FC<InputTextProps> = ({
                                           setType(prev => prev === 'password' ? 'text' : 'password');
                                       }}/>
                 )}
-            </div>
 
+                {searchInput && (
+                    <MagnifyingGlassIcon className="h-6 w-6 text-[#A8A29E] absolute right-4 cursor-pointer"/>
+                )}
+            </div>
 
             {hasError && (
                 <span
