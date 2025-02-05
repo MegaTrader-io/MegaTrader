@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from "clsx";
-import {formatCurrency} from "@/commons/utils";
+import NumericStyle from "@/components/NumericStyle";
 
 const ArrowUp = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +29,6 @@ const ArrowDown = () => (
 )
 
 function TrendIndicator({value}: { value: number }) {
-    const legend = value < 0 ? '-' : '+';
     const textColor = value < 0 ? 'text-[#F43F5E]' : 'text-green-500';
     return (
         <div className="flex items-center gap-1">
@@ -39,7 +38,7 @@ function TrendIndicator({value}: { value: number }) {
             </span>
             <div
                 className={clsx('text-nowrap flex text-xs font-bold items-center', [textColor])}>
-                {legend}{formatCurrency(Math.abs(value))}
+                <NumericStyle value={value} />
             </div>
         </div>
     );
