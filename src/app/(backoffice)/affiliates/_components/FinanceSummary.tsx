@@ -54,11 +54,11 @@ function FinanceSummary() {
                         </div>
                         <div className="text-[#131210] text-base font-bold leading-normal">$</div>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="sm:flex sm:justify-between">
                         <div className="text-[#131210] text-[40px] font-lightuppercase leading-[48px]">
                             $5072,00
                         </div>
-                        <Button variant={'dark'} className="text-base">
+                        <Button variant={'dark'} className="text-base w-full sm:w-auto">
                             REQUEST PAYOUT
                         </Button>
                     </div>

@@ -1,10 +1,70 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import Card, {CardTitle} from "@/components/Card";
-import InputText from "@/components/InputText";
 import {Button} from "@/components/Button";
 import ShareReferralLink from "@/app/(backoffice)/affiliates/_components/ShareReferralLink";
+import InputText from "@/components/InputText";
+import {sleep} from "@/commons/utils";
+import {TARGET_EMAIL} from "@/commons/credentials";
 
-function InviteYourFriends() {
+function InviteYourFriends({displayMessage}: {
+    displayMessage: ({success, message}: { success: boolean, message: string }) => void
+}) {
+    const inputEmail = useRef<HTMLInputElement | null>(null);
+    const [email, setEmail] = useState('');
+    const [sendingEmail, setSendingEmail] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const validateEmail = () => {
+        if (inputEmail.current) {
+            const value = inputEmail.current.value.trim();
+
+            if (!value) {
+                setErrorMessage("Email is required");
+                return false;
+            }
+
+            if (!inputEmail.current.validity.valid) {
+                setErrorMessage("Invalid email address");
+                return false;
+            }
+
+            setErrorMessage(null);
+            return true;
+        }
+        return false;
+    };
+
+    const handlerInvitation = async (ev: React.ChangeEvent<HTMLFormElement>) => {
+        ev.preventDefault();
+
+        if (!validateEmail()) {
+            return;
+        }
+
+        inputEmail.current?.blur();
+
+
+        setSendingEmail(true);
+
+        await sleep(900);
+
+        let result = {
+            success: false,
+            message: 'An error occurred while sending your invitation. Please try again later.'
+        }
+
+        if (email === TARGET_EMAIL) {
+            result = {
+                success: true,
+                message: 'Your invitation has been sent successfully!'
+            };
+        }
+
+        displayMessage(result);
+        setSendingEmail(false);
+        setEmail('')
+    }
+
     return (
         <Card className="w-full lg:col-span-5 p-4 text-white">
             <CardTitle className="mb-2">
@@ -14,15 +74,22 @@ function InviteYourFriends() {
                 Add your friends email addresses and sent them invitations to join!
             </p>
 
-            <div className="grid grid-rows-2 md:flex gap-2 my-4">
+            <form noValidate={true} onSubmit={handlerInvitation}
+                  className="grid grid-rows-2 md:flex items-start gap-2 my-4">
                 <InputText
-                    value={''}
+                    ref={inputEmail}
+                    required={true}
+                    type={'email'}
+                    disabled={sendingEmail}
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    errorMessage={errorMessage}
                     placeholder={'Email addresses...'}
                     name={'email_referral'}/>
-                <Button className="w-full md:w-auto">
+                <Button disabled={sendingEmail} type={'submit'} className="w-full md:w-auto">
                     SEND
                 </Button>
-            </div>
+            </form>
 
             <ShareReferralLink/>
         </Card>
