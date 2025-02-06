@@ -24,9 +24,7 @@ const records = [
         fees: 0.00,
         total: 546.00,
     },
-
 ]
-
 
 function QuickActionsTable() {
     const [direction, setDirection] = useState<directionType>('desc')
@@ -37,7 +35,7 @@ function QuickActionsTable() {
                 <TableHead className="text-xs">
                     <TableRow className="text-white">
                         <TableHeader>
-                            <div className="flex gap-2 items-center cursor-pointer select-none"
+                            <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
                                  onClick={() => {
                                      setDirection(direction === 'desc' ? 'asc' : 'desc');
                                  }}>

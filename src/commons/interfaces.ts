@@ -88,6 +88,14 @@ export interface JournalEntry {
     id: number;
 }
 
+export interface PayoutsEntry {
+    id: number,
+    month: string,
+    sold: number,
+    total_profit: number,
+    status: string
+}
+
 export interface Emoji {
     id: number;
     name: string;
