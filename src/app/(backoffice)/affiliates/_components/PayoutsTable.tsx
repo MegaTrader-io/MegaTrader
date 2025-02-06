@@ -54,12 +54,12 @@ const PayoutsTable = () => {
             })
     }, []);
 
-    const handlePageChange = (page: number) => {
-        fetchPayoutsData(page)
-            .finally(() => {
-
-            })
-    };
+    // const handlePageChange = (page: number) => {
+    //     fetchPayoutsData(page)
+    //         .finally(() => {
+    //
+    //         })
+    // };
 
     return (
         <div className="overflow-x-auto">
