@@ -34,6 +34,8 @@ const PayoutsTable = () => {
         last_page: 0,
     });
 
+    console.info('pagination', pagination);
+
     const fetchPayoutsData = async (page = 1 as number) => {
         setCurrentPage(page)
         setLoading(true)
