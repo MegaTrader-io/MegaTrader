@@ -3,6 +3,9 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import React, {useEffect, useState} from "react";
 import {formatCurrency, sleep} from "@/commons/utils";
 import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
+import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
+import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
+import clsx from "clsx";
 
 const PayoutsTable = () => {
     const [loading, setLoading] = useState(false)
@@ -37,12 +40,12 @@ const PayoutsTable = () => {
             })
     }, []);
 
-    // const handlePageChange = (page: number) => {
-    //     fetchPayoutsData(page)
-    //         .finally(() => {
-    //
-    //         })
-    // };
+    const handlePageChange = (page: number) => {
+        fetchPayoutsData(page)
+            .finally(() => {
+
+            })
+    };
 
     return (
         <div className="overflow-x-auto">
@@ -79,6 +82,38 @@ const PayoutsTable = () => {
                     ))}
                 </TableBody>
             </Table>
+
+            {data.length > 0 && (<Pagination
+                className="mt-6 items-center flex justify-end text-stone-400 text-xs font-normal leading-tight">
+                Showing {pagination.per_page} of {pagination.total}
+                <PaginationList className="text-white flex items-center">
+                    <PaginationPage
+                        as={'button'}
+                        className="h-7 p-1 bg-stone-800 rounded border border-neutral-700"
+                        onClick={() => handlePageChange(pagination.current_page - 1)}
+                        disabled={pagination.current_page === 1}>
+                        <ChevronLeftIcon className="text-white w-5 h-5 "/>
+                    </PaginationPage>
+                    {Array.from({length: pagination.last_page}, (_, i) => i + 1).map((page) => (
+                        <PaginationPage
+                            as={'button'}
+                            className={clsx('w-7 h-7 px-3 py-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex', {
+                                'bg-stone-950': currentPage === page
+                            })}
+                            key={page}
+                            onClick={() => handlePageChange(page)}>
+                            {page}
+                        </PaginationPage>
+                    ))}
+                    <PaginationPage
+                        as={'button'}
+                        className="h-7 p-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex"
+                        onClick={() => handlePageChange(pagination.current_page + 1)}
+                        disabled={pagination.current_page === pagination.last_page}>
+                        <ChevronRightIcon className="text-white w-5 h-5"/>
+                    </PaginationPage>
+                </PaginationList>
+            </Pagination>)}
         </div>
     );
 };

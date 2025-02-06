@@ -68,5 +68,12 @@
     "sold": 10,
     "total_profit": 2300.75,
     "status": "paid"
+  },
+  {
+    "id": 12,
+    "month": "October 2025",
+    "sold": 3,
+    "total_profit": 300.75,
+    "status": "pending"
   }
 ]
