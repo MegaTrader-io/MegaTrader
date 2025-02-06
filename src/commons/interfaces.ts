@@ -93,7 +93,7 @@ export interface PayoutsEntry {
     month: string,
     sold: number,
     total_profit: number,
-    status: string
+    status: 'paid'|'pending'
 }
 
 export interface Emoji {

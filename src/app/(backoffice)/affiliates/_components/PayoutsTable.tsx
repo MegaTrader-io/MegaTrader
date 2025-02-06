@@ -3,7 +3,8 @@ import {PayoutsEntry} from "@/commons/interfaces";
 import Badge from "@/components/Badge";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 import React, {useEffect, useState} from "react";
-import {sleep} from "@/commons/utils";
+import {formatCurrency, sleep} from "@/commons/utils";
+import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
 
 function ConvertedIcon({converted}: { converted: boolean }) {
     return <>
@@ -68,8 +69,8 @@ const PayoutsTable = () => {
                     <TableRow className="text-white">
                         <TableHeader>Month</TableHeader>
                         <TableHeader>Sold</TableHeader>
-                        <TableHeader>Total Profit</TableHeader>
-                        <TableHeader>Status</TableHeader>
+                        <TableHeader className="text-right">Total Profit</TableHeader>
+                        <TableHeader className="text-right">Status</TableHeader>
                     </TableRow>
                 </TableHead>
                 <TableBody className="p-0">
@@ -83,11 +84,14 @@ const PayoutsTable = () => {
                         </TableRow>
                     ))}
                     {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-right text-stone-400 text-xs font-normal">
+                        <TableRow key={entry.id} className="text-stone-400 text-xs font-normal">
                             <TableCell className="py-4">{entry.month}</TableCell>
                             <TableCell className="py-4">{entry.sold}</TableCell>
-                            <TableCell className="py-4">
-                                <ConvertedIcon converted={!!entry.total_profit}/>
+                            <TableCell className="py-4 text-right">
+                                {formatCurrency(entry.total_profit)}
+                            </TableCell>
+                            <TableCell className="py-4 text-right">
+                                <BadgePendingOrPaid status={entry.status}/>
                             </TableCell>
                         </TableRow>
                     ))}
