@@ -1,6 +1,6 @@
 import {PayoutsEntry} from "@/commons/interfaces";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {formatCurrency, sleep} from "@/commons/utils";
 import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
@@ -23,24 +23,27 @@ const PayoutsTable = () => {
         last_page: 0,
     });
 
-    console.info('pagination', pagination);
-
-    const fetchPayoutsData = async () => {
-        setLoading(true)
-        await sleep(200);
-        const response = await fetch(`/api/payouts?page=${currentPage}&per_page=${limitPerPage}sortBy=${sortBy}&direction=${direction}`);
-        const result = await response.json();
-        setData(result.data);
-        setPagination(result.meta);
-        setLoading(false)
-    };
+    const fetchPayoutsData = useCallback(async () => {
+        try {
+            setLoading(true);
+            await sleep(200);
+            const response = await fetch(`/api/payouts?page=${currentPage}&per_page=${limitPerPage}&sortBy=${sortBy}&direction=${direction}`);
+            if (!response.ok) {
+                throw new Error(`unable to fetch the end point: ${response.statusText}`);
+            }
+            const result = await response.json();
+            setData(result.data);
+            setPagination(result.meta);
+        } catch (error) {
+            console.error("error:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentPage, sortBy, direction]);
 
     useEffect(() => {
-        sleep(500)
-            .then(() => {
-                void fetchPayoutsData();
-            })
-    }, [direction, sortBy, currentPage]);
+        void fetchPayoutsData();
+    }, [fetchPayoutsData]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -65,7 +68,7 @@ const PayoutsTable = () => {
                                     Month
                                 </div>
                                 <div>
-                                    <ArrowDown direction={direction}/>
+                                    {sortBy === 'month' && <ArrowDown direction={direction}/>}
                                 </div>
                             </div>
                         </TableHeader>
@@ -79,7 +82,7 @@ const PayoutsTable = () => {
                                     Total Profit
                                 </div>
                                 <div>
-                                    <ArrowDown direction={direction}/>
+                                    {sortBy === 'total_profit' && <ArrowDown direction={direction}/>}
                                 </div>
                             </div>
                         </TableHeader>
