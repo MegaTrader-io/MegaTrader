@@ -9,7 +9,8 @@ import clsx from "clsx";
 import ArrowDown, {directionType} from "@/components/ArrowDown";
 
 const PayoutsTable = () => {
-    const [direction, setDirection] = useState<directionType>('desc')
+    const [sortBy, setSortBy] = useState<string>('month');
+    const [direction, setDirection] = useState<directionType>('desc');
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<PayoutsEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,11 +25,10 @@ const PayoutsTable = () => {
 
     console.info('pagination', pagination);
 
-    const fetchPayoutsData = async (page = 1 as number) => {
-        setCurrentPage(page)
+    const fetchPayoutsData = async () => {
         setLoading(true)
         await sleep(200);
-        const response = await fetch(`/api/payouts?page=${page}&per_page=${limitPerPage}`);
+        const response = await fetch(`/api/payouts?page=${currentPage}&per_page=${limitPerPage}sortBy=${sortBy}&direction=${direction}`);
         const result = await response.json();
         setData(result.data);
         setPagination(result.meta);
@@ -40,14 +40,16 @@ const PayoutsTable = () => {
             .then(() => {
                 void fetchPayoutsData();
             })
-    }, []);
+    }, [direction, sortBy, currentPage]);
 
     const handlePageChange = (page: number) => {
-        fetchPayoutsData(page)
-            .finally(() => {
-
-            })
+        setCurrentPage(page);
     };
+
+    const handlerSortBy = (sortBy: string) => {
+        setDirection(direction === 'desc' ? 'asc' : 'desc');
+        setSortBy(sortBy)
+    }
 
     return (
         <div className="overflow-x-auto">
@@ -57,7 +59,7 @@ const PayoutsTable = () => {
                         <TableHeader>
                             <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
                                  onClick={() => {
-                                     setDirection(direction === 'desc' ? 'asc' : 'desc');
+                                     handlerSortBy('month')
                                  }}>
                                 <div>
                                     Month
@@ -71,7 +73,7 @@ const PayoutsTable = () => {
                         <TableHeader>
                             <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
                                  onClick={() => {
-                                     setDirection(direction === 'desc' ? 'asc' : 'desc');
+                                     handlerSortBy('total_profit')
                                  }}>
                                 <div>
                                     Total Profit
