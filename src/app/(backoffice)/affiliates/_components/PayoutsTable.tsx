@@ -6,8 +6,10 @@ import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
+import ArrowDown, {directionType} from "@/components/ArrowDown";
 
 const PayoutsTable = () => {
+    const [direction, setDirection] = useState<directionType>('desc')
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<PayoutsEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -52,9 +54,33 @@ const PayoutsTable = () => {
             <Table>
                 <TableHead className="text-xs">
                     <TableRow className="text-white">
-                        <TableHeader>Month</TableHeader>
+                        <TableHeader>
+                            <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
+                                 onClick={() => {
+                                     setDirection(direction === 'desc' ? 'asc' : 'desc');
+                                 }}>
+                                <div>
+                                    Month
+                                </div>
+                                <div>
+                                    <ArrowDown direction={direction}/>
+                                </div>
+                            </div>
+                        </TableHeader>
                         <TableHeader>Sold</TableHeader>
-                        <TableHeader className="text-right">Total Profit</TableHeader>
+                        <TableHeader>
+                            <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
+                                 onClick={() => {
+                                     setDirection(direction === 'desc' ? 'asc' : 'desc');
+                                 }}>
+                                <div>
+                                    Total Profit
+                                </div>
+                                <div>
+                                    <ArrowDown direction={direction}/>
+                                </div>
+                            </div>
+                        </TableHeader>
                         <TableHeader className="text-right">Status</TableHeader>
                     </TableRow>
                 </TableHead>
