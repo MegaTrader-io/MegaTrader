@@ -1,26 +1,8 @@
-import {CheckIcon, XMarkIcon} from "@heroicons/react/16/solid";
 import {PayoutsEntry} from "@/commons/interfaces";
-import Badge from "@/components/Badge";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 import React, {useEffect, useState} from "react";
 import {formatCurrency, sleep} from "@/commons/utils";
 import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
-
-function ConvertedIcon({converted}: { converted: boolean }) {
-    return <>
-        {
-            converted ? (
-                <Badge size={'md'} shape={'pill'}>
-                    <CheckIcon className="h-4 w-4 text-black"/>
-                </Badge>
-            ) : (
-                <Badge variant={'error'} shape={'pill'}>
-                    <XMarkIcon className="h-4 w-4 text-black"/>
-                </Badge>
-            )
-        }
-    </>
-}
 
 const PayoutsTable = () => {
     const [loading, setLoading] = useState(false)
