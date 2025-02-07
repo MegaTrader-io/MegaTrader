@@ -9,8 +9,7 @@ import {XMarkIcon} from "@heroicons/react/16/solid";
 
 export default function Login() {
     const [form, setForm] = useState({
-        first_name: '',
-        last_name: '',
+        fullName: '',
         email: '',
         phone: '',
         password: '',
@@ -63,28 +62,14 @@ export default function Login() {
                 <div>
                     <InputText
                         type="text"
-                        placeholder="First Name"
-                        name="first_name"
-                        value={form.first_name}
+                        placeholder="Full Name"
+                        name="fullName"
+                        value={form.fullName}
                         onChange={(e) => {
                             const value = e.target.value;
                             setForm(prev => ({...prev, [e.target.name]: value}));
                         }}
-                        errorMessage={fieldErrors.first_name}
-                    />
-                </div>
-
-                <div>
-                    <InputText
-                        type="text"
-                        placeholder="Last Name"
-                        name="last_name"
-                        value={form.last_name}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setForm(prev => ({...prev, [e.target.name]: value}));
-                        }}
-                        errorMessage={fieldErrors.last_name}
+                        errorMessage={fieldErrors.fullName}
                     />
                 </div>
 
