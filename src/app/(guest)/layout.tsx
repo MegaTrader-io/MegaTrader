@@ -29,7 +29,7 @@ const Layout = ({children,}: {
                         alt="Trading Platform Interface"
                         width={1000}
                         height={700}
-                        style={{ width: '100%', height: 'auto' }}
+                        style={{width: '100%', height: 'auto'}}
                         quality={100}
                     />
                 </div>
