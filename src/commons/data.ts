@@ -21,7 +21,7 @@ export const accounts: Account[] = [
     {
         id: 2,
         name: 'SHYE36496NCHG33',
-        status: 'inactive',
+        status: 'unpaid',
         accountBalance: {
             currentBalance: "$143,166.78",
             currentEquity: "$143,166.78",

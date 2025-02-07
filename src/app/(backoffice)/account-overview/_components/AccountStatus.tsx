@@ -5,7 +5,7 @@ import {AccountStatusType} from "@/commons/interfaces";
 function AccountStatus({status}: { status: AccountStatusType }) {
     const variantColor: Record<AccountStatusType, "secondary" | "error" | "primary" | "info"> = {
         active: 'secondary',
-        inactive: 'error',
+        unpaid: 'error',
         breach: 'primary',
     };
 

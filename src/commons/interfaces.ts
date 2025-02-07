@@ -35,7 +35,7 @@ export interface AccountBalance {
     avgLosingDay: string
 }
 
-export type AccountStatusType = 'active' | 'inactive' | 'breach'
+export type AccountStatusType = 'active' | 'unpaid' | 'breach'
 
 export interface Account {
     id: number
