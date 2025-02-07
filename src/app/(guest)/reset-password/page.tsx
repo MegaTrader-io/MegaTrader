@@ -78,10 +78,10 @@ export default function ResetPassword() {
                 <Alert type="error" message={fieldErrors.form}/>
             )}
 
-        {successMessage && (<Alert type="success" message={successMessage}/>)}
+            {successMessage && (<Alert type="success" message={successMessage}/>)}
 
             <div>
-                <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
+                <h1 className="text-white lg:text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">
                     Reset password
                 </h1>
                 <h2
