@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
-import {OptionInterface, VisitDataInterface} from "@/commons/interfaces";
+import {OptionInterface, VisitDataEntry} from "@/commons/interfaces";
 import URLVisitsTable from "@/app/(backoffice)/affiliates/_components/URLVisitsTable";
 import PayoutsTable from "@/app/(backoffice)/affiliates/_components/PayoutsTable";
 import IncomeTable from "@/app/(backoffice)/affiliates/_components/IncomeTable";
@@ -13,7 +13,7 @@ const Options: OptionInterface[] = [
     {id: 'income', label: 'Income'},
 ]
 
-const visitsData: VisitDataInterface[] = [
+const visitsData: VisitDataEntry[] = [
     {url: "http://axc.deviuco.a/", referrer: "Direct traffic", converted: true},
     {url: "http://axc.deviuco.a/", referrer: "Direct traffic", converted: true},
     {url: "http://axc.deviuco.a/", referrer: "Direct traffic", converted: false},
@@ -52,7 +52,7 @@ function TrafficStatsTable() {
                 <div className="flex lg:hidden gap-2">
                     <SelectionTab onClick={changeSelection} selection={selection}/>
                 </div>
-                {selection === 'url_visits' && <URLVisitsTable visits={visitsData}/>}
+                {selection === 'url_visits' && <URLVisitsTable/>}
                 {selection === 'payouts' && <PayoutsTable/>}
                 {selection === 'income' && <IncomeTable/>}
             </Card>

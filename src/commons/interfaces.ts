@@ -121,7 +121,8 @@ export interface Emoji {
     icon: React.ReactElement;
 }
 
-export interface VisitDataInterface {
+export interface VisitDataEntry {
+    id: number;
     url: string;
     referrer: string;
     converted: boolean;
