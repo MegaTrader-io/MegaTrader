@@ -37,11 +37,18 @@ export interface AccountBalance {
 
 export type AccountStatusType = 'active' | 'unpaid' | 'breach'
 
+export interface Objectives {
+    reach_and_maintain_total: number,
+    progress: number,
+    level: number
+}
+
 export interface Account {
     id: number
     name: string
     status: AccountStatusType,
-    accountBalance: AccountBalance
+    accountBalance: AccountBalance,
+    objectives: Objectives
 }
 
 export interface Period {

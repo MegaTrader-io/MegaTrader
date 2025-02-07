@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 
-export function formatCurrency(value: number) {
+export function formatCurrency(value: number, decimal: number = 2) {
     try {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
-            minimumFractionDigits: 2,
+            minimumFractionDigits: decimal,
             maximumFractionDigits: 2,
         }).format(value);
     } catch (error) {

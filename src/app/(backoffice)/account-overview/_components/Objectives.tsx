@@ -2,8 +2,10 @@ import React from 'react';
 import Card from "@/components/Card";
 import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/16/solid";
 import ProgressSteps from "@/app/(backoffice)/account-overview/ProgressSteps";
+import {Account} from "@/commons/interfaces";
+import NumericStyle from "@/components/NumericStyle";
 
-function Objectives() {
+function Objectives({account}: { account: Account }) {
     return (
         <Card className="space-y-4 lg:max-w-[405px]">
             <div className="text-white text-xl font-light uppercase leading-normal">Objectives</div>
@@ -11,7 +13,8 @@ function Objectives() {
             <div className="space-y-2">
                 <div className="flex gap-2">
                     <div className="flex items-center">
-                        <CheckCircleIcon className="w-6 h-6 text-secondary"/>
+                        {account.status === 'unpaid' && <XCircleIcon className="w-6 h-6 text-rose-500"/>}
+                        {account.status !== 'unpaid' && <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
                     </div>
 
                     <div className="flex gap-4 w-full">
@@ -26,11 +29,19 @@ function Objectives() {
                             </div>
                             <div aria-hidden="true" className="my-2">
                                 <div className="overflow-hidden rounded-full bg-neutral-700">
-                                    <div style={{width: '37.5%'}} className="h-2 bg-secondary"/>
+                                    <div style={{width: `${account.objectives.progress}%`}}
+                                         className="h-2 bg-secondary"/>
                                 </div>
                             </div>
                             <div className="text-base font-light text-right">
-                                <span className="text-mgt-link">$2,900</span>
+                                <span>
+                                    <NumericStyle
+                                        decimal={0}
+                                        positiveLegend={''}
+                                        positiveColor={'text-mgt-link'}
+                                        negativeColor={'text-rose-500'}
+                                        value={account.objectives.reach_and_maintain_total}/>
+                                </span>
                                 <span className="text-stone-400 mx-1">/</span>
                                 <span className="text-stone-400">$9,000</span>
                             </div>
@@ -38,8 +49,8 @@ function Objectives() {
 
                         <div className="flex flex-col items-center gap-2 justify-center">
                             <ProgressSteps
-                                variant={'secondary'}
-                                currentStep={1}
+                                variant={account.status !== 'unpaid' ? 'secondary' : 'error'}
+                                currentStep={account.objectives.level}
                                 totalSteps={5}/>
                             <div
                                 className="relative -top-[5px] text-center text-white text-base font-normal leading-normal">
@@ -51,7 +62,8 @@ function Objectives() {
                 </div>
                 <div className="flex gap-2">
                     <div className="flex items-center">
-                        <CheckCircleIcon className="w-6 h-6 text-secondary"/>
+                        {account.status === 'unpaid' && <XCircleIcon className="w-6 h-6 text-rose-500"/>}
+                        {account.status !== 'unpaid' && <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
                     </div>
                     <div>
                         <div>
@@ -69,7 +81,8 @@ function Objectives() {
             <div className="text-white text-xl font-light uppercase leading-normal">RULE</div>
             <div className="flex gap-2 ">
                 <div className="flex items-center">
-                    <XCircleIcon className="w-6 h-6 text-mgt-error"/>
+                    {account.status === 'unpaid' && <XCircleIcon className="w-6 h-6 text-rose-500"/>}
+                    {account.status !== 'unpaid' && <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
                 </div>
                 <div>
                     <div className="flex flex-col">

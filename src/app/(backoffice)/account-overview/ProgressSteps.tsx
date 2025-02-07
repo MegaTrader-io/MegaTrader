@@ -11,7 +11,9 @@ const ProgressSteps = ({variant = 'secondary', currentStep, totalSteps}: {
         color = '#F43F5E';
     }
 
-    const progressPercentage = (currentStep / totalSteps) * 100;
+
+
+    const progressPercentage = currentStep === 0 ? 100 : (currentStep / totalSteps) * 100;
 
     return (
         <div className="relative flex items-center justify-center w-12 h-12">

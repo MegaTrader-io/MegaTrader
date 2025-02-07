@@ -157,7 +157,7 @@ export default function AccountOverView() {
         <div
             className="space-y-4 lg:grid lg:grid-cols-[1fr_auto] lg:space-y-0 gap-4 w-full">
             <AccountBalance account={selectedAccount}/>
-            <Objectives/>
+            <Objectives account={selectedAccount}/>
         </div>
 
         <ProPlanChart/>

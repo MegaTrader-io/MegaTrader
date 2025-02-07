@@ -16,6 +16,11 @@ export const accounts: Account[] = [
             worstDay: "-$4,524.54",
             avgWinningDay: "-",
             avgLosingDay: "-$1,610.74"
+        },
+        objectives: {
+            reach_and_maintain_total: 2900,
+            progress: 37.5,
+            level: 1
         }
     },
     {
@@ -33,6 +38,11 @@ export const accounts: Account[] = [
             worstDay: "-$4,524.54",
             avgWinningDay: "-",
             avgLosingDay: "-$2,610.74"
+        },
+        objectives: {
+            reach_and_maintain_total: -1600,
+            progress: 0,
+            level: 0
         }
     },
     {
@@ -50,6 +60,11 @@ export const accounts: Account[] = [
             worstDay: "-$4,524.54",
             avgWinningDay: "-",
             avgLosingDay: "-$2,610.74"
+        },
+        objectives: {
+            reach_and_maintain_total: 3200,
+            progress: 0,
+            level: 2
         }
     },
 ];
