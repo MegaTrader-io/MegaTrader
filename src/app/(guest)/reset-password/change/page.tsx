@@ -69,7 +69,7 @@ export default function ChangePassword() {
             {fieldErrors.form && <Alert type="error" message={fieldErrors.form}/>}
 
             <div>
-                <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">
+                <h1 className="text-white xl:text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">
                     Reset password
                 </h1>
                 <h2 className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide">
