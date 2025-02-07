@@ -41,7 +41,7 @@ export default {
                 'mgt-error': 'var(--mgt-color-error)',
                 'mgt-link-hover': 'var(--mgt-color-link-hover)',
                 primary: '#FFB34A',
-                secondary: '#14B8A6',
+                secondary: 'var(--mgt-color-teal)',
                 light: '#FFFFFF'
             },
             keyframes: {

@@ -5,6 +5,7 @@
 @layer base {
     :root {
         --mgt-color-primary: #FFB34A;
+        --mgt-color-teal: #14B8A6;
         --mgt-color-error: #FB7185;
         --mgt-color-link: #FFD78A;
         --mgt-color-link-hover: var(--mgt-color-primary);

@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from "@/components/Card";
 import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/16/solid";
+import ProgressSteps from "@/app/(backoffice)/account-overview/ProgressSteps";
 
 function Objectives() {
     return (
@@ -12,25 +13,41 @@ function Objectives() {
                     <div className="flex items-center">
                         <CheckCircleIcon className="w-6 h-6 text-secondary"/>
                     </div>
-                    <div className="w-full ">
-                        <div className="gap-2 lg:flex lg:items-center">
-                            <div className="text-white text-base font-light">Reach and maintain the $9,000+</div>
+
+                    <div className="flex gap-4 w-full">
+                        <div className="w-full ">
+                            <div className="gap-2">
+                                <div className="text-white text-base font-light lg:pr-8 pr-12">Reach and maintain the
+                                    $9,000+ <span
+                                        className="pl-4 text-mgt-link text-xs font-normal underline leading-tight">Profit
+                                    target
+                                </span>
+                                </div>
+                            </div>
+                            <div aria-hidden="true" className="my-2">
+                                <div className="overflow-hidden rounded-full bg-neutral-700">
+                                    <div style={{width: '37.5%'}} className="h-2 bg-secondary"/>
+                                </div>
+                            </div>
+                            <div className="text-base font-light text-right">
+                                <span className="text-mgt-link">$2,900</span>
+                                <span className="text-stone-400 mx-1">/</span>
+                                <span className="text-stone-400">$9,000</span>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col items-center gap-2 justify-center">
+                            <ProgressSteps
+                                variant={'secondary'}
+                                currentStep={1}
+                                totalSteps={5}/>
                             <div
-                                className="text-mgt-link text-xs font-normal inline underline leading-tight">Profit
-                                target
+                                className="relative -top-[5px] text-center text-white text-base font-normal leading-normal">
+                                Trading Days
                             </div>
-                        </div>
-                        <div aria-hidden="true" className="my-2">
-                            <div className="overflow-hidden rounded-full bg-neutral-700">
-                                <div style={{width: '37.5%'}} className="h-2 bg-secondary"/>
-                            </div>
-                        </div>
-                        <div className="text-base font-light text-right">
-                            <span className="text-secondary">$2,900</span>
-                            <span className="text-stone-400 mx-1">/</span>
-                            <span className="text-stone-400">$9,000</span>
                         </div>
                     </div>
+
                 </div>
                 <div className="flex gap-2">
                     <div className="flex items-center">
