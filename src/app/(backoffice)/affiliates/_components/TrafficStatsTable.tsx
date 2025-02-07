@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
-import {OptionInterface, VisitDataEntry} from "@/commons/interfaces";
+import {OptionInterface} from "@/commons/interfaces";
 import URLVisitsTable from "@/app/(backoffice)/affiliates/_components/URLVisitsTable";
 import PayoutsTable from "@/app/(backoffice)/affiliates/_components/PayoutsTable";
 import IncomeTable from "@/app/(backoffice)/affiliates/_components/IncomeTable";
@@ -12,13 +12,6 @@ const Options: OptionInterface[] = [
     {id: 'payouts', label: 'Payouts'},
     {id: 'income', label: 'Income'},
 ]
-
-const visitsData: VisitDataEntry[] = [
-    {url: "http://axc.deviuco.a/", referrer: "Direct traffic", converted: true},
-    {url: "http://axc.deviuco.a/", referrer: "Direct traffic", converted: true},
-    {url: "http://axc.deviuco.a/", referrer: "Direct traffic", converted: false},
-    {url: "http://axc.deviuco.a/", referrer: "Direct traffic", converted: true},
-];
 
 function SelectionTab({onClick, selection}: { onClick: (option: OptionInterface) => void, selection: string }) {
     return <>
