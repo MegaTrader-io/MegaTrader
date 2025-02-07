@@ -93,8 +93,19 @@ export interface PayoutsEntry {
     month: string,
     sold: number,
     total_profit: number,
-    status: 'paid'|'pending'
+    status: 'paid' | 'pending'
 }
+
+export interface IncomeEntry {
+    id: number;
+    orderNumber: string;
+    product: string;
+    created: string;
+    paymentDate: string;
+    originalPrice: number;
+    profit: number;
+}
+
 
 export interface Emoji {
     id: number;
