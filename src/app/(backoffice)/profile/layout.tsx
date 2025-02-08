@@ -51,11 +51,11 @@ function Links({options}: { options: IOption[] }) {
                 </div>
             </div>
         </div>
-        <div className="hidden md:flex md:gap-2">
+        <div className="hidden lg:block lg:space-y-2">
             {options.map(option => (
                 <Link
                     key={option.url}
-                    className={clsx('btn-dark-link truncate !normal-case', {'!bg-primary !text-black': currentPath === option.url})}
+                    className={clsx('btn-dark-link truncate  !normal-case', {'!bg-primary !text-black': currentPath === option.url})}
                     href={option.url}>
                     {option.label}
                 </Link>
@@ -76,15 +76,12 @@ const Layout = ({children,}: {
 
     return <>
         <>
-            <div className="space-y-4 w-full">
-                <div className="lg:space-y-4 md:space-y-0 grid grid-cols-[1fr_auto] w-full items-start">
-                    <div className="order-2 mb-4 md:mb-8 lg:mb-0 lg:order-none col-span-2">
-                        <Links options={Options}/>
-                    </div>
-                    <div className="order-3 w-full lg:order-none lg:pr-16">
-                        {children}
-                    </div>
-                    <Card className="order-1 w-full md:w-[519px] !mb-8 lg:order-none mx-auto space-y-8">
+            <div className="grid grid-cols-12 w-full gap-4">
+                <div className="col-span-3 w-full">
+                    <Links options={Options}/>
+                </div>
+                <div className="col-span-9 w-full space-y-8">
+                    <Card className="order-1 w-full lg:order-none mx-auto space-y-8">
                         <div className="flex justify-center flex-col items-center gap-4">
                             <Avatar user={user}/>
                             <div className="grid grid-rows-3 gap-0.5">
@@ -123,8 +120,21 @@ const Layout = ({children,}: {
                             </div>
                         </div>
                     </Card>
+                    {children}
                 </div>
             </div>
+
+            {/*<div className="space-y-4 w-full">*/}
+            {/*    <div className="lg:space-y-4 md:space-y-0 grid grid-cols-[1fr_auto] w-full items-start">*/}
+            {/*        <div className="order-2 mb-4 md:mb-8 lg:mb-0 lg:order-none col-span-2">*/}
+            {/*            <Links options={Options}/>*/}
+            {/*        </div>*/}
+            {/*        <div className="order-3 w-full lg:order-none lg:pr-16">*/}
+            {/*            /!*{children}*!/*/}
+            {/*        </div>*/}
+            {/*        */}
+            {/*    </div>*/}
+            {/*</div>*/}
         </>
     </>
 }
