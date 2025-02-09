@@ -7,6 +7,7 @@ function AccountStatus({status}: { status: AccountStatusType }) {
         active: 'secondary',
         unpaid: 'error',
         breach: 'primary',
+        funded: 'secondary',
     };
 
     return (
