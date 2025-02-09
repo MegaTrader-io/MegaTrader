@@ -14,7 +14,7 @@ const AccountContext = createContext<AccountContextType | undefined>(undefined);
 
 export const AccountProvider = ({children}: { children: React.ReactNode }) => {
     const [selectedAccount, setSelectedAccountState] = useState<Account>(accounts[0])
-    const [isLoadingAccount, setIsLoadingAccount] = useState<boolean>(true)
+    const [isLoadingAccount, setIsLoadingAccount] = useState<boolean>(false)
 
     const setSelectedAccount = (account: Account) => {
         console.info('account selected', account);

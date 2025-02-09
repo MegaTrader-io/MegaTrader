@@ -94,6 +94,16 @@ const chartConfig = {
 function ProPlanChart({isLoadingAccount}: { isLoadingAccount: boolean }) {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
+    if (isLoadingAccount) {
+        return <Card className="w-full space-y-8 h-[400px]">
+            {isLoadingAccount && (
+                <SkeletonTemplate>
+
+                </SkeletonTemplate>
+            )}
+        </Card>
+    }
+
     return (
         <Card className="w-full space-y-4">
             <div className="space-y-4 lg:space-y-0 lg:flex justify-between">
@@ -124,13 +134,12 @@ function ProPlanChart({isLoadingAccount}: { isLoadingAccount: boolean }) {
             </div>
 
             <div className="w-full h-[389px] rounded">
-                {isLoadingAccount && (<SkeletonTemplate />)}
-                {!isLoadingAccount && (<ReactApexChart
+                <ReactApexChart
                     type={chartConfig.type}
                     height={chartConfig.height}
                     series={chartConfig.series}
                     options={chartConfig.options}
-                />)}
+                />
             </div>
         </Card>
     );
