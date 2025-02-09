@@ -19,7 +19,6 @@ const Options = [
     {id: 'micro_australian', label: 'Micro Australian'},
 ]
 
-
 function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
     const [selection, setSelection] = useState('overview');
     const [chartMetrics, setChartMetrics] = useState({
@@ -44,13 +43,12 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
         })();
 
         setChartMetrics({chart1, chart2, chart3})
-    }, [])
+    }, [selection])
 
     const changeOption = (ev: React.ChangeEvent<HTMLSelectElement>) => {
         const value = ev.target.value;
         setSelection(value)
     }
-
 
     if (isLoadingAccount) {
         return <Card className="w-full space-y-8 h-[400px]">
