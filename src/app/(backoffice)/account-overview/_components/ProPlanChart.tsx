@@ -9,6 +9,7 @@ import {Period, TooltipData} from "@/commons/interfaces";
 import dynamic from 'next/dynamic';
 import {ApexOptions} from "apexcharts";
 import Tooltip from "@/components/Tooltip";
+import {SkeletonTemplate} from "@/components/Skeleton";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
@@ -90,7 +91,7 @@ const chartConfig = {
     } as ApexOptions,
 };
 
-function ProPlanChart() {
+function ProPlanChart({isLoadingAccount}: { isLoadingAccount: boolean }) {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
     return (
@@ -101,32 +102,35 @@ function ProPlanChart() {
                 </div>
 
                 <div>
-                    <Dropdown
-                        items={periods}
-                        value={selectPeriod}
-                        onChange={setSelectPeriod}
-                        renderButtonContent={(item) => (
-                            <div className="flex gap-2 justify-between w-full">
-                                <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
-                                <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
-                            </div>
-                        )}
-                        renderOptionContent={(item) => (
-                            <>
-                                <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
-                            </>
-                        )}
-                    />
+                    {!isLoadingAccount && (
+                        <Dropdown
+                            items={periods}
+                            value={selectPeriod}
+                            onChange={setSelectPeriod}
+                            renderButtonContent={(item) => (
+                                <div className="flex gap-2 justify-between w-full">
+                                    <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
+                                    <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
+                                </div>
+                            )}
+                            renderOptionContent={(item) => (
+                                <>
+                                    <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
+                                </>
+                            )}
+                        />
+                    )}
                 </div>
             </div>
 
             <div className="w-full h-[389px] rounded">
-                <ReactApexChart
+                {isLoadingAccount && (<SkeletonTemplate />)}
+                {!isLoadingAccount && (<ReactApexChart
                     type={chartConfig.type}
                     height={chartConfig.height}
                     series={chartConfig.series}
                     options={chartConfig.options}
-                />
+                />)}
             </div>
         </Card>
     );

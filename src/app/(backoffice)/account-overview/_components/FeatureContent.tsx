@@ -9,6 +9,7 @@ import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {formatCurrency} from "@/commons/utils";
 import Tooltip from "@/components/Tooltip";
 import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
+import Skeleton from "@/components/Skeleton";
 
 const Options = [
     {id: 'overview', label: 'Overview'},
@@ -19,7 +20,7 @@ const Options = [
 ]
 
 
-function FeatureContent() {
+function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
     const [selection, setSelection] = useState('overview');
     const [chartMetrics, setChartMetrics] = useState({
         chart1: {value: 0, min: 0, max: 0},
@@ -52,40 +53,46 @@ function FeatureContent() {
 
     return (
         <div className="w-full space-y-2 lg:space-y-4">
-            <div className="hidden lg:flex gap-2">
-                {Options.map(option => (
-                    <Button key={option.id}
-                            variant={option.id === selection ? "primary" : 'dark'}
-                            onClick={() => {
-                                setSelection(option.id)
-                            }}>
-                        {option.label}
-                    </Button>
-                ))}
-            </div>
+            {!isLoadingAccount && (
+                <>
+                    <div className="hidden lg:flex gap-2">
+                        {Options.map(option => (
+                            <Button key={option.id}
+                                    variant={option.id === selection ? "primary" : 'dark'}
+                                    onClick={() => {
+                                        setSelection(option.id)
+                                    }}>
+                                {option.label}
+                            </Button>
+                        ))}
+                    </div>
 
-            <div className="lg:hidden relative w-full">
-                <select
-                    className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
-                    onChange={changeOption}>
-                    {Options.map(option => (
-                        <option key={option.id} value={option.id}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0"
-                              width="24" height="24">
-                            <rect width="24" height="24" fill="#D9D9D9"/>
-                        </mask>
-                        <g mask="url(#mask0_5269_2288)">
-                            <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                        </g>
-                    </svg>
-                </div>
-            </div>
+                    <div className="lg:hidden relative w-full">
+                        <select
+                            className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
+                            onChange={changeOption}>
+                            {Options.map(option => (
+                                <option key={option.id} value={option.id}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
+                                      y="0"
+                                      width="24" height="24">
+                                    <rect width="24" height="24" fill="#D9D9D9"/>
+                                </mask>
+                                <g mask="url(#mask0_5269_2288)">
+                                    <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </>
+            )}
 
             <Card className="w-full space-y-8">
                 <div className="gap-4 flex justify-between items-center">
@@ -114,7 +121,8 @@ function FeatureContent() {
                                 </p>
                             </>
                         </GenericExclamationTooltip>
-                        <TrendIndicator value={-127.16}/>
+
+                        {!isLoadingAccount && (<TrendIndicator value={-127.16}/>)}
                     </div>
                     <QuestionTooltip/>
                 </div>
@@ -137,14 +145,15 @@ function FeatureContent() {
                             </GenericTooltip>
                         </div>
 
-                        <div className="h-72 w-full justify-center items-center flex">
+                        <Skeleton isLoading={isLoadingAccount}
+                                  className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
                             <GaugeSVG
                                 value={chartMetrics.chart1.value === 0 ? 0 : chartMetrics.chart1.value * 100 / chartMetrics.chart1.max}
                                 minValue={formatCurrency(chartMetrics.chart1.min)}
                                 maxValue={formatCurrency(chartMetrics.chart1.max)}
                                 centerValue={`${formatCurrency(chartMetrics.chart1.value)}`}
                             />
-                        </div>
+                        </Skeleton>
                     </div>
                     <div className="gap-2 flex  flex-col">
                         <div className="flex gap-2 justify-center">
@@ -163,14 +172,15 @@ function FeatureContent() {
                                 </>
                             </GenericTooltip>
                         </div>
-                        <div className="h-72 justify-center items-center flex">
+                        <Skeleton isLoading={isLoadingAccount}
+                                  className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
                             <GaugeSVG
                                 value={chartMetrics.chart2.value}
                                 minValue={chartMetrics.chart2.min.toString()}
                                 maxValue={chartMetrics.chart2.max.toString()}
                                 centerValue={`${chartMetrics.chart2.value.toFixed(0)}%`}
                             />
-                        </div>
+                        </Skeleton>
                     </div>
                     <div className="gap-2 flex  flex-col">
                         <div className="flex gap-2 justify-center">
@@ -190,14 +200,15 @@ function FeatureContent() {
                             </GenericTooltip>
                         </div>
 
-                        <div className="h-72 justify-center items-center flex">
+                        <Skeleton isLoading={isLoadingAccount}
+                                  className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
                             <GaugeSVG
                                 value={Math.abs(chartMetrics.chart3.value === 0 ? 0 : chartMetrics.chart3.value * 100 / chartMetrics.chart3.max)}
                                 minValue={formatCurrency(chartMetrics.chart3.min)}
                                 maxValue={formatCurrency(chartMetrics.chart3.max)}
                                 centerValue={`${formatCurrency(chartMetrics.chart3.value * -1)}`}
                             />
-                        </div>
+                        </Skeleton>
                     </div>
                 </div>
 
@@ -230,7 +241,7 @@ function FeatureContent() {
                         <div className="flex items-center">
                             <div
                                 className="text-white text-xs font-medium uppercase leading-normal">
-                                1:1.52
+                                {isLoadingAccount ? '...' : '1:1.52'}
                             </div>
                         </div>
                     </div>

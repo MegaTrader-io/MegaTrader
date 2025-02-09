@@ -2,16 +2,17 @@ import React from "react";
 import {useCopy} from "@/hooks/useCopy";
 import clsx from "clsx";
 
-export function CopyButton({value, className, color = '#A8A29E'}: {
+export function CopyButton({value, className, color = '#A8A29E', disabled = false}: {
     value: string,
     className?: string,
     color?: string
+    disabled?: boolean
 }) {
     const {buttonRef, copySuccess} = useCopy(value);
 
     return (
         <>
-            <button ref={buttonRef} className={clsx('relative', [className, `text-[${color}]`])}>
+            <button ref={buttonRef} className={clsx('relative disabled:text-stone-600 disabled:cursor-not-allowed', [className, `text-[${color}]`])} disabled={disabled}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_4397_10330" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0"
                           width="24" height="24">

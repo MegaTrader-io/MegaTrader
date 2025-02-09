@@ -2,7 +2,7 @@
 
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
-import React, {useRef, useState} from "react";
+import React, {useRef} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import Dropdown from "@/components/Dropdown";
@@ -10,7 +10,6 @@ import Image from "next/image";
 import {CopyButton} from "@/components/CopyButton";
 import Objectives from "@/app/(backoffice)/account-overview/_components/Objectives";
 import TooltipPanel from "@/app/(backoffice)/account-overview/_components/TooltipPanel";
-import {Account} from "@/commons/interfaces";
 import AccountBalance from "@/app/(backoffice)/account-overview/_components/AccountBalance";
 import EyeComponent from "@/components/EyeComponent";
 import useToggleSecretsKeys from "@/hooks/useToggleSecretsKeys";
@@ -22,10 +21,12 @@ import DailyJournal from "@/app/(backoffice)/account-overview/_components/DailyJ
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
 import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
+import {useAccount} from "@/app/providers/AccountContext";
+import {SkeletonTemplate} from "@/components/Skeleton";
 
 export default function AccountOverView() {
+    const {selectedAccount, setSelectedAccount, isLoadingAccount} = useAccount();
     const passwordMaskRef = useRef<HTMLDivElement>(null);
-    const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[3]);
 
     const {toggleMask, currentMask} = useToggleSecretsKeys([
         {element: passwordMaskRef.current, value: credentials.password},
@@ -103,19 +104,27 @@ export default function AccountOverView() {
                     className="flex flex-col gap-[17px] lg:flex-row lg:items-center lg:justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">
                     <div
                         className="justify-center flex gap-[17px] flex-col sm:flex-row sm:items-center sm:w-auto sm:justify-between">
+
                         <Image
                             className="mx-auto sm:mx-0"
                             src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue'
                             width={133}
                             height={40}/>
 
-                        <Button variant={'dark'}
-                                iconPosition='left'
-                                size='sm'
-                                className="w-full sm:w-auto"
-                                icon={<ArrowUpRightIcon className="text-white"/>}>
-                            OPEN PLATFORM
-                        </Button>
+                        {isLoadingAccount && (<div className="min-w-[145px] h-[24px]">
+                            <SkeletonTemplate/>
+                        </div>)}
+
+                        {!isLoadingAccount && (
+                            <Button variant={'dark'}
+                                    iconPosition='left'
+                                    size='sm'
+                                    className="w-full sm:w-auto"
+                                    icon={<ArrowUpRightIcon className="text-white"/>}>
+                                OPEN PLATFORM
+                            </Button>
+                        )}
+
                     </div>
 
                     <div className="sm:text-right lg:inline-flex lg:items-center">
@@ -126,12 +135,20 @@ export default function AccountOverView() {
                                 Login :
                             </div>
 
-                            <div
-                                className="text-stone-400 text-base font-light leading-normal">
-                                {credentials.login}
-                            </div>
+                            {isLoadingAccount && (<div className="min-w-[120px] h-[24px]">
+                                <SkeletonTemplate/>
+                            </div>)}
 
-                            <CopyButton value={credentials.login}/>
+                            {!isLoadingAccount && (
+                                <>
+                                    <div
+                                        className="text-stone-400 text-base font-light leading-normal">
+                                        {credentials.login}
+                                    </div>
+
+                                    <CopyButton value={credentials.login}/>
+                                </>
+                            )}
                         </div>
 
                         <div className="gap-2 sm:pl-4 pr-0 py-2 inline-flex items-center text-white">
@@ -140,14 +157,22 @@ export default function AccountOverView() {
                                 Password :
                             </div>
 
-                            <div
-                                ref={passwordMaskRef}
-                                className="text-stone-400 text-base font-light leading-normal">
-                                ••••••••••••
-                            </div>
+                            {isLoadingAccount && (<div className="min-w-[120px] h-[24px]">
+                                <SkeletonTemplate/>
+                            </div>)}
 
-                            <CopyButton value={credentials.password}/>
-                            <EyeComponent type={currentMask} onChange={toggleMask}/>
+                            {!isLoadingAccount && (
+                                <>
+                                    <div
+                                        ref={passwordMaskRef}
+                                        className="text-stone-400 text-base font-light leading-normal">
+                                        ••••••••••••
+                                    </div>
+
+                                    <CopyButton value={credentials.password}/>
+                                    <EyeComponent type={currentMask} onChange={toggleMask}/>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -156,12 +181,12 @@ export default function AccountOverView() {
 
         <div
             className="space-y-4 lg:grid lg:grid-cols-[1fr_auto] lg:space-y-0 gap-4 w-full">
-            <AccountBalance account={selectedAccount}/>
-            <Objectives account={selectedAccount}/>
+            <AccountBalance account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
+            <Objectives account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
         </div>
 
-        <ProPlanChart/>
-        <FeatureContent/>
-        <DailyJournal/>
+        <ProPlanChart isLoadingAccount={isLoadingAccount}/>
+        <FeatureContent isLoadingAccount={isLoadingAccount}/>
+        <DailyJournal isLoadingAccount={isLoadingAccount}/>
     </>
 }

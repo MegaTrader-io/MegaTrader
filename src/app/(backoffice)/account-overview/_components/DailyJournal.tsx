@@ -9,8 +9,9 @@ import {sleep} from "@/commons/utils";
 import {PopoverTrigger, Popover, PopoverPortal} from "@radix-ui/react-popover";
 import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/PopoverSurvey";
 import IconSurvey from "@/app/(backoffice)/account-overview/_components/IconSurvey";
+import {SkeletonTemplate} from "@/components/Skeleton";
 
-function DailyJournal() {
+function DailyJournal({isLoadingAccount}: { isLoadingAccount: boolean }) {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<JournalEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +40,7 @@ function DailyJournal() {
             .then(() => {
                 void fetchJournalData();
             })
-    }, []);
+    }, [isLoadingAccount]);
 
     const handlePageChange = (page: number) => {
         fetchJournalData(page)
@@ -48,8 +49,20 @@ function DailyJournal() {
             })
     };
 
+    if (isLoadingAccount) {
+        return <Card className="w-full space-y-8 h-[400px]">
+            {isLoadingAccount && (
+                <SkeletonTemplate></SkeletonTemplate>
+            )}
+        </Card>
+    }
+
     return (
         <Card className="w-full space-y-8">
+            {isLoadingAccount && (
+                <SkeletonTemplate></SkeletonTemplate>
+            )}
+
             <>
                 <Table>
                     <TableHead className="text-xs">
@@ -74,8 +87,8 @@ function DailyJournal() {
                             <TableRow key={index}>
                                 <TableCell
                                     colSpan={13}
-                                    className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
-                                    <div className="bg-slate-800/70 w-full h-full"></div>
+                                    className="h-[65px]">
+                                    <SkeletonTemplate/>
                                 </TableCell>
                             </TableRow>
                         ))}

@@ -3,15 +3,16 @@ import Card from "@/components/Card";
 import {Account} from "@/commons/interfaces";
 import Image from "next/image";
 import Tooltip from "@/components/Tooltip";
+import Skeleton from "@/components/Skeleton";
 
-function AccountBalance({account}: { account: Account }) {
+function AccountBalance({account, isLoadingAccount}: { account: Account, isLoadingAccount: boolean }) {
     const {accountBalance} = account;
 
     return (
         <Card className="space-y-4">
             <div className="text-white text-xl font-light uppercase leading-normal">ACCOUNT BALANCE</div>
             <div className="gap-4 lg:flex lg:items-center">
-                <div className="glflex flex-col items-start relative flex-1 grow">
+                <div className="lg:flex flex-col items-start relative flex-1 grow">
                     {[
                         {label: "Current Balance", value: accountBalance.currentBalance},
                         {label: "Current Equity", value: accountBalance.currentEquity},
@@ -23,11 +24,14 @@ function AccountBalance({account}: { account: Account }) {
                             key={index}
                             className="justify-between h-14 px-0 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
                         >
-                            <div className="relative flex-1 flex text-stone-400 text-base font-normal leading-normal">
+                            <Skeleton isLoading={isLoadingAccount}
+                                      className="relative flex-1 flex text-stone-400 text-base font-normal leading-normal">
                                 {label}
                                 {label === 'Weekly Net P&L' && <QuestionIcon/>}
-                            </div>
-                            <div className="relative w-fit text-white text-base font-bold leading-normal">{value}</div>
+                            </Skeleton>
+
+                            <Skeleton isLoading={isLoadingAccount}
+                                      className="relative w-fit text-white text-base font-bold leading-normal">{value}</Skeleton>
                         </div>
                     ))}
                 </div>
@@ -44,8 +48,14 @@ function AccountBalance({account}: { account: Account }) {
                             key={index}
                             className="justify-between h-14 px-0 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
                         >
-                            <div className="relative flex-1 text-stone-400">{label}</div>
-                            <div className="relative w-fit text-white text-base font-bold leading-normal">{value}</div>
+                            <Skeleton isLoading={isLoadingAccount}
+                                      className="relative flex-1 text-stone-400">
+                                {label}
+                            </Skeleton>
+                            <Skeleton isLoading={isLoadingAccount}
+                                      className="relative w-fit text-white text-base font-bold leading-normal">
+                                {value}
+                            </Skeleton>
                         </div>
                     ))}
                 </div>
