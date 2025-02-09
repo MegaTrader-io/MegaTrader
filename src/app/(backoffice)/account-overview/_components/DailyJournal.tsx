@@ -59,10 +59,6 @@ function DailyJournal({isLoadingAccount}: { isLoadingAccount: boolean }) {
 
     return (
         <Card className="w-full space-y-8">
-            {isLoadingAccount && (
-                <SkeletonTemplate></SkeletonTemplate>
-            )}
-
             <>
                 <Table>
                     <TableHead className="text-xs">

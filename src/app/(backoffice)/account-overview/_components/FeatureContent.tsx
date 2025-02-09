@@ -9,7 +9,7 @@ import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {formatCurrency} from "@/commons/utils";
 import Tooltip from "@/components/Tooltip";
 import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
-import Skeleton from "@/components/Skeleton";
+import Skeleton, {SkeletonTemplate} from "@/components/Skeleton";
 
 const Options = [
     {id: 'overview', label: 'Overview'},
@@ -51,48 +51,55 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
         setSelection(value)
     }
 
+
+    if (isLoadingAccount) {
+        return <Card className="w-full space-y-8 h-[400px]">
+            {isLoadingAccount && (
+                <SkeletonTemplate>
+
+                </SkeletonTemplate>
+            )}
+        </Card>
+    }
+
     return (
         <div className="w-full space-y-2 lg:space-y-4">
-            {!isLoadingAccount && (
-                <>
-                    <div className="hidden lg:flex gap-2">
-                        {Options.map(option => (
-                            <Button key={option.id}
-                                    variant={option.id === selection ? "primary" : 'dark'}
-                                    onClick={() => {
-                                        setSelection(option.id)
-                                    }}>
-                                {option.label}
-                            </Button>
-                        ))}
-                    </div>
+            <div className="hidden lg:flex gap-2">
+                {Options.map(option => (
+                    <Button key={option.id}
+                            variant={option.id === selection ? "primary" : 'dark'}
+                            onClick={() => {
+                                setSelection(option.id)
+                            }}>
+                        {option.label}
+                    </Button>
+                ))}
+            </div>
 
-                    <div className="lg:hidden relative w-full">
-                        <select
-                            className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
-                            onChange={changeOption}>
-                            {Options.map(option => (
-                                <option key={option.id} value={option.id}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
-                                      y="0"
-                                      width="24" height="24">
-                                    <rect width="24" height="24" fill="#D9D9D9"/>
-                                </mask>
-                                <g mask="url(#mask0_5269_2288)">
-                                    <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                                </g>
-                            </svg>
-                        </div>
-                    </div>
-                </>
-            )}
+            <div className="lg:hidden relative w-full">
+                <select
+                    className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
+                    onChange={changeOption}>
+                    {Options.map(option => (
+                        <option key={option.id} value={option.id}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
+                              y="0"
+                              width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                        </mask>
+                        <g mask="url(#mask0_5269_2288)">
+                            <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
 
             <Card className="w-full space-y-8">
                 <div className="gap-4 flex justify-between items-center">
