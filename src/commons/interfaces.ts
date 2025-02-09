@@ -35,12 +35,47 @@ export interface AccountBalance {
     avgLosingDay: string
 }
 
-export type AccountStatusType = 'active' | 'unpaid' | 'breach'
+export type AccountStatusType = 'active' | 'unpaid' | 'breach' | 'funded'
 
-export interface Objectives {
-    reach_and_maintain_total: number,
-    progress: number,
-    level: number
+interface Profit {
+    goal: number | null;
+    current: number | null;
+    percentage: number | null;
+}
+
+interface Consistency {
+    percentage: number | null;
+    description: string | null;
+}
+
+interface MaximumLossLimit {
+    threshold: number;
+    description: string;
+}
+
+interface Rule {
+    maximumLossLimit: MaximumLossLimit;
+}
+
+interface TradingDays {
+    current: number | null;
+    total: number | null;
+    betweenPayouts: {
+        current: number | null;
+        total: number | null;
+    };
+    daysWithMinProfit: {
+        current: number | null;
+        total: number | null;
+        minProfit: number | null;
+    };
+}
+
+interface Objectives {
+    profit: Profit;
+    consistency: Consistency;
+    rule: Rule;
+    tradingDays: TradingDays;
 }
 
 export interface Account {
@@ -55,7 +90,6 @@ export interface Period {
     id: string
     text: string
 }
-
 
 export interface TooltipData {
     parameters: {

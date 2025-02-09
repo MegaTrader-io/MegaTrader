@@ -18,9 +18,34 @@ export const accounts: Account[] = [
             avgLosingDay: "-$1,610.74"
         },
         objectives: {
-            reach_and_maintain_total: 2900,
-            progress: 37.5,
-            level: 1
+            profit: {
+                goal: 9000,
+                current: 2900,
+                percentage: 37.5
+            },
+            consistency: {
+                percentage: null,
+                description: null
+            },
+            rule: {
+                maximumLossLimit: {
+                    threshold: 145500,
+                    description: "Do not let your account balance hit or go below $145,500."
+                }
+            },
+            tradingDays: {
+                current: 1,
+                total: 5,
+                betweenPayouts: {
+                    current: null,
+                    total: null
+                },
+                daysWithMinProfit: {
+                    current: null,
+                    total: null,
+                    minProfit: null
+                }
+            }
         }
     },
     {
@@ -40,9 +65,34 @@ export const accounts: Account[] = [
             avgLosingDay: "-$2,610.74"
         },
         objectives: {
-            reach_and_maintain_total: -1600,
-            progress: 0,
-            level: 0
+            profit: {
+                goal: 9000,
+                current: -1600,
+                percentage: 0
+            },
+            consistency: {
+                percentage: null,
+                description: null
+            },
+            rule: {
+                maximumLossLimit: {
+                    threshold: 145500,
+                    description: "Do not let your account balance hit or go below $145,500."
+                }
+            },
+            tradingDays: {
+                current: 1,
+                total: 5,
+                betweenPayouts: {
+                    current: null,
+                    total: null
+                },
+                daysWithMinProfit: {
+                    current: null,
+                    total: null,
+                    minProfit: null
+                }
+            }
         }
     },
     {
@@ -62,11 +112,83 @@ export const accounts: Account[] = [
             avgLosingDay: "-$2,610.74"
         },
         objectives: {
-            reach_and_maintain_total: 3200,
-            progress: 0,
-            level: 2
+            profit: {
+                goal: 9000,
+                current: 3200,
+                percentage: 0
+            },
+            consistency: {
+                percentage: null,
+                description: null
+            },
+            rule: {
+                maximumLossLimit: {
+                    threshold: 145500,
+                    description: "Do not let your account balance hit or go below $145,500."
+                }
+            },
+            tradingDays: {
+                current: 1,
+                total: 5,
+                betweenPayouts: {
+                    current: null,
+                    total: null
+                },
+                daysWithMinProfit: {
+                    current: null,
+                    total: null,
+                    minProfit: null
+                }
+            }
         }
     },
+    {
+        id: 4,
+        name: 'S6SEP2586479132',
+        status: 'funded',
+        accountBalance: {
+            currentBalance: "$145,166.78",
+            currentEquity: "$145,166.78",
+            high: "$150,000",
+            low: "$145,166.78",
+            weeklyNetPnL: "$0",
+            bestDayPercentage: "-",
+            bestDay: "-$73.40",
+            worstDay: "-$4,524.54",
+            avgWinningDay: "-",
+            avgLosingDay: "-$1,610.74"
+        },
+        objectives: {
+            profit: {
+                goal: null,
+                current: 5000.00,
+                percentage: 22.00
+            },
+            consistency: {
+                percentage: 100,
+                description: null
+            },
+            rule: {
+                maximumLossLimit: {
+                    threshold: 145500,
+                    description: "Do not let your account balance hit or go below $145,500."
+                }
+            },
+            tradingDays: {
+                current: null,
+                total: null,
+                betweenPayouts: {
+                    current: 2,
+                    total: 10
+                },
+                daysWithMinProfit: {
+                    current: 1,
+                    total: 5,
+                    minProfit: 150
+                }
+            }
+        }
+    }
 ];
 
 export const credentials = {

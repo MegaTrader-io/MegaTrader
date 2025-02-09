@@ -11,8 +11,6 @@ const ProgressSteps = ({variant = 'secondary', currentStep, totalSteps}: {
         color = '#F43F5E';
     }
 
-
-
     const progressPercentage = currentStep === 0 ? 100 : (currentStep / totalSteps) * 100;
 
     return (

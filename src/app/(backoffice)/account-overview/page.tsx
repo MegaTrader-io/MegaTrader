@@ -25,7 +25,7 @@ import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
 
 export default function AccountOverView() {
     const passwordMaskRef = useRef<HTMLDivElement>(null);
-    const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[0]);
+    const [selectedAccount, setSelectedAccount] = useState<Account>(accounts[3]);
 
     const {toggleMask, currentMask} = useToggleSecretsKeys([
         {element: passwordMaskRef.current, value: credentials.password},
