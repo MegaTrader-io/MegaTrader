@@ -3,9 +3,10 @@
 import Image from 'next/image';
 import Link from "next/link";
 import React from "react";
-import {Bars3Icon, BellIcon, UserCircleIcon} from "@heroicons/react/24/solid";
+import {Bars3Icon, UserCircleIcon} from "@heroicons/react/24/solid";
 import {usePathname} from "next/navigation";
 import PopoverMenu from "@/components/backoffice/PopoverMenu";
+import NotificationLink from "@/components/backoffice/NotificationLink";
 
 const navigationItems = [
     {href: '/account-overview', visibleOnDesktop: true, label: 'ACCOUNT OVERVIEW', sectionId: '/account-overview'},
@@ -13,7 +14,12 @@ const navigationItems = [
     {href: '/payouts', visibleOnDesktop: true, label: 'PAYOUTS', sectionId: '/payouts'},
     {href: '/help-center', visibleOnDesktop: true, label: 'HELP CENTER', sectionId: '/help-center'},
     {href: '/notifications', visibleOnDesktop: false, label: 'NOTIFICATIONS', sectionId: '/notifications'},
-    {href: '/profile/identity-verification', visibleOnDesktop: false, label: 'MY PROFILE', sectionId: '/profile/identity-verification'},
+    {
+        href: '/profile/identity-verification',
+        visibleOnDesktop: false,
+        label: 'MY PROFILE',
+        sectionId: '/profile/identity-verification'
+    },
 ];
 
 export default function Header() {
@@ -83,12 +89,7 @@ export default function Header() {
 
             <div className="hidden lg:flex">
                 <div className="flex items-center gap-2">
-                    <Link
-                        href="#"
-                        className="btn-dark-link rounded-xl w-12 h-12"
-                    >
-                        <BellIcon className="w-6 h-6 text-white"/>
-                    </Link>
+                    <NotificationLink/>
                     <Link
                         href="/profile/identity-verification"
                         className="btn-dark-link rounded-xl w-12 h-12"
