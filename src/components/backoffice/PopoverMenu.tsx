@@ -1,4 +1,4 @@
-import React, {PropsWithChildren} from 'react';
+import React, {PropsWithChildren, useEffect, useRef, useState} from 'react';
 import {Popover, PopoverContent, PopoverPortal, PopoverTrigger, PopoverArrow} from "@radix-ui/react-popover";
 import {Bars3Icon} from "@heroicons/react/24/solid";
 
@@ -8,23 +8,46 @@ interface Props extends PropsWithChildren {
 }
 
 function PopoverMenu({className, children, icon}: Props) {
+    const [isVisible, setIsVisible] = useState(true);
+    const [open, setOpen] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (!buttonRef.current) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsVisible(entry.isIntersecting);
+                if (!entry.isIntersecting) {
+                    setOpen(false);
+                }
+            },
+            {threshold: 0.1}
+        );
+
+        observer.observe(buttonRef.current);
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <div className={className}>
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                    <button className="btn-primary block">
+                    <button ref={buttonRef} className="btn-primary block">
                         {!icon && <Bars3Icon className="w-6 h-6 text-white"/>}
                         {icon && icon}
                     </button>
                 </PopoverTrigger>
-                <PopoverPortal>
-                    <PopoverContent
-                        className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000] lg:hidden">
-                        {children}
-                        <PopoverArrow width={26} height={14} className="fill-white"/>
-                    </PopoverContent>
-                </PopoverPortal>
+                {isVisible && (
+                    <PopoverPortal>
+                        <PopoverContent
+                            className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000]"
+                        >
+                            {children}
+                            <PopoverArrow width={26} height={14} className="fill-white" />
+                        </PopoverContent>
+                    </PopoverPortal>
+                )}
             </Popover>
         </div>
     );

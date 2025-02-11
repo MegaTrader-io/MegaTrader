@@ -187,3 +187,18 @@ export interface IUser {
     country: string,
     language: string,
 }
+
+interface NotificationAction {
+    label: string;
+    read: boolean;
+}
+
+export type NotificationStatus = "success" | "error" | "warning";
+
+export interface INotification {
+    id: string;
+    status: NotificationStatus;
+    title: string;
+    message: string;
+    action: NotificationAction;
+}

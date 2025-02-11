@@ -1,10 +1,18 @@
 import React, {JSX, useEffect, useState} from 'react';
+import PopoverMenu from "@/components/backoffice/PopoverMenu";
+import {notificationsData} from "@/commons/data";
+import {INotification, NotificationStatus} from "@/commons/interfaces";
+import NotificationIconStatus from "@/components/NotificationIconStatus";
+import clsx from "clsx";
+import {Button} from "@/components/Button";
+import {CheckIcon} from "@heroicons/react/16/solid";
 
 interface NotificationIconProps {
     hasNotification?: boolean;
 }
 
 const NotificationIcon = ({hasNotification = false}: NotificationIconProps): JSX.Element => {
+    console.info('NotificationIcon', new Date())
     return hasNotification ? (
             <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -21,24 +29,78 @@ const NotificationIcon = ({hasNotification = false}: NotificationIconProps): JSX
         )
 }
 
-function NotificationLink() {
-    const [hasNotification, setHasNotification] = useState<boolean>(false);
+function NotificationTitle({children, status}: {
+    children: React.ReactNode,
+    status: NotificationStatus
+}) {
+    const textColor = {
+        "success": 'text-teal-600',
+        "error": 'text-rose-600',
+        "warning": 'text-orange-600',
+    }[status];
+
+    return <div className={clsx('text-right  text-xs font-bold leading-tight', textColor)}>{children}</div>
+}
+
+function NotificationId({id}: {
+    id: string
+}) {
+    return (
+        <div className="h-6 p-1 bg-neutral-200 rounded justify-center items-center gap-2.5 inline-flex">
+            <div
+                className="text-[#131210] text-[10px] font-medium uppercase leading-none">#{id}
+            </div>
+        </div>
+    )
+}
+
+function NotificationPanel({notification}: { notification: INotification }) {
+    return <div className="grid grid-cols-[auto_1fr] gap-4 p-3 font-['Roboto'] hover:bg-neutral-100 hover:rounded-lg">
+        <div>
+            <NotificationIconStatus status={notification.status}/>
+        </div>
+        <div className="grid grid-cols-[auto_1fr] items-center gap-1">
+            <NotificationId id={notification.id}/>
+            <NotificationTitle status={notification.status}>
+                {notification.title}
+            </NotificationTitle>
+            <div className="col-span-2">
+                <div className="text-black text-xs font-normal  leading-tight">
+                    {notification.message}
+                </div>
+            </div>
+            <div className="col-span-2">
+                <Button variant={'light'} size={'sm'} iconPosition={'left'} icon={<>
+                    <CheckIcon className="text-black w-5 h-5"/>
+                </>
+                }>
+                    MARK READ
+                </Button>
+            </div>
+
+        </div>
+    </div>
+}
+
+export default function NotificationLink() {
+    const [notifications, setNotifications] = useState<INotification[]>([])
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            setHasNotification(true);
-        }, 1000)
+            setNotifications(notificationsData)
+        }, 900)
 
         return () => clearTimeout(timeout)
     }, []);
 
     return (
-        <button
-            className="btn-dark-link rounded-xl w-12 h-12"
-        >
-            <NotificationIcon hasNotification={hasNotification}/>
-        </button>
+        <PopoverMenu className="block z-10 relative"
+                     icon={<NotificationIcon hasNotification={notifications.length > 0}/>}>
+            <div className="gap1 flex flex-col">
+                {notifications.map(notification => (
+                    <NotificationPanel key={notification.id} notification={notification}/>
+                ))}
+            </div>
+        </PopoverMenu>
     );
 }
-
-export default NotificationLink;
