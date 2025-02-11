@@ -259,46 +259,45 @@ export const countries = [
     {id: 'US', description: 'United States'}
 ];
 
-
 export const notificationsData: INotification[] = [
     {
-        "id": "99966584551",
-        "status": "success",
-        "title": "Congratulations! You've Passed!",
-        "message": "Your dedication and skills have led to success. Welcome to the next level!",
-        "action": {
-            "label": "MARK READ",
-            "read": false
+        id: "99966584551",
+        status: "success",
+        title: "Congratulations! You've Passed!",
+        message: "Your dedication and skills have led to success. Welcome to the next level!",
+        action: {
+            label: "MARK READ",
+            read: false
         }
     },
     {
-        "id": "99966584552",
-        "status": "error",
-        "title": "Evaluation Failed",
-        "message": "Unfortunately, you did not meet the evaluation criteria.",
-        "action": {
-            "label": "MARK READ",
-            "read": false
+        id: "99966584552",
+        status: "error",
+        title: "Evaluation Failed",
+        message: "Unfortunately, you did not meet the evaluation criteria.",
+        action: {
+            label: "MARK READ",
+            read: false
         }
     },
     {
-        "id": "99966584553",
-        "status": "success",
-        "title": "Congratulations! You've Passed!",
-        "message": "Your dedication and skills have led to success. Welcome to the next level!",
-        "action": {
-            "label": "MARK READ",
-            "read": false
+        id: "99966584553",
+        status: "success",
+        title: "Congratulations! You've Passed!",
+        message: "Your dedication and skills have led to success. Welcome to the next level!",
+        action: {
+            label: "MARK READ",
+            read: false
         }
     },
     {
-        "id": "99966584554",
-        "status": "warning",
-        "title": "Account Breach Alert",
-        "message": "A rule violation has been detected in your account.",
-        "action": {
-            "label": "MARK READ",
-            "read": false
+        id: "99966584554",
+        status: "warning",
+        title: "Account Breach Alert",
+        message: "A rule violation has been detected in your account.",
+        action: {
+            label: "MARK READ",
+            read: false
         }
     }
 ];
