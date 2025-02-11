@@ -12,7 +12,6 @@ interface NotificationIconProps {
 }
 
 const NotificationIcon = ({hasNotification = false}: NotificationIconProps): JSX.Element => {
-    console.info('NotificationIcon', new Date())
     return hasNotification ? (
             <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -54,7 +53,7 @@ function NotificationId({id}: {
     )
 }
 
-function NotificationPanel({notification}: { notification: INotification }) {
+function NotificationPanel({notification, markRead}: { notification: INotification, markRead: (id: string) => void }) {
     return <div className="grid grid-cols-[auto_1fr] gap-4 p-3 font-['Roboto'] hover:bg-neutral-100 hover:rounded-lg">
         <div>
             <NotificationIconStatus status={notification.status}/>
@@ -70,11 +69,12 @@ function NotificationPanel({notification}: { notification: INotification }) {
                 </div>
             </div>
             <div className="col-span-2">
-                <Button variant={'light'} size={'sm'} iconPosition={'left'} icon={<>
-                    <CheckIcon className="text-black w-5 h-5"/>
-                </>
-                }>
-                    MARK READ
+                <Button onClick={() => markRead(notification.id)} variant={'light'} size={'sm'} iconPosition={'left'}
+                        icon={<>
+                            <CheckIcon className="text-black w-5 h-5"/>
+                        </>
+                        }>
+                    {notification.action.label}
                 </Button>
             </div>
 
@@ -84,6 +84,8 @@ function NotificationPanel({notification}: { notification: INotification }) {
 
 export default function NotificationLink() {
     const [notifications, setNotifications] = useState<INotification[]>([])
+    const hasNotifications = notifications
+        .filter(notification => notification.action.read === false).length > 0
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -93,13 +95,31 @@ export default function NotificationLink() {
         return () => clearTimeout(timeout)
     }, []);
 
+    function markRead(id: string) {
+        setNotifications(prevNotifications =>
+            prevNotifications.map(notification =>
+                notification.id === id
+                    ? {...notification, action: {...notification.action, read: true}}
+                    : notification
+            )
+        );
+    }
+
+    if (!hasNotifications) {
+        return <button className="btn-dark-link rounded-xl w-12 h-12">
+            <NotificationIcon hasNotification={false}/>
+        </button>
+    }
+
     return (
         <PopoverMenu className="block z-10 relative"
-                     icon={<NotificationIcon hasNotification={notifications.length > 0}/>}>
-            <div className="gap1 flex flex-col">
-                {notifications.map(notification => (
-                    <NotificationPanel key={notification.id} notification={notification}/>
-                ))}
+                     icon={<NotificationIcon hasNotification={hasNotifications}/>}>
+            <div className="gap1 flex flex-col w-[481px]">
+                {notifications
+                    .filter(notification => notification.action.read === false)
+                    .map(notification => (
+                        <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>
+                    ))}
             </div>
         </PopoverMenu>
     );
