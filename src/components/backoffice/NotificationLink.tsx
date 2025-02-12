@@ -113,6 +113,8 @@ export default function NotificationLink() {
 
     return (
         <PopoverMenu className="block z-10 relative"
+                     side={'bottom'}
+                     align={'end'}
                      icon={<NotificationIcon hasNotification={hasNotifications}/>}>
             <div className="gap1 flex flex-col w-[481px]">
                 {notifications

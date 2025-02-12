@@ -3,11 +3,13 @@ import {Popover, PopoverContent, PopoverPortal, PopoverTrigger, PopoverArrow} fr
 import {Bars3Icon} from "@heroicons/react/24/solid";
 
 interface Props extends PropsWithChildren {
-    className?: string,
-    icon?: React.ReactNode
+    className?: string;
+    icon?: React.ReactNode;
+    side?: "top" | "bottom" | "left" | "right";
+    align?: "start" | "center" | "end";
 }
 
-function PopoverMenu({className, children, icon}: Props) {
+function PopoverMenu({className, children, icon, side = "bottom", align = "center"}: Props) {
     const [isVisible, setIsVisible] = useState(true);
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -41,10 +43,12 @@ function PopoverMenu({className, children, icon}: Props) {
                 {isVisible && (
                     <PopoverPortal>
                         <PopoverContent
+                            side={side}
+                            align={align}
                             className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000]"
                         >
                             {children}
-                            <PopoverArrow width={26} height={14} className="fill-white" />
+                            <PopoverArrow width={26} height={14} className="fill-white"/>
                         </PopoverContent>
                     </PopoverPortal>
                 )}
