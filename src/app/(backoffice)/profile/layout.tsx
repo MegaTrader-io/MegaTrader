@@ -6,12 +6,10 @@ import clsx from "clsx";
 import Link from "@/components/Link";
 import Card from "@/components/Card";
 import Avatar from "@/app/(backoffice)/profile/_components/Avatar";
-import Badge from "@/components/Badge";
 import InputText from "@/components/InputText";
 import {IOption, IUser} from "@/commons/interfaces";
 import {defaultUser} from "@/commons/data";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
-import Image from "next/image";
 import Pencil from "@/components/Pencil";
 
 const Options: IOption[] = [
