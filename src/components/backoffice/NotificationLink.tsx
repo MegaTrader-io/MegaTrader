@@ -84,8 +84,11 @@ function NotificationPanel({notification, markRead}: { notification: INotificati
 
 export default function NotificationLink() {
     const [notifications, setNotifications] = useState<INotification[]>([])
-    const hasNotifications = notifications
-        .filter(notification => notification.action.read === false).length > 0
+    const notificationsPending = notifications
+        .filter(notification => !notification.action.read);
+
+    const hasNotifications = notificationsPending.length > 0
+
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -117,8 +120,7 @@ export default function NotificationLink() {
                      align={'end'}
                      icon={<NotificationIcon hasNotification={hasNotifications}/>}>
             <div className="gap1 flex flex-col w-[481px]">
-                {notifications
-                    .filter(notification => notification.action.read === false)
+                {notificationsPending
                     .map(notification => (
                         <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>
                     ))}
