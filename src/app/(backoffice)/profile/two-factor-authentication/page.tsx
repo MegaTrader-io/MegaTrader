@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
-import {usePathname} from "next/navigation";
-import Card from "@/components/Card";
+import Alert from "@/components/Alert";
+import {Button} from "@/components/Button";
 
 function Page() {
-    const currentPath = usePathname();
     return (
-        <Card className="w-full text-white">
-            {currentPath}
-        </Card>
+        <div className="space-y-8">
+            <Alert className="w-full" type={'error'} message={'Your account is not protected with two-factor authentication'} />
+            <Button>
+                SET 2FA
+            </Button>
+        </div>
     );
 }
 
