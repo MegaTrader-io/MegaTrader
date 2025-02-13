@@ -11,6 +11,7 @@ import {IOption, IUser} from "@/commons/interfaces";
 import {defaultUser} from "@/commons/data";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import Pencil from "@/components/Pencil";
+import {XCircleIcon} from "@heroicons/react/20/solid";
 
 const Options: IOption[] = [
     {url: '/profile/identity-verification', label: 'Identity verification'},
@@ -69,68 +70,68 @@ const Layout = ({children,}: {
     children: React.ReactNode
 }) => {
     const currentPath = usePathname()
-    const [user, setUser] = useState<IUser>(defaultUser)
+    const [user] = useState<IUser>({...defaultUser, verified: currentPath !== '/profile/personal-information'})
 
-    useEffect(() => {
-        setUser(user => ({...user, verified: currentPath !== '/profile/personal-information'}))
-    }, [currentPath])
-
-    return <>
-        <>
-            <div className="grid grid-cols-12 w-full gap-4">
-                <div className="col-span-3 w-full">
-                    <Links options={Options}/>
-                </div>
-                <div className="col-span-9 w-full space-y-8">
-                    <Card className="order-1 w-full lg:order-none mx-auto space-y-8">
-                        <div className="grid grid-cols-[auto_1fr] gap-8">
-                            <div>
-                                <Avatar user={user}/>
-                            </div>
-                            <div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="col-span-2 flex items-center gap-4">
-                                        <div
-                                            className="flex items-center gap-1">
-                                            <Pencil/>
-                                            <div
-                                                className="text-center text-stone-400 text-base font-normal leading-normal">
-                                                Member since: {user.memberSince}
-                                            </div>
-                                        </div>
-
-                                        <div className="text-secondary flex items-center gap-1">
-                                            <CheckCircleIcon className="w-5 h-5 text-secondary"/>
-                                            {user.verified ? 'VERIFIED' : 'NOT VERIFIED'}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="text-stone-400 text-base font-bold leading-normal">
-                                            First name
-                                            <InputText readOnly={true} name={'first_name'} value={user.firstName}/>
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label className="text-stone-400 text-base font-bold leading-normal">
-                                            Last name
-                                            <InputText readOnly={true} name={'last_name'} value={user.lastName}/>
-                                        </label>
-                                    </div>
-                                    <div className="col-span-2">
-                                        <label className="text-stone-400 text-base font-bold leading-normal">
-                                            Email
-                                            <InputText readOnly={true} name={'email'} value={user.email}/>
-                                        </label>
+    return <div className="grid grid-cols-12 w-full gap-4 font-['Roboto']">
+        <div className="col-span-3 w-full">
+            <Links options={Options}/>
+        </div>
+        <div className="col-span-9 w-full space-y-8">
+            <Card className="order-1 w-full lg:order-none mx-auto space-y-8">
+                <div className="grid grid-cols-[auto_1fr] gap-8">
+                    <div>
+                        <Avatar user={user}/>
+                    </div>
+                    <div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-2 flex items-center gap-4">
+                                <div
+                                    className="flex items-center gap-1">
+                                    <Pencil/>
+                                    <div
+                                        className="text-center text-stone-400 text-base font-normal leading-normal">
+                                        Member since: {user.memberSince}
                                     </div>
                                 </div>
+
+                                <div
+                                    className={clsx('flex items-center gap-1', {
+                                        'text-secondary': user.verified,
+                                        'text-rose-500': !user.verified
+                                    })}>
+
+                                    {user.verified
+                                        ? <CheckCircleIcon className="w-5 h-5"/>
+                                        : <XCircleIcon className="w-5 h-5"/>}
+
+                                    {user.verified ? 'VERIFIED' : 'NOT VERIFIED'}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-stone-400 text-base font-bold leading-normal">
+                                    First name
+                                    <InputText readOnly={true} name={'first_name'} value={user.firstName}/>
+                                </label>
+                            </div>
+                            <div>
+                                <label className="text-stone-400 text-base font-bold leading-normal">
+                                    Last name
+                                    <InputText readOnly={true} name={'last_name'} value={user.lastName}/>
+                                </label>
+                            </div>
+                            <div className="col-span-2">
+                                <label className="text-stone-400 text-base font-bold leading-normal">
+                                    Email
+                                    <InputText readOnly={true} name={'email'} value={user.email}/>
+                                </label>
                             </div>
                         </div>
-                    </Card>
-                    {children}
+                    </div>
                 </div>
-            </div>
-        </>
-    </>
+            </Card>
+            {children}
+        </div>
+    </div>
 }
 
 export default Layout;
