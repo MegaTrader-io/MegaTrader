@@ -57,7 +57,7 @@ export async function GET(request: Request) {
         });
 
     } catch (error) {
-        console.error("Error procesando la solicitud:", error);
+        console.error("Unable to process the request:", error);
         return new Response(JSON.stringify({ error: "Internal Server Error" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },

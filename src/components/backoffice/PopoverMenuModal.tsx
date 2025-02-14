@@ -41,10 +41,11 @@ function PopoverMenu({className, children, icon, modal = true, side = "bottom", 
                     if (!prevTransformRef.current) {
                         prevTransformRef.current = popoverWrapper.style.transform;
                     }
-
+                    popoverWrapper.style.width = "100vw";
                     popoverWrapper.style.transform = "translate(0px, 0px)";
                 } else {
                     if (prevTransformRef.current) {
+                        popoverWrapper.style.width = "auto";
                         prevTransformRef.current = null;
                     }
                 }
@@ -92,7 +93,10 @@ function PopoverMenu({className, children, icon, modal = true, side = "bottom", 
                 {isVisible && (
                     <PopoverPortal>
                         <PopoverContent ref={popoverRef} asChild side={side} align={align}
-                                        className={clsx('z-[1000]', {'h-dvh overflow-auto bg-white': isMobile && modal, 'h-[460px]': modal === false && !isMobile && modal})}>
+                                        className={clsx('z-[1000]', {
+                                            'bg-white': isMobile && modal,
+                                            'h-[460px]': modal === false && !isMobile && modal
+                                        })}>
                             <div className="custom-popover scroll-auto">
                                 <div
                                     className={clsx('flex flex-col items-center justify-center gap-2 p-2 relative bg-white', [!isMobile || modal === false ? 'rounded-lg border border-solid border-[#494949]' : null])}>

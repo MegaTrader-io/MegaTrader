@@ -1,21 +1,21 @@
-import incomeData from './incomeData.json';
+import notifications from './notificationsData.json';
 
 export async function GET(request: Request) {
     try {
-        const { searchParams } = new URL(request.url);
-        const sortBy = searchParams.get('sortBy') || 'month';
+        const {searchParams} = new URL(request.url);
+        const sortBy = searchParams.get('sortBy') || 'id';
         const direction = searchParams.get('direction') === 'asc' ? 'asc' : 'desc';
         const page = parseInt(searchParams.get('page') || '1', 10);
         const perPage = parseInt(searchParams.get('per_page') || '10', 10);
 
-        if (!incomeData.length || !(sortBy in incomeData[0])) {
-            return new Response(JSON.stringify({ error: `Invalid sortBy parameter: ${sortBy}` }), {
+        if (!notifications.length || !(sortBy in notifications[0])) {
+            return new Response(JSON.stringify({error: `Invalid sortBy parameter: ${sortBy}`}), {
                 status: 400,
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
             });
         }
 
-        const sortedData = [...incomeData].sort((a, b) => {
+        const sortedData = [...notifications].sort((a, b) => {
             const valA = a[sortBy as keyof typeof a];
             const valB = b[sortBy as keyof typeof b];
 
@@ -44,23 +44,23 @@ export async function GET(request: Request) {
                 total: total,
             },
             links: {
-                first: `/api/income?page=1&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}`,
-                last: `/api/income?page=${Math.ceil(total / perPage)}&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}`,
-                prev: page > 1 ? `/api/income?page=${page - 1}&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}` : null,
-                next: page < Math.ceil(total / perPage) ? `/api/income?page=${page + 1}&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}` : null,
+                first: `/api/notifications?page=1&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}`,
+                last: `/api/notifications?page=${Math.ceil(total / perPage)}&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}`,
+                prev: page > 1 ? `/api/notifications?page=${page - 1}&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}` : null,
+                next: page < Math.ceil(total / perPage) ? `/api/notifications?page=${page + 1}&per_page=${perPage}&sortBy=${sortBy}&direction=${direction}` : null,
             },
         };
 
         return new Response(JSON.stringify(response), {
             status: 200,
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
         });
 
     } catch (error) {
         console.error("Unable to process the request:", error);
-        return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+        return new Response(JSON.stringify({error: "Internal Server Error"}), {
             status: 500,
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
         });
     }
 }

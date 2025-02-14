@@ -118,9 +118,9 @@ export default function NotificationLink() {
 
     return (
         <PopoverMenuModal className="block z-10 relative"
-                     side={'bottom'}
-                     align={'end'}
-                     icon={<NotificationIcon hasNotification={hasNotifications}/>}>
+                          side={'bottom'}
+                          align={'end'}
+                          icon={<NotificationIcon hasNotification={hasNotifications}/>}>
             <div className="flex sm:hidden text-left w-full justify-between px-2 gap-2 mb-4">
                 <div
                     className="text-[#131210] w-full text-2xl font-light uppercase leading-7">Notifications
@@ -131,7 +131,8 @@ export default function NotificationLink() {
                     </button>
                 </PopoverClose>
             </div>
-            <div className="gap-1 flex flex-col">
+            <div
+                className="gap-1 flex flex-col h-[calc(100dvh-68px)] sm:h-[calc(100dvh-200px)] overflow-scroll scrollbar-hide">
                 {notificationsPending
                     .map(notification => (
                         <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>

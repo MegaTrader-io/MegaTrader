@@ -1,0 +1,302 @@
+[
+  {
+    "id": "99966584550",
+    "status": "success",
+    "title": "Congratulations! You've Passed!",
+    "message": "Your dedication and skills have led to success. Welcome to the next level!",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584551",
+    "status": "info",
+    "title": "New Feature Released!",
+    "message": "Check out our latest update and explore new functionalities.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584552",
+    "status": "info",
+    "title": "New Feature Released!",
+    "message": "Check out our latest update and explore new functionalities.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584553",
+    "status": "error",
+    "title": "Evaluation Failed",
+    "message": "Unfortunately, you did not meet the evaluation criteria.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584554",
+    "status": "success",
+    "title": "Congratulations! You've Passed!",
+    "message": "Your dedication and skills have led to success. Welcome to the next level!",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584555",
+    "status": "error",
+    "title": "Evaluation Failed",
+    "message": "Unfortunately, you did not meet the evaluation criteria.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584556",
+    "status": "error",
+    "title": "Evaluation Failed",
+    "message": "Unfortunately, you did not meet the evaluation criteria.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584557",
+    "status": "error",
+    "title": "Evaluation Failed",
+    "message": "Unfortunately, you did not meet the evaluation criteria.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584558",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584559",
+    "status": "info",
+    "title": "New Feature Released!",
+    "message": "Check out our latest update and explore new functionalities.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584560",
+    "status": "error",
+    "title": "Evaluation Failed",
+    "message": "Unfortunately, you did not meet the evaluation criteria.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584561",
+    "status": "success",
+    "title": "Congratulations! You've Passed!",
+    "message": "Your dedication and skills have led to success. Welcome to the next level!",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584562",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584563",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584564",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584565",
+    "status": "success",
+    "title": "Congratulations! You've Passed!",
+    "message": "Your dedication and skills have led to success. Welcome to the next level!",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584566",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584567",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584568",
+    "status": "info",
+    "title": "New Feature Released!",
+    "message": "Check out our latest update and explore new functionalities.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584569",
+    "status": "info",
+    "title": "New Feature Released!",
+    "message": "Check out our latest update and explore new functionalities.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584570",
+    "status": "success",
+    "title": "Congratulations! You've Passed!",
+    "message": "Your dedication and skills have led to success. Welcome to the next level!",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584571",
+    "status": "success",
+    "title": "Congratulations! You've Passed!",
+    "message": "Your dedication and skills have led to success. Welcome to the next level!",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584572",
+    "status": "error",
+    "title": "Evaluation Failed",
+    "message": "Unfortunately, you did not meet the evaluation criteria.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584573",
+    "status": "error",
+    "title": "Evaluation Failed",
+    "message": "Unfortunately, you did not meet the evaluation criteria.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584574",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584575",
+    "status": "info",
+    "title": "New Feature Released!",
+    "message": "Check out our latest update and explore new functionalities.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584576",
+    "status": "success",
+    "title": "Congratulations! You've Passed!",
+    "message": "Your dedication and skills have led to success. Welcome to the next level!",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584577",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584578",
+    "status": "warning",
+    "title": "Account Breach Alert",
+    "message": "A rule violation has been detected in your account.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  },
+  {
+    "id": "99966584579",
+    "status": "info",
+    "title": "New Feature Released!",
+    "message": "Check out our latest update and explore new functionalities.",
+    "action": {
+      "label": "MARK READ",
+      "read": false
+    }
+  }
+]
