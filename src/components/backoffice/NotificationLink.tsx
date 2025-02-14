@@ -6,6 +6,8 @@ import NotificationIconStatus from "@/components/NotificationIconStatus";
 import clsx from "clsx";
 import {Button} from "@/components/Button";
 import {CheckIcon} from "@heroicons/react/16/solid";
+import {XCircleIcon} from "@heroicons/react/20/solid";
+import {PopoverClose} from "@radix-ui/react-popover";
 
 interface NotificationIconProps {
     hasNotification?: boolean;
@@ -89,7 +91,6 @@ export default function NotificationLink() {
 
     const hasNotifications = notificationsPending.length > 0
 
-
     useEffect(() => {
         const timeout = setTimeout(() => {
             setNotifications(notificationsData)
@@ -117,8 +118,19 @@ export default function NotificationLink() {
     return (
         <PopoverMenu className="block z-10 relative"
                      side={'bottom'}
+                     modal={true}
                      align={'end'}
                      icon={<NotificationIcon hasNotification={hasNotifications}/>}>
+            <div className="flex sm:hidden text-left w-full justify-between px-2 gap-2 mb-4">
+                <div
+                    className="text-[#131210] w-full text-2xl font-light uppercase leading-7">Notifications
+                </div>
+                <PopoverClose asChild>
+                    <button>
+                        <XCircleIcon className="w-6 h-6"/>
+                    </button>
+                </PopoverClose>
+            </div>
             <div className="gap1 flex flex-col w-[481px]">
                 {notificationsPending
                     .map(notification => (
