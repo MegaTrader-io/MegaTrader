@@ -1,5 +1,4 @@
 import React, {JSX, useEffect, useState} from 'react';
-import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import {notificationsData} from "@/commons/data";
 import {INotification, NotificationStatus} from "@/commons/interfaces";
 import NotificationIconStatus from "@/components/NotificationIconStatus";
@@ -8,6 +7,7 @@ import {Button} from "@/components/Button";
 import {CheckIcon} from "@heroicons/react/16/solid";
 import {XCircleIcon} from "@heroicons/react/20/solid";
 import {PopoverClose} from "@radix-ui/react-popover";
+import PopoverMenuModal from "@/components/backoffice/PopoverMenuModal";
 
 interface NotificationIconProps {
     hasNotification?: boolean;
@@ -117,9 +117,8 @@ export default function NotificationLink() {
     }
 
     return (
-        <PopoverMenu className="block z-10 relative"
+        <PopoverMenuModal className="block z-10 relative"
                      side={'bottom'}
-                     modal={true}
                      align={'end'}
                      icon={<NotificationIcon hasNotification={hasNotifications}/>}>
             <div className="flex sm:hidden text-left w-full justify-between px-2 gap-2 mb-4">
@@ -138,6 +137,6 @@ export default function NotificationLink() {
                         <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>
                     ))}
             </div>
-        </PopoverMenu>
+        </PopoverMenuModal>
     );
 }

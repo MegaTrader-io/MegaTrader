@@ -1,58 +1,24 @@
-import React, {PropsWithChildren, useCallback, useEffect, useRef, useState} from 'react';
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import {
     Popover,
     PopoverContent,
+    PopoverPortal,
     PopoverTrigger,
     PopoverArrow,
-    PopoverPortal
 } from "@radix-ui/react-popover";
-import {Bars3Icon} from "@heroicons/react/24/solid";
-import clsx from "clsx";
+import { Bars3Icon } from "@heroicons/react/24/solid";
 
 interface Props extends PropsWithChildren {
     className?: string;
     icon?: React.ReactNode;
-    modal?: boolean
     side?: "top" | "bottom" | "left" | "right";
     align?: "start" | "center" | "end";
 }
 
-function PopoverMenu({className, children, icon, modal = false, side = "bottom", align = "center"}: Props) {
+function PopoverMenu({ className, children, icon, side = "bottom", align = "center" }: Props) {
     const [isVisible, setIsVisible] = useState(true);
-    const [isMobile, setIsMobile] = useState(false);
-    const popoverRef = useRef<HTMLDivElement>(null)
-    const prevTransformRef = useRef<string | null>(null);
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
-
-    const adjustPopoverPosition = useCallback(() => {
-        if (!modal) {
-            return;
-        }
-
-        setIsMobile(window.innerWidth < 640);
-
-        setTimeout(() => {
-            const popoverWrapper = (popoverRef.current?.closest("[data-radix-popper-content-wrapper]") ||
-                document?.querySelector('.custom-popover')?.closest("[data-radix-popper-content-wrapper]")) as HTMLElement;
-
-            if (popoverWrapper) {
-                if (isMobile) {
-                    if (!prevTransformRef.current) {
-                        prevTransformRef.current = popoverWrapper.style.transform;
-                    }
-
-                    popoverWrapper.style.transform = "translate(0px, 0px)";
-                } else {
-                    if (prevTransformRef.current) {
-                        popoverWrapper.style.transform = prevTransformRef.current;
-                        popoverWrapper.style.transition = "";
-                        prevTransformRef.current = null;
-                    }
-                }
-            }
-        }, 0);
-    }, [modal, isMobile]);
 
     useEffect(() => {
         if (!buttonRef.current) return;
@@ -63,10 +29,8 @@ function PopoverMenu({className, children, icon, modal = false, side = "bottom",
                 if (!entry.isIntersecting) {
                     setOpen(false);
                 }
-
-                console.info('xxx');
             },
-            {threshold: 0.1}
+            { threshold: 0.1 }
         );
 
         observer.observe(buttonRef.current);
@@ -74,35 +38,33 @@ function PopoverMenu({className, children, icon, modal = false, side = "bottom",
     }, []);
 
     useEffect(() => {
-        if (open) {
-            adjustPopoverPosition();
-        }
+        const handleResize = () => {
+            if (open) setOpen(false);
+        };
 
-        window.addEventListener('resize', adjustPopoverPosition);
-        return () => window.removeEventListener('resize', adjustPopoverPosition);
-    }, [open, isMobile, adjustPopoverPosition]);
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [open]);
 
     return (
         <div className={className}>
-            <Popover modal={!!(modal && isMobile)} open={open} onOpenChange={setOpen}>
+            <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <button ref={buttonRef} className="btn-primary block">
-                        {!icon && <Bars3Icon className="w-6 h-6 text-white"/>}
-                        {icon && icon}
+                        {!icon ? <Bars3Icon className="w-6 h-6 text-white" /> : icon}
                     </button>
                 </PopoverTrigger>
                 {isVisible && (
                     <PopoverPortal>
-                        <PopoverContent ref={popoverRef} asChild side={side} align={align}
-                                        className={clsx('z-[1000]', {'h-dvh overflow-auto bg-white': isMobile && modal, 'h-[460px]': modal === false && !isMobile && modal})}>
-                            <div className="custom-popover scroll-auto">
-                                <div
-                                    className={clsx('flex flex-col items-center justify-center gap-2 p-2 relative bg-white', [!isMobile || modal === false ? 'rounded-lg border border-solid border-[#494949]' : null])}>
-                                    {children}
-                                    <PopoverArrow width={26} height={14}
-                                                  className={clsx('fill-white', {'!hidden sm:!block': modal})}/>
-                                </div>
-                            </div>
+                        <PopoverContent
+                            side={side}
+                            align={align}
+                            className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000] lg:hidden"
+                        >
+                            {children}
+                            <PopoverArrow width={26} height={14} className="fill-white" />
                         </PopoverContent>
                     </PopoverPortal>
                 )}
