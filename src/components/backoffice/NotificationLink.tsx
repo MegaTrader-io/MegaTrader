@@ -56,7 +56,8 @@ function NotificationId({id}: {
 }
 
 function NotificationPanel({notification, markRead}: { notification: INotification, markRead: (id: string) => void }) {
-    return <div className="grid grid-cols-[auto_1fr] gap-4 p-3 font-['Roboto'] hover:bg-neutral-100 hover:rounded-lg">
+    return <div
+        className="w-[calc(100dvw-24px)] sm:w-full grid grid-cols-[auto_1fr] gap-4 p-3 font-['Roboto'] hover:bg-neutral-100 hover:rounded-lg">
         <div>
             <NotificationIconStatus status={notification.status}/>
         </div>
@@ -131,7 +132,7 @@ export default function NotificationLink() {
                     </button>
                 </PopoverClose>
             </div>
-            <div className="gap1 flex flex-col w-[481px]">
+            <div className="gap-1 flex flex-col">
                 {notificationsPending
                     .map(notification => (
                         <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>

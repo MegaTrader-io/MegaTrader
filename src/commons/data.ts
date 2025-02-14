@@ -299,5 +299,75 @@ export const notificationsData: INotification[] = [
             label: "MARK READ",
             read: false
         }
-    }
+    },
+    // {
+    //     id: "99966584555",
+    //     status: "success",
+    //     title: "Congratulations! You've Passed!",
+    //     message: "Your dedication and skills have led to success. Welcome to the next level!",
+    //     action: {
+    //         label: "MARK READ",
+    //         read: false
+    //     }
+    // },
+    // {
+    //     id: "99966584556",
+    //     status: "error",
+    //     title: "Evaluation Failed",
+    //     message: "Unfortunately, you did not meet the evaluation criteria.",
+    //     action: {
+    //         label: "MARK READ",
+    //         read: false
+    //     }
+    // },
+    // {
+    //     id: "99966584557",
+    //     status: "success",
+    //     title: "Congratulations! You've Passed!",
+    //     message: "Your dedication and skills have led to success. Welcome to the next level!",
+    //     action: {
+    //         label: "MARK READ",
+    //         read: false
+    //     }
+    // },
+    // {
+    //     id: "99966584558",
+    //     status: "warning",
+    //     title: "Account Breach Alert",
+    //     message: "A rule violation has been detected in your account.",
+    //     action: {
+    //         label: "MARK READ",
+    //         read: false
+    //     }
+    // },
+    // {
+    //     id: "99966584559",
+    //     status: "success",
+    //     title: "Congratulations! You've Passed!",
+    //     message: "Your dedication and skills have led to success. Welcome to the next level!",
+    //     action: {
+    //         label: "MARK READ",
+    //         read: false
+    //     }
+    // },
+    // {
+    //     id: "99966584560",
+    //     status: "warning",
+    //     title: "Account Breach Alert",
+    //     message: "A rule violation has been detected in your account.",
+    //     action: {
+    //         label: "MARK READ",
+    //         read: false
+    //     }
+    // },
+    // {
+    //     id: "99966584561",
+    //     status: "warning",
+    //     title: "Account Breach Alert",
+    //     message: "A rule violation has been detected in your account.",
+    //     action: {
+    //         label: "MARK READ",
+    //         read: false
+    //     }
+    // }
 ];

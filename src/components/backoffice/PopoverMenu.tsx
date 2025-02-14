@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useEffect, useRef, useState} from 'react';
+import React, {PropsWithChildren, useCallback, useEffect, useRef, useState} from 'react';
 import {
     Popover,
     PopoverContent,
@@ -7,6 +7,7 @@ import {
     PopoverPortal
 } from "@radix-ui/react-popover";
 import {Bars3Icon} from "@heroicons/react/24/solid";
+import clsx from "clsx";
 
 interface Props extends PropsWithChildren {
     className?: string;
@@ -18,19 +19,23 @@ interface Props extends PropsWithChildren {
 
 function PopoverMenu({className, children, icon, modal = false, side = "bottom", align = "center"}: Props) {
     const [isVisible, setIsVisible] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null)
     const prevTransformRef = useRef<string | null>(null);
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
-    function adjustPopoverPosition() {
+    const adjustPopoverPosition = useCallback(() => {
         if (!modal) {
             return;
         }
-        const isMobile = window.innerWidth < 640;
+
+        setIsMobile(window.innerWidth < 640);
+
         setTimeout(() => {
-            const popoverWrapper = (popoverRef.current?.closest("[data-radix-popper-content-wrapper]") || document?.querySelector('.custom-popover') && document.querySelector('.custom-popover')!.closest("[data-radix-popper-content-wrapper]")) as HTMLElement;
-            console.info('isMobile', isMobile)
+            const popoverWrapper = (popoverRef.current?.closest("[data-radix-popper-content-wrapper]") ||
+                document?.querySelector('.custom-popover')?.closest("[data-radix-popper-content-wrapper]")) as HTMLElement;
+
             if (popoverWrapper) {
                 if (isMobile) {
                     if (!prevTransformRef.current) {
@@ -46,8 +51,8 @@ function PopoverMenu({className, children, icon, modal = false, side = "bottom",
                     }
                 }
             }
-        }, 0)
-    }
+        }, 0);
+    }, [modal, isMobile]);
 
     useEffect(() => {
         if (!buttonRef.current) return;
@@ -75,13 +80,11 @@ function PopoverMenu({className, children, icon, modal = false, side = "bottom",
 
         window.addEventListener('resize', adjustPopoverPosition);
         return () => window.removeEventListener('resize', adjustPopoverPosition);
-    }, [open]);
-
-    // < 640 //mobile
+    }, [open, isMobile, adjustPopoverPosition]);
 
     return (
         <div className={className}>
-            <Popover modal={modal} open={open} onOpenChange={setOpen}>
+            <Popover modal={!!(modal && isMobile)} open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <button ref={buttonRef} className="btn-primary block">
                         {!icon && <Bars3Icon className="w-6 h-6 text-white"/>}
@@ -90,12 +93,14 @@ function PopoverMenu({className, children, icon, modal = false, side = "bottom",
                 </PopoverTrigger>
                 {isVisible && (
                     <PopoverPortal>
-                        <PopoverContent ref={popoverRef} asChild side={side} align={align} className='z-[1000]'>
-                            <div className="custom-popover">
+                        <PopoverContent ref={popoverRef} asChild side={side} align={align}
+                                        className={clsx('z-[1000]', {'h-dvh overflow-auto bg-white': isMobile && modal, 'h-[460px]': modal === false && !isMobile && modal})}>
+                            <div className="custom-popover scroll-auto">
                                 <div
-                                    className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949]">
+                                    className={clsx('flex flex-col items-center justify-center gap-2 p-2 relative bg-white', [!isMobile || modal === false ? 'rounded-lg border border-solid border-[#494949]' : null])}>
                                     {children}
-                                    <PopoverArrow width={26} height={14} className="fill-white !hidden sm:!block"/>
+                                    <PopoverArrow width={26} height={14}
+                                                  className={clsx('fill-white', {'!hidden sm:!block': modal})}/>
                                 </div>
                             </div>
                         </PopoverContent>
