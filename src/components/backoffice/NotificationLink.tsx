@@ -132,7 +132,7 @@ export default function NotificationLink() {
                 </PopoverClose>
             </div>
             <div
-                className="gap-1 flex flex-col h-[calc(100dvh-68px)] sm:h-[calc(100dvh-200px)] overflow-scroll scrollbar-hide">
+                className="gap-1 flex flex-col h-[calc(100dvh-68px)] sm:h-auto sm:max-h-[460px] overflow-scroll scrollbar-hide">
                 {notificationsPending
                     .map(notification => (
                         <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>
