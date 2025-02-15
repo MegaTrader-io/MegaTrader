@@ -1,5 +1,4 @@
 import type {Metadata} from "next";
-import {Space_Grotesk} from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import {roboto} from '@/app/fonts/roboto'
@@ -12,18 +11,12 @@ export const metadata: Metadata = {
     }
 };
 
-const spaceGrotesk = Space_Grotesk({
-    subsets: ["latin"],
-    weight: ["300", "400", "500", "600", "700"],
-    variable: "--font-space-grotesk"
-});
-
 const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
-        <html lang="en" className={`${spaceGrotesk.variable} ${roboto.variable} dark`}>
-        <body className="font-sans antialiased">
+        <html lang="en" className={`${roboto.variable} dark`}>
+        <body className="font-roboto antialiased">
         {children}
         {isProduction && (
             <>

@@ -85,7 +85,7 @@ function PopoverMenu({className, children, icon, modal = true, side = "bottom", 
         <div className={className}>
             <Popover modal={!!(modal && isMobile)} open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                    <button ref={buttonRef} className="btn-primary block">
+                    <button ref={buttonRef} className="btn-primary block w-12">
                         {!icon && <Bars3Icon className="w-6 h-6 text-white"/>}
                         {icon && icon}
                     </button>

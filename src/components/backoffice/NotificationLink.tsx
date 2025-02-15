@@ -1,5 +1,4 @@
-import React, {JSX, useEffect, useState} from 'react';
-import {notificationsData} from "@/commons/data";
+import React, {JSX, useCallback, useEffect, useRef, useState} from 'react';
 import {INotification, NotificationStatus} from "@/commons/interfaces";
 import NotificationIconStatus from "@/components/NotificationIconStatus";
 import clsx from "clsx";
@@ -15,18 +14,24 @@ interface NotificationIconProps {
 
 const NotificationIcon = ({hasNotification = false}: NotificationIconProps): JSX.Element => {
     return hasNotification ? (
-            <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20ZM0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V1.825C9.33333 2.15833 9.20833 2.50833 9.125 2.875C9.04167 3.24167 9 3.61667 9 4C9 5.38333 9.4875 6.5625 10.4625 7.5375C11.4375 8.5125 12.6167 9 14 9V15H16V17H0ZM14 7C13.1667 7 12.4583 6.70833 11.875 6.125C11.2917 5.54167 11 4.83333 11 4C11 3.16667 11.2917 2.45833 11.875 1.875C12.4583 1.29167 13.1667 1 14 1C14.8333 1 15.5417 1.29167 16.125 1.875C16.7083 2.45833 17 3.16667 17 4C17 4.83333 16.7083 5.54167 16.125 6.125C15.5417 6.70833 14.8333 7 14 7Z"
-                    fill="#2DD4BF"/>
-            </svg>
+            <div className="relative">
+                <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V2.2C10.8333 2.53333 11.9167 3.2375 12.75 4.3125C13.5833 5.3875 14 6.61667 14 8V15H16V17H0ZM8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20Z"
+                        fill="#2DD4BF"/>
+                </svg>
+                <div className="bg-[#2DD4BF] w-2.5 h-2.5 rounded-full absolute -right-[3px] top-[0px] border-2 border-stone-800">
+                </div>
+            </div>
         ) :
         (
-            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V2.2C10.8333 2.53333 11.9167 3.2375 12.75 4.3125C13.5833 5.3875 14 6.61667 14 8V15H16V17H0ZM8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20Z"
-                    fill="white"/>
-            </svg>
+            <div>
+                <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M0 17V15H2V8C2 6.61667 2.41667 5.3875 3.25 4.3125C4.08333 3.2375 5.16667 2.53333 6.5 2.2V1.5C6.5 1.08333 6.64583 0.729167 6.9375 0.4375C7.22917 0.145833 7.58333 0 8 0C8.41667 0 8.77083 0.145833 9.0625 0.4375C9.35417 0.729167 9.5 1.08333 9.5 1.5V2.2C10.8333 2.53333 11.9167 3.2375 12.75 4.3125C13.5833 5.3875 14 6.61667 14 8V15H16V17H0ZM8 20C7.45 20 6.97917 19.8042 6.5875 19.4125C6.19583 19.0208 6 18.55 6 18H10C10 18.55 9.80417 19.0208 9.4125 19.4125C9.02083 19.8042 8.55 20 8 20Z"
+                        fill="white"/>
+                </svg>
+            </div>
         )
 }
 
@@ -85,42 +90,74 @@ function NotificationPanel({notification, markRead}: { notification: INotificati
     </div>
 }
 
+const API_URL = "/api/notifications";
+
 export default function NotificationLink() {
     const [notifications, setNotifications] = useState<INotification[]>([])
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
+    const observerRef = useRef<HTMLDivElement | null>(null);
+
+    const fetchNotifications = useCallback(async () => {
+        if (isFetching || !hasMore) return;
+        setIsFetching(true);
+
+        try {
+            const response = await fetch(`${API_URL}?page=${page}&per_page=8&sortBy=id&direction=desc`);
+            if (!response.ok) throw new Error("Unable to get the notifications");
+            const data = await response.json();
+
+            setNotifications((prev) => [...prev, ...data.data]);
+            setPage((prevPage) => prevPage + 1);
+            setHasMore(data.meta.current_page < data.meta.last_page);
+        } catch (error) {
+            console.error("Unable to get the notifications", error);
+        } finally {
+            setIsFetching(false);
+        }
+    }, [page, isFetching, hasMore]);
+
     const notificationsPending = notifications
         .filter(notification => !notification.action.read);
 
-    const hasNotifications = notificationsPending.length > 0
-
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            setNotifications(notificationsData)
-        }, 900)
-
-        return () => clearTimeout(timeout)
+        void fetchNotifications();
     }, []);
 
-    function markRead(id: string) {
-        setNotifications(prevNotifications =>
-            prevNotifications.map(notification =>
-                notification.id === id
-                    ? {...notification, action: {...notification.action, read: true}}
-                    : notification
-            )
-        );
-    }
+    useEffect(() => {
+        if (!observerRef.current || !hasMore) {
+            return
+        }
 
-    if (!hasNotifications) {
-        return <button className="btn-dark-link rounded-xl w-12 h-12">
-            <NotificationIcon hasNotification={false}/>
-        </button>
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    void fetchNotifications();
+                }
+            },
+            {rootMargin: "100px"}
+        );
+
+        observer.observe(observerRef.current);
+        return () => observer.disconnect();
+    }, [fetchNotifications, hasMore]);
+
+    function markRead(id: string) {
+        setNotifications((prev) =>
+            prev.map((notification) => (notification.id === id ? {
+                ...notification,
+                action: {...notification.action, read: true}
+            } : notification))
+        );
     }
 
     return (
         <PopoverMenuModal className="block z-10 relative"
                           side={'bottom'}
                           align={'end'}
-                          icon={<NotificationIcon hasNotification={hasNotifications}/>}>
+                          icon={<NotificationIcon hasNotification={notifications.length > 0}/>}>
             <div className="flex sm:hidden text-left w-full justify-between px-2 gap-2 mb-4">
                 <div
                     className="text-[#131210] w-full text-2xl font-light uppercase leading-7">Notifications
@@ -132,11 +169,17 @@ export default function NotificationLink() {
                 </PopoverClose>
             </div>
             <div
-                className="gap-1 flex flex-col h-[calc(100dvh-68px)] sm:h-auto sm:max-h-[460px] overflow-scroll scrollbar-hide">
+                className="gap-1 flex flex-col h-[calc(100dvh-68px)] sm:w-[465px] sm:h-auto sm:max-h-[460px] overflow-scroll scrollbar-hide">
                 {notificationsPending
                     .map(notification => (
                         <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>
                     ))}
+
+                {hasMore && (
+                    <div ref={observerRef} className="text-center p-4 text-gray-500 text-sm">
+                        {isFetching ? "Loading..." : "More"}
+                    </div>
+                )}
             </div>
         </PopoverMenuModal>
     );

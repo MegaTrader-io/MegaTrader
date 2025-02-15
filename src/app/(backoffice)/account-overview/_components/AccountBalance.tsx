@@ -10,7 +10,7 @@ function AccountBalance({account, isLoadingAccount}: { account: Account, isLoadi
 
     return (
         <Card className="space-y-4">
-            <div className="text-white text-xl font-light uppercase leading-normal">ACCOUNT BALANCE</div>
+            <div className="text-white text-xl font-light uppercase leading-normal"></div>
             <div className="gap-4 lg:flex lg:items-center">
                 <div className="lg:flex flex-col items-start relative flex-1 grow">
                     {[

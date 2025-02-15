@@ -58,13 +58,17 @@ export default function AccountOverView() {
 
                 {/* desktop */}
                 <div className="hidden lg:block w-full">
-                    <Link href="#" className="text-base btn-link">
-                        Manage Subscription
+
+
+
+
+                    <Link href="#" className="text-[#ffd78a] text-xs font-medium underline leading-tight">Manage
+                        Subscription
                     </Link>
                 </div>
                 <div className="hidden md:flex gap-2">
                     <Button variant="dark">
-                        RESET
+                    RESET
                     </Button>
                     <Button variant="dark"
                             icon={<PlusIcon/>}
@@ -121,7 +125,7 @@ export default function AccountOverView() {
                                     size='sm'
                                     className="w-full sm:w-auto"
                                     icon={<ArrowUpRightIcon className="text-white"/>}>
-                                OPEN PLATFORM
+                                LUNCH PLATFORM
                             </Button>
                         )}
 

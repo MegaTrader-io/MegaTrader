@@ -11,7 +11,7 @@
   },
   {
     "id": "99966584551",
-    "status": "info",
+    "status": "error",
     "title": "New Feature Released!",
     "message": "Check out our latest update and explore new functionalities.",
     "action": {
@@ -21,7 +21,7 @@
   },
   {
     "id": "99966584552",
-    "status": "info",
+    "status": "error",
     "title": "New Feature Released!",
     "message": "Check out our latest update and explore new functionalities.",
     "action": {
@@ -91,7 +91,7 @@
   },
   {
     "id": "99966584559",
-    "status": "info",
+    "status": "error",
     "title": "New Feature Released!",
     "message": "Check out our latest update and explore new functionalities.",
     "action": {
@@ -181,7 +181,7 @@
   },
   {
     "id": "99966584568",
-    "status": "info",
+    "status": "error",
     "title": "New Feature Released!",
     "message": "Check out our latest update and explore new functionalities.",
     "action": {
@@ -191,7 +191,7 @@
   },
   {
     "id": "99966584569",
-    "status": "info",
+    "status": "error",
     "title": "New Feature Released!",
     "message": "Check out our latest update and explore new functionalities.",
     "action": {
@@ -251,7 +251,7 @@
   },
   {
     "id": "99966584575",
-    "status": "info",
+    "status": "error",
     "title": "New Feature Released!",
     "message": "Check out our latest update and explore new functionalities.",
     "action": {
@@ -291,7 +291,7 @@
   },
   {
     "id": "99966584579",
-    "status": "info",
+    "status": "error",
     "title": "New Feature Released!",
     "message": "Check out our latest update and explore new functionalities.",
     "action": {
