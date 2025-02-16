@@ -24,6 +24,7 @@ import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
 import {useAccount} from "@/app/providers/AccountContext";
 import {SkeletonTemplate} from "@/components/Skeleton";
 import AccountPlanType from "@/app/(backoffice)/account-overview/_components/AccountPlanType";
+import AccountSummary from "@/app/(backoffice)/account-overview/_components/AccountSummary";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, isLoadingAccount} = useAccount();
@@ -182,6 +183,11 @@ export default function AccountOverView() {
                     </div>
                 </div>
             </TooltipPanel>
+        </div>
+
+        <div
+            className="w-full">
+            <AccountSummary account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
         </div>
 
         <div

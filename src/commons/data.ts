@@ -7,7 +7,7 @@ export const accounts: Account[] = [
         accountType: 'basic_plan',
         status: 'active',
         accountBalance: {
-            currentBalance: "$145,166.78",
+            currentBalance: "$50,000",
             currentEquity: "$145,166.78",
             high: "$150,000",
             low: "$145,166.78",
@@ -31,7 +31,7 @@ export const accounts: Account[] = [
             rule: {
                 maximumLossLimit: {
                     threshold: 145500,
-                    description: "Do not let your account balance hit or go below $145,500."
+                    description: "Keep your Account Balance above $48,000"
                 }
             },
             tradingDays: {
@@ -79,7 +79,7 @@ export const accounts: Account[] = [
             rule: {
                 maximumLossLimit: {
                     threshold: 145500,
-                    description: "Do not let your account balance hit or go below $145,500."
+                    description: "Keep your Account Balance above $48,000"
                 }
             },
             tradingDays: {
@@ -127,7 +127,7 @@ export const accounts: Account[] = [
             rule: {
                 maximumLossLimit: {
                     threshold: 145500,
-                    description: "Do not let your account balance hit or go below $145,500."
+                    description: "Keep your Account Balance above $48,000"
                 }
             },
             tradingDays: {
@@ -175,7 +175,7 @@ export const accounts: Account[] = [
             rule: {
                 maximumLossLimit: {
                     threshold: 145500,
-                    description: "Do not let your account balance hit or go below $145,500."
+                    description: "Keep your Account Balance above $48,000"
                 }
             },
             tradingDays: {
