@@ -78,9 +78,12 @@ interface Objectives {
     tradingDays: TradingDays;
 }
 
+export type AccountType = 'basic_plan' | 'pro_plan' | 'premium_plan'
+
 export interface Account {
     id: number
     name: string
+    accountType: AccountType
     status: AccountStatusType,
     accountBalance: AccountBalance,
     objectives: Objectives

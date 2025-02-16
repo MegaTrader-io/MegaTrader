@@ -12,7 +12,7 @@ import {SkeletonTemplate} from "@/components/Skeleton";
 function Objectives({account, isLoadingAccount}: { account: Account, isLoadingAccount: boolean }) {
     return (
         <Card className="space-y-4 lg:max-w-[405px]">
-            <div className="text-white text-xl font-light uppercase leading-normal">Objectives</div>
+            <div className="text-white text-xl font-light uppercase leading-normal">Your Challenge Objective</div>
 
             {isLoadingAccount && (
                 <div className="min-w-[371px] h-[281px]">

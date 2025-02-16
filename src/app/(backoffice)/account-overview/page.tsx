@@ -23,6 +23,7 @@ import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
 import {useAccount} from "@/app/providers/AccountContext";
 import {SkeletonTemplate} from "@/components/Skeleton";
+import AccountPlanType from "@/app/(backoffice)/account-overview/_components/AccountPlanType";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, isLoadingAccount} = useAccount();
@@ -34,22 +35,23 @@ export default function AccountOverView() {
 
     return <>
         <div className="w-full">
-            <Card className="w-full flex lg:grid lg:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
-                <div className="w-[271px]">
+            <Card className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
+                <div className="flex gap-4 items-center">
+                    <AccountStatus status={selectedAccount.status}/>
                     <Dropdown
                         items={accounts}
                         value={selectedAccount}
                         onChange={setSelectedAccount}
                         renderButtonContent={(item) => (
                             <div className="grid grid-cols-[auto_auto_24px] gap-2 items-center">
-                                <AccountStatus status={item.status}/>
+                                <AccountStatus status={item.status} circleOnly={true}/>
                                 <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
                                 <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
                             </div>
                         )}
                         renderOptionContent={(item) => (
                             <>
-                                <AccountStatus status={item.status}/>
+                                <AccountStatus status={item.status} circleOnly={true}/>
                                 <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
                             </>
                         )}
@@ -57,18 +59,17 @@ export default function AccountOverView() {
                 </div>
 
                 {/* desktop */}
-                <div className="hidden lg:block w-full">
-
-
-
-
-                    <Link href="#" className="text-[#ffd78a] text-xs font-medium underline leading-tight">Manage
-                        Subscription
-                    </Link>
+                <div className="hidden md:block w-full">
+                    <div className='flex flex-col gap-1'>
+                        <AccountPlanType accountType={selectedAccount.accountType}/>
+                        <Link href="#" className="text-[#ffd78a] text-xs font-medium underline leading-tight">Manage
+                            Subscription
+                        </Link>
+                    </div>
                 </div>
-                <div className="hidden md:flex gap-2">
+                <div className="hidden lg:flex gap-2">
                     <Button variant="dark">
-                    RESET
+                        RESET
                     </Button>
                     <Button variant="dark"
                             icon={<PlusIcon/>}
@@ -77,7 +78,7 @@ export default function AccountOverView() {
                     </Button>
                 </div>
 
-                <div className="text-white md:hidden">
+                <div className="text-white lg:hidden">
                     <PopoverMenu className="block lg:hidden"
                                  icon={<EllipsisHorizontalIcon className="w-6 h-6 text-white"/>}>
                         <div className="gap1 flex flex-col">

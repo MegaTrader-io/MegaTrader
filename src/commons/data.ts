@@ -3,7 +3,8 @@ import {Account, INotification, IUser, Period, TooltipData} from "@/commons/inte
 export const accounts: Account[] = [
     {
         id: 1,
-        name: 'S1SEP2586479132',
+        name: 'S1SEP2586479132DSDS8',
+        accountType: 'basic_plan',
         status: 'active',
         accountBalance: {
             currentBalance: "$145,166.78",
@@ -50,8 +51,9 @@ export const accounts: Account[] = [
     },
     {
         id: 2,
-        name: 'SHYE36496NCHG33',
+        name: 'S1SEP2586479132DSDS9',
         status: 'unpaid',
+        accountType: 'basic_plan',
         accountBalance: {
             currentBalance: "$143,166.78",
             currentEquity: "$143,166.78",
@@ -97,7 +99,8 @@ export const accounts: Account[] = [
     },
     {
         id: 3,
-        name: 'NJHA810003BGW33',
+        name: 'S1SEP2586479132DSD10',
+        accountType: 'basic_plan',
         status: 'breach',
         accountBalance: {
             currentBalance: "$143,166.78",
@@ -144,8 +147,9 @@ export const accounts: Account[] = [
     },
     {
         id: 4,
-        name: 'S6SEP2586479132',
+        name: 'S1SEP2586479132DSD11',
         status: 'funded',
+        accountType: 'basic_plan',
         accountBalance: {
             currentBalance: "$145,166.78",
             currentEquity: "$145,166.78",
