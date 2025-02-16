@@ -124,7 +124,7 @@ export default function NotificationLink() {
 
     useEffect(() => {
         void fetchNotifications();
-    }, []);
+    }, [fetchNotifications]);
 
     useEffect(() => {
         if (!observerRef.current || !hasMore) {
