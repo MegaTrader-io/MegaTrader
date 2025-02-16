@@ -5,7 +5,7 @@ import {Button} from "@/components/Button";
 import React, {useRef} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
-import Dropdown from "@/components/Dropdown";
+import DropdownDialog from "@/components/DropdownDialog";
 import Image from "next/image";
 import {CopyButton} from "@/components/CopyButton";
 import TooltipPanel from "@/app/(backoffice)/account-overview/_components/TooltipPanel";
@@ -37,7 +37,7 @@ export default function AccountOverView() {
             <Card className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
                 <div className="flex gap-4 items-center">
                     <AccountStatus status={selectedAccount.status}/>
-                    <Dropdown
+                    <DropdownDialog
                         items={accounts}
                         value={selectedAccount}
                         onChange={setSelectedAccount}
