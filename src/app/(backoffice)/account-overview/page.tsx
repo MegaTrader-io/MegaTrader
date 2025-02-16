@@ -190,12 +190,6 @@ export default function AccountOverView() {
             <AccountSummary account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
         </div>
 
-        <div
-            className="space-y-4 lg:grid lg:grid-cols-[1fr_auto] lg:space-y-0 gap-4 w-full">
-            <AccountBalance account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
-            <Objectives account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
-        </div>
-
         <ProPlanChart isLoadingAccount={isLoadingAccount}/>
         <FeatureContent isLoadingAccount={isLoadingAccount}/>
         <DailyJournal isLoadingAccount={isLoadingAccount}/>
