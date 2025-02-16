@@ -25,7 +25,7 @@ export default function Header() {
     const currentPath = usePathname()
 
     return <div
-        className={`fixed top-0 w-full z-50 transition-all duration-300 bg-[#131210]/70 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-[25px]`}>
+        className={`sticky top-0 w-full z-50 transition-all duration-300 bg-[#131210]/70 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] backdrop-blur-[25px]`}>
         <div
             className="w-full max-w-7xl mx-auto px-4 py-6 lg:py-0 grid grid-cols-[auto_1fr_auto] items-center justify-between lg:h-[100px]">
             {/* Logo */}

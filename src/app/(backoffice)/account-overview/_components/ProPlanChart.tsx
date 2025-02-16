@@ -2,7 +2,6 @@
 
 import React, {useState} from 'react';
 import Image from "next/image";
-import Dropdown from "@/components/Dropdown";
 import {periods, tooltipData} from "@/commons/data";
 import Card from "@/components/Card";
 import {Period, TooltipData} from "@/commons/interfaces";
@@ -94,6 +93,13 @@ const chartConfig = {
 function ProPlanChart({isLoadingAccount}: { isLoadingAccount: boolean }) {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
+
+    function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
+        const id = e.target.value
+        const period = periods.find(period => period.id === id)!
+        setSelectPeriod(period);
+    }
+
     if (isLoadingAccount) {
         return <Card className="w-full space-y-8 h-[400px]">
             {isLoadingAccount && (
@@ -113,22 +119,32 @@ function ProPlanChart({isLoadingAccount}: { isLoadingAccount: boolean }) {
 
                 <div>
                     {!isLoadingAccount && (
-                        <Dropdown
-                            items={periods}
-                            value={selectPeriod}
-                            onChange={setSelectPeriod}
-                            renderButtonContent={(item) => (
-                                <div className="flex gap-2 justify-between w-full">
-                                    <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
-                                    <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
-                                </div>
-                            )}
-                            renderOptionContent={(item) => (
-                                <>
-                                    <div className="text-stone-400 text-base font-normal truncate">{item.text}</div>
-                                </>
-                            )}
-                        />
+                        <div className="relative w-full">
+                            <select
+                                className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
+                                defaultValue={selectPeriod.id}
+                                onChange={changeValue}>
+                                {periods.map(option => (
+                                    <option key={option.id} value={option.id}>
+                                        {option.text}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse"
+                                          x="0"
+                                          y="0"
+                                          width="24" height="24">
+                                        <rect width="24" height="24" fill="#D9D9D9"/>
+                                    </mask>
+                                    <g mask="url(#mask0_5269_2288)">
+                                        <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>

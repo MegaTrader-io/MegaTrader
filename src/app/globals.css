@@ -26,6 +26,9 @@ body {
     overflow-x: hidden
 }
 
+body.dialog-mg-open[data-scroll-locked]{
+}
+
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
