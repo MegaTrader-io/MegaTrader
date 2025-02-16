@@ -46,7 +46,7 @@ export default function AccountOverView() {
                             <button
                                 className="rounded-xl p-3 w-full h-12 bg-stone-800 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800">
                                 <div className="grid grid-cols-[auto_auto_24px] gap-2 items-center">
-                                    <AccountStatus status={'active'} circleOnly={true}/>
+                                    <AccountStatus status={item.status} circleOnly={true}/>
                                     <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
                                     <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
                                 </div>
