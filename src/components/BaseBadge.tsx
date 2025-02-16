@@ -2,9 +2,10 @@ import React from "react";
 import {MgProps} from "@/commons/interfaces";
 import clsx from "clsx";
 
+export type BadgeSize = 'md' | 'sm';
 
 export interface BadgeProps extends MgProps {
-    size?: 'md' | 'sm'
+    size?: BadgeSize;
     variant?: 'primary' | 'secondary' | 'error' | 'info';
     shape?: 'rounded' | 'pill';
 }
@@ -30,8 +31,8 @@ const BaseBadge = ({
     }[size][shape]
 
     const sizeStyles = size === 'md'
-        ? `h-7 px-3 py-0.5 text-xs`
-        : `h-4 px-2 text-[10px]`;
+        ? `min-h-7 px-3 py-0.5 text-xs`
+        : `px-2 py-1 text-[10px]`;
 
     const styles = {
         primary: {

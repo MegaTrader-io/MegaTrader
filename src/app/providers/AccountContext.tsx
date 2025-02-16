@@ -20,10 +20,8 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
         console.info('account selected', account);
 
         setIsLoadingAccount(true)
-        setTimeout(() => {
-            setSelectedAccountState(account);
-            setIsLoadingAccount(false)
-        }, 2000)
+        setSelectedAccountState(account);
+        setIsLoadingAccount(false)
     }
 
     return <AccountContext.Provider value={{selectedAccount, isLoadingAccount, setSelectedAccount}}>

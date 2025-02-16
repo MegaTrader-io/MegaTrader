@@ -2,8 +2,14 @@ import React from 'react';
 import Badge from "@/components/Badge";
 import {AccountStatusType} from "@/commons/interfaces";
 import clsx from "clsx";
+import {BadgeSize} from "@/components/BaseBadge";
 
-function AccountStatus({status, circleOnly = false}: { status: AccountStatusType, circleOnly?: boolean }) {
+function AccountStatus({status, className = '', circleOnly = false, size = 'md'}: {
+    className?: string,
+    status: AccountStatusType,
+    circleOnly?: boolean,
+    size?: BadgeSize
+}) {
     const variantColor: Record<AccountStatusType, "secondary" | "error" | "primary" | "info"> = {
         active: 'secondary',
         unpaid: 'error',
@@ -17,7 +23,7 @@ function AccountStatus({status, circleOnly = false}: { status: AccountStatusType
     }
 
     return (
-        <Badge shape="pill" variant={variantColor[status]}>{status}</Badge>
+        <Badge shape="pill" className={className} size={size} variant={variantColor[status]}>{status}</Badge>
     );
 }
 
