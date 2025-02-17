@@ -36,8 +36,6 @@ export default function AccountOverView() {
         <div className="w-full">
             <Card className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
                 <div className="flex gap-4 items-center">
-                    <AccountStatus status={selectedAccount.status}/>
-
                     <DropdownDialog
                         items={accounts}
                         value={selectedAccount}
