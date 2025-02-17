@@ -63,7 +63,7 @@ export default function AccountOverView() {
                 <div className="hidden md:block w-full">
                     <div className='flex flex-col gap-1'>
                         <AccountPlanType accountType={selectedAccount.accountType}/>
-                        <Link href="#" className="text-[#ffd78a] text-xs font-medium underline leading-tight">Manage
+                        <Link href="#" className="text-[#ffd78a] text-base font-medium underline leading-normal">Manage
                             Subscription
                         </Link>
                     </div>
