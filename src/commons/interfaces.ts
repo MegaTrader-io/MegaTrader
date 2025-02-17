@@ -23,16 +23,11 @@ export type MgProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 export interface AccountBalance {
-    currentBalance: string,
-    currentEquity: string,
-    high: string,
-    low: string,
-    weeklyNetPnL: string,
-    bestDayPercentage: string,
-    bestDay: string,
-    worstDay: string,
-    avgWinningDay: string,
-    avgLosingDay: string
+    currentBalance: number,
+    totalProfit: number,
+    tradingDays: string,
+    currentEquity: number,
+    weeklyNetPnL: number,
 }
 
 export type AccountStatusType = 'active' | 'unpaid' | 'breach' | 'funded'

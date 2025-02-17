@@ -7,22 +7,17 @@ export const accounts: Account[] = [
         accountType: 'basic_plan',
         status: 'active',
         accountBalance: {
-            currentBalance: "$50,000",
-            currentEquity: "$145,166.78",
-            high: "$150,000",
-            low: "$145,166.78",
-            weeklyNetPnL: "$0",
-            bestDayPercentage: "-",
-            bestDay: "-$73.40",
-            worstDay: "-$4,524.54",
-            avgWinningDay: "-",
-            avgLosingDay: "-$1,610.74"
+            currentBalance: 50000.00,
+            totalProfit: 0,
+            tradingDays: "0",
+            currentEquity: 145166.78,
+            weeklyNetPnL: 0,
         },
         objectives: {
             profit: {
-                goal: 9000,
-                current: 2900,
-                percentage: 37.5
+                goal: 3000.00,
+                current: 0,
+                percentage: 0
             },
             consistency: {
                 percentage: null,
@@ -35,8 +30,8 @@ export const accounts: Account[] = [
                 }
             },
             tradingDays: {
-                current: 1,
-                total: 5,
+                current: 0,
+                total: 1,
                 betweenPayouts: {
                     current: null,
                     total: null
@@ -55,16 +50,11 @@ export const accounts: Account[] = [
         status: 'unpaid',
         accountType: 'basic_plan',
         accountBalance: {
-            currentBalance: "$143,166.78",
-            currentEquity: "$143,166.78",
-            high: "$150,000",
-            low: "$145,166.78",
-            weeklyNetPnL: "$0",
-            bestDayPercentage: "-",
-            bestDay: "-$73.40",
-            worstDay: "-$4,524.54",
-            avgWinningDay: "-",
-            avgLosingDay: "-$2,610.74"
+            currentBalance: 50000.00,
+            totalProfit: 0,
+            tradingDays: "0",
+            currentEquity: 145166.78,
+            weeklyNetPnL: 0,
         },
         objectives: {
             profit: {
@@ -103,16 +93,11 @@ export const accounts: Account[] = [
         accountType: 'basic_plan',
         status: 'breach',
         accountBalance: {
-            currentBalance: "$143,166.78",
-            currentEquity: "$143,166.78",
-            high: "$150,000",
-            low: "$145,166.78",
-            weeklyNetPnL: "$0",
-            bestDayPercentage: "-",
-            bestDay: "-$73.40",
-            worstDay: "-$4,524.54",
-            avgWinningDay: "-",
-            avgLosingDay: "-$2,610.74"
+            currentBalance: 50000.00,
+            totalProfit: 0,
+            tradingDays: "0",
+            currentEquity: 145166.78,
+            weeklyNetPnL: 0,
         },
         objectives: {
             profit: {
@@ -151,16 +136,11 @@ export const accounts: Account[] = [
         status: 'funded',
         accountType: 'basic_plan',
         accountBalance: {
-            currentBalance: "$145,166.78",
-            currentEquity: "$145,166.78",
-            high: "$150,000",
-            low: "$145,166.78",
-            weeklyNetPnL: "$0",
-            bestDayPercentage: "-",
-            bestDay: "-$73.40",
-            worstDay: "-$4,524.54",
-            avgWinningDay: "-",
-            avgLosingDay: "-$1,610.74"
+            currentBalance: 50000.00,
+            totalProfit: 0,
+            tradingDays: "0",
+            currentEquity: 145166.78,
+            weeklyNetPnL: 0,
         },
         objectives: {
             profit: {

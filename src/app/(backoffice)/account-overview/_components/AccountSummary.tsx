@@ -3,12 +3,11 @@ import Card from "@/components/Card";
 import {Account} from "@/commons/interfaces";
 import Image from "next/image";
 import Tooltip from "@/components/Tooltip";
-import Skeleton from "@/components/Skeleton";
 import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/20/solid";
 import NumericStyle from "@/components/NumericStyle";
 import {formatCurrency} from "@/commons/utils";
 
-function AccountSummary({account, isLoadingAccount}: { account: Account, isLoadingAccount: boolean }) {
+function AccountSummary({account}: { account: Account, isLoadingAccount: boolean }) {
     const {accountBalance} = account;
 
     return (
@@ -18,24 +17,42 @@ function AccountSummary({account, isLoadingAccount}: { account: Account, isLoadi
                 <div className="gap-4 lg:flex lg:items-center">
                     <div className="lg:flex flex-col items-start relative flex-1 grow">
                         {[
-                            {label: "Account Balance", value: accountBalance.currentBalance},
-                            {label: "Total Profit", value: accountBalance.currentEquity},
-                            {label: "Trading Days", value: accountBalance.high},
-                            {label: "Current Equity", value: accountBalance.low},
-                            {label: "Weekly Net P&L", value: accountBalance.weeklyNetPnL}
+                            {
+                                label: "Account Balance",
+                                value: <NumericStyle positiveLegend={''}
+                                                     positiveColor={'text-teal-400'}
+                                                     value={accountBalance.currentBalance}
+                                                     decimal={0}/>
+                            },
+                            {
+                                label: "Total Profit", value: <NumericStyle positiveLegend={''}
+                                                                            positiveColor={'text-teal-400'}
+                                                                            zeroColor={'text-teal-400'}
+                                                                            value={accountBalance.totalProfit}
+                                                                            decimal={0}/>
+                            },
+                            {label: "Trading Days", value: accountBalance.tradingDays},
+                            {
+                                label: "Current Equity",
+                                value: <>{formatCurrency(Math.abs(accountBalance.currentEquity))}</>
+                            },
+                            {
+                                label: "Weekly Net P&L",
+                                value: <>{accountBalance.weeklyNetPnL > 0 ? formatCurrency(Math.abs(accountBalance.weeklyNetPnL), 2) : '$0'}</>
+                            }
                         ].map(({label, value}, index) => (
                             <div
                                 key={index}
                                 className="justify-between h-14 px-0 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
                             >
-                                <Skeleton isLoading={isLoadingAccount}
-                                          className="relative flex-1 flex text-stone-400 text-base font-normal leading-normal">
+                                <div
+                                    className="relative flex-1 flex text-stone-400 text-base font-normal leading-normal">
                                     {label}
                                     {label === 'Weekly Net P&L' && <QuestionIcon/>}
-                                </Skeleton>
+                                </div>
 
-                                <Skeleton isLoading={isLoadingAccount}
-                                          className="relative w-fit text-white text-base font-medium leading-normal">{value}</Skeleton>
+                                <div
+                                    className="relative w-fit text-white text-base font-medium leading-normal">{value}</div>
                             </div>
                         ))}
                     </div>
@@ -63,8 +80,9 @@ function AccountSummary({account, isLoadingAccount}: { account: Account, isLoadi
                                         <div className="text-base font-light text-right">
                                 <span>
                                     <NumericStyle
-                                        decimal={0}
+                                        decimal={account.objectives.profit.current === 0 ? 0 : 2}
                                         positiveLegend={''}
+                                        zeroColor={'text-teal-400'}
                                         positiveColor={'text-teal-400'}
                                         negativeColor={'text-rose-500'}
                                         value={account.objectives.profit.current ?? 0}/>
@@ -72,7 +90,7 @@ function AccountSummary({account, isLoadingAccount}: { account: Account, isLoadi
                                             <span
                                                 className="text-white text-base font-medium uppercase leading-normal mx-1">/</span>
                                             <span className="text-white text-base font-medium uppercase leading-normal">
-                                    {formatCurrency(account.objectives.profit.goal ?? 0, 0)}
+                                    {formatCurrency(account.objectives.profit.goal ?? 0)}
                                 </span>
                                         </div>
                                         <div className="overflow-hidden rounded-full mt-1 bg-neutral-700">
