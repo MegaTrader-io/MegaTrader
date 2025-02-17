@@ -14,7 +14,7 @@ interface NotificationIconProps {
 
 const NotificationIcon = ({hasNotification = false}: NotificationIconProps): JSX.Element => {
     return hasNotification ? (
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center w-full h-full">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_6163_1787" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0" width="24"
                           height="24">
@@ -29,7 +29,7 @@ const NotificationIcon = ({hasNotification = false}: NotificationIconProps): JSX
             </div>
         ) :
         (
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center w-full h-full">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_6163_187" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0"
                           width="24"
