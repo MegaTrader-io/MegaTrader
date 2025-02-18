@@ -69,9 +69,9 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                                 >
                                     <div className="w-full h-full">
                                         <div className="flex items-center gap-2">
-                                            {account.status === 'unpaid' &&
+                                            {account.status === 'inactive' &&
                                                 <XCircleIcon className="w-6 h-6 text-rose-500"/>}
-                                            {account.status !== 'unpaid' &&
+                                            {account.status === 'active' &&
                                                 <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
                                             <span className="text-white">Profit Target</span>
                                         </div>
@@ -106,9 +106,9 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                                 >
                                     <div className="w-full h-full">
                                         <div className="flex items-center gap-2">
-                                            {account.status === 'unpaid' &&
+                                            {account.status === 'inactive' &&
                                                 <XCircleIcon className="w-6 h-6 text-rose-500"/>}
-                                            {account.status !== 'unpaid' &&
+                                            {account.status === 'active' &&
                                                 <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
                                             <span className="text-white">Days Traded</span>
                                         </div>
