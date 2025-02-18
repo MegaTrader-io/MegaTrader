@@ -9,7 +9,7 @@ export const accounts: Account[] = [
         accountBalance: {
             currentBalance: 50000.00,
             totalProfit: 0,
-            tradingDays: "0",
+            tradingDays: 0,
             currentEquity: 145166.78,
             weeklyNetPnL: 0,
         },
@@ -46,99 +46,13 @@ export const accounts: Account[] = [
     },
     {
         id: 2,
-        name: 'S1SEP2586479132DSDS9',
-        status: 'unpaid',
-        accountType: 'basic_plan',
-        accountBalance: {
-            currentBalance: 50000.00,
-            totalProfit: 0,
-            tradingDays: "0",
-            currentEquity: 145166.78,
-            weeklyNetPnL: 0,
-        },
-        objectives: {
-            profit: {
-                goal: 9000,
-                current: -1600,
-                percentage: 0
-            },
-            consistency: {
-                percentage: null,
-                description: null
-            },
-            rule: {
-                maximumLossLimit: {
-                    threshold: 145500,
-                    description: "Keep your Account Balance above $48,000"
-                }
-            },
-            tradingDays: {
-                current: 1,
-                total: 5,
-                betweenPayouts: {
-                    current: null,
-                    total: null
-                },
-                daysWithMinProfit: {
-                    current: null,
-                    total: null,
-                    minProfit: null
-                }
-            }
-        }
-    },
-    {
-        id: 3,
-        name: 'S1SEP2586479132DSD10',
-        accountType: 'basic_plan',
-        status: 'breach',
-        accountBalance: {
-            currentBalance: 50000.00,
-            totalProfit: 0,
-            tradingDays: "0",
-            currentEquity: 145166.78,
-            weeklyNetPnL: 0,
-        },
-        objectives: {
-            profit: {
-                goal: 9000,
-                current: 3200,
-                percentage: 0
-            },
-            consistency: {
-                percentage: null,
-                description: null
-            },
-            rule: {
-                maximumLossLimit: {
-                    threshold: 145500,
-                    description: "Keep your Account Balance above $48,000"
-                }
-            },
-            tradingDays: {
-                current: 1,
-                total: 5,
-                betweenPayouts: {
-                    current: null,
-                    total: null
-                },
-                daysWithMinProfit: {
-                    current: null,
-                    total: null,
-                    minProfit: null
-                }
-            }
-        }
-    },
-    {
-        id: 4,
         name: 'S1SEP2586479132DSD11',
-        status: 'funded',
+        status: 'inactive',
         accountType: 'basic_plan',
         accountBalance: {
             currentBalance: 50000.00,
             totalProfit: 0,
-            tradingDays: "0",
+            tradingDays: 0,
             currentEquity: 145166.78,
             weeklyNetPnL: 0,
         },

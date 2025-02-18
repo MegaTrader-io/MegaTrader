@@ -12,9 +12,7 @@ function AccountStatus({status, className = '', circleOnly = false, size = 'md'}
 }) {
     const variantColor: Record<AccountStatusType, "secondary" | "error" | "primary" | "info"> = {
         active: 'secondary',
-        unpaid: 'error',
-        breach: 'primary',
-        funded: 'secondary',
+        inactive: 'error',
     };
 
     if (circleOnly) {

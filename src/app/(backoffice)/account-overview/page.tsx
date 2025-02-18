@@ -2,7 +2,7 @@
 
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import DropdownDialog from "@/components/DropdownDialog";
@@ -23,23 +23,76 @@ import {useAccount} from "@/app/providers/AccountContext";
 import {SkeletonTemplate} from "@/components/Skeleton";
 import AccountPlanType from "@/app/(backoffice)/account-overview/_components/AccountPlanType";
 import AccountSummary from "@/app/(backoffice)/account-overview/_components/AccountSummary";
+import {Account} from "@/commons/interfaces";
+import Dialog from "@/components/Dialog";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, isLoadingAccount} = useAccount();
     const passwordMaskRef = useRef<HTMLDivElement>(null);
+    const [showModalBreach, setShowModalBreach] = useState(false)
 
     const {toggleMask, currentMask} = useToggleSecretsKeys([
         {element: passwordMaskRef.current, value: credentials.password},
     ]);
 
+    function changeAccount(account: Account) {
+        setSelectedAccount(account);
+        setShowModalBreach(true)
+    }
+
+    function handleCloseDialog() {
+        setShowModalBreach(false)
+    }
+
     return <>
+        <Dialog
+            className="w-[600px]"
+            showModal={showModalBreach}
+            onClose={handleCloseDialog}
+            title={'BREACH ALERT'}>
+            <div className="w-full space-y-8">
+                <div className="space-y-2">
+                    <div className="w-full flex justify-center">
+                        <svg width="106" height="94" viewBox="0 0 106 94" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M45.206 4.99999C48.6701 -1.00001 57.3304 -0.999995 60.7945 5.00001L104.096 80C107.56 86 103.23 93.5 96.3015 93.5H9.69896C2.77076 93.5 -1.55935 86 1.90475 80L45.206 4.99999Z"
+                                fill="#F43F5E"/>
+                            <path
+                                d="M56.2559 37.375L55.6934 61.4453H50.8652L50.2793 37.375H56.2559ZM50.1152 68.8281C50.1152 67.9688 50.3965 67.25 50.959 66.6719C51.5371 66.0781 52.334 65.7812 53.3496 65.7812C54.3496 65.7812 55.1387 66.0781 55.7168 66.6719C56.2949 67.25 56.584 67.9688 56.584 68.8281C56.584 69.6562 56.2949 70.3672 55.7168 70.9609C55.1387 71.5391 54.3496 71.8281 53.3496 71.8281C52.334 71.8281 51.5371 71.5391 50.959 70.9609C50.3965 70.3672 50.1152 69.6562 50.1152 68.8281Z"
+                                fill="white"/>
+                        </svg>
+                    </div>
+
+                    <div
+                        className="text-center text-white text-5xl font-medium uppercase leading-[60px]">Ups!
+                    </div>
+                    <div
+                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your
+                        evaluation has failed!
+                    </div>
+                    <div
+                        className="text-center text-stone-400 text-base font-medium  leading-normal">In
+                        order to continue trading you need to reset your account.
+                    </div>
+                </div>
+
+                <div className="flex justify-center">
+                    <Button variant={'primary'} onClick={() => {setShowModalBreach(false)}}>
+                        RESET ACCOUNT
+                    </Button>
+                </div>
+            </div>
+        </Dialog>
+
+
         <div className="w-full">
             <Card className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
                 <div className="flex gap-4 items-center">
                     <DropdownDialog
                         items={accounts}
                         value={selectedAccount}
-                        onChange={setSelectedAccount}
+                        onChange={changeAccount}
                         renderButtonContent={(item) => (
                             <button
                                 className="rounded-xl p-3 w-full h-12 bg-stone-800 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800">
