@@ -22,10 +22,16 @@ export type MgProps = React.HTMLAttributes<HTMLDivElement> & {
     children: React.ReactNode;
 };
 
-export interface AccountBalance {
+export interface TotalProfit {
+    value: number,
+    percentage: number
+}
+
+export interface OverallPerformance {
     currentBalance: number,
-    totalProfit: number,
+    totalProfit: TotalProfit,
     tradingDays: number,
+    dailyLossLimit: number,
     currentEquity: number,
     weeklyNetPnL: number,
 }
@@ -36,6 +42,7 @@ interface Profit {
     goal: number | null;
     current: number | null;
     percentage: number | null;
+    pass?: boolean
 }
 
 interface Consistency {
@@ -46,6 +53,7 @@ interface Consistency {
 interface MaximumLossLimit {
     threshold: number;
     description: string;
+    pass: boolean;
 }
 
 interface Rule {
@@ -53,6 +61,7 @@ interface Rule {
 }
 
 interface TradingDays {
+    pass?: boolean,
     current: number | null;
     total: number | null;
     betweenPayouts: {
@@ -69,8 +78,8 @@ interface TradingDays {
 interface Objectives {
     profit: Profit;
     consistency: Consistency;
-    rule: Rule;
     tradingDays: TradingDays;
+    rule: Rule;
 }
 
 export type AccountType = 'basic_plan' | 'pro_plan' | 'premium_plan'
@@ -80,7 +89,7 @@ export interface Account {
     name: string
     accountType: AccountType
     status: AccountStatusType,
-    accountBalance: AccountBalance,
+    overallPerformance: OverallPerformance,
     objectives: Objectives
 }
 

@@ -1,14 +1,33 @@
 import React from "react";
 import Card from "@/components/Card";
-import {Account} from "@/commons/interfaces";
+import {Account, OverallPerformance} from "@/commons/interfaces";
 import Image from "next/image";
 import Tooltip from "@/components/Tooltip";
-import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/20/solid";
+import {CheckCircleIcon, ExclamationCircleIcon} from "@heroicons/react/20/solid";
 import NumericStyle from "@/components/NumericStyle";
 import {formatCurrency} from "@/commons/utils";
+import Badge from "@/components/Badge";
+import {ArrowUp, ArrowDown} from "@/components/Arrows";
+import clsx from "clsx";
+
+function TotalProfit({overallPerformance}: { overallPerformance: OverallPerformance }) {
+    return <div className="flex items-center gap-2">
+        <NumericStyle positiveColor={'text-teal-400'}
+                      zeroColor={'text-teal-400'}
+                      value={overallPerformance.totalProfit.value}/>
+        <div className="flex">
+            {overallPerformance.totalProfit.percentage > 0 ? <ArrowUp circle={false} className="text-teal-400"/> :
+                <ArrowDown circle={false} className="text-rose-500"/>}
+            <Badge shape={'pill'} size={'sm'}
+                   variant={overallPerformance.totalProfit.percentage > 0 ? 'secondary' : 'error'}>
+                {overallPerformance.totalProfit.percentage.toFixed(2)}%
+            </Badge>
+        </div>
+    </div>
+}
 
 function AccountSummary({account}: { account: Account, isLoadingAccount: boolean }) {
-    const {accountBalance} = account;
+    const {overallPerformance} = account;
 
     return (
         <Card className="grid grid-cols-2 gap-8 w-full">
@@ -20,25 +39,24 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                             {
                                 label: "Account Balance",
                                 value: <NumericStyle positiveLegend={''}
-                                                     positiveColor={'text-teal-400'}
-                                                     value={accountBalance.currentBalance}
-                                                     decimal={0}/>
+                                                     positiveColor={account.status === 'inactive' ? 'text-rose-500' : 'text-teal-400'}
+                                                     negativeColor={'text-rose-500'}
+                                                     value={overallPerformance.currentBalance}/>
                             },
                             {
-                                label: "Total Profit", value: <NumericStyle positiveLegend={''}
-                                                                            positiveColor={'text-teal-400'}
-                                                                            zeroColor={'text-teal-400'}
-                                                                            value={accountBalance.totalProfit}
-                                                                            decimal={0}/>
+                                label: "Total Profit", value: <TotalProfit overallPerformance={overallPerformance}/>
                             },
-                            {label: "Trading Days", value: accountBalance.tradingDays},
+                            {label: "Trading Days", value: overallPerformance.tradingDays},
+                            {label: "Daily Loss Limit", value: formatCurrency(overallPerformance.dailyLossLimit, 0)},
                             {
                                 label: "Current Equity",
-                                value: <>{formatCurrency(Math.abs(accountBalance.currentEquity))}</>
+                                value: <>{formatCurrency(Math.abs(overallPerformance.currentEquity))}</>
                             },
                             {
                                 label: "Weekly Net P&L",
-                                value: <>{accountBalance.weeklyNetPnL > 0 ? formatCurrency(Math.abs(accountBalance.weeklyNetPnL), 2) : '$0'}</>
+                                value: <NumericStyle positiveColor={'text-teal-400'}
+                                                     zeroColor={'text-teal-400'}
+                                                     value={overallPerformance.weeklyNetPnL}/>
                             }
                         ].map(({label, value}, index) => (
                             <div
@@ -69,21 +87,20 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                                 >
                                     <div className="w-full h-full">
                                         <div className="flex items-center gap-2">
-                                            {account.status === 'inactive' &&
-                                                <XCircleIcon className="w-6 h-6 text-rose-500"/>}
-                                            {account.status === 'active' &&
-                                                <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
+                                            {account.objectives.profit.pass &&
+                                                <CheckCircleIcon className="w-6 h-6 text-teal-400"/>}
+                                            {!account.objectives.profit.pass &&
+                                                <ExclamationCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
                                             <span className="text-white">Profit Target</span>
                                         </div>
                                     </div>
                                     <div className="w-full h-full">
-                                        <div className="text-base font-light text-right">
+                                        <div className="text-base font-medium text-right">
                                 <span>
                                     <NumericStyle
-                                        decimal={account.objectives.profit.current === 0 ? 0 : 2}
                                         positiveLegend={''}
                                         zeroColor={'text-teal-400'}
-                                        positiveColor={'text-teal-400'}
+                                        positiveColor={account.status === 'inactive' ? 'text-rose-500' : 'text-teal-400'}
                                         negativeColor={'text-rose-500'}
                                         value={account.objectives.profit.current ?? 0}/>
                                 </span>
@@ -107,15 +124,16 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                                     <div className="w-full h-full">
                                         <div className="flex items-center gap-2">
                                             {account.status === 'inactive' &&
-                                                <XCircleIcon className="w-6 h-6 text-rose-500"/>}
+                                                <ExclamationCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
                                             {account.status === 'active' &&
                                                 <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
                                             <span className="text-white">Days Traded</span>
                                         </div>
                                     </div>
                                     <div className="w-full h-full">
-                                        <div className="text-base font-light text-right">
-                                <span className="text-teal-400">
+                                        <div className="text-base font-medium text-right">
+                                <span
+                                    className={clsx([account.status === 'inactive' ? 'text-rose-500' : 'text-teal-400'])}>
 {account.objectives.tradingDays.current ?? 0}
                                 </span>
                                             <span
@@ -135,7 +153,15 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                         <div className="w-full">
                             <div className="text-white text-xl font-light uppercase leading-normal mb-4">RULE</div>
                             <div className="flex gap-2">
-                                <div>
+                                <div className="flex items-center gap-2 h-full">
+                                    <div className="h-full">
+                                        <div className="flex items-center gap-2">
+                                            {!account.objectives.rule.maximumLossLimit.pass &&
+                                                <ExclamationCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
+                                            {account.objectives.rule.maximumLossLimit.pass &&
+                                                <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
+                                        </div>
+                                    </div>
                                     <div className="flex flex-col">
                                         <div
                                             className="text-white text-base font-medium leading-normal">

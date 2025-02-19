@@ -2,10 +2,12 @@ import dayjs from "dayjs";
 
 export function formatCurrency(value: number, decimal: number = 2) {
     try {
+        const hasDecimals = value % 1 !== 0;
+
         return new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
-            minimumFractionDigits: decimal,
+            minimumFractionDigits: hasDecimals ? decimal : 0,
             maximumFractionDigits: 2,
         }).format(value);
     } catch (error) {

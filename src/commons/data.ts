@@ -5,33 +5,28 @@ export const accounts: Account[] = [
         id: 1,
         name: 'S1SEP2586479132DSDS8',
         accountType: 'basic_plan',
-        status: 'active',
-        accountBalance: {
-            currentBalance: 50000.00,
-            totalProfit: 0,
-            tradingDays: 0,
-            currentEquity: 145166.78,
-            weeklyNetPnL: 0,
+        status: 'inactive',
+        overallPerformance: {
+            currentBalance: 47850.30,
+            totalProfit: {
+                value: -2149.70,
+                percentage: -4.30
+            },
+            tradingDays: 4,
+            dailyLossLimit: 2000,
+            currentEquity: 47850.30,
+            weeklyNetPnL: -1560.40,
         },
         objectives: {
             profit: {
                 goal: 3000.00,
-                current: 0,
-                percentage: 0
-            },
-            consistency: {
-                percentage: null,
-                description: null
-            },
-            rule: {
-                maximumLossLimit: {
-                    threshold: 145500,
-                    description: "Keep your Account Balance above $48,000"
-                }
+                current: 2149.70,
+                percentage: 0,
+                pass: false
             },
             tradingDays: {
-                current: 0,
-                total: 1,
+                current: 1,
+                total: 4,
                 betweenPayouts: {
                     current: null,
                     total: null
@@ -41,52 +36,120 @@ export const accounts: Account[] = [
                     total: null,
                     minProfit: null
                 }
-            }
-        }
-    },
-    {
-        id: 2,
-        name: 'S1SEP2586479132DSD11',
-        status: 'inactive',
-        accountType: 'basic_plan',
-        accountBalance: {
-            currentBalance: 50000.00,
-            totalProfit: 0,
-            tradingDays: 0,
-            currentEquity: 145166.78,
-            weeklyNetPnL: 0,
-        },
-        objectives: {
-            profit: {
-                goal: null,
-                current: 5000.00,
-                percentage: 22.00
             },
             consistency: {
-                percentage: 100,
+                percentage: null,
                 description: null
             },
             rule: {
                 maximumLossLimit: {
-                    threshold: 145500,
+                    pass: false,
+                    threshold: 48000,
                     description: "Keep your Account Balance above $48,000"
                 }
             },
+        }
+    },
+    {
+        id: 2,
+        name: 'S1SEP2586479132DSDS9',
+        accountType: 'pro_plan',
+        status: 'active',
+        overallPerformance: {
+            currentBalance: 103540.80,
+            totalProfit: {
+                value: 3549.80,
+                percentage: 3.54
+            },
+            tradingDays: 3,
+            dailyLossLimit: 2500,
+            currentEquity: 103540.80,
+            weeklyNetPnL: 1720.30
+        },
+        objectives: {
+            profit: {
+                goal: 6000,
+                current: 3540.80,
+                percentage: 0,
+                pass: true
+            },
             tradingDays: {
-                current: null,
-                total: null,
+                pass: true,
+                current: 1,
+                total: 3,
                 betweenPayouts: {
-                    current: 2,
-                    total: 10
+                    current: null,
+                    total: null
                 },
                 daysWithMinProfit: {
-                    current: 1,
-                    total: 5,
-                    minProfit: 150
+                    current: null,
+                    total: null,
+                    minProfit: null
                 }
-            }
+            },
+            consistency: {
+                percentage: null,
+                description: null
+            },
+            rule: {
+                maximumLossLimit: {
+                    pass: true,
+                    threshold: 96500,
+                    description: "Keep your Account Balance above $96,500"
+                }
+            },
         }
-    }
+    },
+    {
+        id: 3,
+        name: 'S1SEP2586479132DSD10',
+        accountType: 'premium_plan',
+        status: 'active',
+        overallPerformance: {
+            currentBalance: 159420.75,
+            totalProfit: {
+                value: 9420.75,
+                percentage: 6.28
+            },
+            tradingDays: 12,
+            dailyLossLimit: 3750,
+            currentEquity: 159420.75,
+            weeklyNetPnL: 2740.60
+        },
+        objectives: {
+            profit: {
+                goal: 9000,
+                current: 9420.75,
+                percentage: 0,
+                pass: true
+            },
+            tradingDays: {
+                pass: true,
+                current: 1,
+                total: 12,
+                betweenPayouts: {
+                    current: null,
+                    total: null
+                },
+                daysWithMinProfit: {
+                    current: null,
+                    total: null,
+                    minProfit: null
+                }
+            },
+            consistency: {
+                percentage: null,
+                description: null
+            },
+            rule: {
+                maximumLossLimit: {
+                    pass: true,
+                    threshold: 145000,
+                    description: "Keep your Account Balance above $145,000"
+                }
+            },
+        }
+    },
 ];
 
 export const credentials = {
