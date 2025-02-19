@@ -74,13 +74,13 @@ export default function AccountOverView() {
                     </div>
 
                     <div
-                        className="text-center text-white text-5xl font-medium uppercase leading-[60px]">Congratulations!
+                        className="text-center text-white text-5xl font-medium uppercase leading-[60px]">Ups!
                     </div>
                     <div
-                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your account has passed the evaluation
+                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your evaluation has failed!
                     </div>
                     <div
-                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to continue trading, you need to activate it.
+                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to continue trading you need to reset your account.
                     </div>
                 </div>
 
@@ -191,15 +191,13 @@ export default function AccountOverView() {
                     </div>
 
                     <div
-                        className="text-center text-white text-5xl font-medium uppercase leading-[60px]">Ups!
+                        className="text-center text-white text-5xl font-medium uppercase leading-[60px]">Congratulations!
                     </div>
                     <div
-                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your account has
-                        not been paid
+                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your account has passed the evaluation
                     </div>
                     <div
-                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to
-                        continue trading, you need to make a payment.
+                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to continue trading, you need to activate it.
                     </div>
                 </div>
 
