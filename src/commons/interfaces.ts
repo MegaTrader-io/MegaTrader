@@ -38,20 +38,19 @@ export interface OverallPerformance {
 
 export type AccountStatusType = 'active' | 'inactive'
 
-interface Profit {
-    goal: number | null;
-    current: number | null;
-    percentage: number | null;
+export interface ObjectiveType {
+    current: number;
+    total: number;
+    percentage: number;
     pass?: boolean
 }
 
 interface Consistency {
-    percentage: number | null;
-    description: string | null;
+    minPercentage: number;
+    percentage: number;
 }
 
 interface MaximumLossLimit {
-    threshold: number;
     description: string;
     pass: boolean;
 }
@@ -60,25 +59,14 @@ interface Rule {
     maximumLossLimit: MaximumLossLimit;
 }
 
-interface TradingDays {
-    pass?: boolean,
-    current: number | null;
-    total: number | null;
-    betweenPayouts: {
-        current: number | null;
-        total: number | null;
-    };
-    daysWithMinProfit: {
-        current: number | null;
-        total: number | null;
-        minProfit: number | null;
-    };
-}
-
 interface Objectives {
-    profit: Profit;
-    consistency: Consistency;
-    tradingDays: TradingDays;
+    profit?: ObjectiveType;
+    profitTarget?: ObjectiveType;
+    daysTarget?: ObjectiveType;
+    tradingDayBetweenPayouts?: ObjectiveType;
+    tradingDayWithProfit?: ObjectiveType;
+    consistency?: Consistency;
+    highestProfitDaySinceLastPayout?: number;
     rule: Rule;
 }
 

@@ -1,30 +1,17 @@
 import React from "react";
 import Card from "@/components/Card";
-import {Account, OverallPerformance} from "@/commons/interfaces";
+import {Account} from "@/commons/interfaces";
 import Image from "next/image";
 import Tooltip from "@/components/Tooltip";
 import {CheckCircleIcon, ExclamationCircleIcon} from "@heroicons/react/20/solid";
 import NumericStyle from "@/components/NumericStyle";
 import {formatCurrency} from "@/commons/utils";
-import Badge from "@/components/Badge";
-import {ArrowUp, ArrowDown} from "@/components/Arrows";
-import clsx from "clsx";
+import ConsistencyProgress from "@/app/(backoffice)/account-overview/_components/ConsistencyProgress";
+import {ObjectiveItemPoint} from "@/app/(backoffice)/account-overview/_components/ObjectiveItemPoint";
+import {ObjectiveItemMoney} from "@/app/(backoffice)/account-overview/_components/ObjectiveItemMoney";
+import {TotalProfit} from "@/app/(backoffice)/account-overview/TotalProfit";
+import HighestProfitDay from "@/app/(backoffice)/account-overview/_components/HighestProfitDay";
 
-function TotalProfit({overallPerformance}: { overallPerformance: OverallPerformance }) {
-    return <div className="flex items-center gap-2">
-        <NumericStyle positiveColor={'text-teal-400'}
-                      zeroColor={'text-teal-400'}
-                      value={overallPerformance.totalProfit.value}/>
-        <div className="flex">
-            {overallPerformance.totalProfit.percentage > 0 ? <ArrowUp circle={false} className="text-teal-400"/> :
-                <ArrowDown circle={false} className="text-rose-500"/>}
-            <Badge shape={'pill'} size={'sm'}
-                   variant={overallPerformance.totalProfit.percentage > 0 ? 'secondary' : 'error'}>
-                {overallPerformance.totalProfit.percentage.toFixed(2)}%
-            </Badge>
-        </div>
-    </div>
-}
 
 function AccountSummary({account}: { account: Account, isLoadingAccount: boolean }) {
     const {overallPerformance} = account;
@@ -81,74 +68,26 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                 <div className="gap-4 lg:flex lg:items-center">
                     <div className="lg:flex flex-col items-start relative flex-1 grow space-y-8">
                         <div className="w-full">
-                            <div className="w-full">
-                                <div
-                                    className="justify-between px-0 gap-4 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
-                                >
-                                    <div className="w-full h-full">
-                                        <div className="flex items-center gap-2">
-                                            {account.objectives.profit.pass &&
-                                                <CheckCircleIcon className="w-6 h-6 text-teal-400"/>}
-                                            {!account.objectives.profit.pass &&
-                                                <ExclamationCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
-                                            <span className="text-white">Profit Target</span>
-                                        </div>
-                                    </div>
-                                    <div className="w-full h-full">
-                                        <div className="text-base font-medium text-right">
-                                <span>
-                                    <NumericStyle
-                                        positiveLegend={''}
-                                        zeroColor={'text-teal-400'}
-                                        positiveColor={account.status === 'inactive' ? 'text-rose-500' : 'text-teal-400'}
-                                        negativeColor={'text-rose-500'}
-                                        value={account.objectives.profit.current ?? 0}/>
-                                </span>
-                                            <span
-                                                className="text-white text-base font-medium uppercase leading-normal mx-1">/</span>
-                                            <span className="text-white text-base font-medium uppercase leading-normal">
-                                    {formatCurrency(account.objectives.profit.goal ?? 0)}
-                                </span>
-                                        </div>
-                                        <div className="overflow-hidden rounded-full mt-1 bg-neutral-700">
-                                            <div style={{width: `${account.objectives.profit.percentage}%`}}
-                                                 className="h-2 bg-secondary"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-full">
-                                <div
-                                    className="justify-between px-0 gap-4 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
-                                >
-                                    <div className="w-full h-full">
-                                        <div className="flex items-center gap-2">
-                                            {account.status === 'inactive' &&
-                                                <ExclamationCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
-                                            {account.status === 'active' &&
-                                                <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
-                                            <span className="text-white">Days Traded</span>
-                                        </div>
-                                    </div>
-                                    <div className="w-full h-full">
-                                        <div className="text-base font-medium text-right">
-                                <span
-                                    className={clsx([account.status === 'inactive' ? 'text-rose-500' : 'text-teal-400'])}>
-{account.objectives.tradingDays.current ?? 0}
-                                </span>
-                                            <span
-                                                className="text-white text-base font-medium uppercase leading-normal mx-1">/</span>
-                                            <span className="text-white text-base font-medium uppercase leading-normal">
-                                    {account.objectives.tradingDays.total ?? 0}
-                                </span>
-                                        </div>
-                                        <div className="overflow-hidden rounded-full mt-1 bg-neutral-700">
-                                            <div style={{width: `${account.objectives.profit.percentage}%`}}
-                                                 className="h-2 bg-secondary"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {account.objectives.profitTarget &&
+                                <ObjectiveItemMoney label={'Profit Target'}
+                                                    objective={account.objectives.profitTarget}/>}
+                            {account.objectives.daysTarget &&
+                                <ObjectiveItemPoint label={'Days Traded'}
+                                                    objective={account.objectives.daysTarget}/>}
+                            {account.objectives.profit &&
+                                <ObjectiveItemMoney label={'Profit'}
+                                                    objective={account.objectives.profit}/>}
+                            {account.objectives.tradingDayBetweenPayouts &&
+                                <ObjectiveItemPoint label={'Trading Days Between Payouts'}
+                                                    objective={account.objectives.tradingDayBetweenPayouts}/>}
+                            {account.objectives.tradingDayWithProfit &&
+                                <ObjectiveItemPoint label={'Trading Days with $150 Profit'}
+                                                    objective={account.objectives.tradingDayWithProfit}/>}
+                            {account.objectives.consistency &&
+                                <ConsistencyProgress account={account}/>}
+
+                            {account.objectives.highestProfitDaySinceLastPayout !== undefined &&
+                                <HighestProfitDay account={account}/>}
                         </div>
                         <div className="w-full">
                             <div className="text-white text-xl font-light uppercase leading-normal mb-4">RULE</div>
