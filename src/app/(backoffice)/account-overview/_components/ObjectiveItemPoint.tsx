@@ -8,7 +8,7 @@ export function ObjectiveItemPoint({label, objective}: { label: string, objectiv
         return
     }
 
-    const percentage: number = objective.target > 0 ? (objective.target * 100) / objective.value : 0
+    const percentage: number = objective.target > 0 ? (objective.value * 100) / objective.target : 0
     const currentTarget: number = objective.target;
     const currentValue: number = objective.value;
 
@@ -18,9 +18,9 @@ export function ObjectiveItemPoint({label, objective}: { label: string, objectiv
         >
             <div className="w-full h-full">
                 <div className="flex items-center gap-2">
-                    {currentTarget > 0 && currentTarget < currentValue &&
+                    {currentValue < currentTarget &&
                         <CheckCircleIcon className="w-6 h-6 text-neutral-700"/>}
-                    {currentTarget >= currentValue &&
+                    {currentValue >= currentTarget &&
                         <CheckCircleIcon className="w-6 h-6 text-teal-400"/>}
                     <span className="text-white">{label}</span>
                 </div>
