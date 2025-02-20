@@ -9,9 +9,9 @@ export function ObjectiveItemMoney({label, objective}: { label: string, objectiv
         return
     }
 
-    const percentage: number = objective.current > 0 ? (objective.current * 100) / objective.total : 0
-    const currentValue: number = objective.current;
-    const totalValue: number = objective.total;
+    const percentage: number = objective.target > 0 ? (objective.target * 100) / objective.value : 0
+    const currentTarget: number = objective.target;
+    const currentValue: number = objective.value;
 
     return <div className="w-full">
         <div
@@ -19,9 +19,11 @@ export function ObjectiveItemMoney({label, objective}: { label: string, objectiv
         >
             <div className="w-full h-full">
                 <div className="flex items-center gap-2">
-                    {currentValue > 0 &&
+                    {currentTarget > 0 && currentTarget < currentValue &&
+                        <CheckCircleIcon className="w-6 h-6 text-neutral-700"/>}
+                    {currentTarget >= currentValue &&
                         <CheckCircleIcon className="w-6 h-6 text-teal-400"/>}
-                    {currentValue <= 0 &&
+                    {currentTarget <= 0 &&
                         <XCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
                     <span className="text-white">{label}</span>
                 </div>
@@ -32,14 +34,14 @@ export function ObjectiveItemMoney({label, objective}: { label: string, objectiv
                                     <NumericStyle
                                         positiveLegend={''}
                                         zeroColor={'text-teal-400'}
-                                        positiveColor={currentValue <= 0 ? 'text-rose-500' : 'text-teal-400'}
+                                        positiveColor={currentTarget <= 0 ? 'text-rose-500' : 'text-teal-400'}
                                         negativeColor={'text-rose-500'}
-                                        value={currentValue ?? 0}/>
+                                        value={currentTarget ?? 0}/>
                                 </span>
                     <span
                         className="text-white text-base font-medium uppercase leading-normal mx-1">/</span>
                     <span className="text-white text-base font-medium uppercase leading-normal">
-                                    {formatCurrency(totalValue ?? 0)}
+                                    {formatCurrency(currentValue ?? 0)}
                                 </span>
                 </div>
                 <div className="overflow-hidden rounded-full mt-1 bg-neutral-700">

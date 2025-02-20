@@ -1,5 +1,5 @@
 import {ObjectiveType} from "@/commons/interfaces";
-import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/20/solid";
+import {CheckCircleIcon} from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import React from "react";
 
@@ -8,9 +8,9 @@ export function ObjectiveItemPoint({label, objective}: { label: string, objectiv
         return
     }
 
-    const percentage: number = objective.current > 0 ? (objective.current * 100) / objective.total : 0
-    const currentValue: number = objective.current;
-    const totalValue: number = objective.total;
+    const percentage: number = objective.target > 0 ? (objective.target * 100) / objective.value : 0
+    const currentTarget: number = objective.target;
+    const currentValue: number = objective.value;
 
     return <div className="w-full">
         <div
@@ -18,10 +18,10 @@ export function ObjectiveItemPoint({label, objective}: { label: string, objectiv
         >
             <div className="w-full h-full">
                 <div className="flex items-center gap-2">
-                    {currentValue > 0 &&
+                    {currentTarget > 0 && currentTarget < currentValue &&
+                        <CheckCircleIcon className="w-6 h-6 text-neutral-700"/>}
+                    {currentTarget >= currentValue &&
                         <CheckCircleIcon className="w-6 h-6 text-teal-400"/>}
-                    {currentValue <= 0 &&
-                        <XCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
                     <span className="text-white">{label}</span>
                 </div>
             </div>
@@ -33,7 +33,7 @@ export function ObjectiveItemPoint({label, objective}: { label: string, objectiv
                     <span
                         className="text-white text-base font-medium uppercase leading-normal mx-1">/</span>
                     <span className="text-white text-base font-medium uppercase leading-normal">
-                                    {totalValue}
+                                    {currentTarget}
                                 </span>
                 </div>
                 <div className="overflow-hidden rounded-full mt-1 bg-neutral-700">

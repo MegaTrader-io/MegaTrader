@@ -71,9 +71,9 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                             {account.objectives.profitTarget &&
                                 <ObjectiveItemMoney label={'Profit Target'}
                                                     objective={account.objectives.profitTarget}/>}
-                            {account.objectives.daysTarget &&
+                            {account.objectives.daysTraded &&
                                 <ObjectiveItemPoint label={'Days Traded'}
-                                                    objective={account.objectives.daysTarget}/>}
+                                                    objective={account.objectives.daysTraded}/>}
                             {account.objectives.profit &&
                                 <ObjectiveItemMoney label={'Profit'}
                                                     objective={account.objectives.profit}/>}

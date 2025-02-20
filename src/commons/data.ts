@@ -19,14 +19,14 @@ export const accounts: Account[] = [
         },
         objectives: {
             profitTarget: {
-                current: -2349.70,
-                total: 2500,
+                target: -2349.70,
+                value: 2500,
                 percentage: 0,
                 pass: false
             },
-            daysTarget: {
-                current: 1,
-                total: 4,
+            daysTraded: {
+                target: 1,
+                value: 4,
                 percentage: 0,
                 pass: false
             },
@@ -56,13 +56,13 @@ export const accounts: Account[] = [
         },
         objectives: {
             profitTarget: {
-                current: 3540.80,
-                total: 6000,
+                target: 3540.80,
+                value: 6000,
                 percentage: 0,
             },
-            daysTarget: {
-                current: 1,
-                total: 3,
+            daysTraded: {
+                target: 1,
+                value: 3,
                 percentage: 0,
                 pass: true
             },
@@ -92,14 +92,14 @@ export const accounts: Account[] = [
         },
         objectives: {
             profitTarget: {
-                current: 9420.75,
-                total: 9000,
+                target: 9420.75,
+                value: 9000,
                 percentage: 0,
                 pass: true
             },
-            daysTarget: {
-                current: 1,
-                total: 12,
+            daysTraded: {
+                target: 1,
+                value: 12,
                 percentage: 0,
                 pass: true
             },
@@ -129,20 +129,20 @@ export const accounts: Account[] = [
         },
         objectives: {
             profit: {
-                current: -2349.70,
-                total: 2500,
+                target: -2349.70,
+                value: 2500,
                 percentage: 0,
                 pass: false
             },
             tradingDayBetweenPayouts: {
-                current: 6,
-                total: 10,
+                target: 6,
+                value: 10,
                 percentage: 0,
                 pass: false
             },
             tradingDayWithProfit: {
-                current: 1,
-                total: 5,
+                target: 1,
+                value: 5,
                 percentage: 0,
                 pass: false
             },
@@ -177,20 +177,20 @@ export const accounts: Account[] = [
         },
         objectives: {
             profit: {
-                current: 4280.60,
-                total: 6000,
+                target: 4280.60,
+                value: 6000,
                 percentage: 0,
                 pass: false
             },
             tradingDayBetweenPayouts: {
-                current: 7,
-                total: 10,
+                target: 7,
+                value: 10,
                 percentage: 0,
                 pass: false
             },
             tradingDayWithProfit: {
-                current: 1,
-                total: 5,
+                target: 1,
+                value: 5,
                 percentage: 0,
                 pass: false
             },
@@ -225,20 +225,20 @@ export const accounts: Account[] = [
         },
         objectives: {
             profit: {
-                current: 9870.20,
-                total: 9000,
+                target: 9870.20,
+                value: 9000,
                 percentage: 0,
                 pass: false
             },
             tradingDayBetweenPayouts: {
-                current: 10,
-                total: 12,
+                target: 10,
+                value: 12,
                 percentage: 0,
                 pass: false
             },
             tradingDayWithProfit: {
-                current: 5,
-                total: 6,
+                target: 5,
+                value: 6,
                 percentage: 0,
                 pass: false
             },

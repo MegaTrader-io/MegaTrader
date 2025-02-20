@@ -39,8 +39,8 @@ export interface OverallPerformance {
 export type AccountStatusType = 'active' | 'inactive'
 
 export interface ObjectiveType {
-    current: number;
-    total: number;
+    target: number;
+    value: number;
     percentage: number;
     pass?: boolean
 }
@@ -62,7 +62,7 @@ interface Rule {
 interface Objectives {
     profit?: ObjectiveType;
     profitTarget?: ObjectiveType;
-    daysTarget?: ObjectiveType;
+    daysTraded?: ObjectiveType;
     tradingDayBetweenPayouts?: ObjectiveType;
     tradingDayWithProfit?: ObjectiveType;
     consistency?: Consistency;
