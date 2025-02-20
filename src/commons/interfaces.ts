@@ -70,12 +70,19 @@ interface Objectives {
     rule: Rule;
 }
 
-export type AccountType = 'basic_plan' | 'pro_plan' | 'premium_plan'
+export type PlanLevel = '50K' | '100K' | '150K'
+export type PlanType = 'elite' | 'growth' | 'funded'
+
+export type PlanDetail = {
+    level: PlanLevel,
+    value: number,
+    planType: PlanType,
+}
 
 export interface Account {
     id: number
     name: string
-    accountType: AccountType
+    planDetail: PlanDetail,
     status: AccountStatusType,
     overallPerformance: OverallPerformance,
     objectives: Objectives

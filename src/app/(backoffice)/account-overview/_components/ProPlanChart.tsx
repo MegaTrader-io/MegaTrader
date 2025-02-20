@@ -4,7 +4,7 @@ import React, {useState} from 'react';
 import Image from "next/image";
 import {periods, tooltipData} from "@/commons/data";
 import Card from "@/components/Card";
-import {Period, TooltipData} from "@/commons/interfaces";
+import {Account, Period, TooltipData} from "@/commons/interfaces";
 import dynamic from 'next/dynamic';
 import {ApexOptions} from "apexcharts";
 import Tooltip from "@/components/Tooltip";
@@ -90,7 +90,7 @@ const chartConfig = {
     } as ApexOptions,
 };
 
-function ProPlanChart({isLoadingAccount}: { isLoadingAccount: boolean }) {
+function ProPlanChart({account}: { account: Account }) {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
 
@@ -100,52 +100,40 @@ function ProPlanChart({isLoadingAccount}: { isLoadingAccount: boolean }) {
         setSelectPeriod(period);
     }
 
-    if (isLoadingAccount) {
-        return <Card className="w-full space-y-8 h-[400px]">
-            {isLoadingAccount && (
-                <SkeletonTemplate>
-
-                </SkeletonTemplate>
-            )}
-        </Card>
-    }
-
     return (
         <Card className="w-full space-y-4">
             <div className="space-y-4 lg:space-y-0 lg:flex justify-between">
                 <div className="text-white text-xl font-light uppercase leading-normal flex items-center gap-1">
-                    ELITE PLAN $150K <QuestionIcon data={tooltipData}/>
+                    {account.planDetail.level} {account.planDetail.planType} PLAN <QuestionIcon data={tooltipData}/>
                 </div>
 
                 <div>
-                    {!isLoadingAccount && (
-                        <div className="relative w-full">
-                            <select
-                                className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
-                                defaultValue={selectPeriod.id}
-                                onChange={changeValue}>
-                                {periods.map(option => (
-                                    <option key={option.id} value={option.id}>
-                                        {option.text}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse"
-                                          x="0"
-                                          y="0"
-                                          width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_5269_2288)">
-                                        <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                                    </g>
-                                </svg>
-                            </div>
+                    <div className="relative w-full">
+                        <select
+                            className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
+                            defaultValue={selectPeriod.id}
+                            onChange={changeValue}>
+                            {periods.map(option => (
+                                <option key={option.id} value={option.id}>
+                                    {option.text}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse"
+                                      x="0"
+                                      y="0"
+                                      width="24" height="24">
+                                    <rect width="24" height="24" fill="#D9D9D9"/>
+                                </mask>
+                                <g mask="url(#mask0_5269_2288)">
+                                    <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                                </g>
+                            </svg>
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
 
@@ -250,7 +238,7 @@ const QuestionIcon: React.FC<QuestionIconProps> = ({data}) => {
             }>
             <Image
                 className="inline"
-                src={"/assets/images/question-icon.svg"}
+                src={"/assets/images/exclamation-icon.svg"}
                 alt={"question icon"}
                 width={24}
                 height={24}

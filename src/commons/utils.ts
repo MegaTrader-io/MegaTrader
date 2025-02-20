@@ -1,4 +1,28 @@
 import dayjs from "dayjs";
+import {PlanDetail, PlanType} from "@/commons/interfaces";
+
+
+export function getPlanDetail(planType: PlanType): PlanDetail {
+    const plans = {
+        'elite': {
+            level: '50K',
+            value: 50000,
+            planType: 'elite'
+        },
+        'growth': {
+            level: '100K',
+            value: 10000,
+            planType: 'growth'
+        },
+        'funded': {
+            level: '150K',
+            value: 15000,
+            planType: 'funded'
+        },
+    };
+
+    return plans[planType] as PlanDetail;
+}
 
 export function formatCurrency(value: number, decimal: number = 2) {
     try {

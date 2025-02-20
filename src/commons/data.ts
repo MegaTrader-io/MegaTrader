@@ -1,10 +1,12 @@
 import {Account, INotification, IUser, Period, TooltipData} from "@/commons/interfaces";
+import {getPlanDetail} from "@/commons/utils";
+
 
 export const accounts: Account[] = [
     {
         id: 1,
         name: 'S1SEP2586479132DSDS8',
-        accountType: 'basic_plan',
+        planDetail: getPlanDetail('elite'),
         status: 'inactive',
         overallPerformance: {
             currentBalance: 47850.30,
@@ -41,7 +43,7 @@ export const accounts: Account[] = [
     {
         id: 2,
         name: 'S1SEP2586479132DSDS9',
-        accountType: 'pro_plan',
+        planDetail: getPlanDetail('growth'),
         status: 'active',
         overallPerformance: {
             currentBalance: 103540.80,
@@ -77,7 +79,7 @@ export const accounts: Account[] = [
     {
         id: 3,
         name: 'S1SEP2586479132DSD10',
-        accountType: 'premium_plan',
+        planDetail: getPlanDetail('funded'),
         status: 'active',
         overallPerformance: {
             currentBalance: 159420.75,
@@ -114,7 +116,7 @@ export const accounts: Account[] = [
     {
         id: 4,
         name: 'S1SEP2586479132DSD11',
-        accountType: 'basic_plan',
+        planDetail: getPlanDetail('elite'),
         status: 'inactive',
         overallPerformance: {
             currentBalance: 47650.30,
@@ -162,7 +164,7 @@ export const accounts: Account[] = [
     {
         id: 5,
         name: 'S1SEP2586479132DSD12',
-        accountType: 'pro_plan',
+        planDetail: getPlanDetail('growth'),
         status: 'active',
         overallPerformance: {
             currentBalance: 104280.60,
@@ -210,7 +212,7 @@ export const accounts: Account[] = [
     {
         id: 6,
         name: 'S1SEP2586479132DSD13',
-        accountType: 'premium_plan',
+        planDetail: getPlanDetail('funded'),
         status: 'active',
         overallPerformance: {
             currentBalance: 159870.20,

@@ -21,7 +21,6 @@ import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
 import {useAccount} from "@/app/providers/AccountContext";
 import {SkeletonTemplate} from "@/components/Skeleton";
-import AccountPlanType from "@/app/(backoffice)/account-overview/_components/AccountPlanType";
 import AccountSummary from "@/app/(backoffice)/account-overview/_components/AccountSummary";
 import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
@@ -245,7 +244,6 @@ export default function AccountOverView() {
                 {/* desktop */}
                 <div className="hidden md:block w-full">
                     <div className='flex flex-col gap-1'>
-                        <AccountPlanType accountType={selectedAccount.accountType}/>
                         <Link href="#" className="text-[#ffd78a] text-base font-medium underline leading-normal">Manage
                             Subscription
                         </Link>
@@ -373,7 +371,7 @@ export default function AccountOverView() {
             <AccountSummary account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
         </div>
 
-        <ProPlanChart isLoadingAccount={isLoadingAccount}/>
+        <ProPlanChart account={selectedAccount}/>
         <FeatureContent isLoadingAccount={isLoadingAccount}/>
         <DailyJournal isLoadingAccount={isLoadingAccount}/>
     </>
