@@ -8,7 +8,6 @@ import {Account, Period, TooltipData} from "@/commons/interfaces";
 import dynamic from 'next/dynamic';
 import {ApexOptions} from "apexcharts";
 import Tooltip from "@/components/Tooltip";
-import {SkeletonTemplate} from "@/components/Skeleton";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 

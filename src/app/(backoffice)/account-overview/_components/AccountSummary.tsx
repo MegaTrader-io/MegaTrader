@@ -5,7 +5,6 @@ import Tooltip from "@/components/Tooltip";
 import {CheckCircleIcon, ExclamationCircleIcon} from "@heroicons/react/20/solid";
 import NumericStyle from "@/components/NumericStyle";
 import {formatCurrency} from "@/commons/utils";
-import Image from "next/image";
 import ConsistencyProgress from "@/app/(backoffice)/account-overview/_components/ConsistencyProgress";
 import {ObjectiveItemPoint} from "@/app/(backoffice)/account-overview/_components/ObjectiveItemPoint";
 import {ObjectiveItemMoney} from "@/app/(backoffice)/account-overview/_components/ObjectiveItemMoney";
