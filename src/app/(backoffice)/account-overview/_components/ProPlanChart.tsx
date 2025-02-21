@@ -19,6 +19,14 @@ const chartConfig = {
             name: "Pro Plan Revenue",
             data: [24850, 24600, 24300, 23950, 23500, 23250, 23000, 23250, 23500, 24000, 24300, 24550],
         },
+        {
+            name: "Upper Bound",
+            data: [24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250],
+        },
+        {
+            name: "Lower Bound",
+            data: [23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250],
+        },
     ],
     options: {
         chart: {
@@ -32,14 +40,20 @@ const chartConfig = {
         dataLabels: {
             enabled: false,
         },
-        colors: ["#FFE7B8"],
+        colors: ["#FFE7B8", "#24b8a6", "#FF4D4D"],
         stroke: {
             lineCap: "round",
             curve: "smooth",
-            width: 2,
+            width: [2, 2, 2],
         },
         markers: {
-            size: 0,
+            size: [0, 5, 5],
+            colors: ["#FF4D4D", "#24b8a6"],
+            strokeColors: 'transparent',
+            strokeWidth: 0
+        },
+        legend: {
+            show: false
         },
         xaxis: {
             axisTicks: {

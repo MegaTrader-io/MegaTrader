@@ -75,7 +75,8 @@ function AccountSummary({account}: { account: Account, isLoadingAccount: boolean
                                     className="text-stone-400"
                                     title={'Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday 3:10 PM CT)'}/>
                                 </div>,
-                                value: <NumericStyle positiveColor={'text-teal-400'}
+                                value: <NumericStyle positiveColor={'text-white'}
+                                                     negativeColor={'text-white'}
                                                      zeroColor={'text-teal-400'}
                                                      value={overallPerformance.weeklyNetPnL}/>
                             }

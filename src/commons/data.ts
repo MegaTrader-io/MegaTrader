@@ -11,7 +11,7 @@ export const accounts: Account[] = [
         overallPerformance: {
             currentBalance: 47850.30,
             totalProfit: {
-                value: -2149.70,
+                value: -1149.70,
                 percentage: -4.30
             },
             tradingDays: 4,
@@ -21,8 +21,8 @@ export const accounts: Account[] = [
         },
         objectives: {
             profitTarget: {
-                target: -2349.70,
-                value: 2500,
+                target: -2149.70,
+                value: 3000,
                 percentage: 0,
                 pass: false
             },

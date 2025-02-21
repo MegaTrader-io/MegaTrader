@@ -6,9 +6,10 @@ import TooltipArrow from "@/components/TooltipArrow";
 interface Props extends PropsWithChildren {
     content?: React.ReactNode | string,
     className?: string
+    contentClassName?: string
 }
 
-const Tooltip: React.FC<Props> = ({children, className, content}) => {
+const Tooltip: React.FC<Props> = ({children, className, contentClassName, content}) => {
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -45,7 +46,8 @@ const Tooltip: React.FC<Props> = ({children, className, content}) => {
                         onMouseEnter={handleOpen}
                         onMouseLeave={handleClose}
                     >
-                        <div className="w-[265px] text-stone-400 text-xs font-normal leading-tight">
+                        <div
+                            className={clsx('w-[265px] text-stone-400 text-xs font-normal leading-tight', contentClassName)}>
                             {content}
                         </div>
                         <TooltipArrow/>

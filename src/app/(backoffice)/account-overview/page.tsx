@@ -372,7 +372,7 @@ export default function AccountOverView() {
         </div>
 
         <ProPlanChart account={selectedAccount}/>
-        <FeatureContent isLoadingAccount={isLoadingAccount}/>
+        <FeatureContent/>
         <DailyJournal isLoadingAccount={isLoadingAccount}/>
     </>
 }

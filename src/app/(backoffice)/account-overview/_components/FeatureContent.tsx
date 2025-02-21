@@ -2,14 +2,12 @@
 
 import React, {useEffect, useState} from 'react';
 import Card from "@/components/Card";
-import QuestionIcon from "@/components/QuestionIcon";
 import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
 import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {formatCurrency} from "@/commons/utils";
 import Tooltip from "@/components/Tooltip";
 import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
-import Skeleton, {SkeletonTemplate} from "@/components/Skeleton";
 
 const Options = [
     {id: 'overview', label: 'Overview'},
@@ -19,7 +17,7 @@ const Options = [
     {id: 'micro_australian', label: 'Micro Australian'},
 ]
 
-function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
+function FeatureContent() {
     const [selection, setSelection] = useState('overview');
     const [chartMetrics, setChartMetrics] = useState({
         chart1: {value: 0, min: 0, max: 0},
@@ -48,16 +46,6 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
     const changeOption = (ev: React.ChangeEvent<HTMLSelectElement>) => {
         const value = ev.target.value;
         setSelection(value)
-    }
-
-    if (isLoadingAccount) {
-        return <Card className="w-full space-y-8 h-[400px]">
-            {isLoadingAccount && (
-                <SkeletonTemplate>
-
-                </SkeletonTemplate>
-            )}
-        </Card>
     }
 
     return (
@@ -127,7 +115,7 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
                             </>
                         </GenericExclamationTooltip>
 
-                        {!isLoadingAccount && (<TrendIndicator value={-127.16}/>)}
+                        <TrendIndicator value={-127.16}/>
                     </div>
                     <QuestionTooltip/>
                 </div>
@@ -136,7 +124,7 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
                     <div className="gap-2 flex flex-col">
                         <div className="flex gap-2 justify-center">
                             <span className="text-stone-400 text-base font-normal">Avg. Winning Trade</span>
-                            <GenericTooltip>
+                            <GenericTooltip classNameIcon={'text-stone-400'}>
                                 <>
                                     <div className="text-white text-xs font-bold leading-tight">Avg. Winning trade</div>
                                     <p className="leading-tight">
@@ -150,20 +138,20 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
                             </GenericTooltip>
                         </div>
 
-                        <Skeleton isLoading={isLoadingAccount}
-                                  className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
+                        <div
+                            className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
                             <GaugeSVG
                                 value={chartMetrics.chart1.value === 0 ? 0 : chartMetrics.chart1.value * 100 / chartMetrics.chart1.max}
                                 minValue={formatCurrency(chartMetrics.chart1.min)}
                                 maxValue={formatCurrency(chartMetrics.chart1.max)}
                                 centerValue={`${formatCurrency(chartMetrics.chart1.value)}`}
                             />
-                        </Skeleton>
+                        </div>
                     </div>
                     <div className="gap-2 flex  flex-col">
                         <div className="flex gap-2 justify-center">
                             <span className="text-stone-400 text-base font-normal">Winning Trade %</span>
-                            <GenericTooltip>
+                            <GenericTooltip classNameIcon={'text-stone-400'}>
                                 <>
                                     <div className="text-white text-xs font-bold leading-tight">Winning trade %</div>
                                     <p className="leading-tight">
@@ -177,20 +165,20 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
                                 </>
                             </GenericTooltip>
                         </div>
-                        <Skeleton isLoading={isLoadingAccount}
-                                  className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
+                        <div
+                            className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
                             <GaugeSVG
                                 value={chartMetrics.chart2.value}
                                 minValue={chartMetrics.chart2.min.toString()}
                                 maxValue={chartMetrics.chart2.max.toString()}
                                 centerValue={`${chartMetrics.chart2.value.toFixed(0)}%`}
                             />
-                        </Skeleton>
+                        </div>
                     </div>
                     <div className="gap-2 flex  flex-col">
                         <div className="flex gap-2 justify-center">
                             <span className="text-stone-400 text-base font-normal">Avg. Losing Trade</span>
-                            <GenericTooltip>
+                            <GenericTooltip classNameIcon={'text-stone-400'}>
                                 <>
                                     <div className="text-white text-xs font-bold leading-tight">Avg. Losing Trade</div>
                                     <p className="leading-tight">
@@ -205,15 +193,15 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
                             </GenericTooltip>
                         </div>
 
-                        <Skeleton isLoading={isLoadingAccount}
-                                  className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
+                        <div
+                            className="h-[288px] w-[288px] mx-auto justify-center items-center flex">
                             <GaugeSVG
                                 value={Math.abs(chartMetrics.chart3.value === 0 ? 0 : chartMetrics.chart3.value * 100 / chartMetrics.chart3.max)}
                                 minValue={formatCurrency(chartMetrics.chart3.min)}
                                 maxValue={formatCurrency(chartMetrics.chart3.max)}
                                 centerValue={`${formatCurrency(chartMetrics.chart3.value * -1)}`}
                             />
-                        </Skeleton>
+                        </div>
                     </div>
                 </div>
 
@@ -246,7 +234,7 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
                         <div className="flex items-center">
                             <div
                                 className="text-white text-xs font-medium uppercase leading-normal">
-                                {isLoadingAccount ? '...' : '1:1.52'}
+                                1:1.52
                             </div>
                         </div>
                     </div>
@@ -257,14 +245,17 @@ function FeatureContent({isLoadingAccount}: { isLoadingAccount: boolean }) {
 }
 
 
-function GenericTooltip({children}: { children?: React.ReactElement }) {
+function GenericTooltip({children, classNameIcon = 'text-white'}: {
+    classNameIcon?: string,
+    children?: React.ReactElement
+}) {
     return (
         <Tooltip
             content={
                 <div className="space-y-2">
                     {children}
                 </div>}>
-            <ExclamationIcon className="text-[#d9d9d9]"/>
+            <ExclamationIcon className={classNameIcon}/>
         </Tooltip>
     )
 }
@@ -287,19 +278,22 @@ function QuestionTooltip() {
                     </p>
                 </div>
             }>
-            <QuestionIcon className="text-white"/>
+            <ExclamationIcon className="text-white"/>
         </Tooltip>
     );
 }
 
-function GenericExclamationTooltip({children}: { children?: React.ReactElement }) {
+function GenericExclamationTooltip({children, classNameIcon = 'text-white'}: {
+    children?: React.ReactElement,
+    classNameIcon?: string,
+}) {
     return (
         <Tooltip
             content={
                 <div className="space-y-2">
                     {children}
                 </div>}>
-            <ExclamationIcon className="text-white"/>
+            <ExclamationIcon className={classNameIcon}/>
         </Tooltip>
     )
 }

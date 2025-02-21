@@ -23,7 +23,7 @@ function ConsistencyProgress({account}: { account: Account }) {
                         <div className="text-white text-base font-light leading-normal flex items-center gap-2">
                             <span>Consistency</span>
                             <div className="inline">
-                                <QuestionIcon content={
+                                <QuestionIcon contentClassName={'!w-[300px]'} content={
                                     <div className="space-y-4">
                                         <div className="h-12 justify-start items-center gap-2 inline-flex">
                                             <div
