@@ -17,8 +17,7 @@ const Options: { id: string, label: string }[] = [
     {id: 'e_mini_russell_2000', label: 'E-mini Russell 2000'},
     {id: 'e_mini_natural_gas', label: 'E-mini Natural Gas'},
     {id: 'nikkei_nkd', label: 'Nikkei NKD'},
-    {id: 'nike_e', label: 'Nike E'},
-    // {id: 'australian_dollar', label: 'Australian Dollar'},
+    {id: 'australian_dollar', label: 'Australian Dollar'},
 ];
 
 function FeatureContent() {
