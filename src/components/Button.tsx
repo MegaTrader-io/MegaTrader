@@ -11,6 +11,7 @@ interface ButtonProps extends PropsWithChildren {
     iconPosition?: IconPosition;
     size?: 'md' | 'sm';
     onClick?: () => void;
+    id?: string;
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -23,10 +24,12 @@ export const Button: FC<ButtonProps> = ({
                                             icon,
                                             iconPosition,
                                             size = 'md',
-                                            onClick
+                                            onClick,
+                                            id
                                         }) => {
     return (
         <BaseButton
+            id={id}
             onClick={onClick}
             type={type}
             variant={variant}

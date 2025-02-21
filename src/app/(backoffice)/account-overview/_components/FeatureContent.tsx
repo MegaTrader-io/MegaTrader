@@ -10,7 +10,7 @@ import Tooltip from "@/components/Tooltip";
 import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 
-const Options = [
+const Options: { id: string, label: string }[] = [
     {id: 'overview', label: 'Overview'},
     {id: 'e_mini_sp_500', label: 'E-mini S&P 500'},
     {id: 'e_mini_nasdaq_100', label: 'E-mini NASDAQ 100'},
@@ -21,7 +21,9 @@ const Options = [
 ];
 
 function FeatureContent() {
-    const [selection, setSelection] = useState('overview');
+    const [selection, setSelection] = useState<string>('overview');
+    const [showLeftGradient, setShowLeftGradient] = useState(false);
+    const [showRightGradient, setShowRightGradient] = useState(false);
     const [chartMetrics, setChartMetrics] = useState({
         chart1: {value: 0, min: 0, max: 0},
         chart2: {value: 0, min: 0, max: 0},
@@ -29,17 +31,34 @@ function FeatureContent() {
     })
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-    const scrollLeft = () => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({left: -150, behavior: "smooth"});
-        }
-    };
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!scrollContainerRef.current) return;
+            const {scrollLeft, scrollWidth, clientWidth} = scrollContainerRef.current;
+            setShowLeftGradient(scrollLeft > 0);
+            setShowRightGradient(scrollLeft + clientWidth < scrollWidth);
+        };
 
-    const scrollRight = () => {
+        let observer: MutationObserver;
+
         if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({left: 150, behavior: "smooth"});
+            observer = new MutationObserver(handleScroll);
+            observer.observe(scrollContainerRef.current, {childList: true, subtree: true});
+            scrollContainerRef.current.addEventListener('scroll', handleScroll);
         }
-    };
+
+        handleScroll();
+
+        return () => {
+            if (observer) {
+                observer.disconnect();
+            }
+
+            if (scrollContainerRef.current) {
+                scrollContainerRef.current.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         const {chart1, chart2, chart3} = (function () {
@@ -59,6 +78,36 @@ function FeatureContent() {
         setChartMetrics({chart1, chart2, chart3})
     }, [selection])
 
+    const scrollLeft = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({left: -150, behavior: "smooth"});
+        }
+    };
+
+    const scrollRight = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({left: 150, behavior: "smooth"});
+        }
+    };
+
+    const handleButtonClick = (optionId: string) => {
+        setSelection(optionId);
+        if (!scrollContainerRef.current) return;
+
+        const button = document.getElementById(`btn-${optionId}`);
+        if (!button) return;
+
+        const container = scrollContainerRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const buttonRect = button.getBoundingClientRect();
+
+        if (buttonRect.left < containerRect.left) {
+            container.scrollBy({left: buttonRect.left - containerRect.left - 10, behavior: "smooth"});
+        } else if (buttonRect.right > containerRect.right) {
+            container.scrollBy({left: buttonRect.right - containerRect.right + 10, behavior: "smooth"});
+        }
+    };
+
     const changeOption = (ev: React.ChangeEvent<HTMLSelectElement>) => {
         const value = ev.target.value;
         setSelection(value)
@@ -67,14 +116,19 @@ function FeatureContent() {
     return (
         <div className="w-full space-y-2 lg:space-y-2">
             <div className="hidden lg:flex">
-                <div className="w-full flex items-center space-x-2 rounded-xl">
+                <div className="w-full flex items-center space-x-2 rounded-xl relative">
                     <Button
                         variant={'dark'}
                         onClick={scrollLeft}
-                        className="p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                        icon={<ChevronLeftIcon className="h-6 w-6 text-white"/>}
+                        className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
                     >
-                        <ChevronLeftIcon className="h-5 w-5 text-white"/>
                     </Button>
+
+                    {showLeftGradient && (
+                        <div
+                            className="w-12 h-full bg-gradient-to-l from-transparent to-[#131210] absolute left-[48px] z-10"></div>
+                    )}
 
                     <div
                         ref={scrollContainerRef}
@@ -82,9 +136,10 @@ function FeatureContent() {
                     >
                         {Options.map(option => (
                             <Button
+                                id={`btn-${option.id}`}
                                 variant={option.id === selection ? "primary" : 'dark'}
                                 key={option.id}
-                                onClick={() => setSelection(option.id)}
+                                onClick={() => handleButtonClick(option.id)}
                                 className={`whitespace-nowrap`}
                             >
                                 {option.label}
@@ -92,12 +147,17 @@ function FeatureContent() {
                         ))}
                     </div>
 
+                    {showRightGradient && (
+                        <div
+                            className="w-12 h-full bg-gradient-to-r from-transparent to-[#131210] absolute right-[56px]"></div>
+                    )}
+
                     <Button
                         variant={'dark'}
+                        icon={<ChevronRightIcon className="h-6 w-6 text-white"/>}
                         onClick={scrollRight}
-                        className="p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                        className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
                     >
-                        <ChevronRightIcon className="h-5 w-5 text-white"/>
                     </Button>
                 </div>
             </div>

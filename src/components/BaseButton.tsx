@@ -14,6 +14,7 @@ interface ButtonProps extends PropsWithChildren {
     iconPosition?: IconPosition;
     disabled?: boolean;
     onClick?: () => void
+    id?: string
 }
 
 const Content = ({
@@ -52,6 +53,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
                                                                iconPosition,
                                                                onClick,
                                                                children,
+                                                               id
                                                            }, ref) => {
     const baseStyles = className + ' btn-base';
     let iconClassName = '';
@@ -102,6 +104,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 
     return (
         <button
+            id={id}
             ref={ref}
             type={type}
             onClick={onClick}
