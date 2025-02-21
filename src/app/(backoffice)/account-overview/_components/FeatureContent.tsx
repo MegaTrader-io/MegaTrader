@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
 import ExclamationIcon from "@/components/ExclamationIcon";
@@ -8,14 +8,17 @@ import GaugeSVG from "@/app/(backoffice)/account-overview/_components/GaugeSVG";
 import {formatCurrency} from "@/commons/utils";
 import Tooltip from "@/components/Tooltip";
 import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
+import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 
 const Options = [
     {id: 'overview', label: 'Overview'},
     {id: 'e_mini_sp_500', label: 'E-mini S&P 500'},
-    {id: 'british_pound', label: 'British pound'},
-    {id: 'micro_e_mini_nasdaq_100', label: 'Micro E-mini nasdaq 100'},
-    {id: 'micro_australian', label: 'Micro Australian'},
-]
+    {id: 'e_mini_nasdaq_100', label: 'E-mini NASDAQ 100'},
+    {id: 'e_mini_russell_2000', label: 'E-mini Russell 2000'},
+    {id: 'e_mini_natural_gas', label: 'E-mini Natural Gas'},
+    {id: 'nikkei_nkd', label: 'Nikkei NKD'},
+    {id: 'australian_dollar', label: 'Australian Dollar'},
+];
 
 function FeatureContent() {
     const [selection, setSelection] = useState('overview');
@@ -24,6 +27,19 @@ function FeatureContent() {
         chart2: {value: 0, min: 0, max: 0},
         chart3: {value: 0, min: 0, max: 0},
     })
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    const scrollLeft = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({left: -150, behavior: "smooth"});
+        }
+    };
+
+    const scrollRight = () => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({left: 150, behavior: "smooth"});
+        }
+    };
 
     useEffect(() => {
         const {chart1, chart2, chart3} = (function () {
@@ -49,17 +65,41 @@ function FeatureContent() {
     }
 
     return (
-        <div className="w-full space-y-2 lg:space-y-4">
-            <div className="hidden lg:flex gap-2">
-                {Options.map(option => (
-                    <Button key={option.id}
-                            variant={option.id === selection ? "primary" : 'dark'}
-                            onClick={() => {
-                                setSelection(option.id)
-                            }}>
-                        {option.label}
+        <div className="w-full space-y-2 lg:space-y-2">
+            <div className="hidden lg:flex">
+                <div className="w-full flex items-center space-x-2 rounded-xl">
+                    <Button
+                        variant={'dark'}
+                        onClick={scrollLeft}
+                        className="p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                    >
+                        <ChevronLeftIcon className="h-5 w-5 text-white"/>
                     </Button>
-                ))}
+
+                    <div
+                        ref={scrollContainerRef}
+                        className="flex gap-2 overflow-x-auto scrollbar-hide px-0.5 py-1"
+                    >
+                        {Options.map(option => (
+                            <Button
+                                variant={option.id === selection ? "primary" : 'dark'}
+                                key={option.id}
+                                onClick={() => setSelection(option.id)}
+                                className={`whitespace-nowrap`}
+                            >
+                                {option.label}
+                            </Button>
+                        ))}
+                    </div>
+
+                    <Button
+                        variant={'dark'}
+                        onClick={scrollRight}
+                        className="p-2 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                    >
+                        <ChevronRightIcon className="h-5 w-5 text-white"/>
+                    </Button>
+                </div>
             </div>
 
             <div className="lg:hidden relative w-full">
