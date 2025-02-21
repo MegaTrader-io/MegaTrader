@@ -17,13 +17,15 @@ const Options: { id: string, label: string }[] = [
     {id: 'e_mini_russell_2000', label: 'E-mini Russell 2000'},
     {id: 'e_mini_natural_gas', label: 'E-mini Natural Gas'},
     {id: 'nikkei_nkd', label: 'Nikkei NKD'},
-    {id: 'australian_dollar', label: 'Australian Dollar'},
+    {id: 'nike_e', label: 'Nike E'},
+    // {id: 'australian_dollar', label: 'Australian Dollar'},
 ];
 
 function FeatureContent() {
     const [selection, setSelection] = useState<string>('overview');
     const [showLeftGradient, setShowLeftGradient] = useState(false);
     const [showRightGradient, setShowRightGradient] = useState(false);
+    const [showArrows, setShowArrows] = useState(false);
     const [chartMetrics, setChartMetrics] = useState({
         chart1: {value: 0, min: 0, max: 0},
         chart2: {value: 0, min: 0, max: 0},
@@ -32,31 +34,30 @@ function FeatureContent() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const handleScroll = () => {
+        const handleResize = () => {
             if (!scrollContainerRef.current) return;
-            const {scrollLeft, scrollWidth, clientWidth} = scrollContainerRef.current;
-            setShowLeftGradient(scrollLeft > 0);
-            setShowRightGradient(scrollLeft + clientWidth < scrollWidth);
+            const container = scrollContainerRef.current;
+            setShowArrows(container.scrollWidth > container.clientWidth);
+            setShowLeftGradient(container.scrollLeft > 0);
+            setShowRightGradient(container.scrollLeft + container.clientWidth < container.scrollWidth);
         };
 
-        let observer: MutationObserver;
+        const handleScroll = handleResize;
 
-        if (scrollContainerRef.current) {
-            observer = new MutationObserver(handleScroll);
-            observer.observe(scrollContainerRef.current, {childList: true, subtree: true});
-            scrollContainerRef.current.addEventListener('scroll', handleScroll);
-        }
+        const container = scrollContainerRef.current;
+        if (!container) return;
 
-        handleScroll();
+        const observer = new MutationObserver(handleResize);
+        observer.observe(container, {childList: true, subtree: true});
+        container.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleResize);
+
+        handleResize();
 
         return () => {
-            if (observer) {
-                observer.disconnect();
-            }
-
-            if (scrollContainerRef.current) {
-                scrollContainerRef.current.removeEventListener('scroll', handleScroll);
-            }
+            observer.disconnect();
+            container.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleResize);
         };
     }, []);
 
@@ -116,14 +117,16 @@ function FeatureContent() {
     return (
         <div className="w-full space-y-2 lg:space-y-2">
             <div className="hidden lg:flex">
-                <div className="w-full flex items-center space-x-2 rounded-xl relative">
-                    <Button
-                        variant={'dark'}
-                        onClick={scrollLeft}
-                        icon={<ChevronLeftIcon className="h-6 w-6 text-white"/>}
-                        className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
-                    >
-                    </Button>
+                <div className="w-full flex items-center justify-between space-x-2 rounded-xl relative">
+                    {showArrows && (
+                        <Button
+                            variant={'dark'}
+                            onClick={scrollLeft}
+                            icon={<ChevronLeftIcon className="h-6 w-6 text-white"/>}
+                            className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                        >
+                        </Button>
+                    )}
 
                     {showLeftGradient && (
                         <div
@@ -132,7 +135,7 @@ function FeatureContent() {
 
                     <div
                         ref={scrollContainerRef}
-                        className="flex gap-2 overflow-x-auto scrollbar-hide px-0.5 py-1"
+                        className="flex gap-2 overflow-x-auto scrollbar-hide px-0.5 py-1 w-full"
                     >
                         {Options.map(option => (
                             <Button
@@ -152,13 +155,15 @@ function FeatureContent() {
                             className="w-12 h-full bg-gradient-to-r from-transparent to-[#131210] absolute right-[56px]"></div>
                     )}
 
-                    <Button
-                        variant={'dark'}
-                        icon={<ChevronRightIcon className="h-6 w-6 text-white"/>}
-                        onClick={scrollRight}
-                        className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
-                    >
-                    </Button>
+                    {showArrows && (
+                        <Button
+                            variant={'dark'}
+                            icon={<ChevronRightIcon className="h-6 w-6 text-white"/>}
+                            onClick={scrollRight}
+                            className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                        >
+                        </Button>
+                    )}
                 </div>
             </div>
 
