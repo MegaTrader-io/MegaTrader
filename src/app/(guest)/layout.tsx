@@ -14,10 +14,9 @@ const Layout = ({children,}: {
             </div>
         </div>
         <div className="relative hidden w-0 flex-1 lg:block bg-[#1e1e1e] pl-[120px] overflow-hidden">
-            <Badge className="mt-[91px] mb-[17px]">Start earning up to 90% profit</Badge>
+            <Badge className="mt-[91px] mb-[17px] !font-bold">Start earning up to 90% profit</Badge>
             <p className="text-stone-400 text-base font-normal leading-normal max-w-[434px]">
-                No minimum trading days on your evaluation. Unlocking opportunities and maximizing potential in the
-                dynamic world of trading.
+                Trade smarter with MegaTrader—achieve your goals within our structured evaluation period. Unlock opportunities and maximize your potential in the dynamic world of trading.
             </p>
 
             <div
