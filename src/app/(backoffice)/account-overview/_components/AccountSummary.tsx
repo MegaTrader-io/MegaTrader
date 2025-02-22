@@ -40,7 +40,7 @@ function ExclamationTooltip({className = 'text-white', title}: { className?: str
 }
 
 
-function AccountSummary({account}: { account: Account, isLoadingAccount: boolean }) {
+function AccountSummary({account}: { account: Account}) {
     const {overallPerformance} = account;
 
     return (

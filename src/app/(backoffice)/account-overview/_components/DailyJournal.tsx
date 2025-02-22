@@ -11,7 +11,7 @@ import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/Popov
 import IconSurvey from "@/app/(backoffice)/account-overview/_components/IconSurvey";
 import {SkeletonTemplate} from "@/components/Skeleton";
 
-function DailyJournal({isLoadingAccount}: { isLoadingAccount: boolean }) {
+function DailyJournal() {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<JournalEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -40,7 +40,7 @@ function DailyJournal({isLoadingAccount}: { isLoadingAccount: boolean }) {
             .then(() => {
                 void fetchJournalData();
             })
-    }, [isLoadingAccount]);
+    }, []);
 
     const handlePageChange = (page: number) => {
         fetchJournalData(page)
@@ -48,14 +48,6 @@ function DailyJournal({isLoadingAccount}: { isLoadingAccount: boolean }) {
 
             })
     };
-
-    if (isLoadingAccount) {
-        return <Card className="w-full space-y-8 h-[400px]">
-            {isLoadingAccount && (
-                <SkeletonTemplate></SkeletonTemplate>
-            )}
-        </Card>
-    }
 
     return (
         <Card className="w-full space-y-8">

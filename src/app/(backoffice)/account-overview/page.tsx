@@ -20,13 +20,12 @@ import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
 import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import {EllipsisHorizontalIcon} from "@heroicons/react/24/solid";
 import {useAccount} from "@/app/providers/AccountContext";
-import {SkeletonTemplate} from "@/components/Skeleton";
 import AccountSummary from "@/app/(backoffice)/account-overview/_components/AccountSummary";
 import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
 
 export default function AccountOverView() {
-    const {selectedAccount, setSelectedAccount, isLoadingAccount} = useAccount();
+    const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
     const [modalType, setModalType] = useState<'breach_modal' | 'unpaid_modal' | 'congratulations_modal' | null>(null);
     const passwordMaskRef = useRef<HTMLDivElement>(null);
 
@@ -35,17 +34,22 @@ export default function AccountOverView() {
     ]);
 
     function changeAccount(account: Account) {
-        setSelectedAccount(account);
 
-        if (account.id === 1 || account.id === 4) {
-            if (Math.floor(Math.random() * (20 - 1) + 1) % 2 === 0) {
-                setModalType('breach_modal')
-            } else {
-                setModalType('unpaid_modal')
+        fetchAccount(account).then(() => {
+            setSelectedAccount(account);
+
+            if (account.id === 1 || account.id === 4) {
+                if (Math.floor(Math.random() * (20 - 1) + 1) % 2 === 0) {
+                    setModalType('breach_modal')
+                } else {
+                    setModalType('unpaid_modal')
+                }
+            } else if (account.id === 3) {
+                setModalType('congratulations_modal')
             }
-        } else if (account.id === 3) {
-            setModalType('congratulations_modal')
-        }
+        })
+
+
     }
 
     function handleCloseDialog() {
@@ -298,20 +302,13 @@ export default function AccountOverView() {
                             width={133}
                             height={40}/>
 
-                        {isLoadingAccount && (<div className="min-w-[145px] h-[24px]">
-                            <SkeletonTemplate/>
-                        </div>)}
-
-                        {!isLoadingAccount && (
-                            <Button variant={'dark'}
-                                    iconPosition='left'
-                                    size='sm'
-                                    className="w-full sm:w-auto"
-                                    icon={<ArrowUpRightIcon className="text-white"/>}>
-                                LUNCH PLATFORM
-                            </Button>
-                        )}
-
+                        <Button variant={'dark'}
+                                iconPosition='left'
+                                size='sm'
+                                className="w-full sm:w-auto"
+                                icon={<ArrowUpRightIcon className="text-white"/>}>
+                            LUNCH PLATFORM
+                        </Button>
                     </div>
 
                     <div className="sm:text-right lg:inline-flex lg:items-center">
@@ -322,20 +319,12 @@ export default function AccountOverView() {
                                 Login :
                             </div>
 
-                            {isLoadingAccount && (<div className="min-w-[120px] h-[24px]">
-                                <SkeletonTemplate/>
-                            </div>)}
+                            <div
+                                className="text-stone-400 text-base font-light leading-normal">
+                                {credentials.login}
+                            </div>
 
-                            {!isLoadingAccount && (
-                                <>
-                                    <div
-                                        className="text-stone-400 text-base font-light leading-normal">
-                                        {credentials.login}
-                                    </div>
-
-                                    <CopyButton value={credentials.login}/>
-                                </>
-                            )}
+                            <CopyButton value={credentials.login}/>
                         </div>
 
                         <div className="gap-2 sm:pl-4 pr-0 py-2 inline-flex items-center text-white">
@@ -344,22 +333,14 @@ export default function AccountOverView() {
                                 Password :
                             </div>
 
-                            {isLoadingAccount && (<div className="min-w-[120px] h-[24px]">
-                                <SkeletonTemplate/>
-                            </div>)}
+                            <div
+                                ref={passwordMaskRef}
+                                className="text-stone-400 text-base font-light leading-normal">
+                                ••••••••••••
+                            </div>
 
-                            {!isLoadingAccount && (
-                                <>
-                                    <div
-                                        ref={passwordMaskRef}
-                                        className="text-stone-400 text-base font-light leading-normal">
-                                        ••••••••••••
-                                    </div>
-
-                                    <CopyButton value={credentials.password}/>
-                                    <EyeComponent type={currentMask} onChange={toggleMask}/>
-                                </>
-                            )}
+                            <CopyButton value={credentials.password}/>
+                            <EyeComponent type={currentMask} onChange={toggleMask}/>
                         </div>
                     </div>
                 </div>
@@ -368,11 +349,11 @@ export default function AccountOverView() {
 
         <div
             className="w-full">
-            <AccountSummary account={selectedAccount} isLoadingAccount={isLoadingAccount}/>
+            <AccountSummary account={selectedAccount}/>
         </div>
 
         <ProPlanChart account={selectedAccount}/>
         <FeatureContent/>
-        <DailyJournal isLoadingAccount={isLoadingAccount}/>
+        <DailyJournal/>
     </>
 }
