@@ -9,7 +9,7 @@ const LoadingOverlay = () => {
     if (!isLoading) return null;
 
     return (
-        <div className="fixed inset-0 bg-[#131210]/90  flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-[#131210]/90  flex justify-center items-center z-[9999999]">
             <div className="loader"></div>
         </div>
     );
