@@ -7,16 +7,17 @@ import React, {useState, useEffect} from "react";
 import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import Alert from "@/components/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";
+import {useLoading} from "@/context/LoadingContext";
 
 export default function ChangePassword() {
     const router = useRouter();
+    const {setLoading, isLoading} = useLoading();
     const [form, setForm] = useState({
         email: "",
         password: "",
         confirm_password: "",
     });
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -45,11 +46,11 @@ export default function ChangePassword() {
             return;
         }
 
-        setIsSubmitting(true);
+        setLoading(true);
         setFieldErrors({});
 
         setTimeout(() => {
-            setIsSubmitting(false);
+            setLoading(false);
 
             if (form.email === TARGET_EMAIL) {
                 router.push(
@@ -108,15 +109,15 @@ export default function ChangePassword() {
 
                 <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                     className={`h-12 w-full px-4 disabled:opacity-30 py-3 rounded-xl border-2 justify-center items-center gap-2 inline-flex ${
-                        isSubmitting
+                        isLoading
                             ? "bg-gray-500 border-gray-500 cursor-not-allowed"
                             : "bg-mgt-primary border-mgt-primary"
                     }`}
                 >
                     <div className="text-slate-950 text-base font-normal uppercase leading-normal">
-                        {isSubmitting ? "Loading..." : "Update"}
+                        Update
                     </div>
                 </button>
 

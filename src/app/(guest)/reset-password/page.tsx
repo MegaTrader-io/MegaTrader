@@ -6,13 +6,14 @@ import React, {useState, useEffect} from "react";
 import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import Alert from "@/components/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";
+import {useLoading} from "@/context/LoadingContext";
 
 export default function ResetPassword() {
+    const {setLoading, isLoading} = useLoading();
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
     const [successMessage, setSuccessMessage] = useState('');
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [debouncedEmail, setDebouncedEmail] = useState(email);
 
     function validateEmail(email: string): boolean {
@@ -54,11 +55,11 @@ export default function ResetPassword() {
             return;
         }
 
-        setIsSubmitting(true);
+        setLoading(true)
         setFieldErrors({});
 
         setTimeout(() => {
-            setIsSubmitting(false);
+            setLoading(false)
 
             if (email === TARGET_EMAIL) {
                 setEmail('')
@@ -114,9 +115,9 @@ export default function ResetPassword() {
 
                 <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                     className={`h-12 w-full px-4 disabled:opacity-30 py-3 rounded-xl border-2 justify-center items-center gap-2 inline-flex ${
-                        isSubmitting
+                        isLoading
                             ? "bg-gray-500 border-gray-500 cursor-not-allowed"
                             : "bg-mgt-primary border-mgt-primary"
                     }`}
@@ -124,7 +125,7 @@ export default function ResetPassword() {
                     <div
                         className="text-slate-950 text-base font-normal uppercase leading-normal"
                     >
-                        {isSubmitting ? "Loading..." : "Send email"}
+                        Send email
                     </div>
                 </button>
 
