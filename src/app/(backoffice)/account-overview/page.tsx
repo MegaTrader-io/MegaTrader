@@ -196,15 +196,13 @@ export default function AccountOverView() {
                     </div>
 
                     <div
-                        className="text-center text-white text-5xl font-medium uppercase leading-[60px]">Congratulations!
+                        className="text-center text-white text-5xl font-medium uppercase leading-[60px]">CONGRATS!
                     </div>
                     <div
-                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your account has
-                        passed the evaluation
+                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your account has passed the evaluation
                     </div>
                     <div
-                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to
-                        continue trading, you need to activate it.
+                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to continue trading, you need to activate it.
                     </div>
                 </div>
 
@@ -311,7 +309,7 @@ export default function AccountOverView() {
                         </Button>
                     </div>
 
-                    <div className="sm:text-right lg:inline-flex lg:items-center">
+                    <div className="text-left xs:text-right lg:inline-flex lg:items-center">
                         <div
                             className="gap-2 pl-0 pr-4 py-2 sm:border-r border-neutral-700 inline-flex items-center relative">
                             <div
