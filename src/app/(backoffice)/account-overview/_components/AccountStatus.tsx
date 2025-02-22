@@ -17,7 +17,11 @@ function AccountStatus({status, className = '', circleOnly = false, size = 'md'}
 
     if (circleOnly) {
         const bgColor = variantColor[status] === 'error' ? 'bg-rose-500' : `bg-${variantColor[status]}`;
-        return <div className={clsx('w-2 h-2 rounded-full', [bgColor])}></div>
+        return <span className="relative flex justify-between items-center w-2 h-2">
+  <span
+      className={clsx('animate-ping absolute inline-flex h-full w-full rounded-full opacity-100', [bgColor])}></span>
+  <span className={clsx('relative inline-flex rounded-full w-2 h-2', [bgColor])}></span>
+</span>
     }
 
     return (
