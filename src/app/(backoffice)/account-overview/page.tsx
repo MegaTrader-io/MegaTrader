@@ -58,7 +58,7 @@ export default function AccountOverView() {
 
     return <>
         <Dialog
-            className="w-[600px]"
+            className="w-[calc(100vw-32px)] sm:w-[600px]"
             showModal={modalType === 'breach_modal'}
             onClose={handleCloseDialog}
             title={'BREACH ALERT'}>
@@ -93,14 +93,14 @@ export default function AccountOverView() {
                     <Button variant={'primary'} onClick={() => {
                         setModalType(null)
                     }}>
-                        ACTIVATE ACCOUNT
+                        RESET ACCOUNT
                     </Button>
                 </div>
             </div>
         </Dialog>
 
         <Dialog
-            className="w-[600px]"
+            className="w-[calc(100vw-32px)] sm:w-[600px]"
             showModal={modalType === 'unpaid_modal'}
             onClose={handleCloseDialog}
             title={'UNPAID ALERT'}>
@@ -142,7 +142,7 @@ export default function AccountOverView() {
         </Dialog>
 
         <Dialog
-            className="w-[600px]"
+            className="w-[calc(100vw-32px)] sm:w-[600px]"
             showModal={modalType === 'congratulations_modal'}
             onClose={handleCloseDialog}
             title={'FUNDED ALERT'}>
