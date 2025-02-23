@@ -199,10 +199,12 @@ export default function AccountOverView() {
                         className="text-center text-white text-5xl font-medium uppercase leading-[60px]">CONGRATS!
                     </div>
                     <div
-                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your account has passed the evaluation
+                        className="text-center text-white text-2xl font-medium  uppercase leading-7">Your account has
+                        passed the evaluation
                     </div>
                     <div
-                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to continue trading, you need to activate it.
+                        className="text-center text-stone-400 text-base font-medium  leading-normal">In order to
+                        continue trading, you need to activate it.
                     </div>
                 </div>
 
@@ -219,7 +221,7 @@ export default function AccountOverView() {
 
         <div className="w-full">
             <Card className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-4 items-center w-full">
                     <DropdownDialog
                         items={accounts}
                         value={selectedAccount}
@@ -227,9 +229,10 @@ export default function AccountOverView() {
                         renderButtonContent={(item) => (
                             <button
                                 className="rounded-xl p-3 w-full h-12 bg-stone-800 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800">
-                                <div className="grid grid-cols-[auto_auto_24px] gap-2 items-center">
+                                <div className="grid grid-cols-[8px_auto_24px] gap-2 items-center">
                                     <AccountStatus status={item.status} circleOnly={true}/>
-                                    <div className="text-stone-400 text-base font-normal truncate">{item.name}</div>
+                                    <div
+                                        className="text-left text-stone-400 text-base font-normal truncate">{item.name}</div>
                                     <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
                                 </div>
                             </button>
