@@ -101,35 +101,37 @@ export default function Login() {
                     />
                 </div>
 
-                <div>
-                    <InputText
-                        type="password"
-                        placeholder="Password"
-                        name="password"
-                        value={form.password}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setForm(prev => ({...prev, [e.target.name]: value}));
-                        }}
-                        errorMessage={fieldErrors.password}
-                    />
+                <div
+                    className="flex-col space-y-4 md:grid md:grid-cols-2 md:items-center md:space-y-0 md:gap-4 lg:flex">
+                    <div className="w-full">
+                        <InputText
+                            type="password"
+                            placeholder="Password"
+                            name="password"
+                            value={form.password}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setForm(prev => ({...prev, [e.target.name]: value}));
+                            }}
+                            errorMessage={fieldErrors.password}
+                        />
+                    </div>
+
+                    <div className="w-full">
+                        <InputText
+                            type="password"
+                            placeholder="Confirm Password"
+                            name="confirm_password"
+                            value={form.confirm_password}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setForm(prev => ({...prev, [e.target.name]: value}));
+                            }}
+                            errorMessage={fieldErrors.confirm_password}
+                        />
+                    </div>
+
                 </div>
-
-
-                <div>
-                    <InputText
-                        type="password"
-                        placeholder="Confirm Password"
-                        name="confirm_password"
-                        value={form.confirm_password}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setForm(prev => ({...prev, [e.target.name]: value}));
-                        }}
-                        errorMessage={fieldErrors.confirm_password}
-                    />
-                </div>
-
 
                 <div className="inline-flex gap-2 items-center w-full">
                     <InputCheckbox
@@ -163,7 +165,7 @@ export default function Login() {
                     }`}
                 >
                     <div
-                        className="text-slate-950 text-base font-normal uppercase leading-normal"
+                        className="text-slate-950 text-base font-medium uppercase leading-normal"
                     >
                         Register
                     </div>
@@ -182,7 +184,7 @@ export default function Login() {
                     href="/auth/login"
                     className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex"
                 >
-                    <div className="text-neutral-50 text-base font-normal uppercase leading-normal">
+                    <div className="text-neutral-50 text-base font-medium uppercase leading-normal">
                         Go to Login
                     </div>
                 </Link>

@@ -123,7 +123,7 @@ export default function ResetPassword() {
                     }`}
                 >
                     <div
-                        className="text-slate-950 text-base font-normal uppercase leading-normal"
+                        className="text-slate-950 text-base font-medium uppercase leading-normal"
                     >
                         Send email
                     </div>

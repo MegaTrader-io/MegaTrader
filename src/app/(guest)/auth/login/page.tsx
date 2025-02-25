@@ -133,7 +133,7 @@ export default function Login() {
                             : "bg-mgt-primary border-mgt-primary"
                     }`}
                 >
-                    <div className="text-slate-950 text-base font-normal uppercase leading-normal">
+                    <div className="text-slate-950 text-base font-medium uppercase leading-normal">
                         Sign In
                     </div>
                 </button>
@@ -149,7 +149,7 @@ export default function Login() {
                     href="/register"
                     className="h-12 w-full px-4 py-3 bg-stone-800 rounded-xl border border-neutral-700 justify-center items-center gap-2 inline-flex"
                 >
-                    <div className="text-neutral-50 text-base font-normal uppercase leading-normal">
+                    <div className="text-neutral-50 text-base font-medium uppercase leading-normal">
                         Create account
                     </div>
                 </Link>
