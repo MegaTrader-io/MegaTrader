@@ -12,7 +12,7 @@ const navigationItems = [
     {href: '/account-overview', visibleOnDesktop: true, label: 'ACCOUNT OVERVIEW', sectionId: '/account-overview'},
     {href: '/affiliates', visibleOnDesktop: true, label: 'AFFILIATES', sectionId: '/affiliates'},
     {href: '/payouts', visibleOnDesktop: true, label: 'PAYOUTS', sectionId: '/payouts'},
-    {href: '/help-center', visibleOnDesktop: true, label: 'HELP CENTER', sectionId: '/help-center'},
+    {href: 'https://help.megatrader.io/en/', visibleOnDesktop: true, label: 'HELP CENTER', sectionId: '/help-center'},
     {
         href: '/profile/identity-verification',
         visibleOnDesktop: false,
@@ -53,6 +53,7 @@ export default function Header() {
                         <Link
                             key={item.label}
                             href={item.href}
+                            target={item.sectionId === '/help-center' ? '_blank' : '_self'}
                             className={`text-base text-neutral-50 text-nowrap font-light uppercase leading-6 px-4 py-3 transition-all duration-200 ${
                                 currentPath === item.sectionId
                                     ? 'text-white bg-[#1e1e1e] rounded-lg'

@@ -1,148 +1,190 @@
 'use client'
 
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {Button} from "@/components/Button";
-import GetStartedNow from "@/app/(backoffice)/payouts/_components/GetStartedNow";
-import Actions from "@/app/(backoffice)/payouts/_components/Actions";
 import Card from "@/components/Card";
-import Badge from "@/components/Badge";
-import clsx from "clsx";
-import InputText from "@/components/InputText";
-import QuickActionsTable from "@/app/(backoffice)/payouts/_components/QuickActionsTable";
+import PayoutRequestTable from "@/app/(backoffice)/payouts/_components/PayoutRequestTable";
+import {formatCurrency} from "@/commons/utils";
+import {IPayoutRequest, RequestStatusType} from "@/commons/interfaces";
+
+const METRICS = [
+    {
+        title: 'Available Amount',
+        subtitle: 'Withdrable profit available',
+        value: formatCurrency(4895)
+    },
+    {
+        title: 'Available Profit',
+        subtitle: 'Your total account profit',
+        value: formatCurrency(9000)
+    },
+    {
+        title: 'Profit Share %',
+        subtitle: 'The amount of the profit you keep',
+        value: '80%'
+    },
+    {
+        title: 'Next Withdraw Date',
+        subtitle: 'Next date you can withdraw profits',
+        value: '06/03/2025'
+    },
+]
+
+const payoutRequests: IPayoutRequest[] = [
+    {
+        id: 1,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 910.00,
+        profitShare: 60,
+        traderShare: 546.00,
+        status: "APPROVED"
+    },
+    {
+        id: 2,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 1810.00,
+        profitShare: 50,
+        traderShare: 450.00,
+        status: "APPROVED"
+    },
+    {
+        id: 3,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "APPROVED"
+    },
+    {
+        id: 4,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "APPROVED"
+    },
+    {
+        id: 5,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "APPROVED"
+    },
+    {
+        id: 6,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 910.00,
+        profitShare: 60,
+        traderShare: 546.00,
+        status: "PENDING"
+    },
+    {
+        id: 7,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 1810.00,
+        profitShare: 50,
+        traderShare: 450.00,
+        status: "PENDING"
+    },
+    {
+        id: 8,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "PENDING"
+    },
+    {
+        id: 9,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 910.00,
+        profitShare: 60,
+        traderShare: 546.00,
+        status: "REJECTED"
+    },
+    {
+        id: 10,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 1810.00,
+        profitShare: 50,
+        traderShare: 450.00,
+        status: "REJECTED"
+    }
+]
 
 export default function AccountOverView() {
+    const payoutRequestLegend: Record<'approved' | 'pending' | 'rejected', RequestStatusType> = {
+        approved: 'APPROVED',
+        pending: 'PENDING',
+        rejected: 'REJECTED'
+    };
+
+    const [payoutApprovedList, setPayoutApprovedList] = useState<IPayoutRequest[]>([]);
+    const [payoutPendingList, setPayoutPendingList] = useState<IPayoutRequest[]>([]);
+    const [payoutRejectedList, setPayoutRejectedList] = useState<IPayoutRequest[]>([]);
+
+    useEffect(() => {
+        setPayoutApprovedList(payoutRequests.filter(p => p.status === payoutRequestLegend.approved));
+        setPayoutPendingList(payoutRequests.filter(p => p.status === payoutRequestLegend.pending));
+        setPayoutRejectedList(payoutRequests.filter(p => p.status === payoutRequestLegend.rejected));
+    }, [payoutRequestLegend.approved, payoutRequestLegend.pending, payoutRequestLegend.rejected]);
+
     return <>
-        <div className="flex w-full justify-between items-center">
-            <Image
-                src={'/assets/images/payouts.svg'}
-                alt={'payouts'}
-                width={201}
-                height={70}
-            />
-
-            <Button>REQUEST PAYOUT</Button>
-        </div>
-        <div className="grid grid-cols-[1fr_auto] w-full items-start gap-16">
-            <div className="space-y-4">
-                <Actions/>
-                <Card className="grid grid-cols-[1fr_34px_1fr]">
-                    <div className="w-full space-y-2">
-                        <div>
-                            <div className="w-full flex">
-                                <div className="text-white text-base font-bold leading-normal flex-1">
-                                    Previous payout
-                                </div>
-                                <div className="text-white text-base font-bold leading-normal">
-                                    July 30, 2022
-                                </div>
+        <div className="w-full space-y-8">
+            <div className="flex justify-around gap-4">
+                {METRICS.map((metric, index) => (
+                    <Card
+                        key={index}
+                        className="flex-col justify-center items-start gap-2 inline-flex w-full">
+                        <div className="flex-col justify-start items-start flex">
+                            <div
+                                className="text-white text-base font-medium leading-normal">
+                                {metric.title}
                             </div>
-                            <div className="w-full flex items-center">
-                                <div
-                                    className="text-white text-[40px] font-light uppercase leading-[48px]  flex-1">
-                                    $7,962.34
-                                </div>
-                                <Badge shape={'pill'}>PAID</Badge>
+                            <div
+                                className="text-stone-400 text-xs font-medium leading-tight">
+                                {metric.subtitle}
                             </div>
                         </div>
-                        <Button size={'sm'} variant={'dark'}>
-                            VIRE TRANSACTION
-                        </Button>
-                    </div>
-                    <Image src={'/assets/images/line.svg'} className="mx-4" alt={'line'} width={2} height={108}/>
-                    <div className="w-full space-y-2">
-                        <div>
-                            <div className="w-full flex">
-                                <div className="text-white text-base font-bold leading-normal flex-1">
-                                    Previous payout
-                                </div>
-                                <div className="text-white text-base font-bold leading-normal">
-                                    July 30, 2022
-                                </div>
-                            </div>
-                            <div className="w-full flex items-center">
-                                <div
-                                    className="text-white text-[40px] font-light uppercase leading-[48px]  flex-1">
-                                    2,468.29
-                                </div>
-                                <Badge shape={'pill'} variant={'primary'}>PENDING</Badge>
-                            </div>
-                        </div>
-                        <Button size={'sm'} variant={'dark'}>
-                            VIRE TRANSACTION
-                        </Button>
-                    </div>
-                </Card>
-                <Card>
-                    <div className="w-full space-y-2">
-                        <div>
-                            <div className="w-full flex">
-                                <div className="text-white text-base font-bold leading-normal flex-1">
-                                    Previous payout
-                                </div>
-                                <div className="text-white text-base font-bold leading-normal">
-                                    July 30, 2022
-                                </div>
-                            </div>
-                            <div className="w-full flex items-center">
-                                <div
-                                    className="text-white text-[40px] font-light uppercase leading-[48px] flex-1">
-                                    $399,00
-                                </div>
-                                <Badge shape={'pill'}>PAID</Badge>
-                            </div>
-                        </div>
-                        <Button size={'sm'} variant={'dark'}>
-                            VIRE TRANSACTION
-                        </Button>
-                    </div>
-                </Card>
-                <Card className="!mt-8">
-                    <div className="flex w-full justify-between items-center">
                         <div
-                            className="h-6 text-white text-xl font-light uppercase leading-normal">
-                            Quick actions
-                        </div>
-                        <Button variant={'dark'}>
-                            FIND MORE
-                        </Button>
-                    </div>
-
-                    <div className="grid grid-cols-[250px_auto] gap-2 my-4">
-                        <div className="relative w-full">
-                            <select
-                                name="link"
-                                className={clsx('align-middle w-full h-12 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none')}
-                            >
-                                <option value="">Filyter payouts</option>
-                            </select>
-                            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_5269_2288" style={{maskType: 'alpha'}}
-                                          maskUnits="userSpaceOnUse" x="0" y="0"
-                                          width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_5269_2288)">
-                                        <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                                    </g>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <div className="relative flex">
-                            <InputText name={'search'}
-                                       className="pr-12 placeholder:text-stone-400"
-                                       placeholder="Search here"
-                                       searchInput={true}/>
-                        </div>
-                    </div>
-
-                    <QuickActionsTable/>
-                </Card>
+                            className="text-primary text-[32px] font-light uppercase leading-10">{metric.value}</div>
+                    </Card>
+                ))}
             </div>
-            <GetStartedNow/>
+
+            <Card
+                className="p-4 bg-[#1e1e1e] rounded-2xl justify-start items-center gap-4 inline-flex w-full">
+                <div className="grow shrink basis-0 h-6 justify-start items-center gap-4 flex w-full">
+                    <div className="text-white text-base font-medium leading-normal">Available Payment
+                        Methods
+                    </div>
+                    <Image src='/assets/images/crypto-icons.svg' alt='icons' width={218} height={24}/>
+                </div>
+
+                <Button>
+                    Request Withdrawal
+                </Button>
+            </Card>
+
+            <Card className="space-y-8">
+                <PayoutRequestTable
+                    status={payoutRequestLegend.approved}
+                    payoutRequests={payoutApprovedList}
+                />
+
+                <PayoutRequestTable
+                    status={payoutRequestLegend.pending}
+                    payoutRequests={payoutPendingList}
+                />
+
+                <PayoutRequestTable
+                    status={payoutRequestLegend.rejected}
+                    payoutRequests={payoutRejectedList}
+                />
+            </Card>
         </div>
+
     </>
 }

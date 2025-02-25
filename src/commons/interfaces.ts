@@ -204,3 +204,14 @@ export interface INotification {
     message: string;
     action: NotificationAction;
 }
+
+export type RequestStatusType = 'APPROVED' | 'PENDING' | 'REJECTED'
+
+export interface IPayoutRequest {
+    id: number
+    dateOfRequest: string
+    mtAmount: number
+    profitShare: number
+    traderShare: number
+    status: RequestStatusType
+}
