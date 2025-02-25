@@ -134,7 +134,7 @@ export default function ResetPassword() {
                     className="h-12 w-full px-4 py-3 justify-center items-center gap-2 inline-flex"
                 >
                     <div
-                        className="text-neutral-50 text-base font-normal uppercase leading-normal flex">
+                        className="text-neutral-50 text-base font-medium uppercase leading-normal flex">
                         <ChevronLeftIcon className="w-6 h-6 text-white"/> Return to login
                     </div>
                 </Link>

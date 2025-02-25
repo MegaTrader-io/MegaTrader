@@ -8,6 +8,7 @@ import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import Alert from "@/components/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";
 import {useLoading} from "@/context/LoadingContext";
+import {Button} from "@/components/Button";
 
 export default function ChangePassword() {
     const router = useRouter();
@@ -71,7 +72,7 @@ export default function ChangePassword() {
 
             <div>
                 <h1 className="text-white xl:text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">
-                    Reset password
+                    New password
                 </h1>
                 <h2 className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide">
                     Enter and confirm your new password.
@@ -107,25 +108,15 @@ export default function ChangePassword() {
                     />
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`h-12 w-full px-4 disabled:opacity-30 py-3 rounded-xl border-2 justify-center items-center gap-2 inline-flex ${
-                        isLoading
-                            ? "bg-gray-500 border-gray-500 cursor-not-allowed"
-                            : "bg-mgt-primary border-mgt-primary"
-                    }`}
-                >
-                    <div className="text-slate-950 text-base font-normal uppercase leading-normal">
-                        Update
-                    </div>
-                </button>
+                <Button type="submit" disabled={isLoading} className="w-full !font-medium">
+                    Update
+                </Button>
 
                 <Link
                     href="/auth/login"
                     className="h-12 w-full px-4 py-3 justify-center items-center gap-2 inline-flex"
                 >
-                    <div className="text-neutral-50 text-base font-normal uppercase leading-normal flex">
+                    <div className="text-neutral-50 text-base font-medium uppercase leading-normal flex">
                         <ChevronLeftIcon className="w-6 h-6 text-white"/> Return to login
                     </div>
                 </Link>
