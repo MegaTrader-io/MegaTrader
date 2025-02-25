@@ -93,7 +93,7 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                                 <TableHeader>MT Amount</TableHeader>
                                 <TableHeader>Profit share</TableHeader>
                                 <TableHeader>Trader share</TableHeader>
-                                <TableHeader>Status</TableHeader>
+                                <TableHeader className={"w-[230px]"}>Status</TableHeader>
                             </TableRow>
                         </TableHead>
                         <TableBody className="p-0">

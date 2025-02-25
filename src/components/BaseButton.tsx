@@ -79,7 +79,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 
     const sizeStyles = size === 'sm'
         ? `${defaultPaddingMD} py-1 text-xs font-bold leading-tight rounded`
-        : `${defaultPaddingMD} py-3 text-base font-normal leading-normal rounded-xl`;
+        : `${defaultPaddingMD} py-3 text-base font-medium leading-normal rounded-xl`;
 
     const variantStyles = {
         primary: {

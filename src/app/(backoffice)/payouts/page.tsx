@@ -133,7 +133,7 @@ export default function AccountOverView() {
 
     return <>
         <div className="w-full space-y-8">
-            <div className="flex justify-around gap-4">
+            <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:flex lg:justify-around gap-4">
                 {METRICS.map((metric, index) => (
                     <Card
                         key={index}
@@ -155,15 +155,16 @@ export default function AccountOverView() {
             </div>
 
             <Card
-                className="p-4 bg-[#1e1e1e] rounded-2xl justify-start items-center gap-4 inline-flex w-full">
-                <div className="grow shrink basis-0 h-6 justify-start items-center gap-4 flex w-full">
+                className="space-y-4 md:space-y-0 md:justify-start md:items-center md:gap-4 md:inline-flex md:w-full">
+                <div
+                    className="md:grow md:shrink md:basis-0 md:h-6 md:justify-start md:items-center md:gap-4 md:flex md:w-full">
                     <div className="text-white text-base font-medium leading-normal">Available Payment
                         Methods
                     </div>
                     <Image src='/assets/images/crypto-icons.svg' alt='icons' width={218} height={24}/>
                 </div>
 
-                <Button>
+                <Button className="w-full md:w-auto">
                     Request Withdrawal
                 </Button>
             </Card>
