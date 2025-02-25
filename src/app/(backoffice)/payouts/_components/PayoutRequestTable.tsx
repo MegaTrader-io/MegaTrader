@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
-import ArrowDown, {directionType} from "@/components/ArrowDown";
 import Badge from "@/components/Badge";
 import {formatCurrency, formatDateTime} from "@/commons/utils";
 import {IPayoutRequest, RequestStatusType} from "@/commons/interfaces";
 import clsx from "clsx";
 import ArrowSortBy from "@/components/ArrowSortBy";
+import {directionType} from "@/components/ArrowDown";
 
 
 function BadgeColorByStatus({status}: { status: RequestStatusType }) {
@@ -107,7 +107,7 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                                         {formatCurrency(payoutRequest.mtAmount)}
                                     </TableCell>
                                     <TableCell className="py-4">
-                                        {formatCurrency(payoutRequest.profitShare)}
+                                        {payoutRequest.profitShare}%
                                     </TableCell>
                                     <TableCell className="py-4">
                                         {formatCurrency(payoutRequest.traderShare)}
