@@ -14,7 +14,7 @@ const Layout = ({children,}: {
                 </div>
             </div>
         </div>
-        <div className="relative hidden lg:w-0 lg:flex-1 sm:block bg-[#1e1e1e] sm:pl-[120px] lg:overflow-hidden">
+        <div className="relative hidden lg:w-0 lg:flex-1 md:block bg-[#1e1e1e] md:pl-[120px] lg:overflow-hidden">
             <Badge className="mt-8 lg:mt-[91px] mb-[17px] !font-bold">Start earning up to 90% profit</Badge>
             <p className="text-stone-400 text-base font-normal leading-normal max-w-[434px]">
                 Trade smarter with MegaTrader—achieve your goals within our structured evaluation period. Unlock
