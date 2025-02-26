@@ -7,10 +7,10 @@ import {formatCurrency} from "@/commons/utils";
 import ConsistencyProgress from "@/app/(backoffice)/account-overview/_components/ConsistencyProgress";
 import {ObjectiveItemPoint} from "@/app/(backoffice)/account-overview/_components/ObjectiveItemPoint";
 import {ObjectiveItemMoney} from "@/app/(backoffice)/account-overview/_components/ObjectiveItemMoney";
-import {TotalProfit} from "@/app/(backoffice)/account-overview/TotalProfit";
 import HighestProfitDay from "@/app/(backoffice)/account-overview/_components/HighestProfitDay";
 import DailyLossLimit from "@/app/(backoffice)/account-overview/_components/DailyLossLimit";
 import ExclamationTooltip from "@/app/(backoffice)/account-overview/_components/ExclamationTooltip";
+import {TotalProfit} from "@/app/(backoffice)/account-overview/_components/TotalProfit";
 
 
 function AccountSummary({account}: { account: Account}) {
