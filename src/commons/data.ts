@@ -1,5 +1,5 @@
-import {Account, INotification, IUser, Period, TooltipData} from "@/commons/interfaces";
-import {getPlanDetail} from "@/commons/utils";
+import {Account, INotification, IPayoutRequest, IUser, Period, TooltipData} from "@/commons/interfaces";
+import {formatCurrency, getPlanDetail} from "@/commons/utils";
 
 
 export const accounts: Account[] = [
@@ -439,3 +439,109 @@ export const notificationsData: INotification[] = [
         }
     }
 ];
+
+export const payoutRequests: IPayoutRequest[] = [
+    {
+        id: 1,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 910.00,
+        profitShare: 60,
+        traderShare: 546.00,
+        status: "APPROVED"
+    },
+    {
+        id: 2,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 1810.00,
+        profitShare: 50,
+        traderShare: 450.00,
+        status: "APPROVED"
+    },
+    {
+        id: 3,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "APPROVED"
+    },
+    {
+        id: 4,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "APPROVED"
+    },
+    {
+        id: 5,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "APPROVED"
+    },
+    {
+        id: 6,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 910.00,
+        profitShare: 60,
+        traderShare: 546.00,
+        status: "PENDING"
+    },
+    {
+        id: 7,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 1810.00,
+        profitShare: 50,
+        traderShare: 450.00,
+        status: "PENDING"
+    },
+    {
+        id: 8,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 900.00,
+        profitShare: 18,
+        traderShare: 80.00,
+        status: "PENDING"
+    },
+    {
+        id: 9,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 910.00,
+        profitShare: 60,
+        traderShare: 546.00,
+        status: "REJECTED"
+    },
+    {
+        id: 10,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 1810.00,
+        profitShare: 50,
+        traderShare: 450.00,
+        status: "REJECTED"
+    }
+]
+
+export const METRICS = [
+    {
+        title: 'Available Amount',
+        subtitle: 'Withdrable profit available',
+        value: formatCurrency(4895)
+    },
+    {
+        title: 'Available Profit',
+        subtitle: 'Your total account profit',
+        value: formatCurrency(9000)
+    },
+    {
+        title: 'Profit Share %',
+        subtitle: 'The amount of the profit you keep',
+        value: '80%'
+    },
+    {
+        title: 'Next Withdraw Date',
+        subtitle: 'Next date you can withdraw profits',
+        value: '06/03/2025'
+    },
+]

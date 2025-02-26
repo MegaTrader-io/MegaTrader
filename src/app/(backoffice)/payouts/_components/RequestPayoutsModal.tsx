@@ -24,7 +24,11 @@ const PaymentMethodList: IPaymentMethod[] = [
     {key: 'riseworks', name: 'Riseworks'},
 ];
 
-function RequestPayoutsModal({open, onClose}: { open: boolean, onClose: () => void }) {
+function RequestPayoutsModal({open, onClose, submitRequest}: {
+    open: boolean,
+    onClose: () => void,
+    submitRequest: (form: IRequestPayoutForm) => void
+}) {
     const [form, setForm] = useState<IRequestPayoutForm>({
         amount: undefined,
         paymentMethodType: 'crypto_btc'
@@ -55,6 +59,9 @@ function RequestPayoutsModal({open, onClose}: { open: boolean, onClose: () => vo
             setFieldErrors(validationErrors);
             return;
         }
+
+        setFieldErrors({});
+        submitRequest(form)
     }
 
     return (

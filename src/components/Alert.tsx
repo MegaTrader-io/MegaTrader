@@ -13,7 +13,7 @@ interface Prop {
 
 const AlertIcon: React.FC<{ type: AlertType }> = ({type}) => {
     if (type === 'success') {
-        return <CheckIcon className="w-5 h-5"/>;
+        return <CheckIcon className="w-5 h-5 text-black"/>
     }
 
     return <XMarkIcon className="w-5 h-5"/>;
@@ -25,7 +25,7 @@ const Alert: React.FC<Prop> = ({className, type, message}) => {
 
     return (
         <div
-            className={clsx('p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 inline-flex overflow-hidden', className)}>
+            className={clsx('p-4 bg-[#1e1e1e] rounded-lg justify-start items-start gap-4 flex overflow-hidden', className)}>
             <div className={`w-6 h-6 flex items-center justify-center rounded-full ${bgColor}`}>
                 <AlertIcon type={type}/>
             </div>
