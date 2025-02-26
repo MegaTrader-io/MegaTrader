@@ -1,102 +1,62 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Card, {CardTitle} from "@/components/Card";
 import dynamic from "next/dynamic";
-import {ApexOptions} from "apexcharts";
+import {chartAffiliatesConfig, periods} from "@/commons/data";
+import {Period} from "@/commons/interfaces";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
-const chartConfig = {
-    type: "line" as const,
-    height: '100%',
-    series: [
-        {
-            name: "Earnings over time",
-            data: [400, 300, 200, 100, 0],
-        },
-    ],
-    options: {
-        chart: {
-            toolbar: {
-                show: false,
-            },
-        },
-        title: {
-            show: false,
-        },
-        dataLabels: {
-            enabled: false,
-        },
-        colors: ["#FFE7B8"],
-        stroke: {
-            lineCap: "round",
-            curve: "smooth",
-            width: 2,
-        },
-        markers: {
-            size: 0,
-        },
-        xaxis: {
-            axisTicks: {
-                show: false,
-            },
-            axisBorder: {
-                show: false,
-            },
-            labels: {
-                style: {
-                    colors: "#A8A29E",
-                    fontSize: "12px",
-                    fontFamily: "inherit",
-                    fontWeight: 400,
-                },
-            },
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        },
-        yaxis: {
-            labels: {
-                formatter: (value: number) => `${value}`,
-                style: {
-                    colors: "#A8A29E",
-                    fontSize: "12px",
-                    fontFamily: "inherit",
-                    fontWeight: 400,
-                },
-            },
-        },
-        grid: {
-            show: true,
-            borderColor: "#374151",
-            strokeDashArray: 5,
-        },
-        fill: {
-            opacity: 0.8,
-        },
-        tooltip: {
-            theme: "dark",
-            x: {
-                show: true,
-            },
-            y: {
-                formatter: (value: number) => `$ ${value.toFixed(2)}`,
-            },
-        },
-    } as ApexOptions,
-};
-
-
 function EarningsOverTime() {
+    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
+
+    function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
+        const id = e.target.value
+        const period = periods.find(period => period.id === id)!
+        setSelectPeriod(period);
+    }
+
     return (
         <Card className="w-full p-4 text-white">
-            <CardTitle>
-                Earnings over time
-            </CardTitle>
+            <div className="flex justify-between items-center">
+                <CardTitle>
+                    Earnings over time
+                </CardTitle>
+                <div>
+                    <div className="relative w-full">
+                        <select
+                            className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
+                            defaultValue={selectPeriod.id}
+                            onChange={changeValue}>
+                            {periods.map(option => (
+                                <option key={option.id} value={option.id}>
+                                    {option.text}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse"
+                                      x="0"
+                                      y="0"
+                                      width="24" height="24">
+                                    <rect width="24" height="24" fill="#D9D9D9"/>
+                                </mask>
+                                <g mask="url(#mask0_5269_2288)">
+                                    <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div className="w-full h-[389px]">
                 <ReactApexChart
-                    type={chartConfig.type}
-                    height={chartConfig.height}
-                    series={chartConfig.series}
-                    options={chartConfig.options}
+                    type={chartAffiliatesConfig.type}
+                    height={chartAffiliatesConfig.height}
+                    series={chartAffiliatesConfig.series}
+                    options={chartAffiliatesConfig.options}
                 />
             </div>
         </Card>

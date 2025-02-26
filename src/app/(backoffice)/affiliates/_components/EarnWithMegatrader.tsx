@@ -8,10 +8,6 @@ function EarnWithMegatrader() {
             <CardTitle className="mb-2">
                 EARN WITH MEGATRADER
             </CardTitle>
-            <p className="text-stone-400 text-base font-normal  leading-normal">Invite your
-                Invite friends to Megatrader, if they sign up, you and your friend will get 2 premium features from
-                free!
-            </p>
             <div className="mt-4 md:mt-9 grid md:grid-cols-3 gap-6">
                 {/** panel 1 **/}
                 <div className="text-center space-y-2">
@@ -38,7 +34,7 @@ function EarnWithMegatrader() {
                     </h2>
                     <p
                         className="text-center text-stone-400 text-base font-normal leading-normal">
-                        Let your friends register to our services using your personal referral code!
+                        Earn real money on every purchase your friends make once they sign up!
                     </p>
                 </div>
                 {/** panel 3 **/}
@@ -53,7 +49,7 @@ function EarnWithMegatrader() {
                     </h2>
                     <p
                         className="text-center text-stone-400 text-base font-normal leading-normal">
-                        You and your friends get 2 premium Megatrader features for free!
+                        Easily withdraw your earned rewards and enjoy the benefits of referring friends!
                     </p>
                 </div>
             </div>

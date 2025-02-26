@@ -2,110 +2,16 @@
 
 import React, {useState} from 'react';
 import Image from "next/image";
-import {periods, tooltipData} from "@/commons/data";
+import {chartConfig, periods, tooltipData} from "@/commons/data";
 import Card from "@/components/Card";
 import {Account, Period, TooltipData} from "@/commons/interfaces";
 import dynamic from 'next/dynamic';
-import {ApexOptions} from "apexcharts";
 import Tooltip from "@/components/Tooltip";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
-const chartConfig = {
-    type: "line" as const,
-    height: '100%',
-    series: [
-        {
-            name: "Pro Plan Revenue",
-            data: [24850, 24600, 24300, 23950, 23500, 23250, 23000, 23250, 23500, 24000, 24300, 24550],
-        },
-        {
-            name: "Upper Bound",
-            data: [24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250],
-        },
-        {
-            name: "Lower Bound",
-            data: [23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250],
-        },
-    ],
-    options: {
-        chart: {
-            toolbar: {
-                show: false,
-            },
-        },
-        title: {
-            show: false,
-        },
-        dataLabels: {
-            enabled: false,
-        },
-        colors: ["#FFE7B8", "#24b8a6", "#FF4D4D"],
-        stroke: {
-            lineCap: "round",
-            curve: "smooth",
-            width: [2, 2, 2],
-        },
-        markers: {
-            size: [0, 5, 5],
-            colors: ["#FF4D4D", "#24b8a6"],
-            strokeColors: 'transparent',
-            strokeWidth: 0
-        },
-        legend: {
-            show: false
-        },
-        xaxis: {
-            axisTicks: {
-                show: false,
-            },
-            axisBorder: {
-                show: false,
-            },
-            labels: {
-                style: {
-                    colors: "#A8A29E",
-                    fontSize: "12px",
-                    fontFamily: "inherit",
-                    fontWeight: 400,
-                },
-            },
-            categories: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18],
-        },
-        yaxis: {
-            labels: {
-                formatter: (value: number) => `$${value}`,
-                style: {
-                    colors: "#A8A29E",
-                    fontSize: "12px",
-                    fontFamily: "inherit",
-                    fontWeight: 400,
-                },
-            },
-        },
-        grid: {
-            show: true,
-            borderColor: "#374151",
-            strokeDashArray: 5,
-        },
-        fill: {
-            opacity: 0.8,
-        },
-        tooltip: {
-            theme: "dark",
-            x: {
-                show: true,
-            },
-            y: {
-                formatter: (value: number) => `$ ${value.toFixed(2)}`,
-            },
-        },
-    } as ApexOptions,
-};
-
 function ProPlanChart({account}: { account: Account }) {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
-
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
         const id = e.target.value
