@@ -16,8 +16,8 @@ function EarningsOverTime() {
     }
 
     return (
-        <Card className="w-full p-4 text-white">
-            <div className="flex justify-between items-center">
+        <Card className="w-full p-4 text-white space-y-4 md:space-y-0">
+            <div className="space-y-2 md:space-y-0 md:flex md:justify-between md:items-center">
                 <CardTitle>
                     Earnings over time
                 </CardTitle>
@@ -50,7 +50,6 @@ function EarningsOverTime() {
                     </div>
                 </div>
             </div>
-
             <div className="w-full h-[389px]">
                 <ReactApexChart
                     type={chartAffiliatesConfig.type}
