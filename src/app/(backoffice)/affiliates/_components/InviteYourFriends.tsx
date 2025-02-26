@@ -5,6 +5,7 @@ import ShareReferralLink from "@/app/(backoffice)/affiliates/_components/ShareRe
 import InputText from "@/components/InputText";
 import {sleep} from "@/commons/utils";
 import {TARGET_EMAIL} from "@/commons/credentials";
+import clsx from "clsx";
 
 function InviteYourFriends({displayMessage}: {
     displayMessage: ({success, message}: { success: boolean, message: string }) => void
@@ -81,6 +82,7 @@ function InviteYourFriends({displayMessage}: {
                     required={true}
                     type={'email'}
                     disabled={sendingEmail}
+                    className={clsx(!!errorMessage ? 'placeholder:text-rose-500' : null)}
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                     errorMessage={errorMessage}
