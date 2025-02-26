@@ -2,7 +2,6 @@
 
 import React from 'react';
 import InputText from "@/components/InputText";
-import {Button} from "@/components/Button";
 import {CopyButton} from "@/components/CopyButton";
 
 function ShareReferralLink() {
