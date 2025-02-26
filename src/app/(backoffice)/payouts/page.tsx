@@ -7,6 +7,7 @@ import Card from "@/components/Card";
 import PayoutRequestTable from "@/app/(backoffice)/payouts/_components/PayoutRequestTable";
 import {formatCurrency} from "@/commons/utils";
 import {IPayoutRequest, RequestStatusType} from "@/commons/interfaces";
+import RequestPayoutsModal from "@/app/(backoffice)/payouts/_components/RequestPayoutsModal";
 
 const METRICS = [
     {
@@ -115,6 +116,7 @@ const payoutRequests: IPayoutRequest[] = [
 ]
 
 export default function AccountOverView() {
+    const [openRequestModal, setOpenRequestModal] = useState<boolean>(false);
     const payoutRequestLegend: Record<'approved' | 'pending' | 'rejected', RequestStatusType> = {
         approved: 'APPROVED',
         pending: 'PENDING',
@@ -131,7 +133,12 @@ export default function AccountOverView() {
         setPayoutRejectedList(payoutRequests.filter(p => p.status === payoutRequestLegend.rejected));
     }, [payoutRequestLegend.approved, payoutRequestLegend.pending, payoutRequestLegend.rejected]);
 
+    function toggleRequestModal() {
+        setOpenRequestModal(prev => !prev);
+    }
+
     return <>
+        {openRequestModal && <RequestPayoutsModal open={openRequestModal} onClose={toggleRequestModal}/>}
         <div className="w-full space-y-8">
             <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:flex lg:justify-around gap-4">
                 {METRICS.map((metric, index) => (
@@ -149,7 +156,9 @@ export default function AccountOverView() {
                             </div>
                         </div>
                         <div
-                            className="text-primary text-[32px] font-light uppercase leading-10">{metric.value}</div>
+                            className="text-primary text-[32px] font-light uppercase leading-10">
+                            {metric.value}
+                        </div>
                     </Card>
                 ))}
             </div>
@@ -164,7 +173,7 @@ export default function AccountOverView() {
                     <Image src='/assets/images/crypto-icons.svg' alt='icons' width={218} height={24}/>
                 </div>
 
-                <Button className="w-full md:w-auto">
+                <Button onClick={toggleRequestModal} className="w-full md:w-auto">
                     Request Withdrawal
                 </Button>
             </Card>
