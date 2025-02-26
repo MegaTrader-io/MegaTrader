@@ -13,7 +13,7 @@ import ExclamationTooltip from "@/app/(backoffice)/account-overview/_components/
 import {TotalProfit} from "@/app/(backoffice)/account-overview/_components/TotalProfit";
 
 
-function AccountSummary({account}: { account: Account}) {
+function AccountSummary({account}: { account: Account }) {
     const {overallPerformance} = account;
 
     return (
@@ -48,8 +48,8 @@ function AccountSummary({account}: { account: Account}) {
                                     className="text-stone-400"
                                     title={'Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday 3:10 PM CT)'}/>
                                 </div>,
-                                value: <NumericStyle positiveColor={'text-white'}
-                                                     negativeColor={'text-white'}
+                                value: <NumericStyle positiveColor={'text-teal-400'}
+                                                     negativeColor={'text-rose-500'}
                                                      zeroColor={'text-teal-400'}
                                                      value={overallPerformance.weeklyNetPnL}/>
                             }
