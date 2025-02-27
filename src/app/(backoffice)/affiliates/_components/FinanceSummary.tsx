@@ -43,8 +43,8 @@ function FinanceSummary({handleDisplayAlert}: { handleDisplayAlert: (payload: IS
                 <RequestPayoutsModal open={openRequestModal} onClose={toggleRequestModal}
                                      submitRequest={submitRequest}/>}
             <div className="w-full space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-12 gap-4 w-full">
-                    <Card className="col-span-1 md:col-span-4 xl:col-span-4  w-full bg-primary p-4 space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 w-full">
+                    <Card className="col-span-1 md:col-span-4 lg:col-span-4 w-full bg-primary p-4 space-y-2">
                         <div className="flex justify-between">
                             <div className="text-[#131210] text-base font-bold leading-normal">
                                 Total sold
@@ -61,7 +61,7 @@ function FinanceSummary({handleDisplayAlert}: { handleDisplayAlert: (payload: IS
                             </Button>
                         </div>
                     </Card>
-                    <Card className="col-span-1 md:col-span-2 xl:col-span-4 w-full p-4 text-white">
+                    <Card className="col-span-1 md:col-span-2 lg:col-span-4 w-full p-4 text-white">
                         <div className="text-white text-base font-bold leading-normal">
                             Total profit
                         </div>
@@ -72,7 +72,7 @@ function FinanceSummary({handleDisplayAlert}: { handleDisplayAlert: (payload: IS
                             +$120 from last month
                         </div>
                     </Card>
-                    <Card className="col-span-1 md:col-span-2 xl:col-span-4 w-full p-4 text-white">
+                    <Card className="col-span-1 md:col-span-2 lg:col-span-4 w-full p-4 text-white">
                         <div className="text-white text-base font-bold leading-normal">
                             Total sold
                         </div>
