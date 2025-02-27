@@ -9,6 +9,7 @@ import {formatCurrency} from "@/commons/utils";
 import Tooltip from "@/components/Tooltip";
 import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
+import clsx from "clsx";
 
 const Options: { id: string, label: string }[] = [
     {id: 'overview', label: 'Overview'},
@@ -18,6 +19,7 @@ const Options: { id: string, label: string }[] = [
     {id: 'e_mini_natural_gas', label: 'E-mini Natural Gas'},
     {id: 'nikkei_nkd', label: 'Nikkei NKD'},
     {id: 'australian_dollar', label: 'Australian Dollar'},
+    {id: 'british', label: 'British'},
 ];
 
 function FeatureContent() {
@@ -142,7 +144,7 @@ function FeatureContent() {
                                 variant={option.id === selection ? "primary" : 'dark'}
                                 key={option.id}
                                 onClick={() => handleButtonClick(option.id)}
-                                className={`whitespace-nowrap`}
+                                className={clsx(`whitespace-nowrap !normal-case`, {'text-black': option.id === selection, '!text-stone-400': option.id !== selection})}
                             >
                                 {option.label}
                             </Button>
