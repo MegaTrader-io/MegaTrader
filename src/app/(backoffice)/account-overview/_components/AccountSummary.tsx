@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "@/components/Card";
 import {Account} from "@/commons/interfaces";
-import {CheckCircleIcon, ExclamationCircleIcon} from "@heroicons/react/20/solid";
+import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/20/solid";
 import NumericStyle from "@/components/NumericStyle";
 import {formatCurrency} from "@/commons/utils";
 import ConsistencyProgress from "@/app/(backoffice)/account-overview/_components/ConsistencyProgress";
@@ -104,7 +104,7 @@ function AccountSummary({account}: { account: Account }) {
                                     <div className="h-full">
                                         <div className="flex items-center gap-2">
                                             {!account.objectives.rule.maximumLossLimit.pass &&
-                                                <ExclamationCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
+                                                <XCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
                                             {account.objectives.rule.maximumLossLimit.pass &&
                                                 <CheckCircleIcon className="w-6 h-6 text-secondary"/>}
                                         </div>
