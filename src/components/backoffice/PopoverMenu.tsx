@@ -52,7 +52,7 @@ function PopoverMenu({ className, children, icon, side = "bottom", align = "cent
         <div className={className}>
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                    <button ref={buttonRef} className="btn-primary block">
+                    <button ref={buttonRef} className="btn-primary max-w-[48px] !px-3 block">
                         {!icon ? <Bars3Icon className="w-6 h-6 text-white" /> : icon}
                     </button>
                 </PopoverTrigger>
