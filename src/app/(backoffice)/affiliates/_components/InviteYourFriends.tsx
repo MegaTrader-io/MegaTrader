@@ -6,13 +6,14 @@ import InputText from "@/components/InputText";
 import {sleep} from "@/commons/utils";
 import {TARGET_EMAIL} from "@/commons/credentials";
 import clsx from "clsx";
+import {useLoading} from "@/context/LoadingContext";
 
 function InviteYourFriends({displayMessage}: {
     displayMessage: ({success, message}: { success: boolean, message: string }) => void
 }) {
+    const {setLoading, isLoading: sendingEmail} = useLoading();
     const inputEmail = useRef<HTMLInputElement | null>(null);
     const [email, setEmail] = useState('');
-    const [sendingEmail, setSendingEmail] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const validateEmail = () => {
@@ -44,9 +45,7 @@ function InviteYourFriends({displayMessage}: {
 
         inputEmail.current?.blur();
 
-
-        setSendingEmail(true);
-
+        setLoading(true);
         await sleep(900);
 
         let result = {
@@ -62,7 +61,7 @@ function InviteYourFriends({displayMessage}: {
         }
 
         displayMessage(result);
-        setSendingEmail(false);
+        setLoading(false);
         setEmail('')
     }
 
