@@ -10,17 +10,7 @@ import Tooltip from "@/components/Tooltip";
 import TrendIndicator from "@/app/(backoffice)/account-overview/_components/TrendIndicator";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
-
-const Options: { id: string, label: string }[] = [
-    {id: 'overview', label: 'Overview'},
-    {id: 'e_mini_sp_500', label: 'E-mini S&P 500'},
-    {id: 'e_mini_nasdaq_100', label: 'E-mini NASDAQ 100'},
-    {id: 'e_mini_russell_2000', label: 'E-mini Russell 2000'},
-    {id: 'e_mini_natural_gas', label: 'E-mini Natural Gas'},
-    {id: 'nikkei_nkd', label: 'Nikkei NKD'},
-    {id: 'australian_dollar', label: 'Australian Dollar'},
-    {id: 'british_pound', label: 'British Pound'},
-];
+import {featureContentOptions} from '@/commons/data';
 
 function FeatureContent() {
     const [selection, setSelection] = useState<string>('overview');
@@ -138,13 +128,16 @@ function FeatureContent() {
                         ref={scrollContainerRef}
                         className="flex gap-2 overflow-x-auto scrollbar-hide px-0.5 py-1 w-full"
                     >
-                        {Options.map(option => (
+                        {featureContentOptions.map(option => (
                             <Button
                                 id={`btn-${option.id}`}
                                 variant={option.id === selection ? "primary" : 'dark'}
                                 key={option.id}
                                 onClick={() => handleButtonClick(option.id)}
-                                className={clsx(`whitespace-nowrap !normal-case`, {'text-black': option.id === selection, '!text-stone-400': option.id !== selection})}
+                                className={clsx(`whitespace-nowrap !normal-case`, {
+                                    'text-black': option.id === selection,
+                                    '!text-stone-400': option.id !== selection
+                                })}
                             >
                                 {option.label}
                             </Button>
@@ -172,7 +165,7 @@ function FeatureContent() {
                 <select
                     className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
                     onChange={changeOption}>
-                    {Options.map(option => (
+                    {featureContentOptions.map(option => (
                         <option key={option.id} value={option.id}>
                             {option.label}
                         </option>
