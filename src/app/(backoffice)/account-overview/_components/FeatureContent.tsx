@@ -19,7 +19,7 @@ const Options: { id: string, label: string }[] = [
     {id: 'e_mini_natural_gas', label: 'E-mini Natural Gas'},
     {id: 'nikkei_nkd', label: 'Nikkei NKD'},
     {id: 'australian_dollar', label: 'Australian Dollar'},
-    {id: 'british', label: 'British'},
+    {id: 'british_pound', label: 'British Pound'},
 ];
 
 function FeatureContent() {
