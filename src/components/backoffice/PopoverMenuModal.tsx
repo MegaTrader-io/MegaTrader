@@ -62,8 +62,6 @@ function PopoverMenu({className, children, icon, modal = true, side = "bottom", 
                 if (!entry.isIntersecting) {
                     setOpen(false);
                 }
-
-                console.info('xxx');
             },
             {threshold: 0.1}
         );
