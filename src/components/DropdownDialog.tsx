@@ -50,7 +50,7 @@ export default function DropdownDialog<T extends { id: string | number, name: st
                 {renderButtonContent(selected)}
             </AlertDialogTrigger>
             <AlertDialogPortal>
-                <AlertDialogOverlay className="fixed inset-0 bg-[#131210]/60 data-[state=open]:animate-overlayShow"/>
+                <AlertDialogOverlay className="fixed inset-0 bg-[#131210]/90 data-[state=open]:animate-overlayShow"/>
                 <AlertDialogContent
                     className="z-[2000] fixed left-1/2 top-1/2 max-h-[85vh] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-4 bg-[#131210] shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] border border-neutral-700 flex-col justify-start items-center gap-8 inline-flex overflow-hidden focus:outline-none data-[state=open]:animate-contentShow">
                     <AlertDialogTitle className="w-full">
