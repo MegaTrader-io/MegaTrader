@@ -20,7 +20,7 @@ function BadgeColorByStatus({status}: { status: RequestStatusType }) {
     }
 
     return <Badge shape={'pill'}
-                  className='!font-bold'
+                  className='!font-bold !text-base'
                   variant={variant || 'secondary'}>
         {status}
     </Badge>
@@ -74,9 +74,9 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
             {togglePanel && (
                 <div className="overflow-x-auto">
                     <Table>
-                        <TableHead className="text-xs">
+                        <TableHead>
                             <TableRow className="text-white">
-                                <TableHeader>
+                                <TableHeader className="!text-base">
                                     <div
                                         className="min-h-6 flex justify-between gap-2 items-center cursor-pointer select-none"
                                         onClick={() => {
@@ -90,16 +90,16 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                                         </div>
                                     </div>
                                 </TableHeader>
-                                <TableHeader>MT Amount</TableHeader>
-                                <TableHeader>Profit share</TableHeader>
-                                <TableHeader>Trader share</TableHeader>
-                                <TableHeader className={"w-[230px]"}>Status</TableHeader>
+                                <TableHeader className="!text-base">MT Amount</TableHeader>
+                                <TableHeader className="!text-base">Profit share</TableHeader>
+                                <TableHeader className="!text-base">Trader share</TableHeader>
+                                <TableHeader className={"!text-base w-[230px]"}>Status</TableHeader>
                             </TableRow>
                         </TableHead>
                         <TableBody className="p-0">
                             {payoutRequests.map(payoutRequest => (
                                 <TableRow key={payoutRequest.id}
-                                          className="text-stone-400 text-xs font-normal leading-tight">
+                                          className="text-stone-400 text-base font-normal leading-tight">
                                     <TableCell className="py-4">
                                         {formatDateTime(payoutRequest.dateOfRequest, 'DD-MM-YYYY')}
                                     </TableCell>
@@ -112,7 +112,7 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                                     <TableCell className="py-4">
                                         {formatCurrency(payoutRequest.traderShare)}
                                     </TableCell>
-                                    <TableCell className="py-4">
+                                    <TableCell className="py-4 text-base">
                                         <BadgeColorByStatus status={payoutRequest.status}/>
                                     </TableCell>
                                 </TableRow>
