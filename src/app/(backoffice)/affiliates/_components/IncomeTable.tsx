@@ -56,9 +56,9 @@ const IncomeTable = () => {
     return (
         <div className="overflow-x-auto">
             <Table>
-                <TableHead className="text-xs">
+                <TableHead>
                     <TableRow className="text-white">
-                        <TableHeader>
+                        <TableHeader className="!text-base">
                             <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
                                  onClick={() => {
                                      handlerSortBy('orderNumber')
@@ -71,7 +71,7 @@ const IncomeTable = () => {
                                 </div>
                             </div>
                         </TableHeader>
-                        <TableHeader>Product</TableHeader>
+                        <TableHeader className="!text-base">Product</TableHeader>
                         <TableHeader>
                             <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
                                  onClick={() => {
@@ -85,7 +85,7 @@ const IncomeTable = () => {
                                 </div>
                             </div>
                         </TableHeader>
-                        <TableHeader>
+                        <TableHeader className="!text-base">
                             <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
                                  onClick={() => {
                                      handlerSortBy('paymentDate')
@@ -98,7 +98,7 @@ const IncomeTable = () => {
                                 </div>
                             </div>
                         </TableHeader>
-                        <TableHeader>
+                        <TableHeader className="!text-base">
                             <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
                                  onClick={() => {
                                      handlerSortBy('originalPrice')
@@ -111,7 +111,7 @@ const IncomeTable = () => {
                                 </div>
                             </div>
                         </TableHeader>
-                        <TableHeader>
+                        <TableHeader className="!text-base">
                             <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
                                  onClick={() => {
                                      handlerSortBy('profit')
@@ -137,7 +137,7 @@ const IncomeTable = () => {
                         </TableRow>
                     ))}
                     {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-stone-400 text-xs font-normal">
+                        <TableRow key={entry.id} className="text-stone-400 !text-base font-normal">
                             <TableCell className="py-4">{entry.orderNumber}</TableCell>
                             <TableCell className="py-4">{entry.product}</TableCell>
                             <TableCell className="py-4">{entry.created}</TableCell>

@@ -1,5 +1,8 @@
 import React from "react";
 
+export type RequestStatusType = 'APPROVED' | 'PENDING' | 'REJECTED'
+export type PaymentMethod = 'bitcoin' | 'paypal' | 'wise' | 'ethereum';
+
 export interface PlanInterface {
     id: number
     level: string
@@ -136,7 +139,8 @@ export interface PayoutsEntry {
     month: string,
     sold: number,
     total_profit: number,
-    status: 'paid' | 'pending'
+    status: 'paid' | 'pending',
+    paymentMethod: PaymentMethod
 }
 
 export interface IncomeEntry {
@@ -204,9 +208,6 @@ export interface INotification {
     message: string;
     action: NotificationAction;
 }
-
-export type RequestStatusType = 'APPROVED' | 'PENDING' | 'REJECTED'
-export type PaymentMethod = 'bitcoin' | 'paypal' | 'wise' | 'ethereum';
 
 export interface IPayoutRequest {
     id: number

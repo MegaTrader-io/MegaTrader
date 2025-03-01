@@ -7,6 +7,7 @@ import {Pagination, PaginationList, PaginationPage} from "@/components/Paginatio
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import ArrowDown, {directionType} from "@/components/ArrowDown";
+import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
 
 const PayoutsTable = () => {
     const [sortBy, setSortBy] = useState<string>('month');
@@ -73,6 +74,7 @@ const PayoutsTable = () => {
                             </div>
                         </TableHeader>
                         <TableHeader className='!text-base'>Sold</TableHeader>
+                        <TableHeader className='!text-base !w-[95px]'>Payment method</TableHeader>
                         <TableHeader className="!text-base">
                             <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
                                  onClick={() => {
@@ -103,6 +105,7 @@ const PayoutsTable = () => {
                         <TableRow key={entry.id} className="text-stone-400 text-base font-normal">
                             <TableCell className="py-4">{entry.month}</TableCell>
                             <TableCell className="py-4">{entry.sold}</TableCell>
+                            <TableCell className="py-4"><PaymentMethodImage paymentMethod={entry.paymentMethod} /></TableCell>
                             <TableCell className="py-4 text-right">
                                 {formatCurrency(entry.total_profit)}
                             </TableCell>
