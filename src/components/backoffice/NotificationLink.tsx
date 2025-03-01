@@ -7,6 +7,7 @@ import {CheckIcon} from "@heroicons/react/16/solid";
 import {XCircleIcon} from "@heroicons/react/20/solid";
 import {PopoverClose} from "@radix-ui/react-popover";
 import PopoverMenuModal from "@/components/backoffice/PopoverMenuModal";
+import {Bars3Icon} from "@heroicons/react/24/solid";
 
 interface NotificationIconProps {
     hasNotification?: boolean;
@@ -111,6 +112,7 @@ export default function NotificationLink() {
     const [hasMore, setHasMore] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const observerRef = useRef<HTMLDivElement | null>(null);
+    const hasNotifications = notifications.filter(notification => !notification.action.read).length > 0;
 
     const fetchNotifications = useCallback(async () => {
         if (isFetching || !hasMore) return;
@@ -154,7 +156,7 @@ export default function NotificationLink() {
 
         observer.observe(observerRef.current);
         return () => observer.disconnect();
-    }, [fetchNotifications, hasMore]);
+    }, [fetchNotifications, hasMore, notifications]);
 
     function markRead(id: string) {
         setNotifications((prev) =>
@@ -165,11 +167,18 @@ export default function NotificationLink() {
         );
     }
 
+    if (!hasNotifications) {
+        return <button
+            className="bg-[#292524] rounded-xl border border-neutral-700 p-3 w-12 h-12 items-center justify-center">
+            <NotificationIcon hasNotification={false}/>
+        </button>
+    }
+
     return (
         <PopoverMenuModal className="block z-10 relative"
                           side={'bottom'}
                           align={'end'}
-                          icon={<NotificationIcon hasNotification={notifications.length > 0}/>}>
+                          icon={<NotificationIcon hasNotification={true}/>}>
             <div className="flex sm:hidden text-left w-full justify-between px-2 gap-2 mb-4">
                 <div
                     className="text-[#131210] w-full text-2xl font-light uppercase leading-7">Notifications
@@ -184,7 +193,8 @@ export default function NotificationLink() {
                 className="gap-1 flex flex-col h-[calc(100dvh-68px)] sm:w-[465px] sm:h-auto sm:max-h-[460px] overflow-scroll scrollbar-hide">
                 {notificationsPending
                     .map(notification => (
-                        <NotificationPanel key={notification.id} notification={notification} markRead={markRead}/>
+                        <NotificationPanel key={notification.id} notification={notification}
+                                           markRead={markRead}/>
                     ))}
 
                 {hasMore && (
