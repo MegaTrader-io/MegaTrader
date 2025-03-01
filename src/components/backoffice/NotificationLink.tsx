@@ -7,7 +7,6 @@ import {CheckIcon} from "@heroicons/react/16/solid";
 import {XCircleIcon} from "@heroicons/react/20/solid";
 import {PopoverClose} from "@radix-ui/react-popover";
 import PopoverMenuModal from "@/components/backoffice/PopoverMenuModal";
-import {Bars3Icon} from "@heroicons/react/24/solid";
 
 interface NotificationIconProps {
     hasNotification?: boolean;
