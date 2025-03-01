@@ -448,7 +448,7 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 910.00,
         profitShare: 60,
         traderShare: 546.00,
-        status: "APPROVED",
+        status: "PENDING",
         paymentMethod: 'bitcoin',
     },
     {
@@ -457,7 +457,7 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 1810.00,
         profitShare: 50,
         traderShare: 450.00,
-        status: "APPROVED",
+        status: "PENDING",
         paymentMethod: 'ethereum',
     },
     {
@@ -466,7 +466,7 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 900.00,
         profitShare: 18,
         traderShare: 80.00,
-        status: "APPROVED",
+        status: "PENDING",
         paymentMethod: 'wise',
     },
     {
@@ -475,7 +475,7 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 900.00,
         profitShare: 18,
         traderShare: 80.00,
-        status: "APPROVED",
+        status: "PENDING",
         paymentMethod: 'paypal'
     },
     {
@@ -484,7 +484,7 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 900.00,
         profitShare: 18,
         traderShare: 80.00,
-        status: "APPROVED",
+        status: "PENDING",
         paymentMethod: 'bitcoin'
     },
     {
@@ -531,6 +531,24 @@ export const payoutRequests: IPayoutRequest[] = [
         traderShare: 450.00,
         status: "REJECTED",
         paymentMethod: 'paypal'
+    },
+    {
+        id: 11,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 1200.00,
+        profitShare: 40,
+        traderShare: 480.00,
+        status: "PENDING",
+        paymentMethod: 'paypal',
+    },
+    {
+        id: 12,
+        dateOfRequest: "01-01-2023",
+        mtAmount: 750.00,
+        profitShare: 25,
+        traderShare: 187.50,
+        status: "PENDING",
+        paymentMethod: 'bitcoin',
     }
 ]
 
