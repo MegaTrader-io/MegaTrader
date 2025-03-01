@@ -17,7 +17,7 @@ interface Props extends PropsWithChildren {
     align?: "start" | "center" | "end";
 }
 
-function PopoverMenu({className, children, icon, modal = false, side = "bottom", align = "center"}: Props) {
+function PopoverMenu({className, children, icon, modal = true, side = "bottom", align = "center"}: Props) {
     const [isVisible, setIsVisible] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null)
