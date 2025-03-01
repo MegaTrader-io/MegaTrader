@@ -68,9 +68,9 @@ const URLVisitsTable = () => {
             <Table>
                 <TableHead className="text-xs">
                     <TableRow className="text-white">
-                        <TableHeader>URL</TableHeader>
-                        <TableHeader>Referring URL</TableHeader>
-                        <TableHeader>Converted</TableHeader>
+                        <TableHeader className="!text-base">URL</TableHeader>
+                        <TableHeader className="!text-base">Referring URL</TableHeader>
+                        <TableHeader className="!text-base">Converted</TableHeader>
                     </TableRow>
                 </TableHead>
                 <TableBody className="p-0">
@@ -84,7 +84,7 @@ const URLVisitsTable = () => {
                         </TableRow>
                     ))}
                     {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-stone-400 text-xs font-normal leading-tight">
+                        <TableRow key={entry.id} className="text-stone-400 text-base font-normal leading-tight">
                             <TableCell className="py-4">{entry.url}</TableCell>
                             <TableCell className="py-4">{entry.referrer}</TableCell>
                             <TableCell className="py-4">

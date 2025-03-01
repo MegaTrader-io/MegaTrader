@@ -57,9 +57,9 @@ const PayoutsTable = () => {
     return (
         <div className="overflow-x-auto">
             <Table>
-                <TableHead className="text-xs">
+                <TableHead className="!text-base">
                     <TableRow className="text-white">
-                        <TableHeader>
+                        <TableHeader className="!text-base">
                             <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
                                  onClick={() => {
                                      handlerSortBy('month')
@@ -72,8 +72,8 @@ const PayoutsTable = () => {
                                 </div>
                             </div>
                         </TableHeader>
-                        <TableHeader>Sold</TableHeader>
-                        <TableHeader>
+                        <TableHeader className='!text-base'>Sold</TableHeader>
+                        <TableHeader className="!text-base">
                             <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
                                  onClick={() => {
                                      handlerSortBy('total_profit')
@@ -86,7 +86,7 @@ const PayoutsTable = () => {
                                 </div>
                             </div>
                         </TableHeader>
-                        <TableHeader className="text-right">Status</TableHeader>
+                        <TableHeader className="text-right !text-base">Status</TableHeader>
                     </TableRow>
                 </TableHead>
                 <TableBody className="p-0">
@@ -100,7 +100,7 @@ const PayoutsTable = () => {
                         </TableRow>
                     ))}
                     {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-stone-400 text-xs font-normal">
+                        <TableRow key={entry.id} className="text-stone-400 text-base font-normal">
                             <TableCell className="py-4">{entry.month}</TableCell>
                             <TableCell className="py-4">{entry.sold}</TableCell>
                             <TableCell className="py-4 text-right">
