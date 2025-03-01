@@ -9,12 +9,7 @@ function PaymentMethodImage({paymentMethod}: { paymentMethod: PaymentMethod }) {
 
     const url = `/assets/images/payment-method/${paymentMethod}.svg`;
 
-    const imageSize = {
-        width: paymentMethod === 'paypal' ? 91 : 24,
-        height: 24
-    }
-
-    return <Image src={url} alt={paymentMethod} width={imageSize.width} height={imageSize.height}></Image>
+    return <Image src={url} alt={paymentMethod} width={24} height={24}></Image>
 }
 
 export default PaymentMethodImage;
