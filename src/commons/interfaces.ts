@@ -206,6 +206,7 @@ export interface INotification {
 }
 
 export type RequestStatusType = 'APPROVED' | 'PENDING' | 'REJECTED'
+export type PaymentMethod = 'bitcoin' | 'paypal' | 'wise' | 'ethereum';
 
 export interface IPayoutRequest {
     id: number
@@ -214,4 +215,5 @@ export interface IPayoutRequest {
     profitShare: number
     traderShare: number
     status: RequestStatusType
+    paymentMethod: PaymentMethod
 }

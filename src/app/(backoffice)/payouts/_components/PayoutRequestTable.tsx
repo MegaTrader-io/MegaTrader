@@ -6,6 +6,7 @@ import {IPayoutRequest, RequestStatusType} from "@/commons/interfaces";
 import clsx from "clsx";
 import ArrowSortBy from "@/components/ArrowSortBy";
 import {directionType} from "@/components/ArrowDown";
+import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
 
 
 function BadgeColorByStatus({status}: { status: RequestStatusType }) {
@@ -93,6 +94,7 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                                 <TableHeader className="!text-base">MT Amount</TableHeader>
                                 <TableHeader className="!text-base">Profit share</TableHeader>
                                 <TableHeader className="!text-base">Trader share</TableHeader>
+                                <TableHeader className="!text-base">Payment method</TableHeader>
                                 <TableHeader className={"!text-base w-[230px]"}>Status</TableHeader>
                             </TableRow>
                         </TableHead>
@@ -111,6 +113,9 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                                     </TableCell>
                                     <TableCell className="py-4">
                                         {formatCurrency(payoutRequest.traderShare)}
+                                    </TableCell>
+                                    <TableCell className="py-4">
+                                        <PaymentMethodImage paymentMethod={payoutRequest.paymentMethod} />
                                     </TableCell>
                                     <TableCell className="py-4 text-base">
                                         <BadgeColorByStatus status={payoutRequest.status}/>

@@ -448,7 +448,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 910.00,
         profitShare: 60,
         traderShare: 546.00,
-        status: "APPROVED"
+        status: "APPROVED",
+        paymentMethod: 'bitcoin',
     },
     {
         id: 2,
@@ -456,7 +457,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 1810.00,
         profitShare: 50,
         traderShare: 450.00,
-        status: "APPROVED"
+        status: "APPROVED",
+        paymentMethod: 'ethereum',
     },
     {
         id: 3,
@@ -464,7 +466,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 900.00,
         profitShare: 18,
         traderShare: 80.00,
-        status: "APPROVED"
+        status: "APPROVED",
+        paymentMethod: 'wise',
     },
     {
         id: 4,
@@ -472,7 +475,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 900.00,
         profitShare: 18,
         traderShare: 80.00,
-        status: "APPROVED"
+        status: "APPROVED",
+        paymentMethod: 'paypal'
     },
     {
         id: 5,
@@ -480,7 +484,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 900.00,
         profitShare: 18,
         traderShare: 80.00,
-        status: "APPROVED"
+        status: "APPROVED",
+        paymentMethod: 'bitcoin'
     },
     {
         id: 6,
@@ -488,7 +493,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 910.00,
         profitShare: 60,
         traderShare: 546.00,
-        status: "PENDING"
+        status: "PENDING",
+        paymentMethod: 'bitcoin'
     },
     {
         id: 7,
@@ -496,7 +502,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 1810.00,
         profitShare: 50,
         traderShare: 450.00,
-        status: "PENDING"
+        status: "PENDING",
+        paymentMethod: 'ethereum'
     },
     {
         id: 8,
@@ -504,7 +511,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 900.00,
         profitShare: 18,
         traderShare: 80.00,
-        status: "PENDING"
+        status: "PENDING",
+        paymentMethod: 'wise'
     },
     {
         id: 9,
@@ -512,7 +520,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 910.00,
         profitShare: 60,
         traderShare: 546.00,
-        status: "REJECTED"
+        status: "REJECTED",
+        paymentMethod: 'bitcoin'
     },
     {
         id: 10,
@@ -520,7 +529,8 @@ export const payoutRequests: IPayoutRequest[] = [
         mtAmount: 1810.00,
         profitShare: 50,
         traderShare: 450.00,
-        status: "REJECTED"
+        status: "REJECTED",
+        paymentMethod: 'paypal'
     }
 ]
 
@@ -718,56 +728,56 @@ export const chartAffiliatesConfig = {
 };
 
 export const featureContentOptions: { id: string, label: string }[] = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'e_mini_sp_500', label: 'E-mini S&P 500' },
-    { id: 'micro_e_mini_sp', label: 'Micro E-mini S&P' },
-    { id: 'e_mini_nasdaq_100', label: 'E-mini NASDAQ 100' },
-    { id: 'micro_e_mini_nasdaq_100', label: 'Micro E-mini NASDAQ 100' },
-    { id: 'e_mini_russell_2000', label: 'E-mini Russell 2000' },
-    { id: 'micro_e_mini_russell_2000', label: 'Micro E-mini Russell 2000' },
-    { id: 'nikkei_nkd', label: 'Nikkei NKD' },
-    { id: 'micro_bitcoin', label: 'Micro Bitcoin' },
-    { id: 'micro_ether', label: 'Micro Ether' },
-    { id: 'australian_dollar', label: 'Australian Dollar' },
-    { id: 'british_pound', label: 'British Pound' },
-    { id: 'canadian_dollar', label: 'Canadian Dollar' },
-    { id: 'euro_fx', label: 'Euro FX' },
-    { id: 'japanese_yen', label: 'Japanese Yen' },
-    { id: 'swiss_franc', label: 'Swiss Franc' },
-    { id: 'e_mini_euro_fx', label: 'E-mini Euro FX' },
-    { id: 'micro_euro_fx', label: 'Micro Euro FX' },
-    { id: 'micro_aud_usd', label: 'Micro AUD/USD' },
-    { id: 'mexican_peso', label: 'Mexican Peso' },
-    { id: 'new_zealand_dollar', label: 'New Zealand Dollar' },
-    { id: 'micro_gbp_usd', label: 'Micro GBP/USD' },
-    { id: 'lean_hogs', label: 'Lean Hogs' },
-    { id: 'live_cattle', label: 'Live Cattle' },
-    { id: 'crude_oil', label: 'Crude Oil' },
-    { id: 'e_mini_crude_oil', label: 'E-mini Crude Oil' },
-    { id: 'natural_gas', label: 'Natural Gas' },
-    { id: 'e_mini_natural_gas', label: 'E-mini Natural Gas' },
-    { id: 'micro_crude_oil', label: 'Micro Crude Oil' },
-    { id: 'rbob_gasoline', label: 'RBOB Gasoline' },
-    { id: 'heating_oil', label: 'Heating Oil' },
-    { id: 'platinum', label: 'Platinum' },
-    { id: 'micro_henry_hub_natural_gas', label: 'Micro Henry Hub Natural Gas' },
-    { id: 'corn', label: 'Corn' },
-    { id: 'wheat', label: 'Wheat' },
-    { id: 'soybeans', label: 'Soybeans' },
-    { id: 'soybean_meal', label: 'Soybean Meal' },
-    { id: 'soybean_oil', label: 'Soybean Oil' },
-    { id: 'mini_dow', label: 'Mini-DOW' },
-    { id: 'micro_mini_dow', label: 'Micro Mini-DOW' },
-    { id: '2_year_note', label: '2-Year Note' },
-    { id: '5_year_note', label: '5-Year Note' },
-    { id: '10_year_note', label: '10-Year Note' },
-    { id: '10_year_ultra_note', label: '10-Year Ultra-Note' },
-    { id: '30_year_bond', label: '30-Year Bond' },
-    { id: 'ultra_bond', label: 'Ultra-Bond' },
-    { id: 'gold', label: 'Gold' },
-    { id: 'silver', label: 'Silver' },
-    { id: 'copper', label: 'Copper' },
-    { id: 'micro_gold', label: 'Micro Gold' },
-    { id: 'micro_silver', label: 'Micro Silver' },
-    { id: 'micro_copper', label: 'Micro Copper' },
+    {id: 'overview', label: 'Overview'},
+    {id: 'e_mini_sp_500', label: 'E-mini S&P 500'},
+    {id: 'micro_e_mini_sp', label: 'Micro E-mini S&P'},
+    {id: 'e_mini_nasdaq_100', label: 'E-mini NASDAQ 100'},
+    {id: 'micro_e_mini_nasdaq_100', label: 'Micro E-mini NASDAQ 100'},
+    {id: 'e_mini_russell_2000', label: 'E-mini Russell 2000'},
+    {id: 'micro_e_mini_russell_2000', label: 'Micro E-mini Russell 2000'},
+    {id: 'nikkei_nkd', label: 'Nikkei NKD'},
+    {id: 'micro_bitcoin', label: 'Micro Bitcoin'},
+    {id: 'micro_ether', label: 'Micro Ether'},
+    {id: 'australian_dollar', label: 'Australian Dollar'},
+    {id: 'british_pound', label: 'British Pound'},
+    {id: 'canadian_dollar', label: 'Canadian Dollar'},
+    {id: 'euro_fx', label: 'Euro FX'},
+    {id: 'japanese_yen', label: 'Japanese Yen'},
+    {id: 'swiss_franc', label: 'Swiss Franc'},
+    {id: 'e_mini_euro_fx', label: 'E-mini Euro FX'},
+    {id: 'micro_euro_fx', label: 'Micro Euro FX'},
+    {id: 'micro_aud_usd', label: 'Micro AUD/USD'},
+    {id: 'mexican_peso', label: 'Mexican Peso'},
+    {id: 'new_zealand_dollar', label: 'New Zealand Dollar'},
+    {id: 'micro_gbp_usd', label: 'Micro GBP/USD'},
+    {id: 'lean_hogs', label: 'Lean Hogs'},
+    {id: 'live_cattle', label: 'Live Cattle'},
+    {id: 'crude_oil', label: 'Crude Oil'},
+    {id: 'e_mini_crude_oil', label: 'E-mini Crude Oil'},
+    {id: 'natural_gas', label: 'Natural Gas'},
+    {id: 'e_mini_natural_gas', label: 'E-mini Natural Gas'},
+    {id: 'micro_crude_oil', label: 'Micro Crude Oil'},
+    {id: 'rbob_gasoline', label: 'RBOB Gasoline'},
+    {id: 'heating_oil', label: 'Heating Oil'},
+    {id: 'platinum', label: 'Platinum'},
+    {id: 'micro_henry_hub_natural_gas', label: 'Micro Henry Hub Natural Gas'},
+    {id: 'corn', label: 'Corn'},
+    {id: 'wheat', label: 'Wheat'},
+    {id: 'soybeans', label: 'Soybeans'},
+    {id: 'soybean_meal', label: 'Soybean Meal'},
+    {id: 'soybean_oil', label: 'Soybean Oil'},
+    {id: 'mini_dow', label: 'Mini-DOW'},
+    {id: 'micro_mini_dow', label: 'Micro Mini-DOW'},
+    {id: '2_year_note', label: '2-Year Note'},
+    {id: '5_year_note', label: '5-Year Note'},
+    {id: '10_year_note', label: '10-Year Note'},
+    {id: '10_year_ultra_note', label: '10-Year Ultra-Note'},
+    {id: '30_year_bond', label: '30-Year Bond'},
+    {id: 'ultra_bond', label: 'Ultra-Bond'},
+    {id: 'gold', label: 'Gold'},
+    {id: 'silver', label: 'Silver'},
+    {id: 'copper', label: 'Copper'},
+    {id: 'micro_gold', label: 'Micro Gold'},
+    {id: 'micro_silver', label: 'Micro Silver'},
+    {id: 'micro_copper', label: 'Micro Copper'},
 ];
