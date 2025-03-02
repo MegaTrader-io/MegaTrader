@@ -17,9 +17,8 @@ function Dialog({children, onClose, className = '', showModal = false, title = '
     showModal?: boolean,
     title?: string
 }) {
-    const [isMobile, setIsMobile] = useState(false);  // Inicializamos en false para evitar errores en SSR
+    const [isMobile, setIsMobile] = useState(false);
     const [open, setOpen] = useState(false);
-    const popoverRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setOpen(showModal);
@@ -42,18 +41,6 @@ function Dialog({children, onClose, className = '', showModal = false, title = '
         };
     }, []);
 
-    useEffect(() => {
-        setTimeout(() => {
-            if (!popoverRef.current) return;
-
-            if (isMobile) {
-                // popoverRef.current.classList.add('dialog-fullscreen');
-            } else {
-                // popoverRef.current.classList.remove('dialog-fullscreen');
-            }
-        }, 200)
-    }, [isMobile, open]);
-
     return (
         <AlertDialogRoot open={open} onOpenChange={(_open) => {
             setOpen(_open);
@@ -65,11 +52,10 @@ function Dialog({children, onClose, className = '', showModal = false, title = '
                 <AlertDialogOverlay
                     className="fixed inset-0 bg-[#131210]/90 data-[state=open]:animate-overlayShow z-[60]"/>
                 <AlertDialogContent
-                    ref={popoverRef}
                     className={clsx(
                         'z-[2000] fixed left-1/2 top-1/2 max-h-[85vh] lg:max-h-full -translate-x-1/2 -translate-y-1/2 rounded-2xl pt-4 bg-[#131210] shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] border border-neutral-700 flex-col justify-start items-center gap-8 inline-flex overflow-hidden focus:outline-none data-[state=open]:animate-contentShow',
                         className,
-                        open && isMobile ? 'w-screen h-dvh max-h-dvh rounded-none border-0': null
+                        open && isMobile ? 'w-screen h-dvh max-h-dvh rounded-none border-0' : null
                     )}>
                     <AlertDialogTitle className="w-full px-4">
                         <div className="flex justify-between items-center w-full">
