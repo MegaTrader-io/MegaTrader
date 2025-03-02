@@ -5,7 +5,7 @@ import {Button} from "@/components/Button";
 import React, {useRef, useState} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
-import DropdownDialog from "@/components/DropdownDialog";
+import SelectAccountDialog from "@/components/SelectAccountDialog";
 import Image from "next/image";
 import {CopyButton} from "@/components/CopyButton";
 import TooltipPanel from "@/app/(backoffice)/account-overview/_components/TooltipPanel";
@@ -13,7 +13,6 @@ import EyeComponent from "@/components/EyeComponent";
 import useToggleSecretsKeys from "@/hooks/useToggleSecretsKeys";
 import {accounts, credentials} from "@/commons/data";
 import ProPlanChart from "@/app/(backoffice)/account-overview/_components/ProPlanChart";
-import AccountStatus from "@/app/(backoffice)/account-overview/_components/AccountStatus";
 import FeatureContent from "@/app/(backoffice)/account-overview/_components/FeatureContent";
 import DailyJournal from "@/app/(backoffice)/account-overview/_components/DailyJournal";
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
@@ -235,27 +234,10 @@ export default function AccountOverView() {
         <div className="w-full">
             <Card className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
                 <div className="flex gap-4 items-center w-full">
-                    <DropdownDialog
+                    <SelectAccountDialog
                         items={accounts}
                         value={selectedAccount}
                         onChange={changeAccount}
-                        renderButtonContent={(item) => (
-                            <button
-                                className="rounded-xl p-3 w-full h-12 bg-stone-800 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800">
-                                <div className="grid grid-cols-[8px_auto_24px] gap-2 items-center">
-                                    <AccountStatus status={item.status} circleOnly={true}/>
-                                    <div
-                                        className="text-left text-stone-400 text-base font-normal truncate">{item.name}</div>
-                                    <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
-                                </div>
-                            </button>
-                        )}
-                        renderOptionContent={(item) => (
-                            <>
-                                <AccountStatus size={'sm'} status={item.status}/>
-                                <div className=" text-stone-400 text-base font-normal truncate">{item.name}</div>
-                            </>
-                        )}
                     />
                 </div>
 
