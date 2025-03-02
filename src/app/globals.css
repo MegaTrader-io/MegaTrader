@@ -118,3 +118,11 @@ body.dialog-mg-open[data-scroll-locked]{
         transform: rotate(-360deg);
     }
 }
+
+.dialog-fullscreen {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    border: none;
+}
