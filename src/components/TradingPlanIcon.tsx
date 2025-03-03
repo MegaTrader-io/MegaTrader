@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const iconMap: Record<string, string> = {
     megax: "/assets/images/trading-plans/lg/megaxIcon.svg",
@@ -25,7 +26,7 @@ const TradingPlanIcon: React.FC<TradingPlanIconProps> = ({
         return null;
     }
 
-    return <img src={iconSrc} alt={alt} width={size} height={size}/>;
+    return <Image src={iconSrc} alt={alt} width={size} height={size}/>;
 };
 
 export default TradingPlanIcon;
