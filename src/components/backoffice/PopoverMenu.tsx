@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
+import React, {PropsWithChildren, useEffect, useRef, useState} from "react";
 import {
     Popover,
     PopoverContent,
@@ -6,16 +6,24 @@ import {
     PopoverTrigger,
     PopoverArrow,
 } from "@radix-ui/react-popover";
-import { Bars3Icon } from "@heroicons/react/24/solid";
+import {Bars3Icon} from "@heroicons/react/24/solid";
 
 interface Props extends PropsWithChildren {
     className?: string;
+    collisionPadding?: number | undefined;
     icon?: React.ReactNode;
     side?: "top" | "bottom" | "left" | "right";
     align?: "start" | "center" | "end";
 }
 
-function PopoverMenu({ className, children, icon, side = "bottom", align = "center" }: Props) {
+function PopoverMenu({
+                         className,
+                         children,
+                         icon,
+                         collisionPadding = undefined,
+                         side = "bottom",
+                         align = "center"
+                     }: Props) {
     const [isVisible, setIsVisible] = useState(true);
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -30,7 +38,7 @@ function PopoverMenu({ className, children, icon, side = "bottom", align = "cent
                     setOpen(false);
                 }
             },
-            { threshold: 0.1 }
+            {threshold: 0.1}
         );
 
         observer.observe(buttonRef.current);
@@ -53,7 +61,7 @@ function PopoverMenu({ className, children, icon, side = "bottom", align = "cent
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <button ref={buttonRef} className="btn-primary max-w-[48px] !px-3 block">
-                        {!icon ? <Bars3Icon className="w-6 h-6 text-white" /> : icon}
+                        {!icon ? <Bars3Icon className="w-6 h-6 text-white"/> : icon}
                     </button>
                 </PopoverTrigger>
                 {isVisible && (
@@ -61,10 +69,12 @@ function PopoverMenu({ className, children, icon, side = "bottom", align = "cent
                         <PopoverContent
                             side={side}
                             align={align}
+                            sideOffset={8}
+                            collisionPadding={collisionPadding}
                             className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000] lg:hidden"
                         >
                             {children}
-                            <PopoverArrow width={26} height={14} className="fill-white" />
+                            <PopoverArrow width={26} height={14} className="fill-white"/>
                         </PopoverContent>
                     </PopoverPortal>
                 )}

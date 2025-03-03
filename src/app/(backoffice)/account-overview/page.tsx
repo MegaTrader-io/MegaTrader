@@ -261,7 +261,7 @@ export default function AccountOverView() {
                 </div>
 
                 <div className="text-white lg:hidden">
-                    <PopoverMenu className="block lg:hidden"
+                    <PopoverMenu collisionPadding={33} className="block lg:hidden"
                                  icon={<EllipsisHorizontalIcon className="w-6 h-6 text-white"/>}>
                         <div className="gap1 flex flex-col">
                             <Link
