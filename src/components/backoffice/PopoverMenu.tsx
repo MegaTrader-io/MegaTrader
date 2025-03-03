@@ -56,6 +56,18 @@ function PopoverMenu({
         };
     }, [open]);
 
+    const enhancedChildren = React.Children.map(children, (child) => {
+        if (React.isValidElement<{ onClick?: (e: React.MouseEvent) => void }>(child)) {
+            return React.cloneElement(child, {
+                onClick: (e: React.MouseEvent) => {
+                    child.props.onClick?.(e);
+                    setOpen(false);
+                },
+            });
+        }
+        return child;
+    });
+
     return (
         <div className={className}>
             <Popover open={open} onOpenChange={setOpen}>
@@ -70,10 +82,11 @@ function PopoverMenu({
                             side={side}
                             align={align}
                             sideOffset={8}
+                            onClick={() => setOpen(false)}
                             collisionPadding={collisionPadding}
                             className="flex flex-col items-center justify-center gap-2 p-2 relative bg-white rounded-lg border border-solid border-[#494949] z-[1000] lg:hidden"
                         >
-                            {children}
+                            {enhancedChildren}
                             <PopoverArrow width={26} height={14} className="fill-white"/>
                         </PopoverContent>
                     </PopoverPortal>
