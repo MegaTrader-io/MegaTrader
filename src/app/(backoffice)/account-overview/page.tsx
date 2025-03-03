@@ -266,18 +266,21 @@ export default function AccountOverView() {
                         <div className="gap1 flex flex-col">
                             <Link
                                 href={'#'}
+                                data-dismiss="true"
                                 className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
                             >
                                 RESET
                             </Link>
                             <Link
                                 href={'#'}
+                                data-dismiss="true"
                                 className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
                             >
                                 CREATE NEW
                             </Link>
                             <Link
                                 href={'#'}
+                                data-dismiss="true"
                                 className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
                             >
                                 MANAGE SUBSCRIPTION
