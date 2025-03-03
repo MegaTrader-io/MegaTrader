@@ -92,7 +92,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
         },
         light: {
             filled: 'bg-white hover:bg-gray-100 text-gray-900 focus:ring-gray-300',
-            text: 'text-gray-900 hover:text-black hover:bg-gray-200 focus:ring-gray-300',
+            text: 'text-white hover:text-black hover:bg-gray-200 focus:ring-gray-300',
         },
         dark: {
             filled: 'bg-stone-800 hover:bg-stone-900 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800',

@@ -6,8 +6,46 @@ import {ApexOptions} from "apexcharts";
 export const accounts: Account[] = [
     {
         id: 1,
+        name: 'S1SEP2586479132DSDS9',
+        planDetail: getPlanDetail('growth'),
+        status: 'active',
+        tradingType: 'tradovate',
+        overallPerformance: {
+            currentBalance: 103540.80,
+            totalProfit: {
+                value: 3549.80,
+                percentage: 3.54
+            },
+            tradingDays: 3,
+            dailyLossLimit: 2500,
+            currentEquity: 103540.80,
+            weeklyNetPnL: 1720.30
+        },
+        objectives: {
+            profitTarget: {
+                target: 3540.80,
+                value: 6000,
+                percentage: 0,
+            },
+            daysTraded: {
+                target: 1,
+                value: 3,
+                percentage: 0,
+                pass: true
+            },
+            rule: {
+                maximumLossLimit: {
+                    pass: true,
+                    description: "Keep your Account Balance above $96,500"
+                }
+            },
+        },
+    },
+    {
+        id: 2,
         name: 'S1SEP2586479132DSDS8',
         planDetail: getPlanDetail('elite'),
+        tradingType: 'quantower',
         status: 'inactive',
         overallPerformance: {
             currentBalance: 47850.30,
@@ -42,83 +80,11 @@ export const accounts: Account[] = [
         }
     },
     {
-        id: 2,
-        name: 'S1SEP2586479132DSDS9',
-        planDetail: getPlanDetail('growth'),
-        status: 'active',
-        overallPerformance: {
-            currentBalance: 103540.80,
-            totalProfit: {
-                value: 3549.80,
-                percentage: 3.54
-            },
-            tradingDays: 3,
-            dailyLossLimit: 2500,
-            currentEquity: 103540.80,
-            weeklyNetPnL: 1720.30
-        },
-        objectives: {
-            profitTarget: {
-                target: 3540.80,
-                value: 6000,
-                percentage: 0,
-            },
-            daysTraded: {
-                target: 1,
-                value: 3,
-                percentage: 0,
-                pass: true
-            },
-            rule: {
-                maximumLossLimit: {
-                    pass: true,
-                    description: "Keep your Account Balance above $96,500"
-                }
-            },
-        }
-    },
-    {
         id: 3,
-        name: 'S1SEP2586479132DSD10',
-        planDetail: getPlanDetail('funded'),
-        status: 'active',
-        overallPerformance: {
-            currentBalance: 159420.75,
-            totalProfit: {
-                value: 9420.75,
-                percentage: 6.28
-            },
-            tradingDays: 12,
-            dailyLossLimit: 3750,
-            currentEquity: 159420.75,
-            weeklyNetPnL: 2740.60
-        },
-        objectives: {
-            profitTarget: {
-                target: 9420.75,
-                value: 9000,
-                percentage: 0,
-                pass: true
-            },
-            daysTraded: {
-                target: 1,
-                value: 12,
-                percentage: 0,
-                pass: true
-            },
-            rule: {
-                maximumLossLimit: {
-                    pass: true,
-                    description: "Keep your Account Balance above $145,000"
-                }
-            },
-        }
-    },
-    {
-        id: 4,
         name: 'S1SEP2586479132DSD11',
         planDetail: getPlanDetail('elite'),
         status: 'inactive',
+        tradingType: 'ninjatrader',
         overallPerformance: {
             currentBalance: 47650.30,
             totalProfit: {
@@ -158,6 +124,44 @@ export const accounts: Account[] = [
                 maximumLossLimit: {
                     pass: false,
                     description: "Keep your Account Balance above $48,000"
+                }
+            },
+        }
+    },
+    {
+        id: 4,
+        name: 'S1SEP2586479132DSD10',
+        planDetail: getPlanDetail('funded'),
+        status: 'active',
+        tradingType: 'megax',
+        overallPerformance: {
+            currentBalance: 159420.75,
+            totalProfit: {
+                value: 9420.75,
+                percentage: 6.28
+            },
+            tradingDays: 12,
+            dailyLossLimit: 3750,
+            currentEquity: 159420.75,
+            weeklyNetPnL: 2740.60
+        },
+        objectives: {
+            profitTarget: {
+                target: 9420.75,
+                value: 9000,
+                percentage: 0,
+                pass: true
+            },
+            daysTraded: {
+                target: 1,
+                value: 12,
+                percentage: 0,
+                pass: true
+            },
+            rule: {
+                maximumLossLimit: {
+                    pass: true,
+                    description: "Keep your Account Balance above $145,000"
                 }
             },
         }

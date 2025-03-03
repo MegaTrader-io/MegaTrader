@@ -4,6 +4,9 @@ import AccountStatus from "@/app/(backoffice)/account-overview/_components/Accou
 import Image from "next/image";
 import Dialog from "@/components/Dialog";
 import {Account} from "@/commons/interfaces";
+import TradingPlanIcon from "@/components/TradingPlanIcon";
+import {CheckCircleIcon} from "@heroicons/react/16/solid";
+import {Button} from "@/components/Button";
 
 interface DropdownDialogProps<T> {
     items: T[];
@@ -20,11 +23,18 @@ export default function DropdownDialog<T extends Account>({
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState(value);
 
-    const handleChange = (item: T) => {
+    const switchOption = (item: T) => {
         setSelected(item);
-        if (onChange) onChange(item);
-        setOpen(false)
     };
+
+    const selectAccount = () => {
+        if (onChange) onChange(selected);
+        setOpen(false)
+    }
+
+    const closeModal = () => {
+        setOpen(false)
+    }
 
     return (
         <>
@@ -40,28 +50,54 @@ export default function DropdownDialog<T extends Account>({
             </button>
 
             <Dialog
-                className="w-[calc(100vw-32px)] sm:w-[600px]"
+                className="w-[calc(100vw-32px)] sm:w-[428px]"
                 showModal={open}
-                onClose={() => setOpen(false)}
+                onClose={closeModal}
                 title={'SELECT ACCOUNT'}>
                 <div className="flex items-center h-full sm:h-auto">
                     <div className="w-full space-y-8">
                         <div>
-                            <ul className="grid grid-cols-2">
+                            <div className="grid grid-cols-2 gap-2">
                                 {items.map((item) => {
-                                    return <li
+                                    return <div
                                         onClick={() => {
-                                            handleChange(item)
+                                            switchOption(item)
                                         }}
-                                        className={clsx('cursor-pointer flex  pl-4 pr-3 py-3 gap-2 items-center', {'bg-stone-800 rounded-xl border border-neutral-700': selected.id === item.id})}
+                                        className={clsx('cursor-pointer flex pl-4 pr-3 py-3 gap-2 items-center border-transparent rounded-xl',
+                                            {
+                                                'bg-stone-800': selected.id === item.id
+                                            })}
                                         key={item.id}>
+                                        <div className="text-center space-y-2 relative select-none w-full">
+                                            <div className="w-full justify-center flex relative">
+                                                <TradingPlanIcon tradingType={item.tradingType}/>
 
-                                        <AccountStatus size={'sm'} status={item.status}/>
-                                        <div
-                                            className=" text-stone-400 text-base font-normal truncate">{item.name}</div>
-                                    </li>
+                                                {selected.id === item.id &&
+                                                    <CheckCircleIcon
+                                                        className="w-6 h-6 fill-primary absolute right-0 -top-1"/>}
+                                            </div>
+                                            <div>
+                                                <div
+                                                    className="text-center text-white text-base font-medium leading-normal">
+                                                    {item.planDetail.level} <span className="capitalize">{item.planDetail.planType}</span> Plan
+                                                </div>
+                                                <div
+                                                    className="text-stone-400 text-sm font-medium uppercase leading-tight">
+                                                    {item.name}</div>
+                                            </div>
+                                            <AccountStatus size={'sm'} status={item.status}/>
+                                        </div>
+                                    </div>
                                 })}
-                            </ul>
+                            </div>
+                        </div>
+                        <div className="flex gap-2 justify-between sm:justify-end">
+                            <Button className="w-full sm:w-auto" variant='light' onClick={closeModal} styleType='text'>
+                                CANCEL
+                            </Button>
+                            <Button className="w-full sm:w-auto" variant={'dark'} onClick={selectAccount}>
+                                SELECT
+                            </Button>
                         </div>
                     </div>
                 </div>

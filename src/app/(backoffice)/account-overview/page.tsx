@@ -37,18 +37,16 @@ export default function AccountOverView() {
         fetchAccount(account).then(() => {
             setSelectedAccount(account);
 
-            if (account.id === 1 || account.id === 4) {
+            if (account.id === 2 || account.id === 3) {// 2 and 3 are inactive
                 if (Math.floor(Math.random() * (20 - 1) + 1) % 2 === 0) {
                     setModalType('breach_modal')
                 } else {
                     setModalType('unpaid_modal')
                 }
-            } else if (account.id === 3) {
+            } else if (account.id === 4) {
                 setModalType('congratulations_modal')
             }
         })
-
-
     }
 
     function handleCloseDialog() {

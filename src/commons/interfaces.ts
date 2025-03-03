@@ -75,6 +75,7 @@ interface Objectives {
 
 export type PlanLevel = '50K' | '100K' | '150K'
 export type PlanType = 'elite' | 'growth' | 'funded'
+export type TradingType = "megax" | "ninjatrader" | "quantower" | "tradovate";
 
 export type PlanDetail = {
     level: PlanLevel,
@@ -86,6 +87,7 @@ export interface Account {
     id: number
     name: string
     planDetail: PlanDetail,
+    tradingType: TradingType,
     status: AccountStatusType,
     overallPerformance: OverallPerformance,
     objectives: Objectives
