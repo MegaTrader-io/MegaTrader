@@ -76,6 +76,7 @@ export default function Header() {
                             <Link
                                 key={item.label}
                                 href={item.href}
+                                target={item.sectionId === '/help-center' ? '_blank' : '_self'}
                                 data-dismiss="true"
                                 className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 ${
                                     currentPath === item.sectionId
