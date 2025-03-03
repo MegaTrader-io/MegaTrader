@@ -76,6 +76,7 @@ export default function Header() {
                             <Link
                                 key={item.label}
                                 href={item.href}
+                                data-dismiss="true"
                                 className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 ${
                                     currentPath === item.sectionId
                                         ? 'px-3 py-1 bg-neutral-300 rounded border border-neutral-300 justify-center items-center gap-2 inline-flex'
@@ -87,6 +88,7 @@ export default function Header() {
                         ))}
                         <Link
                             href="/auth/login"
+                            data-dismiss="true"
                             className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
                         >
                             LOG OUT
