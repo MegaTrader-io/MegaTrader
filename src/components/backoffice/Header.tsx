@@ -68,7 +68,9 @@ export default function Header() {
 
             <div className="flex gap-2">
                 <NotificationLink/>
-                <PopoverMenu className="block lg:hidden" icon={<Bars3Icon className="w-6 h-6 text-white"/>}>
+                <PopoverMenu collisionPadding={16}
+                             className="block lg:hidden"
+                             icon={<Bars3Icon className="w-6 h-6 text-white"/>}>
                     <div className="gap1 flex flex-col">
                         {navigationItems.map((item) => (
                             <Link
