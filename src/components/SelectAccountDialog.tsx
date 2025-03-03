@@ -82,7 +82,7 @@ export default function DropdownDialog<T extends Account>({
                                                     {item.planDetail.level} <span className="capitalize">{item.planDetail.planType}</span> Plan
                                                 </div>
                                                 <div
-                                                    className="text-stone-400 text-sm font-medium uppercase leading-tight">
+                                                    className="text-stone-400 text-sm font-medium uppercase leading-tight truncate">
                                                     {item.name}</div>
                                             </div>
                                             <AccountStatus size={'sm'} status={item.status}/>
