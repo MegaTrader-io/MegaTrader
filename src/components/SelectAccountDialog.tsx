@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import clsx from "clsx";
 import AccountStatus from "@/app/(backoffice)/account-overview/_components/AccountStatus";
 import Image from "next/image";
@@ -22,6 +22,12 @@ export default function DropdownDialog<T extends Account>({
                                                           }: DropdownDialogProps<T>) {
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState(value);
+
+    useEffect(() => {
+        if (open) {
+            setSelected(value);
+        }
+    }, [open, value]);
 
     const switchOption = (item: T) => {
         setSelected(item);
