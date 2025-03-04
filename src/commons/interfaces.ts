@@ -83,6 +83,12 @@ export type PlanDetail = {
     planType: PlanType,
 }
 
+export interface Metrics {
+    title: string,
+    subtitle: string,
+    value: string|number|null
+}
+
 export interface Account {
     id: number
     name: string

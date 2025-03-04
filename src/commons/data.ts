@@ -1,4 +1,4 @@
-import {Account, IUser, Period, TooltipData} from "@/commons/interfaces";
+import {Account, IUser, Metrics, Period, TooltipData} from "@/commons/interfaces";
 import {formatCurrency, getPlanDetail} from "@/commons/utils";
 import {ApexOptions} from "apexcharts";
 
@@ -236,7 +236,7 @@ export const countries = [
     {id: 'US', description: 'United States'}
 ];
 
-export const METRICS = [
+export const PayoutMetrics: Metrics[] = [
     {
         title: 'Available Amount',
         subtitle: 'Withdrable profit available',
@@ -256,6 +256,29 @@ export const METRICS = [
         title: 'Next Withdraw Date',
         subtitle: 'Next date you can withdraw profits',
         value: '06/03/2025'
+    },
+]
+
+export const AffiliatesMetrics: Metrics[] = [
+    {
+        title: 'Available Amount',
+        subtitle: 'Withdrable profit available',
+        value: formatCurrency(4895)
+    },
+    {
+        title: 'Total Earnings',
+        subtitle: 'Total profit earned',
+        value: formatCurrency(5471)
+    },
+    {
+        title: 'Active Referrals',
+        subtitle: 'Subscribed user count',
+        value: 12
+    },
+    {
+        title: 'Total sold',
+        subtitle: 'Purchased plan count',
+        value: 7
     },
 ]
 

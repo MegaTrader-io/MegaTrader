@@ -3,9 +3,11 @@
 import React, {useState} from "react";
 import EarningsOverTime from "@/app/(backoffice)/affiliates/_components/EarningsOverTime";
 import TrafficStatsTable from "@/app/(backoffice)/affiliates/_components/TrafficStatsTable";
-import FinanceSummary from "@/app/(backoffice)/affiliates/_components/FinanceSummary";
 import ReferralAndEarningsSection from "@/app/(backoffice)/affiliates/_components/ReferralAndEarningsSection";
 import Alert from "@/components/Alert";
+import MetricsPanel from "@/components/MetricsPanel";
+import {AffiliatesMetrics} from "@/commons/data";
+import RequestWithdrawal from "@/components/RequestWithdrawal";
 
 export interface IShowAlert {
     type: 'success' | 'error',
@@ -27,8 +29,9 @@ export default function Affiliates() {
             </div>
         )}
 
+        <MetricsPanel metrics={AffiliatesMetrics}/>
+        <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
         <ReferralAndEarningsSection handleDisplayAlert={handleDisplayAlert}/>
-        <FinanceSummary handleDisplayAlert={handleDisplayAlert}/>
         <EarningsOverTime/>
         <TrafficStatsTable/>
     </>
