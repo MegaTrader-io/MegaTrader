@@ -1,4 +1,4 @@
-import {Account, INotification, IPayoutRequest, IUser, Period, TooltipData} from "@/commons/interfaces";
+import {Account, IUser, Period, TooltipData} from "@/commons/interfaces";
 import {formatCurrency, getPlanDetail} from "@/commons/utils";
 import {ApexOptions} from "apexcharts";
 
