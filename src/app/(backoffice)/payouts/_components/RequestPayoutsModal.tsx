@@ -66,6 +66,7 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
 
     return (
         <Dialog showModal={open}
+                childrenClassName={'max-h-dvh'}
                 className="w-[calc(100vw-32px)] sm:w-[600px]"
                 title={'REQUEST PAYOUTS'}
                 onClose={onClose}>

@@ -10,8 +10,9 @@ import {
 import {XCircleIcon} from "@heroicons/react/20/solid";
 import clsx from "clsx";
 
-function Dialog({children, onClose, className = '', showModal = false, title = ''}: {
+function Dialog({children, onClose, className = '', childrenClassName = 'max-h-[70vh]', showModal = false, title = ''}: {
     className?: string,
+    childrenClassName?: string,
     children?: React.ReactNode,
     onClose: () => void,
     showModal?: boolean,
@@ -70,7 +71,7 @@ function Dialog({children, onClose, className = '', showModal = false, title = '
                             </AlertDialogCancel>
                         </div>
                     </AlertDialogTitle>
-                    <div className="w-full h-full sm:h-auto overflow-auto max-h-[70vh] lg:max-h-full pr-4 pl-4 pb-4">
+                    <div className={clsx('w-full h-full sm:h-auto overflow-auto lg:max-h-full pr-4 pl-4 pb-4', childrenClassName)}>
                         {children}
                     </div>
                 </AlertDialogContent>
