@@ -1,12 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 import Badge from "@/components/Badge";
-import {formatCurrency, formatDateTime} from "@/commons/utils";
-import {IPayoutRequest, RequestStatusType} from "@/commons/interfaces";
+import {formatCurrency, formatDateTime, sleep} from "@/commons/utils";
+import {IPayoutRequest, PayoutsEntry, RequestStatusType} from "@/commons/interfaces";
 import clsx from "clsx";
 import ArrowSortBy from "@/components/ArrowSortBy";
-import {directionType} from "@/components/ArrowDown";
+import ArrowDown, {directionType} from "@/components/ArrowDown";
 import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
+import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
+import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 
 
 function BadgeColorByStatus({status}: { status: RequestStatusType }) {
@@ -44,10 +46,52 @@ function ToggleArrow({open, onChange}: { open: boolean, onChange: () => void }) 
     </button>
 }
 
-function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusType, payoutRequests: IPayoutRequest[] }) {
-    const [direction, setDirection] = useState<directionType>('desc')
+function PayoutRequestTable({status}: { status: RequestStatusType }) {
+    const [sortBy, setSortBy] = useState<string>('dateOfRequest');
+    const [direction, setDirection] = useState<directionType>('desc');
+    const [loading, setLoading] = useState(false)
+    const [data, setData] = useState<IPayoutRequest[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const limitPerPage = 7;
     const [togglePanel, setTogglePanel] = useState(true);
-    const hasData = payoutRequests.length > 0;
+    const [pagination, setPagination] = useState({
+        current_page: currentPage,
+        per_page: limitPerPage,
+        total: 0,
+        last_page: 0,
+    });
+
+    const fetchPayoutsData = useCallback(async () => {
+        try {
+            setLoading(true);
+            await sleep(200);
+            const response = await fetch(`/api/payouts?page=${currentPage}&per_page=${limitPerPage}&sortBy=${sortBy}&direction=${direction}&payoutStatus=${status}`);
+            if (!response.ok) {
+                throw new Error(`unable to fetch the end point: ${response.statusText}`);
+            }
+            const result = await response.json();
+            setData(result.data);
+            setPagination(result.meta);
+        } catch (error) {
+            console.error("error:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentPage, sortBy, direction, status]);
+
+    useEffect(() => {
+        void fetchPayoutsData();
+    }, [fetchPayoutsData]);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const handlerSortBy = (sortBy: string) => {
+        setDirection(direction === 'desc' ? 'asc' : 'desc');
+        setSortBy(sortBy)
+    }
+
     return (
         <div>
             <div className="flex w-full justify-between items-center mb-2">
@@ -60,7 +104,7 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                             'bg-rose-500': status === 'REJECTED'
                         })}>
                         <div
-                            className="text-[#131210] text-xs font-bold uppercase leading-normal">{payoutRequests.length}
+                            className="text-[#131210] text-xs font-bold uppercase leading-normal">{pagination.total}
                         </div>
                     </div>
                     <div
@@ -72,8 +116,8 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                 }} open={togglePanel}/>
             </div>
 
-            {togglePanel && !hasData && <EmptyPanel status={status}/>}
-            {togglePanel && hasData && (
+            {togglePanel && pagination.total === 0 && <EmptyPanel status={status}/>}
+            {togglePanel && pagination.total > 0 && (
                 <div className="overflow-x-auto">
                     <Table>
                         <TableHead>
@@ -82,7 +126,7 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                                     <div
                                         className="min-h-6 flex justify-between gap-2 items-center cursor-pointer select-none"
                                         onClick={() => {
-                                            setDirection(direction === 'desc' ? 'asc' : 'desc');
+                                            handlerSortBy('dateOfRequest')
                                         }}>
                                         <div>
                                             Date of request
@@ -100,7 +144,17 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                             </TableRow>
                         </TableHead>
                         <TableBody className="p-0">
-                            {payoutRequests.map(payoutRequest => (
+                            {loading && Array(limitPerPage).fill('1').map((_, index) => (
+                                <TableRow key={index}>
+                                    <TableCell
+                                        colSpan={6}
+                                        className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
+                                        <div className="bg-slate-800/70 w-full h-full"></div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+
+                            {!loading && data.map(payoutRequest => (
                                 <TableRow key={payoutRequest.id}
                                           className="text-stone-400 text-base font-normal leading-tight">
                                     <TableCell className="py-4">
@@ -125,6 +179,38 @@ function PayoutRequestTable({status, payoutRequests}: { status: RequestStatusTyp
                             ))}
                         </TableBody>
                     </Table>
+
+                    {data.length > 0 && (<Pagination
+                        className="mt-6 items-center flex justify-end text-stone-400 text-xs font-normal leading-tight">
+                        {pagination.total >= limitPerPage ? `Showing ${pagination.per_page} of ${pagination.total}` : null}
+                        <PaginationList className="text-white flex items-center">
+                            <PaginationPage
+                                as={'button'}
+                                className="h-7 p-1 bg-stone-800 rounded border border-neutral-700"
+                                onClick={() => handlePageChange(pagination.current_page - 1)}
+                                disabled={pagination.current_page === 1}>
+                                <ChevronLeftIcon className="text-white w-5 h-5 "/>
+                            </PaginationPage>
+                            {Array.from({length: pagination.last_page}, (_, i) => i + 1).map((page) => (
+                                <PaginationPage
+                                    as={'button'}
+                                    className={clsx('w-7 h-7 px-3 py-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex', {
+                                        'bg-stone-950': currentPage === page
+                                    })}
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}>
+                                    {page}
+                                </PaginationPage>
+                            ))}
+                            <PaginationPage
+                                as={'button'}
+                                className="h-7 p-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex"
+                                onClick={() => handlePageChange(pagination.current_page + 1)}
+                                disabled={pagination.current_page === pagination.last_page}>
+                                <ChevronRightIcon className="text-white w-5 h-5"/>
+                            </PaginationPage>
+                        </PaginationList>
+                    </Pagination>)}
                 </div>
             )}
         </div>
