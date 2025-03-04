@@ -41,7 +41,7 @@ const URLVisitsTable = () => {
         try {
             setLoading(true);
             await sleep(200);
-            const response = await fetch(`/api/url-visits?page=${currentPage}&per_page=${limitPerPage}&sortBy=id&direction=desc`);
+            const response = await fetch(`/api/affiliates/url-visits?page=${currentPage}&per_page=${limitPerPage}&sortBy=id&direction=desc`);
             if (!response.ok) {
                 throw new Error(`unable to fetch the end point: ${response.statusText}`);
             }

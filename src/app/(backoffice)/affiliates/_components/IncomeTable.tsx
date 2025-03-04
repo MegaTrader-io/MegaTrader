@@ -26,7 +26,7 @@ const IncomeTable = () => {
         try {
             setLoading(true);
             await sleep(200);
-            const response = await fetch(`/api/income?page=${currentPage}&per_page=${limitPerPage}&sortBy=${sortBy}&direction=${direction}`);
+            const response = await fetch(`/api/affiliates/income?page=${currentPage}&per_page=${limitPerPage}&sortBy=${sortBy}&direction=${direction}`);
             if (!response.ok) {
                 throw new Error(`unable to fetch the end point: ${response.statusText}`);
             }

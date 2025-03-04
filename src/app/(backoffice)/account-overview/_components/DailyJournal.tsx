@@ -127,7 +127,6 @@ function DailyJournal() {
                         )}
                     </TableBody>
                 </Table>
-
                 {data.length > 0 && (<Pagination
                     className="mt-6 items-center flex justify-end text-stone-400 text-xs font-normal leading-tight">
                     Showing {pagination.per_page} of {pagination.total}
