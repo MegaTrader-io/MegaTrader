@@ -88,7 +88,7 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                 </div>
 
                 <div className="text-white text-xl font-medium uppercase leading-normal">
-                    Your max withdrawal amount is: $150
+                    MAX WITHDRAWAL: $150
                 </div>
 
                 <div>
