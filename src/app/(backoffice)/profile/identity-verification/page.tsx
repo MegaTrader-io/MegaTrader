@@ -75,7 +75,7 @@ function Page() {
                     <Image className="mx-auto md:mx-0" src={'/assets/images/veriff.svg'} alt="veriff" width={118} height={34}/>
                 </div>
             </Card>
-            <div className="mt-8 w-full space-y-4">
+            <Card className="mt-8 w-full space-y-4">
                 <div
                     className="text-white text-xl font-light uppercase leading-normal">Verification process
                 </div>
@@ -99,7 +99,7 @@ function Page() {
                     </div>
                 ))}
 
-            </div>
+            </Card>
         </>
     );
 }
