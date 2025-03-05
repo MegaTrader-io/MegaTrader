@@ -77,7 +77,7 @@ const Layout = ({children,}: {
         <div className="lg:col-span-3 w-full">
             <Links options={Options}/>
         </div>
-        <div className="lg:col-span-9 w-full md:space-y-8">
+        <div className="lg:col-span-9 w-full space-y-8">
             <Card className="order-1 w-full lg:order-none mx-auto space-y-8">
                 <div className="md:grid md:grid-cols-[auto_1fr] md:gap-8 space-y-8 md:space-y-0">
                     <div className="w-full justify-center items-center flex md:block">
