@@ -51,7 +51,8 @@ function Page() {
     return (
         <>
             <Card className="w-full bg-primary text-white space-y-4">
-                <div className="justify-start items-start space-y-4 md:space-y-0 md:gap-4 md:grid-cols-3 lg:grid-cols-1 md:grid xl:grid-cols-3">
+                <div
+                    className="justify-start items-start space-y-4 sm:space-y-0 md:gap-4 md:grid-cols-3 md:grid lg:grid-cols-3">
                     {blocks.map(block => (
                         <div key={block.title}
                              className="space-y-4">
@@ -72,7 +73,8 @@ function Page() {
                         Get verified now
                     </Link>
 
-                    <Image className="mx-auto md:mx-0" src={'/assets/images/veriff.svg'} alt="veriff" width={118} height={34}/>
+                    <Image className="mx-auto md:mx-0" src={'/assets/images/veriff.svg'} alt="veriff" width={118}
+                           height={34}/>
                 </div>
             </Card>
             <Card className="mt-8 w-full space-y-4">
