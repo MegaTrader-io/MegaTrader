@@ -7,6 +7,7 @@ import {Bars3Icon, UserCircleIcon} from "@heroicons/react/24/solid";
 import {usePathname} from "next/navigation";
 import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import NotificationLink from "@/components/backoffice/NotificationLink";
+import clsx from "clsx";
 
 const navigationItems = [
     {href: '/account-overview', visibleOnDesktop: true, label: 'ACCOUNT OVERVIEW', sectionId: '/account-overview'},
@@ -20,6 +21,18 @@ const navigationItems = [
         sectionId: '/profile/identity-verification'
     },
 ];
+
+function ProfileIcon({currentPath}: { currentPath: string }) {
+    const isProfileCurrentPath = currentPath.startsWith('/profile/');
+    return (
+        <Link
+            href="/profile/identity-verification"
+            className={clsx('btn-dark-link rounded-xl w-12 h-12', {'!bg-stone-900': isProfileCurrentPath})}
+        >
+            <UserCircleIcon className="w-6 h-6 text-white"/>
+        </Link>
+    )
+}
 
 export default function Header() {
     const currentPath = usePathname()
@@ -98,12 +111,7 @@ export default function Header() {
                 </PopoverMenu>
                 <div className="hidden lg:flex">
                     <div className="flex items-center gap-2">
-                        <Link
-                            href="/profile/identity-verification"
-                            className="btn-dark-link rounded-xl w-12 h-12"
-                        >
-                            <UserCircleIcon className="w-6 h-6 text-white"/>
-                        </Link>
+                        <ProfileIcon currentPath={currentPath}/>
                         <Link
                             href="/auth/login"
                             className="btn-dark-link rounded-xl w-12 h-12"
