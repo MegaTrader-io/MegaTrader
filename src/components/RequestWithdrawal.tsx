@@ -42,7 +42,7 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
                                      submitRequest={submitRequest}/>}
 
             <Card
-                className="space-y-4 md:space-y-0 md:justify-start md:items-center md:gap-4 md:inline-flex md:w-full">
+                className="space-y-4 md:space-y-0 md:justify-start w-full md:items-center md:gap-4 md:inline-flex md:w-full">
                 <div
                     className="md:grow md:shrink md:basis-0 md:h-6 md:justify-start md:items-center md:gap-4 md:flex md:w-full">
                     <div className="text-white text-base font-medium leading-normal">Available Payment

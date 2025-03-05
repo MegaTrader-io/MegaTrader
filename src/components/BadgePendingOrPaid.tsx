@@ -8,6 +8,7 @@ interface Props {
 const BadgePendingOrPaid: React.FC<Props> = ({status}) => {
     return (
         <Badge shape={'pill'}
+               size={'sm'}
                className="!text-base"
                variant={status === 'paid'
                    ? 'secondary'

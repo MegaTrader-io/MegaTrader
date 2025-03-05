@@ -95,7 +95,7 @@ const PayoutsTable = () => {
                     {loading && Array(limitPerPage).fill('1').map((_, index) => (
                         <TableRow key={index}>
                             <TableCell
-                                colSpan={4}
+                                colSpan={5}
                                 className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
                                 <div className="bg-slate-800/70 w-full h-full"></div>
                             </TableCell>
@@ -105,7 +105,10 @@ const PayoutsTable = () => {
                         <TableRow key={entry.id} className="text-stone-400 text-base font-normal">
                             <TableCell className="py-4">{entry.month}</TableCell>
                             <TableCell className="py-4">{entry.sold}</TableCell>
-                            <TableCell className="py-4"><PaymentMethodImage paymentMethod={entry.paymentMethod} /></TableCell>
+                            <TableCell className="py-4">
+                                <PaymentMethodImage
+                                    paymentMethod={entry.paymentMethod}/>
+                            </TableCell>
                             <TableCell className="py-4 text-right">
                                 {formatCurrency(entry.total_profit)}
                             </TableCell>
