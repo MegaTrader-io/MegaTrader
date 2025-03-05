@@ -7,6 +7,7 @@ import {IUser} from "@/commons/interfaces";
 import {Button} from "@/components/Button";
 import clsx from "clsx";
 import Alert from "@/components/Alert";
+import Card from "@/components/Card";
 
 function Page() {
     const [user, setUser] = useState<IUser>(defaultUser)
@@ -54,7 +55,7 @@ function Page() {
     }
 
     return (
-        <div className="w-full space-y-4">
+        <Card className="w-full space-y-4">
             {hasErrors &&
                 <Alert className="w-full" type="error" message='Somethig went wrogn. Please try again later.'/>}
             {updated &&
@@ -209,7 +210,7 @@ function Page() {
                     </Button>
                 </div>
             </form>
-        </div>
+        </Card>
     );
 }
 
