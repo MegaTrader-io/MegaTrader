@@ -6,7 +6,6 @@ import {OptionInterface} from "@/commons/interfaces";
 import URLVisitsTable from "@/app/(backoffice)/affiliates/_components/URLVisitsTable";
 import PayoutsTable from "@/app/(backoffice)/affiliates/_components/PayoutsTable";
 import IncomeTable from "@/app/(backoffice)/affiliates/_components/IncomeTable";
-import {featureContentOptions} from "@/commons/data";
 
 const Options: OptionInterface[] = [
     {id: 'url_visits', label: 'URL Visits'},
