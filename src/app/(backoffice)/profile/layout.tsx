@@ -32,7 +32,7 @@ function Links({options}: { options: IOption[] }) {
                     value={currentPath}
                     className={clsx('w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none')}
                     onChange={(ev: React.ChangeEvent<HTMLSelectElement>) => {
-                        router.push(ev.target.value)
+                        router.push(ev.target.value, {scroll: false})
                     }}
                 >
                     {options.map(option => (
