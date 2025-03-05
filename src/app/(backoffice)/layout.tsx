@@ -9,7 +9,7 @@ const Layout = ({children}: {
     return <AccountProvider>
         <Header/>
         <main
-            className="w-full max-w-7xl h-full mx-auto px-4 py-8 flex items-center justify-between flex-col space-y-8">
+            className="w-full max-w-7xl flex-1 h-dvh mx-auto px-4 py-8 flex items-center justify-between flex-col space-y-8">
             {children}
         </main>
         <Footer/>
