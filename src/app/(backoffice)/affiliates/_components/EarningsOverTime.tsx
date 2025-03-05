@@ -3,6 +3,8 @@ import Card, {CardTitle} from "@/components/Card";
 import dynamic from "next/dynamic";
 import {chartAffiliatesConfig, periods} from "@/commons/data";
 import {Period} from "@/commons/interfaces";
+import Tooltip from "@/components/Tooltip";
+import ExclamationIcon from "@/components/ExclamationIcon";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
@@ -18,8 +20,11 @@ function EarningsOverTime() {
     return (
         <Card className="w-full p-4 text-white space-y-4 md:space-y-0">
             <div className="space-y-2 md:space-y-0 md:flex md:justify-between md:items-center">
-                <CardTitle>
-                    Earnings over time
+                <CardTitle className="flex items-center gap-2">
+                    <span>Earnings over time</span> <Tooltip
+                    content="Earnings over time">
+                    <ExclamationIcon/>
+                </Tooltip>
                 </CardTitle>
                 <div>
                     <div className="relative w-full">
