@@ -25,7 +25,7 @@ function Links({options}: { options: IOption[] }) {
     const router = useRouter()
 
     return <>
-        <div className="block md:hidden">
+        <div className="block sm:hidden">
             <div className="relative w-full">
                 <select
                     name="link"
@@ -54,7 +54,7 @@ function Links({options}: { options: IOption[] }) {
                 </div>
             </div>
         </div>
-        <div className="hidden lg:block lg:space-y-2">
+        <div className="hidden md:flex md:gap-2 lg:block lg:space-y-2">
             {options.map(option => (
                 <Link
                     key={option.url}
@@ -73,14 +73,14 @@ const Layout = ({children,}: {
     const currentPath = usePathname()
     const [user] = useState<IUser>({...defaultUser, verified: currentPath !== '/profile/personal-information'})
 
-    return <div className="flex flex-col lg:grid lg:grid-cols-12 w-full gap-4">
+    return <div className="flex flex-col space-y-8 lg:space-y-0 lg:grid lg:grid-cols-12 w-full lg:gap-4">
         <div className="lg:col-span-3 w-full">
             <Links options={Options}/>
         </div>
-        <div className="lg:col-span-9 w-full space-y-8">
+        <div className="lg:col-span-9 w-full md:space-y-8">
             <Card className="order-1 w-full lg:order-none mx-auto space-y-8">
                 <div className="md:grid md:grid-cols-[auto_1fr] md:gap-8 space-y-8 md:space-y-0">
-                    <div className="w-full justify-center items-center flex">
+                    <div className="w-full justify-center items-center flex md:block">
                         <Avatar user={user}/>
                     </div>
                     <div>
