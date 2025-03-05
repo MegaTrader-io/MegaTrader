@@ -29,6 +29,7 @@ function Links({options}: { options: IOption[] }) {
             <div className="relative w-full">
                 <select
                     name="link"
+                    value={currentPath}
                     className={clsx('w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none')}
                     onChange={(ev: React.ChangeEvent<HTMLSelectElement>) => {
                         router.push(ev.target.value)
@@ -72,30 +73,31 @@ const Layout = ({children,}: {
     const currentPath = usePathname()
     const [user] = useState<IUser>({...defaultUser, verified: currentPath !== '/profile/personal-information'})
 
-    return <div className="grid grid-cols-12 w-full gap-4 font-['Roboto']">
-        <div className="col-span-3 w-full">
+    return <div className="flex flex-col lg:grid lg:grid-cols-12 w-full gap-4">
+        <div className="lg:col-span-3 w-full">
             <Links options={Options}/>
         </div>
-        <div className="col-span-9 w-full space-y-8">
+        <div className="lg:col-span-9 w-full space-y-8">
             <Card className="order-1 w-full lg:order-none mx-auto space-y-8">
-                <div className="grid grid-cols-[auto_1fr] gap-8">
-                    <div>
+                <div className="md:grid md:grid-cols-[auto_1fr] md:gap-8 space-y-8 md:space-y-0">
+                    <div className="w-full justify-center items-center flex">
                         <Avatar user={user}/>
                     </div>
                     <div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="col-span-2 flex items-center gap-4">
+                        <div className="md:grid md:grid-cols-2 gap-4 space-y-4 sm:space-y-0">
+                            <div
+                                className="space-y-2 sm:space-y-0 flex-col md:col-span-2 md:flex md:items-center gap-4">
                                 <div
-                                    className="flex items-center gap-1">
+                                    className="text-center  items-center gap-2 flex justify-center">
                                     <Pencil/>
-                                    <div
-                                        className="text-center text-stone-400 text-base font-normal leading-normal">
-                                        Member since: {user.memberSince}
-                                    </div>
+                                    <span
+                                        className="text-stone-400 text-base font-normal leading-normal">
+                                         Member since: {user.memberSince}
+                                    </span>
                                 </div>
 
                                 <div
-                                    className={clsx('flex items-center gap-1', {
+                                    className={clsx('flex justify-center items-center gap-1', {
                                         'text-secondary': user.verified,
                                         'text-rose-500': !user.verified
                                     })}>
