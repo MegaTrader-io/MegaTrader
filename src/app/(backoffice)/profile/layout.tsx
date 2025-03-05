@@ -86,9 +86,9 @@ const Layout = ({children,}: {
                     <div>
                         <div className="md:grid md:grid-cols-2 gap-4 space-y-4 sm:space-y-0">
                             <div
-                                className="space-y-2 sm:space-y-0 flex-col md:col-span-2 md:flex md:items-center gap-4">
+                                className="space-y-2 flex-col sm:flex-row sm:space-y-0 md:col-span-2 md:flex md:items-center md:gap-4">
                                 <div
-                                    className="text-center  items-center gap-2 flex justify-center">
+                                    className="text-center items-center gap-2 flex justify-center">
                                     <Pencil/>
                                     <span
                                         className="text-stone-400 text-base font-normal leading-normal">
