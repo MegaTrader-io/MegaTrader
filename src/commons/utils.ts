@@ -1,22 +1,34 @@
 import dayjs from "dayjs";
-import {PlanDetail, PlanType} from "@/commons/interfaces";
+import {PlanDetail, PlanLevel, PlanType} from "@/commons/interfaces";
 
+function valueBySize( size: PlanLevel){
+    if(size === '50K') {
+        return 50000
+    }else if(size === '100K') {
+        return 100000;
+    } else if(size === '150K') {
+        return 150000;
+    }
 
-export function getPlanDetail(planType: PlanType): PlanDetail {
+    return 0
+}
+
+export function getPlanDetail(planType: PlanType, size: PlanLevel): PlanDetail {
+
     const plans = {
         'elite': {
-            level: '50K',
-            value: 50000,
+            level: size,
+            value: valueBySize(size),
             planType: 'elite'
         },
         'growth': {
-            level: '100K',
-            value: 10000,
+            level: size,
+            value: valueBySize(size),
             planType: 'growth'
         },
         'funded': {
-            level: '150K',
-            value: 15000,
+            level: size,
+            value: valueBySize(size),
             planType: 'funded'
         },
     };

@@ -6,7 +6,7 @@ export const accounts: Account[] = [
     {
         id: 1,
         name: 'S1SEP2586479132DSDS8',
-        planDetail: getPlanDetail('elite'),
+        planDetail: getPlanDetail('elite', '50K'),
         tradingType: 'quantower',
         status: 'inactive',
         overallPerformance: {
@@ -44,7 +44,7 @@ export const accounts: Account[] = [
     {
         id: 2,
         name: 'S1SEP2586479132DSDS9',
-        planDetail: getPlanDetail('growth'),
+        planDetail: getPlanDetail('growth', '100K'),
         status: 'active',
         tradingType: 'ninjatrader',
         overallPerformance: {
@@ -80,57 +80,8 @@ export const accounts: Account[] = [
     },
     {
         id: 3,
-        name: 'S1SEP2586479132DSD11',
-        planDetail: getPlanDetail('elite'),
-        status: 'inactive',
-        tradingType: 'ninjatrader',
-        overallPerformance: {
-            currentBalance: 47650.30,
-            totalProfit: {
-                value: -2349.70,
-                percentage: -4.70
-            },
-            tradingDays: 6,
-            dailyLossLimit: 1250,
-            currentEquity: 47650.30,
-            weeklyNetPnL: -1130.50,
-        },
-        objectives: {
-            profit: {
-                target: -2349.70,
-                value: 2500,
-                percentage: 0,
-                pass: false
-            },
-            tradingDayBetweenPayouts: {
-                target: 6,
-                value: 10,
-                percentage: 0,
-                pass: false
-            },
-            tradingDayWithProfit: {
-                target: 1,
-                value: 5,
-                percentage: 0,
-                pass: false
-            },
-            consistency: {
-                percentage: 45,
-                minPercentage: 35
-            },
-            highestProfitDaySinceLastPayout: 0,
-            rule: {
-                maximumLossLimit: {
-                    pass: false,
-                    description: "Keep your Account Balance above $48,000"
-                }
-            },
-        }
-    },
-    {
-        id: 4,
         name: 'S1SEP2586479132DSD10',
-        planDetail: getPlanDetail('funded'),
+        planDetail: getPlanDetail('growth', '150K'),
         status: 'active',
         tradingType: 'megax',
         overallPerformance: {
@@ -161,6 +112,55 @@ export const accounts: Account[] = [
                 maximumLossLimit: {
                     pass: true,
                     description: "Keep your Account Balance above $145,000"
+                }
+            },
+        }
+    },
+    {
+        id: 4,
+        name: 'S1SEP2586479132DSD11',
+        planDetail: getPlanDetail('elite', '50K'),
+        status: 'inactive',
+        tradingType: 'megax',
+        overallPerformance: {
+            currentBalance: 47650.30,
+            totalProfit: {
+                value: -2349.70,
+                percentage: -4.70
+            },
+            tradingDays: 6,
+            dailyLossLimit: 1250,
+            currentEquity: 47650.30,
+            weeklyNetPnL: -1130.50,
+        },
+        objectives: {
+            profit: {
+                target: -2349.70,
+                value: 2500,
+                percentage: 0,
+                pass: false
+            },
+            tradingDayBetweenPayouts: {
+                target: 10,
+                value: 6,
+                percentage: 0,
+                pass: false
+            },
+            tradingDayWithProfit: {
+                target: 5,
+                value: 1,
+                percentage: 0,
+                pass: false
+            },
+            consistency: {
+                percentage: 45,
+                minPercentage: 35
+            },
+            highestProfitDaySinceLastPayout: 0,
+            rule: {
+                maximumLossLimit: {
+                    pass: false,
+                    description: "Keep your Account Balance above $48,000"
                 }
             },
         }
