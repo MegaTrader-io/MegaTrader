@@ -1,16 +1,10 @@
-import {NextConfig} from 'next';
-
-
-const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
-
-
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
                 protocol: 'https',
                 hostname: 'megatrader.io',
-                pathname: '/assets/images/**', // Ajusta a la ruta de tus imágenes
+                pathname: '/assets/images/**',
             },
         ],
     },
@@ -22,7 +16,12 @@ const nextConfig: NextConfig = {
                     headers: [
                         {
                             key: 'Content-Security-Policy',
-                            value: `script-src 'self' 'unsafe-inline' https://cdn.livechatinc.com https://api.livechatinc.com; object-src 'none'; frame-ancestors 'self'; connect-src 'self' https://api.livechatinc.com;`,
+                            value: `
+                                script-src 'self' 'unsafe-inline' https://cdn.livechatinc.com https://api.livechatinc.com https://widget.intercom.io;
+                                object-src 'none';
+                                frame-ancestors 'self';
+                                connect-src 'self' https://api.livechatinc.com https://api-iam.intercom.io;
+                            `.replace(/\s{2,}/g, ' ').trim(),
                         },
                         {
                             key: 'Cache-Control',
