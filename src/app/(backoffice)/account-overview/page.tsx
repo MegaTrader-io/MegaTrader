@@ -22,6 +22,7 @@ import {useAccount} from "@/app/providers/AccountContext";
 import AccountSummary from "@/app/(backoffice)/account-overview/_components/AccountSummary";
 import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
+import TradingLogo from "@/components/TradingLogo";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
@@ -37,12 +38,15 @@ export default function AccountOverView() {
         fetchAccount(account).then(() => {
             setSelectedAccount(account);
 
-            if (account.id === 2 || account.id === 3) {// 2 and 3 are inactive
-                if (Math.floor(Math.random() * (20 - 1) + 1) % 2 === 0) {
-                    setModalType('breach_modal')
-                } else {
-                    setModalType('unpaid_modal')
-                }
+            // if (Math.floor(Math.random() * (20 - 1) + 1) % 2 === 0) {
+            // } else {
+            //     setModalType('unpaid_modal')
+            // }
+
+            if (account.id === 1) {
+                setModalType('breach_modal')
+            } else if (account.id === 1) {
+                setModalType('breach_modal')
             } else if (account.id === 4) {
                 setModalType('congratulations_modal')
             }
@@ -293,11 +297,7 @@ export default function AccountOverView() {
                     <div
                         className="justify-center flex gap-[17px] flex-col sm:flex-row sm:items-center sm:w-auto sm:justify-between">
 
-                        <Image
-                            className="mx-auto sm:mx-0"
-                            src='/assets/images/tradovate-t-blue.svg' alt='tradovate blue'
-                            width={133}
-                            height={40}/>
+                        <TradingLogo className="mx-auto sm:mx-0" tradingType={selectedAccount.tradingType}/>
 
                         <Button variant={'dark'}
                                 iconPosition='left'

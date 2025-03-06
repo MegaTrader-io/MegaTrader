@@ -2,47 +2,9 @@ import {Account, IUser, Metrics, Period, TooltipData} from "@/commons/interfaces
 import {formatCurrency, getPlanDetail} from "@/commons/utils";
 import {ApexOptions} from "apexcharts";
 
-
 export const accounts: Account[] = [
     {
         id: 1,
-        name: 'S1SEP2586479132DSDS9',
-        planDetail: getPlanDetail('growth'),
-        status: 'active',
-        tradingType: 'tradovate',
-        overallPerformance: {
-            currentBalance: 103540.80,
-            totalProfit: {
-                value: 3549.80,
-                percentage: 3.54
-            },
-            tradingDays: 3,
-            dailyLossLimit: 2500,
-            currentEquity: 103540.80,
-            weeklyNetPnL: 1720.30
-        },
-        objectives: {
-            profitTarget: {
-                target: 3540.80,
-                value: 6000,
-                percentage: 0,
-            },
-            daysTraded: {
-                target: 1,
-                value: 3,
-                percentage: 0,
-                pass: true
-            },
-            rule: {
-                maximumLossLimit: {
-                    pass: true,
-                    description: "Keep your Account Balance above $96,500"
-                }
-            },
-        },
-    },
-    {
-        id: 2,
         name: 'S1SEP2586479132DSDS8',
         planDetail: getPlanDetail('elite'),
         tradingType: 'quantower',
@@ -78,6 +40,43 @@ export const accounts: Account[] = [
                 }
             },
         }
+    },
+    {
+        id: 2,
+        name: 'S1SEP2586479132DSDS9',
+        planDetail: getPlanDetail('growth'),
+        status: 'active',
+        tradingType: 'tradovate',
+        overallPerformance: {
+            currentBalance: 103540.80,
+            totalProfit: {
+                value: 3549.80,
+                percentage: 3.54
+            },
+            tradingDays: 3,
+            dailyLossLimit: 2500,
+            currentEquity: 103540.80,
+            weeklyNetPnL: 1720.30
+        },
+        objectives: {
+            profitTarget: {
+                target: 3540.80,
+                value: 6000,
+                percentage: 0,
+            },
+            daysTraded: {
+                target: 1,
+                value: 3,
+                percentage: 0,
+                pass: true
+            },
+            rule: {
+                maximumLossLimit: {
+                    pass: true,
+                    description: "Keep your Account Balance above $96,500"
+                }
+            },
+        },
     },
     {
         id: 3,
