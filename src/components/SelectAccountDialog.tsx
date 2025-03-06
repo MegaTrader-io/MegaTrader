@@ -61,7 +61,7 @@ export default function DropdownDialog<T extends Account>({
                 onClose={closeModal}
                 title={'SELECT ACCOUNT'}>
                 <div className="flex items-center h-full sm:h-auto">
-                    <div className="w-full space-y-8">
+                    <div className="w-full space-y-8 h-full">
                         <div>
                             <div className="grid grid-cols-2 gap-2">
                                 {items.map((item) => {
