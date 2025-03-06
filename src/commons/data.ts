@@ -119,7 +119,7 @@ export const accounts: Account[] = [
     {
         id: 4,
         name: 'S1SEP2586479132DSD11',
-        planDetail: getPlanDetail('elite', '50K'),
+        planDetail: getPlanDetail('funded', '50K'),
         status: 'inactive',
         tradingType: 'megax',
         overallPerformance: {
@@ -164,6 +164,49 @@ export const accounts: Account[] = [
                 }
             },
         }
+    },
+    {
+        id: 5,
+        name: 'S1SEP2586479132DSD10',
+        planDetail: getPlanDetail('funded', '100K'),
+        status: 'active',
+        tradingType: 'tradovate',
+        overallPerformance: {
+            currentBalance: 104280.60,
+            totalProfit: {
+                value: 4280.60,
+                percentage: 4.28
+            },
+            tradingDays: 7,
+            dailyLossLimit: 2500,
+            currentEquity: 104280.60,
+            weeklyNetPnL: 1930.75
+        },
+        objectives: {
+            profitTarget: {
+                target: 4280.60,
+                value: 6000,
+                percentage: 0,
+                pass: false
+            },
+            daysTraded: {
+                target: 10,
+                value: 7,
+                percentage: 0,
+            },
+            tradingDayWithProfit: {
+                target: 5,
+                value: 4,
+                percentage: 0,
+                pass: false
+            },
+            rule: {
+                maximumLossLimit: {
+                    pass: true,
+                    description: "Keep your Account Balance above $96,500"
+                }
+            },
+        },
     },
 ];
 
