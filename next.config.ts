@@ -1,3 +1,9 @@
+import {NextConfig} from 'next';
+
+
+const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
+
+
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
