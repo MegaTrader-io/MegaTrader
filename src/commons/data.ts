@@ -46,7 +46,7 @@ export const accounts: Account[] = [
         name: 'S1SEP2586479132DSDS9',
         planDetail: getPlanDetail('growth'),
         status: 'active',
-        tradingType: 'tradovate',
+        tradingType: 'ninjatrader',
         overallPerformance: {
             currentBalance: 103540.80,
             totalProfit: {
