@@ -33,18 +33,20 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
                     <>
                         <Script id="livechat-script" strategy="lazyOnload">
                             {`
-            window.__lc = window.__lc || {};
-            window.__lc.license = 18972174;
-            window.__lc.integration_name = "manual_channels";
-            window.__lc.product_name = "livechat";
-            ;(function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[LiveChatWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.livechatinc.com/tracking.js",t.head.appendChild(n)}};!n.__lc.asyncInit&&e.init(),n.LiveChatWidget=n.LiveChatWidget||e}(window,document,[].slice))
+ // We pre-filled your app ID in the widget URL: 'https://widget.intercom.io/widget/izt54gd4'
+  (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',w.intercomSettings);}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;var l=function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/izt54gd4';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);};if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+
+    window.intercomSettings = {
+    api_base: "https://api-iam.intercom.io",
+    app_id: "izt54gd4",
+    user_id: "123", // IMPORTANT: Replace "user.id" with the variable you use to capture the user's ID
+    name: "foo bar", // IMPORTANT: Replace "user.name" with the variable you use to capture the user's name
+    email: "test@megatrader.io", // IMPORTANT: Replace "user.email" with the variable you use to capture the user's email address
+    created_at: new Date().getTime(), // IMPORTANT: Replace "user.createdAt" with the variable you use to capture the user's sign-up date
+  };
+
             `}
                         </Script>
-                        <noscript><a href="https://www.livechat.com/chat-with/18972174/" rel="nofollow">Chat with us</a>,
-                            powered by <a
-                                href="https://www.livechat.com/?welcome" rel="noopener nofollow"
-                                target="_blank">LiveChat</a>
-                        </noscript>
                     </>
                 )}
             </LoadingProvider>
