@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
                                 script-src 'self' 'unsafe-inline' https://cdn.livechatinc.com https://api.livechatinc.com https://widget.intercom.io https://js.intercomcdn.com;
                                 object-src 'none';
                                 frame-ancestors 'self';
-                                connect-src 'self' https://api.livechatinc.com https://api-iam.intercom.io https://js.intercomcdn.com;
+                                connect-src 'self' https://api.livechatinc.com https://api-iam.intercom.io https://js.intercomcdn.com wss://nexus-websocket-a.intercom.io;
                             `.replace(/\s{2,}/g, ' ').trim(),
                         },
                         {
