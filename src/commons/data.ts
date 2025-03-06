@@ -213,6 +213,55 @@ export const accounts: Account[] = [
             },
         },
     },
+    {
+        id: 6,
+        name: 'S1SEP2586479132DSD11',
+        planDetail: getPlanDetail('funded', '150K'),
+        status: 'active',
+        tradingType: 'tradovate',
+        overallPerformance: {
+            currentBalance: 159870.20,
+            totalProfit: {
+                value: 9870.20,
+                percentage: 6.58
+            },
+            tradingDays: 12,
+            dailyLossLimit: 3750,
+            currentEquity: 159870.20,
+            weeklyNetPnL: 2960.40
+        },
+        objectives: {
+            profitTarget: {
+                target: 9870.20,
+                value: 6000,
+                percentage: 0,
+                pass: false
+            },
+            tradingDayBetweenPayouts: {
+                target: 10,
+                value: 12,
+                percentage: 0,
+                pass: false
+            },
+            tradingDayWithProfit: {
+                target: 5,
+                value: 6,
+                percentage: 0,
+                pass: false
+            },
+            consistency: {
+                percentage: 25,
+                minPercentage: 20
+            },
+            highestProfitDaySinceLastPayout: 534.15,
+            rule: {
+                maximumLossLimit: {
+                    pass: true,
+                    description: "Keep your Account Balance above $144,000"
+                }
+            },
+        },
+    },
 ];
 
 export const credentials = {
