@@ -6,7 +6,6 @@ import React, {useRef, useState} from "react";
 import Link from "next/link";
 import {PlusIcon} from "@heroicons/react/16/solid";
 import SelectAccountDialog from "@/components/SelectAccountDialog";
-import Image from "next/image";
 import {CopyButton} from "@/components/CopyButton";
 import TooltipPanel from "@/app/(backoffice)/account-overview/_components/TooltipPanel";
 import EyeComponent from "@/components/EyeComponent";
