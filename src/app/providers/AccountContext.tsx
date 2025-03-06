@@ -15,7 +15,7 @@ interface AccountContextType {
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
 
 export const AccountProvider = ({children}: { children: React.ReactNode }) => {
-    const [selectedAccount, setSelectedAccountState] = useState<Account>(accounts[4])
+    const [selectedAccount, setSelectedAccountState] = useState<Account>(accounts[0])
     const {setLoading, isLoading} = useLoading();
 
     const setSelectedAccount = (account: Account) => {

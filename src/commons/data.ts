@@ -200,10 +200,15 @@ export const accounts: Account[] = [
                 percentage: 0,
                 pass: false
             },
+            consistency: {
+                percentage: 30,
+                minPercentage: 35
+            },
+            highestProfitDaySinceLastPayout: 0,
             rule: {
                 maximumLossLimit: {
                     pass: true,
-                    description: "Keep your Account Balance above $96,500"
+                    description: "Keep your Account Balance above $96,000"
                 }
             },
         },

@@ -9,20 +9,22 @@ function ConsistencyProgress({account}: { account: Account }) {
         return;
     }
 
+    const passConsistency = account.objectives.consistency.percentage && account.objectives.consistency.percentage >= account.objectives.consistency.minPercentage;
+
     return <div className="w-full">
         <div
             className="justify-between px-0 gap-4 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
         >
             <div className="w-full h-full">
                 <div className="flex items-center gap-2">
-                    {account.objectives.consistency.percentage && account.objectives.consistency.percentage >= account.objectives.consistency.minPercentage &&
+                    {passConsistency &&
                         <CheckCircleIcon className="w-6 h-6 text-teal-400"/>}
-                    {account.objectives.consistency.percentage && account.objectives.consistency.percentage <= account.objectives.consistency.minPercentage &&
+                    {!passConsistency &&
                         <XCircleIcon className="rotate-180 w-6 h-6 text-rose-500"/>}
                     <div>
                         <div className="text-white text-base font-light leading-normal flex items-center gap-2">
                             <span>Consistency</span>
-                            <div className="inline">
+                            <div className="inline-flex">
                                 <QuestionIcon contentClassName={'!w-[300px]'} content={
                                     <div className="space-y-4">
                                         <div className="h-12 justify-start items-center gap-2 inline-flex">
@@ -71,13 +73,13 @@ function ConsistencyProgress({account}: { account: Account }) {
             <div className="w-full h-full">
                 <div className="text-base font-medium text-right uppercase leading-normal">
                                 <span
-                                    className={clsx([account.objectives.consistency.percentage && account.objectives.consistency.percentage <= account.objectives.consistency.minPercentage ? 'text-rose-500' : 'text-teal-400'])}>
+                                    className={clsx([!passConsistency ? 'text-rose-500' : 'text-teal-400'])}>
                                     {account.objectives.consistency.percentage ?? 0}%
                                 </span>
                 </div>
                 <div className="overflow-hidden rounded-full mt-1 bg-neutral-700">
                     <div style={{width: `${account.objectives.consistency.percentage}%`}}
-                         className="h-2 bg-secondary"/>
+                         className={clsx("h-2", clsx([!passConsistency ? 'bg-rose-500' : 'bg-teal-400']))}/>
                 </div>
             </div>
         </div>
