@@ -25,7 +25,7 @@ import TradingLogo from "@/components/TradingLogo";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
-    const [modalType, setModalType] = useState<'breach_modal' | 'unpaid_modal' | 'congratulations_modal' | null>(null);
+    const [modalType, setModalType] = useState<'breach_modal' | 'unpaid_modal' | 'congratulations_modal' | 'delete_account' | null>(null);
     const passwordMaskRef = useRef<HTMLDivElement>(null);
 
     const {toggleMask, currentMask} = useToggleSecretsKeys([
@@ -132,13 +132,60 @@ export default function AccountOverView() {
                     </div>
 
                     <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
-                        <Button className="order-2 sm:order-1 w-full sm:w-auto" variant='light' styleType='text'>
+                        <Button className="order-2 sm:order-1 w-full sm:w-auto" variant='light'
+                                styleType='text'
+                                onClick={() => {
+                                    setModalType('delete_account')
+                                }}>
                             DELETE ACCOUNT
                         </Button>
                         <Button className="order-1 sm:order-2 w-full sm:w-auto" variant={'primary'} onClick={() => {
                             setModalType(null)
                         }}>
                             PAY NOW
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
+
+        <Dialog
+            className="w-[calc(100vw-32px)] sm:w-[600px]"
+            showModal={modalType === 'delete_account'}
+            onClose={handleCloseDialog}
+            title={'DELETE ACCOUNT'}>
+            <div className="flex items-center h-full sm:h-auto">
+                <div className="w-full space-y-8">
+                    <div className="space-y-4">
+                        <div className="w-full flex justify-center">
+                            <svg width="106" height="94" viewBox="0 0 106 94" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M45.206 4.99999C48.6701 -1.00001 57.3304 -0.999995 60.7945 5.00001L104.096 80C107.56 86 103.23 93.5 96.3015 93.5H9.69896C2.77076 93.5 -1.55935 86 1.90475 80L45.206 4.99999Z"
+                                    fill="#F43F5E"/>
+                                <path
+                                    d="M56.2559 37.375L55.6934 61.4453H50.8652L50.2793 37.375H56.2559ZM50.1152 68.8281C50.1152 67.9688 50.3965 67.25 50.959 66.6719C51.5371 66.0781 52.334 65.7812 53.3496 65.7812C54.3496 65.7812 55.1387 66.0781 55.7168 66.6719C56.2949 67.25 56.584 67.9688 56.584 68.8281C56.584 69.6562 56.2949 70.3672 55.7168 70.9609C55.1387 71.5391 54.3496 71.8281 53.3496 71.8281C52.334 71.8281 51.5371 71.5391 50.959 70.9609C50.3965 70.3672 50.1152 69.6562 50.1152 68.8281Z"
+                                    fill="white"/>
+                            </svg>
+                        </div>
+                        <div
+                            className="text-center text-white text-2xl font-medium  uppercase leading-7">
+                            ARE YOU SURE YOU WANT TO DELETE YOUR ACCOUNT?
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
+                        <Button className="order-2 sm:order-1 w-full sm:w-auto" variant='light'
+                                styleType='text'
+                                onClick={() => {
+                                    setModalType(null)
+                                }}>
+                            YES
+                        </Button>
+                        <Button className="order-1 sm:order-2 w-full sm:w-auto" variant={'primary'} onClick={() => {
+                            setModalType(null)
+                        }}>
+                            NO
                         </Button>
                     </div>
                 </div>

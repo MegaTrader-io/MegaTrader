@@ -51,6 +51,8 @@ function Dialog({
 
     useEffect(() => {
         const handleResize = () => {
+            setIsMobile(window.innerWidth < 640);
+
             const intercomContainer = (document.querySelector('.intercom-lightweight-app') || document.getElementById('intercom-container')) as HTMLElement | null;
 
             if (intercomContainer) {
