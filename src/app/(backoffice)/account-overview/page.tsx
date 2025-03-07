@@ -131,11 +131,11 @@ export default function AccountOverView() {
                         </div>
                     </div>
 
-                    <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-2">
-                        <Button className="w-full sm:w-auto" variant='light' styleType='text'>
+                    <div className="flex flex-col gap-2 sm:grid sm:grid-cols-2">
+                        <Button className="order-2 sm:order-1 w-full sm:w-auto" variant='light' styleType='text'>
                             DELETE ACCOUNT
                         </Button>
-                        <Button className="w-full sm:w-auto" variant={'primary'} onClick={() => {
+                        <Button className="order-1 sm:order-2 w-full sm:w-auto" variant={'primary'} onClick={() => {
                             setModalType(null)
                         }}>
                             PAY NOW
