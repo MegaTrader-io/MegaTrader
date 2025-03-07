@@ -131,7 +131,7 @@ export default function AccountOverView() {
                         </div>
                     </div>
 
-                    <div className="sm:grid sm:grid-cols-2">
+                    <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-2">
                         <Button className="w-full sm:w-auto" variant='light' styleType='text'>
                             DELETE ACCOUNT
                         </Button>
