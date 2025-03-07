@@ -10,7 +10,14 @@ import {
 import {XCircleIcon} from "@heroicons/react/20/solid";
 import clsx from "clsx";
 
-function Dialog({children, onClose, className = '', childrenClassName = 'max-h-[70vh]', showModal = false, title = ''}: {
+function Dialog({
+                    children,
+                    onClose,
+                    className = '',
+                    childrenClassName = 'max-h-[70vh]',
+                    showModal = false,
+                    title = ''
+                }: {
     className?: string,
     childrenClassName?: string,
     children?: React.ReactNode,
@@ -42,6 +49,33 @@ function Dialog({children, onClose, className = '', childrenClassName = 'max-h-[
         };
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            const intercomContainer = document.querySelector('.intercom-lightweight-app') || document.getElementById('intercom-container');
+
+            if (intercomContainer) {
+                if (!open) {
+                    intercomContainer.style.display = 'block';
+                }
+
+                if (open && isMobile) {
+                    intercomContainer.style.display = open && isMobile ? 'none' : 'block';
+                }
+            }
+        };
+
+        const resizeObserver = new ResizeObserver(() => handleResize());
+
+        if (typeof window !== "undefined") {
+            handleResize();
+            resizeObserver.observe(document.body);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [open, isMobile]);
+
     return (
         <AlertDialogRoot open={open} onOpenChange={(_open) => {
             setOpen(_open);
@@ -71,7 +105,8 @@ function Dialog({children, onClose, className = '', childrenClassName = 'max-h-[
                             </AlertDialogCancel>
                         </div>
                     </AlertDialogTitle>
-                    <div className={clsx('w-full h-full sm:h-auto overflow-auto lg:max-h-full pr-4 pl-4 pb-4', childrenClassName)}>
+                    <div
+                        className={clsx('w-full h-full sm:h-auto overflow-auto lg:max-h-full pr-4 pl-4 pb-4', childrenClassName)}>
                         {children}
                     </div>
                 </AlertDialogContent>

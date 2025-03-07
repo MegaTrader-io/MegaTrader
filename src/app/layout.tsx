@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     }
 };
 
-const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
+const isProduction = true;//process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
