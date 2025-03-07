@@ -51,7 +51,7 @@ function Dialog({
 
     useEffect(() => {
         const handleResize = () => {
-            const intercomContainer = document.querySelector('.intercom-lightweight-app') || document.getElementById('intercom-container');
+            const intercomContainer = (document.querySelector('.intercom-lightweight-app') || document.getElementById('intercom-container')) as HTMLElement | null;
 
             if (intercomContainer) {
                 if (!open) {
