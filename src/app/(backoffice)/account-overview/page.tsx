@@ -131,7 +131,10 @@ export default function AccountOverView() {
                         </div>
                     </div>
 
-                    <div className="flex justify-center">
+                    <div className="sm:grid sm:grid-cols-2">
+                        <Button className="w-full sm:w-auto" variant='light' styleType='text'>
+                            DELETE ACCOUNT
+                        </Button>
                         <Button className="w-full sm:w-auto" variant={'primary'} onClick={() => {
                             setModalType(null)
                         }}>
