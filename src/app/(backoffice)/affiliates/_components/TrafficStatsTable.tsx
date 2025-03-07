@@ -71,7 +71,7 @@ function TrafficStatsTable() {
                 </div>
             </div>
 
-            <Card className="space-y-4">
+            <Card id="traffic-conversion-table" className="space-y-4">
                 {selection === 'url_visits' && <URLVisitsTable/>}
                 {selection === 'payouts' && <PayoutsTable/>}
                 {selection === 'income' && <IncomeTable/>}

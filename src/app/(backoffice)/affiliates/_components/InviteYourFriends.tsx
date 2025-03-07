@@ -66,7 +66,7 @@ function InviteYourFriends({displayMessage}: {
     }
 
     return (
-        <Card className="w-full lg:col-span-5 p-4 text-white">
+        <Card id="invite-your-friends" className="w-full lg:col-span-5 p-4 text-white">
             <CardTitle className="mb-2">
                 INVITE YOUR FRIENDS
             </CardTitle>

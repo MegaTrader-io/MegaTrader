@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function EarnWithMegatrader() {
     return (
-        <Card className="lg:col-span-7 w-full p-4 text-white">
+        <Card id="referral-program" className="lg:col-span-7 w-full p-4 text-white">
             <CardTitle className="mb-2">
                 EARN WITH MEGATRADER
             </CardTitle>

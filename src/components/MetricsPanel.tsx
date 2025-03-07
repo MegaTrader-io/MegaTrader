@@ -4,7 +4,7 @@ import Card from "@/components/Card";
 
 function MetricsPanel({metrics}: { metrics: Metrics[] }) {
     return (
-        <div className="space-y-4 md:space-y-0 w-full md:grid md:grid-cols-2 lg:flex lg:justify-around gap-4">
+        <div id="affiliate-summary" className="space-y-4 md:space-y-0 w-full md:grid md:grid-cols-2 lg:flex lg:justify-around gap-4">
             {metrics.map((metric, index) => (
                 <Card
                     key={index}

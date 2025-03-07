@@ -18,7 +18,7 @@ function EarningsOverTime() {
     }
 
     return (
-        <Card className="w-full p-4 text-white space-y-4 md:space-y-0">
+        <Card id="earnings-over-time" className="w-full p-4 text-white space-y-4 md:space-y-0">
             <div className="space-y-2 md:space-y-0 md:flex md:justify-between md:items-center">
                 <CardTitle className="flex items-center gap-2">
                     <span>Earnings over time</span> <Tooltip

@@ -123,6 +123,38 @@ function getStepsForPath(path: string) {
                 position: "top"
             },
         ],
+        "/affiliates": [
+            {
+                title: "Affiliate Summary",
+                element: "#affiliate-summary",
+                intro: "Track your total earnings, active referrals, and sales performance. Stay updated on your commission progress and referral activity.",
+                position: "bottom"
+            },
+            {
+                title: "Referral Program",
+                element: "#referral-program",
+                intro: "Earn rewards by inviting friends. Send invitations, generate commissions from sign-ups, and use your earnings to trade for free.",
+                position: "bottom"
+            },
+            {
+                title: "Invite Your Friends",
+                element: "#invite-your-friends",
+                intro: "Send referral invites via email or copy your unique referral link to share on social media or directly with others.",
+                position: "bottom"
+            },
+            {
+                title: "Earnings Over Time",
+                element: "#earnings-over-time",
+                intro: "Analyze your affiliate earnings with a performance graph showing trends over a selected time period.",
+                position: "bottom"
+            },
+            {
+                title: "Traffic & Conversion Table",
+                element: "#traffic-conversion-table",
+                intro: "Monitor referral traffic, source URLs, and conversion rates to track visitor engagement and successful sign-ups.",
+                position: "bottom"
+            },
+        ]
     };
 
     return stepsMap[path] || [];
