@@ -59,6 +59,7 @@ export default function DropdownDialog<T extends Account>({
                 className="w-[calc(100vw-32px)] sm:w-[428px]"
                 showModal={open}
                 onClose={closeModal}
+                childrenClassName={''}
                 title={'SELECT ACCOUNT'}>
                 <div className="flex items-center h-full sm:h-auto">
                     <div className="w-full space-y-8 h-full">
