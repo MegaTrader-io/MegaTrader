@@ -42,6 +42,7 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
                                      submitRequest={submitRequest}/>}
 
             <Card
+                id="available-payment-methods"
                 className="space-y-4 md:space-y-0 md:justify-start w-full md:items-center md:gap-4 md:inline-flex md:w-full">
                 <div
                     className="md:grow md:shrink md:basis-0 md:h-6 md:justify-start md:items-center md:gap-4 md:flex md:w-full">
@@ -51,7 +52,7 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
                     <Image src='/assets/images/crypto-icons.svg' alt='icons' width={216} height={24}/>
                 </div>
 
-                <Button onClick={toggleRequestModal} className="w-full md:w-auto">
+                <Button id="request-withdrawal-button" onClick={toggleRequestModal} className="w-full md:w-auto">
                     REQUEST WITHDRAWAL
                 </Button>
             </Card>

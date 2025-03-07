@@ -21,23 +21,29 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                 const intro = introJs();
                 intro.setOptions({
-                    steps: steps.map(step => ({
+                    steps: steps.map((step, index) => ({
                         title: step.title,
                         element: step.element,
-                        intro: step.intro,
+                        intro: `
+                            <div class="intro-content">
+                                <p>${step.intro}</p>
+                                <div class="intro-buttons">
+                                    ${customSkipButton()}
+                                    ${index === steps.length - 1 ? customFinishButton() : ""}
+                                </div>
+                            </div>`,
                         position: adjustPosition(step.position || "bottom"),
                     })) as Partial<IntroStep>[],
-                    scrollToElement: true, // Hace scroll automático si el tooltip está fuera de pantalla
-                    positionPrecedence: ["bottom", "top", "right", "left"], // Prioriza ubicaciones disponibles
+                    scrollToElement: true,
+                    positionPrecedence: ["bottom", "top", "right", "left"],
                     showProgress: false,
                     showBullets: false,
-                    exitOnOverlayClick: false,
+                    exitOnOverlayClick: true,
                     showStepNumbers: false,
                     disableInteraction: true,
-                    hidePrev: true,
-                    hideNext: true,
+                    hidePrev: false,
+                    hideNext: false,
                     showButtons: true,
-                    doneLabel: customSkipButton(),
                     nextLabel: customNextButton(),
                     prevLabel: customPrevButton(),
                     tooltipClass: "custom-intro-tooltip",
@@ -154,10 +160,46 @@ function getStepsForPath(path: string) {
                 intro: "Monitor referral traffic, source URLs, and conversion rates to track visitor engagement and successful sign-ups.",
                 position: "bottom"
             },
+        ],
+        "/payouts": [
+            {
+                title: "Payout Summary",
+                element: "#payout-summary",
+                intro: "Track your withdrawable profit, total earnings, profit share percentage, and next payout date to plan your withdrawals efficiently.",
+                position: "bottom"
+            },
+            {
+                title: "Available Payment Methods",
+                element: "#available-payment-methods",
+                intro: "View all supported withdrawal methods, including bank transfers and crypto, and select the best option for your needs.",
+                position: "bottom"
+            },
+            {
+                title: "Request Withdrawal Button",
+                element: "#request-withdrawal-button",
+                intro: "Click the button to submit a withdrawal request instantly when you meet the eligibility requirements for payouts.",
+                position: "bottom"
+            },
+            {
+                title: "Payout History Table",
+                element: "#payout-history-table",
+                intro: "Review your past and pending payout requests, including approval status, payment method, and transaction details in one place.",
+                position: "bottom"
+            },
+            {
+                title: "Purpose of the Payouts Page",
+                element: "#purpose-of-the-payouts-page",
+                intro: "Easily manage withdrawals, monitor payout progress, and stay informed about your earnings and available balance at all times.",
+                position: "bottom"
+            },
         ]
     };
 
     return stepsMap[path] || [];
+}
+
+function customFinishButton() {
+    return `<button class="custom-intro-button custom-finish">FINISH</button>`;
 }
 
 function customSkipButton() {
@@ -165,9 +207,9 @@ function customSkipButton() {
 }
 
 function customNextButton() {
-    return `<button class="custom-intro-button custom-next">→</button>`;
+    return `<button class="custom-intro-button custom-next"> > </button>`;
 }
 
 function customPrevButton() {
-    return `<button class="custom-intro-button custom-prev">←</button>`;
+    return `<button class="custom-intro-button custom-prev"> < </button>`;
 }

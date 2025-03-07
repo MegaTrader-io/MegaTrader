@@ -31,7 +31,7 @@ export default function Affiliates() {
             </div>
         )}
 
-        <MetricsPanel metrics={AffiliatesMetrics}/>
+        <MetricsPanel id="affiliate-summary" metrics={AffiliatesMetrics}/>
         <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
         <ReferralAndEarningsSection handleDisplayAlert={handleDisplayAlert}/>
         <EarningsOverTime/>

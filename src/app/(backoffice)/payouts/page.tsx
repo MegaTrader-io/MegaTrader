@@ -9,6 +9,7 @@ import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
+import IntroGuide from "@/components/IntroGuide";
 
 export default function AccountOverView() {
     const payoutRequestLegend: Record<'approved' | 'pending' | 'rejected', RequestStatusType> = {
@@ -24,6 +25,8 @@ export default function AccountOverView() {
     }
 
     return <>
+        <IntroGuide currentPath="/payouts"/>
+
         <div className="w-full space-y-8">
             {showAlert && (
                 <div className="w-full">
@@ -32,23 +35,29 @@ export default function AccountOverView() {
                 </div>
             )}
 
-            <MetricsPanel metrics={PayoutMetrics}/>
+            <MetricsPanel id="payout-summary" metrics={PayoutMetrics}/>
 
             <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
 
-            <Card className="space-y-8">
-                <PayoutRequestTable
-                    status={payoutRequestLegend.approved}
-                />
+            <div id="payout-history-table">
+                <div id="purpose-of-the-payouts-page">
+                    <Card>
+                        <div className="space-y-8">
+                            <PayoutRequestTable
+                                status={payoutRequestLegend.approved}
+                            />
 
-                <PayoutRequestTable
-                    status={payoutRequestLegend.pending}
-                />
+                            <PayoutRequestTable
+                                status={payoutRequestLegend.pending}
+                            />
 
-                <PayoutRequestTable
-                    status={payoutRequestLegend.rejected}
-                />
-            </Card>
+                            <PayoutRequestTable
+                                status={payoutRequestLegend.rejected}
+                            />
+                        </div>
+                    </Card>
+                </div>
+            </div>
         </div>
 
     </>
