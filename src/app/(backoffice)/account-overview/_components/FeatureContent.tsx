@@ -106,7 +106,7 @@ function FeatureContent() {
     }
 
     return (
-        <div className="w-full space-y-2 lg:space-y-2">
+        <div id="market-performance-tabs" className="w-full space-y-2 lg:space-y-2">
             <div className="hidden lg:flex">
                 <div className="w-full flex items-center justify-between space-x-2 rounded-xl relative">
                     {showArrows && (
@@ -186,7 +186,7 @@ function FeatureContent() {
                 </div>
             </div>
 
-            <Card className="w-full space-y-8">
+            <Card id="profitability-metrics" className="w-full space-y-8">
                 <div className="gap-4 flex justify-between items-center">
                     <div
                         className="px-3 sm:mb-auto py-1 gap-2 grid grid-cols-[auto_24px_auto] items-center bg-stone-800 rounded-2xl">

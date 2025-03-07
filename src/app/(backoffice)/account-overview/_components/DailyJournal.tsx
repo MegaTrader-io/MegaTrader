@@ -50,7 +50,7 @@ function DailyJournal() {
     };
 
     return (
-        <Card className="w-full space-y-8">
+        <Card id="daily-journal" className="w-full space-y-8">
             <>
                 <Table>
                     <TableHead className="text-xs">

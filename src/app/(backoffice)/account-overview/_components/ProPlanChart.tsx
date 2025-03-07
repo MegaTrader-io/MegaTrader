@@ -20,7 +20,7 @@ function ProPlanChart({account}: { account: Account }) {
     }
 
     return (
-        <Card className="w-full space-y-4">
+        <Card id="balance-graph" className="w-full space-y-4">
             <div className="space-y-4 lg:space-y-0 md:flex justify-between">
                 <div className="text-white text-xl font-light uppercase leading-normal flex items-center gap-1">
                     {account.planDetail.level} {account.planDetail.planType} PLAN <QuestionIcon data={tooltipData}/>

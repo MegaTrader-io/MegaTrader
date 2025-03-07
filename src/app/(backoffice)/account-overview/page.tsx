@@ -22,6 +22,7 @@ import AccountSummary from "@/app/(backoffice)/account-overview/_components/Acco
 import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
 import TradingLogo from "@/components/TradingLogo";
+import IntroGuide from "@/components/IntroGuide";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
@@ -52,6 +53,8 @@ export default function AccountOverView() {
     }
 
     return <>
+        <IntroGuide currentPath="/account-overview"/>
+
         <Dialog
             className="w-[calc(100vw-32px)] sm:w-[600px]"
             showModal={modalType === 'breach_modal'}
@@ -278,7 +281,8 @@ export default function AccountOverView() {
 
 
         <div className="w-full">
-            <Card className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
+            <Card id="manage-subscription"
+                  className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">
                 <div className="flex gap-4 items-center w-full">
                     <SelectAccountDialog
                         items={accounts}
@@ -335,7 +339,7 @@ export default function AccountOverView() {
                     </PopoverMenu>
                 </div>
             </Card>
-            <TooltipPanel>
+            <TooltipPanel id="platform-access">
                 <div
                     className="flex flex-col gap-[17px] lg:flex-row lg:items-center lg:justify-between p-3 relative bg-neutral-950 rounded-lg border border-solid border-[#1e1e1e]">
                     <div
