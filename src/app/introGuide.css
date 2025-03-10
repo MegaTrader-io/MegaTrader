@@ -1,5 +1,5 @@
 .custom-intro-tooltip {
-    background: rgba(30, 30, 30, 0.95) !important;
+    background: #14120f;
     color: white !important;
     border-radius: 12px !important;
     padding: 16px !important;
@@ -50,7 +50,51 @@
     line-height: 24px;
     padding: 0px;
     word-wrap: break-word
+}
 
+.introjs-arrow {
+    width: 28px;
+    height: 14px;
+    background-size: cover; /* Asegura que la imagen ocupe todo el contenedor */
+    background-repeat: no-repeat;
+    background-position: center; /* Centra la imagen correctamente */
+    position: absolute;
+    display: block;
+}
+
+/* Flecha en la parte superior (TOP) */
+.introjs-arrow.top {
+    background-image: url('/assets/images/arrows/arrow-top.svg');
+    bottom: 100%; /* Coloca la flecha arriba del elemento */
+    left: 50%;
+    top: -12px;
+    transform: translateX(-50%);
+    border-bottom-color: transparent;
+}
+
+/* Flecha en la parte inferior (BOTTOM) */
+.introjs-arrow.bottom {
+    background-image: url('/assets/images/arrows/arrow-bottom.svg');
+    bottom: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top-color: transparent;
+}
+
+/* Flecha a la izquierda (LEFT) */
+.introjs-arrow.left {
+    background-image: url('/assets/images/arrows/arrow-left.svg');
+    right: 100%; /* Coloca la flecha a la izquierda del elemento */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Flecha a la derecha (RIGHT) */
+.introjs-arrow.right {
+    background-image: url('/assets/images/arrows/arrow-right.svg');
+    left: 100%; /* Coloca la flecha a la derecha del elemento */
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 /*.custom-intro-button {*/
