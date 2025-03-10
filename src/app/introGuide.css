@@ -1,10 +1,57 @@
-/*.custom-intro-tooltip {*/
-/*    background: rgba(30, 30, 30, 0.95) !important;*/
-/*    color: white !important;*/
-/*    border-radius: 12px !important;*/
-/*    padding: 16px !important;*/
-/*    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;*/
-/*}*/
+.custom-intro-tooltip {
+    background: rgba(30, 30, 30, 0.95) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+    border: 1px #404040 solid;
+    gap: 8px;
+    display: grid
+}
+
+.custom-intro-tooltip .introjs-tooltiptext {
+
+}
+
+.custom-intro-tooltip .introjs-tooltip-header {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+}
+
+.custom-intro-tooltip .introjs-tooltip-header .introjs-skipbutton {
+    display: none;
+}
+
+.custom-intro-tooltip .introjs-tooltip-title {
+    align-self: stretch;
+    height: 24px;
+    position: relative;
+    color: white;
+    font-size: 16px;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word
+}
+
+.custom-intro-tooltip .introjs-tooltipbuttons {
+    border-top: none;
+    padding: 0px;
+}
+
+.custom-intro-tooltip .introjs-tooltiptext {
+    align-self: stretch;
+    position: relative;
+    color: #A8A29E;
+    font-size: 16px;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 0px;
+    word-wrap: break-word
+
+}
 
 /*.custom-intro-button {*/
 /*    background: #444 !important;*/
