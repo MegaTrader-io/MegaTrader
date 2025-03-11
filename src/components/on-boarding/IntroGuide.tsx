@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import "intro.js/introjs.css";
 import introJs from "intro.js";
 import {IntroStep} from "intro.js/src/core/steps";
@@ -220,7 +220,6 @@ function customNextButton() {
         </svg>
 </button>`;
 }
-
 
 
 function customPrevButton() {
