@@ -34,8 +34,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                                 <p>${step.intro}</p>
                                 <div class="intro-buttons grid grid-cols-[48px_1fr_48px] items-center h-12 gap-2">
                                     ${customPrevButtonMirror()}
-                                    ${customSkipButton()}
-                                    ${index === steps.length - 1 ? customFinishButton() : ""}
+                                    ${index === steps.length - 1 ? customFinishButton() : customSkipButton()}
                                     ${customNextButtonMirror()}
                                 </div>
                             </div>`,
@@ -56,6 +55,14 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     tooltipClass: "custom-intro-tooltip",
                 });
 
+                intro.onafterchange((providedCallback) => {
+                    console.info('providedCallback', providedCallback)
+                });
+
+                intro.onexit(() => {
+                    console.info('onexit')
+                });
+
                 setTimeout(() => {
                     void intro.start();
 
@@ -72,7 +79,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                             btn?.dispatchEvent(new Event('click'));
                         }
 
-                        if (target?.closest(".custom-skip")) {
+                        if (target?.closest(".custom-skip") || target?.closest(".custom-finish")) {
                             introRef.current?.exit(true);
                             // localStorage.setItem(`hasSeenIntro-${currentPath}`, "1");
                         }
@@ -225,7 +232,7 @@ function getStepsForPath(path: string) {
 }
 
 function customFinishButton() {
-    return `<button class="custom-intro-button custom-finish">FINISH</button>`;
+    return `<button class="btn-dark-link w-full rounded-sm font-['Roboto'] text-[14px] px-3 py-0.5 custom-intro-button custom-finish">FINISH</button>`;
 }
 
 function customSkipButton() {

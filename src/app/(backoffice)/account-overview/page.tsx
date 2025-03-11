@@ -34,7 +34,6 @@ export default function AccountOverView() {
     ]);
 
     function changeAccount(account: Account) {
-
         fetchAccount(account).then(() => {
             setSelectedAccount(account);
 
@@ -289,8 +288,6 @@ export default function AccountOverView() {
                         value={selectedAccount}
                         onChange={changeAccount}
                     />
-
-                    <Button styleType={'text'} variant={'light'}>next</Button>
                 </div>
 
                 {/* desktop */}
