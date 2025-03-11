@@ -5,15 +5,12 @@ import "intro.js/introjs.css";
 import introJs from "intro.js";
 import {IntroStep} from "intro.js/src/core/steps";
 import "../../app/introGuide.css";
-import CustomControls from "@/components/on-boarding/CustomControls";
 
 interface IntroGuideProps {
     currentPath: string;
 }
 
 export default function IntroGuide({currentPath}: IntroGuideProps) {
-    const [introInstance, setIntroInstance] = useState<any>(null);
-
     useEffect(() => {
         try {
             const hasSeenIntro = localStorage.getItem(`hasSeenIntro-${currentPath}`);
@@ -53,8 +50,6 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     prevLabel: customPrevButton(),
                     tooltipClass: "custom-intro-tooltip",
                 });
-
-                setIntroInstance(intro);
 
                 setTimeout(() => {
                     void intro.start();
