@@ -1,16 +1,19 @@
 "use client";
 
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import "intro.js/introjs.css";
 import introJs from "intro.js";
 import {IntroStep} from "intro.js/src/core/steps";
 import "../../app/introGuide.css";
+import {IntroJs} from "intro.js/src/intro";
 
 interface IntroGuideProps {
     currentPath: string;
 }
 
 export default function IntroGuide({currentPath}: IntroGuideProps) {
+    const introRef = useRef<IntroJs | null>(null);
+
     useEffect(() => {
         try {
             const hasSeenIntro = localStorage.getItem(`hasSeenIntro-${currentPath}`);
@@ -19,7 +22,9 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 const steps = getStepsForPath(currentPath);
                 if (steps.length === 0) return;
 
-                const intro = introJs();
+                const intro: IntroJs = introJs();
+                introRef.current = intro;
+
                 intro.setOptions({
                     steps: steps.map((step, index) => ({
                         title: step.title,
@@ -65,6 +70,11 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                         if (target?.closest('.custom-next-mirror')) {
                             const btn = document.querySelector('.introjs-nextbutton') as HTMLButtonElement | null;
                             btn?.dispatchEvent(new Event('click'));
+                        }
+
+                        if (target?.closest(".custom-skip")) {
+                            introRef.current?.exit(true);
+                            // localStorage.setItem(`hasSeenIntro-${currentPath}`, "1");
                         }
                     });
                 }, 800);
