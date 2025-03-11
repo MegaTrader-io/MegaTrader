@@ -8,7 +8,7 @@ import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import {AffiliatesMetrics} from "@/commons/data";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
-import IntroGuide from "@/components/IntroGuide";
+import IntroGuide from "@/components/on-boarding/IntroGuide";
 
 export interface IShowAlert {
     type: 'success' | 'error',

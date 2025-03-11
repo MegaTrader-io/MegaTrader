@@ -9,7 +9,7 @@ import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
-import IntroGuide from "@/components/IntroGuide";
+import IntroGuide from "@/components/on-boarding/IntroGuide";
 
 export default function AccountOverView() {
     const payoutRequestLegend: Record<'approved' | 'pending' | 'rejected', RequestStatusType> = {

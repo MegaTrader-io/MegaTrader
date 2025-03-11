@@ -22,7 +22,7 @@ import AccountSummary from "@/app/(backoffice)/account-overview/_components/Acco
 import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
 import TradingLogo from "@/components/TradingLogo";
-import IntroGuide from "@/components/IntroGuide";
+import IntroGuide from "@/components/on-boarding/IntroGuide";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
