@@ -11,8 +11,6 @@ interface IntroGuideProps {
 }
 
 export default function IntroGuide({currentPath}: IntroGuideProps) {
-    const [introInstance, setIntroInstance] = useState<any>(null);
-
     useEffect(() => {
         try {
             const hasSeenIntro = localStorage.getItem(`hasSeenIntro-${currentPath}`);
@@ -53,8 +51,6 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     tooltipClass: "custom-intro-tooltip",
                 });
 
-                setIntroInstance(intro);
-
                 setTimeout(() => {
                     void intro.start();
 
@@ -71,32 +67,11 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                             btn?.dispatchEvent(new Event('click'));
                         }
                     });
-                    // const btnNext = document.querySelector('.custom-next-mirror') as HTMLLinkElement;
-                    //
-                    // if (!btnPrev || !btnNext) {
-                    //     return;
-                    // }
-                    //
-                    // btnPrev.addEventListener('click', function () {
-                    //     console.info('btnPrev');
-                    //     const btn = document.querySelector('.custom-prev-mirror') as HTMLButtonElement;
-                    //     btn.dispatchEvent(new Event('click'));
-                    // });
-                    //
-                    // btnNext.addEventListener('click', function () {
-                    //     console.info('btnNext');
-                    //     const btn = document.querySelector('.introjs-nextbutton') as HTMLButtonElement;
-                    //     btn.dispatchEvent(new Event('click'));
-                    // });
                 }, 800);
             }
         } catch (error) {
             console.error("Unable to active Intro.js:", error);
         }
-    }, [currentPath]);
-
-    useEffect(() => {
-
     }, [currentPath]);
 
     return null;
