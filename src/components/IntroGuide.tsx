@@ -38,7 +38,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     positionPrecedence: ["bottom", "top", "right", "left"],
                     showProgress: false,
                     showBullets: false,
-                    exitOnOverlayClick: true,
+                    exitOnOverlayClick: false,
                     showStepNumbers: false,
                     disableInteraction: true,
                     hidePrev: false,
@@ -207,9 +207,27 @@ function customSkipButton() {
 }
 
 function customNextButton() {
-    return `<button class="custom-intro-button custom-next"> > </button>`;
+    return `<button class="custom-intro-button custom-next">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <mask id="mask0_7151_429" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1" y="0" width="25" height="24">
+        <rect x="-0.5" width="24" height="24" fill="#D9D9D9"/>
+    </mask>
+    <g mask="url(#mask0_7151_429)">
+        <path d="M12.1 12L7.5 7.4L8.9 6L14.9 12L8.9 18L7.5 16.6L12.1 12Z" fill="currentColor"/>
+    </g>
+</svg>
+</button>`;
 }
 
 function customPrevButton() {
-    return `<button class="custom-intro-button custom-prev"> < </button>`;
+    return `<button class="custom-intro-button custom-prev">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <mask id="mask0_7158_4863" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
+        <rect width="24" height="24" transform="matrix(-1 0 0 1 24.5 0)" fill="#D9D9D9"/>
+    </mask>
+    <g mask="url(#mask0_7158_4863)">
+        <path d="M11.9 12L16.5 7.4L15.1 6L9.1 12L15.1 18L16.5 16.6L11.9 12Z" fill="currentColor"/>
+    </g>
+</svg>
+</button>`;
 }
