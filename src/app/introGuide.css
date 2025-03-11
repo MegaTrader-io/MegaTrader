@@ -110,7 +110,6 @@
     color: white;
 }
 
-
 .custom-intro-controls {
     position: fixed;
     bottom: 20px;
@@ -132,4 +131,8 @@
 
 .custom-intro-controls button:hover {
     background: #0056b3;
+}
+
+.introjs-tooltipbuttons{
+    display: none;
 }

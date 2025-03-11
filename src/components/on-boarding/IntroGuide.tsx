@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import "intro.js/introjs.css";
 import introJs from "intro.js";
 import {IntroStep} from "intro.js/src/core/steps";
@@ -11,6 +11,8 @@ interface IntroGuideProps {
 }
 
 export default function IntroGuide({currentPath}: IntroGuideProps) {
+    const [introInstance, setIntroInstance] = useState<any>(null);
+
     useEffect(() => {
         try {
             const hasSeenIntro = localStorage.getItem(`hasSeenIntro-${currentPath}`);
@@ -51,13 +53,50 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     tooltipClass: "custom-intro-tooltip",
                 });
 
+                setIntroInstance(intro);
+
                 setTimeout(() => {
                     void intro.start();
+
+                    document.querySelector('body')?.addEventListener('click', function (event: MouseEvent) {
+                        const target = event.target as Element | null;
+
+                        if (target?.closest('.custom-prev-mirror')) {
+                            const btn = document.querySelector('.introjs-prevbutton') as HTMLButtonElement | null;
+                            btn?.dispatchEvent(new Event('click'));
+                        }
+
+                        if (target?.closest('.custom-next-mirror')) {
+                            const btn = document.querySelector('.introjs-nextbutton') as HTMLButtonElement | null;
+                            btn?.dispatchEvent(new Event('click'));
+                        }
+                    });
+                    // const btnNext = document.querySelector('.custom-next-mirror') as HTMLLinkElement;
+                    //
+                    // if (!btnPrev || !btnNext) {
+                    //     return;
+                    // }
+                    //
+                    // btnPrev.addEventListener('click', function () {
+                    //     console.info('btnPrev');
+                    //     const btn = document.querySelector('.custom-prev-mirror') as HTMLButtonElement;
+                    //     btn.dispatchEvent(new Event('click'));
+                    // });
+                    //
+                    // btnNext.addEventListener('click', function () {
+                    //     console.info('btnNext');
+                    //     const btn = document.querySelector('.introjs-nextbutton') as HTMLButtonElement;
+                    //     btn.dispatchEvent(new Event('click'));
+                    // });
                 }, 800);
             }
         } catch (error) {
             console.error("Unable to active Intro.js:", error);
         }
+    }, [currentPath]);
+
+    useEffect(() => {
+
     }, [currentPath]);
 
     return null;
@@ -237,7 +276,7 @@ function customPrevButton() {
 
 
 function customNextButtonMirror() {
-    return `<button class="custom-intro-button custom-next flex w-full h-full justify-center items-center">
+    return `<button class="custom-intro-button custom-next-mirror flex w-full h-full justify-center items-center">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <mask id="mask0_7151_429" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1" y="0" width="25" height="24">
                 <rect x="-0.5" width="24" height="24" fill="#D9D9D9"/>
@@ -250,7 +289,7 @@ function customNextButtonMirror() {
 }
 
 function customPrevButtonMirror() {
-    return `<button class="custom-intro-button custom-prev flex w-full h-full justify-center items-center">
+    return `<button class="custom-intro-button custom-prev-mirror flex w-full h-full justify-center items-center">
  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <mask id="mask0_7158_4863" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
             <rect width="24" height="24" transform="matrix(-1 0 0 1 24.5 0)" fill="#D9D9D9"/>
