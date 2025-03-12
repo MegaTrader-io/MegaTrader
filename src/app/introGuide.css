@@ -136,3 +136,7 @@
 .introjs-tooltipbuttons {
     display: none;
 }
+
+.introjs-helperLayer{
+    border-radius: 1rem;
+}

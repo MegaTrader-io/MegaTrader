@@ -16,6 +16,28 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
     const btnPrevRef = useRef<HTMLButtonElement | null>(null);
     const btnNextRef = useRef<HTMLButtonElement | null>(null);
 
+    const adjustTooltipSize = () => {
+        setTimeout(() => {
+            const introjsHelperLayer = document.querySelector(".introjs-helperLayer") as HTMLDivElement || null;
+            const tooltips = document.querySelectorAll(".introjs-tooltip");
+
+            if (introjsHelperLayer) {
+                introjsHelperLayer.style.boxShadow = 'rgb(33 33 33 / 0%) 0px 0px 1px 2px, rgb(3 3 3 / 65%) 0px 0px 0px 5000px';
+            }
+
+            tooltips.forEach((tooltip) => {
+                const element = tooltip.parentElement?.querySelector(".introjs-tooltip-reference");
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+
+                    (tooltip as HTMLElement).style.width = `${rect.width}px`;
+                    (tooltip as HTMLElement).style.height = `${rect.height}px`;
+                    (tooltip as HTMLElement).style.boxSizing = "border-box";
+                }
+            });
+        }, 50); // Espera breve para asegurar que el DOM ha actualizado los tooltips
+    };
+
     const updateButtonStyles = () => {
         if (!introRef.current) return;
 
@@ -38,7 +60,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
         if (!btnPrevRef.current || !btnNextRef.current) {
             setTimeout(initializeButtons, 100);
         } else {
-            console.info("btn in memory:", { btnPrev: btnPrevRef.current, btnNext: btnNextRef.current });
+            console.info("btn in memory:", {btnPrev: btnPrevRef.current, btnNext: btnNextRef.current});
         }
     };
 
@@ -54,6 +76,8 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 introRef.current = intro;
 
                 intro.setOptions({
+                    helperElementPadding: 0,
+                    overlayOpacity: 0.95,
                     steps: steps.map((step, index) => ({
                         title: step.title,
                         element: step.element,
@@ -77,7 +101,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     disableInteraction: true,
                     hidePrev: true,
                     hideNext: true,
-                    showButtons: true,
+                    showButtons: false,
                     nextLabel: customNextButton(),
                     prevLabel: customPrevButton(),
                     tooltipClass: "custom-intro-tooltip",
@@ -85,14 +109,16 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                 intro.onafterchange(() => {
                     updateButtonStyles();
+                    adjustTooltipSize()
                 });
 
                 const observer = new MutationObserver(() => {
                     initializeButtons();
                     updateButtonStyles();
+                    adjustTooltipSize()
                 });
 
-                observer.observe(document.body, { childList: true, subtree: true });
+                observer.observe(document.body, {childList: true, subtree: true});
 
                 setTimeout(() => {
                     void intro.start();
@@ -115,6 +141,8 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                             // localStorage.setItem(`hasSeenIntro-${currentPath}`, "1");
                         }
                     });
+
+                    adjustTooltipSize();
                 }, 501);
             }
         } catch (error) {
