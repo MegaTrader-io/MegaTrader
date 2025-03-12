@@ -23,6 +23,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
             if (introjsHelperLayer) {
                 introjsHelperLayer.style.boxShadow = 'rgb(33 33 33 / 0%) 0px 0px 1px 2px, rgb(3 3 3 / 65%) 0px 0px 0px 5000px';
+                introjsHelperLayer.style.borderRadius = '1rem';
             }
 
             tooltips.forEach((tooltip) => {
