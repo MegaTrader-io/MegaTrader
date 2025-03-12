@@ -50,7 +50,7 @@
     word-wrap: break-word
 }
 
-.custom-intro-tooltip .introjs-tooltiptext .intro-content p{
+.custom-intro-tooltip .introjs-tooltiptext .intro-content p {
     max-width: 368px;
 }
 
@@ -91,7 +91,7 @@
     border: none;
 }
 
-.introjs-button.introjs-disabled .custom-intro-button{
+.introjs-button.introjs-disabled .custom-intro-button {
     color: #57534E;
 }
 
@@ -106,7 +106,7 @@
 }
 
 
-.custom-prev, .custom-next {
+.custom-prev, .custom-next, .custom-prev-mirror, .custom-next-mirror {
     color: white;
 }
 
@@ -133,6 +133,6 @@
     background: #0056b3;
 }
 
-.introjs-tooltipbuttons{
+.introjs-tooltipbuttons {
     display: none;
 }
