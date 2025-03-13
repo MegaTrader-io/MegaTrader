@@ -20,9 +20,14 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
         setTimeout(() => {
             const introjsHelperLayer = document.querySelector(".introjs-helperLayer") as HTMLDivElement || null;
             const tooltips = document.querySelectorAll(".introjs-tooltip");
+            const overlay = document.querySelector(".introjs-overlay") as HTMLDivElement || null;
+
+            if (overlay) {
+                overlay.remove();
+            }
 
             if (introjsHelperLayer) {
-                // introjsHelperLayer.style.boxShadow = 'rgb(33 33 33 / 0%) 0px 0px 1px 2px, rgb(3 3 3 / 65%) 0px 0px 0px 5000px';
+                introjsHelperLayer.style.boxShadow = '';
                 introjsHelperLayer.style.borderRadius = '1rem';
             }
 
@@ -36,7 +41,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     (tooltip as HTMLElement).style.boxSizing = "border-box";
                 }
             });
-        }, 50); // Espera breve para asegurar que el DOM ha actualizado los tooltips
+        }, 50);
     };
 
     const updateButtonStyles = () => {
@@ -61,7 +66,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
         if (!btnPrevRef.current || !btnNextRef.current) {
             setTimeout(initializeButtons, 100);
         } else {
-            console.info("btn in memory:", {btnPrev: btnPrevRef.current, btnNext: btnNextRef.current});
+            // console.info("btn in memory:", {btnPrev: btnPrevRef.current, btnNext: btnNextRef.current});
         }
     };
 
@@ -108,9 +113,33 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     tooltipClass: "custom-intro-tooltip",
                 });
 
+                intro.onexit(() => {
+                    steps.forEach(step => {
+                        const element = document.getElementById(step.element.replace('#', '')) as HTMLDivElement || null;
+                        if (element) {
+                            element.classList.remove('bg-card-onboarding')
+                        }
+                    });
+                })
+
                 intro.onafterchange(() => {
                     updateButtonStyles();
                     adjustTooltipSize()
+
+                    steps.forEach(step => {
+                        const element = document.getElementById(step.element.replace('#', '')) as HTMLDivElement || null;
+                        if (element) {
+                            element.classList.add('bg-card-onboarding')
+                        }
+                    });
+
+                    const currentElementID = steps[intro.currentStep()].element as string || null;
+                    if (currentElementID) {
+                        const element = document.getElementById(currentElementID.replace('#', '')) as HTMLDivElement || null;
+                        if (element) {
+                            element.classList.remove('bg-card-onboarding')
+                        }
+                    }
                 });
 
                 const observer = new MutationObserver(() => {

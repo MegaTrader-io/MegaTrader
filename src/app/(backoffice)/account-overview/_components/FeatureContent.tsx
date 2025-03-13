@@ -108,13 +108,13 @@ function FeatureContent() {
     return (
         <div id="market-performance-tabs" className="w-full space-y-2 lg:space-y-2">
             <div className="hidden lg:flex">
-                <div className="w-full flex items-center justify-between space-x-2 rounded-xl relative">
+                <div className=" w-full flex items-center justify-between space-x-2 rounded-xl relative">
                     {showArrows && (
                         <Button
                             variant={'dark'}
                             onClick={scrollLeft}
                             icon={<ChevronLeftIcon className="h-6 w-6 text-white"/>}
-                            className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                            className="bg-btn-onboarding w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
                         >
                         </Button>
                     )}
@@ -134,7 +134,7 @@ function FeatureContent() {
                                 variant={option.id === selection ? "primary" : 'dark'}
                                 key={option.id}
                                 onClick={() => handleButtonClick(option.id)}
-                                className={clsx(`whitespace-nowrap !normal-case`, {
+                                className={clsx(`bg-btn-onboarding whitespace-nowrap !normal-case`, {
                                     'text-black': option.id === selection,
                                     '!text-stone-400': option.id !== selection
                                 })}
@@ -154,7 +154,7 @@ function FeatureContent() {
                             variant={'dark'}
                             icon={<ChevronRightIcon className="h-6 w-6 text-white"/>}
                             onClick={scrollRight}
-                            className="w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                            className="bg-btn-onboarding w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
                         >
                         </Button>
                     )}
