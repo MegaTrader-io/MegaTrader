@@ -120,9 +120,9 @@ body.dialog-mg-open[data-scroll-locked]{
 }
 
 .bg-card-onboarding {
-    @apply relative after:rounded-2xl after:content-[''] after:bg-[#1E1E1E]/80 after:absolute after:top-0 after:bottom-0 after:w-full after:h-full
+    @apply relative after:rounded-2xl after:content-[''] after:bg-[#1E1E1E]/80 after:absolute after:inset-0 after:w-full after:h-full
 }
 
 .bg-btn-onboarding {
-    @apply relative after:rounded-[0.75rem] after:content-[''] after:bg-[#1E1E1E]/80 after:absolute after:top-0 after:bottom-0 after:w-full after:h-full
+    @apply relative after:rounded-[0.75rem] after:content-[''] after:bg-[#1E1E1E]/80 after:absolute after:inset-0 after:w-full after:h-full
 }
