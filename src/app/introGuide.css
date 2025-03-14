@@ -136,7 +136,3 @@
 .introjs-tooltipbuttons {
     display: none;
 }
-
-.introjs-showElement .introjs-relativePosition{
-    z-index: auto !important;
-}

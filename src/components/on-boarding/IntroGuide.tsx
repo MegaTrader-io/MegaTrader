@@ -115,7 +115,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                 intro.onexit(() => {
                     document.querySelectorAll('.bg-card-onboarding').forEach((element => {
-                        element.classList.remove('bg-card-onboarding');
+                        element.classList.remove('bg-card-onboarding', '');
                     }))
                 })
 
@@ -136,7 +136,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                         const element = document.getElementById(elementId) as HTMLDivElement || null;
 
                         if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
-                            const parentElement = element.parentElement as HTMLDivElement || null;
+                            const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
                             if (parentElement) {
                                 parentElement.classList.add('bg-card-onboarding');
                             }
@@ -150,6 +150,9 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                         if (element) {
                             element.classList.add('bg-card-onboarding')
+                            if (step.className) {
+                                element.classList.add(step.className)
+                            }
                         }
                     });
 
@@ -159,7 +162,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                         const element = document.getElementById(elementId) as HTMLDivElement || null;
                         if (element) {
                             if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
-                                const parentElement = element.parentElement as HTMLDivElement || null;
+                                const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
                                 if (parentElement) {
                                     parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
                                 }
@@ -168,7 +171,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                             }
 
                             if (elementId === 'rules-compliance') {
-                                const parentElement = element.parentElement?.parentElement?.parentElement?.parentElement as HTMLDivElement || null;
+                                const parentElement = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement as HTMLDivElement || null;
                                 if (parentElement) {
                                     parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
                                 }
@@ -234,7 +237,13 @@ function adjustPosition(position: string): string {
 }
 
 function getStepsForPath(path: string) {
-    const stepsMap: Record<string, { title: string; element: string; intro: string; position?: string }[]> = {
+    const stepsMap: Record<string, {
+        title: string;
+        element: string;
+        intro: string;
+        position?: string,
+        className?: string
+    }[]> = {
         "/account-overview": [
             {
                 title: "Top Navigation",
@@ -246,7 +255,8 @@ function getStepsForPath(path: string) {
                 title: "Platform Access",
                 element: "#platform-access",
                 intro: "Displays the logo of your selected trading platform. View and copy your login credentials for quick access.",
-                position: "top"
+                position: "top",
+                className: 'after:!rounded-lg'
             },
             {
                 title: "Account Overview",
