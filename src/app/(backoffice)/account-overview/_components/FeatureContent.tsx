@@ -114,7 +114,7 @@ function FeatureContent() {
                             variant={'dark'}
                             onClick={scrollLeft}
                             icon={<ChevronLeftIcon className="h-6 w-6 text-white"/>}
-                            className="bg-btn-onboarding w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                            className="bg-btn-onboarding btn-scroll-left w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
                         >
                         </Button>
                     )}
@@ -134,7 +134,7 @@ function FeatureContent() {
                                 variant={option.id === selection ? "primary" : 'dark'}
                                 key={option.id}
                                 onClick={() => handleButtonClick(option.id)}
-                                className={clsx(`bg-btn-onboarding whitespace-nowrap !normal-case`, {
+                                className={clsx(`btn-metric whitespace-nowrap !normal-case`, {
                                     'text-black': option.id === selection,
                                     '!text-stone-400': option.id !== selection
                                 })}
@@ -154,7 +154,7 @@ function FeatureContent() {
                             variant={'dark'}
                             icon={<ChevronRightIcon className="h-6 w-6 text-white"/>}
                             onClick={scrollRight}
-                            className="bg-btn-onboarding w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                            className="btn-scroll-right w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
                         >
                         </Button>
                     )}

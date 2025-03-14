@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function TooltipPanel({children, id}: { children: React.ReactNode, id?: string }) {
-    return <div id={id} className="relative mt-[22px] group bg-card-onboarding">
+    return <div id={id} className="relative mt-[22px] group">
         <div>
             {children}
         </div>

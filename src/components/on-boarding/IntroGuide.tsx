@@ -125,19 +125,53 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 intro.onafterchange(() => {
                     updateButtonStyles();
                     adjustTooltipSize()
+                    const currentElementID = steps[intro.currentStep()].element as string || null;
+                    console.info('currentElementID ', currentElementID);
 
                     steps.forEach(step => {
-                        const element = document.getElementById(step.element.replace('#', '')) as HTMLDivElement || null;
+                        const elementId = step.element.replace('#', '');
+
+
+                        if (step.element === currentElementID) {
+                            return;
+                        }
+
+                        const element = document.getElementById(elementId) as HTMLDivElement || null;
+
+                        if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
+                            const parentElement = element.parentElement as HTMLDivElement || null;
+                            if (parentElement) {
+                                parentElement.classList.add('bg-card-onboarding');
+                            }
+
+                            return;
+                        }
+
+                        if (elementId === 'rules-compliance') {
+                            return;
+                        }
+
                         if (element) {
                             element.classList.add('bg-card-onboarding')
                         }
                     });
 
-                    const currentElementID = steps[intro.currentStep()].element as string || null;
+
                     if (currentElementID) {
-                        const element = document.getElementById(currentElementID.replace('#', '')) as HTMLDivElement || null;
+                        const elementId = currentElementID.replace('#', '');
+                        const element = document.getElementById(elementId) as HTMLDivElement || null;
                         if (element) {
-                            element.classList.remove('bg-card-onboarding')
+                            if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
+                                const parentElement = element.parentElement as HTMLDivElement || null;
+                                if (parentElement) {
+                                    parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                                }
+
+                                return;
+                            }
+
+
+                            element.classList.remove('bg-card-onboarding', 'introjs-relativePosition')
                         }
                     }
                 });
