@@ -114,9 +114,11 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 });
 
                 intro.onexit(() => {
-                    document.querySelectorAll('.bg-card-onboarding').forEach((element => {
-                        element.classList.remove('bg-card-onboarding', '');
-                    }))
+                    document.querySelectorAll('.bg-card-onboarding,.without-bg-card-onboarding,.bg-btn-onboarding').forEach((element => {
+                        element.classList.remove('bg-card-onboarding');
+                        element.classList.remove('without-bg-card-onboarding');
+                        element.classList.remove('bg-btn-onboarding');
+                    }));
                 })
 
                 intro.onafterchange(() => {
@@ -127,7 +129,6 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                     steps.forEach(step => {
                         const elementId = step.element.replace('#', '');
-
 
                         if (step.element === currentElementID) {
                             return;
@@ -145,6 +146,18 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                         }
 
                         if (elementId === 'rules-compliance') {
+                            return;
+                        }
+
+                        if (elementId === 'market-performance-tabs') {
+                            element.classList.add('without-bg-card-onboarding')
+                            const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                            if (btns && btns.length > 0) {
+                                btns.forEach(btn => {
+                                    btn.classList.add('bg-btn-onboarding');
+                                })
+                            }
+
                             return;
                         }
 

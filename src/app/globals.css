@@ -119,8 +119,12 @@ body.dialog-mg-open[data-scroll-locked]{
     }
 }
 
+.without-bg-card-onboarding {
+    @apply relative after:rounded-2xl after:content-[''] after:opacity-80 after:absolute after:inset-0 after:w-full after:h-full
+}
+
 .bg-card-onboarding {
-    @apply relative after:rounded-2xl after:content-[''] after:bg-[#1E1E1E]/80 after:absolute after:inset-0 after:w-full after:h-full
+    @apply without-bg-card-onboarding after:bg-[#1E1E1E]
 }
 
 .bg-btn-onboarding {

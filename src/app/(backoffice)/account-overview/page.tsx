@@ -278,7 +278,6 @@ export default function AccountOverView() {
             </div>
         </Dialog>
 
-
         <div className="w-full">
             <Card id="manage-subscription"
                   className="w-full flex md:grid md:grid-cols-[auto_1fr_auto] items-center justify-between gap-4">

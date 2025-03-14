@@ -106,83 +106,84 @@ function FeatureContent() {
     }
 
     return (
-        <div id="market-performance-tabs" className="w-full space-y-2 lg:space-y-2">
-            <div className="hidden lg:flex">
-                <div className=" w-full flex items-center justify-between space-x-2 rounded-xl relative">
-                    {showArrows && (
-                        <Button
-                            variant={'dark'}
-                            onClick={scrollLeft}
-                            icon={<ChevronLeftIcon className="h-6 w-6 text-white"/>}
-                            className="bg-btn-onboarding btn-scroll-left w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
-                        >
-                        </Button>
-                    )}
-
-                    {showLeftGradient && (
-                        <div
-                            className="w-12 h-full bg-gradient-to-l from-transparent to-[#131210] absolute left-[48px] z-10"></div>
-                    )}
-
-                    <div
-                        ref={scrollContainerRef}
-                        className="flex gap-2 overflow-x-auto scrollbar-hide px-0.5 py-1 w-full"
-                    >
-                        {featureContentOptions.map(option => (
+        <div className="w-full space-y-2 lg:space-y-2">
+            <div id="market-performance-tabs">
+                <div className="hidden lg:flex">
+                    <div className=" w-full flex items-center justify-between space-x-2 rounded-xl relative">
+                        {showArrows && (
                             <Button
-                                id={`btn-${option.id}`}
-                                variant={option.id === selection ? "primary" : 'dark'}
-                                key={option.id}
-                                onClick={() => handleButtonClick(option.id)}
-                                className={clsx(`btn-metric whitespace-nowrap !normal-case`, {
-                                    'text-black': option.id === selection,
-                                    '!text-stone-400': option.id !== selection
-                                })}
+                                variant={'dark'}
+                                onClick={scrollLeft}
+                                icon={<ChevronLeftIcon className="h-6 w-6 text-white disabled:text-[#A8A29E]/20"/>}
+                                className="btn-scroll-left w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
                             >
-                                {option.label}
                             </Button>
-                        ))}
-                    </div>
+                        )}
 
-                    {showRightGradient && (
+                        {showLeftGradient && (
+                            <div
+                                className="w-12 h-full bg-gradient-to-l from-transparent to-[#131210] absolute left-[48px] z-10"></div>
+                        )}
+
                         <div
-                            className="w-12 h-full bg-gradient-to-r from-transparent to-[#131210] absolute right-[56px]"></div>
-                    )}
-
-                    {showArrows && (
-                        <Button
-                            variant={'dark'}
-                            icon={<ChevronRightIcon className="h-6 w-6 text-white"/>}
-                            onClick={scrollRight}
-                            className="btn-scroll-right w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                            ref={scrollContainerRef}
+                            className="flex gap-2 overflow-x-auto scrollbar-hide px-0.5 py-1 w-full"
                         >
-                        </Button>
-                    )}
-                </div>
-            </div>
+                            {featureContentOptions.map(option => (
+                                <Button
+                                    id={`btn-${option.id}`}
+                                    variant={option.id === selection ? "primary" : 'dark'}
+                                    key={option.id}
+                                    onClick={() => handleButtonClick(option.id)}
+                                    className={clsx(`btn-metric whitespace-nowrap !normal-case`, {
+                                        'text-black': option.id === selection,
+                                        '!text-stone-400': option.id !== selection
+                                    })}
+                                >
+                                    {option.label}
+                                </Button>
+                            ))}
+                        </div>
 
-            <div className="lg:hidden relative w-full">
-                <select
-                    className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
-                    onChange={changeOption}>
-                    {featureContentOptions.map(option => (
-                        <option key={option.id} value={option.id}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
-                              y="0"
-                              width="24" height="24">
-                            <rect width="24" height="24" fill="#D9D9D9"/>
-                        </mask>
-                        <g mask="url(#mask0_5269_2288)">
-                            <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                        </g>
-                    </svg>
+                        {showRightGradient && (
+                            <div
+                                className="w-12 h-full bg-gradient-to-r from-transparent to-[#131210] absolute right-[56px]"></div>
+                        )}
+
+                        {showArrows && (
+                            <Button
+                                variant={'dark'}
+                                icon={<ChevronRightIcon className="h-6 w-6 text-white"/>}
+                                onClick={scrollRight}
+                                className="btn-scroll-right w-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+                            >
+                            </Button>
+                        )}
+                    </div>
+                </div>
+                <div className="lg:hidden relative w-full">
+                    <select
+                        className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
+                        onChange={changeOption}>
+                        {featureContentOptions.map(option => (
+                            <option key={option.id} value={option.id}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
+                                  y="0"
+                                  width="24" height="24">
+                                <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_5269_2288)">
+                                <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                            </g>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
