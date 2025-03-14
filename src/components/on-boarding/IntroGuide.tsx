@@ -192,6 +192,38 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                                 return;
                             }
 
+                            if (elementId === 'market-performance-tabs') {
+                                element.classList.remove('without-bg-card-onboarding')
+                                const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                                if (btns && btns.length > 0) {
+                                    btns.forEach(btn => {
+                                        btn.classList.remove('bg-btn-onboarding');
+                                    })
+                                }
+
+                                const profitabilityMetrics = document.getElementById('profitability-metrics') as HTMLDivElement || null;
+                                if (profitabilityMetrics) {
+                                    profitabilityMetrics.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                                    profitabilityMetrics.classList.add('without-bg-card-onboarding');
+                                }
+
+                                return;
+                            }
+
+                            if (elementId === 'profitability-metrics') {
+                                const marketPerformanceTabs = document.getElementById('market-performance-tabs') as HTMLDivElement || null;
+                                if (marketPerformanceTabs) {
+                                    const btns = marketPerformanceTabs.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                                    if (btns && btns.length > 0) {
+                                        btns.forEach(btn => {
+                                            btn.classList.remove('bg-btn-onboarding');
+                                        })
+                                    }
+                                }
+
+                                element.classList.remove('without-bg-card-onboarding', 'bg-card-onboarding', 'introjs-relativePosition')
+                                return;
+                            }
 
                             element.classList.remove('bg-card-onboarding', 'introjs-relativePosition')
                         }
