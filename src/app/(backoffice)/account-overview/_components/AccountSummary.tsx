@@ -98,7 +98,9 @@ function AccountSummary({account}: { account: Account }) {
                                 <HighestProfitDay account={account}/>}
                         </div>
                         <div id="rules-compliance" className="w-full">
-                            <div className="text-white text-xl font-light uppercase leading-normal mb-4">RULE</div>
+                            <div className="text-white text-xl font-light uppercase leading-normal mb-4">
+                                <span>RULE</span>
+                            </div>
                             <div className="flex gap-2">
                                 <div className="flex items-center gap-2 h-full">
                                     <div className="h-full">

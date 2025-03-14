@@ -114,12 +114,9 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 });
 
                 intro.onexit(() => {
-                    steps.forEach(step => {
-                        const element = document.getElementById(step.element.replace('#', '')) as HTMLDivElement || null;
-                        if (element) {
-                            element.classList.remove('bg-card-onboarding')
-                        }
-                    });
+                    document.querySelectorAll('.bg-card-onboarding').forEach((element => {
+                        element.classList.remove('bg-card-onboarding');
+                    }))
                 })
 
                 intro.onafterchange(() => {
@@ -163,6 +160,15 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                         if (element) {
                             if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
                                 const parentElement = element.parentElement as HTMLDivElement || null;
+                                if (parentElement) {
+                                    parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                                }
+
+                                return;
+                            }
+
+                            if (elementId === 'rules-compliance') {
+                                const parentElement = element.parentElement?.parentElement?.parentElement?.parentElement as HTMLDivElement || null;
                                 if (parentElement) {
                                     parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
                                 }
