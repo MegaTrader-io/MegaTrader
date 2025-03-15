@@ -40,6 +40,18 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     (tooltip as HTMLElement).style.height = `${rect.height}px`;
                     (tooltip as HTMLElement).style.boxSizing = "border-box";
                 }
+
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                const navbarHeight = 100;
+                const scrollOffset = 186;
+
+                if (tooltipRect.top < navbarHeight || tooltipRect.bottom > windowHeight) {
+                    window.scrollBy({
+                        top: -scrollOffset,
+                        behavior: "smooth"
+                    });
+                }
             });
         }, 50);
     };

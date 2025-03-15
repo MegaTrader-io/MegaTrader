@@ -26,7 +26,7 @@ body {
     overflow-x: hidden
 }
 
-body.dialog-mg-open[data-scroll-locked]{
+body.dialog-mg-open[data-scroll-locked] {
 }
 
 .scrollbar-hide {
@@ -83,6 +83,7 @@ body.dialog-mg-open[data-scroll-locked]{
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
 }
+
 .loader::after {
     content: '';
     box-sizing: border-box;
