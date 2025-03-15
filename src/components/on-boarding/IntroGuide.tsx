@@ -40,18 +40,6 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     (tooltip as HTMLElement).style.height = `${rect.height}px`;
                     (tooltip as HTMLElement).style.boxSizing = "border-box";
                 }
-
-                const tooltipRect = tooltip.getBoundingClientRect();
-                const windowHeight = window.innerHeight;
-                const navbarHeight = 100;
-                const scrollOffset = 186;
-
-                if (tooltipRect.top < navbarHeight || tooltipRect.bottom > windowHeight) {
-                    window.scrollBy({
-                        top: -scrollOffset,
-                        behavior: "smooth"
-                    });
-                }
             });
         }, 50);
     };
@@ -80,6 +68,34 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
         } else {
             // console.info("btn in memory:", {btnPrev: btnPrevRef.current, btnNext: btnNextRef.current});
         }
+    };
+
+    const observeTooltipChanges = () => {
+        const observer = new MutationObserver(() => {
+            const tooltip = document.querySelector(".introjs-tooltip") as HTMLElement | null;
+            if (!tooltip) return;
+
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const navbarHeight = 100;
+            const scrollPadding = 100;
+
+            if (tooltipRect.top < navbarHeight) {
+                window.scrollBy({
+                    top: tooltipRect.top - navbarHeight - scrollPadding,
+                    behavior: "smooth",
+                });
+            } else if (tooltipRect.bottom > windowHeight) {
+                window.scrollBy({
+                    top: tooltipRect.bottom - windowHeight + scrollPadding,
+                    behavior: "smooth",
+                });
+            }
+        });
+
+        observer.observe(document.body, {childList: true, subtree: true});
+
+        return observer;
     };
 
     useEffect(() => {
@@ -242,6 +258,8 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     }
                 });
 
+                const observerTooltip = observeTooltipChanges();
+
                 const observer = new MutationObserver(() => {
                     initializeButtons();
                     updateButtonStyles();
@@ -274,6 +292,11 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                     adjustTooltipSize();
                 }, 501);
+
+                return () => {
+                    observer.disconnect();
+                    observerTooltip.disconnect();
+                };
             }
         } catch (error) {
             console.error("Unable to active Intro.js:", error);
