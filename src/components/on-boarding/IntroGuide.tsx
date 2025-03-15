@@ -300,7 +300,7 @@ function getStepsForPath(path: string) {
                 title: "Platform Access",
                 element: "#platform-access",
                 intro: "Displays the logo of your selected trading platform. View and copy your login credentials for quick access.",
-                position: "top",
+                position: "bottom",
                 className: 'after:!rounded-lg'
             },
             {
