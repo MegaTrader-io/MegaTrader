@@ -85,6 +85,8 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 let stepElementSelector = steps[introRef.current.currentStep()].element;
                 if (stepElementSelector === '#rules-compliance') {
                     stepElementSelector = '#challenge-payout-objectives';
+                } else if (stepElementSelector === '#challenge-payout-objectives') {
+                    stepElementSelector = '#account-overview';
                 }
 
                 const stepElement = document.querySelector(stepElementSelector) as HTMLElement | null;
