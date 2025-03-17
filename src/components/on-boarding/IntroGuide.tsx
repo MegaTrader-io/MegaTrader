@@ -82,7 +82,11 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
             if (introRef.current && introRef.current._direction === 'backward') {
                 const steps = getStepsForPath(currentPath);
-                const stepElementSelector = steps[introRef.current.currentStep()].element;
+                let stepElementSelector = steps[introRef.current.currentStep()].element;
+                if (stepElementSelector === '#rules-compliance') {
+                    stepElementSelector = '#challenge-payout-objectives';
+                }
+
                 const stepElement = document.querySelector(stepElementSelector) as HTMLElement | null;
                 if (!stepElement) return;
 
