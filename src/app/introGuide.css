@@ -73,6 +73,15 @@
     border-bottom-color: transparent;
 }
 
+.introjs-arrow.top-middle {
+    background-image: url('/assets/images/arrows/arrow-top.svg');
+    bottom: 100%; /* Coloca la flecha arriba del elemento */
+    left: 50%;
+    top: -13px;
+    transform: translateX(-50%);
+    border-bottom-color: transparent;
+}
+
 .introjs-arrow.bottom {
     background-image: url('/assets/images/arrows/arrow-bottom.svg');
     bottom: -13px;
