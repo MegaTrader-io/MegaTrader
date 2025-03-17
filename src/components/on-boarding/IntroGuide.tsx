@@ -78,7 +78,25 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
             const tooltipRect = tooltip.getBoundingClientRect();
             const windowHeight = window.innerHeight;
             const navbarHeight = 100;
-            const scrollPadding = 100;
+            const scrollPadding = 186;
+
+            if (introRef.current && introRef.current._direction === 'backward') {
+                const steps = getStepsForPath(currentPath);
+                const stepElementSelector = steps[introRef.current.currentStep()].element;
+                const stepElement = document.querySelector(stepElementSelector) as HTMLElement | null;
+                if (!stepElement) return;
+
+                const stepRect = stepElement.getBoundingClientRect();
+
+                if (stepRect.top < navbarHeight) {
+                    window.scrollBy({
+                        top: stepRect.top - navbarHeight - scrollPadding - 100,
+                        behavior: "smooth",
+                    });
+                }
+
+                return;
+            }
 
             if (tooltipRect.top < navbarHeight) {
                 window.scrollBy({
@@ -199,8 +217,10 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
 
                     if (currentElementID) {
+                        console.info(intro._direction);
                         const elementId = currentElementID.replace('#', '');
                         const element = document.getElementById(elementId) as HTMLDivElement || null;
+
                         if (element) {
                             if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
                                 const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
