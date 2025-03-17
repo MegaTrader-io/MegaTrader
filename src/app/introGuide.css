@@ -64,15 +64,7 @@
     display: block;
 }
 
-.introjs-arrow.top {
-    background-image: url('/assets/images/arrows/arrow-top.svg');
-    bottom: 100%; /* Coloca la flecha arriba del elemento */
-    left: 50%;
-    top: -13px;
-    transform: translateX(-50%);
-    border-bottom-color: transparent;
-}
-
+.introjs-arrow.top,
 .introjs-arrow.top-middle {
     background-image: url('/assets/images/arrows/arrow-top.svg');
     bottom: 100%; /* Coloca la flecha arriba del elemento */
@@ -82,6 +74,7 @@
     border-bottom-color: transparent;
 }
 
+.introjs-arrow.bottom-middle,
 .introjs-arrow.bottom {
     background-image: url('/assets/images/arrows/arrow-bottom.svg');
     bottom: -13px;
@@ -146,10 +139,10 @@
     display: none;
 }
 
-.introjs-tooltipReferenceLayer{
+.introjs-tooltipReferenceLayer {
     z-index: 49 !important;
 }
 
-.introjs-showElement{
+.introjs-showElement {
     z-index: 49 !important;
 }
