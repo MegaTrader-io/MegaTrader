@@ -80,9 +80,14 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
             const navbarHeight = 100;
             const scrollPadding = 186;
 
-            if (introRef.current && introRef.current._direction === 'backward') {
-                const steps = getStepsForPath(currentPath);
-                let stepElementSelector = steps[introRef.current.currentStep()].element;
+            if (!introRef.current) {
+                return;
+            }
+
+            const steps = getStepsForPath(currentPath);
+            let stepElementSelector = steps[introRef.current.currentStep()].element;
+
+            if (introRef.current._direction === 'backward') {
                 if (stepElementSelector === '#rules-compliance') {
                     stepElementSelector = '#challenge-payout-objectives';
                 } else if (stepElementSelector === '#challenge-payout-objectives') {
@@ -102,6 +107,16 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 }
 
                 return;
+            }
+
+            if (introRef.current._direction === 'forward') {
+                if (stepElementSelector === '#platform-access') {
+                    console.info('tooltipRect.top - navbarHeight - scrollPadding', tooltipRect.top - navbarHeight - scrollPadding);
+                    window.scrollBy({
+                        top: tooltipRect.top - navbarHeight - scrollPadding,
+                        behavior: "smooth",
+                    });
+                }
             }
 
             if (tooltipRect.top < navbarHeight) {
