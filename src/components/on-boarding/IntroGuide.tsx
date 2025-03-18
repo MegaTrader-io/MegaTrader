@@ -71,6 +71,8 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
     };
 
     const observeTooltipChanges = () => {
+        const isMobile = window.innerWidth <= 768
+
         const observer = new MutationObserver(() => {
             const tooltip = document.querySelector(".introjs-tooltip") as HTMLElement | null;
             if (!tooltip) return;
@@ -88,10 +90,35 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
             let stepElementSelector = steps[introRef.current.currentStep()].element;
 
             if (introRef.current._direction === 'backward') {
-                if (stepElementSelector === '#rules-compliance') {
-                    stepElementSelector = '#challenge-payout-objectives';
-                } else if (stepElementSelector === '#challenge-payout-objectives') {
-                    stepElementSelector = '#account-overview';
+                if (isMobile) {
+                    if (stepElementSelector === '#account-overview') {
+                        window.scrollTo({
+                            top: 76,
+                            behavior: "smooth"
+                        });
+
+                        return;
+                    } else if (stepElementSelector === '#challenge-payout-objectives') {
+                        window.scrollTo({
+                            top: 412,
+                            behavior: "smooth"
+                        });
+
+                        return;
+                    } else if (stepElementSelector === '#rules-compliance') {
+                        window.scrollTo({
+                            top: 697,
+                            behavior: "smooth"
+                        });
+
+                        return;
+                    }
+                } else {
+                    if (stepElementSelector === '#rules-compliance') {
+                        stepElementSelector = '#challenge-payout-objectives';
+                    } else if (stepElementSelector === '#challenge-payout-objectives') {
+                        stepElementSelector = '#account-overview';
+                    }
                 }
 
                 const stepElement = document.querySelector(stepElementSelector) as HTMLElement | null;
@@ -116,6 +143,8 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                         top: tooltipRect.top - navbarHeight - scrollPadding,
                         behavior: "smooth",
                     });
+
+                    return;
                 }
             }
 
