@@ -489,7 +489,7 @@ export const chartAffiliatesConfig = {
             background: "transparent",
             toolbar: { show: false },
         },
-        colors: ["#10B981", "#3B82F6"], // Mantiene los colores correctos
+        colors: ["#10B981", "#3B82F6"],
         plotOptions: {
             bar: {
                 horizontal: false,
@@ -499,7 +499,7 @@ export const chartAffiliatesConfig = {
         },
         dataLabels: { enabled: false },
         legend: {
-            show: false, // Oculta la leyenda
+            show: false,
         },
         tooltip: {
             theme: "dark",
@@ -528,8 +528,7 @@ export const chartAffiliatesConfig = {
         },
         grid: {
             show: true,
-            borderColor: "#374151",
-            strokeDashArray: 5,
+            borderColor: "#404040",
         },
         fill: { opacity: 1 },
     } as ApexOptions,
