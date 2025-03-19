@@ -3,12 +3,10 @@ import Card, {CardTitle} from "@/components/Card";
 import dynamic from "next/dynamic";
 import {chartAffiliatesConfig, periods} from "@/commons/data";
 import {Period} from "@/commons/interfaces";
-import Tooltip from "@/components/Tooltip";
-import ExclamationIcon from "@/components/ExclamationIcon";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
-function EarningsOverTime() {
+function PerformanceAnalysis() {
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -21,10 +19,7 @@ function EarningsOverTime() {
         <Card id="earnings-over-time" className="w-full p-4 text-white space-y-4 md:space-y-0">
             <div className="space-y-2 md:space-y-0 md:flex md:justify-between md:items-center">
                 <CardTitle className="flex items-center gap-2">
-                    <span>Earnings over time</span> <Tooltip
-                    content="Earnings over time">
-                    <ExclamationIcon/>
-                </Tooltip>
+                    <span>Performance Analysis</span>
                 </CardTitle>
                 <div>
                     <div className="relative w-full">
@@ -67,4 +62,4 @@ function EarningsOverTime() {
     );
 }
 
-export default EarningsOverTime;
+export default PerformanceAnalysis;

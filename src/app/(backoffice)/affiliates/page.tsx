@@ -1,13 +1,13 @@
 'use client';
 
 import React, {useState} from "react";
-import EarningsOverTime from "@/app/(backoffice)/affiliates/_components/EarningsOverTime";
 import TrafficStatsTable from "@/app/(backoffice)/affiliates/_components/TrafficStatsTable";
 import ReferralAndEarningsSection from "@/app/(backoffice)/affiliates/_components/ReferralAndEarningsSection";
 import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import {AffiliatesMetrics} from "@/commons/data";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
+import PerformanceAnalysis from "@/app/(backoffice)/affiliates/_components/PerformanceAnalysis";
 
 export interface IShowAlert {
     type: 'success' | 'error',
@@ -32,7 +32,7 @@ export default function Affiliates() {
         <MetricsPanel id="affiliate-summary" metrics={AffiliatesMetrics}/>
         <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
         <ReferralAndEarningsSection handleDisplayAlert={handleDisplayAlert}/>
-        <EarningsOverTime/>
+        <PerformanceAnalysis/>
         <TrafficStatsTable/>
     </>
 }

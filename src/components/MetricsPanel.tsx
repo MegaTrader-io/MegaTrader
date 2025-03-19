@@ -20,7 +20,7 @@ function MetricsPanel({metrics, id}: { metrics: Metrics[], id?: string }) {
                         </div>
                     </div>
                     <div
-                        className="text-primary text-[32px] font-light uppercase leading-10">
+                        className="text-primary text-3xl font-light uppercase leading-10">
                         {metric.value}
                     </div>
                 </Card>

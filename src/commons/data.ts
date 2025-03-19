@@ -471,34 +471,44 @@ export const chartConfig = {
 };
 
 export const chartAffiliatesConfig = {
-    type: "line" as const,
+    type: "bar" as const, // Cambio a barras apiladas
     height: '100%',
     series: [
         {
-            name: "Earnings over time",
-            data: [400, 300, 200, 100, 0],
+            name: "Visits",
+            data: [120, 180, 300, 250, 320, 200, 130], // Azul
+        },
+        {
+            name: "Conversions",
+            data: [80, 100, 90, 140, 150, 110, 70], // Verde
         },
     ],
     options: {
         chart: {
-            toolbar: {
-                show: false,
-            },
+            stacked: true, // Habilitar apilado
+            background: "transparent",
+            toolbar: { show: false },
         },
-        title: {
-            show: false,
+        colors: ["#3B82F6", "#10B981"], // Azul y Verde, como en la imagen
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 6,
+                columnWidth: "50%",
+            },
         },
         dataLabels: {
             enabled: false,
         },
-        colors: ["#FFE7B8"],
-        stroke: {
-            lineCap: "round",
-            curve: "smooth",
-            width: 2,
+        legend: {
+            position: "top",
+            labels: { colors: "#ffffff" },
         },
-        markers: {
-            size: 0,
+        tooltip: {
+            theme: "dark",
+            y: {
+                formatter: (val: number) => `${val} `,
+            },
         },
         xaxis: {
             axisTicks: {
@@ -509,19 +519,16 @@ export const chartAffiliatesConfig = {
             },
             labels: {
                 style: {
-                    colors: "#A8A29E",
-                    fontSize: "12px",
-                    fontFamily: "inherit",
-                    fontWeight: 400,
+                    cssClass: 'apexcharts-xaxis-label-custom'
                 },
             },
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            categories: ["S", "M", "T", "W", "T", "F", "S"],
         },
         yaxis: {
             labels: {
                 formatter: (value: number) => `${value}`,
                 style: {
-                    colors: "#A8A29E",
+                    colors: "#ffffff",
                     fontSize: "12px",
                     fontFamily: "inherit",
                     fontWeight: 400,
@@ -534,16 +541,7 @@ export const chartAffiliatesConfig = {
             strokeDashArray: 5,
         },
         fill: {
-            opacity: 0.8,
-        },
-        tooltip: {
-            theme: "dark",
-            x: {
-                show: true,
-            },
-            y: {
-                formatter: (value: number) => `$ ${value.toFixed(2)}`,
-            },
+            opacity: 1,
         },
     } as ApexOptions,
 };

@@ -131,3 +131,15 @@ body.dialog-mg-open[data-scroll-locked] {
 .bg-btn-onboarding {
     @apply relative after:rounded-[0.75rem] after:content-[''] after:bg-[#1E1E1E]/80 after:absolute after:inset-0 after:w-full after:h-full
 }
+
+.apexcharts-xaxis-label-custom {
+    fill: white;
+    width: 36px;
+    text-align: center;
+    font-size: 16px;
+    font-family: "Roboto", serif;
+    font-weight: 500;
+    line-height: 24px;
+    background-color: red;
+    word-wrap: break-word
+}
