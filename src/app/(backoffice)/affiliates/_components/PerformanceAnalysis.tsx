@@ -21,7 +21,20 @@ function PerformanceAnalysis() {
                 <CardTitle className="flex items-center gap-2">
                     <span>Performance Analysis</span>
                 </CardTitle>
-                <div>
+                <div className="flex items-center gap-4">
+                    <div className="flex gap-4">
+                        <div className="flex gap-2">
+                            <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
+                            <div
+                                className="justify-start text-white text-base font-medium leading-normal">Visits</div>
+                        </div>
+                        <div className="flex gap-2">
+                            <div className="w-6 h-6 bg-teal-500 rounded-full"></div>
+                            <div
+                                className="justify-start text-white text-base font-medium leading-normal">Conversions</div>
+                        </div>
+                    </div>
+
                     <div className="relative w-full">
                         <select
                             className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"

@@ -471,25 +471,25 @@ export const chartConfig = {
 };
 
 export const chartAffiliatesConfig = {
-    type: "bar" as const, // Cambio a barras apiladas
+    type: "bar" as const,
     height: '100%',
     series: [
-        {
-            name: "Visits",
-            data: [120, 180, 300, 250, 320, 200, 130], // Azul
-        },
         {
             name: "Conversions",
             data: [80, 100, 90, 140, 150, 110, 70], // Verde
         },
+        {
+            name: "Visits",
+            data: [120, 180, 300, 250, 320, 200, 130], // Azul
+        },
     ],
     options: {
         chart: {
-            stacked: true, // Habilitar apilado
+            stacked: true,
             background: "transparent",
             toolbar: { show: false },
         },
-        colors: ["#3B82F6", "#10B981"], // Azul y Verde, como en la imagen
+        colors: ["#10B981", "#3B82F6"], // Mantiene los colores correctos
         plotOptions: {
             bar: {
                 horizontal: false,
@@ -497,12 +497,9 @@ export const chartAffiliatesConfig = {
                 columnWidth: 36,
             },
         },
-        dataLabels: {
-            enabled: false,
-        },
+        dataLabels: { enabled: false },
         legend: {
-            position: "top",
-            labels: { colors: "#ffffff" },
+            show: false, // Oculta la leyenda
         },
         tooltip: {
             theme: "dark",
@@ -511,16 +508,10 @@ export const chartAffiliatesConfig = {
             },
         },
         xaxis: {
-            axisTicks: {
-                show: false,
-            },
-            axisBorder: {
-                show: false,
-            },
+            axisTicks: { show: false },
+            axisBorder: { show: false },
             labels: {
-                style: {
-                    cssClass: 'apexcharts-xaxis-label-custom'
-                },
+                style: { cssClass: 'apexcharts-xaxis-label-custom' },
             },
             categories: ["S", "M", "T", "W", "T", "F", "S"],
         },
@@ -540,11 +531,10 @@ export const chartAffiliatesConfig = {
             borderColor: "#374151",
             strokeDashArray: 5,
         },
-        fill: {
-            opacity: 1,
-        },
+        fill: { opacity: 1 },
     } as ApexOptions,
 };
+
 
 export const featureContentOptions: { id: string, label: string }[] = [
     {id: 'overview', label: 'Overview'},
