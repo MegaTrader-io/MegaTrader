@@ -50,46 +50,17 @@ const PayoutsTable = () => {
         setCurrentPage(page);
     };
 
-    const handlerSortBy = (sortBy: string) => {
-        setDirection(direction === 'desc' ? 'asc' : 'desc');
-        setSortBy(sortBy)
-    }
-
     return (
         <div className="overflow-x-auto">
             <Table>
                 <TableHead>
                     <TableRow className="text-white">
-                        <TableHeader className='!text-sm'>
-                            <div className="min-h-6 flex gap-2 justify-start items-center cursor-pointer select-none"
-                                 onClick={() => {
-                                     handlerSortBy('id')
-                                 }}>
-                                <div>
-                                    Request ID
-                                </div>
-                                <div>
-                                    {sortBy === 'id' && <ArrowDown direction={direction}/>}
-                                </div>
-                            </div>
-                        </TableHeader>
+                        <TableHeader className='!text-sm'>Request ID</TableHeader>
                         <TableHeader className='!text-sm'>Date</TableHeader>
                         <TableHeader className="!text-sm">Status</TableHeader>
                         <TableHeader className="!text-sm">Company/Beneficiary</TableHeader>
                         <TableHeader className='!text-sm !w-[95px]'>Payment method</TableHeader>
-                        <TableHeader className="!text-sm">
-                            <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
-                                 onClick={() => {
-                                     handlerSortBy('amount')
-                                 }}>
-                                <div>
-                                    Amount
-                                </div>
-                                <div>
-                                    {sortBy === 'amount' && <ArrowDown direction={direction}/>}
-                                </div>
-                            </div>
-                        </TableHeader>
+                        <TableHeader className="text-right !text-sm">Amount</TableHeader>
                     </TableRow>
                 </TableHead>
                 <TableBody className="p-0">
