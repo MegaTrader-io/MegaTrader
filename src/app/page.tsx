@@ -16,7 +16,7 @@ import FlexibleFuturesTradingAndAnalytics from "@/components/landing-page/Flexib
 
 const Home = () => {
     return <>
-        <header id="home" className="px-4 py-6 w-full z-50">
+        <header id="home" className="px-4 w-full z-50">
             <Header/>
         </header>
         <main

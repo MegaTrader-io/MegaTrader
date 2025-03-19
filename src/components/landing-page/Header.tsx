@@ -78,7 +78,7 @@ export default function Header() {
         <div
             className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isMenuOpen ? 'bg-[#131210]' : 'bg-[#111]/80'}  backdrop-blur-3xl shadow-lg`}
         >
-            <div className="w-full max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+            <div className="w-full max-w-7xl mx-auto px-4 flex items-center justify-between">
                 {/* Logo */}
                 <div className="w-auto">
                     <Link
@@ -131,7 +131,7 @@ export default function Header() {
 
                 {/* Navegación escritorio */}
                 <nav
-                    className="hidden lg:flex justify-start items-center flex-row xl:gap-4"
+                    className="hidden lg:flex justify-start items-center flex-row xl:gap-2"
                     aria-label="Main navigation"
                 >
                     {navigationItems.map((item) => (
@@ -139,7 +139,7 @@ export default function Header() {
                             key={item.label}
                             href={item.href}
                             onClick={(e) => handleClick(e, item.href)}
-                            className={`text-xl text-neutral-50 text-nowrap font-light uppercase leading-6 px-4 py-3 transition-all duration-200 ${
+                            className={`text-base text-neutral-50 text-nowrap font-light uppercase leading-6 px-4 py-3 transition-all duration-200 ${
                                 activeSection === item.sectionId
                                     ? 'text-white bg-[#1e1e1e] rounded-lg'
                                     : 'text-gray-400 hover:text-white'
