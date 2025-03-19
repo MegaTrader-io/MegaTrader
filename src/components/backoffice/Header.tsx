@@ -40,7 +40,7 @@ export default function Header() {
     return <div
         className={`sticky top-0 w-full z-50 transition-all duration-300 bg-[#111]/80 shadow-lg backdrop-blur-3xl`}>
         <div
-            className="w-full max-w-7xl mx-auto px-4 py-6 lg:py-0 grid grid-cols-[auto_1fr_auto] items-center justify-between lg:h-[120px]">
+            className="w-full max-w-7xl mx-auto px-4 py-6 lg:py-0 grid grid-cols-[auto_1fr_auto] items-center justify-between lg:h-[100px]">
             {/* Logo */}
             <div className="w-auto">
                 <Link
