@@ -493,8 +493,8 @@ export const chartAffiliatesConfig = {
         plotOptions: {
             bar: {
                 horizontal: false,
-                borderRadius: 6,
-                columnWidth: "50%",
+                borderRadius: 16,
+                columnWidth: 36,
             },
         },
         dataLabels: {
