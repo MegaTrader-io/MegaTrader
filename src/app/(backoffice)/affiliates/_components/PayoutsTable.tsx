@@ -6,12 +6,12 @@ import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
-import ArrowDown, {directionType} from "@/components/ArrowDown";
+import {directionType} from "@/components/ArrowDown";
 import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
 
 const PayoutsTable = () => {
-    const [sortBy, setSortBy] = useState<string>('id');
-    const [direction, setDirection] = useState<directionType>('asc');
+    const [sortBy] = useState<string>('id');
+    const [direction] = useState<directionType>('asc');
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<PayoutsEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
