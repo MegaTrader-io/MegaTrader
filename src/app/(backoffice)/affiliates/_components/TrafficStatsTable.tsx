@@ -1,16 +1,17 @@
 'use client'
+
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
 import {OptionInterface} from "@/commons/interfaces";
 import URLVisitsTable from "@/app/(backoffice)/affiliates/_components/URLVisitsTable";
 import PayoutsTable from "@/app/(backoffice)/affiliates/_components/PayoutsTable";
-import IncomeTable from "@/app/(backoffice)/affiliates/_components/IncomeTable";
+import Conversions from "@/app/(backoffice)/affiliates/_components/Conversions";
 
 const Options: OptionInterface[] = [
-    {id: 'url_visits', label: 'URL Visits'},
     {id: 'payouts', label: 'Payouts'},
-    {id: 'income', label: 'Income'},
+    {id: 'url_visits', label: 'URL Visits'},
+    {id: 'conversions', label: 'Conversions'},
 ]
 
 function SelectionTab({onClick, selection}: { onClick: (option: OptionInterface) => void, selection: string }) {
@@ -72,9 +73,9 @@ function TrafficStatsTable() {
             </div>
 
             <Card id="traffic-conversion-table" className="space-y-4">
-                {selection === 'url_visits' && <URLVisitsTable/>}
                 {selection === 'payouts' && <PayoutsTable/>}
-                {selection === 'income' && <IncomeTable/>}
+                {selection === 'url_visits' && <URLVisitsTable/>}
+                {selection === 'conversions' && <Conversions/>}
             </Card>
         </div>
     )

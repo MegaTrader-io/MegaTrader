@@ -9,7 +9,6 @@ import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
-import IntroGuide from "@/components/on-boarding/IntroGuide";
 
 export default function AccountOverView() {
     const payoutRequestLegend: Record<'approved' | 'pending' | 'rejected', RequestStatusType> = {
@@ -25,8 +24,6 @@ export default function AccountOverView() {
     }
 
     return <>
-        <IntroGuide currentPath="/payouts"/>
-
         <div className="w-full space-y-8">
             {showAlert && (
                 <div className="w-full">

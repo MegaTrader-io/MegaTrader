@@ -1,90 +1,90 @@
 [
   {
-    "id": 1,
-    "month": "January 2024",
-    "sold": 5,
-    "total_profit": 1200.50,
-    "status": "paid",
-    "paymentMethod": "bitcoin"
+    "id": 332589,
+    "date": "01-01-2023",
+    "status": "approved",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 1200.50
   },
   {
-    "id": 2,
-    "month": "February 2024",
-    "sold": 8,
-    "total_profit": 1950.75,
+    "id": 332590,
+    "date": "01-01-2023",
     "status": "pending",
-    "paymentMethod": "paypal"
+    "company": "Michael Rozenfel",
+    "paymentMethod": "paypal",
+    "amount": 1950.75
   },
   {
-    "id": 3,
-    "month": "March 2024",
-    "sold": 12,
-    "total_profit": 2780.00,
-    "status": "paid",
-    "paymentMethod": "paypal"
+    "id": 332591,
+    "date": "01-01-2023",
+    "status": "approved",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "paypal",
+    "amount": 2780.00
   },
   {
-    "id": 4,
-    "month": "April 2024",
-    "sold": 3,
-    "total_profit": 890.00,
-    "status": "paid",
-    "paymentMethod": "wise"
+    "id": 332592,
+    "date": "01-01-2023",
+    "status": "approved",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "wise",
+    "amount": 890.00
   },
   {
-    "id": 5,
-    "month": "May 2024",
-    "sold": 9,
-    "total_profit": 2110.25,
-    "status": "PENDING",
-    "paymentMethod": "ethereum"
-  },
-  {
-    "id": 6,
-    "month": "June 2024",
-    "sold": 7,
-    "total_profit": 1700.00,
-    "status": "paid",
-    "paymentMethod": "ethereum"
-  },
-  {
-    "id": 8,
-    "month": "July 2024",
-    "sold": 6,
-    "total_profit": 1580.50,
-    "status": "paid",
-    "paymentMethod": "bitcoin"
-  },
-  {
-    "id": 9,
-    "month": "August 2024",
-    "sold": 11,
-    "total_profit": 2490.00,
-    "status": "PENDING",
-    "paymentMethod": "bitcoin"
-  },
-  {
-    "id": 10,
-    "month": "September 2024",
-    "sold": 4,
-    "total_profit": 1080.00,
-    "status": "paid",
-    "paymentMethod": "bitcoin"
-  },
-  {
-    "id": 11,
-    "month": "October 2024",
-    "sold": 10,
-    "total_profit": 2300.75,
-    "status": "paid",
-    "paymentMethod": "wise"
-  },
-  {
-    "id": 12,
-    "month": "October 2025",
-    "sold": 3,
-    "total_profit": 300.75,
+    "id": 332593,
+    "date": "01-01-2023",
     "status": "pending",
-    "paymentMethod": "paypal"
+    "company": "Michael Rozenfel",
+    "paymentMethod": "ethereum",
+    "amount": 2110.25
+  },
+  {
+    "id": 332594,
+    "date": "01-01-2023",
+    "status": "rejected",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "ethereum",
+    "amount": 1700.00
+  },
+  {
+    "id": 332595,
+    "date": "01-01-2023",
+    "status": "approved",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 1580.50
+  },
+  {
+    "id": 332596,
+    "date": "01-01-2023",
+    "status": "approved",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 2490.00
+  },
+  {
+    "id": 332597,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 1080.00
+  },
+  {
+    "id": 332598,
+    "date": "01-01-2023",
+    "status": "rejected",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "wise",
+    "amount": 2300.75
+  },
+  {
+    "id": 332599,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "paypal",
+    "amount": 300.75
   }
 ]

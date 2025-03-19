@@ -3,7 +3,7 @@ import payoutsData from './payoutsData.json';
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const sortBy = searchParams.get('sortBy') || 'month';
+        const sortBy = searchParams.get('sortBy') || 'date';
         const direction = searchParams.get('direction') === 'asc' ? 'asc' : 'desc';
         const page = parseInt(searchParams.get('page') || '1', 10);
         const perPage = parseInt(searchParams.get('per_page') || '10', 10);

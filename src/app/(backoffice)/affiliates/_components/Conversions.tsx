@@ -1,19 +1,17 @@
-import {PayoutsEntry} from "@/commons/interfaces";
+import {IncomeEntry} from "@/commons/interfaces";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 import React, {useCallback, useEffect, useState} from "react";
 import {formatCurrency, sleep} from "@/commons/utils";
-import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import ArrowDown, {directionType} from "@/components/ArrowDown";
-import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
 
-const PayoutsTable = () => {
-    const [sortBy, setSortBy] = useState<string>('id');
-    const [direction, setDirection] = useState<directionType>('asc');
+const Conversions = () => {
+    const [sortBy, setSortBy] = useState<string>('orderNumber');
+    const [direction, setDirection] = useState<directionType>('desc');
     const [loading, setLoading] = useState(false)
-    const [data, setData] = useState<PayoutsEntry[]>([]);
+    const [data, setData] = useState<IncomeEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const limitPerPage = 10;
 
@@ -24,11 +22,11 @@ const PayoutsTable = () => {
         last_page: 0,
     });
 
-    const fetchPayoutsData = useCallback(async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             await sleep(200);
-            const response = await fetch(`/api/affiliates/payouts?page=${currentPage}&per_page=${limitPerPage}&sortBy=${sortBy}&direction=${direction}`);
+            const response = await fetch(`/api/affiliates/income?page=${currentPage}&per_page=${limitPerPage}&sortBy=${sortBy}&direction=${direction}`);
             if (!response.ok) {
                 throw new Error(`unable to fetch the end point: ${response.statusText}`);
             }
@@ -43,8 +41,8 @@ const PayoutsTable = () => {
     }, [currentPage, sortBy, direction]);
 
     useEffect(() => {
-        void fetchPayoutsData();
-    }, [fetchPayoutsData]);
+        void fetchData();
+    }, [fetchData]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -60,33 +58,69 @@ const PayoutsTable = () => {
             <Table>
                 <TableHead>
                     <TableRow className="text-white">
-                        <TableHeader className='!text-sm'>
-                            <div className="min-h-6 flex gap-2 justify-start items-center cursor-pointer select-none"
+                        <TableHeader className="!text-sm">
+                            <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
                                  onClick={() => {
-                                     handlerSortBy('id')
+                                     handlerSortBy('orderNumber')
                                  }}>
                                 <div>
-                                    Request ID
+                                    Order number
                                 </div>
                                 <div>
-                                    {sortBy === 'id' && <ArrowDown direction={direction}/>}
+                                    {sortBy === 'orderNumber' && <ArrowDown direction={direction}/>}
                                 </div>
                             </div>
                         </TableHeader>
-                        <TableHeader className='!text-sm'>Date</TableHeader>
-                        <TableHeader className="!text-sm">Status</TableHeader>
-                        <TableHeader className="!text-sm">Company/Beneficiary</TableHeader>
-                        <TableHeader className='!text-sm !w-[95px]'>Payment method</TableHeader>
+                        <TableHeader className="!text-sm">Product</TableHeader>
+                        <TableHeader>
+                            <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
+                                 onClick={() => {
+                                     handlerSortBy('created')
+                                 }}>
+                                <div>
+                                    Created
+                                </div>
+                                <div>
+                                    {sortBy === 'created' && <ArrowDown direction={direction}/>}
+                                </div>
+                            </div>
+                        </TableHeader>
+                        <TableHeader className="!text-sm">
+                            <div className="min-h-6 flex gap-2 items-center cursor-pointer select-none"
+                                 onClick={() => {
+                                     handlerSortBy('paymentDate')
+                                 }}>
+                                <div>
+                                    Payment Date
+                                </div>
+                                <div>
+                                    {sortBy === 'paymentDate' && <ArrowDown direction={direction}/>}
+                                </div>
+                            </div>
+                        </TableHeader>
                         <TableHeader className="!text-sm">
                             <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
                                  onClick={() => {
-                                     handlerSortBy('amount')
+                                     handlerSortBy('originalPrice')
                                  }}>
                                 <div>
-                                    Amount
+                                    Ordinal price
                                 </div>
                                 <div>
-                                    {sortBy === 'amount' && <ArrowDown direction={direction}/>}
+                                    {sortBy === 'originalPrice' && <ArrowDown direction={direction}/>}
+                                </div>
+                            </div>
+                        </TableHeader>
+                        <TableHeader className="!text-sm">
+                            <div className="min-h-6 flex gap-2 justify-end items-center cursor-pointer select-none"
+                                 onClick={() => {
+                                     handlerSortBy('profit')
+                                 }}>
+                                <div>
+                                    Profit
+                                </div>
+                                <div>
+                                    {sortBy === 'profit' && <ArrowDown direction={direction}/>}
                                 </div>
                             </div>
                         </TableHeader>
@@ -103,20 +137,13 @@ const PayoutsTable = () => {
                         </TableRow>
                     ))}
                     {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-stone-400 text-sm font-normal">
-                            <TableCell className="py-4">#{entry.id}</TableCell>
-                            <TableCell className="py-4">{entry.date}</TableCell>
-                            <TableCell className="py-4">
-                                <BadgePendingOrPaid status={entry.status}/>
-                            </TableCell>
-                            <TableCell className="py-4">{entry.company}</TableCell>
-                            <TableCell className="py-4">
-                                <PaymentMethodImage
-                                    paymentMethod={entry.paymentMethod}/>
-                            </TableCell>
-                            <TableCell className="py-4 text-right">
-                                {formatCurrency(entry.amount)}
-                            </TableCell>
+                        <TableRow key={entry.id} className="text-stone-400 !text-sm font-normal">
+                            <TableCell className="py-4">{entry.orderNumber}</TableCell>
+                            <TableCell className="py-4">{entry.product}</TableCell>
+                            <TableCell className="py-4">{entry.created}</TableCell>
+                            <TableCell className="py-4">{entry.paymentDate}</TableCell>
+                            <TableCell className="py-4 text-right">{formatCurrency(entry.originalPrice)}</TableCell>
+                            <TableCell className="py-4 text-right">{formatCurrency(entry.profit)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -157,4 +184,4 @@ const PayoutsTable = () => {
     );
 };
 
-export default PayoutsTable;
+export default Conversions;

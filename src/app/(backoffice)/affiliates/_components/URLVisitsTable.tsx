@@ -3,21 +3,17 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import React, {useCallback, useEffect, useState} from "react";
 import {sleep} from "@/commons/utils";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
-import {CheckIcon, ChevronLeftIcon, ChevronRightIcon, XMarkIcon} from "@heroicons/react/16/solid";
+import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
-import Badge from "@/components/Badge";
+import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/20/solid";
 
 function ConvertedIcon({converted}: { converted: boolean }) {
     return <>
         {
             converted ? (
-                <Badge size={'md'} shape={'pill'}>
-                    <CheckIcon className="h-4 w-4 text-black"/>
-                </Badge>
+                <CheckCircleIcon className={'fill-[#2DD4BF] w-5 h-5'}/>
             ) : (
-                <Badge variant={'error'} shape={'pill'}>
-                    <XMarkIcon className="h-4 w-4 text-black"/>
-                </Badge>
+                <XCircleIcon className={'fill-[#F43F5E] stroke-1 w-5 h-5'}/>
             )
         }
 
@@ -28,7 +24,7 @@ const URLVisitsTable = () => {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<VisitDataEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const limitPerPage = 7;
+    const limitPerPage = 10;
 
     const [pagination, setPagination] = useState({
         current_page: currentPage,
@@ -66,11 +62,11 @@ const URLVisitsTable = () => {
     return (
         <div className="overflow-x-auto">
             <Table>
-                <TableHead className="text-xs">
+                <TableHead>
                     <TableRow className="text-white">
-                        <TableHeader className="!text-base">URL</TableHeader>
-                        <TableHeader className="!text-base">Referring URL</TableHeader>
-                        <TableHeader className="!text-base">Converted</TableHeader>
+                        <TableHeader className="!text-sm">URL</TableHeader>
+                        <TableHeader className="!text-sm">Referring URL</TableHeader>
+                        <TableHeader className="!text-sm">Converted</TableHeader>
                     </TableRow>
                 </TableHead>
                 <TableBody className="p-0">
@@ -84,7 +80,7 @@ const URLVisitsTable = () => {
                         </TableRow>
                     ))}
                     {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-stone-400 text-base font-normal leading-tight">
+                        <TableRow key={entry.id} className="text-stone-400 text-sm font-medium leading-tight">
                             <TableCell className="py-4">{entry.url}</TableCell>
                             <TableCell className="py-4">{entry.referrer}</TableCell>
                             <TableCell className="py-4">

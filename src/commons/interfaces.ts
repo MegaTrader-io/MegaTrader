@@ -144,11 +144,11 @@ export interface JournalEntry {
 
 export interface PayoutsEntry {
     id: number,
-    month: string,
-    sold: number,
-    total_profit: number,
-    status: 'paid' | 'pending',
+    date: string,
+    status: 'approved' | 'pending' | 'rejected',
+    company: string,
     paymentMethod: PaymentMethod
+    amount: number,
 }
 
 export interface IncomeEntry {
