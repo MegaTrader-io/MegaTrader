@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Card, {CardTitle} from "@/components/Card";
 import dynamic from "next/dynamic";
 import {chartAffiliatesConfig, periods} from "@/commons/data";
@@ -7,6 +7,7 @@ import {Period} from "@/commons/interfaces";
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
 function PerformanceAnalysis() {
+    const container = useRef<HTMLDivElement | null>(null);
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -14,6 +15,50 @@ function PerformanceAnalysis() {
         const period = periods.find(period => period.id === id)!
         setSelectPeriod(period);
     }
+
+    useEffect(() => {
+        if (!container.current) {
+            return;
+        }
+
+        const rerenderAxis = () => {
+            console.info('rerenderAxis')
+            const axisTexts = document.querySelector('.apexcharts-canvas svg .apexcharts-xaxis .apexcharts-xaxis-texts-g');
+            if (!axisTexts) {
+                return;
+            }
+
+            const texts = Array.from(axisTexts.querySelectorAll('text'));
+
+            texts.forEach((text) => {
+                const x = Number(text.getAttribute('x') || 0);
+                const y = Number(text.getAttribute('y') || 0);
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', x.toString());
+                circle.setAttribute('cy', (y - 2).toString());
+                circle.setAttribute('r', '15');
+                circle.setAttribute('fill', '#3a3a3a');
+
+                const clonedText = text.cloneNode(true) as SVGTextElement;
+
+                axisTexts.insertBefore(circle, text);
+                text.remove();
+
+                axisTexts.after(clonedText, text);
+            });
+        };
+
+        const observer = new MutationObserver(rerenderAxis);
+        observer.observe(container.current, {childList: true, subtree: true});
+
+        rerenderAxis();
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
 
     return (
         <Card id="performance-analysis" className="w-full p-4 text-white space-y-4 md:space-y-0">
@@ -26,12 +71,14 @@ function PerformanceAnalysis() {
                         <div className="flex gap-2">
                             <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
                             <div
-                                className="justify-start text-white text-base font-medium leading-normal">Visits</div>
+                                className="justify-start text-white text-base font-medium leading-normal">Visits
+                            </div>
                         </div>
                         <div className="flex gap-2">
                             <div className="w-6 h-6 bg-teal-500 rounded-full"></div>
                             <div
-                                className="justify-start text-white text-base font-medium leading-normal">Conversions</div>
+                                className="justify-start text-white text-base font-medium leading-normal">Conversions
+                            </div>
                         </div>
                     </div>
 
@@ -63,7 +110,7 @@ function PerformanceAnalysis() {
                     </div>
                 </div>
             </div>
-            <div className="w-full h-[389px]">
+            <div ref={container} className="w-full h-[389px]">
                 <ReactApexChart
                     type={chartAffiliatesConfig.type}
                     height={chartAffiliatesConfig.height}
