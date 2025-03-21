@@ -43,11 +43,11 @@ function TrafficStatsTable() {
     return (
         <div className="w-full space-y-2 lg:space-y-4">
             <Card id="traffic-conversion-table" className="space-y-4">
-                <div className="hidden lg:flex gap-2">
+                <div className="hidden md:flex gap-2">
                     <SelectionTab onClick={clickOption} selection={selection}/>
                 </div>
 
-                <div className="lg:hidden relative w-full">
+                <div className="md:hidden relative w-full">
                     <select
                         value={selection}
                         className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
