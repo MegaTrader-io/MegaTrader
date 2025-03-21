@@ -473,6 +473,7 @@ export const chartConfig = {
 export const chartAffiliatesConfig = {
     type: "bar" as const,
     height: '100%',
+    width: 1200,
     series: [
         {
             name: "Conversions",
