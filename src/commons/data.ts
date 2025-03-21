@@ -511,7 +511,7 @@ export const chartAffiliatesConfig = {
             axisTicks: { show: false },
             axisBorder: { show: false },
             labels: {
-                style: { cssClass: 'apexcharts-xaxis-label-custom' },
+                style: { colors: 'white' },
             },
             categories: ["S", "M", "T", "W", "T", "F", "S"],
         },

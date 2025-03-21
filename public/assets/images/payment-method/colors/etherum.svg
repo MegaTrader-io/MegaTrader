@@ -1,0 +1,43 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 0C18.6271 0 24 5.37288 24 12C24 18.6271 18.6269 24 12 24C5.37312 24 0 18.6286 0 12C0 5.37144 5.37216 0 12 0Z" fill="#F5F5F5"/>
+    <g opacity="0.6">
+        <mask id="mask0_7198_57172" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="7" y="9" width="10" height="7">
+            <path d="M7.08691 9.91577H16.9086V15.0515H7.08691V9.91577Z" fill="white"/>
+        </mask>
+        <g mask="url(#mask0_7198_57172)">
+            <path d="M11.9987 9.91577L7.08691 12.1496L11.9987 15.0515L16.9086 12.1496L11.9987 9.91577Z" fill="#010101"/>
+        </g>
+    </g>
+    <g opacity="0.45">
+        <mask id="mask1_7198_57172" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="7" y="4" width="5" height="12">
+            <path d="M7.08691 4H11.9987V15.0515H7.08691V4Z" fill="white"/>
+        </mask>
+        <g mask="url(#mask1_7198_57172)">
+            <path d="M7.08691 12.1496L11.9987 15.0515V4L7.08691 12.1496Z" fill="#010101"/>
+        </g>
+    </g>
+    <g opacity="0.8">
+        <mask id="mask2_7198_57172" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="11" y="4" width="6" height="12">
+            <path d="M11.999 4H16.9108V15.0515H11.999V4Z" fill="white"/>
+        </mask>
+        <g mask="url(#mask2_7198_57172)">
+            <path d="M11.999 4V15.0515L16.9089 12.1496L11.999 4Z" fill="#010101"/>
+        </g>
+    </g>
+    <g opacity="0.45">
+        <mask id="mask3_7198_57172" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="7" y="13" width="5" height="7">
+            <path d="M7.08691 13.0802H11.9987V20H7.08691V13.0802Z" fill="white"/>
+        </mask>
+        <g mask="url(#mask3_7198_57172)">
+            <path d="M7.08691 13.0802L11.9987 20V15.9821L7.08691 13.0802Z" fill="#010101"/>
+        </g>
+    </g>
+    <g opacity="0.8">
+        <mask id="mask4_7198_57172" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="11" y="13" width="6" height="7">
+            <path d="M11.999 13.0802H16.9127V20H11.999V13.0802Z" fill="white"/>
+        </mask>
+        <g mask="url(#mask4_7198_57172)">
+            <path d="M11.999 15.9821V20L16.9127 13.0802L11.999 15.9821Z" fill="#010101"/>
+        </g>
+    </g>
+</svg>

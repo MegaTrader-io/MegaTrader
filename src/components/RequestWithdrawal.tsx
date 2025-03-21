@@ -49,7 +49,7 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
                     <div className="text-white text-base font-medium leading-normal">Available Payment
                         Methods
                     </div>
-                    <Image src='/assets/images/crypto-icons.svg' alt='icons' width={216} height={24}/>
+                    <Image src='/assets/images/crypto-icons.svg' alt='icons' width={120} height={24}/>
                 </div>
 
                 <Button id="request-withdrawal-button" onClick={toggleRequestModal} className="w-full md:w-auto">
