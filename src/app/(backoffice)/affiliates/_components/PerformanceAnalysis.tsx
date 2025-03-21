@@ -66,7 +66,7 @@ function PerformanceAnalysis() {
                 <CardTitle className="flex items-center gap-2">
                     <span>Performance Analysis</span>
                 </CardTitle>
-                <div className="flex items-center gap-4">
+                <div className="space-y-4 md:space-y-0 md:flex items-center gap-4">
                     <div className="flex gap-4">
                         <div className="flex gap-2">
                             <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
