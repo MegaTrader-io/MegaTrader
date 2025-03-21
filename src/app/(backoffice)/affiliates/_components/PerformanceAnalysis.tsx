@@ -110,9 +110,10 @@ function PerformanceAnalysis() {
                     </div>
                 </div>
             </div>
-            <div ref={container} className="w-full h-[389px] overflow-x-scroll sm:overflow-hidden">
+            <div ref={container} className="w-full h-[389px] overflow-x-scroll overflow-hidden sm:overflow-hidden">
                 <div className="h-full" style={{minWidth: '500px'}}>
                     <ReactApexChart
+                        className="h-full"
                         type={chartAffiliatesConfig.type}
                         height={chartAffiliatesConfig.height}
                         series={chartAffiliatesConfig.series}
