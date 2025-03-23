@@ -140,17 +140,17 @@ function IncomeTracker() {
                 </div>
             </div>
             <div className="grid grid-cols-[200px_auto] align-bottom gap-4">
-                <div className={'inline-block justify-end flex h-full'}>
+                <div className={'h-full flex items-end'}>
+                    <div>
+                        <div
+                            className="self-stretch text-teal-500 justify-start text-Success-500 text-5xl font-light  uppercase leading-[60px]">+20%
+                        </div>
 
-                    <div
-                        className="self-stretch text-teal-500 justify-start text-Success-500 text-5xl font-light  uppercase leading-[60px]">+20%
+                        <div
+                            className="self-stretch text-stone-400 justify-start text-Text-Body text-base font-medium leading-normal">This
+                            week income is higher than last week’s.
+                        </div>
                     </div>
-
-                    <div
-                        className="self-stretch text-stone-400 justify-start text-Text-Body text-base font-medium leading-normal">This
-                        week income is higher than last week’s.
-                    </div>
-
                 </div>
                 <div ref={container} className="w-full h-[389px] overflow-x-scroll overflow-hidden sm:overflow-hidden">
                     <div className="h-full" style={{minWidth: '500px'}}>
