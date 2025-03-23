@@ -143,3 +143,7 @@ body.dialog-mg-open[data-scroll-locked] {
     background-color: red;
     word-wrap: break-word
 }
+
+.apexcharts-series path:hover {
+    fill: #78716C !important;
+}

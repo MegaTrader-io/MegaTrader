@@ -275,6 +275,12 @@ export const periods: Period[] = [
     {id: 'last_60_days', text: 'LAST 60 DAYS'},
 ]
 
+export const incomeTrackerPeriods: Period[] = [
+    {id: 'one_week', text: 'ONE WEEK'},
+    {id: 'last_14_days', text: 'LAST 14 DAYS'},
+    {id: 'last_30_days', text: 'LAST 30 DAYS'},
+]
+
 export const tooltipData: TooltipData = {
     parameters: {
         startingBalance: "$50,000",
@@ -488,7 +494,7 @@ export const chartAffiliatesConfig = {
         chart: {
             stacked: true,
             background: "transparent",
-            toolbar: { show: false },
+            toolbar: {show: false},
         },
         colors: ["#10B981", "#3B82F6"],
         plotOptions: {
@@ -498,7 +504,7 @@ export const chartAffiliatesConfig = {
                 columnWidth: 36,
             },
         },
-        dataLabels: { enabled: false },
+        dataLabels: {enabled: false},
         legend: {
             show: false,
         },
@@ -509,10 +515,10 @@ export const chartAffiliatesConfig = {
             },
         },
         xaxis: {
-            axisTicks: { show: false },
-            axisBorder: { show: false },
+            axisTicks: {show: false},
+            axisBorder: {show: false},
             labels: {
-                style: { colors: 'white' },
+                style: {colors: 'white'},
             },
             categories: ["S", "M", "T", "W", "T", "F", "S"],
         },
@@ -531,7 +537,125 @@ export const chartAffiliatesConfig = {
             show: true,
             borderColor: "#404040",
         },
-        fill: { opacity: 1 },
+        fill: {opacity: 1},
+    } as ApexOptions,
+};
+
+export const chartPayoutsConfig = {
+    type: "bar" as const,
+    height: '100%',
+    width: 1200,
+    series: [
+        {
+            data: [
+                1114,
+                1457,
+                2284,
+                1726,
+                1931,
+                1355,
+                909,
+                1114,
+                1457,
+                2284,
+                1726,
+                1931,
+                1355,
+                909,
+                1114,
+                1457,
+                2284,
+                1726,
+                1931,
+                1355,
+                909,
+                1114,
+                1457,
+                2284,
+                1726,
+                1931,
+                1355,
+                909,
+                1114,
+                1457
+            ],
+        },
+    ],
+    options: {
+        chart: {
+            stacked: true,
+            background: "transparent",
+            toolbar: {show: false},
+        },
+        colors: ["#404040", "#10B981"],
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 16,
+                columnWidth: 36,
+            },
+        },
+        dataLabels: {enabled: false},
+        legend: {
+            show: false,
+        },
+        tooltip: {
+            theme: "dark",
+            style: {
+                fontSize: '12px',
+                fontFamily: undefined
+            },
+            custom: function ({series, seriesIndex, dataPointIndex}) {
+                const value = series[seriesIndex][dataPointIndex];
+                return `<div style="padding: 8px; color: white;">${formatCurrency(value)}</div>`;
+            }
+        },
+        xaxis: {
+            axisTicks: {show: false},
+            axisBorder: {show: false},
+            labels: {
+                style: {colors: 'white'},
+            },
+            categories: [
+                "01",
+                "02",
+                "03",
+                "04",
+                "05",
+                "06",
+                "07",
+                "08",
+                "09",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29",
+                "30"
+            ],
+        },
+        yaxis: {
+            show: false,
+        },
+        grid: {
+            show: false,
+        },
+        fill: {colors: ['#404040']},
     } as ApexOptions,
 };
 

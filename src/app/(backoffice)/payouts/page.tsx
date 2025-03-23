@@ -9,6 +9,7 @@ import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
+import IncomeTracker from "@/app/(backoffice)/affiliates/_components/IncomeTracker";
 
 export default function AccountOverView() {
     const payoutRequestLegend: Record<'approved' | 'pending' | 'rejected', RequestStatusType> = {
@@ -35,6 +36,7 @@ export default function AccountOverView() {
             <MetricsPanel id="payout-summary" metrics={PayoutMetrics}/>
 
             <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
+            <IncomeTracker/>
 
             <div id="payout-history-table">
                 <div id="purpose-of-the-payouts-page">
