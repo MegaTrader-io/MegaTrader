@@ -586,13 +586,10 @@ export const chartPayoutsConfig = {
             background: "transparent",
             toolbar: {show: false},
         },
-        colors: ["#404040", "#10B981"],
         plotOptions: {
             bar: {
                 horizontal: false,
                 borderRadius: 12,
-                borderRadiusApplication: 'around',
-                columnWidth: '80%',
             },
         },
         dataLabels: {enabled: false},
@@ -655,7 +652,6 @@ export const chartPayoutsConfig = {
         grid: {
             show: false,
         },
-        fill: {colors: ['#404040']},
     } as ApexOptions,
 };
 

@@ -147,3 +147,7 @@ body.dialog-mg-open[data-scroll-locked] {
 .apexcharts-series path:hover {
     fill: #78716C !important;
 }
+
+path.apexcharts-bar-area[selected=true] {
+    fill: #10B981;
+}
