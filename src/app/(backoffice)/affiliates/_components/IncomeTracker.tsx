@@ -4,13 +4,14 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import {chartPayoutsConfig, incomeTrackerPeriods} from "@/commons/data";
 import {Period} from "@/commons/interfaces";
-
+import {Props as ApexChartProps} from "react-apexcharts";
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
+const defaultColor = '#404040';
 
 function IncomeTracker() {
     const container = useRef<HTMLDivElement | null>(null);
-    const [dataChart] = useState(chartPayoutsConfig);
+    const [dataChart, setDataChart] = useState<ApexChartProps|null>(null);
     const [selectPeriod, setSelectPeriod] = useState<Period>(incomeTrackerPeriods[2]);
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -20,10 +21,16 @@ function IncomeTracker() {
     }
 
     useEffect(() => {
+        const data = chartPayoutsConfig;
         if (selectPeriod.id === 'last_30_days') {
+            const colors = Array(30).fill(defaultColor);
+            data.options.fill = {
+                colors
+            };
 
+            setDataChart(data);
         }
-    }, []);
+    }, [selectPeriod.id]);
 
     useEffect(() => {
         if (!container.current) {
@@ -127,13 +134,15 @@ function IncomeTracker() {
                 </div>
                 <div ref={container} className="w-full h-[389px] overflow-x-scroll overflow-hidden sm:overflow-hidden">
                     <div className="h-full" style={{minWidth: '500px'}}>
-                        <ReactApexChart
-                            className="h-full"
-                            type={chartPayoutsConfig.type}
-                            height={chartPayoutsConfig.height}
-                            series={dataChart.series}
-                            options={dataChart.options}
-                        />
+                        {dataChart && (
+                            <ReactApexChart
+                                className="h-full"
+                                type={dataChart.type}
+                                height={dataChart.height}
+                                series={dataChart.series}
+                                options={dataChart.options}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
