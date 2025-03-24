@@ -544,7 +544,6 @@ export const chartAffiliatesConfig = {
 export const chartPayoutsConfig = {
     type: "bar" as const,
     height: '100%',
-    width: 1200,
     series: [
         {
             data: [
@@ -591,8 +590,9 @@ export const chartPayoutsConfig = {
         plotOptions: {
             bar: {
                 horizontal: false,
-                borderRadius: 16,
-                columnWidth: 36,
+                borderRadius: 12,
+                borderRadiusApplication: 'around',
+                columnWidth: '80%',
             },
         },
         dataLabels: {enabled: false},

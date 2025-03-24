@@ -21,34 +21,7 @@ function IncomeTracker() {
 
     useEffect(() => {
         if (selectPeriod.id === 'last_30_days') {
-            // const categories = Array(30).fill(0).map((_, index) => (index + 1).toString().padStart(2, '0'));
-            //
-            // const dummyData = [
-            //     1114,
-            //     1457,
-            //     2284,
-            //     1726,
-            //     1931,
-            //     1355,
-            //     909
-            // ];
-            //
-            // const values: number[] = [];
-            // let indexDummyData = 0;
-            // categories.forEach((_, index) => {
-            //     indexDummyData = index % 7 === 0 ? 0 : indexDummyData + 1;
-            //     values.push(dummyData[indexDummyData]);
-            // });
-            //
-            // console.info(categories);
 
-            // setDataChart(prev => ({
-            //     ...prev,
-            //     options: {
-            //         ...prev.options,
-            //         colors: updatedColors,
-            //     }
-            // }));
         }
     }, []);
 
