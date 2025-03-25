@@ -144,7 +144,7 @@ function IncomeTracker() {
                         </div>
                     </div>
                 </div>
-                <div className="w-full md:px-4 pt-16 h-auto overflow-x-scroll  scrollbar-hide">
+                <div className="w-full md:px-4 pt-16 h-auto overflow-x-scroll">
                     {dataChart && (
                         <ChartBar
                             data={dataChart.data}
