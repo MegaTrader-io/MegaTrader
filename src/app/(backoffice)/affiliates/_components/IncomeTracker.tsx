@@ -90,7 +90,7 @@ function IncomeTracker() {
 
     return (
         <Card id="income-tracker" className="w-full p-4 text-white space-y-4 md:space-y-0">
-            <div className="space-y-8 md:space-y-0 md:flex md:justify-between md:items-center">
+            <div className="space-y-4 md:space-y-0 md:flex md:justify-between md:items-center">
                 <CardTitle className="flex items-center gap-2">
                     <div>
                         <div className="flex gap-2 items-center">
@@ -104,7 +104,7 @@ function IncomeTracker() {
                     </div>
                 </CardTitle>
                 <div className="space-y-4 md:space-y-0 md:flex items-center gap-4">
-                    <div className="relative w-full">
+                    <div className="relative md:w-[250px]">
                         <select
                             className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
                             defaultValue={selectPeriod.id}
@@ -132,20 +132,19 @@ function IncomeTracker() {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-[200px_auto] align-bottom gap-4">
+            <div className="md:grid md:grid-cols-[200px_auto] align-bottom gap-4">
                 <div className={'h-full flex items-end'}>
                     <div>
                         <div
                             className="self-stretch text-teal-500 justify-start text-Success-500 text-5xl font-light  uppercase leading-[60px]">+20%
                         </div>
-
                         <div
                             className="self-stretch text-stone-400 justify-start text-Text-Body text-base font-medium leading-normal">This
                             week income is higher than last week’s.
                         </div>
                     </div>
                 </div>
-                <div className="w-full px-4  h-[389px] overflow-x-scroll  scrollbar-hide">
+                <div className="w-full md:px-4 pt-16 h-auto overflow-x-scroll  scrollbar-hide">
                     {dataChart && (
                         <ChartBar
                             data={dataChart.data}
