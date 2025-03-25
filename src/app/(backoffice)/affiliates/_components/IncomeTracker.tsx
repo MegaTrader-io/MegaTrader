@@ -132,7 +132,7 @@ function IncomeTracker() {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-[200px_auto] align-bottom">
+            <div className="grid grid-cols-[200px_auto] align-bottom gap-4">
                 <div className={'h-full flex items-end'}>
                     <div>
                         <div
@@ -145,7 +145,7 @@ function IncomeTracker() {
                         </div>
                     </div>
                 </div>
-                <div className="w-full px-4  h-[389px] overflow-x-scroll overflow-hidden scrollbar-hide">
+                <div className="w-full px-4  h-[389px] overflow-x-scroll  scrollbar-hide">
                     {dataChart && (
                         <ChartBar
                             data={dataChart.data}

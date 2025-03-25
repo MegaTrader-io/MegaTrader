@@ -25,6 +25,7 @@ const ChartBar: React.FC<ChartBarProps> = ({data, labels}) => {
                 return (
                     <div
                         key={index}
+                        id={`bar_${index}`}
                         className="grid grid-rows-[auto_36px] gap-2 items-end group h-[290px]"
                         onMouseEnter={() => setHoverIndex(index)}
                         onMouseLeave={() => setHoverIndex(null)}
@@ -48,7 +49,7 @@ const ChartBar: React.FC<ChartBarProps> = ({data, labels}) => {
                                             initial={{opacity: 0, y: 10}}
                                             animate={{opacity: 1, y: 0}}
                                             exit={{opacity: 0, y: 10}}
-                                            className={`absolute -top-[35px] transform z-10 !translate-x-[-25%] px-3 py-1 rounded-full text-sm font-bold ${
+                                            className={`absolute transform z-10 !translate-x-[-25%] translate-y-[-36px] px-3 py-1 rounded-full text-sm font-bold ${
                                                 isSelected ? 'bg-teal-500 text-black' : 'bg-neutral-200 text-black'
                                             }`}
                                         >
