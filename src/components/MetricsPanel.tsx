@@ -15,7 +15,7 @@ function MetricsPanel({metrics, id}: { metrics: Metrics[], id?: string }) {
                             {metric.title}
                         </div>
                         <div
-                            className="text-stone-400 text-xs font-medium leading-tight">
+                            className="text-stone-400 text-sm font-medium leading-tight">
                             {metric.subtitle}
                         </div>
                     </div>
