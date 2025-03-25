@@ -16,7 +16,7 @@ const ChartBar: React.FC<ChartBarProps> = ({data, labels}) => {
     const hoverColor = '#78716C';
 
     return (
-        <div className="flex items-end w-full h-full gap-2">
+        <div className="flex items-end justify-between w-full h-full gap-2">
             {data.map((value, index) => {
                 const heightPercent = (value / maxValue) * 100;
                 const isSelected = selectedIndex === index;
