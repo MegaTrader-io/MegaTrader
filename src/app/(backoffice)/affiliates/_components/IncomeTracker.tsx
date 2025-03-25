@@ -1,17 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Card, {CardTitle} from "@/components/Card";
-import dynamic from "next/dynamic";
 import Image from "next/image";
-import {chartPayoutsConfig, incomeTrackerPeriods} from "@/commons/data";
+import {incomeTrackerPeriods} from "@/commons/data";
 import {Period} from "@/commons/interfaces";
-import {Props as ApexChartProps} from "react-apexcharts";
-const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
-
-const defaultColor = '#404040';
+import ChartBar from "@/components/ChartBar";
 
 function IncomeTracker() {
-    const container = useRef<HTMLDivElement | null>(null);
-    const [dataChart, setDataChart] = useState<ApexChartProps|null>(null);
+    const [dataChart, setDataChart] = useState<{ data: number[], labels: string[] } | null>(null);
     const [selectPeriod, setSelectPeriod] = useState<Period>(incomeTrackerPeriods[2]);
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -21,59 +16,77 @@ function IncomeTracker() {
     }
 
     useEffect(() => {
-        const data = chartPayoutsConfig;
         if (selectPeriod.id === 'last_30_days') {
-            const colors = Array(30).fill(defaultColor);
-            data.options.fill = {
-                colors
-            };
-
-            setDataChart(data);
+            setDataChart({
+                labels: Array(30).fill('').map((_, index) => (index + 1).toString().padStart(2, '0')),
+                data: [
+                    1114,
+                    1457,
+                    2284,
+                    1726,
+                    1931,
+                    1355,
+                    909,
+                    1114,
+                    1457,
+                    2284,
+                    1726,
+                    1931,
+                    1355,
+                    909,
+                    1114,
+                    1457,
+                    2284,
+                    1726,
+                    1931,
+                    1355,
+                    909,
+                    1114,
+                    1457,
+                    2284,
+                    1726,
+                    1931,
+                    1355,
+                    909,
+                    1114,
+                    1457
+                ]
+            });
+        } else if (selectPeriod.id === 'last_14_days') {
+            setDataChart({
+                labels: Array(14).fill('').map((_, index) => (index + 1).toString().padStart(2, '0')),
+                data: [
+                    1114,
+                    1457,
+                    2284,
+                    1726,
+                    1931,
+                    1355,
+                    909,
+                    1114,
+                    1457,
+                    2284,
+                    1726,
+                    1931,
+                    1355,
+                    909,
+                ]
+            });
+        } else if (selectPeriod.id === 'one_week') {
+            setDataChart({
+                labels: Array(7).fill('').map((_, index) => (index + 1).toString().padStart(2, '0')),
+                data: [
+                    1114,
+                    1457,
+                    2284,
+                    1726,
+                    1931,
+                    1355,
+                    909,
+                ]
+            });
         }
     }, [selectPeriod.id]);
-
-    useEffect(() => {
-        if (!container.current) {
-            return;
-        }
-
-        const rerenderAxis = () => {
-            console.info('rerenderAxis')
-            const axisTexts = document.querySelector('.apexcharts-canvas svg .apexcharts-xaxis .apexcharts-xaxis-texts-g');
-            if (!axisTexts) {
-                return;
-            }
-
-            const texts = Array.from(axisTexts.querySelectorAll('text'));
-
-            texts.forEach((text) => {
-                const x = Number(text.getAttribute('x') || 0);
-                const y = Number(text.getAttribute('y') || 0);
-
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', x.toString());
-                circle.setAttribute('cy', (y).toString());
-                circle.setAttribute('r', '13');
-                circle.setAttribute('fill', '#3a3a3a');
-
-                const clonedText = text.cloneNode(true) as SVGTextElement;
-
-                axisTexts.insertBefore(circle, text);
-                text.remove();
-
-                axisTexts.after(clonedText, text);
-            });
-        };
-
-        const observer = new MutationObserver(rerenderAxis);
-        observer.observe(container.current, {childList: true, subtree: true});
-
-        rerenderAxis();
-
-        return () => {
-            observer.disconnect();
-        };
-    }, []);
 
     return (
         <Card id="income-tracker" className="w-full p-4 text-white space-y-4 md:space-y-0">
@@ -119,7 +132,7 @@ function IncomeTracker() {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-[200px_auto] align-bottom gap-4">
+            <div className="grid grid-cols-[200px_auto] align-bottom">
                 <div className={'h-full flex items-end'}>
                     <div>
                         <div
@@ -132,21 +145,15 @@ function IncomeTracker() {
                         </div>
                     </div>
                 </div>
-                <div ref={container} className="w-full h-[389px] overflow-x-scroll overflow-hidden sm:overflow-hidden">
-                    <div className="h-full" style={{minWidth: '500px'}}>
-                        {dataChart && (
-                            <ReactApexChart
-                                className="h-full"
-                                type={dataChart.type}
-                                height={dataChart.height}
-                                series={dataChart.series}
-                                options={dataChart.options}
-                            />
-                        )}
-                    </div>
+                <div className="w-full px-4  h-[389px] overflow-x-scroll overflow-hidden scrollbar-hide">
+                    {dataChart && (
+                        <ChartBar
+                            data={dataChart.data}
+                            labels={dataChart.labels}
+                        />
+                    )}
                 </div>
             </div>
-
         </Card>
     );
 }
