@@ -14,25 +14,49 @@ const Layout = ({children,}: {
                 </div>
             </div>
         </div>
-        <div className="relative hidden lg:w-0 lg:flex-1 md:block bg-[#1e1e1e] md:pl-[120px] lg:overflow-hidden">
+        <div className="relative hidden md:px-[46px] md:pb-[46px] lg:w-0 lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
             <Badge className="mt-8 lg:mt-[91px] mb-[17px] !font-bold">Start earning up to 90% profit</Badge>
             <p className="text-stone-400 text-base font-normal leading-normal max-w-[434px]">
                 Trade smarter with MegaTrader—achieve your goals within our structured evaluation period. Unlock
                 opportunities and maximize your potential in the dynamic world of trading.
             </p>
-            <div
-                className="md:h-dvh lg:h-full w-full mt-[75px] overflow-hidden relative bg-[#151211] rounded-tl-[36px] shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] border-l-8 border-t-8 border-[#474b54]"
-            >
-                <div className="mx-auto w-10/12 h-0">
-                    <Image
-                        src="/assets/images/img_3.png"
-                        alt="Trading Platform Interface"
-                        width={1000}
-                        height={700}
-                        style={{width: '100%', height: 'auto'}}
-                        quality={100}
-                    />
+            <MegatraderScreen/>
+        </div>
+    </div>
+}
+
+const MegatraderScreen = () => {
+    return <div className="relative mt-[48px] w-[840px] h-[758px] overflow-hidden rounded-2xl">
+        <div
+            className="w-full h-[1200px] opacity-5 rotate-[20deg] translate-x-[520px] bg-white -top-[10px] absolute">
+        </div>
+        <div
+            className="w-[840px] h-[758px] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
+        >
+            <div className="flex justify-between px-2 items-center bg-black h-[48px]">
+                <div className="flex gap-2 items-center justify-end">
+                    <div className="bg-[#ee6a5e] shadow rounded-full w-4 h-4"></div>
+                    <div className="bg-[#f5be4e] rounded-full w-4 h-4"></div>
+                    <div className="bg-[#63c755] rounded-full w-4 h-4"></div>
                 </div>
+                <div className="flex items-center justify-center">
+                    <div
+                        className="self-stretch text-center justify-center text-sm font-bold leading-tight text-[#A8A29E]">https://megatrader.io
+                    </div>
+                </div>
+                <div className="flex items-center justify-start">
+                    <Image src={'/assets/images/locked.svg'} alt={'locked'} width={24} height={24}/>
+                </div>
+            </div>
+            <div className="h-0">
+                <Image
+                    src="/assets/images/Account_Overview.png"
+                    alt="Trading Platform Interface"
+                    width={1000}
+                    height={700}
+                    style={{width: '100%', height: 'auto'}}
+                    quality={100}
+                />
             </div>
         </div>
     </div>
