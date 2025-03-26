@@ -4,7 +4,7 @@ export async function GET(request: Request) {
     try {
         const {searchParams} = new URL(request.url);
         const payoutStatus = searchParams.get('payoutStatus');
-        const payoutsData = data.filter(p => p.status === payoutStatus);
+        const payoutsData = payoutStatus === 'all_payouts' ? data : data.filter(p => p.status === payoutStatus);
         const sortBy = searchParams.get('sortBy') || 'dateOfRequest';
         const direction = searchParams.get('direction') === 'asc' ? 'asc' : 'desc';
         const page = parseInt(searchParams.get('page') || '1', 10);

@@ -1,110 +1,90 @@
 [
   {
-    "id": 1,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 910.00,
-    "profitShare": 60,
-    "traderShare": 546.00,
-    "status": "PENDING",
-    "paymentMethod": "bitcoin"
+    "id": 332589,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 1200.50
   },
   {
-    "id": 2,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 1810.00,
-    "profitShare": 50,
-    "traderShare": 450.00,
-    "status": "PENDING",
-    "paymentMethod": "ethereum"
+    "id": 332590,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "paypal",
+    "amount": 1950.75
   },
   {
-    "id": 3,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 900.00,
-    "profitShare": 18,
-    "traderShare": 80.00,
-    "status": "PENDING",
-    "paymentMethod": "wise"
+    "id": 332591,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "paypal",
+    "amount": 2780.00
   },
   {
-    "id": 4,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 900.00,
-    "profitShare": 18,
-    "traderShare": 80.00,
-    "status": "PENDING",
-    "paymentMethod": "paypal"
+    "id": 332592,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "wise",
+    "amount": 890.00
   },
   {
-    "id": 5,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 900.00,
-    "profitShare": 18,
-    "traderShare": 80.00,
-    "status": "PENDING",
-    "paymentMethod": "bitcoin"
+    "id": 332593,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "ethereum",
+    "amount": 2110.25
   },
   {
-    "id": 6,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 910.00,
-    "profitShare": 60,
-    "traderShare": 546.00,
-    "status": "PENDING",
-    "paymentMethod": "bitcoin"
+    "id": 332594,
+    "date": "01-01-2023",
+    "status": "rejected",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "ethereum",
+    "amount": 1700.00
   },
   {
-    "id": 7,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 1810.00,
-    "profitShare": 50,
-    "traderShare": 450.00,
-    "status": "PENDING",
-    "paymentMethod": "ethereum"
+    "id": 332595,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 1580.50
   },
   {
-    "id": 8,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 900.00,
-    "profitShare": 18,
-    "traderShare": 80.00,
-    "status": "PENDING",
-    "paymentMethod": "wise"
+    "id": 332596,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 2490.00
   },
   {
-    "id": 9,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 910.00,
-    "profitShare": 60,
-    "traderShare": 546.00,
-    "status": "REJECTED",
-    "paymentMethod": "bitcoin"
+    "id": 332597,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "bitcoin",
+    "amount": 1080.00
   },
   {
-    "id": 10,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 1810.00,
-    "profitShare": 50,
-    "traderShare": 450.00,
-    "status": "REJECTED",
-    "paymentMethod": "paypal"
+    "id": 332598,
+    "date": "01-01-2023",
+    "status": "rejected",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "wise",
+    "amount": 2300.75
   },
   {
-    "id": 11,
-    "dateOfRequest": "03-04-2025",
-    "mtAmount": 1200.00,
-    "profitShare": 40,
-    "traderShare": 480.00,
-    "status": "PENDING",
-    "paymentMethod": "paypal"
-  },
-  {
-    "id": 12,
-    "dateOfRequest": "01-01-2023",
-    "mtAmount": 750.00,
-    "profitShare": 25,
-    "traderShare": 187.50,
-    "status": "PENDING",
-    "paymentMethod": "bitcoin"
+    "id": 332599,
+    "date": "01-01-2023",
+    "status": "pending",
+    "company": "Michael Rozenfel",
+    "paymentMethod": "paypal",
+    "amount": 300.75
   }
 ]

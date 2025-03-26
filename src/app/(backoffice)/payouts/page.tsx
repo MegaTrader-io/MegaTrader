@@ -1,23 +1,15 @@
 'use client'
 
 import React, {useState} from "react";
-import Card from "@/components/Card";
-import PayoutRequestTable from "@/app/(backoffice)/payouts/_components/PayoutRequestTable";
-import {RequestStatusType} from "@/commons/interfaces";
 import {PayoutMetrics} from "@/commons/data";
 import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
 import IncomeTracker from "@/app/(backoffice)/affiliates/_components/IncomeTracker";
+import PayoutsManager from "@/app/(backoffice)/payouts/_components/PayoutsManager";
 
 export default function AccountOverView() {
-    const payoutRequestLegend: Record<'approved' | 'pending' | 'rejected', RequestStatusType> = {
-        approved: 'APPROVED',
-        pending: 'PENDING',
-        rejected: 'REJECTED'
-    };
-
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
 
     function handleDisplayAlert(payload: IShowAlert) {
@@ -37,26 +29,7 @@ export default function AccountOverView() {
 
             <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
             <IncomeTracker/>
-
-            <div id="payout-history-table">
-                <div id="purpose-of-the-payouts-page">
-                    <Card>
-                        <div className="space-y-8">
-                            <PayoutRequestTable
-                                status={payoutRequestLegend.approved}
-                            />
-
-                            <PayoutRequestTable
-                                status={payoutRequestLegend.pending}
-                            />
-
-                            <PayoutRequestTable
-                                status={payoutRequestLegend.rejected}
-                            />
-                        </div>
-                    </Card>
-                </div>
-            </div>
+            <PayoutsManager/>
         </div>
 
     </>
