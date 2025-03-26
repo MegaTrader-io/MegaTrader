@@ -26,12 +26,12 @@ const Layout = ({children,}: {
 }
 
 const MegatraderScreen = () => {
-    return <div className="relative mt-[48px] w-[840px] h-[758px] overflow-hidden rounded-2xl">
+    return <div className="mx-auto relative mt-[48px] w-[840px] h-[758px] overflow-hidden rounded-2xl">
         <div
             className="w-full h-[1200px] opacity-5 rotate-[20deg] translate-x-[520px] bg-white -top-[10px] absolute">
         </div>
         <div
-            className="w-[840px] h-[758px] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
+            className="mx-auto w-full h-[758px] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
         >
             <div className="flex justify-between px-2 items-center bg-black h-[48px]">
                 <div className="flex gap-2 items-center justify-end">
@@ -50,7 +50,7 @@ const MegatraderScreen = () => {
             </div>
             <div className="h-0">
                 <Image
-                    src="/assets/images/Account_Overview.png"
+                    src="/assets/images/img_6.png"
                     alt="Trading Platform Interface"
                     width={1000}
                     height={700}
