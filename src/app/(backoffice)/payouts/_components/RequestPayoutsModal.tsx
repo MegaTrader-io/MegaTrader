@@ -8,7 +8,10 @@ import Alert from "@/components/Alert";
 
 export interface IRequestPayoutForm {
     amount: number | undefined,
-    paymentMethodType: string
+    paymentMethodType: string,
+    email: string | undefined,
+    address: string | undefined,
+    fullName: string | undefined,
 }
 
 interface IPaymentMethod {
@@ -17,11 +20,10 @@ interface IPaymentMethod {
 }
 
 const PaymentMethodList: IPaymentMethod[] = [
+    {key: 'riseworks', name: 'Riseworks'},
     {key: 'crypto_btc', name: 'Crypto - BTC'},
     {key: 'crypto_eth', name: 'Crypto - ETH'},
-    {key: 'crypto_usdc_erc20', name: 'Crypto - USDC-ERC20'},
-    {key: 'wire_ach', name: 'Wire/ACH'},
-    {key: 'riseworks', name: 'Riseworks'},
+    {key: 'wire_ach', name: 'Wire / ACH'},
 ];
 
 function RequestPayoutsModal({open, onClose, submitRequest}: {
@@ -31,7 +33,10 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
 }) {
     const [form, setForm] = useState<IRequestPayoutForm>({
         amount: undefined,
-        paymentMethodType: 'crypto_btc'
+        email: undefined,
+        address: undefined,
+        fullName: undefined,
+        paymentMethodType: 'riseworks'
     })
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -67,7 +72,8 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
     return (
         <Dialog showModal={open}
                 childrenClassName={'max-h-dvh'}
-                className="w-[calc(100vw-32px)] sm:w-[600px]"
+                classNameOverlay={'bg-[#131210]'}
+                className="w-[calc(100vw-32px)] sm:w-[668px]"
                 title={'REQUEST PAYOUTS'}
                 onClose={onClose}>
             {Object.keys(fieldErrors).length > 0 && (
@@ -75,39 +81,24 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                        type={'error'}
                        message={'You must select, at lease, one of the options in Payment method'}/>
             )}
-            <form onSubmit={onSubmit} className="text-white w-full space-y-8">
-                <div>
-                    <label className="text-stone-400 text-base font-bold leading-normal">
-                        Enter the amount you wish to withdraw
-                        <InputText type={"text"}
-                                   name='amount'
-                                   placeholder="100"
-                                   defaultValue={form.amount}
-                                   onChange={changeFields}
-                                   errorMessage={fieldErrors.amount}/>
-                    </label>
-                </div>
 
-                <div className="text-white text-xl font-medium uppercase leading-normal">
-                    MAX WITHDRAWAL: $150
-                </div>
-
-                <div>
-                    <label className="text-stone-400 text-base font-bold leading-normal space-y-2">
+            <form onSubmit={onSubmit} className="text-white w-full space-y-4">
+                <div className="space-y-8">
+                    <div>
+                        <label className="text-stone-400 text-base font-bold leading-normal">
                         <span>
                             Payment method
                         </span>
-
-                        <RadioGroup value={form.paymentMethodType}
-                                    onChange={(value: string) => updateForm('paymentMethodType', value)}
-                                    className="flex flex-col space-y-4">
-                            {PaymentMethodList.map((option) => (
-                                <Radio
-                                    key={option.key}
-                                    value={option.key}
-                                    aria-label={option.name}
-                                    className="flex cursor-pointer items-center space-x-2"
-                                >
+                            <RadioGroup value={form.paymentMethodType}
+                                        onChange={(value: string) => updateForm('paymentMethodType', value)}
+                                        className="flex gap-4">
+                                {PaymentMethodList.map((option) => (
+                                    <Radio
+                                        key={option.key}
+                                        value={option.key}
+                                        aria-label={option.name}
+                                        className="flex cursor-pointer items-center space-x-2"
+                                    >
             <span className={clsx(
                 "relative flex items-center justify-center size-6 rounded-full border-2 border-primary",
                 option.key === form.paymentMethodType ? "bg-black" : "bg-transparent"
@@ -117,21 +108,73 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                 )}
             </span>
 
-                                    <span className="text-white text-lg font-medium">{option.name}</span>
-                                </Radio>
-                            ))}
-                        </RadioGroup>
+                                        <span className="text-white text-lg font-medium">{option.name}</span>
+                                    </Radio>
+                                ))}
+                            </RadioGroup>
 
+                        </label>
+                    </div>
+                    <div>
+                        <label className="text-stone-400 text-base font-bold leading-normal">
+                            Enter the amount you wish to withdraw
+                            <InputText type={"text"}
+                                       name='amount'
+                                       placeholder="100"
+                                       defaultValue={form.amount}
+                                       onChange={changeFields}
+                                       errorMessage={fieldErrors.amount}/>
+                        </label>
+                        <span
+                            className="self-stretch text-stone-400 justify-start text-sm font-medium leading-tight">Max
+                        withdrawal: $150
+                    </span>
+                    </div>
+                </div>
+
+
+                <div>
+                    <label className="text-stone-400 text-base font-bold leading-normal">
+                        Email
+                        <InputText type={"email"}
+                                   name='email'
+                                   defaultValue={form.email}
+                                   onChange={changeFields}
+                                   errorMessage={fieldErrors.email}/>
                     </label>
                 </div>
+
+                <div>
+                    <label className="text-stone-400 text-base font-bold leading-normal">
+                        Full Name or Business Name
+                        <InputText type={"text"}
+                                   name='fullName'
+                                   defaultValue={form.fullName}
+                                   onChange={changeFields}
+                                   errorMessage={fieldErrors.fullName}/>
+                    </label>
+                </div>
+
+                <div>
+                    <label className="text-stone-400 text-base font-bold leading-normal">
+                        Address
+                        <InputText type={"text"}
+                                   name='address'
+                                   defaultValue={form.address}
+                                   onChange={changeFields}
+                                   errorMessage={fieldErrors.address}/>
+                    </label>
+                </div>
+
                 <div className="!mt-4 space-y-4 sm:space-y-0 sm:flex justify-center gap-2">
-                    <Button type='submit' className="w-full">
-                        CONFIRM
-                    </Button>
                     <Button onClick={onClose}
                             className="w-full"
-                            variant={'dark'}>
+                            styleType={'text'}
+                            variant={'light'}>
                         CANCEL
+                    </Button>
+                    <Button type='submit' className="w-full">
+                        CONTINUE
                     </Button>
                 </div>
             </form>
