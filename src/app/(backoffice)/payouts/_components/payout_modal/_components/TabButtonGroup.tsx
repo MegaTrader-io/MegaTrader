@@ -5,7 +5,7 @@ import React from "react";
 import {PaymentMethodList} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
 
 export default function TabButtonGroup({onClick, selection}: { onClick: (key: string) => void, selection: string }) {
-    return <div className="flex justify-around items-center gap-2">
+    return <div className="grid grid-cols-2 sm:flex justify-around items-center gap-2">
         {PaymentMethodList.map(option => (
             <Button key={option.id}
                     className="w-full !pl-3 flex justify-center gap-2 text-nowrap"

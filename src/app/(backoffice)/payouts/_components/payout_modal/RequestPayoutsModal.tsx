@@ -145,14 +145,14 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                     </label>
                 </div>
 
-                <div className="!mt-4 space-y-4 sm:space-y-0 sm:flex justify-center gap-2">
+                <div className="flex flex-col !mt-4 space-y-4 sm:space-y-0 sm:flex sm:flex-row justify-center gap-2">
                     <Button onClick={onClose}
-                            className="w-full"
+                            className="w-full order-2 sm:order-1"
                             styleType={'text'}
                             variant={'light'}>
                         CANCEL
                     </Button>
-                    <Button type='submit' className="w-full">
+                    <Button type='submit' className="w-full order-1 sm:order-2">
                         CONTINUE
                     </Button>
                 </div>
