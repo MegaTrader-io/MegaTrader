@@ -2,8 +2,6 @@ import React, {useRef, useState} from 'react';
 import InputText from "@/components/InputText";
 import {Button} from "@/components/Button";
 import Dialog from "@/components/Dialog";
-import clsx from "clsx";
-import IconPaymentMethod from "@/app/(backoffice)/payouts/_components/payout_modal/_components/IconPaymentMethod";
 import TabButtonGroup from "@/app/(backoffice)/payouts/_components/payout_modal/_components/TabButtonGroup";
 
 export interface IRequestPayoutForm {
