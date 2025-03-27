@@ -2,9 +2,11 @@ import React, {useState} from 'react';
 import Image from "next/image";
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
-import RequestPayoutsModal, {IRequestPayoutForm} from "@/app/(backoffice)/payouts/_components/RequestPayoutsModal";
 import {useLoading} from "@/context/LoadingContext";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
+import RequestPayoutsModal, {
+    IRequestPayoutForm
+} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
 
 function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload: IShowAlert) => void }) {
     const {setLoading} = useLoading();
@@ -38,7 +40,8 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
     return (
         <>
             {openRequestModal &&
-                <RequestPayoutsModal open={openRequestModal} onClose={toggleRequestModal}
+                <RequestPayoutsModal open={openRequestModal}
+                                     onClose={toggleRequestModal}
                                      submitRequest={submitRequest}/>}
 
             <Card

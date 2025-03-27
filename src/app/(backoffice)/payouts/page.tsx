@@ -26,7 +26,6 @@ export default function AccountOverView() {
             )}
 
             <MetricsPanel id="payout-summary" metrics={PayoutMetrics}/>
-
             <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
             <IncomeTracker/>
             <PayoutsManager/>
