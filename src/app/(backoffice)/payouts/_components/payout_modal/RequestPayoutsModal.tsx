@@ -79,7 +79,7 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
 
     function validateFields() {
         const newErrors: { [key: string]: string } = {};
-        if (!form.withdrawalAmount) newErrors.withdrawalAmount = "This field is required.";
+        if (!form.withdrawalAmount || !!form.withdrawalAmount && form.withdrawalAmount.toString().trim() === '') newErrors.withdrawalAmount = "This field is required.";
         if (!form.email) newErrors.email = "This field is required.";
         if (!form.address) newErrors.address = "This field is required.";
         if (!form.fullName) newErrors.fullName = "This field is required.";
