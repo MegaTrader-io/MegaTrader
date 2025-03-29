@@ -2,9 +2,12 @@ import {Button} from "@/components/Button";
 import clsx from "clsx";
 import IconPaymentMethod from "@/app/(backoffice)/payouts/_components/payout_modal/_components/IconPaymentMethod";
 import React from "react";
-import {PaymentMethodList} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
+import {
+    PaymentMethodList,
+    PaymentMethodType
+} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
 
-export default function TabButtonGroup({onClick, selection}: { onClick: (key: string) => void, selection: string }) {
+export default function TabButtonGroup({onClick, selection}: { onClick: (key: PaymentMethodType) => void, selection: string }) {
     return <div className="grid grid-cols-2 sm:flex justify-around items-center gap-2">
         {PaymentMethodList.map(option => (
             <Button key={option.id}

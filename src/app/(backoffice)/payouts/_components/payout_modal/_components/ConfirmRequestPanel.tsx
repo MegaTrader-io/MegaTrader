@@ -1,11 +1,52 @@
 import React from 'react';
 import {Button} from "@/components/Button";
-import {RequestPayoutsType} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
+import {
+    IRequestPayoutForm,
+    PaymentMethodType, PayoutSummary
+} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
 import Alert from "@/components/Alert";
 
-function ConfirmRequestPanel({confirmRequest, goBack}: {goBack: () => void, confirmRequest: RequestPayoutsType }) {
-    return (
-        <form className="text-white w-full">
+function PayoutTransaction({withdrawalAmount, transactionFee, netAmount}: PayoutSummary) {
+    return <>
+        <div
+            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+            <div
+                className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
+                Withdraw
+            </div>
+            <div
+                className="text-right justify-start text-base font-medium leading-normal">${withdrawalAmount}
+            </div>
+        </div>
+        <div
+            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+            <div
+                className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Transaction Fee
+            </div>
+            <div
+                className="text-right justify-start text-base font-medium leading-normal">${transactionFee}
+            </div>
+        </div>
+
+        <div
+            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+            <div
+                className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
+                Receive
+            </div>
+            <div
+                className="text-right justify-start text-base font-medium leading-normal">${netAmount}
+            </div>
+        </div>
+    </>
+}
+
+function FormRequest({methodTypeSelected, payload}: {
+    methodTypeSelected: PaymentMethodType,
+    payload: IRequestPayoutForm
+}) {
+    if (methodTypeSelected === 'riseworks') {
+        return <>
             <div
                 className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
                 <div
@@ -13,66 +54,53 @@ function ConfirmRequestPanel({confirmRequest, goBack}: {goBack: () => void, conf
                     Name
                 </div>
                 <div
-                    className="text-right justify-start text-base font-medium leading-normal">John
-                    Doe
+                    className="text-right justify-start text-base font-medium leading-normal capitalize">{payload.fullName}
                 </div>
             </div>
-
             <div
                 className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Email
                 </div>
                 <div
-                    className="text-right justify-start text-base font-medium leading-normal">john@doe.com
+                    className="text-right justify-start text-base font-medium leading-normal">{payload.email}
                 </div>
             </div>
-
-
             <div
                 className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Address
                 </div>
                 <div
-                    className="text-right justify-start text-base font-medium leading-normal">Dayne Port, 890 Franecki
-                    Motorway Suite 297
+                    className="text-right justify-start text-base font-medium leading-normal capitalize">{payload.address}
                 </div>
             </div>
+            <PayoutTransaction
+                withdrawalAmount={payload.withdrawalAmount}
+                transactionFee={payload.transactionFee}
+                netAmount={payload.netAmount}
+            />
+        </>
+    }
 
+    return null;
+}
 
-            <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-                <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
-                    Withdraw
-                </div>
-                <div
-                    className="text-right justify-start text-base font-medium leading-normal">$150
-                </div>
-            </div>
+function ConfirmRequestPanel({
+                                 methodTypeSelected,
+                                 submitForm,
+                                 payload,
+                                 goBack
+                             }: {
+    goBack: () => void,
+    payload: IRequestPayoutForm,
+    submitForm: () => void,
+    methodTypeSelected: PaymentMethodType
+}) {
 
-
-            <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-                <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Transaction Fee
-                </div>
-                <div
-                    className="text-right justify-start text-base font-medium leading-normal">$12
-                </div>
-            </div>
-
-            <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-                <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
-                    Receive
-                </div>
-                <div
-                    className="text-right justify-start text-base font-medium leading-normal">$138
-                </div>
-            </div>
+    return (
+        <div className="text-white w-full">
+            <FormRequest methodTypeSelected={methodTypeSelected} payload={payload}/>
 
             <Alert type={'info'} className='my-4'
                    message={'Please verify your details before confirming. Incorrect information may cause payment delays.'}/>
@@ -84,11 +112,11 @@ function ConfirmRequestPanel({confirmRequest, goBack}: {goBack: () => void, conf
                         variant={'light'}>
                     GO BACK
                 </Button>
-                <Button className="w-full order-1 sm:order-2">
+                <Button onClick={submitForm} className="w-full order-1 sm:order-2">
                     CONFIRM REQUEST
                 </Button>
             </div>
-        </form>
+        </div>
     );
 }
 

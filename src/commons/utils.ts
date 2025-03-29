@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import {PlanDetail, PlanLevel, PlanType} from "@/commons/interfaces";
 
-function valueBySize( size: PlanLevel){
-    if(size === '50K') {
+function valueBySize(size: PlanLevel) {
+    if (size === '50K') {
         return 50000
-    }else if(size === '100K') {
+    } else if (size === '100K') {
         return 100000;
-    } else if(size === '150K') {
+    } else if (size === '150K') {
         return 150000;
     }
 
@@ -81,4 +81,10 @@ export function formatDateTime(
     }
 
     return dayjs(datetime).format(format)
+}
+
+export function capitalizeWords(value: string) {
+    return value.toString().split(' ').map(word => {
+        return word.charAt(0).toUpperCase() + +word.slice(1).toLowerCase();
+    }).join(' ');
 }

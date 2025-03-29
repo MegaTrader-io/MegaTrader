@@ -4,19 +4,27 @@ import {Button} from "@/components/Button";
 import Dialog from "@/components/Dialog";
 import TabButtonGroup from "@/app/(backoffice)/payouts/_components/payout_modal/_components/TabButtonGroup";
 import ConfirmRequestPanel from "@/app/(backoffice)/payouts/_components/payout_modal/_components/ConfirmRequestPanel";
+import {capitalizeWords} from "@/commons/utils";
 
-export type RequestPayoutsType = 'riseworks' | 'crypto_btc' | 'crypto_eth' | 'wire_ach';
+export type PaymentMethodType = 'riseworks' | 'crypto_btc' | 'crypto_eth' | 'wire_ach';
 
-export interface IRequestPayoutForm {
-    amount: number | undefined,
-    paymentMethodType: RequestPayoutsType,
+const TRANSACTION_PERCENTAGE = 0.08;
+const MAX_WITHDRAWAL = 150;
+
+export interface PayoutSummary {
+    withdrawalAmount: number | undefined;
+    transactionFee: number;
+    netAmount: number;
+}
+
+export interface IRequestPayoutForm extends PayoutSummary {
     email: string | undefined,
     address: string | undefined,
     fullName: string | undefined,
 }
 
 interface IPaymentMethod {
-    id: RequestPayoutsType,
+    id: PaymentMethodType,
     name: string
 }
 
@@ -32,35 +40,52 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
     onClose: () => void,
     submitRequest: (form: IRequestPayoutForm) => void
 }) {
-    const [confirmRequest, setConfirmRequest] = useState<RequestPayoutsType | null>(null);
+    const [methodTypeSelected, setMethodTypeSelected] = useState<PaymentMethodType>('riseworks');
+    const [confirmData, setConfirmData] = useState<IRequestPayoutForm | null>(null);
     const inputEmail = useRef<HTMLInputElement | null>(null);
+
     const [form, setForm] = useState<IRequestPayoutForm>({
-        paymentMethodType: 'riseworks',
-        amount: undefined,
+        fullName: undefined,
         email: undefined,
         address: undefined,
-        fullName: undefined,
+        withdrawalAmount: undefined,
+        netAmount: 0,
+        transactionFee: 0,
     })
+
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-    const maxWithdrawal = 150;
 
     function changeFields(ev: React.ChangeEvent<HTMLInputElement>) {
         const {name, value} = ev.target;
         updateForm(name, value);
     }
 
-    function updateForm(name: string, value: string) {
-        setForm(prev => ({...prev, [name]: value}))
+    function calculateAmountToReceive(amount: number) {
+        const transactionFee = amount * TRANSACTION_PERCENTAGE;
+        return {transactionFee, netAmount: Math.max(0, amount - transactionFee)};
+    }
+
+    function updateForm(name: string, value: string | number) {
+        setForm(prev => {
+            const newData = {...prev, [name]: value}
+            if (name === 'withdrawalAmount') {
+                const {transactionFee, netAmount} = calculateAmountToReceive(Number(value));
+                newData.netAmount = netAmount;
+                newData.transactionFee = transactionFee;
+            }
+
+            return newData
+        })
     }
 
     function validateFields() {
         const newErrors: { [key: string]: string } = {};
-        if (!form.amount) newErrors.amount = "This field is required.";
+        if (!form.withdrawalAmount) newErrors.withdrawalAmount = "This field is required.";
         if (!form.email) newErrors.email = "This field is required.";
         if (!form.address) newErrors.address = "This field is required.";
         if (!form.fullName) newErrors.fullName = "This field is required.";
 
-        if (form.amount && (form.amount < 0 || form.amount > maxWithdrawal)) newErrors.amount = "Invalid amount.";
+        if (form.withdrawalAmount && (form.withdrawalAmount <= 0 || form.withdrawalAmount > MAX_WITHDRAWAL)) newErrors.withdrawalAmount = "Invalid amount.";
         if (form.email && inputEmail.current && !inputEmail.current.validity.valid) newErrors.email = "Invalid email address";
 
         return newErrors;
@@ -77,16 +102,20 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
         }
 
         setFieldErrors({});
-        // submitRequest(form)
-        confirm()
+
+        showConfirmRequestDialog()
     }
 
-    function confirm() {
-        setConfirmRequest('riseworks');
+    function showConfirmRequestDialog() {
+        setConfirmData(form);
     }
 
     function goBack() {
-        setConfirmRequest(null);
+        setConfirmData(null);
+    }
+
+    function submitForm() {
+        submitRequest(form)
     }
 
     return (
@@ -96,17 +125,21 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                 className="w-[calc(100vw-32px)] sm:w-[700px]"
                 title={'REQUEST PAYOUTS'}
                 onClose={onClose}>
-            {confirmRequest && <ConfirmRequestPanel
-                confirmRequest={confirmRequest}
+
+            {confirmData && (<ConfirmRequestPanel
+                submitForm={submitForm}
+                payload={confirmData}
+                methodTypeSelected={methodTypeSelected}
                 goBack={goBack}
-            />}
-            {!confirmRequest && (
+            />)}
+
+            {!confirmData && (
                 <>
                     <div className="mb-8">
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             Payment method
-                            <TabButtonGroup selection={form.paymentMethodType}
-                                            onClick={(value: string) => updateForm('paymentMethodType', value)}/>
+                            <TabButtonGroup selection={methodTypeSelected}
+                                            onClick={(value: PaymentMethodType) => setMethodTypeSelected(value)}/>
                         </label>
                     </div>
 
@@ -116,11 +149,11 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                                 <label className="text-stone-400 text-base font-bold leading-normal">
                                     Enter the amount you wish to withdraw
                                     <InputText type={"text"}
-                                               name='amount'
+                                               name='withdrawalAmount'
                                                placeholder="100"
-                                               defaultValue={form.amount}
+                                               defaultValue={form.withdrawalAmount}
                                                onChange={changeFields}
-                                               errorMessage={fieldErrors.amount}/>
+                                               errorMessage={fieldErrors.withdrawalAmount}/>
                                 </label>
                                 <span
                                     className="self-stretch text-stone-400 justify-start text-sm font-medium leading-tight">Max
