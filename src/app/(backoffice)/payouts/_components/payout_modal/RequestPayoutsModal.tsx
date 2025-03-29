@@ -4,7 +4,6 @@ import {Button} from "@/components/Button";
 import Dialog from "@/components/Dialog";
 import TabButtonGroup from "@/app/(backoffice)/payouts/_components/payout_modal/_components/TabButtonGroup";
 import ConfirmRequestPanel from "@/app/(backoffice)/payouts/_components/payout_modal/_components/ConfirmRequestPanel";
-import {capitalizeWords} from "@/commons/utils";
 
 export type PaymentMethodType = 'riseworks' | 'crypto_btc' | 'crypto_eth' | 'wire_ach';
 
