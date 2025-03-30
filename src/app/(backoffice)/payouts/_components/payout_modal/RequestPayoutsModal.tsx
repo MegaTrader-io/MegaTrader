@@ -24,7 +24,7 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
     onClose: () => void,
     submitRequest: (form: IRequestPayoutForm) => void
 }) {
-    const [methodTypeSelected, setMethodTypeSelected] = useState<PaymentMethodType>(PayoutMethod.RISEWORKS);
+    const [methodTypeSelected, setMethodTypeSelected] = useState<PaymentMethodType>(PayoutMethod.CRYPTO_BTC);
     const [confirmData, setConfirmData] = useState<IRequestPayoutForm | null>(null);
 
     function showConfirmRequestDialog(form: IRequestPayoutRiseWorks | IRequestPayoutCryptoBTC) {
@@ -71,13 +71,13 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                 </>
             )}
 
-            {methodTypeSelected === PayoutMethod.RISEWORKS && (
+            {!confirmData && methodTypeSelected === PayoutMethod.RISEWORKS && (
                 <RiseworksForm onClose={onClose}
                                showConfirmRequestDialog={showConfirmRequestDialog}
                 />
             )}
 
-            {methodTypeSelected === PayoutMethod.CRYPTO_BTC && (
+            {!confirmData && methodTypeSelected === PayoutMethod.CRYPTO_BTC && (
                 <CryptoBTCForm onClose={onClose}
                                showConfirmRequestDialog={showConfirmRequestDialog}
                 />

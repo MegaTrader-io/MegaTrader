@@ -94,3 +94,11 @@ export function calculateAmountToReceive(amount: number) {
     const transactionFee = amount * TRANSACTION_PERCENTAGE;
     return {transactionFee, netAmount: Math.max(0, amount - transactionFee)};
 }
+
+export function debounce<T extends (...args: any[]) => void>(fn: T, delay: number) {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: Parameters<T>): void => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn(...args), delay);
+    };
+}

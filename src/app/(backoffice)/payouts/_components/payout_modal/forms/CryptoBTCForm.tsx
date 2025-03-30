@@ -4,12 +4,17 @@ import {Button} from "@/components/Button";
 import {MAX_WITHDRAWAL} from "@/commons/data";
 import {calculateAmountToReceive} from "@/commons/utils";
 import {IRequestPayoutCryptoBTC} from "@/commons/interfaces";
+import {CheckIcon} from "@heroicons/react/16/solid";
+import clsx from "clsx";
+
+const invalidWalletAddressMessage = 'The address was not validated';
 
 function CryptoBTCForm({showConfirmRequestDialog, onClose}: {
     showConfirmRequestDialog: (form: IRequestPayoutCryptoBTC) => void,
     onClose: () => void
 }) {
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [isValidWalletAddress, setIsValidWalletAddress] = useState<boolean | null>(false);
 
     const [form, setForm] = useState<IRequestPayoutCryptoBTC>({
         fullName: undefined,
@@ -60,9 +65,56 @@ function CryptoBTCForm({showConfirmRequestDialog, onClose}: {
             return;
         }
 
+        if (!isValidWalletAddress) {
+            return;
+        }
+
         setFieldErrors({});
 
         showConfirmRequestDialog(form)
+    }
+
+    async function verifyWalletAddress(ev: React.ChangeEvent<HTMLInputElement>) {
+        const value = ev.target.value.toString().trim();
+
+        setFieldErrors(prev => {
+            const newErrors = {...prev};
+            delete newErrors.walletAddress;
+
+            return newErrors;
+        });
+
+        if (!value) {
+            setIsValidWalletAddress(null)
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/request-payouts`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    walletAddress: value,
+                    network: 'BTC'
+                })
+            });
+
+            const result = await response.json() as { success: boolean, data: { message: string, valid: boolean } };
+            console.info('result', result);
+            setIsValidWalletAddress(result.data.valid)
+
+            if (!result.data.valid) {
+                setFieldErrors(prev => {
+                    const newErrors = {...prev};
+                    newErrors.walletAddress = invalidWalletAddressMessage;
+                    return newErrors;
+                });
+            }
+        } catch (e) {
+            console.info(e);
+        }
     }
 
     return (
@@ -91,9 +143,17 @@ function CryptoBTCForm({showConfirmRequestDialog, onClose}: {
                     <InputText
                         type={"text"}
                         name='walletAddress'
+                        className={clsx({'text-red-500': fieldErrors.walletAddress === invalidWalletAddressMessage})}
                         defaultValue={form.walletAddress}
+                        onInput={verifyWalletAddress}
                         onChange={changeFields}
                         errorMessage={fieldErrors.walletAddress}/>
+                    {isValidWalletAddress && (
+                        <div
+                            className="text-teal-400 inline-flex text-sm font-medium leading-tight align-middle items-center mt-2">
+                            <CheckIcon className={'w-6 h-6 text-teal-400'}/> Wallet validated
+                        </div>
+                    )}
                 </label>
             </div>
 
