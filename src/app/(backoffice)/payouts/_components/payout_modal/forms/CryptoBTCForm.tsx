@@ -9,8 +9,9 @@ import clsx from "clsx";
 
 const invalidWalletAddressMessage = 'The address was not validated';
 
-function CryptoBTCForm({showConfirmRequestDialog, onClose}: {
+function CryptoBTCForm({showConfirmRequestDialog, network, onClose}: {
     showConfirmRequestDialog: (form: IRequestPayoutCryptoBTC) => void,
+    network: 'BTC' | 'ETH'
     onClose: () => void
 }) {
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -97,7 +98,7 @@ function CryptoBTCForm({showConfirmRequestDialog, onClose}: {
                 },
                 body: JSON.stringify({
                     walletAddress: value,
-                    network: 'BTC'
+                    network
                 })
             });
 

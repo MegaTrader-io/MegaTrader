@@ -79,6 +79,14 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
 
             {!confirmData && methodTypeSelected === PayoutMethod.CRYPTO_BTC && (
                 <CryptoBTCForm onClose={onClose}
+                               network={'BTC'}
+                               showConfirmRequestDialog={showConfirmRequestDialog}
+                />
+            )}
+
+            {!confirmData && methodTypeSelected === PayoutMethod.CRYPTO_ETH && (
+                <CryptoBTCForm onClose={onClose}
+                               network={'ETH'}
                                showConfirmRequestDialog={showConfirmRequestDialog}
                 />
             )}
