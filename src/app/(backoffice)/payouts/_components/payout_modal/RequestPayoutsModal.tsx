@@ -24,7 +24,7 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
     onClose: () => void,
     submitRequest: (form: IRequestPayoutForm) => void
 }) {
-    const [methodTypeSelected, setMethodTypeSelected] = useState<PaymentMethodType>(PayoutMethod.CRYPTO_BTC);
+    const [methodTypeSelected, setMethodTypeSelected] = useState<PaymentMethodType>(PayoutMethod.RISEWORKS);
     const [confirmData, setConfirmData] = useState<IRequestPayoutForm | null>(null);
 
     function showConfirmRequestDialog(form: IRequestPayoutRiseWorks | IRequestPayoutCryptoBTC) {
