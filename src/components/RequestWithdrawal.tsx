@@ -22,7 +22,7 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
         console.info('form', form);
 
         setTimeout(function () {
-            const success = Number(form.withdrawalAmount) >= 150;
+            const success = Number(form.withdrawalAmount) > 0 && Number(form.withdrawalAmount) <= 150;
             const message = success
                 ? 'Your request has been submitted successfully. You\'ll be notified once it\'s approved.'
                 : 'Something went wrong. Check your internet connection and try again later.';

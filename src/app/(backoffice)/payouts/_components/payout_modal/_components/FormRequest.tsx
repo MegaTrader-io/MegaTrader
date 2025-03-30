@@ -36,9 +36,9 @@ function FormRequest({methodTypeSelected, payload}: {
                 </div>
             </div>
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="grid grid-cols-2 w-full py-4 border-b border-Colors-Gray-700 justify-between items-center">
                 <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Address
+                    className="justify-start text-stone-400 text-base font-medium leading-normal">Address
                 </div>
                 <div
                     className="text-right justify-start text-base font-medium leading-normal capitalize">{_payload.address}
@@ -52,7 +52,7 @@ function FormRequest({methodTypeSelected, payload}: {
         </>
     }
 
-    if (methodTypeSelected === PayoutMethod.CRYPTO_BTC) {
+    if (methodTypeSelected === PayoutMethod.CRYPTO_BTC || methodTypeSelected === PayoutMethod.CRYPTO_ETH) {
         const _payload = payload as IRequestPayoutCryptoBTC;
         return <>
             <div
@@ -66,18 +66,18 @@ function FormRequest({methodTypeSelected, payload}: {
                 </div>
             </div>
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="grid grid-cols-2 w-full py-4 border-b border-Colors-Gray-700 justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Wallet Address
                 </div>
                 <div
-                    className="text-right justify-start text-base font-medium leading-normal">{_payload.walletAddress}
-                </div>
+                    className="text-right justify-start text-base font-medium leading-normal truncate">{_payload.walletAddress}
+                </div>mb
             </div>
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="grid grid-cols-2 w-full py-4 border-b border-Colors-Gray-700 justify-between items-center">
                 <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Address
+                    className="justify-start text-stone-400 text-base font-medium leading-normal">Address
                 </div>
                 <div
                     className="text-right justify-start text-base font-medium leading-normal capitalize">{_payload.address}
