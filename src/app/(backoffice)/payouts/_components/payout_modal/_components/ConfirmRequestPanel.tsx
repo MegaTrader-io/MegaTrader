@@ -1,90 +1,11 @@
 import React from 'react';
 import {Button} from "@/components/Button";
+import Alert from "@/components/Alert";
 import {
     IRequestPayoutForm,
-    PaymentMethodType, PayoutSummary
-} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
-import Alert from "@/components/Alert";
-
-function PayoutTransaction({withdrawalAmount, transactionFee, netAmount}: PayoutSummary) {
-    return <>
-        <div
-            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-            <div
-                className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
-                Withdraw
-            </div>
-            <div
-                className="text-right justify-start text-base font-medium leading-normal">${withdrawalAmount}
-            </div>
-        </div>
-        <div
-            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-            <div
-                className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Transaction Fee
-            </div>
-            <div
-                className="text-right justify-start text-base font-medium leading-normal">${transactionFee}
-            </div>
-        </div>
-
-        <div
-            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-            <div
-                className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
-                Receive
-            </div>
-            <div
-                className="text-right justify-start text-base font-medium leading-normal">${netAmount}
-            </div>
-        </div>
-    </>
-}
-
-function FormRequest({methodTypeSelected, payload}: {
-    methodTypeSelected: PaymentMethodType,
-    payload: IRequestPayoutForm
-}) {
-    if (methodTypeSelected === 'riseworks') {
-        return <>
-            <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-                <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Full
-                    Name
-                </div>
-                <div
-                    className="text-right justify-start text-base font-medium leading-normal capitalize">{payload.fullName}
-                </div>
-            </div>
-            <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-                <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Email
-                </div>
-                <div
-                    className="text-right justify-start text-base font-medium leading-normal">{payload.email}
-                </div>
-            </div>
-            <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
-                <div
-                    className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Address
-                </div>
-                <div
-                    className="text-right justify-start text-base font-medium leading-normal capitalize">{payload.address}
-                </div>
-            </div>
-            <PayoutTransaction
-                withdrawalAmount={payload.withdrawalAmount}
-                transactionFee={payload.transactionFee}
-                netAmount={payload.netAmount}
-            />
-        </>
-    }
-
-    return null;
-}
+    PaymentMethodType
+} from "@/commons/interfaces";
+import FormRequest from "@/app/(backoffice)/payouts/_components/payout_modal/_components/FormRequest";
 
 function ConfirmRequestPanel({
                                  methodTypeSelected,

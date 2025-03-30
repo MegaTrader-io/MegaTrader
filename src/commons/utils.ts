@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {PlanDetail, PlanLevel, PlanType} from "@/commons/interfaces";
+import {TRANSACTION_PERCENTAGE} from "@/commons/data";
 
 function valueBySize(size: PlanLevel) {
     if (size === '50K') {
@@ -87,4 +88,9 @@ export function capitalizeWords(value: string) {
     return value.toString().split(' ').map(word => {
         return word.charAt(0).toUpperCase() + +word.slice(1).toLowerCase();
     }).join(' ');
+}
+
+export function calculateAmountToReceive(amount: number) {
+    const transactionFee = amount * TRANSACTION_PERCENTAGE;
+    return {transactionFee, netAmount: Math.max(0, amount - transactionFee)};
 }

@@ -1,7 +1,33 @@
 import React from "react";
+import {PayoutMethod} from "@/commons/data";
 
 export type RequestStatusType = 'APPROVED' | 'PENDING' | 'REJECTED'
 export type PaymentMethod = 'bitcoin' | 'paypal' | 'wise' | 'ethereum';
+export type PaymentMethodType = (typeof PayoutMethod)[keyof typeof PayoutMethod]
+
+export interface PayoutSummary {
+    withdrawalAmount: number | undefined;
+    transactionFee: number;
+    netAmount: number;
+}
+
+export interface IRequestPayoutForm extends PayoutSummary {
+    address: string | undefined,
+    fullName: string | undefined,
+}
+
+export interface IRequestPayoutRiseWorks extends IRequestPayoutForm {
+    email: string | undefined,
+}
+
+export interface IRequestPayoutCryptoBTC extends IRequestPayoutForm {
+    walletAddress: string | undefined,
+}
+
+export interface IPaymentMethod {
+    id: PaymentMethodType,
+    name: string
+}
 
 export interface PlanInterface {
     id: number
@@ -86,7 +112,7 @@ export type PlanDetail = {
 export interface Metrics {
     title: string,
     subtitle: string,
-    value: string|number|null
+    value: string | number | null
 }
 
 export interface Account {

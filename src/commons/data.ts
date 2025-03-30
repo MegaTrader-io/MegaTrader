@@ -2,6 +2,9 @@ import {Account, IUser, Metrics, Period, TooltipData} from "@/commons/interfaces
 import {formatCurrency, getPlanDetail} from "@/commons/utils";
 import {ApexOptions} from "apexcharts";
 
+export const TRANSACTION_PERCENTAGE = 0.08;
+export const MAX_WITHDRAWAL = 150;
+
 export const accounts: Account[] = [
     {
         id: 1,
@@ -710,3 +713,10 @@ export const featureContentOptions: { id: string, label: string }[] = [
     {id: 'micro_silver', label: 'Micro Silver'},
     {id: 'micro_copper', label: 'Micro Copper'},
 ];
+
+export const PayoutMethod = {
+    RISEWORKS: 'riseworks',
+    CRYPTO_BTC: 'crypto_btc',
+    CRYPTO_ETH: 'crypto_eth',
+    WIRE_ACH: 'wire_ach',
+} as const;
