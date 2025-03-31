@@ -3,7 +3,7 @@
 import InputText from "@/components/InputText";
 import {InputCheckbox} from "@/components/InputCheckbox";
 import Link from "next/link";
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Alert from "@/components/Alert";
 import {TARGET_EMAIL, TARGET_PASSWORD} from "@/commons/credentials";
 import {useRouter} from "next/navigation";

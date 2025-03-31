@@ -1,7 +1,7 @@
 'use client';
 
 import React, {forwardRef, InputHTMLAttributes, useState} from 'react';
-import {EyeSlashIcon, EyeIcon, MagnifyingGlassIcon} from "@heroicons/react/16/solid";
+import {EyeIcon, EyeSlashIcon, MagnifyingGlassIcon} from "@heroicons/react/16/solid";
 
 interface InputTextProps extends InputHTMLAttributes<HTMLInputElement> {
     className?: string;

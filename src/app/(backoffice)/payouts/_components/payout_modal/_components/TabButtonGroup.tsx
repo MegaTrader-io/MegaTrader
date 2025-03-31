@@ -1,9 +1,7 @@
 import {Button} from "@/components/Button";
 import clsx from "clsx";
 import React from "react";
-import {
-    PaymentMethodList,
-} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
+import {PaymentMethodList,} from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
 import IconPaymentMethod from "@/components/IconPaymentMethod";
 import {PaymentMethodType} from "@/commons/interfaces";
 

@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {
-    Root as AlertDialogRoot,
-    AlertDialogTrigger,
-    AlertDialogPortal,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogOverlay,
+    AlertDialogPortal,
     AlertDialogTitle,
+    AlertDialogTrigger,
+    Root as AlertDialogRoot,
 } from "@radix-ui/react-alert-dialog";
 import {XCircleIcon} from "@heroicons/react/20/solid";
 import clsx from "clsx";

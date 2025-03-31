@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import ClipboardJS from "clipboard";
 
 export function useCopy(value: string) {

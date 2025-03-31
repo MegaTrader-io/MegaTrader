@@ -3,21 +3,21 @@ import InputText from "@/components/InputText";
 import {Button} from "@/components/Button";
 import {MAX_WITHDRAWAL} from "@/commons/data";
 import {calculateAmountToReceive} from "@/commons/utils";
-import {IRequestPayoutCryptoBTC} from "@/commons/interfaces";
+import {IRequestPayoutCrypto} from "@/commons/interfaces";
 import {CheckIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 
 const invalidWalletAddressMessage = 'The address was not validated';
 
-function CryptoBTCForm({showConfirmRequestDialog, network, onClose}: {
-    showConfirmRequestDialog: (form: IRequestPayoutCryptoBTC) => void,
+function CryptoForm({showConfirmRequestDialog, network, onClose}: {
+    showConfirmRequestDialog: (form: IRequestPayoutCrypto) => void,
     network: 'BTC' | 'ETH'
     onClose: () => void
 }) {
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [isValidWalletAddress, setIsValidWalletAddress] = useState<boolean | null>(false);
 
-    const [form, setForm] = useState<IRequestPayoutCryptoBTC>({
+    const [form, setForm] = useState<IRequestPayoutCrypto>({
         fullName: undefined,
         walletAddress: undefined,
         address: undefined,
@@ -196,4 +196,4 @@ function CryptoBTCForm({showConfirmRequestDialog, network, onClose}: {
     );
 }
 
-export default CryptoBTCForm;
+export default CryptoForm;

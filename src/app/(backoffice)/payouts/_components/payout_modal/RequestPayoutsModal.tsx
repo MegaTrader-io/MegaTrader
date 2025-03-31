@@ -3,31 +3,34 @@ import Dialog from "@/components/Dialog";
 import TabButtonGroup from "@/app/(backoffice)/payouts/_components/payout_modal/_components/TabButtonGroup";
 import ConfirmRequestPanel from "@/app/(backoffice)/payouts/_components/payout_modal/_components/ConfirmRequestPanel";
 import RiseworksForm from "@/app/(backoffice)/payouts/_components/payout_modal/forms/RiseworksForm";
+
 import {
     IPaymentMethod,
-    IRequestPayoutCryptoBTC, IRequestPayoutForm,
-    IRequestPayoutRiseWorks,
+    IRequestPayoutCrypto,
+    IRequestPayoutForm,
+    IRequestPayoutRiseWorks, IRequestPayoutTransfer,
     PaymentMethodType
 } from "@/commons/interfaces";
 import {PayoutMethod} from "@/commons/data";
-import CryptoBTCForm from "@/app/(backoffice)/payouts/_components/payout_modal/forms/CryptoBTCForm";
+import CryptoForm from "@/app/(backoffice)/payouts/_components/payout_modal/forms/CryptoForm";
+import TransferForm from "@/app/(backoffice)/payouts/_components/payout_modal/forms/TransferForm";
 
 export const PaymentMethodList: IPaymentMethod[] = [
     {id: 'riseworks', name: 'Riseworks'},
     {id: 'crypto_btc', name: 'Crypto - BTC'},
     {id: 'crypto_eth', name: 'Crypto - ETH'},
-    {id: 'wire_ach', name: 'Wire / ACH'},
+    {id: 'wire_ach', name: 'Transfer'},
 ];
 
 function RequestPayoutsModal({open, onClose, submitRequest}: {
     open: boolean,
     onClose: () => void,
-    submitRequest: (form: IRequestPayoutForm) => void
+    submitRequest: (form: IRequestPayoutForm | IRequestPayoutTransfer) => void
 }) {
     const [methodTypeSelected, setMethodTypeSelected] = useState<PaymentMethodType>(PayoutMethod.RISEWORKS);
-    const [confirmData, setConfirmData] = useState<IRequestPayoutForm | null>(null);
+    const [confirmData, setConfirmData] = useState<IRequestPayoutForm | IRequestPayoutTransfer | null>(null);
 
-    function showConfirmRequestDialog(form: IRequestPayoutRiseWorks | IRequestPayoutCryptoBTC) {
+    function showConfirmRequestDialog(form: IRequestPayoutRiseWorks | IRequestPayoutCrypto | IRequestPayoutTransfer) {
         setConfirmData(form);
     }
 
@@ -78,16 +81,22 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
             )}
 
             {!confirmData && methodTypeSelected === PayoutMethod.CRYPTO_BTC && (
-                <CryptoBTCForm onClose={onClose}
-                               network={'BTC'}
-                               showConfirmRequestDialog={showConfirmRequestDialog}
+                <CryptoForm onClose={onClose}
+                            network={'BTC'}
+                            showConfirmRequestDialog={showConfirmRequestDialog}
                 />
             )}
 
             {!confirmData && methodTypeSelected === PayoutMethod.CRYPTO_ETH && (
-                <CryptoBTCForm onClose={onClose}
-                               network={'ETH'}
-                               showConfirmRequestDialog={showConfirmRequestDialog}
+                <CryptoForm onClose={onClose}
+                            network={'ETH'}
+                            showConfirmRequestDialog={showConfirmRequestDialog}
+                />
+            )}
+
+            {!confirmData && methodTypeSelected === PayoutMethod.WIRE_ACH && (
+                <TransferForm onClose={onClose}
+                              showConfirmRequestDialog={showConfirmRequestDialog}
                 />
             )}
         </Dialog>

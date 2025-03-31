@@ -1,11 +1,5 @@
 import React, {PropsWithChildren, useCallback, useEffect, useRef, useState} from 'react';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    PopoverArrow,
-    PopoverPortal
-} from "@radix-ui/react-popover";
+import {Popover, PopoverArrow, PopoverContent, PopoverPortal, PopoverTrigger} from "@radix-ui/react-popover";
 import {Bars3Icon} from "@heroicons/react/24/solid";
 import clsx from "clsx";
 

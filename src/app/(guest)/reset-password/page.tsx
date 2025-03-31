@@ -2,7 +2,7 @@
 
 import InputText from "@/components/InputText";
 import Link from "next/link";
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import Alert from "@/components/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";

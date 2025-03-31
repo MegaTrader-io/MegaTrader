@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import Card from "@/components/Card";
-import {Table, TableBody, TableHead, TableHeader, TableRow, TableCell} from "@/components/Table";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import {JournalEntry} from "@/commons/interfaces";
 import {sleep} from "@/commons/utils";
-import {PopoverTrigger, Popover, PopoverPortal} from "@radix-ui/react-popover";
+import {Popover, PopoverPortal, PopoverTrigger} from "@radix-ui/react-popover";
 import PopoverSurvey from "@/app/(backoffice)/account-overview/_components/PopoverSurvey";
 import IconSurvey from "@/app/(backoffice)/account-overview/_components/IconSurvey";
 import {SkeletonTemplate} from "@/components/Skeleton";

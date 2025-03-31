@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {
     Dialog as AlertDialogRoot,
-    DialogPortal as AlertDialogPortal,
     DialogClose as AlertDialogCancel,
     DialogContent as AlertDialogContent,
     DialogOverlay as AlertDialogOverlay,
+    DialogPortal as AlertDialogPortal,
     DialogTitle as AlertDialogTitle,
 } from "@radix-ui/react-dialog";
 import {XCircleIcon} from "@heroicons/react/20/solid";

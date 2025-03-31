@@ -20,8 +20,23 @@ export interface IRequestPayoutRiseWorks extends IRequestPayoutForm {
     email: string | undefined,
 }
 
-export interface IRequestPayoutCryptoBTC extends IRequestPayoutForm {
+export interface IRequestPayoutCrypto extends IRequestPayoutForm {
     walletAddress: string | undefined,
+}
+
+export interface IRequestPayoutTransfer extends PayoutSummary {
+    transferType: 'ACH' | 'WIRE',
+    fullName: string,
+    fedwireRoutingNumber: string,
+    bankName: string,
+    routingNumber: string,
+    accountNumber: string,
+    accountType: string,
+    country: string,
+    city: string,
+    recipientAddress: string,
+    state: string,
+    zipCode: string
 }
 
 export interface IPaymentMethod {

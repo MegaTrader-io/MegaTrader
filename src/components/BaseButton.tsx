@@ -1,4 +1,4 @@
-import React, {JSX, forwardRef, PropsWithChildren} from 'react';
+import React, {forwardRef, JSX, PropsWithChildren} from 'react';
 import clsx from "clsx";
 
 export type Icon = JSX.Element;

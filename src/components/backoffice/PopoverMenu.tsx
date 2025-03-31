@@ -1,11 +1,5 @@
 import React, {PropsWithChildren, useEffect, useRef, useState} from "react";
-import {
-    Popover,
-    PopoverContent,
-    PopoverPortal,
-    PopoverTrigger,
-    PopoverArrow,
-} from "@radix-ui/react-popover";
+import {Popover, PopoverArrow, PopoverContent, PopoverPortal, PopoverTrigger,} from "@radix-ui/react-popover";
 import {Bars3Icon} from "@heroicons/react/24/solid";
 
 interface Props extends PropsWithChildren {
