@@ -4,6 +4,7 @@ import {Button} from "@/components/Button";
 import {MAX_WITHDRAWAL} from "@/commons/data";
 import {calculateAmountToReceive} from "@/commons/utils";
 import {IRequestPayoutRiseWorks} from "@/commons/interfaces";
+import useValidateNumber from "@/hooks/useValidateNumber";
 
 function RiseworksForm({showConfirmRequestDialog, onClose}: {
     showConfirmRequestDialog: (form: IRequestPayoutRiseWorks) => void,
@@ -19,6 +20,24 @@ function RiseworksForm({showConfirmRequestDialog, onClose}: {
         withdrawalAmount: undefined,
         netAmount: 0,
         transactionFee: 0,
+    })
+
+    const {handlePaste, handleBeforeInput, verifyWithdrawalAmount} = useValidateNumber({
+        handlePasteBehavior: (field, sanitizedData) => {
+            updateForm(field, sanitizedData ? Number(sanitizedData) : "");
+        },
+        handleWithdrawalAmount: (msgError: string) => {
+            setFieldErrors(prev => {
+                const newErrors = {...prev};
+                delete newErrors.withdrawalAmount;
+
+                if (msgError) {
+                    newErrors.withdrawalAmount = msgError
+                }
+
+                return newErrors;
+            });
+        }
     })
 
     function updateForm(name: string, value: string | number) {
@@ -76,6 +95,9 @@ function RiseworksForm({showConfirmRequestDialog, onClose}: {
                         <InputText type={"text"}
                                    name='withdrawalAmount'
                                    placeholder="100"
+                                   onInput={verifyWithdrawalAmount}
+                                   onBeforeInput={handleBeforeInput}
+                                   onPaste={handlePaste}
                                    defaultValue={form.withdrawalAmount}
                                    onChange={changeFields}
                                    errorMessage={fieldErrors.withdrawalAmount}/>

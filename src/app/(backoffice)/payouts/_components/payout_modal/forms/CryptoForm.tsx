@@ -6,6 +6,7 @@ import {calculateAmountToReceive} from "@/commons/utils";
 import {IRequestPayoutCrypto} from "@/commons/interfaces";
 import {CheckIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
+import useValidateNumber from "@/hooks/useValidateNumber";
 
 const invalidWalletAddressMessage = 'The address was not validated';
 
@@ -24,6 +25,24 @@ function CryptoForm({showConfirmRequestDialog, network, onClose}: {
         withdrawalAmount: undefined,
         netAmount: 0,
         transactionFee: 0,
+    })
+
+    const {handlePaste, handleBeforeInput, verifyWithdrawalAmount} = useValidateNumber({
+        handlePasteBehavior: (field, sanitizedData) => {
+            updateForm(field, sanitizedData ? Number(sanitizedData) : "");
+        },
+        handleWithdrawalAmount: (msgError: string) => {
+            setFieldErrors(prev => {
+                const newErrors = {...prev};
+                delete newErrors.withdrawalAmount;
+
+                if (msgError) {
+                    newErrors.withdrawalAmount = msgError
+                }
+
+                return newErrors;
+            });
+        }
     })
 
     function updateForm(name: string, value: string | number) {
@@ -127,6 +146,9 @@ function CryptoForm({showConfirmRequestDialog, network, onClose}: {
                         <InputText type={"text"}
                                    name='withdrawalAmount'
                                    placeholder="100"
+                                   onInput={verifyWithdrawalAmount}
+                                   onBeforeInput={handleBeforeInput}
+                                   onPaste={handlePaste}
                                    defaultValue={form.withdrawalAmount}
                                    onChange={changeFields}
                                    errorMessage={fieldErrors.withdrawalAmount}/>
