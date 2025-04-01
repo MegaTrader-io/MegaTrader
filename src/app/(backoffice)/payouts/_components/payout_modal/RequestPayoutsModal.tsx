@@ -61,11 +61,11 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
             {!confirmData && (
                 <>
                     <div className="mb-8">
-                        <label className="text-stone-400 text-base font-bold leading-normal">
+                        <div className="text-stone-400 text-base font-bold leading-normal">
                             Payment method
                             <TabButtonGroup selection={methodTypeSelected}
                                             onClick={(value: PaymentMethodType) => setMethodTypeSelected(value)}/>
-                        </label>
+                        </div>
                     </div>
 
                 </>
