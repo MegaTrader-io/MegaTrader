@@ -40,7 +40,7 @@ const MegatraderScreen = () => {
             </div>
             <div className="h-0">
                 <Image
-                    src="/assets/images/img_6.png"
+                    src="/assets/images/account-overview.svg"
                     alt="Trading Platform Interface"
                     width={1000}
                     height={700}
