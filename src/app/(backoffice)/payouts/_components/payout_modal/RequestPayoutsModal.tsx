@@ -13,13 +13,11 @@ import {
 } from "@/commons/interfaces";
 import {PayoutMethod} from "@/commons/data";
 import CryptoForm from "@/app/(backoffice)/payouts/_components/payout_modal/forms/CryptoForm";
-import TransferForm from "@/app/(backoffice)/payouts/_components/payout_modal/forms/TransferForm";
 
 export const PaymentMethodList: IPaymentMethod[] = [
     {id: 'riseworks', name: 'Riseworks'},
     {id: 'crypto_btc', name: 'Crypto - BTC'},
     {id: 'crypto_eth', name: 'Crypto - ETH'},
-    {id: 'wire_ach', name: 'Transfer'},
 ];
 
 function RequestPayoutsModal({open, onClose, submitRequest}: {
@@ -91,12 +89,6 @@ function RequestPayoutsModal({open, onClose, submitRequest}: {
                 <CryptoForm onClose={onClose}
                             network={'ETH'}
                             showConfirmRequestDialog={showConfirmRequestDialog}
-                />
-            )}
-
-            {!confirmData && methodTypeSelected === PayoutMethod.WIRE_ACH && (
-                <TransferForm onClose={onClose}
-                              showConfirmRequestDialog={showConfirmRequestDialog}
                 />
             )}
         </Dialog>
