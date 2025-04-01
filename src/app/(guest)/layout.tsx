@@ -14,7 +14,8 @@ const Layout = ({children,}: {
                 </div>
             </div>
         </div>
-        <div className="relative hidden md:px-[46px] md:pb-[46px] lg:w-0 lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
+        <div
+            className="relative hidden md:px-[46px] md:pb-[46px] lg:w-0 lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
             <Badge className="mt-8 lg:mt-[91px] mb-[17px] !font-bold">Start earning up to 90% profit</Badge>
             <p className="text-stone-400 text-base font-normal leading-normal max-w-[434px]">
                 Trade smarter with MegaTrader—achieve your goals within our structured evaluation period. Unlock
@@ -26,9 +27,9 @@ const Layout = ({children,}: {
 }
 
 const MegatraderScreen = () => {
-    return <div className="mx-auto relative mt-[48px] w-[840px] h-[758px] overflow-hidden rounded-2xl">
+    return <div className="mx-auto relative mt-[48px] w-[840px] xl:w-full h-[758px] overflow-hidden rounded-2xl">
         <div
-            className="w-full h-[1200px] opacity-5 rotate-[20deg] translate-x-[520px] bg-white -top-[10px] absolute">
+            className="w-full h-[1200px] opacity-5 rotate-[20deg] translate-x-[520px] xl:translate-x-[700px] bg-white -top-[10px] absolute">
         </div>
         <div
             className="mx-auto w-full h-[758px] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
