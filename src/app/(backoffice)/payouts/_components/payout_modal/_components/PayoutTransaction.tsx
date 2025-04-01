@@ -4,7 +4,7 @@ import {PayoutSummary} from "@/commons/interfaces";
 function PayoutTransaction({withdrawalAmount, transactionFee, netAmount}: PayoutSummary) {
     return <>
         <div
-            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+            className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
             <div
                 className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
                 Withdraw
@@ -14,7 +14,7 @@ function PayoutTransaction({withdrawalAmount, transactionFee, netAmount}: Payout
             </div>
         </div>
         <div
-            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+            className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
             <div
                 className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Transaction Fee
             </div>
@@ -24,7 +24,7 @@ function PayoutTransaction({withdrawalAmount, transactionFee, netAmount}: Payout
         </div>
 
         <div
-            className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+            className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
             <div
                 className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Amount to
                 Receive

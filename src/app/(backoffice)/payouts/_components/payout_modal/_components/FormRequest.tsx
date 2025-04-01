@@ -17,7 +17,7 @@ function FormRequest({methodTypeSelected, payload}: {
         const _payload = payload as IRequestPayoutRiseWorks;
         return <>
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Full
                     Name
@@ -27,7 +27,7 @@ function FormRequest({methodTypeSelected, payload}: {
                 </div>
             </div>
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Email
                 </div>
@@ -36,7 +36,7 @@ function FormRequest({methodTypeSelected, payload}: {
                 </div>
             </div>
             <div
-                className="grid grid-cols-2 w-full py-4 border-b border-Colors-Gray-700 justify-between items-center">
+                className="grid grid-cols-2 w-full py-4 border-b border-neutral-700 justify-between items-center">
                 <div
                     className="justify-start text-stone-400 text-base font-medium leading-normal">Address
                 </div>
@@ -57,7 +57,7 @@ function FormRequest({methodTypeSelected, payload}: {
 
         return <>
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Full
                     Name
@@ -67,7 +67,7 @@ function FormRequest({methodTypeSelected, payload}: {
                 </div>
             </div>
             <div
-                className="grid grid-cols-2 w-full py-4 border-b border-Colors-Gray-700 justify-between items-center">
+                className="grid grid-cols-2 w-full py-4 border-b border-neutral-700 justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Wallet Address
                 </div>
@@ -76,7 +76,7 @@ function FormRequest({methodTypeSelected, payload}: {
                 </div>
             </div>
             <div
-                className="grid grid-cols-2 w-full py-4 border-b border-Colors-Gray-700 justify-between items-center">
+                className="grid grid-cols-2 w-full py-4 border-b border-neutral-700 justify-between items-center">
                 <div
                     className="justify-start text-stone-400 text-base font-medium leading-normal">Address
                 </div>
@@ -96,7 +96,7 @@ function FormRequest({methodTypeSelected, payload}: {
         const _payload = payload as IRequestPayoutTransfer;
         return <>
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Full
                     Name
@@ -109,7 +109,7 @@ function FormRequest({methodTypeSelected, payload}: {
 
             {_payload.transferType === 'ACH' && (
                 <div
-                    className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                    className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                     <div
                         className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Routing
                         Number
@@ -122,7 +122,7 @@ function FormRequest({methodTypeSelected, payload}: {
 
             {_payload.transferType === 'WIRE' && (
                 <div
-                    className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                    className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                     <div
                         className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Fedwire
                         Routing number
@@ -134,7 +134,7 @@ function FormRequest({methodTypeSelected, payload}: {
             )}
 
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Bank Name
                 </div>
@@ -150,7 +150,7 @@ function FormRequest({methodTypeSelected, payload}: {
             />
 
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">Country
                 </div>
@@ -160,7 +160,7 @@ function FormRequest({methodTypeSelected, payload}: {
             </div>
 
             <div
-                className="grid grid-cols-2 w-full py-4 border-b border-Colors-Gray-700 justify-between items-center">
+                className="grid grid-cols-2 w-full py-4 border-b border-neutral-700 justify-between items-center">
                 <div
                     className="justify-start text-stone-400 text-base font-medium leading-normal">Address
                 </div>
@@ -170,7 +170,7 @@ function FormRequest({methodTypeSelected, payload}: {
             </div>
 
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">State
                 </div>
@@ -180,7 +180,7 @@ function FormRequest({methodTypeSelected, payload}: {
             </div>
 
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">City
                 </div>
@@ -190,7 +190,7 @@ function FormRequest({methodTypeSelected, payload}: {
             </div>
 
             <div
-                className="w-full py-4 border-b border-Colors-Gray-700 inline-flex justify-between items-center">
+                className="w-full py-4 border-b border-neutral-700 inline-flex justify-between items-center">
                 <div
                     className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">ZIP Code
                 </div>
