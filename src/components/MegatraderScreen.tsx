@@ -1,4 +1,7 @@
 'use client'
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 import React, {useEffect, useRef} from "react";
 import Image from "next/image";
@@ -18,36 +21,63 @@ const MegatraderScreen = () => {
         }
     }, []);
 
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+    };
+
     return <div ref={windowExampleRef}
-                className="mx-auto relative mt-[48px] xl:w-full h-full overflow-hidden rounded-2xl">
+                className="mx-auto relative xl:w-full h-full overflow-hidden">
         <div
-            className="mx-auto w-full h-[calc(100vh-326px)] rounded-2xl shadow-lg overflow-hidden border-4 border-black"
+            className="relative"
         >
-            <div className="flex justify-between px-2 items-center bg-black h-[48px]">
-                <div className="flex gap-2 items-center justify-end">
-                    <div className="bg-[#ee6a5e] shadow rounded-full w-4 h-4"></div>
-                    <div className="bg-[#f5be4e] rounded-full w-4 h-4"></div>
-                    <div className="bg-[#63c755] rounded-full w-4 h-4"></div>
+            <Slider {...settings}>
+                <div>
+                    <h3>
+                        <Image src={'/assets/images/carousel/slide-1.svg'}
+                               alt={'screenshot account overview'}
+                               width={800}
+                               height={766}
+                               style={{width: '100%', height: 'auto'}}
+                               quality={100}
+                        />
+                    </h3>
                 </div>
-                <div className="flex items-center justify-center">
-                    <div
-                        className="self-stretch text-center justify-center text-sm font-bold leading-tight text-[#A8A29E]">https://megatrader.io
-                    </div>
+                <div className="h-full flex justify-center items-center">
+                    <h3 className="flex  items-center justify-center h-full">
+                        <Image src={'/assets/images/carousel/slide-2.svg'}
+                               alt={'screenshot account overview'}
+                               width={400}
+                               height={424}
+                               quality={100}
+                        />
+                    </h3>
                 </div>
-                <div className="flex items-center justify-start">
-                    <Image src={'/assets/images/locked.svg'} alt={'locked'} width={24} height={24}/>
+                <div className="h-full flex justify-center items-center">
+                    <h3 className="flex  items-center justify-center h-full">
+                        <Image src={'/assets/images/carousel/slide-3.svg'}
+                               alt={'screenshot account overview'}
+                               width={506}
+                               height={568}
+                               quality={100}
+                        />
+                    </h3>
                 </div>
-            </div>
-            <div className="h-0">
-                <Image
-                    src="/assets/images/account-overview.svg"
-                    alt="Trading Platform Interface"
-                    width={1000}
-                    height={700}
-                    style={{width: '100%', height: 'auto'}}
-                    quality={100}
-                />
-            </div>
+                <div className="h-full flex justify-center items-center">
+                    <h3 className="flex  items-center justify-center h-full">
+                        <Image src={'/assets/images/carousel/slide-4.svg'}
+                               alt={'screenshot account overview'}
+                               width={600}
+                               height={520}
+                               style={{width: '100%', height: 'auto'}}
+                               quality={100}
+                        />
+                    </h3>
+                </div>
+            </Slider>
         </div>
     </div>
 }

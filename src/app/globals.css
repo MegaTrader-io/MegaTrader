@@ -151,3 +151,7 @@ body.dialog-mg-open[data-scroll-locked] {
 path.apexcharts-bar-area[selected=true] {
     fill: #10B981;
 }
+
+.window-custom-shape{
+    clip-path: polygon(88% 0, 100% 0%, 100% 100%, 40% 100%);
+}

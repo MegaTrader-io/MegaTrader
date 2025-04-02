@@ -1,5 +1,4 @@
 import React from "react";
-import Badge from "@/components/Badge";
 import MegatraderScreen from "@/components/MegatraderScreen";
 
 const Layout = ({children,}: {
@@ -15,12 +14,7 @@ const Layout = ({children,}: {
             </div>
         </div>
         <div
-            className="relative hidden md:px-[46px] md:pb-[46px] lg:w-0 lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
-            <Badge className="mt-8 lg:mt-[91px] mb-[17px] !font-bold">Start earning up to 90% profit</Badge>
-            <p className="text-stone-400 text-base font-normal leading-normal max-w-[434px]">
-                Trade smarter with MegaTrader—achieve your goals within our structured evaluation period. Unlock
-                opportunities and maximize your potential in the dynamic world of trading.
-            </p>
+            className="relative hidden md:px-[46px] md:pb-[46px] rounded-2xl lg:w-0 lg:rounded-2xl lg:m-4 lg:px-[62px] lg:py-[37px] lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
             <MegatraderScreen/>
         </div>
     </div>
