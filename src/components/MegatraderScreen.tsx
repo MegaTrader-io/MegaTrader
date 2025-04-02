@@ -28,7 +28,6 @@ const MegatraderScreen = () => {
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
-        adaptiveHeight: true
     };
 
     return <div ref={windowExampleRef}
@@ -45,7 +44,7 @@ const MegatraderScreen = () => {
                 </h3>
             </div>
             <div className="h-full flex flex-col justify-center items-center">
-                <h3 className="flex  items-center justify-center h-[766px]">
+                <h3 className="flex items-center justify-center h-[766px]">
                     <Image src={'/assets/images/carousel/slide-2.svg'}
                            alt={'screenshot account overview'}
                            width={400}
