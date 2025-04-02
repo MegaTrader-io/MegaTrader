@@ -28,16 +28,16 @@ const MegatraderScreen = () => {
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
+        adaptiveHeight: true
     };
 
     return <div ref={windowExampleRef}
-                className="mx-auto relative xl:w-full h-full overflow-hidden max-w-[800px]">
+                className="mx-auto relative xl:w-full overflow-hidden max-w-[800px] h-[799px] mt-[37px]">
         <Slider {...settings}>
             <div className="h-full flex flex-col justify-center items-center">
                 <h3 className="flex  items-center justify-center h-[766px]">
                     <Image src={'/assets/images/carousel/slide-1.svg'}
                            alt={'screenshot account overview'}
-                           className="m-0 p-0"
                            width={800}
                            height={766}
                            quality={100}
