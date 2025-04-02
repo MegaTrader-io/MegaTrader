@@ -14,7 +14,7 @@ const Layout = ({children,}: {
             </div>
         </div>
         <div
-            className="relative hidden md:px-[46px] md:pb-[46px] rounded-2xl lg:w-0 lg:rounded-2xl lg:m-4 lg:px-[62px] lg:py-[37px] lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
+            className="relative hidden rounded-2xl lg:w-0 lg:rounded-2xl lg:m-4 lg:flex-1 md:block bg-[#1E1E1E] lg:overflow-hidden">
             <MegatraderScreen/>
         </div>
     </div>

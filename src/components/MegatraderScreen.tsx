@@ -2,6 +2,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "../app/slick-theme.css";
 
 import React, {useEffect, useRef} from "react";
 import Image from "next/image";
@@ -30,55 +31,50 @@ const MegatraderScreen = () => {
     };
 
     return <div ref={windowExampleRef}
-                className="mx-auto relative xl:w-full h-full overflow-hidden">
-        <div
-            className="relative"
-        >
-            <Slider {...settings}>
-                <div>
-                    <h3>
-                        <Image src={'/assets/images/carousel/slide-1.svg'}
-                               alt={'screenshot account overview'}
-                               width={800}
-                               height={766}
-                               style={{width: '100%', height: 'auto'}}
-                               quality={100}
-                        />
-                    </h3>
-                </div>
-                <div className="h-full flex justify-center items-center">
-                    <h3 className="flex  items-center justify-center h-full">
-                        <Image src={'/assets/images/carousel/slide-2.svg'}
-                               alt={'screenshot account overview'}
-                               width={400}
-                               height={424}
-                               quality={100}
-                        />
-                    </h3>
-                </div>
-                <div className="h-full flex justify-center items-center">
-                    <h3 className="flex  items-center justify-center h-full">
-                        <Image src={'/assets/images/carousel/slide-3.svg'}
-                               alt={'screenshot account overview'}
-                               width={506}
-                               height={568}
-                               quality={100}
-                        />
-                    </h3>
-                </div>
-                <div className="h-full flex justify-center items-center">
-                    <h3 className="flex  items-center justify-center h-full">
-                        <Image src={'/assets/images/carousel/slide-4.svg'}
-                               alt={'screenshot account overview'}
-                               width={600}
-                               height={520}
-                               style={{width: '100%', height: 'auto'}}
-                               quality={100}
-                        />
-                    </h3>
-                </div>
-            </Slider>
-        </div>
+                className="mx-auto relative xl:w-full h-full overflow-hidden max-w-[800px]">
+        <Slider {...settings}>
+            <div className="h-full flex flex-col justify-center items-center">
+                <h3 className="flex  items-center justify-center h-[766px]">
+                    <Image src={'/assets/images/carousel/slide-1.svg'}
+                           alt={'screenshot account overview'}
+                           className="m-0 p-0"
+                           width={800}
+                           height={766}
+                           quality={100}
+                    />
+                </h3>
+            </div>
+            <div className="h-full flex flex-col justify-center items-center">
+                <h3 className="flex  items-center justify-center h-[766px]">
+                    <Image src={'/assets/images/carousel/slide-2.svg'}
+                           alt={'screenshot account overview'}
+                           width={400}
+                           height={424}
+                           quality={100}
+                    />
+                </h3>
+            </div>
+            <div className="h-full flex justify-center items-center">
+                <h3 className="flex  items-center justify-center h-[766px]">
+                    <Image src={'/assets/images/carousel/slide-3.svg'}
+                           alt={'screenshot account overview'}
+                           width={506}
+                           height={568}
+                           quality={100}
+                    />
+                </h3>
+            </div>
+            <div className="h-full flex justify-center items-center">
+                <h3 className="flex  items-center justify-center h-[766px]">
+                    <Image src={'/assets/images/carousel/slide-4.svg'}
+                           alt={'screenshot account overview'}
+                           width={600}
+                           height={520}
+                           quality={100}
+                    />
+                </h3>
+            </div>
+        </Slider>
     </div>
 }
 
