@@ -30,7 +30,7 @@ const MegatraderScreen = () => {
     };
 
     return <div ref={windowExampleRef}
-                className="mx-auto relative xl:w-full overflow-hidden  max-w-[800px] lg:min-h-[869px] pt-[37px] pb-[32px]">
+                className="mx-auto relative xl:w-full overflow-hidden  max-w-[800px] lg:min-h-[869px] pt-[37px] pb-[64px]">
         <Slider {...settings}>
             <div className="h-full flex flex-col justify-center items-center">
                 <h3 className="flex items-center justify-center md:h-[650px] lg:h-[766px]">
