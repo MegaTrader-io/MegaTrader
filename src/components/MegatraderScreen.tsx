@@ -39,7 +39,7 @@ const MegatraderScreen = () => {
                 </h3>
             </div>
             <div className="h-full flex flex-col justify-center items-center">
-                <h3 className="flex items-center justify-center md:h-[650px] lg:h-[766px]">
+                <h3 className="flex flex-col items-center justify-center h-dvh">
                     <Image src={'/assets/images/carousel/slide-2.svg'}
                            alt={'screenshot account overview'}
                            width={400}
@@ -49,7 +49,7 @@ const MegatraderScreen = () => {
                 </h3>
             </div>
             <div className="h-full flex justify-center items-center">
-                <h3 className="flex items-center justify-center md:h-[650px] lg:h-[766px]">
+                <h3 className="flex flex-col items-center justify-center h-dvh">
                     <Image src={'/assets/images/carousel/slide-3.svg'}
                            alt={'screenshot account overview'}
                            width={506}
@@ -59,7 +59,7 @@ const MegatraderScreen = () => {
                 </h3>
             </div>
             <div className="h-full flex justify-center items-center">
-                <h3 className="flex items-center justify-center md:h-[650px] lg:h-[766px]">
+                <h3 className="flex flex-col items-center justify-center h-dvh">
                     <Image src={'/assets/images/carousel/slide-4.svg'}
                            alt={'screenshot account overview'}
                            width={600}
