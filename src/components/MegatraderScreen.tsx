@@ -35,7 +35,7 @@ const MegatraderScreen = () => {
             <div className="h-full flex flex-col justify-center items-center">
                 <h3 className="flex items-center justify-center md:h-[650px] lg:h-[766px]">
                     <Image src={'/assets/images/carousel/slide-1-tablet.svg'}
-                           className="mx-[62px] h-full block lg:hidden"
+                           className="mx-[62px] h-full w-full block lg:hidden"
                            alt={'screenshot account overview'}
                            width={700}
                            height={650}

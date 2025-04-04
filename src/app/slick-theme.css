@@ -112,9 +112,21 @@
 
 
 .slick-dots {
-    bottom: -32px;
+    display: flex !important;
+    gap: 8px;
+    justify-content: center;
 }
 
+.slick-dots li {
+    margin: 0;
+    width: 8px;
+}
+
+.slick-dots li button {
+    padding: 0;
+    width: 8px;
+    margin: 0;
+}
 
 .slick-dots li button:hover:before,
 .slick-dots li button:focus:before {
@@ -123,9 +135,9 @@
 
 .slick-dots li button:before {
     font-size: 8px;
-    width: 20px;
+    width: 8px;
     height: 20px;
-    margin: 0 8px;
+    margin: 0;
     content: '•';
     text-align: center;
     opacity: 0.40;
