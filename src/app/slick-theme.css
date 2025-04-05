@@ -114,6 +114,7 @@
 .slick-dots {
     display: flex !important;
     gap: 8px;
+    bottom: -36px !important;
     justify-content: center;
 }
 
