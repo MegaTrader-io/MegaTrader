@@ -38,34 +38,19 @@ const MegatraderScreen = () => {
                     <ScreenshotMg/>
                 </h3>
             </div>
-            <div className="h-full flex flex-col justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-dvh">
-                    <Image src={'/assets/images/carousel/slide-2.svg'}
-                           alt={'screenshot account overview'}
-                           width={400}
-                           height={424}
-                           quality={100}
-                    />
+            <div className="h-0 flex justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center">
+                    slider 2
                 </h3>
             </div>
-            <div className="h-full flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-dvh">
-                    <Image src={'/assets/images/carousel/slide-3.svg'}
-                           alt={'screenshot account overview'}
-                           width={506}
-                           height={568}
-                           quality={100}
-                    />
+            <div className="h-0 flex justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center">
+                    slider 3
                 </h3>
             </div>
-            <div className="h-full flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-dvh">
-                    <Image src={'/assets/images/carousel/slide-4.svg'}
-                           alt={'screenshot account overview'}
-                           width={600}
-                           height={520}
-                           quality={100}
-                    />
+            <div className="h-0 flex justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center">
+                    slider 4
                 </h3>
             </div>
         </Slider>

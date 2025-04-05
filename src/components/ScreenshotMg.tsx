@@ -4,10 +4,7 @@ import Image from "next/image";
 function ScreenshotMg() {
     return (<div className="mx-auto relative w-[840px] xl:w-full h-auto overflow-hidden rounded-2xl">
         <div
-            className="w-full h-[1200px] opacity-5 rotate-[20deg] translate-x-[520px] xl:translate-x-[700px] bg-white -top-[10px] absolute">
-        </div>
-        <div
-            className="mx-auto w-full h-[758px] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
+            className="mx-auto w-full h-[calc(100dvh-300px)] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
         >
             <div className="flex justify-between px-2 items-center bg-black h-[48px]">
                 <div className="flex gap-2 items-center justify-end">
@@ -26,10 +23,10 @@ function ScreenshotMg() {
             </div>
             <div className="h-0">
                 <Image
-                    src="/assets/images/img_7.png"
+                    src="/assets/images/img_7.svg"
                     alt="Trading Platform Interface"
-                    width={1000}
-                    height={700}
+                    width={800}
+                    height={766}
                     style={{width: '100%', height: 'auto'}}
                     quality={100}
                 />
