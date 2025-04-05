@@ -1,6 +1,7 @@
 'use client'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
+import Image from 'next/image';
 import "../app/slick-theme.css";
 
 import React, {useEffect, useRef} from "react";
@@ -37,19 +38,34 @@ const MegatraderScreen = () => {
                     <ScreenshotMg/>
                 </h3>
             </div>
-            <div className="h-0 flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center">
-                    slider 2
+            <div className="flex flex-col justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center h-auto">
+                    <Image src={'/assets/images/carousel/slide-2.svg'}
+                           alt={'screenshot account overview'}
+                           width={400}
+                           height={424}
+                           quality={100}
+                    />
                 </h3>
             </div>
-            <div className="h-0 flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center">
-                    slider 3
+            <div className="flex justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center h-auto">
+                    <Image src={'/assets/images/carousel/slide-3.svg'}
+                           alt={'screenshot account overview'}
+                           width={506}
+                           height={568}
+                           quality={100}
+                    />
                 </h3>
             </div>
-            <div className="h-0 flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center">
-                    slider 4
+            <div className="flex justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center h-auto">
+                    <Image src={'/assets/images/carousel/slide-4.svg'}
+                           alt={'screenshot account overview'}
+                           width={600}
+                           height={520}
+                           quality={100}
+                    />
                 </h3>
             </div>
         </Slider>
