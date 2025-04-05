@@ -33,7 +33,7 @@ const MegatraderScreen = () => {
     return <div ref={windowExampleRef}
                 className="mx-auto relative xl:w-full overflow-hidden pb-[64px]">
         <Slider {...settings}>
-            <div className="h-full flex flex-col justify-center w-full items-center w-full">
+            <div className="h-full flex flex-col justify-center items-center w-full">
                 <h3 className="flex items-center justify-center w-full h-auto">
                     <ScreenshotMg/>
                 </h3>
