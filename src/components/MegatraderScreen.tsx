@@ -12,13 +12,20 @@ const MegatraderScreen = () => {
 
     useEffect(() => {
         const handlerResize = () => {
-            console.info(handlerResize);
+            console.info('handlerResize');
         }
 
         const observer = new ResizeObserver(handlerResize);
 
+        if (typeof window !== "undefined") {
+            handlerResize();
+            observer.observe(document.body);
+            window.addEventListener("resize", handlerResize);
+        }
+
         return () => {
             observer.disconnect();
+            window.removeEventListener("resize", handlerResize);
         }
     }, []);
 

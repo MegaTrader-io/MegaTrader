@@ -1,13 +1,50 @@
-import React from 'react';
+'use client'
+import React, {useEffect, useRef} from 'react';
 import Image from "next/image";
 
 function ScreenshotMg() {
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        let resizeTimeout: NodeJS.Timeout | null = null;
+
+        const handleResize = () => {
+            if (resizeTimeout) clearTimeout(resizeTimeout);
+
+            resizeTimeout = setTimeout(() => {
+                if (!containerRef.current) return;
+
+                const slickList = document.querySelector('.slick-list');
+                const containerHeight = containerRef.current.offsetHeight || 0;
+
+                if (!slickList) return;
+
+                const slickListHeight = slickList.getBoundingClientRect().height;
+                const maxHeight = Math.floor(Math.max(slickListHeight, containerHeight));
+
+                containerRef.current.style.height = `${maxHeight}px`;
+            }, 250);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        handleResize();
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            if (resizeTimeout) clearTimeout(resizeTimeout);
+        };
+    }, []);
+
     return (<div className="mx-auto relative w-[840px] xl:w-full h-auto overflow-hidden rounded-2xl">
         <div
-            className="w-full h-[1200px] opacity-5 rotate-[20deg] translate-x-[520px] xl:translate-x-[700px] bg-white -top-[10px] absolute">
+            className="w-full window-custom-shape inset-0 bg-white/[0.040] absolute">
         </div>
         <div
-            className="mx-auto w-full h-[calc(100dvh-300px)] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
+            ref={containerRef}
+            className="container-screenshot mx-auto w-full h-[calc(100dvh-300px)] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
         >
             <div className="flex justify-between px-2 items-center bg-black h-[48px]">
                 <div className="flex gap-2 items-center justify-end">
