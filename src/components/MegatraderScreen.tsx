@@ -12,7 +12,17 @@ const MegatraderScreen = () => {
 
     useEffect(() => {
         const handlerResize = () => {
-            console.info('handlerResize');
+            if (!windowExampleRef.current) {
+                return;
+            }
+
+            const slickSlider = windowExampleRef.current.querySelector('.slick-slider') as HTMLDivElement;
+
+            if (!slickSlider) {
+                return;
+            }
+
+            windowExampleRef.current.style.setProperty('--height-slider', `${slickSlider.offsetHeight}px`);
         }
 
         const observer = new ResizeObserver(handlerResize);
@@ -40,13 +50,13 @@ const MegatraderScreen = () => {
     return <div ref={windowExampleRef}
                 className="mx-auto relative xl:w-full overflow-hidden pb-[64px]">
         <Slider {...settings}>
-            <div className="h-full flex flex-col justify-center items-center w-full">
-                <h3 className="flex items-center justify-center w-full h-auto">
+            <div className="h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
+                <h3 className="flex items-center justify-center w-full h-full">
                     <ScreenshotMg/>
                 </h3>
             </div>
-            <div className="flex flex-col justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-auto">
+            <div className="h-[var(--height-slider)] flex  flex-col justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center h-full">
                     <Image src={'/assets/images/carousel/slide-2.svg'}
                            alt={'screenshot account overview'}
                            width={400}
@@ -55,8 +65,8 @@ const MegatraderScreen = () => {
                     />
                 </h3>
             </div>
-            <div className="flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-auto">
+            <div className="h-[var(--height-slider)] flex justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center h-full">
                     <Image src={'/assets/images/carousel/slide-3.svg'}
                            alt={'screenshot account overview'}
                            width={506}
@@ -65,8 +75,8 @@ const MegatraderScreen = () => {
                     />
                 </h3>
             </div>
-            <div className="flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-auto">
+            <div className="h-[var(--height-slider)] flex justify-center items-center">
+                <h3 className="flex flex-col items-center justify-center h-full">
                     <Image src={'/assets/images/carousel/slide-4.svg'}
                            alt={'screenshot account overview'}
                            width={600}
