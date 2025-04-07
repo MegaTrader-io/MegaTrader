@@ -9,10 +9,10 @@ export default function TabButtonGroup({onClick, selection}: {
     onClick: (key: PaymentMethodType) => void,
     selection: string
 }) {
-    return <div className="flex justify-around items-center gap-2">
+    return <div className="flex items-center gap-2">
         {PaymentMethodList.map(option => (
             <Button key={option.id}
-                    className="w-auto sm:w-full flex justify-center gap-2 text-nowrap"
+                    className="w-auto grow sm:grow-0 sm:w-full justify-center gap-2 text-nowrap"
                     variant={option.id === selection ? "primary" : 'dark'}
                     onClick={() => {
                         onClick(option.id)
