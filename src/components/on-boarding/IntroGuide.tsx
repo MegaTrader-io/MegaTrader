@@ -232,6 +232,13 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     const currentElementID = steps[intro.currentStep()].element as string || null;
                     console.info('currentElementID ', currentElementID);
 
+                    if (currentPath === '/affiliates') {
+                        const element = document.getElementById('available-payment-methods') as HTMLDivElement || null;
+                        if (element) {
+                            element.classList.add('bg-card-onboarding');
+                        }
+                    }
+
                     steps.forEach(step => {
                         const elementId = step.element.replace('#', '');
 
