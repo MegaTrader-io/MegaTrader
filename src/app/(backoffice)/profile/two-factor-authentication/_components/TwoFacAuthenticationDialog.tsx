@@ -2,15 +2,34 @@ import React, {useState} from 'react';
 import Dialog from "@/components/Dialog";
 import {Button} from "@/components/Button";
 import InputText from "@/components/InputText";
+import QRcode from "@/components/QRcode";
 
-function TwoFacAuthenticationDialog({open, onClose}: {
+function TwoFacAuthenticationDialog({open, onClose, submitCode}: {
     open: boolean,
     onClose: () => void
+    submitCode: (code: string) => void
 }) {
-    const [fieldErrors] = useState<Record<string, string>>({});
-    const [form, setForm] = useState({
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [form, setForm] = useState<{ code: string }>({
         code: '',
     });
+
+    function handleSubmitCode(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        if (!form.code.trim()) {
+            setFieldErrors((prev) => ({...prev, code: "The code is required."}));
+            return;
+        }
+
+        if (form.code.toString().length < 6) {
+            setFieldErrors((prev) => ({...prev, code: "The code is invalid."}));
+            return;
+        }
+
+
+        submitCode(form.code)
+    }
 
     return (
         <Dialog showModal={open}
@@ -24,13 +43,16 @@ function TwoFacAuthenticationDialog({open, onClose}: {
                         authentication application, such as Google Authenticator, on your phone.
                     </div>
 
-                    <div className="text-center text-stone-400 text-base font-medium  leading-normal">Or enter
-                        the code below
+                    <div className="flex justify-center">
+                        <QRcode/>
                     </div>
 
-                    <div className="text-center">
+                    <div className="text-center space-y-4">
+                        <div className="text-center text-stone-400 text-base font-medium  leading-normal">Or enter
+                            the code below
+                        </div>
                         <div
-                            className="mx-auto h-7 px-3 py-0.5 bg-neutral-200 rounded-2xl justify-center items-center gap-2.5 inline-flex">
+                            className="mx-auto h-7 px-3 bg-neutral-200 rounded-2xl justify-center items-center gap-2.5 inline-flex">
                             <div
                                 className="text-[#131210] text-sm font-bold uppercase leading-normal">PHDNUETGDHNYRASBDF
                             </div>
@@ -42,22 +64,26 @@ function TwoFacAuthenticationDialog({open, onClose}: {
                         the code created by the authenticator app.
                     </div>
 
-                    <form className="w-full sm:w-[300px] mx-auto space-y-4">
+                    <form onSubmit={handleSubmitCode} noValidate={true}
+                          className="w-full sm:w-[300px] mx-auto space-y-4">
                         <div>
                             <InputText
                                 type="text"
                                 placeholder="XXX XXX"
+                                required={true}
                                 name="code"
+                                maxLength={6}
                                 value={form.code}
                                 onChange={(e) => {
                                     const value = e.target.value;
+                                    setFieldErrors((prev) => ({...prev, code: ""}));
                                     setForm(prev => ({...prev, [e.target.name]: value}));
                                 }}
-                                errorMessage={fieldErrors.fullName}
+                                errorMessage={fieldErrors.code}
                             />
                         </div>
 
-                        <Button className="w-full">
+                        <Button type={'submit'} className="w-full">
                             CONTINUE
                         </Button>
                     </form>

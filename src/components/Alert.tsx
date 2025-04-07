@@ -2,7 +2,7 @@ import {CheckIcon, ExclamationCircleIcon, XMarkIcon} from "@heroicons/react/16/s
 import React from "react";
 import clsx from "clsx";
 
-type AlertType = 'success' | 'error' | 'info';
+export type AlertType = 'success' | 'error' | 'info';
 
 interface Prop {
     className?: string;
