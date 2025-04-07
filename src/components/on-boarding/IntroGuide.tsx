@@ -379,7 +379,6 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
         return () => {
             if (introRef.current) {
                 introRef.current?.exit(true);
-                introRef.current
             }
 
             if (observer) {
@@ -390,7 +389,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                 observerTooltip.disconnect();
             }
         };
-    }, [currentPath, introRef.current]);
+    }, [currentPath]);
 
     return null;
 }
