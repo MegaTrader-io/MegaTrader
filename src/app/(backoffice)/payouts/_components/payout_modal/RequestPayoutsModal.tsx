@@ -16,8 +16,8 @@ import CryptoForm from "@/app/(backoffice)/payouts/_components/payout_modal/form
 
 export const PaymentMethodList: IPaymentMethod[] = [
     {id: 'riseworks', name: 'Riseworks'},
-    {id: 'crypto_btc', name: 'Crypto - BTC'},
-    {id: 'crypto_eth', name: 'Crypto - ETH'},
+    {id: 'crypto_btc', name: 'BTC'},
+    {id: 'crypto_eth', name: 'ETH'},
 ];
 
 function RequestPayoutsModal({open, onClose, submitRequest}: {
