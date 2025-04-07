@@ -8,6 +8,7 @@ import MetricsPanel from "@/components/MetricsPanel";
 import {AffiliatesMetrics} from "@/commons/data";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
 import PerformanceAnalysis from "@/app/(backoffice)/affiliates/_components/PerformanceAnalysis";
+import IntroGuide from "@/components/on-boarding/IntroGuide";
 
 export interface IShowAlert {
     type: 'success' | 'error',
@@ -22,6 +23,7 @@ export default function Affiliates() {
     }
 
     return <>
+        <IntroGuide currentPath="/affiliates"/>
         {showAlert && (
             <div className="w-full">
                 <Alert type={showAlert.type}

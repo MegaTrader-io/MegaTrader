@@ -480,19 +480,19 @@ function getStepsForPath(path: string) {
                 title: "Referral Program",
                 element: "#referral-program",
                 intro: "Earn rewards by inviting friends. Send invitations, generate commissions from sign-ups, and use your earnings to trade for free.",
-                position: "bottom"
+                position: "top"
             },
             {
                 title: "Invite Your Friends",
                 element: "#invite-your-friends",
                 intro: "Send referral invites via email or copy your unique referral link to share on social media or directly with others.",
-                position: "bottom"
+                position: "top"
             },
             {
-                title: "Earnings Over Time",
-                element: "#earnings-over-time",
-                intro: "Analyze your affiliate earnings with a performance graph showing trends over a selected time period.",
-                position: "bottom"
+                title: "Performance Overview",
+                element: "#performance-analysis",
+                intro: "Monitor your weekly visits and conversions to identify trends, improve engagement, and optimize your strategy.",
+                position: "top"
             },
             {
                 title: "Traffic & Conversion Table",
