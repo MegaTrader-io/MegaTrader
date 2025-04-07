@@ -218,9 +218,11 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                 intro.onexit(() => {
                     document.querySelectorAll('.bg-card-onboarding,.without-bg-card-onboarding,.bg-btn-onboarding').forEach((element => {
-                        element.classList.remove('bg-card-onboarding');
-                        element.classList.remove('without-bg-card-onboarding');
-                        element.classList.remove('bg-btn-onboarding');
+                        if (element) {
+                            element.classList.remove('bg-card-onboarding');
+                            element.classList.remove('without-bg-card-onboarding');
+                            element.classList.remove('bg-btn-onboarding');
+                        }
                     }));
                 })
 
@@ -377,6 +379,7 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
         return () => {
             if (introRef.current) {
                 introRef.current?.exit(true);
+                introRef.current
             }
 
             if (observer) {
