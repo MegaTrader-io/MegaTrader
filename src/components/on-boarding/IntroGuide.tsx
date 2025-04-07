@@ -87,7 +87,12 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
             }
 
             const steps = getStepsForPath(currentPath);
-            let stepElementSelector = steps[introRef.current.currentStep()].element;
+            const introScreen = steps[introRef.current.currentStep()];
+            if (!introScreen) {
+                return;
+            }
+
+            let stepElementSelector = introScreen.element;
 
             if (introRef.current._direction === 'backward') {
                 if (isMobile) {
@@ -167,6 +172,8 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
     };
 
     useEffect(() => {
+        let observerTooltip: MutationObserver, observer: MutationObserver;
+
         try {
             const hasSeenIntro = localStorage.getItem(`hasSeenIntro-${currentPath}`);
 
@@ -328,9 +335,9 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     }
                 });
 
-                const observerTooltip = observeTooltipChanges();
+                observerTooltip = observeTooltipChanges();
 
-                const observer = new MutationObserver(() => {
+                observer = new MutationObserver(() => {
                     initializeButtons();
                     updateButtonStyles();
                     adjustTooltipSize()
@@ -362,16 +369,25 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                     adjustTooltipSize();
                 }, 501);
-
-                return () => {
-                    observer.disconnect();
-                    observerTooltip.disconnect();
-                };
             }
         } catch (error) {
             console.error("Unable to active Intro.js:", error);
         }
-    }, [currentPath]);
+
+        return () => {
+            if (introRef.current) {
+                introRef.current?.exit(true);
+            }
+
+            if (observer) {
+                observer.disconnect();
+            }
+
+            if (observerTooltip) {
+                observerTooltip.disconnect();
+            }
+        };
+    }, [currentPath, introRef.current]);
 
     return null;
 }
