@@ -37,11 +37,9 @@ function Page() {
 
     return (
         <div className="space-y-8">
-            {validCode !== undefined && (
-                <Alert className="w-full"
-                       type={alertMessage.type}
-                       message={alertMessage.message}/>
-            )}
+            <Alert className="w-full"
+                   type={alertMessage.type}
+                   message={alertMessage.message}/>
 
             {openRequestModal && (
                 <TwoFacAuthenticationDialog
