@@ -48,9 +48,11 @@ function Page() {
                     submitCode={submitCode}/>
             )}
 
-            <Button onClick={toggleRequestModal}>
-                SET 2FA
-            </Button>
+            {!validCode && (
+                <Button onClick={toggleRequestModal}>
+                    SET 2FA
+                </Button>
+            )}
         </div>
     );
 }
