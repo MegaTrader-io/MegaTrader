@@ -139,9 +139,9 @@
     display: none;
 }
 
-.introjs-tooltipReferenceLayer {
-    z-index: 49 !important;
-}
+/*.introjs-tooltipReferenceLayer {*/
+/*    z-index: 49 !important;*/
+/*}*/
 
 .introjs-showElement {
     z-index: 49 !important;
