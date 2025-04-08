@@ -8,6 +8,7 @@ import RequestWithdrawal from "@/components/RequestWithdrawal";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
 import IncomeTracker from "@/app/(backoffice)/affiliates/_components/IncomeTracker";
 import PayoutsManager from "@/app/(backoffice)/payouts/_components/PayoutsManager";
+import IntroGuide from "@/components/on-boarding/IntroGuide";
 
 export default function AccountOverView() {
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
@@ -17,6 +18,7 @@ export default function AccountOverView() {
     }
 
     return <>
+        <IntroGuide currentPath="/payouts"/>
         <div className="w-full space-y-8">
             {showAlert && (
                 <div className="w-full">

@@ -519,25 +519,25 @@ function getStepsForPath(path: string) {
                 title: "Available Payment Methods",
                 element: "#available-payment-methods",
                 intro: "View all supported withdrawal methods, including bank transfers and crypto, and select the best option for your needs.",
-                position: "bottom"
+                position: "top"
             },
             {
                 title: "Request Withdrawal Button",
                 element: "#request-withdrawal-button",
                 intro: "Click the button to submit a withdrawal request instantly when you meet the eligibility requirements for payouts.",
-                position: "bottom"
+                position: "top"
             },
             {
-                title: "Payout History Table",
-                element: "#payout-history-table",
-                intro: "Review your past and pending payout requests, including approval status, payment method, and transaction details in one place.",
-                position: "bottom"
+                title: "Income Tracker",
+                element: "#income-tracker",
+                intro: "Analyze your earnings over time, track daily income trends, and compare weekly growth to optimize your financial performance.",
+                position: "top"
             },
             {
-                title: "Purpose of the Payouts Page",
-                element: "#purpose-of-the-payouts-page",
-                intro: "Easily manage withdrawals, monitor payout progress, and stay informed about your earnings and available balance at all times.",
-                position: "bottom"
+                title: "Payouts Overview",
+                element: "#traffic-conversion-table",
+                intro: "Track the status of your payouts, view approved, pending, and rejected transactions, and manage payment methods efficiently.",
+                position: "top"
             },
         ]
     };
