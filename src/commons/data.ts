@@ -523,7 +523,7 @@ export const chartAffiliatesConfig = {
             labels: {
                 style: {colors: 'white'},
             },
-            categories: ["S", "M", "T", "W", "T", "F", "S"],
+            categories: Array(7).fill(null).map((_, index) => (index+1).toString().padStart(2, '0')),
         },
         yaxis: {
             labels: {
