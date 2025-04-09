@@ -98,7 +98,7 @@ const PayoutsTable = ({payoutStatus}: { payoutStatus: 'all_payouts' | 'approved'
                         <TableRow>
                             <TableCell
                                 colSpan={6}
-                                className="h-[65px] bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
+                                className="h-[65px] bg-transparent text-center font-bold w-full text-zinc-400">
                                 <EmptyPanel status={payoutStatus}/>
                             </TableCell>
                         </TableRow>
