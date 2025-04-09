@@ -9,9 +9,6 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
 function PerformanceAnalysis() {
     const container = useRef<HTMLDivElement | null>(null);
-    const [fullData, setFullData] = useState<{
-        series: { name: string, data: number[] }[]
-    } | null>(null);
     const [dataChart, setDataChart] = useState<{
         series: { name: string, data: number[] }[],
         options: ApexOptions
