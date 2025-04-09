@@ -273,13 +273,13 @@ export const credentials = {
 }
 
 export const periods: Period[] = [
-    {id: 'last_10_days', text: 'LAST 10 DAYS'},
+    {id: 'last_7_days', text: 'LAST 7 DAYS'},
+    {id: 'last_14_days', text: 'LAST 14 DAYS'},
     {id: 'last_30_days', text: 'LAST 30 DAYS'},
-    {id: 'last_60_days', text: 'LAST 60 DAYS'},
 ]
 
 export const incomeTrackerPeriods: Period[] = [
-    {id: 'one_week', text: 'ONE WEEK'},
+    {id: 'last_7_days', text: 'LAST 7 DAYS'},
     {id: 'last_14_days', text: 'LAST 14 DAYS'},
     {id: 'last_30_days', text: 'LAST 30 DAYS'},
 ]
@@ -486,11 +486,11 @@ export const chartAffiliatesConfig = {
     series: [
         {
             name: "Conversions",
-            data: [80, 100, 90, 140, 150, 110, 70], // Verde
+            data: [80, 100, 90, 140, 150, 110, 70],
         },
         {
             name: "Visits",
-            data: [120, 180, 300, 250, 320, 200, 130], // Azul
+            data: [120, 180, 300, 250, 320, 200, 130],
         },
     ],
     options: {
@@ -523,7 +523,7 @@ export const chartAffiliatesConfig = {
             labels: {
                 style: {colors: 'white'},
             },
-            categories: Array(7).fill(null).map((_, index) => (index+1).toString().padStart(2, '0')),
+            categories: Array(7).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
         },
         yaxis: {
             labels: {

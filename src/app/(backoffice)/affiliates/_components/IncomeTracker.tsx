@@ -72,7 +72,8 @@ function IncomeTracker() {
                     909,
                 ]
             });
-        } else if (selectPeriod.id === 'one_week') {
+        } else if (selectPeriod.id === 'last_7_days') {
+        } else if (selectPeriod.id === 'last_7_days') {
             setDataChart({
                 labels: Array(7).fill('').map((_, index) => (index + 1).toString().padStart(2, '0')),
                 data: [

@@ -3,11 +3,21 @@ import Card, {CardTitle} from "@/components/Card";
 import dynamic from "next/dynamic";
 import {chartAffiliatesConfig, periods} from "@/commons/data";
 import {Period} from "@/commons/interfaces";
+import {ApexOptions} from "apexcharts";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
 
 function PerformanceAnalysis() {
     const container = useRef<HTMLDivElement | null>(null);
+    const [fullData, setFullData] = useState<{
+        series: { name: string, data: number[] }[]
+    } | null>(null);
+    const [dataChart, setDataChart] = useState<{
+        series: { name: string, data: number[] }[],
+        options: ApexOptions
+    }>();
+
+    // const [dataChart, setDataChart] = useState<ApexOptions | undefined>(undefined);
     const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -15,6 +25,13 @@ function PerformanceAnalysis() {
         const period = periods.find(period => period.id === id)!
         setSelectPeriod(period);
     }
+
+    useEffect(() => {
+        setDataChart({
+            series: chartAffiliatesConfig.series,
+            options: chartAffiliatesConfig.options
+        });
+    }, []);
 
     useEffect(() => {
         if (!container.current) {
@@ -58,6 +75,68 @@ function PerformanceAnalysis() {
             observer.disconnect();
         };
     }, []);
+
+    function generateRandomSeries(days: number) {
+        const generateArray = () =>
+            Array.from({length: days}, () => Math.floor(Math.random() * 300) + 50); // entre 50 y 350
+
+        return [
+            {
+                name: "Conversions",
+                data: generateArray(),
+            },
+            {
+                name: "Visits",
+                data: generateArray(),
+            },
+        ];
+    }
+
+    useEffect(() => {
+        if (selectPeriod.id === 'last_7_days') {
+            setDataChart(prev => {
+                if (!prev) return prev;
+                return {
+                    series: generateRandomSeries(7),
+                    options: {
+                        ...prev.options,
+                        xaxis: {
+                            ...prev.options.xaxis,
+                            categories: Array(7).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
+                        }
+                    }
+                }
+            });
+        } else if (selectPeriod.id === 'last_14_days') {
+            setDataChart(prev => {
+                if (!prev) return prev;
+                return {
+                    series: generateRandomSeries(14),
+                    options: {
+                        ...prev.options,
+                        xaxis: {
+                            ...prev.options.xaxis,
+                            categories: Array(14).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
+                        }
+                    }
+                }
+            });
+        } else if (selectPeriod.id === 'last_30_days') {
+            setDataChart(prev => {
+                if (!prev) return prev;
+                return {
+                    series: generateRandomSeries(30),
+                    options: {
+                        ...prev.options,
+                        xaxis: {
+                            ...prev.options.xaxis,
+                            categories: Array(30).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
+                        }
+                    }
+                }
+            });
+        }
+    }, [selectPeriod.id]);
 
 
     return (
@@ -112,13 +191,15 @@ function PerformanceAnalysis() {
             </div>
             <div ref={container} className="w-full h-[389px] overflow-x-scroll overflow-hidden sm:overflow-hidden">
                 <div className="h-full" style={{minWidth: '500px'}}>
-                    <ReactApexChart
-                        className="h-full"
-                        type={chartAffiliatesConfig.type}
-                        height={chartAffiliatesConfig.height}
-                        series={chartAffiliatesConfig.series}
-                        options={chartAffiliatesConfig.options}
-                    />
+                    {dataChart && (
+                        <ReactApexChart
+                            className="h-full"
+                            type={'bar'}
+                            height={'100%'}
+                            series={dataChart?.series}
+                            options={dataChart?.options}
+                        />
+                    )}
                 </div>
             </div>
         </Card>
