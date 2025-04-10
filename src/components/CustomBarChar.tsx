@@ -36,7 +36,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, yAxis, series}) => {
                 })}
             </div>
 
-            <div className="relative z-10 flex gap-2 h-full w-full">
+            <div className="relative flex gap-2 h-full w-full">
                 {xAxis.map((label, i) => {
                     const stackedBars = series.map((serie) => ({
                         height: (serie.data[i] / maxY) * 100,
