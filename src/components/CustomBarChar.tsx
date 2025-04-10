@@ -13,7 +13,7 @@ export interface ChartBarProps {
     series: SeriesItem[]
 }
 
-export const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, yAxis, series}) => {
+const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, yAxis, series}) => {
     if (!series?.length || !xAxis?.length || !yAxis?.length) {
         return <p className="text-red-500">No data to display.</p>
     }
@@ -73,3 +73,5 @@ export const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, yAxis, series}) =
         </div>
     );
 }
+
+export default CustomBarChar;
