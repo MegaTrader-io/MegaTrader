@@ -23,10 +23,10 @@ function PerformanceAnalysis() {
         try {
             const generateArray = (name: string): number[] => {
                 if (days === 7 && name === 'visits') {
-                    return [300, 421, 80, 90, 85, 30, 10];
+                    return [190, 90, 280, 110, 50, 150, 65];
                 }
                 if (days === 7 && name === 'conversions') {
-                    return [200, 21, 80, 10, 30, 10, 50];
+                    return [100, 210, 120, 150, 380, 120, 160];
                 }
                 return Array.from({length: days}, () => Math.floor(Math.random() * 300) + 50);
             };
