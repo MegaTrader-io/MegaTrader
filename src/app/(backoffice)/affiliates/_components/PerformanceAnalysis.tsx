@@ -1,21 +1,50 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Card, {CardTitle} from "@/components/Card";
-import dynamic from "next/dynamic";
-import {chartAffiliatesConfig, periods} from "@/commons/data";
+import {periods} from "@/commons/data";
 import {Period} from "@/commons/interfaces";
-import {ApexOptions} from "apexcharts";
-
-const ReactApexChart = dynamic(() => import("react-apexcharts"), {ssr: false});
+import CustomBarChar, {ChartBarProps} from "@/components/CustomBarChar";
 
 function PerformanceAnalysis() {
     const container = useRef<HTMLDivElement | null>(null);
-    const [dataChart, setDataChart] = useState<{
-        series: { name: string, data: number[] }[],
-        options: ApexOptions
-    }>();
+    const [chartData, setChartData] = useState<ChartBarProps | undefined>(undefined)
+    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[2]);
 
-    // const [dataChart, setDataChart] = useState<ApexOptions | undefined>(undefined);
-    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
+    useEffect(() => {
+        setChartData(generateRandomData(30))
+    }, []);
+
+    useEffect(() => {
+        if (selectPeriod.id === 'last_7_days') {
+            setChartData(generateRandomData(7));
+        } else if (selectPeriod.id === 'last_14_days') {
+            setChartData(generateRandomData(14));
+        } else if (selectPeriod.id === 'last_30_days') {
+            setChartData(generateRandomData(30));
+        }
+    }, [selectPeriod.id]);
+
+    function generateRandomData(days: number) {
+        const generateArray = () =>
+            Array.from({length: days}, () => Math.floor(Math.random() * 300) + 50); // entre 50 y 350
+
+        return {
+            xAxis: Array(days).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
+            yAxis: [0, 100, 200, 300, 400],
+            series: [
+                {
+                    name: 'Visits',
+                    color: '#3b82f6',
+                    data: generateArray(),
+                },
+                {
+                    name: 'Conversions',
+                    color: '#14b8a6',
+                    data: generateArray(),
+                },
+            ],
+        }
+    }
+
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
         const id = e.target.value
@@ -23,121 +52,8 @@ function PerformanceAnalysis() {
         setSelectPeriod(period);
     }
 
-    useEffect(() => {
-        setDataChart({
-            series: chartAffiliatesConfig.series,
-            options: chartAffiliatesConfig.options
-        });
-    }, []);
-
-    useEffect(() => {
-        if (!container.current) {
-            return;
-        }
-
-        const rerenderAxis = () => {
-            console.info('rerenderAxis')
-            const axisTexts = document.querySelector('.apexcharts-canvas svg .apexcharts-xaxis .apexcharts-xaxis-texts-g');
-            if (!axisTexts) {
-                return;
-            }
-
-            const texts = Array.from(axisTexts.querySelectorAll('text'));
-
-            texts.forEach((text) => {
-                const x = Number(text.getAttribute('x') || 0);
-                const y = Number(text.getAttribute('y') || 0);
-
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', x.toString());
-                circle.setAttribute('cy', (y - 2).toString());
-                circle.setAttribute('r', '15');
-                circle.setAttribute('fill', '#3a3a3a');
-
-                const clonedText = text.cloneNode(true) as SVGTextElement;
-
-                axisTexts.insertBefore(circle, text);
-                text.remove();
-
-                axisTexts.after(clonedText, text);
-            });
-        };
-
-        const observer = new MutationObserver(rerenderAxis);
-        observer.observe(container.current, {childList: true, subtree: true});
-
-        rerenderAxis();
-
-        return () => {
-            observer.disconnect();
-        };
-    }, []);
-
-    function generateRandomSeries(days: number) {
-        const generateArray = () =>
-            Array.from({length: days}, () => Math.floor(Math.random() * 300) + 50); // entre 50 y 350
-
-        return [
-            {
-                name: "Conversions",
-                data: generateArray(),
-            },
-            {
-                name: "Visits",
-                data: generateArray(),
-            },
-        ];
-    }
-
-    useEffect(() => {
-        if (selectPeriod.id === 'last_7_days') {
-            setDataChart(prev => {
-                if (!prev) return prev;
-                return {
-                    series: generateRandomSeries(7),
-                    options: {
-                        ...prev.options,
-                        xaxis: {
-                            ...prev.options.xaxis,
-                            categories: Array(7).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
-                        }
-                    }
-                }
-            });
-        } else if (selectPeriod.id === 'last_14_days') {
-            setDataChart(prev => {
-                if (!prev) return prev;
-                return {
-                    series: generateRandomSeries(14),
-                    options: {
-                        ...prev.options,
-                        xaxis: {
-                            ...prev.options.xaxis,
-                            categories: Array(14).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
-                        }
-                    }
-                }
-            });
-        } else if (selectPeriod.id === 'last_30_days') {
-            setDataChart(prev => {
-                if (!prev) return prev;
-                return {
-                    series: generateRandomSeries(30),
-                    options: {
-                        ...prev.options,
-                        xaxis: {
-                            ...prev.options.xaxis,
-                            categories: Array(30).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
-                        }
-                    }
-                }
-            });
-        }
-    }, [selectPeriod.id]);
-
-
     return (
-        <Card id="performance-analysis" className="w-full p-4 text-white space-y-4 md:space-y-0">
+        <Card id="performance-analysis" className="w-full p-4 text-white space-y-4 md:space-y-8">
             <div className="space-y-2 md:space-y-0 md:flex md:justify-between md:items-center">
                 <CardTitle className="flex items-center gap-2">
                     <span>Performance Analysis</span>
@@ -186,18 +102,8 @@ function PerformanceAnalysis() {
                     </div>
                 </div>
             </div>
-            <div ref={container} className="w-full h-[389px] overflow-x-scroll overflow-hidden sm:overflow-hidden">
-                <div className="h-full" style={{minWidth: '500px'}}>
-                    {dataChart && (
-                        <ReactApexChart
-                            className="h-full"
-                            type={'bar'}
-                            height={'100%'}
-                            series={dataChart?.series}
-                            options={dataChart?.options}
-                        />
-                    )}
-                </div>
+            <div ref={container} className="w-full h-[409px] overflow-x-scroll">
+                {chartData && <CustomBarChar {...chartData} />}
             </div>
         </Card>
     );
