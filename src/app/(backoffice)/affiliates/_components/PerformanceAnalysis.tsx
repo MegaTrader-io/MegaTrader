@@ -6,12 +6,8 @@ import CustomBarChar, {ChartBarProps} from "@/components/CustomBarChar";
 
 function PerformanceAnalysis() {
     const container = useRef<HTMLDivElement | null>(null);
-    const [chartData, setChartData] = useState<ChartBarProps | undefined>(undefined)
-    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[2]);
-
-    useEffect(() => {
-        setChartData(generateRandomData(30))
-    }, []);
+    const [chartData, setChartData] = useState<ChartBarProps | undefined>(undefined);
+    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
 
     useEffect(() => {
         if (selectPeriod.id === 'last_7_days') {
@@ -23,32 +19,52 @@ function PerformanceAnalysis() {
         }
     }, [selectPeriod.id]);
 
-    function generateRandomData(days: number) {
-        const generateArray = () =>
-            Array.from({length: days}, () => Math.floor(Math.random() * 300) + 50); // entre 50 y 350
+    function generateRandomData(days: number): ChartBarProps {
+        try {
+            const generateArray = (name: string): number[] => {
+                if (days === 7 && name === 'visits') {
+                    return [300, 421, 80, 90, 85, 30, 10];
+                }
+                if (days === 7 && name === 'conversions') {
+                    return [200, 21, 80, 10, 30, 10, 50];
+                }
+                return Array.from({length: days}, () => Math.floor(Math.random() * 300) + 50);
+            };
 
-        return {
-            xAxis: Array(days).fill(null).map((_, index) => (index + 1).toString().padStart(2, '0')),
-            yAxis: [0, 100, 200, 300, 400],
-            series: [
-                {
-                    name: 'Visits',
-                    color: '#3b82f6',
-                    data: generateArray(),
-                },
-                {
-                    name: 'Conversions',
-                    color: '#14b8a6',
-                    data: generateArray(),
-                },
-            ],
+            const visits = generateArray('visits');
+            const conversions = generateArray('conversions');
+
+            if (visits.length !== conversions.length) {
+                throw new Error("Las longitudes de 'visits' y 'conversions' no coinciden.");
+            }
+
+            return {
+                xAxis: Array.from({length: days}, (_, i) => (i + 1).toString().padStart(2, '0')),
+                series: [
+                    {
+                        name: 'Visits',
+                        color: '#3b82f6',
+                        data: visits,
+                    },
+                    {
+                        name: 'Conversions',
+                        color: '#14b8a6',
+                        data: conversions,
+                    },
+                ],
+            };
+        } catch (error) {
+            console.error("unable to process the data:", error);
+            return {
+                xAxis: [],
+                series: [],
+            };
         }
     }
 
-
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
-        const id = e.target.value
-        const period = periods.find(period => period.id === id)!
+        const id = e.target.value;
+        const period = periods.find((period) => period.id === id)!;
         setSelectPeriod(period);
     }
 
@@ -62,36 +78,46 @@ function PerformanceAnalysis() {
                     <div className="flex gap-4">
                         <div className="flex gap-2">
                             <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
-                            <div
-                                className="justify-start text-white text-base font-medium leading-normal">Visits
+                            <div className="justify-start text-white text-base font-medium leading-normal">
+                                Visits
                             </div>
                         </div>
                         <div className="flex gap-2">
                             <div className="w-6 h-6 bg-teal-500 rounded-full"></div>
-                            <div
-                                className="justify-start text-white text-base font-medium leading-normal">Conversions
+                            <div className="justify-start text-white text-base font-medium leading-normal">
+                                Conversions
                             </div>
                         </div>
                     </div>
-
                     <div className="relative w-full">
                         <select
                             className="w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none"
                             defaultValue={selectPeriod.id}
-                            onChange={changeValue}>
-                            {periods.map(option => (
+                            onChange={changeValue}
+                        >
+                            {periods.map((option) => (
                                 <option key={option.id} value={option.id}>
                                     {option.text}
                                 </option>
                             ))}
                         </select>
                         <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <mask id="mask0_5269_2288" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse"
-                                      x="0"
-                                      y="0"
-                                      width="24" height="24">
+                            <svg
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <mask
+                                    id="mask0_5269_2288"
+                                    style={{maskType: 'alpha'}}
+                                    maskUnits="userSpaceOnUse"
+                                    x="0"
+                                    y="0"
+                                    width="24"
+                                    height="24"
+                                >
                                     <rect width="24" height="24" fill="#D9D9D9"/>
                                 </mask>
                                 <g mask="url(#mask0_5269_2288)">
