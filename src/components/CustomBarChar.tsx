@@ -13,7 +13,7 @@ export interface ChartBarProps {
     yAxis?: number[];
 }
 
-const CustomBarChar: React.FC<ChartBarProps> = ({ xAxis, series, yAxis }) => {
+const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
     if (!series?.length || !xAxis?.length) {
         return <p className="text-red-500">No data to display.</p>;
     }
@@ -91,9 +91,9 @@ const CustomBarChar: React.FC<ChartBarProps> = ({ xAxis, series, yAxis }) => {
                         key={idx}
                         className={clsx(
                             'absolute w-full text-sm font-medium text-stone-500 ml-10 leading-tight',
-                            { 'border-t border-white/10': idx > 0 }
+                            {'border-t border-white/10': idx > 0}
                         )}
-                        style={{ bottom: `${(y / maxY) * 100}%` }}
+                        style={{bottom: `${(y / maxY) * 100}%`}}
                     >
             <span className="absolute -translate-x-10 -translate-y-1/2 text-right">
               {y}
@@ -106,7 +106,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({ xAxis, series, yAxis }) => {
             <div className="relative flex gap-2 h-full w-full">
                 {xAxis.map((label, i) => {
                     const stackedBars = series.map((serie) => ({
-                        height: (serie.data[i] / maxY) * 100,
+                        height: (serie.data[i] / maxY) * 90,
                         color: serie.color,
                     }));
                     return (
@@ -128,7 +128,8 @@ const CustomBarChar: React.FC<ChartBarProps> = ({ xAxis, series, yAxis }) => {
                                     ></div>
                                 ))}
                             </div>
-                            <div className="mt-2 text-base w-9 h-9 rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600">
+                            <div
+                                className="mt-2 text-base w-9 h-9 rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600">
                                 {label}
                             </div>
                         </div>
