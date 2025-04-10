@@ -85,7 +85,6 @@ const CustomBarChar: React.FC<ChartBarProps> = ({ xAxis, series, yAxis }) => {
 
     return (
         <div className="relative w-full h-full text-white px-16">
-            {/* Líneas y valores del eje Y */}
             <div className="absolute inset-0 z-0 -bottom-[1px] my-10">
                 {computedYAxis.map((y, idx) => (
                     <div
