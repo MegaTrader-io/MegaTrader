@@ -118,6 +118,8 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                     const isSelected = selectedIndex === index;
                     const isHovered = hoverIndex === index;
 
+                    console.info('stackedBars', series, stackedBars);
+
                     return (
                         <div key={index}
                              id={`bar_${index}`}
@@ -127,18 +129,19 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                              className="flex flex-col items-center justify-end flex-1 max-h-[387px]">
                             <div className="flex flex-col justify-end w-[36px] relative h-full">
                                 <AnimatePresence>
-                                    {(index == 3 || isHovered || isSelected) && (
+                                    {(isHovered || isSelected) && (
                                         <motion.div
                                             initial={{opacity: 0, y: 10}}
                                             animate={{opacity: 1, y: 0}}
                                             exit={{opacity: 0, y: 10}}
-                                            className="border border-neutral-700 absolute
+                                            className=" shadow-[0px_16px_16px_16px_rgba(0,0,0,0.20)]
+                                            border border-neutral-700 absolute
                                              z-10 !translate-x-[-42%] translate-y-[-230px] rounded-2xl
                                                 inline-flex flex-col justify-center
                                                  items-center gap-2"
                                         >
                                             <div
-                                                className="rounded-2xl relative bg-[#131210] flex flex-col space-y-2 p-4">
+                                                className=" rounded-2xl relative bg-[#131210] flex flex-col space-y-2 p-4">
                                                 <div className="flex">
                                                     <div className="grid grid-cols-[24px_1fr] gap-2 items-center">
                                                         <div className={'w-6 h-6 flex justify-center items-center'}>
@@ -198,7 +201,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                 ))}
                             </div>
                             <div
-                                className="mt-2 text-base w-9 h-9 rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600">
+                                className="text-base rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600">
                                 {label}
                             </div>
                         </div>
