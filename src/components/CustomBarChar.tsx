@@ -174,7 +174,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                             </div>
 
                                             <div
-                                                className="absolute bg-[#131210] border border-neutral-700 -bottom-[14px] w-7 h-7 -z-[1] left-[50%]"
+                                                className="absolute bg-[#131210] border border-neutral-700 -bottom-[12px] w-6 h-6 -z-[1] left-[50%]"
                                                 style={{'transform': 'translate(-50%) rotate(45deg)'}}>
                                             </div>
                                         </motion.div>
