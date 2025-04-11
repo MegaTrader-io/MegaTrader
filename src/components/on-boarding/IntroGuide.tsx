@@ -11,10 +11,16 @@ interface IntroGuideProps {
     currentPath: string;
 }
 
+const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
+
 export default function IntroGuide({currentPath}: IntroGuideProps) {
     const introRef = useRef<IntroJs | null>(null);
     const btnPrevRef = useRef<HTMLButtonElement | null>(null);
     const btnNextRef = useRef<HTMLButtonElement | null>(null);
+
+    if (!isProduction) {
+        return;
+    }
 
     const adjustTooltipSize = () => {
         setTimeout(() => {

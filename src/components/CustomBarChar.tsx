@@ -126,41 +126,56 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                              onClick={() => setSelectedIndex(index)}
                              className="flex flex-col items-center justify-end flex-1 max-h-[387px]">
                             <div className="flex flex-col justify-end w-[36px] relative h-full">
-                                <div className="h-full items-end flex">
-                                    <AnimatePresence>
-                                        {(isHovered || isSelected) && (
-                                            <motion.div
-                                                initial={{opacity: 0, y: 10}}
-                                                animate={{opacity: 1, y: 0}}
-                                                exit={{opacity: 0, y: 10}}
-                                                className={`absolute transform z-10 !translate-x-[-15%] translate-y-[-16px] px-3 py-1 rounded-2xl text-sm font-bold  bg-[#131210] outline-neutral-700 inline-flex flex-col justify-center items-center gap-2">`}
-                                            >
-                                                <div className="flex flex-col gap-2 p-4">
-                                                    <div className="flex gap-12">
-                                                        <div className="flex gap-2 items-center">
-                                                            <div className={'w-6 h-6 rounded-full bg-[#3b82f6]'}></div>
+                                <AnimatePresence>
+                                    {(index == 3 || isHovered || isSelected) && (
+                                        <motion.div
+                                            initial={{opacity: 0, y: 10}}
+                                            animate={{opacity: 1, y: 0}}
+                                            exit={{opacity: 0, y: 10}}
+                                            className={`absolute transform
+                                             z-10 !translate-x-[-42%] translate-y-[-230px] 
+                                             py-1 rounded-2xl text-sm font-bold
+                                               bg-[#131210] outline-neutral-700
+                                                inline-flex flex-col justify-center
+                                                 items-center gap-2`}
+                                        >
+                                            <div className="flex flex-col space-y-2 p-4">
+                                                <div className="flex">
+                                                    <div className="grid grid-cols-[24px_1fr] gap-2 items-center">
+                                                        <div className={'w-6 h-6 flex justify-center items-center'}>
+                                                            <div className={'rounded-full size-3/4 bg-[#3b82f6]'}></div>
+                                                        </div>
+                                                        <div className="text-base w-[62px] truncate">
                                                             387
                                                         </div>
-                                                        <div className="flex gap-2 items-center">
-                                                            108
-                                                            <ArrowUpRightIcon className="w-6 h-6 text-white" />
-                                                        </div>
                                                     </div>
-                                                    <div className="flex gap-12">
-                                                        <div className="flex gap-2 items-center">
-                                                            <div className={'w-6 h-6 rounded-full bg-[#3b82f6]'}></div>
-                                                            1250
+                                                    <div className="flex items-center">
+                                                        <div className="text-base text-stone-400">
+                                                            108
                                                         </div>
-                                                        <div className="flex gap-2 items-center">
-                                                            247
-                                                            <ArrowUpRightIcon className="w-6 h-6 text-white" />
-                                                        </div>
+                                                        <ArrowUpRightIcon className="w-6 h-6 text-white"/>
                                                     </div>
                                                 </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
+                                                <div className="flex">
+                                                    <div className="flex gap-2 items-center">
+                                                        <div className={'w-6 h-6 flex justify-center items-center'}>
+                                                            <div className={'rounded-full size-3/4 bg-[#14b8a6]'}></div>
+                                                        </div>
+                                                        <div className="text-base w-[62px] truncate">
+                                                            1250
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center">
+                                                        <div className="text-base text-stone-400">
+                                                            247
+                                                        </div>
+                                                        <ArrowUpRightIcon className="w-6 h-6 text-white"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
 
                                 {stackedBars.map((bar, idx) => (
                                     <div
