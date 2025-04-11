@@ -113,12 +113,11 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                 {xAxis.map((label, index) => {
                     const stackedBars = series.map((serie) => ({
                         height: (serie.data[index] / maxY) * 90,
+                        total: serie.data[index],
                         color: serie.color,
                     }));
                     const isSelected = selectedIndex === index;
                     const isHovered = hoverIndex === index;
-
-                    console.info('stackedBars', series, stackedBars);
 
                     return (
                         <div key={index}
@@ -126,7 +125,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                              onMouseEnter={() => setHoverIndex(index)}
                              onMouseLeave={() => setHoverIndex(null)}
                              onClick={() => setSelectedIndex(index)}
-                             className="flex flex-col items-center justify-end flex-1 max-h-[387px]">
+                             className="grid grid-rows-[1fr_36px] gap-2 items-center justify-end flex-1 h-[387px]">
                             <div className="flex flex-col justify-end w-[36px] relative h-full">
                                 <AnimatePresence>
                                     {(isHovered || isSelected) && (
@@ -142,38 +141,30 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                         >
                                             <div
                                                 className=" rounded-2xl relative bg-[#131210] flex flex-col space-y-2 p-4">
-                                                <div className="flex">
-                                                    <div className="grid grid-cols-[24px_1fr] gap-2 items-center">
-                                                        <div className={'w-6 h-6 flex justify-center items-center'}>
-                                                            <div className={'rounded-full size-3/4 bg-[#3b82f6]'}></div>
+                                                {stackedBars.map((serie, serieIndex) => {
+                                                    return (
+                                                        <div key={`row_${serieIndex}`} className="flex">
+                                                            <div
+                                                                className="grid grid-cols-[24px_1fr] gap-2 items-center">
+                                                                <div
+                                                                    className={'w-6 h-6 flex justify-center items-center'}>
+                                                                    <div
+                                                                        className={`rounded-full size-3/4 bg-[${serie.color}]`}>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="text-base w-[62px] truncate">
+                                                                    {serie.total}
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center">
+                                                                <div className="text-base text-stone-400">
+                                                                    108
+                                                                </div>
+                                                                <ArrowUpRightIcon className="w-6 h-6 text-white"/>
+                                                            </div>
                                                         </div>
-                                                        <div className="text-base w-[62px] truncate">
-                                                            387
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <div className="text-base text-stone-400">
-                                                            108
-                                                        </div>
-                                                        <ArrowUpRightIcon className="w-6 h-6 text-white"/>
-                                                    </div>
-                                                </div>
-                                                <div className="flex">
-                                                    <div className="flex gap-2 items-center">
-                                                        <div className={'w-6 h-6 flex justify-center items-center'}>
-                                                            <div className={'rounded-full size-3/4 bg-[#14b8a6]'}></div>
-                                                        </div>
-                                                        <div className="text-base w-[62px] truncate">
-                                                            1250
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <div className="text-base text-stone-400">
-                                                            247
-                                                        </div>
-                                                        <ArrowUpRightIcon className="w-6 h-6 text-white"/>
-                                                    </div>
-                                                </div>
+                                                    )
+                                                })}
                                             </div>
 
                                             <div
@@ -201,7 +192,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                 ))}
                             </div>
                             <div
-                                className="text-base rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600">
+                                className="h-9 w-9 rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600">
                                 {label}
                             </div>
                         </div>
