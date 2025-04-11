@@ -132,14 +132,13 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                             initial={{opacity: 0, y: 10}}
                                             animate={{opacity: 1, y: 0}}
                                             exit={{opacity: 0, y: 10}}
-                                            className={`absolute transform
-                                             z-10 !translate-x-[-42%] translate-y-[-230px] 
-                                             py-1 rounded-2xl text-sm font-bold
-                                               bg-[#131210] outline-neutral-700
+                                            className="border border-neutral-700 absolute
+                                             z-10 !translate-x-[-42%] translate-y-[-230px] rounded-2xl
                                                 inline-flex flex-col justify-center
-                                                 items-center gap-2`}
+                                                 items-center gap-2"
                                         >
-                                            <div className="flex flex-col space-y-2 p-4">
+                                            <div
+                                                className="rounded-2xl relative bg-[#131210] flex flex-col space-y-2 p-4">
                                                 <div className="flex">
                                                     <div className="grid grid-cols-[24px_1fr] gap-2 items-center">
                                                         <div className={'w-6 h-6 flex justify-center items-center'}>
@@ -172,6 +171,11 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                                         <ArrowUpRightIcon className="w-6 h-6 text-white"/>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <div
+                                                className="absolute bg-[#131210] border border-neutral-700 -bottom-[14px] w-7 h-7 -z-[1] left-[50%]"
+                                                style={{'transform': 'translate(-50%) rotate(45deg)'}}>
                                             </div>
                                         </motion.div>
                                     )}
