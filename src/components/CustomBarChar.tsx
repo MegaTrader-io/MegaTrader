@@ -1,5 +1,9 @@
-import React from 'react';
+'use client'
+
+import React, {useState} from 'react';
 import clsx from "clsx";
+import {AnimatePresence, motion} from "framer-motion";
+import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
 
 interface SeriesItem {
     name: string;
@@ -14,6 +18,9 @@ export interface ChartBarProps {
 }
 
 const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+
     if (!series?.length || !xAxis?.length) {
         return <p className="text-red-500">No data to display.</p>;
     }
@@ -102,16 +109,59 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                 ))}
             </div>
 
-            {/* Gráfica de barras */}
             <div className="relative flex gap-2 h-full w-full">
-                {xAxis.map((label, i) => {
+                {xAxis.map((label, index) => {
                     const stackedBars = series.map((serie) => ({
-                        height: (serie.data[i] / maxY) * 90,
+                        height: (serie.data[index] / maxY) * 90,
                         color: serie.color,
                     }));
+                    const isSelected = selectedIndex === index;
+                    const isHovered = hoverIndex === index;
+
                     return (
-                        <div key={i} className="flex flex-col items-center justify-end flex-1 h-[387px]">
-                            <div className="flex flex-col justify-end w-[36px] relative h-[343px]">
+                        <div key={index}
+                             id={`bar_${index}`}
+                             onMouseEnter={() => setHoverIndex(index)}
+                             onMouseLeave={() => setHoverIndex(null)}
+                             onClick={() => setSelectedIndex(index)}
+                             className="flex flex-col items-center justify-end flex-1 max-h-[387px]">
+                            <div className="flex flex-col justify-end w-[36px] relative h-full">
+                                <div className="h-full items-end flex">
+                                    <AnimatePresence>
+                                        {(isHovered || isSelected) && (
+                                            <motion.div
+                                                initial={{opacity: 0, y: 10}}
+                                                animate={{opacity: 1, y: 0}}
+                                                exit={{opacity: 0, y: 10}}
+                                                className={`absolute transform z-10 !translate-x-[-15%] translate-y-[-16px] px-3 py-1 rounded-2xl text-sm font-bold  bg-[#131210] outline-neutral-700 inline-flex flex-col justify-center items-center gap-2">`}
+                                            >
+                                                <div className="flex flex-col gap-2 p-4">
+                                                    <div className="flex gap-12">
+                                                        <div className="flex gap-2 items-center">
+                                                            <div className={'w-6 h-6 rounded-full bg-[#3b82f6]'}></div>
+                                                            387
+                                                        </div>
+                                                        <div className="flex gap-2 items-center">
+                                                            108
+                                                            <ArrowUpRightIcon className="w-6 h-6 text-white" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-12">
+                                                        <div className="flex gap-2 items-center">
+                                                            <div className={'w-6 h-6 rounded-full bg-[#3b82f6]'}></div>
+                                                            1250
+                                                        </div>
+                                                        <div className="flex gap-2 items-center">
+                                                            247
+                                                            <ArrowUpRightIcon className="w-6 h-6 text-white" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
                                 {stackedBars.map((bar, idx) => (
                                     <div
                                         key={idx}

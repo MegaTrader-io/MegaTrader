@@ -25,6 +25,7 @@ function PerformanceAnalysis() {
                 if (days === 7 && name === 'visits') {
                     return [190, 90, 263, 110, 40, 150, 65];
                 }
+
                 if (days === 7 && name === 'conversions') {
                     return [100, 210, 130, 150, 290, 120, 160];
                 }

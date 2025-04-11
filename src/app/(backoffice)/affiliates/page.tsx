@@ -23,7 +23,7 @@ export default function Affiliates() {
     }
 
     return <>
-        <IntroGuide currentPath="/affiliates"/>
+        {/*<IntroGuide currentPath="/affiliates"/>*/}
         {showAlert && (
             <div className="w-full">
                 <Alert type={showAlert.type}
