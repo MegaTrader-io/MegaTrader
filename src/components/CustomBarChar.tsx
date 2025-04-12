@@ -4,6 +4,7 @@ import React, {useRef, useState} from 'react';
 import clsx from "clsx";
 import {AnimatePresence, motion} from "framer-motion";
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
+import {createPortal} from "react-dom";
 
 interface SeriesItem {
     name: string;
@@ -91,15 +92,13 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
 
     const maxY = computedYAxis[computedYAxis.length - 1];
 
-    function getHeightByBarRef(index: number) {
+    function getRectByBarRef(index: number) {
         const barSelected: HTMLDivElement = barRefs.current[index]!;
-
         let barHeight = 0;
         barSelected.querySelectorAll('.bar-item').forEach(bar => {
             barHeight += Number(bar.getBoundingClientRect().height);
-        })
-
-        return barHeight + 26;
+        });
+        return {height: barHeight, barSelected: barSelected.getBoundingClientRect()};
     }
 
     return (
@@ -114,9 +113,9 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                         )}
                         style={{bottom: `${(y / maxY) * 100}%`}}
                     >
-            <span className="absolute -translate-x-10 -translate-y-1/2 text-right">
-              {y}
-            </span>
+                        <span className="absolute -translate-x-10 -translate-y-1/2 text-right">
+                            {y}
+                        </span>
                     </div>
                 ))}
             </div>
@@ -131,14 +130,13 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                     const isSelected = selectedIndex === index;
                     const isHovered = hoverIndex === index;
 
-                    let positionY: number = 0;
+                    let rect: { height: number; barSelected: DOMRect } | undefined = undefined;
 
                     if (isSelected) {
-                        positionY = getHeightByBarRef(selectedIndex);
+                        rect = getRectByBarRef(selectedIndex!);
                     }
-
                     if (isHovered) {
-                        positionY = getHeightByBarRef(hoverIndex)
+                        rect = getRectByBarRef(hoverIndex!);
                     }
 
                     return (
@@ -147,59 +145,79 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                              onMouseEnter={() => setHoverIndex(index)}
                              onMouseLeave={() => setHoverIndex(null)}
                              onClick={() => setSelectedIndex(index)}
-                             className="grid grid-rows-[1fr_36px] gap-2 items-center justify-end flex-1 h-[387px]">
+                             className="grid grid-rows-[1fr_36px] gap-2 items-center justify-end flex-1 h-[387px]"
+                        >
                             <div
                                 ref={(el) => {
-                                    if (!el) {
-                                        return;
+                                    if (el) {
+                                        barRefs.current[index] = el;
                                     }
-                                    barRefs.current[index] = el
                                 }}
-                                className="bar_container flex flex-col justify-end w-[36px] relative h-full">
-                                <AnimatePresence>
-                                    {(isHovered || isSelected) && (
-                                        <motion.div
-                                            initial={{opacity: 0, y: positionY * -1, x: -71}}
-                                            animate={{opacity: 1, y: positionY * -1}}
-                                            exit={{opacity: 0, y: positionY * -1, x: -71}}
-
-                                            className={clsx('tooltip shadow-[0px_16px_16px_16px_rgba(0,0,0,0.20)] border border-neutral-700 absolute z-10  rounded-2xl inline-flex flex-col justify-center items-center gap-2')}
-                                        >
-                                            <div
-                                                className=" rounded-2xl relative bg-[#131210] flex flex-col space-y-2 p-4">
-                                                {stackedBars.map((serie, serieIndex) => {
-                                                    return (
-                                                        <div key={`row_${serieIndex}`} className="flex">
-                                                            <div
-                                                                className="grid grid-cols-[24px_1fr] gap-2 items-center">
+                                className="bar_container flex flex-col justify-end w-[36px] relative h-full"
+                            >
+                                <>
+                                    {(rect && (isHovered || isSelected)) && (
+                                        createPortal(
+                                            <AnimatePresence>
+                                                <motion.div
+                                                    initial={{
+                                                        opacity: 0,
+                                                        x: rect.barSelected.left + rect.barSelected.width / 2 + (window.scrollX || 0) - 90,
+                                                        y: rect.barSelected.top + window.scrollY - (rect.height - 409 + 88 + 88 + 8)
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        x: rect.barSelected.left + rect.barSelected.width / 2 + (window.scrollX || 0) - 90,
+                                                        y: rect.barSelected.top + window.scrollY - (rect.height - 409 + 88 + 88 + 8)
+                                                    }}
+                                                    exit={{
+                                                        opacity: 0,
+                                                        x: rect.barSelected.left + rect.barSelected.width / 2 + (window.scrollX || 0) - 90,
+                                                        y: rect.barSelected.top + window.scrollY - (rect.height - 409 + 88 + 88 + 8)
+                                                    }}
+                                                    className={clsx(
+                                                        'tooltip shadow-[0px_16px_16px_16px_rgba(0,0,0,0.20)]',
+                                                        'border border-neutral-700 absolute z-10 rounded-2xl inline-flex flex-col justify-center items-center gap-2'
+                                                    )}
+                                                    style={{position: 'absolute'}}
+                                                >
+                                                    <div
+                                                        className="rounded-2xl relative bg-[#131210] flex flex-col space-y-2 p-4">
+                                                        {stackedBars.map((serie, serieIndex) => (
+                                                            <div key={`row_${serieIndex}`} className="flex">
                                                                 <div
-                                                                    className={'w-6 h-6 flex justify-center items-center'}>
+                                                                    className="grid grid-cols-[24px_1fr] gap-2 items-center">
                                                                     <div
-                                                                        className={`rounded-full size-3/4 ${serie.color}`}>
+                                                                        className="w-6 h-6 flex justify-center items-center">
+                                                                        <div
+                                                                            className={`rounded-full size-3/4 ${serie.color}`}>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div
+                                                                        className="text-base w-[62px] truncate text-white">
+                                                                        {serie.total}
                                                                     </div>
                                                                 </div>
-                                                                <div className="text-base w-[62px] truncate">
-                                                                    {serie.total}
+                                                                <div className="flex items-center">
+                                                                    <div className="text-base text-stone-400">
+                                                                        108
+                                                                    </div>
+                                                                    <ArrowUpRightIcon className="w-6 h-6 text-white"/>
                                                                 </div>
                                                             </div>
-                                                            <div className="flex items-center">
-                                                                <div className="text-base text-stone-400">
-                                                                    108
-                                                                </div>
-                                                                <ArrowUpRightIcon className="w-6 h-6 text-white"/>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
+                                                        ))}
+                                                    </div>
 
-                                            <div
-                                                className="absolute bg-[#131210] border border-neutral-700 -bottom-[12px] w-6 h-6 -z-[1] left-[50%]"
-                                                style={{'transform': 'translate(-50%) rotate(45deg)'}}>
-                                            </div>
-                                        </motion.div>
+                                                    <div
+                                                        className="absolute bg-[#131210] border border-neutral-700 -bottom-[12px] w-6 h-6 -z-[1] left-[50%]"
+                                                        style={{transform: 'translate(-50%) rotate(45deg)'}}
+                                                    />
+                                                </motion.div>
+                                            </AnimatePresence>,
+                                            document.body
+                                        )
                                     )}
-                                </AnimatePresence>
+                                </>
 
                                 {stackedBars.map((bar, idx) => (
                                     <div
@@ -219,7 +237,8 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                 ))}
                             </div>
                             <div
-                                className="h-9 w-9 rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600">
+                                className="h-9 w-9 rounded-full font-medium flex items-center justify-center transition-colors bg-neutral-700 text-white group-hover:bg-neutral-600"
+                            >
                                 {label}
                             </div>
                         </div>
