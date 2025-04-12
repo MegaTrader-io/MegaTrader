@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import clsx from "clsx";
 import {AnimatePresence, motion} from "framer-motion";
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
