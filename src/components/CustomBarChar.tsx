@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import clsx from "clsx";
 import {AnimatePresence, motion} from "framer-motion";
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
@@ -20,6 +20,7 @@ export interface ChartBarProps {
 const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+    const barRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     if (!series?.length || !xAxis?.length) {
         return <p className="text-red-500">No data to display.</p>;
@@ -90,6 +91,17 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
 
     const maxY = computedYAxis[computedYAxis.length - 1];
 
+    function getHeightByBarRef(index: number) {
+        const barSelected: HTMLDivElement = barRefs.current[index]!;
+
+        let barHeight = 0;
+        barSelected.querySelectorAll('.bar-item').forEach(bar => {
+            barHeight += Number(bar.getBoundingClientRect().height);
+        })
+
+        return barHeight + 26;
+    }
+
     return (
         <div className="relative w-full h-full text-white px-16">
             <div className="absolute inset-0 z-0 -bottom-[1px] my-10">
@@ -119,6 +131,16 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                     const isSelected = selectedIndex === index;
                     const isHovered = hoverIndex === index;
 
+                    let positionY: number = 0;
+
+                    if (isSelected) {
+                        positionY = getHeightByBarRef(selectedIndex);
+                    }
+
+                    if (isHovered) {
+                        positionY = getHeightByBarRef(hoverIndex)
+                    }
+
                     return (
                         <div key={index}
                              id={`bar_${index}`}
@@ -126,18 +148,22 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                              onMouseLeave={() => setHoverIndex(null)}
                              onClick={() => setSelectedIndex(index)}
                              className="grid grid-rows-[1fr_36px] gap-2 items-center justify-end flex-1 h-[387px]">
-                            <div className="flex flex-col justify-end w-[36px] relative h-full">
+                            <div
+                                ref={(el) => {
+                                    if (!el) {
+                                        return;
+                                    }
+                                    barRefs.current[index] = el
+                                }}
+                                className="bar_container flex flex-col justify-end w-[36px] relative h-full">
                                 <AnimatePresence>
                                     {(isHovered || isSelected) && (
                                         <motion.div
-                                            initial={{opacity: 0, y: 10}}
-                                            animate={{opacity: 1, y: 0}}
-                                            exit={{opacity: 0, y: 10}}
-                                            className=" shadow-[0px_16px_16px_16px_rgba(0,0,0,0.20)]
-                                            border border-neutral-700 absolute
-                                             z-10 !translate-x-[-42%] translate-y-[-230px] rounded-2xl
-                                                inline-flex flex-col justify-center
-                                                 items-center gap-2"
+                                            initial={{opacity: 0, y: positionY * -1, x: -71}}
+                                            animate={{opacity: 1, y: positionY * -1}}
+                                            exit={{opacity: 0, y: positionY * -1, x: -71}}
+
+                                            className={clsx('tooltip shadow-[0px_16px_16px_16px_rgba(0,0,0,0.20)] border border-neutral-700 absolute z-10  rounded-2xl inline-flex flex-col justify-center items-center gap-2')}
                                         >
                                             <div
                                                 className=" rounded-2xl relative bg-[#131210] flex flex-col space-y-2 p-4">
@@ -178,8 +204,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                 {stackedBars.map((bar, idx) => (
                                     <div
                                         key={idx}
-                                        title={idx.toString()}
-                                        className={clsx('w-[36px] flex', {
+                                        className={clsx('bar-item w-[36px] flex', {
                                             'rounded-tl-[64px] rounded-tr-[64px]': idx === 0,
                                             'rounded-bl-[64px] rounded-br-[64px]': idx === stackedBars.length - 1,
                                         })}
