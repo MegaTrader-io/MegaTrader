@@ -45,12 +45,12 @@ function PerformanceAnalysis() {
                 series: [
                     {
                         name: 'Visits',
-                        color: '#3b82f6',
+                        color: 'bg-visits',
                         data: visits,
                     },
                     {
                         name: 'Conversions',
-                        color: '#14b8a6',
+                        color: 'bg-conversions',
                         data: conversions,
                     },
                 ],

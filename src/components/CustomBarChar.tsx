@@ -175,7 +175,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                                                 <div
                                                                     className={'w-6 h-6 flex justify-center items-center'}>
                                                                     <div
-                                                                        className={`rounded-full size-3/4 bg-[${serie.color}]`}>
+                                                                        className={`rounded-full size-3/4 ${serie.color}`}>
                                                                     </div>
                                                                 </div>
                                                                 <div className="text-base w-[62px] truncate">
@@ -207,13 +207,15 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                                         className={clsx('bar-item w-[36px] flex', {
                                             'rounded-tl-[64px] rounded-tr-[64px]': idx === 0,
                                             'rounded-bl-[64px] rounded-br-[64px]': idx === stackedBars.length - 1,
+                                            [bar.color]: true
                                         })}
                                         style={{
                                             height: `${bar.height}%`,
-                                            backgroundColor: bar.color,
                                             bottom: `${stackedBars.slice(0, idx).reduce((acc, b) => acc + b.height, 0)}%`,
                                         }}
-                                    ></div>
+                                    >
+                                        <span className={`bg-[${bar.color}]`}></span>
+                                    </div>
                                 ))}
                             </div>
                             <div

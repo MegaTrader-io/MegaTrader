@@ -152,6 +152,14 @@ path.apexcharts-bar-area[selected=true] {
     fill: #10B981;
 }
 
-.window-custom-shape{
+.window-custom-shape {
     clip-path: polygon(89% 0, 100% 0%, 100% 100%, 38% 100%)
+}
+
+.bg-visits {
+    @apply bg-blue-500
+}
+
+.bg-conversions {
+    @apply bg-teal-500
 }
