@@ -27,7 +27,6 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
         return <p className="text-red-500">No data to display.</p>;
     }
 
-    // Función auxiliar para calcular un "número agradable"
     function niceNumber(x: number, round: boolean): number {
         const exponent = Math.floor(Math.log10(x));
         const fraction = x / Math.pow(10, exponent);
@@ -57,7 +56,6 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
         return niceFraction * Math.pow(10, exponent);
     }
 
-    // Función que genera ticks para el eje Y de forma similar a Excel, con un buffer del 10%.
     function generateYAxis(max: number, nTicks: number = 6): number[] {
         if (max <= 0) return [0];
 
@@ -75,7 +73,6 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
         return ticks;
     }
 
-    // Si no se pasó yAxis, lo calculamos internamente:
     let computedYAxis: number[];
     if (!yAxis) {
         let maxStacked = 0;
