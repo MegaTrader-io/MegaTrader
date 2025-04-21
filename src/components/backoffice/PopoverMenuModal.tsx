@@ -81,7 +81,7 @@ function PopoverMenu({className, children, icon, modal = true, side = "bottom", 
 
     const handleOpenMenu = (open: boolean) => {
         const doesExistsIntroTooltip = document.querySelector('.introjs-tooltip');
-        if (doesExistsIntroTooltip) {
+        if (doesExistsIntroTooltip && isMobile) {
             return;
         }
 

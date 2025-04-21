@@ -232,12 +232,12 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                     const currentElementID = steps[intro.currentStep()].element as string || null;
                     console.info('currentElementID ', currentElementID);
 
-                    if (currentPath === '/affiliates') {
-                        const element = document.getElementById('available-payment-methods') as HTMLDivElement || null;
-                        if (element) {
-                            element.classList.add('bg-card-onboarding');
-                        }
-                    }
+                    // if (currentPath === '/affiliates' || currentPath === '/payouts') {
+                    //     const element = document.getElementById('available-payment-methods') as HTMLDivElement || null;
+                    //     if (element) {
+                    //         element.classList.add('bg-card-onboarding');
+                    //     }
+                    // }
 
                     steps.forEach(step => {
                         const elementId = step.element.replace('#', '');
@@ -258,6 +258,11 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
                         }
 
                         if (elementId === 'rules-compliance') {
+                            return;
+                        }
+
+                        if (elementId === 'request-withdrawal-button') {
+                            element.classList.add('without-bg-card-onboarding')
                             return;
                         }
 
@@ -299,6 +304,19 @@ export default function IntroGuide({currentPath}: IntroGuideProps) {
 
                             if (elementId === 'rules-compliance') {
                                 const parentElement = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement as HTMLDivElement || null;
+                                if (parentElement) {
+                                    parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                                }
+
+                                return;
+                            }
+
+                            if (elementId === 'available-payment-methods') {
+                                element.querySelector('#request-withdrawal-button')?.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                            }
+
+                            if (elementId === 'request-withdrawal-button') {
+                                const parentElement = document.getElementById('available-payment-methods') as HTMLDivElement || null;
                                 if (parentElement) {
                                     parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
                                 }
