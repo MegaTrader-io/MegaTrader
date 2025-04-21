@@ -51,7 +51,7 @@
 }
 
 .custom-intro-tooltip .introjs-tooltiptext .intro-content p {
-    max-width: 368px;
+    min-width: 368px;
 }
 
 .introjs-arrow {
@@ -78,8 +78,8 @@
 .introjs-arrow.bottom {
     background-image: url('/assets/images/arrows/arrow-bottom.svg');
     bottom: -13px;
-    /*left: 50%;*/
-    /*transform: translateX(-50%);*/
+    left: 50%;
+    transform: translateX(-50%);
     border-top-color: transparent;
 }
 
