@@ -76,7 +76,7 @@ export default function Header() {
 
     return (
         <div
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isMenuOpen ? 'bg-[#131210]' : 'bg-[#111]/80'}  backdrop-blur-3xl shadow-lg`}
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 h-[100px] flex ${isMenuOpen ? 'bg-[#131210]' : 'bg-[#111]/80'}  backdrop-blur-3xl shadow-lg`}
         >
             <div className="w-full max-w-7xl mx-auto px-4 flex items-center justify-between lg:h-[100px]">
                 {/* Logo */}
