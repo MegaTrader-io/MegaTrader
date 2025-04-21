@@ -79,9 +79,18 @@ function PopoverMenu({className, children, icon, modal = true, side = "bottom", 
         }
     }, [children]);
 
+    const handleOpenMenu = (open: boolean) => {
+        const doesExistsIntroTooltip = document.querySelector('.introjs-tooltip');
+        if (doesExistsIntroTooltip) {
+            return;
+        }
+
+        setOpen(open);
+    }
+
     return (
         <div className={className}>
-            <Popover modal={!!(modal && isMobile)} open={open} onOpenChange={setOpen}>
+            <Popover modal={!!(modal && isMobile)} open={open} onOpenChange={handleOpenMenu}>
                 <PopoverTrigger asChild>
                     <button ref={buttonRef}
                             className="bg-[#292524] rounded-xl border border-neutral-700 p-3 w-12 h-12 items-center justify-center">

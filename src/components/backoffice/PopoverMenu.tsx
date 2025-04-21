@@ -57,9 +57,18 @@ function PopoverMenu({
         }
     };
 
+    const handleOpenMenu = (open: boolean) => {
+        const doesExistsIntroTooltip = document.querySelector('.introjs-tooltip');
+        if (doesExistsIntroTooltip) {
+            return;
+        }
+
+        setOpen(open);
+    }
+
     return (
         <div className={className}>
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={open} onOpenChange={handleOpenMenu}>
                 <PopoverTrigger asChild>
                     <button ref={buttonRef} className="btn-primary max-w-[48px] !px-3 block">
                         {!icon ? <Bars3Icon className="w-6 h-6 text-white"/> : icon}
