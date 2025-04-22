@@ -50,8 +50,15 @@
     word-wrap: break-word
 }
 
+
+@media (min-width: 768px) {
+    .custom-intro-tooltip .introjs-tooltiptext .intro-content p {
+        min-width: 368px;
+    }
+}
+
 .custom-intro-tooltip .introjs-tooltiptext .intro-content p {
-    min-width: 368px;
+    max-width: 368px;
 }
 
 .introjs-arrow {
