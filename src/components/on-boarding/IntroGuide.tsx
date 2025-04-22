@@ -502,6 +502,18 @@ function getStepsForPath(path: string) {
                 position: "bottom"
             },
             {
+                title: "Available Payment Methods",
+                element: "#available-payment-methods",
+                intro: "View all supported withdrawal methods, including bank transfers and crypto, and select the best option for your needs.",
+                position: "top"
+            },
+            {
+                title: "Request Withdrawal Button",
+                element: "#request-withdrawal-button",
+                intro: "Click the button to submit a withdrawal request instantly when you meet the eligibility requirements for payouts.",
+                position: "top"
+            },
+            {
                 title: "Referral Program",
                 element: "#referral-program",
                 intro: "Earn rewards by inviting friends. Send invitations, generate commissions from sign-ups, and use your earnings to trade for free.",
