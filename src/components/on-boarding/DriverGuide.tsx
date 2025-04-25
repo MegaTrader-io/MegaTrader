@@ -65,6 +65,10 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
 
                     const element = document.getElementById(elementId) as HTMLDivElement || null;
 
+                    if (!element) {
+                        return;
+                    }
+
                     if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
                         const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
                         if (parentElement) {
@@ -80,6 +84,11 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
 
                     if (elementId === 'request-withdrawal-button') {
                         element.classList.add('without-bg-card-onboarding')
+                        return;
+                    }
+
+                    if (elementId === 'available-payment-methods') {
+                        element?.parentElement?.parentElement?.classList.add('bg-card-onboarding')
                         return;
                     }
 
@@ -124,15 +133,11 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                         }
 
                         if (elementId === 'available-payment-methods') {
-                            element.querySelector('#request-withdrawal-button')?.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                            element.parentElement?.parentElement?.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
                         }
 
                         if (elementId === 'request-withdrawal-button') {
-                            const parentElement = document.getElementById('available-payment-methods') as HTMLDivElement || null;
-                            if (parentElement) {
-                                parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
-                            }
-
+                            element.parentElement?.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
                             return;
                         }
 
