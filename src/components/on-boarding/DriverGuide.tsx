@@ -19,10 +19,15 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
             popoverClass: 'driverjs-megatrader-theme',
             overlayOpacity: 0,
             onPopoverRender: (popover: PopoverDOM, {config, state}: { config: DriverConfig; state: DriverState }) => {
+                const currentElementID = steps[state.activeIndex || 0].element?.toString().replace('#', '');
+                if (!currentElementID) {
+                    return;
+                }
+
+                console.info('currentElementID', currentElementID);
                 console.info('config', config);
                 console.info('state', state);
 
-                // Botón "Skip" personalizado
                 const skipButton = document.createElement('div');
                 skipButton.innerHTML = customSkipButton();
                 skipButton.classList.add('btn-dark-link')
@@ -32,7 +37,6 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                     driverObj.destroy();
                 });
 
-                // Botón "Next" personalizado
                 const nextButton = popover.footerButtons.querySelector('.driver-popover-next-btn');
                 if (nextButton) {
                     nextButton.innerHTML = customNextButton();
@@ -52,14 +56,125 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                     });
                 }
 
+                steps.forEach(step => {
+                    const elementId = step.element?.toString().replace('#', '');
 
-                // const tooltip = popover.wrapper;
-                // if (tooltip) {
-                //     tooltip.style.transform = 'translateY(-20px)'; // Ajusta 20px hacia abajo
-                // }
+                    if (!elementId || elementId === currentElementID) {
+                        return;
+                    }
+
+                    const element = document.getElementById(elementId) as HTMLDivElement || null;
+
+                    if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
+                        const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
+                        if (parentElement) {
+                            parentElement.classList.add('bg-card-onboarding');
+                        }
+
+                        return;
+                    }
+
+                    if (elementId === 'rules-compliance') {
+                        return;
+                    }
+
+                    if (elementId === 'request-withdrawal-button') {
+                        element.classList.add('without-bg-card-onboarding')
+                        return;
+                    }
+
+                    if (elementId === 'market-performance-tabs') {
+                        element.classList.add('without-bg-card-onboarding')
+                        const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                        if (btns && btns.length > 0) {
+                            btns.forEach(btn => {
+                                btn.classList.add('bg-btn-onboarding');
+                            })
+                        }
+
+                        return;
+                    }
+
+                    if (element) {
+                        element.classList.add('bg-card-onboarding')
+                    }
+                });
+
+                if (currentElementID) {
+                    const elementId = currentElementID.replace('#', '');
+                    const element = document.getElementById(elementId) as HTMLDivElement || null;
+
+                    if (element) {
+                        if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
+                            const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
+                            if (parentElement) {
+                                parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                            }
+
+                            return;
+                        }
+
+                        if (elementId === 'rules-compliance') {
+                            const parentElement = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement as HTMLDivElement || null;
+                            if (parentElement) {
+                                parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                            }
+
+                            return;
+                        }
+
+                        if (elementId === 'available-payment-methods') {
+                            element.querySelector('#request-withdrawal-button')?.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                        }
+
+                        if (elementId === 'request-withdrawal-button') {
+                            const parentElement = document.getElementById('available-payment-methods') as HTMLDivElement || null;
+                            if (parentElement) {
+                                parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                            }
+
+                            return;
+                        }
+
+                        if (elementId === 'market-performance-tabs') {
+                            element.classList.remove('without-bg-card-onboarding')
+                            const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                            if (btns && btns.length > 0) {
+                                btns.forEach(btn => {
+                                    btn.classList.remove('bg-btn-onboarding');
+                                })
+                            }
+
+                            const profitabilityMetrics = document.getElementById('profitability-metrics') as HTMLDivElement || null;
+                            if (profitabilityMetrics) {
+                                profitabilityMetrics.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
+                                profitabilityMetrics.classList.add('without-bg-card-onboarding');
+                            }
+
+                            return;
+                        }
+
+                        if (elementId === 'profitability-metrics') {
+                            const marketPerformanceTabs = document.getElementById('market-performance-tabs') as HTMLDivElement || null;
+                            if (marketPerformanceTabs) {
+                                const btns = marketPerformanceTabs.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                                if (btns && btns.length > 0) {
+                                    btns.forEach(btn => {
+                                        btn.classList.remove('bg-btn-onboarding');
+                                    })
+                                }
+                            }
+
+                            element.classList.remove('without-bg-card-onboarding', 'bg-card-onboarding', 'introjs-relativePosition')
+                            return;
+                        }
+
+                        element.classList.remove('bg-card-onboarding', 'introjs-relativePosition')
+                    }
+                }
             },
             onHighlightStarted: (element: Element | undefined, step: DriveStep) => {
-                console.info('step', step);
+                console.info('onHighlightStarted.step', step);
                 if (!element) {
                     return;
                 }
@@ -74,12 +189,10 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                 //     parent.style.border = '2px solid blue';  // Estilo del borde en el contenedor superior
                 // }
             },
-            onPrevClick: (e) => {
-                console.info('Previous clicked', e);
+            onPrevClick: () => {
                 driverObj.movePrevious();
             },
-            onNextClick: (e) => {
-                console.info('Next clicked', e);
+            onNextClick: () => {
                 driverObj.moveNext();
             },
         });
