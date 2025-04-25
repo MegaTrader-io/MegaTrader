@@ -1,0 +1,109 @@
+.driver-popover.driverjs-megatrader-theme {
+    background: #131210;
+    color: #fff !important;
+    max-width: 400px;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .3) !important;
+    border: 1px solid #404040;
+    gap: 8px;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-title {
+    align-self: stretch;
+    height: 24px;
+    position: relative;
+    color: #fff;
+    font-size: 16px;
+    font-family: "Roboto", serif;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-description {
+    display: block;
+    align-self: stretch;
+    position: relative;
+    color: #a8a29e;
+    font-size: 16px;
+    font-family: "Roboto", serif;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 0;
+    word-wrap: break-word;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-progress-text {
+    color: #000;
+}
+
+.driver-popover.driverjs-megatrader-theme button {
+    flex: 1;
+    text-align: center;
+    background-color: transparent;
+    color: #ffffff;
+    border: none;
+    text-shadow: none;
+    font-size: 14px;
+    padding: 5px 8px;
+    border-radius: 6px;
+}
+
+.driver-popover.driverjs-megatrader-theme button:hover {
+    color: #ffffff;
+    border: none;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-navigation-btns {
+    gap: .5rem;
+    align-items: center;
+    grid-template-columns: 48px 1fr 48px;
+    height: 3rem;
+    display: grid
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-close-btn {
+    color: #9b9b9b;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-close-btn:hover {
+    color: #000;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-arrow-side-left.driver-popover-arrow {
+    border-left-color: red;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-arrow-side-right.driver-popover-arrow {
+    border-right-color: red;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-arrow-side-top.driver-popover-arrow {
+    background-image: url('/assets/images/arrows/arrow-bottom.svg');
+    border-bottom-color: transparent;
+    width: 38px;
+    height: 14px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    border-top-color: transparent;
+    transform: translateX(-45%) translateY(-2px);
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-arrow-side-bottom.driver-popover-arrow {
+    /*border-bottom-color: #14120f;*/
+    background-image: url('/assets/images/arrows/arrow-top.svg');
+    bottom: 100%;
+    border-bottom-color: transparent;
+    width: 38px;
+    height: 14px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: translateX(-45%);
+    top: -13px;
+}
+
+.driver-popover.driverjs-megatrader-theme .driver-popover-arrow-side-top.driver-popover-arrow-align-start.driver-popover-arrow {
+    left: 50%;
+    transform: translateX(-50%);
+}

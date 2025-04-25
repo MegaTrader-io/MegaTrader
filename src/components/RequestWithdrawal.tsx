@@ -44,11 +44,11 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
                                      submitRequest={submitRequest}/>}
 
             <Card
-                id="available-payment-methods"
                 className="space-y-4 md:space-y-0 md:justify-start w-full md:items-center md:gap-4 md:inline-flex md:w-full">
                 <div
                     className="space-y-4 md:space-y-0 md:grow md:shrink md:basis-0 md:h-6 md:justify-start md:items-center md:gap-4 md:flex md:w-full">
-                    <div className="text-white text-base font-medium leading-normal">Available Payment
+                    <div id="available-payment-methods"
+                         className="text-white text-base font-medium leading-normal">Available Payment
                         Methods
                     </div>
                     <Image src='/assets/images/crypto-icons.svg' alt='icons' quality={100} width={88} height={24}/>

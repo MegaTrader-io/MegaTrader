@@ -21,7 +21,7 @@ import AccountSummary from "@/app/(backoffice)/account-overview/_components/Acco
 import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
 import TradingLogo from "@/components/TradingLogo";
-import IntroGuide from "@/components/on-boarding/IntroGuide";
+import DriverGuide from "@/components/on-boarding/DriverGuide";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
@@ -51,7 +51,7 @@ export default function AccountOverView() {
     }
 
     return <>
-        <IntroGuide currentPath="/account-overview"/>
+        <DriverGuide currentPath="/account-overview"/>
 
         <Dialog
             className="w-[calc(100vw-32px)] sm:w-[600px]"
