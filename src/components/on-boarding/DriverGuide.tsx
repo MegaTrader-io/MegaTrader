@@ -178,6 +178,15 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                     }
                 }
             },
+            onDestroyed: () => {
+                document.querySelectorAll('.bg-card-onboarding,.without-bg-card-onboarding,.bg-btn-onboarding').forEach((element => {
+                    if (element) {
+                        element.classList.remove('bg-card-onboarding');
+                        element.classList.remove('without-bg-card-onboarding');
+                        element.classList.remove('bg-btn-onboarding');
+                    }
+                }));
+            },
             onHighlightStarted: (element: Element | undefined, step: DriveStep) => {
                 console.info('onHighlightStarted.step', step);
                 if (!element) {
