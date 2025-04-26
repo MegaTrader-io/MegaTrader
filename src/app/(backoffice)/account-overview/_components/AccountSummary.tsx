@@ -17,7 +17,7 @@ function AccountSummary({account}: { account: Account }) {
     const {overallPerformance} = account;
 
     return (
-        <Card className="space-y-8 md:space-y-0 md:grid md:grid-cols-2 gap-8 w-full px-0">
+        <Card id='AccountSummary' className="space-y-8 md:space-y-0 md:grid md:grid-cols-2 gap-8 w-full px-0">
             <div id="account-overview" className="space-y-4 px-4">
                 <div className="text-white text-xl font-light uppercase leading-normal">OVERALL PERFORMANCE</div>
                 <div className="gap-4 lg:flex lg:items-center">
@@ -71,7 +71,8 @@ function AccountSummary({account}: { account: Account }) {
                 </div>
             </div>
             <div id="challenge-payout-objectives" className="space-y-4">
-                <div className="text-white text-xl font-light uppercase leading-normal px-4">Your Challenge Objective</div>
+                <div className="text-white text-xl font-light uppercase leading-normal px-4">Your Challenge Objective
+                </div>
                 <div className="gap-4 lg:flex lg:items-center">
                     <div className="lg:flex flex-col items-start relative flex-1 grow space-y-8">
                         <div className="w-full px-4">
@@ -97,9 +98,9 @@ function AccountSummary({account}: { account: Account }) {
                             {account.objectives.highestProfitDaySinceLastPayout !== undefined &&
                                 <HighestProfitDay account={account}/>}
                         </div>
-                        <div id="rules-compliance" className="w-full">
+                        <div className="w-full">
                             <div className="text-white text-xl font-light uppercase leading-normal mb-4 px-4">
-                                <span>RULE</span>
+                                <span id="rules-compliance">RULE</span>
                             </div>
                             <div className="flex gap-2 px-4">
                                 <div className="flex items-center gap-2 h-full">

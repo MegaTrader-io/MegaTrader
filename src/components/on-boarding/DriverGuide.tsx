@@ -1,5 +1,11 @@
-import {useEffect} from 'react';
-import {driver, DriveStep, Config as DriverConfig, State as DriverState, PopoverDOM} from 'driver.js';
+import {useEffect, useRef} from 'react';
+import {
+    driver,
+    DriveStep,
+    State as DriverState,
+    PopoverDOM,
+    Driver
+} from 'driver.js';
 import 'driver.js/dist/driver.css';
 import '../../../src/app/driveGuide.css'
 
@@ -8,176 +14,193 @@ interface IntroGuideProps {
 }
 
 export default function DriverGuide({currentPath}: IntroGuideProps) {
-    useEffect(() => {
+    const driverObjRef = useRef<Driver | undefined>(undefined);
+
+    const addButtons = (popover: PopoverDOM) => {
+        const skipButton = document.createElement('div');
+        skipButton.innerHTML = customSkipButton();
+        skipButton.classList.add('btn-dark-link')
+        popover.footerButtons.querySelector('.driver-popover-prev-btn')?.after(skipButton);
+
+        const handlerAction = (action: 'moveNext' | 'movePrevious' | 'destroy') => {
+            if (!driverObjRef || !driverObjRef.current) {
+                return;
+            }
+
+            if (action === 'moveNext') {
+                driverObjRef.current.moveNext();
+            } else if (action === 'movePrevious') {
+                driverObjRef.current.movePrevious();
+            } else {
+                driverObjRef.current.destroy();
+            }
+        }
+
+        skipButton.addEventListener('click', () => {
+            handlerAction('destroy')
+        });
+
+        const nextButton = popover.footerButtons.querySelector('.driver-popover-next-btn');
+        if (nextButton) {
+            nextButton.innerHTML = customNextButton();
+            nextButton.addEventListener('click', () => {
+                handlerAction('moveNext')
+            });
+        }
+
+        const prevButton = popover.footerButtons.querySelector('.driver-popover-prev-btn');
+        if (prevButton) {
+            prevButton.innerHTML = customPrevButton();
+            prevButton.addEventListener('click', () => {
+                handlerAction('movePrevious')
+            });
+        }
+    }
+
+    const addPopoverRenderBehavior = (popover: PopoverDOM, {state}: { state: DriverState }) => {
         const steps = getStepsForPath(currentPath);
         if (steps.length === 0) return;
 
-        const driverObj = driver({
-            showButtons: ['next', 'previous'],
-            steps,
-            stagePadding: 0,
-            popoverClass: 'driverjs-megatrader-theme',
-            overlayOpacity: 0,
-            onPopoverRender: (popover: PopoverDOM, {config, state}: { config: DriverConfig; state: DriverState }) => {
-                const currentElementID = steps[state.activeIndex || 0].element?.toString().replace('#', '');
-                if (!currentElementID) {
+        const currentElementID = steps[state.activeIndex || 0].element?.toString().replace('#', '');
+        if (!currentElementID) {
+            return;
+        }
+
+        addButtons(popover);
+
+        steps.forEach(step => {
+            const elementId = step.element?.toString().replace('#', '');
+
+            if (!elementId || elementId === currentElementID) {
+                return;
+            }
+
+            const element = document.getElementById(elementId) as HTMLDivElement || null;
+
+            if (!element) {
+                return;
+            }
+
+            if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
+                const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
+                if (parentElement) {
+                    parentElement.classList.add('bg-card-onboarding');
+                }
+
+                return;
+            }
+
+            if (elementId === 'rules-compliance') {
+                return;
+            }
+
+            if (elementId === 'request-withdrawal-button') {
+                element.classList.add('without-bg-card-onboarding')
+                return;
+            }
+
+            if (elementId === 'available-payment-methods') {
+                element?.parentElement?.parentElement?.classList.add('bg-card-onboarding')
+                return;
+            }
+
+            if (elementId === 'market-performance-tabs') {
+                element.classList.add('without-bg-card-onboarding')
+                const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                if (btns && btns.length > 0) {
+                    btns.forEach(btn => {
+                        btn.classList.add('bg-btn-onboarding');
+                    })
+                }
+
+                return;
+            }
+
+            if (element) {
+                element.classList.add('bg-card-onboarding')
+            }
+        });
+
+        if (currentElementID) {
+            const elementId = currentElementID.replace('#', '');
+            const element = document.getElementById(elementId) as HTMLDivElement || null;
+
+            if (element) {
+                if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
+                    const parentElement = document.getElementById('AccountSummary') as HTMLDivElement || null;
+
+                    if (parentElement) {
+                        parentElement.parentElement?.classList.remove('bg-card-onboarding');
+                    }
+
                     return;
                 }
 
-                console.info('currentElementID', currentElementID);
-                console.info('config', config);
-                console.info('state', state);
+                if (elementId === 'rules-compliance') {
+                    const parentElement = document.getElementById('AccountSummary') as HTMLDivElement || null;
+                    if (parentElement) {
+                        parentElement.parentElement?.classList.remove('bg-card-onboarding');
+                    }
 
-                const skipButton = document.createElement('div');
-                skipButton.innerHTML = customSkipButton();
-                skipButton.classList.add('btn-dark-link')
-                popover.footerButtons.querySelector('.driver-popover-prev-btn')?.after(skipButton);
-
-                skipButton.addEventListener('click', () => {
-                    driverObj.destroy();
-                });
-
-                const nextButton = popover.footerButtons.querySelector('.driver-popover-next-btn');
-                if (nextButton) {
-                    nextButton.innerHTML = customNextButton();
-                    nextButton.addEventListener('click', (e) => {
-                        console.info('Next clicked', e);
-                        driverObj.moveNext();
-                    });
+                    return;
                 }
 
-                // Botón "Previous" personalizado
-                const prevButton = popover.footerButtons.querySelector('.driver-popover-prev-btn');
-                if (prevButton) {
-                    prevButton.innerHTML = customPrevButton();
-                    prevButton.addEventListener('click', (e) => {
-                        console.info('Previous clicked', e);
-                        driverObj.movePrevious();
-                    });
+                if (elementId === 'available-payment-methods') {
+                    element.parentElement?.parentElement?.classList.remove('bg-card-onboarding');
                 }
 
-                steps.forEach(step => {
-                    const elementId = step.element?.toString().replace('#', '');
+                if (elementId === 'request-withdrawal-button') {
+                    element.parentElement?.classList.remove('bg-card-onboarding');
+                    return;
+                }
 
-                    if (!elementId || elementId === currentElementID) {
-                        return;
+                if (elementId === 'market-performance-tabs') {
+                    element.classList.remove('without-bg-card-onboarding')
+                    const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                    if (btns && btns.length > 0) {
+                        btns.forEach(btn => {
+                            btn.classList.remove('bg-btn-onboarding');
+                        })
                     }
 
-                    const element = document.getElementById(elementId) as HTMLDivElement || null;
-
-                    if (!element) {
-                        return;
+                    const profitabilityMetrics = document.getElementById('profitability-metrics') as HTMLDivElement || null;
+                    if (profitabilityMetrics) {
+                        profitabilityMetrics.classList.remove('bg-card-onboarding');
+                        profitabilityMetrics.classList.add('without-bg-card-onboarding');
                     }
 
-                    if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
-                        const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
-                        if (parentElement) {
-                            parentElement.classList.add('bg-card-onboarding');
-                        }
+                    return;
+                }
 
-                        return;
-                    }
-
-                    if (elementId === 'rules-compliance') {
-                        return;
-                    }
-
-                    if (elementId === 'request-withdrawal-button') {
-                        element.classList.add('without-bg-card-onboarding')
-                        return;
-                    }
-
-                    if (elementId === 'available-payment-methods') {
-                        element?.parentElement?.parentElement?.classList.add('bg-card-onboarding')
-                        return;
-                    }
-
-                    if (elementId === 'market-performance-tabs') {
-                        element.classList.add('without-bg-card-onboarding')
-                        const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
+                if (elementId === 'profitability-metrics') {
+                    const marketPerformanceTabs = document.getElementById('market-performance-tabs') as HTMLDivElement || null;
+                    if (marketPerformanceTabs) {
+                        const btns = marketPerformanceTabs.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
                         if (btns && btns.length > 0) {
                             btns.forEach(btn => {
-                                btn.classList.add('bg-btn-onboarding');
+                                btn.classList.remove('bg-btn-onboarding');
                             })
                         }
-
-                        return;
                     }
 
-                    if (element) {
-                        element.classList.add('bg-card-onboarding')
-                    }
-                });
-
-                if (currentElementID) {
-                    const elementId = currentElementID.replace('#', '');
-                    const element = document.getElementById(elementId) as HTMLDivElement || null;
-
-                    if (element) {
-                        if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
-                            const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
-                            if (parentElement) {
-                                parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
-                            }
-
-                            return;
-                        }
-
-                        if (elementId === 'rules-compliance') {
-                            const parentElement = element.parentElement?.parentElement?.parentElement?.parentElement?.parentElement as HTMLDivElement || null;
-                            if (parentElement) {
-                                parentElement.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
-                            }
-
-                            return;
-                        }
-
-                        if (elementId === 'available-payment-methods') {
-                            element.parentElement?.parentElement?.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
-                        }
-
-                        if (elementId === 'request-withdrawal-button') {
-                            element.parentElement?.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
-                            return;
-                        }
-
-                        if (elementId === 'market-performance-tabs') {
-                            element.classList.remove('without-bg-card-onboarding')
-                            const btns = element?.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
-                            if (btns && btns.length > 0) {
-                                btns.forEach(btn => {
-                                    btn.classList.remove('bg-btn-onboarding');
-                                })
-                            }
-
-                            const profitabilityMetrics = document.getElementById('profitability-metrics') as HTMLDivElement || null;
-                            if (profitabilityMetrics) {
-                                profitabilityMetrics.classList.remove('bg-card-onboarding', 'introjs-relativePosition');
-                                profitabilityMetrics.classList.add('without-bg-card-onboarding');
-                            }
-
-                            return;
-                        }
-
-                        if (elementId === 'profitability-metrics') {
-                            const marketPerformanceTabs = document.getElementById('market-performance-tabs') as HTMLDivElement || null;
-                            if (marketPerformanceTabs) {
-                                const btns = marketPerformanceTabs.querySelectorAll<HTMLButtonElement>('.btn-metric,.btn-scroll-right,.btn-scroll-left');
-                                if (btns && btns.length > 0) {
-                                    btns.forEach(btn => {
-                                        btn.classList.remove('bg-btn-onboarding');
-                                    })
-                                }
-                            }
-
-                            element.classList.remove('without-bg-card-onboarding', 'bg-card-onboarding', 'introjs-relativePosition')
-                            return;
-                        }
-
-                        element.classList.remove('bg-card-onboarding', 'introjs-relativePosition')
-                    }
+                    element.classList.remove('without-bg-card-onboarding', 'bg-card-onboarding')
+                    return;
                 }
-            },
+
+                element.classList.remove('bg-card-onboarding')
+            }
+        }
+    }
+
+
+    useEffect(() => {
+        driverObjRef.current = driver({
+            showButtons: ['next', 'previous'],
+            steps: getStepsForPath(currentPath),
+            popoverClass: 'driverjs-megatrader-theme',
+            popoverOffset: 17,
+            overlayOpacity: 0,
+            onPopoverRender: addPopoverRenderBehavior,
             onDestroyed: () => {
                 document.querySelectorAll('.bg-card-onboarding,.without-bg-card-onboarding,.bg-btn-onboarding').forEach((element => {
                     if (element) {
@@ -202,17 +225,11 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                 //     parent.style.position = 'relative';
                 //     parent.style.border = '2px solid blue';  // Estilo del borde en el contenedor superior
                 // }
-            },
-            onPrevClick: () => {
-                driverObj.movePrevious();
-            },
-            onNextClick: () => {
-                driverObj.moveNext();
-            },
+            }
         });
 
-        driverObj.drive();
-    }, [currentPath]);
+        driverObjRef.current.drive();
+    }, [currentPath, driverObjRef]);
 
     return null;
 }
@@ -402,6 +419,14 @@ function getStepsForPath(path: string) {
                         'View all supported withdrawal methods, including bank transfers and crypto, and select the best option for your needs.',
                     align: 'center',
                     side: 'top',
+                    // onPopoverRender: (popover: PopoverDOM, opts: {
+                    //     config: Config;
+                    //     state: State;
+                    //     driver: Driver;
+                    // }) => {
+                    //
+                    //     opts.config.popoverOffset = 40;
+                    // }
                 },
             },
             {
