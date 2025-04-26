@@ -6,6 +6,8 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, .3) !important;
     border: 1px solid #404040;
     gap: 8px;
+    min-width: 400px;
+    max-width: 400px;
 }
 
 .driver-popover.driverjs-megatrader-theme .driver-popover-title {
@@ -49,6 +51,14 @@
     border-radius: 6px;
 }
 
+.driver-popover.driverjs-megatrader-theme button.driver-popover-prev-btn, .driver-popover.driverjs-megatrader-theme button.driver-popover-next-btn {
+    height: 48px;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    display: flex !important;
+}
+
 .driver-popover.driverjs-megatrader-theme button:hover {
     color: #ffffff;
     border: none;
@@ -71,7 +81,14 @@
 }
 
 .driver-popover.driverjs-megatrader-theme .driver-popover-arrow-side-left.driver-popover-arrow {
-    border-left-color: red;
+    border-left-color: transparent;
+    background-image: url(/assets/images/arrows/arrow-bottom.svg);
+    border-bottom-color: transparent;
+    width: 38px;
+    height: 23px;
+    background-repeat: no-repeat;
+    border-top-color: transparent;
+    transform: translateX(-35%) translateY(-5px) rotate(-90deg);
 }
 
 .driver-popover.driverjs-megatrader-theme .driver-popover-arrow-side-right.driver-popover-arrow {
