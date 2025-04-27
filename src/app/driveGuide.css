@@ -13,8 +13,8 @@
 
 @media (min-width: 640px) {
     .driver-popover.driverjs-megatrader-theme {
-        min-width: 368px;
-        max-width: 368px;
+        min-width: 400px;
+        max-width: 400px;
     }
 }
 

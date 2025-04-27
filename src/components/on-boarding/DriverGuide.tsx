@@ -81,6 +81,10 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                 return;
             }
 
+            if (elementId === 'platform-access') {
+                element.classList.add('after:!rounded-lg');
+            }
+
             if (elementId === 'account-overview' || elementId === 'challenge-payout-objectives') {
                 const parentElement = element?.parentElement?.parentElement as HTMLDivElement || null;
                 if (parentElement) {
