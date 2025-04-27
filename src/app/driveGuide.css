@@ -6,8 +6,16 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, .3) !important;
     border: 1px solid #404040;
     gap: 8px;
-    min-width: 400px;
-    max-width: 400px;
+    min-width: calc(100% - 17px - 1rem);
+    max-width: calc(100% - 17px - 1rem);
+}
+
+
+@media (min-width: 640px) {
+    .driver-popover.driverjs-megatrader-theme {
+        min-width: 368px;
+        max-width: 368px;
+    }
 }
 
 .driver-popover.driverjs-megatrader-theme .driver-popover-title {
