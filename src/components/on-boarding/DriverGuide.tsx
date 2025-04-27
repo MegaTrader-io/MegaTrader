@@ -68,6 +68,21 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
 
         addButtons(popover);
 
+        if (popover.wrapper) {
+            const rerenderPopoverRefresh = () => {
+                const isMobile = window.innerWidth <= 768
+                const left = (window.innerWidth - popover.wrapper.getBoundingClientRect().width) / 2;
+                const bounding = popover.wrapper.getBoundingClientRect();
+
+                if (isMobile && bounding.x <= 38) {
+                    popover.wrapper.style.left = `${Math.min(16.5, left)}px`;
+                }
+            };
+
+            const observer = new MutationObserver(rerenderPopoverRefresh);
+            observer.observe(popover.wrapper, {attributes: true});
+        }
+
         steps.forEach(step => {
             const elementId = step.element?.toString().replace('#', '');
 
@@ -196,7 +211,6 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
         }
     }
 
-
     useEffect(() => {
         driverObjRef.current = driver({
             showButtons: ['next', 'previous'],
@@ -232,7 +246,36 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
             }
         });
 
+
         driverObjRef.current.drive();
+
+        const popover: PopoverDOM = driverObjRef.current.getState('popover')
+
+        console.info('popover.getState(\'popover\')', popover);
+
+        // const rerenderPopoverRefresh = () => {
+        //     console.info('rerenderPopoverRefresh, paso 1');
+        //     const isMobile = window.innerWidth <= 768
+        //     const left = (window.innerWidth - popover.wrapper.getBoundingClientRect().width) / 2;
+        //     const bounding = popover.wrapper.getBoundingClientRect();
+        //     console.info('triggered', popover.wrapper.getBoundingClientRect());
+        //     console.info('popover.getState(\'popover\')', popover);
+        //
+        //     if (isMobile && bounding.x <= 38) {
+        //         console.info('rerenderPopoverRefresh, paso 2');
+        //
+        //         popover.wrapper.style.left = `${left}px`;
+        //     }
+        //     console.info('rerenderPopoverRefresh, paso 3');
+        // };
+        //
+        // window.addEventListener("resize", rerenderPopoverRefresh);
+        // window.addEventListener("scroll", rerenderPopoverRefresh);
+
+        // return () => {
+        //     // window.removeEventListener("resize", rerenderPopoverRefresh);
+        //     // window.removeEventListener("scroll", rerenderPopoverRefresh);
+        // }
     }, [currentPath, driverObjRef]);
 
     return null;
