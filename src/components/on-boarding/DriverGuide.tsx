@@ -15,7 +15,6 @@ interface IntroGuideProps {
 
 export default function DriverGuide({currentPath}: IntroGuideProps) {
     const driverObjRef = useRef<Driver | undefined>(undefined);
-    const [direction, setDirection] = useState<'moveNext' | 'movePrevious' | undefined>(undefined);
 
     const addButtons = (popover: PopoverDOM) => {
         const skipButton = document.createElement('div');
@@ -59,7 +58,6 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
             prevButton.innerHTML = customPrevButton();
             prevButton.addEventListener('click', () => {
                 handlerAction('movePrevious')
-                setDirection('movePrevious')
             });
         }
     }
