@@ -237,55 +237,10 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                         element.classList.remove('bg-btn-onboarding');
                     }
                 }));
-            },
-            onHighlightStarted: (element: Element | undefined, step: DriveStep) => {
-                console.info('onHighlightStarted.step', step);
-                if (!element) {
-                    return;
-                }
-                // Aquí puedes personalizar el recuadro de resaltado
-                // element.style.border = '2px solid red';  // Estilo del borde
-                // element.style.zIndex = '9999';  // Asegurarse de que se muestra por encima de otros elementos
-
-                // Si deseas mover el recuadro al contenedor superior
-                // const parent = element.parentElement;
-                // if (parent) {
-                //     parent.style.position = 'relative';
-                //     parent.style.border = '2px solid blue';  // Estilo del borde en el contenedor superior
-                // }
             }
         });
 
-
         driverObjRef.current.drive();
-
-        const popover: PopoverDOM = driverObjRef.current.getState('popover')
-
-        console.info('popover.getState(\'popover\')', popover);
-
-        // const rerenderPopoverRefresh = () => {
-        //     console.info('rerenderPopoverRefresh, paso 1');
-        //     const isMobile = window.innerWidth <= 768
-        //     const left = (window.innerWidth - popover.wrapper.getBoundingClientRect().width) / 2;
-        //     const bounding = popover.wrapper.getBoundingClientRect();
-        //     console.info('triggered', popover.wrapper.getBoundingClientRect());
-        //     console.info('popover.getState(\'popover\')', popover);
-        //
-        //     if (isMobile && bounding.x <= 38) {
-        //         console.info('rerenderPopoverRefresh, paso 2');
-        //
-        //         popover.wrapper.style.left = `${left}px`;
-        //     }
-        //     console.info('rerenderPopoverRefresh, paso 3');
-        // };
-        //
-        // window.addEventListener("resize", rerenderPopoverRefresh);
-        // window.addEventListener("scroll", rerenderPopoverRefresh);
-
-        // return () => {
-        //     // window.removeEventListener("resize", rerenderPopoverRefresh);
-        //     // window.removeEventListener("scroll", rerenderPopoverRefresh);
-        // }
     }, [currentPath, driverObjRef]);
 
     return null;
@@ -475,15 +430,7 @@ function getStepsForPath(path: string) {
                     description:
                         'View all supported withdrawal methods, including bank transfers and crypto, and select the best option for your needs.',
                     align: 'center',
-                    side: 'top',
-                    // onPopoverRender: (popover: PopoverDOM, opts: {
-                    //     config: Config;
-                    //     state: State;
-                    //     driver: Driver;
-                    // }) => {
-                    //
-                    //     opts.config.popoverOffset = 40;
-                    // }
+                    side: 'top'
                 },
             },
             {
