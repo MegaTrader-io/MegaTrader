@@ -102,22 +102,22 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                     positionElement = positions.find(position => position.id === currentElementID)!;
                 } else if (currentPath === '/affiliates') {
                     const positions: PositionElement[] = [
-                        {id: 'affiliate-summary', top: 360, behavior: 'smooth'},
-                        {id: 'available-payment-methods', top: 270, behavior: 'smooth'},
-                        {id: 'request-withdrawal-button', top: 360, behavior: 'smooth'},
+                        {id: 'affiliate-summary', top: 280, behavior: 'smooth'},
+                        {id: 'available-payment-methods', top: 380, behavior: 'smooth'},
+                        {id: 'request-withdrawal-button', top: 380, behavior: 'smooth'},
                         {id: 'referral-program', top: 458, behavior: 'smooth'},
                         {id: 'invite-your-friends', top: 1052, behavior: 'smooth'},
                         {id: 'performance-analysis', top: 1530, behavior: 'smooth'},
-                        {id: 'traffic-conversion-table', top: 2196, behavior: 'smooth'},
+                        {id: 'traffic-conversion-table', top: 2158, behavior: 'smooth'},
                     ];
                     positionElement = positions.find(position => position.id === currentElementID)!;
                 } else if (currentPath === '/payouts') {
                     const positions: PositionElement[] = [
                         {id: 'payout-summary', top: 280, behavior: 'smooth'},
-                        {id: 'available-payment-methods', top: 270, behavior: 'smooth'},
-                        {id: 'request-withdrawal-button', top: 360, behavior: 'smooth'},
-                        {id: 'income-tracker', top: 520, behavior: 'smooth'},
-                        {id: 'traffic-conversion-table', top: 1225, behavior: 'smooth'},
+                        {id: 'available-payment-methods', top: 380, behavior: 'smooth'},
+                        {id: 'request-withdrawal-button', top: 380, behavior: 'smooth'},
+                        {id: 'income-tracker', top: 380, behavior: 'smooth'},
+                        {id: 'traffic-conversion-table', top: 1150, behavior: 'smooth'},
                     ];
                     positionElement = positions.find(position => position.id === currentElementID)!;
                 }
@@ -281,6 +281,8 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
 
     useEffect(() => {
         driverObjRef.current = driver({
+            smoothScroll: false,
+            animate: false,
             showButtons: ['next', 'previous'],
             steps: getStepsForPath(currentPath),
             popoverClass: 'driverjs-megatrader-theme',
