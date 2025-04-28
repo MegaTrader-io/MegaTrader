@@ -13,6 +13,12 @@ interface IntroGuideProps {
     currentPath: string;
 }
 
+interface PositionElement {
+    id: string,
+    top: number,
+    behavior?: ScrollBehavior
+}
+
 export default function DriverGuide({currentPath}: IntroGuideProps) {
     const driverObjRef = useRef<Driver | undefined>(undefined);
 
@@ -44,11 +50,6 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
         if (nextButton) {
             nextButton.innerHTML = customNextButton();
             nextButton.addEventListener('click', () => {
-                const button = popover.footerButtons?.querySelector('.driver-popover-next-btn') as HTMLButtonElement | null;
-                if (button) {
-                    button.setAttribute('disabled', 'disabled');
-                }
-
                 handlerAction('moveNext')
             });
         }
@@ -77,6 +78,58 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
 
         if (popover.wrapper) {
             const isMobile = window.innerWidth <= 768
+            const tooltip = popover.wrapper;
+
+            if (!tooltip) {
+                return;
+            }
+
+            if (isMobile) {
+                let positionElement: PositionElement | undefined;
+
+                if (currentPath === '/account-overview') {
+                    const positions: PositionElement[] = [
+                        {id: 'manage-subscription', top: 0, behavior: 'smooth'},
+                        {id: 'platform-access', top: 130, behavior: 'smooth'},
+                        {id: 'account-overview', top: 140, behavior: 'smooth'},
+                        {id: 'challenge-payout-objectives', top: 570, behavior: 'smooth'},
+                        {id: 'rules-compliance', top: 780, behavior: 'smooth'},
+                        {id: 'balance-graph', top: 940, behavior: 'smooth'},
+                        {id: 'market-performance-tabs', top: 1500, behavior: 'smooth'},
+                        {id: 'profitability-metrics', top: 1570, behavior: 'smooth'},
+                        {id: 'daily-journal', top: 2780, behavior: 'smooth'}
+                    ];
+                    positionElement = positions.find(position => position.id === currentElementID)!;
+                } else if (currentPath === '/affiliates') {
+                    const positions: PositionElement[] = [
+                        {id: 'affiliate-summary', top: 360, behavior: 'smooth'},
+                        {id: 'available-payment-methods', top: 270, behavior: 'smooth'},
+                        {id: 'request-withdrawal-button', top: 360, behavior: 'smooth'},
+                        {id: 'referral-program', top: 458, behavior: 'smooth'},
+                        {id: 'invite-your-friends', top: 1052, behavior: 'smooth'},
+                        {id: 'performance-analysis', top: 1530, behavior: 'smooth'},
+                        {id: 'traffic-conversion-table', top: 2196, behavior: 'smooth'},
+                    ];
+                    positionElement = positions.find(position => position.id === currentElementID)!;
+                } else if (currentPath === '/payouts') {
+                    const positions: PositionElement[] = [
+                        {id: 'payout-summary', top: 360, behavior: 'smooth'},
+                        {id: 'available-payment-methods', top: 270, behavior: 'smooth'},
+                        {id: 'request-withdrawal-button', top: 360, behavior: 'smooth'},
+                        {id: 'income-tracker', top: 520, behavior: 'smooth'},
+                        {id: 'traffic-conversion-table', top: 1225, behavior: 'smooth'},
+                    ];
+                    positionElement = positions.find(position => position.id === currentElementID)!;
+                }
+
+                if (positionElement) {
+                    window.scrollTo({
+                        top: positionElement.top,
+                        behavior: positionElement.behavior || 'smooth'
+                    });
+                }
+            }
+
 
             const rerenderPopoverRefresh = () => {
                 const left = (window.innerWidth - popover.wrapper.getBoundingClientRect().width) / 2;
@@ -94,70 +147,6 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
 
             const observer = new MutationObserver(rerenderPopoverRefresh);
             observer.observe(popover.wrapper, {attributes: true});
-
-            const scrollObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const tooltip = popover.wrapper;
-
-                        if (!tooltip) {
-                            return;
-                        }
-
-                        if (currentElementID === 'manage-subscription') {
-                            window.scrollTo({
-                                top: 0,
-                                behavior: "instant"
-                            });
-                        } else if (currentElementID === 'platform-access') {
-                            window.scrollTo({
-                                top: 130,
-                                behavior: "smooth"
-                            });
-                        } else if (currentElementID === 'account-overview') {
-                            window.scrollTo({
-                                top: 140,
-                                behavior: "smooth"
-                            });
-                        } else if (currentElementID === 'challenge-payout-objectives') {
-                            window.scrollTo({
-                                top: 570,
-                                behavior: "smooth"
-                            });
-                        } else if (currentElementID === 'rules-compliance') {
-                            window.scrollTo({
-                                top: 780,
-                                behavior: "smooth"
-                            });
-                        } else if (currentElementID === 'balance-graph') {
-                            window.scrollTo({
-                                top: 940,
-                                behavior: "smooth"
-                            });
-                        } else if (currentElementID === 'market-performance-tabs') {
-                            window.scrollTo({
-                                top: 1500,
-                                behavior: "smooth"
-                            });
-                        } else if (currentElementID === 'profitability-metrics') {
-                            window.scrollTo({
-                                top: 1570,
-                                behavior: "smooth"
-                            });
-                        } else if (currentElementID === 'daily-journal') {
-                            window.scrollTo({
-                                top: 2780,
-                                behavior: "smooth"
-                            });
-                        }
-                    }
-                })
-            }, {
-                root: null,
-                threshold: 0.1
-            })
-
-            scrollObserver.observe(popover.wrapper)
         }
 
         steps.forEach(step => {
