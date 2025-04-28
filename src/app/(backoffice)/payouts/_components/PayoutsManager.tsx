@@ -47,7 +47,7 @@ function PayoutsManager() {
 
     return (
         <div className="w-full space-y-2 lg:space-y-4">
-            <Card id="traffic-conversion-table" className="space-y-4">
+            <Card id="payouts-manager" className="space-y-4">
                 <div className="hidden md:flex gap-2">
                     <SelectionTab onClick={clickOption} selection={selection}/>
                 </div>

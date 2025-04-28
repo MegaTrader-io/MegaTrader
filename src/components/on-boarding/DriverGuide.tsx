@@ -117,7 +117,7 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                         {id: 'available-payment-methods', top: 380, behavior: 'smooth'},
                         {id: 'request-withdrawal-button', top: 380, behavior: 'smooth'},
                         {id: 'income-tracker', top: 380, behavior: 'smooth'},
-                        {id: 'traffic-conversion-table', top: 1150, behavior: 'smooth'},
+                        {id: 'payouts-manager', top: 1150, behavior: 'smooth'},
                     ];
                     positionElement = positions.find(position => position.id === currentElementID)!;
                 }
@@ -129,6 +129,23 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                     });
 
                     console.info('popover.wrapper', popover.wrapper);
+                }
+            } else {
+                const tooltipRect = tooltip.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                const navbarHeight = 100;
+                const scrollPadding = 200;
+
+                if (tooltipRect.top < navbarHeight) {
+                    window.scrollBy({
+                        top: tooltipRect.top - navbarHeight - scrollPadding,
+                        behavior: "smooth",
+                    });
+                } else if (tooltipRect.bottom > windowHeight) {
+                    window.scrollBy({
+                        top: tooltipRect.bottom - windowHeight + scrollPadding,
+                        behavior: "smooth",
+                    });
                 }
             }
 
@@ -528,7 +545,7 @@ function getStepsForPath(path: string) {
                 },
             },
             {
-                element: '#traffic-conversion-table',
+                element: '#payouts-manager',
                 popover: {
                     title: 'Payouts Overview',
                     description:
