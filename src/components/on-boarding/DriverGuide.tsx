@@ -61,7 +61,9 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
         const steps = getStepsForPath(currentPath);
         if (steps.length === 0) return;
 
-        const currentElementID = steps[state.activeIndex || 0].element?.toString().replace('#', '');
+        const currentElement = steps[state.activeIndex || 0]!;
+        const currentElementID = currentElement.element?.toString().replace('#', '');
+
         if (!currentElementID) {
             return;
         }
@@ -76,7 +78,15 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
 
                 if (isMobile && bounding.x <= 38) {
                     popover.wrapper.style.left = `${Math.min(16.5, left)}px`;
+                    console.info('popover.arrow.classList', popover.arrow.classList);
                 }
+
+                if (popover.arrow.classList.contains('driver-popover-arrow-align-start') || popover.arrow.classList.contains('driver-popover-arrow-align-end')) {
+                    popover.arrow.classList.remove('driver-popover-arrow-align-start');
+                    popover.arrow.classList.add('driver-popover-arrow-align-center');
+                }
+
+                console.info('currentElementID', currentElementID);
             };
 
             const observer = new MutationObserver(rerenderPopoverRefresh);
