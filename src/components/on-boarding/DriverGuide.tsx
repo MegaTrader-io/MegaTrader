@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
     driver,
     DriveStep,
@@ -15,6 +15,7 @@ interface IntroGuideProps {
 
 export default function DriverGuide({currentPath}: IntroGuideProps) {
     const driverObjRef = useRef<Driver | undefined>(undefined);
+    const [direction, setDirection] = useState<'moveNext' | 'movePrevious' | undefined>(undefined);
 
     const addButtons = (popover: PopoverDOM) => {
         const skipButton = document.createElement('div');
@@ -44,6 +45,11 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
         if (nextButton) {
             nextButton.innerHTML = customNextButton();
             nextButton.addEventListener('click', () => {
+                const button = popover.footerButtons?.querySelector('.driver-popover-next-btn') as HTMLButtonElement | null;
+                if (button) {
+                    button.setAttribute('disabled', 'disabled');
+                }
+
                 handlerAction('moveNext')
             });
         }
@@ -53,6 +59,7 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
             prevButton.innerHTML = customPrevButton();
             prevButton.addEventListener('click', () => {
                 handlerAction('movePrevious')
+                setDirection('movePrevious')
             });
         }
     }
@@ -71,26 +78,88 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
         addButtons(popover);
 
         if (popover.wrapper) {
+            const isMobile = window.innerWidth <= 768
+
             const rerenderPopoverRefresh = () => {
-                const isMobile = window.innerWidth <= 768
                 const left = (window.innerWidth - popover.wrapper.getBoundingClientRect().width) / 2;
                 const bounding = popover.wrapper.getBoundingClientRect();
 
                 if (isMobile && bounding.x <= 38) {
                     popover.wrapper.style.left = `${Math.min(16.5, left)}px`;
-                    console.info('popover.arrow.classList', popover.arrow.classList);
                 }
 
                 if (popover.arrow.classList.contains('driver-popover-arrow-align-start') || popover.arrow.classList.contains('driver-popover-arrow-align-end')) {
                     popover.arrow.classList.remove('driver-popover-arrow-align-start');
                     popover.arrow.classList.add('driver-popover-arrow-align-center');
                 }
-
-                console.info('currentElementID', currentElementID);
             };
 
             const observer = new MutationObserver(rerenderPopoverRefresh);
             observer.observe(popover.wrapper, {attributes: true});
+
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const tooltip = popover.wrapper;
+
+                        if (!tooltip) {
+                            return;
+                        }
+
+                        if (currentElementID === 'manage-subscription') {
+                            window.scrollTo({
+                                top: 0,
+                                behavior: "instant"
+                            });
+                        } else if (currentElementID === 'platform-access') {
+                            window.scrollTo({
+                                top: 130,
+                                behavior: "smooth"
+                            });
+                        } else if (currentElementID === 'account-overview') {
+                            window.scrollTo({
+                                top: 140,
+                                behavior: "smooth"
+                            });
+                        } else if (currentElementID === 'challenge-payout-objectives') {
+                            window.scrollTo({
+                                top: 570,
+                                behavior: "smooth"
+                            });
+                        } else if (currentElementID === 'rules-compliance') {
+                            window.scrollTo({
+                                top: 780,
+                                behavior: "smooth"
+                            });
+                        } else if (currentElementID === 'balance-graph') {
+                            window.scrollTo({
+                                top: 940,
+                                behavior: "smooth"
+                            });
+                        } else if (currentElementID === 'market-performance-tabs') {
+                            window.scrollTo({
+                                top: 1500,
+                                behavior: "smooth"
+                            });
+                        } else if (currentElementID === 'profitability-metrics') {
+                            window.scrollTo({
+                                top: 1570,
+                                behavior: "smooth"
+                            });
+                        } else if (currentElementID === 'daily-journal') {
+                            window.scrollTo({
+                                top: 2780,
+                                behavior: "smooth"
+                            });
+                        }
+                    }
+                })
+            }, {
+                root: null,
+                threshold: 0.1
+            })
+
+            scrollObserver.observe(popover.wrapper)
         }
 
         steps.forEach(step => {
@@ -241,6 +310,20 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
         });
 
         driverObjRef.current.drive();
+
+        const handlerScroll = () => {
+            if (!driverObjRef.current) {
+                return;
+            }
+
+            console.info('handlerScroll', window.scrollY);
+        }
+
+        window.addEventListener('scroll', handlerScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handlerScroll);
+        }
     }, [currentPath, driverObjRef]);
 
     return null;
