@@ -113,7 +113,7 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                     positionElement = positions.find(position => position.id === currentElementID)!;
                 } else if (currentPath === '/payouts') {
                     const positions: PositionElement[] = [
-                        {id: 'payout-summary', top: 360, behavior: 'smooth'},
+                        {id: 'payout-summary', top: 280, behavior: 'smooth'},
                         {id: 'available-payment-methods', top: 270, behavior: 'smooth'},
                         {id: 'request-withdrawal-button', top: 360, behavior: 'smooth'},
                         {id: 'income-tracker', top: 520, behavior: 'smooth'},
@@ -123,10 +123,12 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                 }
 
                 if (positionElement) {
+                    console.info('positionElement', positionElement);
                     window.scrollTo({
                         top: positionElement.top,
-                        behavior: positionElement.behavior || 'smooth'
                     });
+
+                    console.info('popover.wrapper', popover.wrapper);
                 }
             }
 
