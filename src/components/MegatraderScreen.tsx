@@ -1,7 +1,6 @@
 'use client'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
-import Image from 'next/image';
 import "../app/slick-theme.css";
 
 import React, {useEffect, useRef} from "react";
