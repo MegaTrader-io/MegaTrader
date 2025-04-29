@@ -70,15 +70,6 @@ const MegatraderScreen = () => {
                 <div className="flex flex-col items-center justify-center h-full">
                     <div className="relative">
                         <ScreenshotMg/>
-                        <Image
-                            className="absolute top-0"
-                            src="/assets/images/screenshots/account-overview-small.svg"
-                            alt="Account overview"
-                            width={296}
-                            height={420}
-                            style={{width: '100%', height: 'auto'}}
-                            quality={100}
-                        />
                     </div>
                     <div className="space-y-2 mt-[44px] text-center">
                         <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
