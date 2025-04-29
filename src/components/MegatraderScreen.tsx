@@ -50,42 +50,58 @@ const MegatraderScreen = () => {
     };
 
     return <div ref={windowExampleRef}
-                className="mx-auto relative xl:w-full overflow-hidden pb-[64px]">
+                className="mx-auto relative xl:w-full overflow-hidden pb-[96px]">
         <Slider {...settings}>
-            <div className="h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
-                <h3 className="flex items-center justify-center w-full h-full">
+            <div className="text-white h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
+                <div className="flex flex-col justify-center w-full h-full">
                     <ScreenshotMg/>
-                </h3>
+                    <div className="space-y-2 mt-[44px] text-center">
+                        <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
+                            Power up your trading with full control.
+                        </h3>
+                        <p className="mx-auto text-stone-400 text-base font-medium leading-normal max-w-[500px] text-center">
+                            Log in to manage your accounts, track performance, and unlock the full potential of your MegaTrader journey.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div className="h-[var(--height-slider)] flex  flex-col justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-full">
+            <div className="text-white h-[var(--height-slider)] flex  flex-col justify-center items-center">
+                <div className="flex flex-col items-center justify-center h-full">
                     <Image src={'/assets/images/carousel/slide-2.svg'}
                            alt={'screenshot account overview'}
                            width={400}
                            height={424}
                            quality={100}
                     />
-                </h3>
+
+                    <div className="space-y-2 mt-[44px] text-center">
+                        <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
+                            Track, Grow, and Earn with Confidence
+                        </h3>
+                        <p className="mx-auto text-stone-400 text-base font-medium leading-normal max-w-[500px] text-center">
+                            Monitor your referrals, commissions, and performance using powerful tools designed to maximize your affiliate success.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div className="h-[var(--height-slider)] flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-full">
+            <div className="text-white h-[var(--height-slider)] flex justify-center items-center">
+                <div className="flex flex-col items-center justify-center h-full">
                     <Image src={'/assets/images/carousel/slide-3.svg'}
                            alt={'screenshot account overview'}
                            width={506}
                            height={568}
                            quality={100}
                     />
-                </h3>
-            </div>
-            <div className="h-[var(--height-slider)] flex justify-center items-center">
-                <h3 className="flex flex-col items-center justify-center h-full">
-                    <Image src={'/assets/images/carousel/slide-4.svg'}
-                           alt={'screenshot account overview'}
-                           width={600}
-                           height={520}
-                           quality={100}
-                    />
-                </h3>
+
+                    <div className="space-y-2 mt-[44px] text-center">
+                        <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
+                            Stay Fully in Control of Every Payout
+                        </h3>
+                        <p className="mx-auto text-stone-400 text-base font-medium leading-normal max-w-[500px] text-center">
+                            View your earnings, check payment status, and stay in control of your withdrawals with clear, real-time updates.
+                        </p>
+                    </div>
+                </div>
             </div>
         </Slider>
     </div>
