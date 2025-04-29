@@ -1,6 +1,5 @@
 import React from "react";
 import MegatraderScreen from "@/components/MegatraderScreen";
-import Badge from "@/components/Badge";
 
 const Layout = ({children}: { children: React.ReactNode }) => {
     return (
