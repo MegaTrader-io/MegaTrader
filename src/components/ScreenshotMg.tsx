@@ -38,7 +38,7 @@ function ScreenshotMg() {
         };
     }, []);
 
-    return (<div className="mx-auto relative w-[840px] xl:w-full h-auto overflow-hidden rounded-2xl">
+    return (<div className="mx-auto relative w-[840px] xl:w-[700px] h-auto overflow-hidden rounded-2xl">
         <div
             className="w-full window-custom-shape inset-0 bg-white/[0.040] absolute">
         </div>
@@ -63,8 +63,8 @@ function ScreenshotMg() {
             </div>
             <div className="h-0">
                 <Image
-                    src="/assets/images/img_7.svg"
-                    alt="Trading Platform Interface"
+                    src="/assets/images/screenshots/account-overview.svg"
+                    alt="Account overview"
                     width={800}
                     height={766}
                     style={{width: '100%', height: 'auto'}}
