@@ -499,7 +499,7 @@ function getStepsForPath(path: string) {
                     description:
                         'Monitor referral traffic, source URLs, and conversion rates to track visitor engagement and successful sign-ups.',
                     align: 'center',
-                    side: 'bottom',
+                    side: 'top',
                 },
             },
         ],
