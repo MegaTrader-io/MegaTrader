@@ -1,8 +1,9 @@
 'use client'
+
 import React, {useEffect, useRef} from 'react';
 import Image from "next/image";
 
-function ScreenshotMg() {
+function ScreenshotMg({children}: { children: React.ReactElement }) {
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -21,10 +22,12 @@ function ScreenshotMg() {
 
                 if (!slickList) return;
 
-                const slickListHeight = slickList.getBoundingClientRect().height;
-                const maxHeight = Math.floor(Math.max(slickListHeight, containerHeight));
+                const slickListHeight = slickList.getBoundingClientRect().height - (slickList.getBoundingClientRect().height - 659);
+                console.info('containerHeight', containerHeight);
+                console.info('slickListHeight', slickListHeight);
+                // const maxHeight = slickListHeight;//Math.floor(Math.max(slickListHeight, containerHeight));
 
-                containerRef.current.style.height = `${maxHeight}px`;
+                // containerRef.current.style.height = `${maxHeight}px`;
             }, 250);
         };
 
@@ -62,14 +65,7 @@ function ScreenshotMg() {
                 </div>
             </div>
             <div className="h-0">
-                <Image
-                    src="/assets/images/screenshots/account-overview.svg"
-                    alt="Account overview"
-                    width={800}
-                    height={766}
-                    style={{width: '100%', height: 'auto'}}
-                    quality={100}
-                />
+                {children}
             </div>
         </div>
     </div>)
