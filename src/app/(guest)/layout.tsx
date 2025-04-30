@@ -12,7 +12,9 @@ const Layout = ({children}: { children: React.ReactNode }) => {
             </div>
             <div
                 className="relative hidden rounded-2xl md:px-[52px] lg:w-0 lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
-                <MegatraderScreen/>
+                <div className="flex justify-center h-full items-center">
+                    <MegatraderScreen/>
+                </div>
             </div>
         </div>
     );

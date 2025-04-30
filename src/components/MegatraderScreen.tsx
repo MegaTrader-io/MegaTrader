@@ -3,41 +3,43 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "../app/slick-theme.css";
 
-import React, {useEffect, useRef} from "react";
+import React, {useRef} from "react";
 import ScreenshotMg from "@/components/ScreenshotMg";
 import Image from "next/image";
 
 const MegatraderScreen = () => {
     const windowExampleRef = useRef<HTMLInputElement | null>(null);
 
-    useEffect(() => {
-        const handlerResize = () => {
-            if (!windowExampleRef.current) {
-                return;
-            }
-
-            const slickSlider = windowExampleRef.current.querySelector('.slick-slider') as HTMLDivElement;
-
-            if (!slickSlider) {
-                return;
-            }
-
-            windowExampleRef.current.style.setProperty('--height-slider', `${slickSlider.offsetHeight}px`);
-        }
-
-        const observer = new ResizeObserver(handlerResize);
-
-        if (typeof window !== "undefined") {
-            handlerResize();
-            observer.observe(document.body);
-            window.addEventListener("resize", handlerResize);
-        }
-
-        return () => {
-            observer.disconnect();
-            window.removeEventListener("resize", handlerResize);
-        }
-    }, []);
+    // useEffect(() => {
+    //     const handlerResize = () => {
+    //         if (!windowExampleRef.current) {
+    //             return;
+    //         }
+    //
+    //         const slickSlider = windowExampleRef.current.querySelector('.slick-slider') as HTMLDivElement;
+    //
+    //         if (!slickSlider) {
+    //             return;
+    //         }
+    //
+    //         const height = slickSlider.offsetHeight;
+    //
+    //         // windowExampleRef.current.style.setProperty('--height-slider', `${height}px`);
+    //     }
+    //
+    //     const observer = new ResizeObserver(handlerResize);
+    //
+    //     if (typeof window !== "undefined") {
+    //         handlerResize();
+    //         observer.observe(document.body);
+    //         window.addEventListener("resize", handlerResize);
+    //     }
+    //
+    //     return () => {
+    //         observer.disconnect();
+    //         window.removeEventListener("resize", handlerResize);
+    //     }
+    // }, []);
 
     const settings = {
         dots: true,
@@ -50,11 +52,11 @@ const MegatraderScreen = () => {
     };
 
     return <div ref={windowExampleRef}
-                className="mx-auto relative xl:w-full overflow-hidden h-[calc(100%)]">
+                className="mx-auto relative xl:w-full">
         <Slider {...settings}>
             <div className="text-white h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
                 <div className="flex flex-col justify-center w-full h-full">
-                    <div className="block relative mx-auto w-[804px] h-[715px]">
+                    <div className="block relative mx-auto h-[772px]">
                         <ScreenshotMg>
                             <Image
                                 src="/assets/images/screenshots/account-overview.svg"
@@ -65,7 +67,7 @@ const MegatraderScreen = () => {
                                 quality={100}
                             />
                         </ScreenshotMg>
-                        <div className="absolute bottom-0 left-0">
+                        <div className="absolute bottom-0 -left-[52px]">
                             <Image
                                 src="/assets/images/screenshots/account-overview-small.svg"
                                 alt="Account overview"
@@ -89,7 +91,7 @@ const MegatraderScreen = () => {
             </div>
             <div className="text-white h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
                 <div className="flex flex-col justify-center w-full h-full">
-                    <div className="block relative mx-auto w-[804px] h-[715px]">
+                    <div className="block relative mx-auto h-[772px]">
                         <ScreenshotMg>
                             <Image
                                 src="/assets/images/screenshots/affiliates.svg"
@@ -101,9 +103,9 @@ const MegatraderScreen = () => {
                             />
                         </ScreenshotMg>
 
-                        <div className="absolute bottom-0  right-0">
+                        <div className="absolute bottom-0 -right-[52px]">
                             <Image
-                                src="/assets/images/screenshots/affilates-small.svg"
+                                src="/assets/images/screenshots/affilates-small.png"
                                 alt="Affiliates"
                                 width={296}
                                 height={420}
@@ -125,7 +127,7 @@ const MegatraderScreen = () => {
             </div>
             <div className="text-white h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
                 <div className="flex flex-col justify-center w-full h-full">
-                    <div className="block relative mx-auto w-[804px] h-[715px]">
+                    <div className="block relative mx-auto h-[772px]">
                         <ScreenshotMg>
                             <Image
                                 src="/assets/images/screenshots/payouts.svg"
@@ -137,7 +139,7 @@ const MegatraderScreen = () => {
                             />
                         </ScreenshotMg>
 
-                        <div className="absolute bottom-0">
+                        <div className="absolute bottom-0 -left-[52px]">
                             <Image
                                 src="/assets/images/screenshots/payouts-small.svg"
                                 alt="Affiliates"
@@ -147,7 +149,7 @@ const MegatraderScreen = () => {
                                 quality={100}
                             />
                         </div>
-                        <div className="absolute -bottom-2 right-[52px]">
+                        <div className="absolute bottom-0 right-0">
                             <Image
                                 src="/assets/images/screenshots/payouts-icons.svg"
                                 alt="Affiliates"
