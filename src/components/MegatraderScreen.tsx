@@ -101,7 +101,7 @@ const MegatraderScreen = () => {
                             />
                         </ScreenshotMg>
 
-                        <div className="absolute bottom-0">
+                        <div className="absolute bottom-0  right-0">
                             <Image
                                 src="/assets/images/screenshots/affilates-small.svg"
                                 alt="Affiliates"
