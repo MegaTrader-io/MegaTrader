@@ -4,7 +4,6 @@ import "slick-carousel/slick/slick-theme.css";
 import "../app/slick-theme.css";
 
 import React, {useRef} from "react";
-import ScreenshotMg from "@/components/ScreenshotMg";
 import Image from "next/image";
 
 const MegatraderScreen = () => {
