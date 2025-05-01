@@ -43,16 +43,14 @@ const SliderItem = ({imageUrl, className, title, subtitle}: {
 }) => {
     return <div className={clsx("text-white w-full", className)}>
         <div className="flex flex-col items-center justify-center w-full h-full">
-            <div className="xl:min-w-3/5">
-                <Image
-                    src={imageUrl}
-                    alt="Account overview"
-                    width={684}
-                    height={659}
-                    style={{width: '100%', height: 'auto'}}
-                    quality={100}
-                />
-            </div>
+            <Image
+                src={imageUrl}
+                alt="Account overview"
+                width={684}
+                height={659}
+                style={{width: '100%', height: 'auto'}}
+                quality={100}
+            />
             <div className="space-y-2 text-center  mt-[44px]">
                 <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
                     {title}
