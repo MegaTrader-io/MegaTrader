@@ -9,6 +9,7 @@ import Alert from "@/components/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";
 import {useLoading} from "@/context/LoadingContext";
 import {Button} from "@/components/Button";
+import Image from "next/image";
 
 export default function ChangePassword() {
     const router = useRouter();
@@ -69,6 +70,8 @@ export default function ChangePassword() {
     return (
         <>
             {fieldErrors.form && <Alert type="error" message={fieldErrors.form}/>}
+
+            <Image src={'/assets/images/logo-mt.svg'} width={72} height={72} alt={'Logo Megatrader'}/>
 
             <div>
                 <h1 className="text-white xl:text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">

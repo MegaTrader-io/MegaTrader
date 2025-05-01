@@ -8,6 +8,7 @@ import Alert from "@/components/Alert";
 import {TARGET_EMAIL, TARGET_PASSWORD} from "@/commons/credentials";
 import {useRouter} from "next/navigation";
 import {useLoading} from "@/context/LoadingContext";
+import Image from "next/image";
 
 export default function Login() {
     const {setLoading, isLoading} = useLoading();
@@ -84,6 +85,8 @@ export default function Login() {
             {successMessage && (
                 <Alert type="success" message={successMessage}/>
             )}
+
+            <Image src={'/assets/images/logo-mt.svg'} width={72} height={72} alt={'Logo Megatrader'}/>
 
             <div>
                 <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">

@@ -6,6 +6,7 @@ import Link from "next/link";
 import React, {useState} from "react";
 import {XMarkIcon} from "@heroicons/react/16/solid";
 import {useLoading} from "@/context/LoadingContext";
+import Image from "next/image";
 
 export default function Login() {
     const {setLoading, isLoading} = useLoading();
@@ -46,6 +47,8 @@ export default function Login() {
                     </div>
                 </div>
             )}
+
+            <Image src={'/assets/images/logo-mt.svg'} width={72} height={72} alt={'Logo Megatrader'}/>
 
             <div>
                 <h1 className="text-white text-5xl font-light uppercase leading-[60px] mb-2">

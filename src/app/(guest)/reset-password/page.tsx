@@ -7,6 +7,7 @@ import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import Alert from "@/components/Alert";
 import {TARGET_EMAIL} from "@/commons/credentials";
 import {useLoading} from "@/context/LoadingContext";
+import Image from "next/image";
 
 export default function ResetPassword() {
     const {setLoading, isLoading} = useLoading();
@@ -80,6 +81,8 @@ export default function ResetPassword() {
             )}
 
             {successMessage && (<Alert type="success" message={successMessage}/>)}
+
+            <Image src={'/assets/images/logo-mt.svg'} width={72} height={72} alt={'Logo Megatrader'}/>
 
             <div>
                 <h1 className="text-white lg:text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">
