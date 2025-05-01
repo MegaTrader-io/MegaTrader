@@ -42,12 +42,12 @@ function ScreenshotMg({children}: { children: React.ReactElement }) {
     // }, []);
 
     return (
-        <div className="mx-auto relative w-full xl:max-w-[700px] max-h-[715px] h-auto overflow-hidden rounded-2xl">
+        <div className="mx-auto relative h-auto overflow-hidden rounded-2xl">
             <div
                 className="w-full window-custom-shape inset-0 bg-white/[0.040] absolute">
             </div>
             <div
-                className="container-screenshot mx-auto w-full h-[715px] bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
+                className="container-screenshot mx-auto w-full max-h-max bg-[#151211] rounded-2xl shadow-[0px_30px_35px_32px_rgba(0,0,0,0.20)] overflow-hidden border-4 border-black"
             >
                 <div className="flex justify-between px-2 items-center bg-black h-[48px]">
                     <div className="flex gap-2 items-center justify-end">

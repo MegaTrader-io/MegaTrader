@@ -55,30 +55,18 @@ const MegatraderScreen = () => {
                 className="mx-auto relative xl:w-full">
         <Slider {...settings}>
             <div className="text-white h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
-                <div className="flex flex-col justify-center w-full h-full">
-                    <div className="block relative mx-auto h-[772px]">
-                        <ScreenshotMg>
-                            <Image
-                                src="/assets/images/screenshots/account-overview.svg"
-                                alt="Account overview"
-                                width={684}
-                                height={659}
-                                style={{width: '100%', height: 'auto'}}
-                                quality={100}
-                            />
-                        </ScreenshotMg>
-                        <div className="absolute bottom-0 -left-[52px]">
-                            <Image
-                                src="/assets/images/screenshots/account-overview-small.svg"
-                                alt="Account overview"
-                                width={296}
-                                height={420}
-                                style={{width: '100%', height: 'auto'}}
-                                quality={100}
-                            />
-                        </div>
+                <div className="flex flex-col items-center justify-center w-full h-full">
+                    <div className="size-9/12 justify-center flex">
+                        <Image
+                            src="/assets/images/screenshots/ac2.svg"
+                            alt="Account overview"
+                            width={684}
+                            height={659}
+                            style={{width: '100%', height: 'auto'}}
+                            quality={100}
+                        />
                     </div>
-                    <div className="space-y-2 mt-[44px] text-center">
+                    <div className="space-y-2 text-center  mt-[44px]">
                         <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
                             Power up your trading with full control.
                         </h3>
@@ -90,29 +78,16 @@ const MegatraderScreen = () => {
                 </div>
             </div>
             <div className="text-white h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
-                <div className="flex flex-col justify-center w-full h-full">
-                    <div className="block relative mx-auto h-[772px]">
-                        <ScreenshotMg>
-                            <Image
-                                src="/assets/images/screenshots/affiliates.svg"
-                                alt="Affiliates"
-                                width={684}
-                                height={659}
-                                style={{width: '100%', height: 'auto'}}
-                                quality={100}
-                            />
-                        </ScreenshotMg>
-
-                        <div className="absolute bottom-0 -right-[52px]">
-                            <Image
-                                src="/assets/images/screenshots/affilates-small.png"
-                                alt="Affiliates"
-                                width={296}
-                                height={420}
-                                style={{width: '100%', height: 'auto'}}
-                                quality={100}
-                            />
-                        </div>
+                <div className="flex flex-col items-center justify-center w-full h-full">
+                    <div className="size-9/12 justify-center flex">
+                        <Image
+                            src="/assets/images/screenshots/affiliates2.svg"
+                            alt="Affiliates"
+                            width={684}
+                            height={659}
+                            style={{width: '100%', height: 'auto'}}
+                            quality={100}
+                        />
                     </div>
                     <div className="space-y-2 mt-[44px] text-center">
                         <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
@@ -126,39 +101,16 @@ const MegatraderScreen = () => {
                 </div>
             </div>
             <div className="text-white h-[var(--height-slider)] flex flex-col justify-center items-center w-full">
-                <div className="flex flex-col justify-center w-full h-full">
-                    <div className="block relative mx-auto h-[772px]">
-                        <ScreenshotMg>
-                            <Image
-                                src="/assets/images/screenshots/payouts.svg"
-                                alt="Affiliates"
-                                width={684}
-                                height={659}
-                                style={{width: '100%', height: 'auto'}}
-                                quality={100}
-                            />
-                        </ScreenshotMg>
-
-                        <div className="absolute bottom-0 -left-[52px]">
-                            <Image
-                                src="/assets/images/screenshots/payouts-small.svg"
-                                alt="Affiliates"
-                                width={296}
-                                height={420}
-                                style={{width: '100%', height: 'auto'}}
-                                quality={100}
-                            />
-                        </div>
-                        <div className="absolute bottom-0 right-0">
-                            <Image
-                                src="/assets/images/screenshots/payouts-icons.svg"
-                                alt="Affiliates"
-                                width={160}
-                                height={48}
-                                style={{width: '100%', height: 'auto'}}
-                                quality={100}
-                            />
-                        </div>
+                <div className="flex flex-col items-center justify-center w-full h-full">
+                    <div className="size-9/12 justify-center flex">
+                        <Image
+                            src="/assets/images/screenshots/payouts2.svg"
+                            alt="Affiliates"
+                            width={684}
+                            height={659}
+                            style={{width: '100%', height: 'auto'}}
+                            quality={100}
+                        />
                     </div>
                     <div className="space-y-2 mt-[44px] text-center">
                         <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
