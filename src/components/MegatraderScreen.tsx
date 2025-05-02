@@ -36,15 +36,14 @@ const MegatraderScreen = () => {
             delay: 3000,
             disableOnInteraction: false
         }}
-                loop={true}
                 pagination={true}
-                modules={[Pagination, Autoplay]}
+                modules={[Pagination]}
                 className="h-full pb-[32px]">
             {sliders.map(({imageUrl, title, subtitle}, index) => (
                 <SwiperSlide key={index} className={'h-full'}>
                     <div className={clsx("text-white w-full h-full")}>
                         <div
-                            className="flex-col  w-full h-full xl:grid xl:grid-rows-[auto_128px]">
+                            className="flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px]">
                             <Image
                                 src={imageUrl}
                                 className="size-3/4 md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px)]"
