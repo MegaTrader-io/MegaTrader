@@ -36,8 +36,9 @@ const MegatraderScreen = () => {
             delay: 3000,
             disableOnInteraction: false
         }}
+                loop={true}
                 pagination={true}
-                modules={[Pagination]}
+                modules={[Pagination, Autoplay]}
                 className="h-full pb-[32px]">
             {sliders.map(({imageUrl, title, subtitle}, index) => (
                 <SwiperSlide key={index} className={'h-full'}>
