@@ -1,6 +1,6 @@
 'use client'
 import {Swiper, SwiperSlide} from 'swiper/react';
-import {Pagination} from 'swiper/modules';
+import {Pagination, Autoplay, Keyboard} from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
 import 'swiper/css/pagination';
 import '../app/swiper-pagination.css'
@@ -32,7 +32,12 @@ const MegatraderScreen = () => {
     const windowExampleRef = useRef<HTMLInputElement | null>(null);
 
     return <div ref={windowExampleRef} className="windowExampleRef h-full">
-        <Swiper pagination={true} autoplay={true} spaceBetween={50} slidesPerView={1} modules={[Pagination]}
+        <Swiper autoplay={{
+            delay: 3000,
+            disableOnInteraction: false
+        }}
+                pagination={true}
+                modules={[Pagination, Autoplay]}
                 className="h-full pb-[32px]">
             {sliders.map(({imageUrl, title, subtitle}, index) => (
                 <SwiperSlide key={index} className={'h-full'}>
