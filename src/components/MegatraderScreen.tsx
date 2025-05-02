@@ -44,17 +44,17 @@ const MegatraderScreen = () => {
                 <SwiperSlide key={index} className={'h-full'}>
                     <div className={clsx("text-white w-full h-full")}>
                         <div
-                            className="flex-col  w-full h-full grid grid-rows-[auto_128px]">
+                            className="flex-col  w-full h-full xl:grid xl:grid-rows-[auto_128px]">
                             <Image
                                 src={imageUrl}
-                                className="size-3/4 lg:max-h-[calc(100dvh-60px-85px-32px-128px)]"
+                                className="size-3/4 md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px)]"
                                 alt="Account overview"
                                 width={684}
                                 height={659}
                                 style={{width: '100%', height: 'auto'}}
                                 quality={100}
                             />
-                            <div className="space-y-2 text-center relative -top-[44px]">
+                            <div className="space-y-2 text-center relative md:top-[44px] xl:-top-[44px]">
                                 <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
                                     {title}
                                 </h3>
