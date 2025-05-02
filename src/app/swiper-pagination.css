@@ -1,0 +1,6 @@
+:root {
+    --swiper-pagination-bottom: 32px;
+    --swiper-pagination-color: #FFFFFF;
+    --swiper-pagination-bullet-inactive-color: #fff;
+    --swiper-pagination-bullet-inactive-opacity: 0.4;
+}

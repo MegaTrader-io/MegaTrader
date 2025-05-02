@@ -1,21 +1,14 @@
 'use client'
-import Slider from "react-slick";
-import "slick-carousel/slick/slick-theme.css";
-import "../app/slick-theme.css";
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Pagination} from 'swiper/modules';
+import 'swiper/swiper-bundle.css';
+import 'swiper/css/pagination';
+import '../app/swiper-pagination.css'
 
-import React, {useEffect, useRef} from "react";
+import React, {useRef} from "react";
 import Image from "next/image";
 import clsx from "clsx";
 
-const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    autoplay: false,
-    autoplaySpeed: 3000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-};
 
 const sliders = [
     {
@@ -35,100 +28,39 @@ const sliders = [
     },
 ]
 
-const SliderItem = ({imageUrl, className, title, subtitle}: {
-    imageUrl: string,
-    className: string,
-    title: string,
-    subtitle: string
-}) => {
-    return <div className={clsx("text-white w-full", className)}>
-        <div className="flex flex-col items-center justify-center w-full h-full">
-            <Image
-                src={imageUrl}
-                alt="Account overview"
-                width={684}
-                height={659}
-                style={{width: '100%', height: 'auto'}}
-                quality={100}
-            />
-            <div className="space-y-2 text-center  mt-[44px]">
-                <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
-                    {title}
-                </h3>
-                <p className="mx-auto text-stone-400 text-base font-medium leading-normal max-w-[500px] text-center">
-                    {subtitle}
-                </p>
-            </div>
-        </div>
-    </div>
-}
-
 const MegatraderScreen = () => {
     const windowExampleRef = useRef<HTMLInputElement | null>(null);
-    const sliderRef = useRef<Slider | null>(null);
 
-    useEffect(() => {
-        const handlerResize = () => {
-            if (!windowExampleRef.current) {
-                return;
-            }
-
-            const slickSlider = windowExampleRef.current.querySelector('.slick-slider') as HTMLDivElement;
-
-            if (!slickSlider) {
-                return;
-            }
-
-            const height = slickSlider.offsetHeight;
-
-            console.info('height', height);
-            // windowExampleRef.current.style.setProperty('--height-slider', `${height}px`);
-        }
-
-        const observer = new ResizeObserver(handlerResize);
-
-        if (typeof window !== "undefined") {
-            handlerResize();
-            observer.observe(document.body);
-            window.addEventListener("resize", handlerResize);
-        }
-
-        return () => {
-            observer.disconnect();
-            window.removeEventListener("resize", handlerResize);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (!sliderRef.current) {
-            return;
-        }
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                console.info('entry.isIntersecting', entry.isIntersecting);
-            },
-            {threshold: 0.1, root: windowExampleRef.current}
-        );
-
-        return () => {
-            observer.disconnect();
-        }
-    }, [sliderRef.current, windowExampleRef.current]);
-
-
-    return <div ref={windowExampleRef} className="windowExampleRef mx-auto relative xl:w-full">
-        <Slider ref={sliderRef} {...settings}>
-            {sliders.map((sliderItem, index) => (
-                <SliderItem
-                    key={index}
-                    className={`slider-${index + 1}`}
-                    imageUrl={sliderItem.imageUrl}
-                    title={sliderItem.title}
-                    subtitle={sliderItem.subtitle}
-                />
+    return <div ref={windowExampleRef} className="windowExampleRef h-full">
+        <Swiper pagination={true} autoplay={true} spaceBetween={50} slidesPerView={1} modules={[Pagination]}
+                className="h-full pb-[32px]">
+            {sliders.map(({imageUrl, title, subtitle}, index) => (
+                <SwiperSlide key={index} className={'h-full'}>
+                    <div className={clsx("text-white w-full h-full")}>
+                        <div
+                            className="flex-col  w-full h-full grid grid-rows-[auto_128px]">
+                            <Image
+                                src={imageUrl}
+                                className="size-3/4 lg:max-h-[calc(100dvh-60px-85px-32px-128px)]"
+                                alt="Account overview"
+                                width={684}
+                                height={659}
+                                style={{width: '100%', height: 'auto'}}
+                                quality={100}
+                            />
+                            <div className="space-y-2 text-center relative -top-[44px]">
+                                <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
+                                    {title}
+                                </h3>
+                                <p className="mx-auto text-stone-400 text-base font-medium leading-normal max-w-[500px] text-center">
+                                    {subtitle}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </SwiperSlide>
             ))}
-        </Slider>
+        </Swiper>
     </div>
 }
 

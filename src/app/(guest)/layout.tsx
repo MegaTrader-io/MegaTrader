@@ -11,8 +11,10 @@ const Layout = ({children}: { children: React.ReactNode }) => {
                 </div>
             </div>
             <div
-                className="relative hidden rounded-2xl md:px-[52px] xl:w-0 lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden pt-16 pb-20">
-                <MegatraderScreen/>
+                className="relative hidden rounded-2xl md:px-[52px] xl:w-0 lg:flex-1 md:block bg-[#1e1e1e] lg:overflow-hidden">
+                <div className="h-full pt-[60px]">
+                    <MegatraderScreen/>
+                </div>
             </div>
         </div>
     );
