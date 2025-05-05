@@ -15,12 +15,12 @@ const sliders = [
         subtitle: 'Log in to manage your accounts, track performance, and unlock the full potential of your MegaTrader journey.'
     },
     {
-        imageUrl: '/assets/images/screenshots/affiliates2.svg',
+        imageUrl: '/assets/images/screenshots/affiliates3.svg',
         title: 'Track, Grow, and Earn with Confidence',
         subtitle: 'Monitor your referrals, commissions, and performance using powerful tools designed to maximize your affiliate success.'
     },
     {
-        imageUrl: '/assets/images/screenshots/payouts2.svg',
+        imageUrl: '/assets/images/screenshots/payouts3.svg',
         title: 'Stay Fully in Control of Every Payout',
         subtitle: 'View your earnings, check payment status, and stay in control of your withdrawals with clear, real-time updates.'
     },
