@@ -355,7 +355,7 @@ export default function AccountOverView() {
 
                     <div className="text-left xs:text-right lg:inline-flex lg:items-center">
                         <div
-                            className="gap-2 pl-0 pr-4 py-2 sm:border-r border-neutral-700 inline-flex items-center relative">
+                            className="gap-2 pl-0 pr-4 py-2 inline-flex items-center relative">
                             <div
                                 className="text-white">
                                 Login :
