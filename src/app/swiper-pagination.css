@@ -4,3 +4,10 @@
     --swiper-pagination-bullet-inactive-color: #fff;
     --swiper-pagination-bullet-inactive-opacity: 0.4;
 }
+
+.swiper-pagination{
+    position: relative;
+    bottom: auto !important;
+    margin-top: 44px;
+    margin-bottom: 32px;
+}
