@@ -33,7 +33,7 @@ const Layout = ({children}: { children: React.ReactNode }) => {
         <div className="m-4 xl:max-h-[calc(100dvh-32px)] xl:h-dvh xl:flex xl:flex-row flex-col">
             <div
                 ref={divRef}
-                className="mg-divRef flex h-full w-full flex-col justify-center px-4 pt-6 sm:pb-12 sm:px-6 md:h-auto lg:min-h-auto xl:w-2/5 xl:flex-none xl:px-24">
+                className="mg-divRef flex h-full w-full flex-col justify-center px-4 py-6 sm:py-12 sm:px-6 md:h-auto lg:min-h-auto xl:w-2/5 xl:flex-none xl:px-24">
                 <div className="mx-auto w-full md:max-w-[638px] lg:max-w-[409px]">
                     <div className="w-full mx-auto space-y-8">{children}</div>
                 </div>
