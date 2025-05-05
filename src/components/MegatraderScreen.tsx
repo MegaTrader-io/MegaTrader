@@ -1,6 +1,6 @@
 'use client'
 import {Swiper, SwiperSlide} from 'swiper/react';
-import {Pagination} from 'swiper/modules';
+import {Pagination, Autoplay} from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
 import 'swiper/css/pagination';
 import '../app/swiper-pagination.css'
@@ -26,39 +26,37 @@ const sliders = [
     },
 ]
 
-const MegatraderScreen = () => {
-    return <Swiper autoplay={{
-        delay: 3000,
-        disableOnInteraction: false
-    }}
-                   loop={true}
-                   pagination={true}
-                   modules={[Pagination]}>
-        {sliders.map(({imageUrl, title, subtitle}, index) => (
-            <SwiperSlide key={index}>
-                <div
-                    className="min-h-[773px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px]">
-                    <Image
-                        src={imageUrl}
-                        className="size-3/4 md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
-                        alt="Account overview"
-                        width={684}
-                        height={659}
-                        style={{objectFit: 'fill', width: '100%', height: '100%'}}
-                        quality={100}
-                    />
-                    <div className="space-y-2 text-center relative md:top-[44px]">
-                        <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
-                            {title}
-                        </h3>
-                        <p className="mx-auto text-stone-400 text-base font-medium leading-normal max-w-[500px] text-center">
-                            {subtitle}
-                        </p>
-                    </div>
+const MegatraderScreen = () => <Swiper autoplay={{
+    delay: 3000,
+    disableOnInteraction: false
+}}
+                                       loop={true}
+                                       pagination={true}
+                                       modules={[Pagination, Autoplay]}>
+    {sliders.map(({imageUrl, title, subtitle}, index) => (
+        <SwiperSlide key={index}>
+            <div
+                className="min-h-[773px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px]">
+                <Image
+                    src={imageUrl}
+                    className="size-3/4 md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
+                    alt="Account overview"
+                    width={684}
+                    height={659}
+                    style={{objectFit: 'fill', width: '100%', height: '100%'}}
+                    quality={100}
+                />
+                <div className="space-y-2 text-center relative md:top-[44px]">
+                    <h3 className="h-[29px] text-center text-white text-xl font-medium uppercase leading-normal">
+                        {title}
+                    </h3>
+                    <p className="mx-auto text-stone-400 text-base font-medium leading-normal max-w-[500px] text-center">
+                        {subtitle}
+                    </p>
                 </div>
-            </SwiperSlide>
-        ))}
-    </Swiper>
-}
+            </div>
+        </SwiperSlide>
+    ))}
+</Swiper>
 
 export default MegatraderScreen;
