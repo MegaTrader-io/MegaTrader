@@ -50,7 +50,7 @@ const InputText = forwardRef<HTMLInputElement | null, InputTextProps>(
                         aria-label={placeholder || name}
                         aria-invalid={hasError}
                         aria-describedby={hasError ? `${name}-error` : undefined}
-                        className={`h-12 px-4 py-3 bg-[#1e1e1e]/70 placeholder:text-neutral-700 rounded-xl border w-full focus:border-transparent focus:outline-none focus:ring-1 ${
+                        className={`h-12 px-4 py-3 bg-[#1e1e1e]/70 placeholder:text-neutral-700 rounded-xl border w-full font-medium focus:border-transparent text-base focus:outline-none focus:ring-1 ${
                             hasError
                                 ? 'ring-1 ring-red-500 text-red-500 border-transparent'
                                 : 'hover:border-white text-stone-400 border-neutral-700 focus:ring-mgt-primary'
