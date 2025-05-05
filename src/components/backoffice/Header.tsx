@@ -45,13 +45,18 @@ export default function Header() {
             <div className="w-auto">
                 <Link
                     href="/account-overview"
+                    className="flex gap-4 items-center"
                 >
+                    <Image src={'/assets/images/logo-mt.svg'}
+                           className="w-[48px] h-[48px] lg:w-[60px] lg:h-[60px]"
+                           width={60} height={60} alt={'Logo Megatrader'}/>
+
                     <Image
                         src="../assets/images/megatrader-original.svg"
                         alt="Logo"
                         width={250}
                         height={45}
-                        className="w-[170px] h-[47px] lg:w-[250px] lg:h-[45px]"
+                        className="w-[170px] h-[47px] lg:w-[250px] lg:h-[45px] hidden lg:block"
                     />
                 </Link>
             </div>
