@@ -100,23 +100,32 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
 
     return (
         <div className="relative w-full h-full text-white px-16">
-            <div className="absolute inset-0 z-0 -bottom-[1px] my-10">
-                {computedYAxis.map((y, idx) => (
-                    <div
-                        key={idx}
-                        className={clsx(
-                            'absolute w-full text-sm font-medium text-stone-500 ml-10 leading-tight',
-                            {'border-t border-white/10': idx > 0}
-                        )}
-                        style={{bottom: `${(y / maxY) * 100}%`}}
-                    >
-                        <span className="absolute -translate-x-10 -translate-y-1/2 text-right">
-                            {y}
-                        </span>
-                    </div>
-                ))}
-            </div>
+            <div className="absolute top-0 -bottom-1 right-0 left-0 z-0 my-10 overflow-hidden">
+                {computedYAxis.map((y, idx) => {
+                    // Establecer el 0 en el 2% y el máximo (último) en el 95%
+                    let bottomPosition = (y / maxY) * 100;
+                    if (y === 0) {
+                        bottomPosition = 2; // El valor de 0 en y se coloca en 2%
+                    } else if (y === maxY) {
+                        bottomPosition = 98; // El valor máximo de y se coloca en 95%
+                    }
 
+                    return (
+                        <div
+                            key={idx}
+                            className={clsx(
+                                'absolute w-full text-sm font-medium text-stone-500 ml-10 leading-tight',
+                                {'border-t border-white/10': idx > 0}
+                            )}
+                            style={{bottom: `${bottomPosition}%`}}
+                        >
+                <span className="absolute -translate-x-10 -translate-y-1/2 text-right">
+                    {y}
+                </span>
+                        </div>
+                    );
+                })}
+            </div>
             <div className="relative flex gap-2 h-full w-full">
                 {xAxis.map((label, index) => {
                     const stackedBars = series.map((serie) => ({
