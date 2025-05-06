@@ -1,6 +1,5 @@
 'use client';
 
-import Layout from './(guest)/layout';
 import Image from "next/image";
 import React, {useRef, useState} from "react";
 import InputText from "@/components/InputText";
@@ -11,6 +10,7 @@ import {sleep} from "@/commons/utils";
 import {TARGET_EMAIL} from "@/commons/credentials";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
 import Alert from "@/components/Alert";
+import HomeLayout from "@/components/HomeLayout";
 
 const Home = () => {
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
@@ -68,8 +68,8 @@ const Home = () => {
         setEmail('')
     }
 
-    return <Layout>
-        <div className="mx-auto w-[406px] space-y-8">
+    return <HomeLayout>
+        <div className="mx-auto sm:w-[406px] space-y-8 h-[calc(100dvh-64px)] content-center sm:h-full sm:content-normal">
             {showAlert && (
                 <div className="w-full">
                     <Alert type={showAlert.type}
@@ -116,7 +116,7 @@ const Home = () => {
                 </Button>
             </form>
         </div>
-    </Layout>
+    </HomeLayout>
 }
 
 export default Home;
