@@ -1,42 +1,122 @@
 'use client';
 
-import {Suspense} from 'react'
-import HeroSection from "@/components/landing-page/HeroSection";
-import Header from "@/components/landing-page/Header";
-import Footer from "@/components/landing-page/Footer";
-import FeatureHighlightSection from "@/components/landing-page/FeatureHighlightSection";
-import SponsorLogosSection from "@/components/landing-page/SponsorLogosSection";
-import TradingStepsSection from "@/components/landing-page/TradingStepsSection";
-import BenefitsSection from "@/components/landing-page/BenefitsSection";
-import Subscriptions from "@/components/landing-page/Subscriptions";
-import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
-import UnlockThePowerOfMegaTrader from "@/components/landing-page/UnlockThePowerOfMegaTrader";
-import FaqsSection from "@/components/landing-page/Faqs";
-import FlexibleFuturesTradingAndAnalytics from "@/components/landing-page/FlexibleFuturesTradingAndAnalytics";
+import Layout from './(guest)/layout';
+import Image from "next/image";
+import React, {useRef, useState} from "react";
+import InputText from "@/components/InputText";
+import clsx from "clsx";
+import {Button} from "@/components/Button";
+import {useLoading} from "@/context/LoadingContext";
+import {sleep} from "@/commons/utils";
+import {TARGET_EMAIL} from "@/commons/credentials";
+import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
+import Alert from "@/components/Alert";
 
 const Home = () => {
-    return <>
-        <header id="home" className="px-4 w-full z-50">
-            <Header/>
-        </header>
-        <main
-            className="min-h-[calc(100vh-96px)] lg:h-full lg:mt-8 xl:mt-[229px] w-full lg:max-w-7xl mx-auto mt-24">
-            <HeroSection className="px-4"/>
-            <FeatureHighlightSection className="px-4"/>
-            <SponsorLogosSection className="px-4"/>
-            <Suspense fallback={'loading...'}>
-                <MarketOverviewSection className="px-4"/>
-            </Suspense>
-            <TradingStepsSection className="px-4"/>
-            <Subscriptions className="px-4"/>
-            <UnlockThePowerOfMegaTrader className="lg:px-4"/>
-            <FlexibleFuturesTradingAndAnalytics className="px-4"/>
-            <BenefitsSection className="px-4"/>
-            <FaqsSection className="px-4"/>
-        </main>
-        <Footer/>
-    </>
-}
+    const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
+    const {setLoading, isLoading: sendingEmail} = useLoading();
+    const inputEmail = useRef<HTMLInputElement | null>(null);
+    const [email, setEmail] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const validateEmail = () => {
+        if (inputEmail.current) {
+            const value = inputEmail.current.value.trim();
+
+            if (!value) {
+                setErrorMessage("This field is required");
+                return false;
+            }
+
+            if (!inputEmail.current.validity.valid) {
+                setErrorMessage("Invalid email address");
+                return false;
+            }
+
+            setErrorMessage(null);
+            return true;
+        }
+        return false;
+    };
+
+    const handlerSubmitForm = async (ev: React.ChangeEvent<HTMLFormElement>) => {
+        ev.preventDefault();
+
+        if (!validateEmail()) {
+            return;
+        }
+
+        inputEmail.current?.blur();
+
+        setLoading(true);
+        await sleep(900);
+
+        let result: IShowAlert = {
+            type: 'error',
+            message: 'Something went wrong. Check your internet connection and try again later.'
+        }
+
+        if (email === TARGET_EMAIL) {
+            result = {
+                type: 'success',
+                message: 'Congratulations! You have successfully subscribed.'
+            }
+        }
+
+        setShowAlert(result)
+        setLoading(false);
+        setEmail('')
+    }
+
+    return <Layout>
+        <div className="mx-auto w-[406px] space-y-8">
+            {showAlert && (
+                <div className="w-full">
+                    <Alert type={showAlert.type}
+                           message={showAlert.message}/>
+                </div>
+            )}
+
+            <div className="flex gap-4 items-center justify-center">
+                <Image src={'/assets/images/logo-mt.svg'} width={60} height={60} alt={'Logo Megatrader'}/>
+                <Image
+                    src="../assets/images/megatrader-original.svg"
+                    alt="Logo"
+                    width={250}
+                    height={45}
+                    className="w-[250px] h-[44.63px]"
+                />
+            </div>
+
+            <div className="space-y-4">
+                <h1 className="self-stretch text-center justify-start text-white text-[40px] font-medium font-['Roboto'] uppercase leading-[48px]">
+                    Comming soon!
+                </h1>
+                <h2 className="self-stretch text-center justify-start text-stone-400 text-base font-medium font-['Roboto'] leading-normal">
+                    Empowering traders with innovative solutions, unmatched reliability, and tools designed to elevate
+                    your trading journey to new heights.
+                </h2>
+            </div>
+
+            <form noValidate={true} onSubmit={handlerSubmitForm}
+                  className="grid grid-rows-2 md:flex items-start gap-2 my-4">
+                <InputText
+                    ref={inputEmail}
+                    required={true}
+                    type={'email'}
+                    disabled={sendingEmail}
+                    className={clsx(!!errorMessage ? 'placeholder:text-rose-500' : null)}
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    errorMessage={errorMessage}
+                    placeholder={'Enter your email'}
+                    name={'email'}/>
+                <Button disabled={sendingEmail} type={'submit'} className="w-full md:w-auto">
+                    SUBSCRIBE
+                </Button>
+            </form>
+        </div>
+    </Layout>
+}
 
 export default Home;
