@@ -69,7 +69,7 @@ const Home = () => {
     }
 
     return <HomeLayout>
-        <div className="mx-auto sm:w-[406px] space-y-8 h-[calc(100dvh-64px)] content-center sm:h-full sm:content-normal">
+        <div className="mx-auto sm:w-[406px] xl:w-[406px] space-y-8 h-[calc(100dvh-64px)] content-center sm:h-full sm:content-normal">
             {showAlert && (
                 <div className="w-full">
                     <Alert type={showAlert.type}
