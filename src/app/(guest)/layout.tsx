@@ -9,7 +9,7 @@ const Layout = ({children}: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const updateHeight = () => {
-            if (window.innerWidth >= 767 && window.innerWidth <= 1280 && divRef.current) {
+            if (window.innerWidth >= 767 && window.innerWidth <= 1280) {
                 if (divRef.current) {
                     const divHeight = divRef.current.offsetHeight;
                     const calculatedHeight = `calc(100dvh - ${divHeight + 32}px)`;
