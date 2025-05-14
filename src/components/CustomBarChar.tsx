@@ -122,7 +122,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
     }
 
     return (
-        <div className="chart-wrapper relative w-full h-full text-white px-16" style={{'--total-width': '0px'}}>
+        <div className="chart-wrapper relative w-full h-full text-white px-16">
             <div ref={panelLinesRef}
                  className="panel-lines absolute top-0 -bottom-1 right-0 left-0 z-0 my-10 overflow-hidden"
                  style={{width: 'var(--total-width)'}}>

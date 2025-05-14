@@ -23,6 +23,7 @@ export default function Affiliates() {
     }
 
     return <>
+        <DriverGuide currentPath="/affiliates"/>
         {showAlert && (
             <div className="w-full">
                 <Alert type={showAlert.type}
