@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import clsx from "clsx";
 import {AnimatePresence, motion} from "framer-motion";
 import {ArrowUpRightIcon} from "@heroicons/react/16/solid";
@@ -13,15 +13,38 @@ interface SeriesItem {
 }
 
 export interface ChartBarProps {
+    internalId: number;
     xAxis: string[];
     series: SeriesItem[];
     yAxis?: number[];
 }
 
-const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
+const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxis}) => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [hoverIndex, setHoverIndex] = useState<number | null>(null);
     const barRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const panelLinesRef = useRef<HTMLDivElement | null>(null);
+
+    const updatePanelWidth = () => {
+        const totalWidth = document.querySelector('.bars')?.scrollWidth || 0;
+        console.info('totalWidth', totalWidth, panelLinesRef.current);
+        if (panelLinesRef.current) {
+            panelLinesRef.current.style.width = `${totalWidth + 64 + 64}px`;
+        }
+    };
+
+    useEffect(() => {
+        updatePanelWidth();
+
+        window.addEventListener('resize', updatePanelWidth);
+
+        return () => {
+            window.removeEventListener('resize', updatePanelWidth);
+            if (panelLinesRef.current) {
+                panelLinesRef.current.style.width = `0px`;
+            }
+        };
+    }, [internalId]);
 
     if (!series?.length || !xAxis?.length) {
         return <p className="text-red-500">No data to display.</p>;
@@ -99,8 +122,10 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
     }
 
     return (
-        <div className="relative w-full h-full text-white px-16">
-            <div className="absolute top-0 -bottom-1 right-0 left-0 z-0 my-10 overflow-hidden">
+        <div className="chart-wrapper relative w-full h-full text-white px-16" style={{'--total-width': '0px'}}>
+            <div ref={panelLinesRef}
+                 className="panel-lines absolute top-0 -bottom-1 right-0 left-0 z-0 my-10 overflow-hidden"
+                 style={{width: 'var(--total-width)'}}>
                 {computedYAxis.map((y, idx) => {
                     // Establecer el 0 en el 2% y el máximo (último) en el 95%
                     let bottomPosition = (y / maxY) * 100;
@@ -126,7 +151,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({xAxis, series, yAxis}) => {
                     );
                 })}
             </div>
-            <div className="relative flex gap-2 h-full w-full">
+            <div className="bars relative flex gap-2 h-full w-full">
                 {xAxis.map((label, index) => {
                     const stackedBars = series.map((serie) => ({
                         height: (serie.data[index] / maxY) * 90,

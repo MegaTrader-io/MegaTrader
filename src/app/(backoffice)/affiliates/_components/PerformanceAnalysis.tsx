@@ -41,6 +41,7 @@ function PerformanceAnalysis() {
             }
 
             return {
+                internalId: new Date().getTime(),
                 xAxis: Array.from({length: days}, (_, i) => (i + 1).toString().padStart(2, '0')),
                 series: [
                     {
@@ -58,6 +59,7 @@ function PerformanceAnalysis() {
         } catch (error) {
             console.error("unable to process the data:", error);
             return {
+                internalId: new Date().getTime(),
                 xAxis: [],
                 series: [],
             };
@@ -130,7 +132,8 @@ function PerformanceAnalysis() {
                     </div>
                 </div>
             </div>
-            <div ref={container} className="w-full h-[409px] overflow-x-auto">
+            <div ref={container}
+                 className="container-chart w-full h-[409px] overflow-x-auto">
                 {chartData && <CustomBarChar {...chartData} />}
             </div>
         </Card>
