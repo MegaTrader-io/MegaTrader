@@ -7,7 +7,7 @@ import ChartBar from "@/components/ChartBar";
 
 function IncomeTracker() {
     const [dataChart, setDataChart] = useState<{ data: number[], labels: string[] } | null>(null);
-    const [selectPeriod, setSelectPeriod] = useState<Period>(incomeTrackerPeriods[2]);
+    const [selectPeriod, setSelectPeriod] = useState<Period>(incomeTrackerPeriods[0]);
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
         const id = e.target.value
