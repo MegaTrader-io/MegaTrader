@@ -133,7 +133,7 @@ function PerformanceAnalysis() {
                 </div>
             </div>
             <div ref={container}
-                 className="container-chart w-full h-[409px] overflow-x-auto">
+                 className="container-chart w-full h-[409px] overflow-x-auto pr-[8px]">
                 {chartData && <CustomBarChar {...chartData} />}
             </div>
         </Card>
