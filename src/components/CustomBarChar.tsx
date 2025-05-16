@@ -23,26 +23,57 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [hoverIndex, setHoverIndex] = useState<number | null>(null);
     const barRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const panelBarRefs = useRef<HTMLDivElement | null>(null);
     const panelLinesRef = useRef<HTMLDivElement | null>(null);
 
     const updatePanelWidth = () => {
-        const totalWidth = document.querySelector('.bars')?.scrollWidth || 0;
-        console.info('totalWidth', totalWidth, panelLinesRef.current);
-        if (panelLinesRef.current) {
-            panelLinesRef.current.style.width = `${totalWidth + 64 + 64}px`;
-        }
+        const panelLines = panelLinesRef.current;
+        if (!panelLines) return;
+
+        if (!panelBarRefs.current) return;
+        const panelBars = panelBarRefs.current;
+
+        // console.info('panelLines.scrollWidth', panelLines.scrollWidth);
+        // console.info('panelBars.scrollWidth', panelBars.scrollWidth);
+        //
+        const maxWidthLabel = Math.max(...[...panelLines.querySelectorAll('span')].map(element => element.getBoundingClientRect().width), 0);
+        // console.info('maxWidthLabel', maxWidthLabel);
+        //
+        // if (panelLines.scrollWidth > panelBars.scrollWidth) {
+        //     const panelLinesWidth = panelLines.scrollWidth;
+        //     const adjustedWidth = panelLinesWidth - maxWidthLabel - 64 * 2 - 40;
+        //     panelBars.style.width = `${adjustedWidth}px`;
+        // } else {
+        //     if (panelLinesRef.current) {
+        //         panelLinesRef.current.style.minWidth = `${panelBars.scrollWidth + (64 * 2) + 40 + maxWidthLabel}px`;
+        //     }
+        //
+        //     panelBars.style.width = ``;
+        // }
+
+        const marginLeft = 40;
+        panelBars.style.marginLeft = `${marginLeft}px`;
+        panelBars.style.width = `${panelBars.style.width || 0 - 40}px`;
+        // panelLinesRef.current.style.width = `${panelBarRefs.current?.scrollWidth+(40+24*2)}px`;
     };
 
     useEffect(() => {
         updatePanelWidth();
 
+        console.info('internalId', internalId);
         window.addEventListener('resize', updatePanelWidth);
 
         return () => {
             window.removeEventListener('resize', updatePanelWidth);
-            if (panelLinesRef.current) {
-                panelLinesRef.current.style.width = `0px`;
-            }
+
+            // if (panelLinesRef.current) {
+            //     panelLinesRef.current.style.width = '';
+            // }
+            //
+            // if (panelBarRefs.current) {
+            //     panelBarRefs.current.style.transform = '';
+            //     panelBarRefs.current.style.width = '';
+            // }
         };
     }, [internalId]);
 
@@ -122,15 +153,15 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
     }
 
     return (
-        <div className="chart-wrapper relative w-full h-full text-white px-16">
+        <div className="chart-wrapper relative w-full text-white">
             <div ref={panelLinesRef}
-                 className="panel-lines absolute top-0 -bottom-1 right-0 left-0 z-0 my-10 overflow-hidden"
-                 style={{width: 'var(--total-width)'}}>
+                 className="panel-lines absolute top-0 -bottom-1 right-0 left-0 z-0 overflow-hidden"
+            >
                 {computedYAxis.map((y, idx) => {
                     // Establecer el 0 en el 2% y el máximo (último) en el 95%
                     let bottomPosition = (y / maxY) * 100;
                     if (y === 0) {
-                        bottomPosition = 2; // El valor de 0 en y se coloca en 2%
+                        bottomPosition = 6; // El valor de 0 en y se coloca en 2%
                     } else if (y === maxY) {
                         bottomPosition = 98; // El valor máximo de y se coloca en 95%
                     }
@@ -144,14 +175,14 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
                             )}
                             style={{bottom: `${bottomPosition}%`}}
                         >
-                <span className="absolute -translate-x-10 -translate-y-1/2 text-right">
+                <span className="absolute -translate-x-10 -translate-y-1/2 min-w-[25px] text-right">
                     {y}
                 </span>
                         </div>
                     );
                 })}
             </div>
-            <div className="bars relative flex gap-2 h-full w-full">
+            <div ref={panelBarRefs} className="bars relative flex gap-2 h-full w-[100% - 40px]">
                 {xAxis.map((label, index) => {
                     const stackedBars = series.map((serie) => ({
                         height: (serie.data[index] / maxY) * 90,
@@ -176,7 +207,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
                              onMouseEnter={() => setHoverIndex(index)}
                              onMouseLeave={() => setHoverIndex(null)}
                              onClick={() => setSelectedIndex(index)}
-                             className="grid grid-rows-[1fr_36px] gap-2 items-center justify-end flex-1 h-[387px]"
+                             className="grid grid-rows-[1fr_36px] gap-2 items-center w-full h-[387px]"
                         >
                             <div
                                 ref={(el) => {
