@@ -42,9 +42,9 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
         const maxWidthLabel = Math.max(...[...panelLines.querySelectorAll('span')].map(element => element.getBoundingClientRect().width), 0);
 
         const marginLeft = 40;
-        panelBars.style.marginLeft = `${marginLeft + maxWidthLabel}px`;
+        panelBars.style.marginLeft = `${marginLeft}px`;
         panelBars.style.width = `${panelBars.style.width || 0 - marginLeft}px`;
-        panelLines.style.width = `${panelChartWrapper.scrollWidth + maxWidthLabel - 17}px`;
+        panelLines.style.width = `${panelChartWrapper.scrollWidth + maxWidthLabel - 17 - 8}px`;
     };
 
     useEffect(() => {
@@ -156,9 +156,9 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
                             )}
                             style={{bottom: `${bottomPosition}%`}}
                         >
-                <span className="absolute -translate-x-10 -translate-y-1/2 min-w-[25px] text-right">
-                    {y}
-                </span>
+                             <span className="absolute -translate-x-10 -translate-y-1/2 min-w-[25px] text-right">
+                                 {y}
+                             </span>
                         </div>
                     );
                 })}
