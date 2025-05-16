@@ -36,7 +36,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
         // console.info('panelLines.scrollWidth', panelLines.scrollWidth);
         // console.info('panelBars.scrollWidth', panelBars.scrollWidth);
         //
-        const maxWidthLabel = Math.max(...[...panelLines.querySelectorAll('span')].map(element => element.getBoundingClientRect().width), 0);
+        // const maxWidthLabel = Math.max(...[...panelLines.querySelectorAll('span')].map(element => element.getBoundingClientRect().width), 0);
         // console.info('maxWidthLabel', maxWidthLabel);
         //
         // if (panelLines.scrollWidth > panelBars.scrollWidth) {
