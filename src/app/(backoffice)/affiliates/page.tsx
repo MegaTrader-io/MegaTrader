@@ -9,6 +9,7 @@ import {AffiliatesMetrics} from "@/commons/data";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
 import PerformanceAnalysis from "@/app/(backoffice)/affiliates/_components/PerformanceAnalysis";
 import DriverGuide from "@/components/on-boarding/DriverGuide";
+import {ActivateAffiliateModal} from "@/app/(backoffice)/affiliates/_components/activate_modal/ActivateAffiliateModal";
 
 export interface IShowAlert {
     type: 'success' | 'error',
@@ -17,13 +18,17 @@ export interface IShowAlert {
 
 export default function Affiliates() {
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
+    const [openActivateModal, setOpenActivateModal] = useState<boolean>(true);
 
     function handleDisplayAlert(payload: IShowAlert) {
         setShowAlert(payload)
     }
 
     return <>
-        <DriverGuide currentPath="/affiliates"/>
+        {!openActivateModal && (
+            <DriverGuide currentPath="/affiliates"/>
+        )}
+
         {showAlert && (
             <div className="w-full">
                 <Alert type={showAlert.type}
@@ -31,6 +36,10 @@ export default function Affiliates() {
             </div>
         )}
 
+        <ActivateAffiliateModal open={openActivateModal}
+                                onClose={() => {
+                                    setOpenActivateModal(false)
+                                }}/>
         <MetricsPanel id="affiliate-summary" metrics={AffiliatesMetrics}/>
         <RequestWithdrawal handleDisplayAlert={handleDisplayAlert}/>
         <ReferralAndEarningsSection handleDisplayAlert={handleDisplayAlert}/>
