@@ -32,7 +32,7 @@ export const ActivateAffiliateModal = ({open, onClose}: {
 
     return (
         <Dialog showModal={open}
-                childrenClassName={'max-h-dvh -top-[10px] relative md:space-y-12'}
+                childrenClassName={'max-h-dvh -top-[10px] relative md:space-y-12 pr-8 pl-8'}
                 className="w-[calc(100vw-32px)] sm:w-[700px] md:!gap-0"
                 onClose={onClose}>
             <div
