@@ -42,7 +42,7 @@ export const ActivateAffiliateModal = ({open, onClose}: {
                         className="justify-start text-white text-[32px] font-medium uppercase leading-10">
                         Start Earning with Referrals
                     </div>
-                    <p className="text-left text-stone-400 text-base font-medium  leading-normal">
+                    <p className="w-[288px] text-left text-stone-400 text-base font-medium  leading-normal">
                         Activate your dashboard to start earning commission from every referral sale.
                     </p>
                     <form onSubmit={onSubmit} noValidate={false}>
