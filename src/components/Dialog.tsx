@@ -103,7 +103,7 @@ function Dialog({
                             </div>
 
                             <AlertDialogCancel asChild>
-                                <button className="select-none">
+                                <button className="select-none outline-none focus-visible:border-none">
                                     <XCircleIcon className="text-white w-6 h-6"/>
                                 </button>
                             </AlertDialogCancel>
