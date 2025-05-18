@@ -4,7 +4,7 @@ import React from 'react';
 import Skeleton from "@/components/Skeleton";
 
 function SkeletonAffiliate() {
-    const animated = false;
+    const animated = true;
     return (
         <>
             <div className="space-y-4 md:space-y-0 w-full md:grid md:grid-cols-2 lg:flex lg:justify-around gap-4">
