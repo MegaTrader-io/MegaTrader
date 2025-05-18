@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .bg-shimmer {
+        background-image: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+        );
+    }
+
+    .bg-shimmer-size {
+        background-size: 200% 100%;
+        background-repeat: no-repeat;
+    }
+}
+
 @layer base {
     :root {
         --mgt-color-primary: #FFB34A;
@@ -22,7 +38,6 @@ body {
     line-height: 1.6;
     display: flex;
     flex-direction: column;
-    /*min-height: 100vh;*/
     overflow-x: hidden
 }
 

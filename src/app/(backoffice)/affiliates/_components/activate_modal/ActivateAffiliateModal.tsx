@@ -22,14 +22,11 @@ const featureList = [
     }
 ]
 
-export const ActivateAffiliateModal = ({open, onClose}: {
+export const ActivateAffiliateModal = ({open, onClose, onSubmit}: {
     open: boolean,
     onClose: () => void,
+    onSubmit: () => void,
 }) => {
-    const onSubmit = () => {
-
-    }
-
     return (
         <Dialog showModal={open}
                 childrenClassName={'max-h-dvh -top-[10px] relative md:space-y-12 pr-8 pl-8'}

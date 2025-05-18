@@ -28,6 +28,12 @@ export default {
             // => @media (min-width: 1600px) { ... }
         },
         extend: {
+            backgroundImage: {
+                shimmer: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+            },
+            backgroundSize: {
+                shimmer: '200% 100%',
+            },
             fontFamily: {
                 sans: ["var(--font-space-grotesk)", "sans-serif"],
                 roboto: ["var(--font-roboto)", "sans-serif"],
@@ -65,8 +71,13 @@ export default {
                     from: { opacity: "0", transform: "translateX(-2px)" },
                     to: { opacity: "1", transform: "translateX(0)" },
                 },
+                shimmer: {
+                    '0%': { backgroundPosition: '200% 0' },
+                    '100%': { backgroundPosition: '-200% 0' },
+                },
             },
             animation: {
+                shimmer: 'shimmer 2s linear infinite',
                 'rotate-animation': 'rotate-animation 10s linear infinite',
                 slideDownAndFade:
                     "slideDownAndFade 400ms cubic-bezier(0.16, 1, 0.3, 1)",
