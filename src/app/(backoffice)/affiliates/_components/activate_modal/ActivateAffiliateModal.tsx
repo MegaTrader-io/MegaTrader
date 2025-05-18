@@ -36,7 +36,7 @@ export const ActivateAffiliateModal = ({open, onClose, onSubmit}: {
                 className="flex flex-col items-center space-y-8 md:space-y-0 md:flex-row md:flex md:space-x-8 relative">
                 <div className="space-y-4 justify-center items-center flex-col self-center">
                     <div
-                        className="justify-start text-white text-[32px] font-medium uppercase leading-10">
+                        className="justify-start text-white text-[32px] mr-2 md:mr-0 font-medium uppercase leading-10">
                         Start Earning with Referrals
                     </div>
                     <p className="w-[288px] text-left text-stone-400 text-base font-medium  leading-normal">
