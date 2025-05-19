@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import React, {useRef, useState} from "react";
+import React, {ChangeEvent, useRef, useState} from "react";
 import InputText from "@/components/InputText";
 import clsx from "clsx";
 import {Button} from "@/components/Button";
@@ -11,13 +11,18 @@ import {TARGET_EMAIL} from "@/commons/credentials";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
 import Alert from "@/components/Alert";
 import HomeLayout from "@/components/HomeLayout";
+import {InputCheckbox} from "@/components/InputCheckbox";
 
 const Home = () => {
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
     const {setLoading, isLoading: sendingEmail} = useLoading();
+    const [form, setForm] = useState({
+        email: '',
+        email_consent: false,
+    });
     const inputEmail = useRef<HTMLInputElement | null>(null);
-    const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const canSubscribe = form.email_consent === true;
 
     const validateEmail = () => {
         if (inputEmail.current) {
@@ -56,7 +61,7 @@ const Home = () => {
             message: 'Something went wrong. Check your internet connection and try again later.'
         }
 
-        if (email === TARGET_EMAIL) {
+        if (form.email === TARGET_EMAIL) {
             result = {
                 type: 'success',
                 message: 'Congratulations! You have successfully subscribed.'
@@ -65,11 +70,11 @@ const Home = () => {
 
         setShowAlert(result)
         setLoading(false);
-        setEmail('')
     }
 
     return <HomeLayout>
-        <div className="mx-auto sm:w-[406px] xl:w-[406px] space-y-8 h-[calc(100dvh-64px)] content-center sm:h-full sm:content-normal">
+        <div
+            className="mx-auto sm:w-[406px] xl:w-[406px] space-y-8 h-[calc(100dvh-64px)] content-center sm:h-full sm:content-normal">
             {showAlert && (
                 <div className="w-full">
                     <Alert type={showAlert.type}
@@ -90,7 +95,7 @@ const Home = () => {
 
             <div className="space-y-4">
                 <h1 className="self-stretch text-center justify-start text-white text-[40px] font-medium font-['Roboto'] uppercase leading-[48px]">
-                    Comming soon!
+                    Coming soon!
                 </h1>
                 <h2 className="self-stretch text-center justify-start text-stone-400 text-base font-medium font-['Roboto'] leading-normal">
                     Empowering traders with innovative solutions, unmatched reliability, and tools designed to elevate
@@ -106,15 +111,39 @@ const Home = () => {
                     type={'email'}
                     disabled={sendingEmail}
                     className={clsx(!!errorMessage ? 'placeholder:text-rose-500' : null)}
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                        const value = e.target.value;
+                        setForm(item => ({
+                            ...item,
+                            'email': value
+                        }))
+                    }}
+                    value={form.email}
                     errorMessage={errorMessage}
                     placeholder={'Enter your email'}
                     name={'email'}/>
-                <Button disabled={sendingEmail} type={'submit'} className="w-full md:w-auto">
+
+                <Button disabled={!canSubscribe || sendingEmail} type={'submit'} className="w-full md:w-auto">
                     SUBSCRIBE
                 </Button>
             </form>
+
+            <div>
+                <InputCheckbox
+                    value="1"
+                    onChange={(e) => {
+                        const checked = e.target.checked;
+                        setForm(item => ({
+                            ...item,
+                            'email_consent': checked
+                        }))
+                    }}
+                    name="email_consent">
+                    <p className="select-none text-white text-base font-medium leading-normal">
+                        I consent to the use of my email address to receive updates and launch announcements.
+                    </p>
+                </InputCheckbox>
+            </div>
         </div>
     </HomeLayout>
 }
