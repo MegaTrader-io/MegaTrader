@@ -74,7 +74,7 @@ const Home = () => {
 
     return <HomeLayout>
         <div
-            className="mx-auto sm:w-[406px] xl:w-[406px] space-y-8 h-[calc(100dvh-64px)] content-center sm:h-full sm:content-normal">
+            className="mx-auto sm:w-[406px] xl:w-[406px] space-y-8 h-[calc(100dvh-64px)] h-full">
             {showAlert && (
                 <div className="w-full">
                     <Alert type={showAlert.type}
@@ -139,7 +139,7 @@ const Home = () => {
                         }))
                     }}
                     name="email_consent">
-                    <p className="select-none text-white text-base font-medium leading-normal">
+                    <p className="select-none w-[296px] sm:w-auto text-white text-base font-medium leading-normal">
                         I consent to the use of my email address to receive updates and launch announcements.
                     </p>
                 </InputCheckbox>
