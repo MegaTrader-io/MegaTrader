@@ -12,10 +12,6 @@ export function getClientIp(req: NextRequest): string | null {
     const xForwardedFor = req.headers.get('x-forwarded-for')
     console.info('xForwardedFor', xForwardedFor);
 
-    if (xForwardedFor === '::1') {
-        return '190.219.213.44';
-    }
-
     if (xForwardedFor) {
         return xForwardedFor.split(',')[0].trim()
     }
