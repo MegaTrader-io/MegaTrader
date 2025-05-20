@@ -16,7 +16,7 @@ const Home = () => {
     const {setLoading, isLoading: sendingEmail} = useLoading();
     const [form, setForm] = useState<{ email: string, email_consent: boolean }>({
         email: '',
-        email_consent: false,
+        email_consent: false
     });
     const inputEmail = useRef<HTMLInputElement | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -63,23 +63,6 @@ const Home = () => {
 
         setShowAlert(null);
         setLoading(true);
-
-        // await sleep(900);
-        //
-        // let result: IShowAlert = {
-        //     type: 'error',
-        //     message: 'Something went wrong. Check your internet connection and try again later.'
-        // }
-        //
-        // if (form.email === TARGET_EMAIL) {
-        //     result = {
-        //         type: 'success',
-        //         message: 'Congratulations! You have successfully subscribed.'
-        //     }
-        // }
-        //
-        // setShowAlert(result)
-        // setLoading(false);
 
         try {
             const response = await fetch('/api/subscribe', {
