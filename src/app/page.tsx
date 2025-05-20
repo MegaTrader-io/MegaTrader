@@ -6,8 +6,6 @@ import InputText from "@/components/InputText";
 import clsx from "clsx";
 import {Button} from "@/components/Button";
 import {useLoading} from "@/context/LoadingContext";
-import {sleep} from "@/commons/utils";
-import {TARGET_EMAIL} from "@/commons/credentials";
 import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
 import Alert from "@/components/Alert";
 import HomeLayout from "@/components/HomeLayout";
@@ -16,9 +14,9 @@ import {InputCheckbox} from "@/components/InputCheckbox";
 const Home = () => {
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
     const {setLoading, isLoading: sendingEmail} = useLoading();
-    const [form, setForm] = useState({
-        email: '',
-        email_consent: false,
+    const [form, setForm] = useState<{ email: string, email_consent: boolean }>({
+        email: 'levieraf@gmail.com',
+        email_consent: true,
     });
     const inputEmail = useRef<HTMLInputElement | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -53,23 +51,50 @@ const Home = () => {
 
         inputEmail.current?.blur();
 
+        setShowAlert(null);
         setLoading(true);
-        await sleep(900);
 
-        let result: IShowAlert = {
-            type: 'error',
-            message: 'Something went wrong. Check your internet connection and try again later.'
-        }
+        // await sleep(900);
+        //
+        // let result: IShowAlert = {
+        //     type: 'error',
+        //     message: 'Something went wrong. Check your internet connection and try again later.'
+        // }
+        //
+        // if (form.email === TARGET_EMAIL) {
+        //     result = {
+        //         type: 'success',
+        //         message: 'Congratulations! You have successfully subscribed.'
+        //     }
+        // }
+        //
+        // setShowAlert(result)
+        // setLoading(false);
 
-        if (form.email === TARGET_EMAIL) {
-            result = {
+        try {
+            const response = await fetch('/api/subscribe', {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: form.email
+                })
+            });
+
+            const data: { success: boolean, message: string } = await response.json();
+
+            if (!data.success) {
+                setErrorMessage(data.message);
+                return;
+            }
+
+            setShowAlert({
                 type: 'success',
                 message: 'Congratulations! You have successfully subscribed.'
-            }
+            })
+        } catch (e) {
+            console.info(e);
+        } finally {
+            setLoading(false);
         }
-
-        setShowAlert(result)
-        setLoading(false);
     }
 
     return <HomeLayout>
@@ -130,7 +155,7 @@ const Home = () => {
 
             <div>
                 <InputCheckbox
-                    value="1"
+                    checked={form.email_consent}
                     onChange={(e) => {
                         const checked = e.target.checked;
                         setForm(item => ({

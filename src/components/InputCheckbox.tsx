@@ -4,13 +4,14 @@ import React, {forwardRef, InputHTMLAttributes, useState} from 'react';
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
+    checked?: boolean;
     children?: React.ReactElement;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export const InputCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(
-    ({className = '', label, children = null, ...props}, ref) => {
-        const [isChecked, setIsChecked] = useState(props.checked || false);
+    ({className = '', label, checked = false, children = null, ...props}, ref) => {
+        const [isChecked, setIsChecked] = useState<boolean>(checked);
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setIsChecked(e.target.checked);
