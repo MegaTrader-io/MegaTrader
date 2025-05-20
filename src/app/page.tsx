@@ -25,14 +25,16 @@ const Home = () => {
     const validateEmail = () => {
         if (inputEmail.current) {
             const value = inputEmail.current.value.trim();
+            inputEmail.current.value = value;
 
             if (!value) {
+                inputEmail.current.value = '';
                 setErrorMessage("This field is required");
                 return false;
             }
 
             if (!inputEmail.current.validity.valid) {
-                setErrorMessage("Invalid email address");
+                setErrorMessage("Invalid email");
                 return false;
             }
 
@@ -135,6 +137,7 @@ const Home = () => {
                     required={true}
                     type={'email'}
                     disabled={sendingEmail}
+                    onBlur={validateEmail}
                     className={clsx(!!errorMessage ? 'placeholder:text-rose-500' : null)}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                         const value = e.target.value;
@@ -148,7 +151,7 @@ const Home = () => {
                     placeholder={'Enter your email'}
                     name={'email'}/>
 
-                <Button disabled={!canSubscribe || sendingEmail} type={'submit'} className="w-full md:w-auto">
+                <Button disabled={!canSubscribe || sendingEmail || !!errorMessage} type={'submit'} className="w-full md:w-auto">
                     SUBSCRIBE
                 </Button>
             </form>
