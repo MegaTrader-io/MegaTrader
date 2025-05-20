@@ -7,7 +7,7 @@ import {
 import {getClientIp} from '@/app/api/subscribe/util'
 
 const ABSTRACT_EMAIL_API_KEY = '6251ad73244b4a23926998a839393c28'
-const ABSTRACT_GEO_API_KEY = '5be85e7283094158b07f0976e9b0d363'
+const ABSTRACT_GEO_API_KEY = '5be85e728309415cb70f0976e9b0d363'
 const KLAVIYO_API_KEY = 'pk_5a92a736289822ee50fdb33a5087b2b776'
 const KLAVIYO_LIST_ID = 'WZVM7e'
 
