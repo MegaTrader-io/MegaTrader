@@ -15,8 +15,8 @@ const Home = () => {
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
     const {setLoading, isLoading: sendingEmail} = useLoading();
     const [form, setForm] = useState<{ email: string, email_consent: boolean }>({
-        email: 'levieraf@gmail.com',
-        email_consent: true,
+        email: '',
+        email_consent: false,
     });
     const inputEmail = useRef<HTMLInputElement | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
