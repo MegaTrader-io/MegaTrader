@@ -31,6 +31,10 @@ const Home = () => {
             const value = inputEmail.current.value.trim();
             inputEmail.current.value = value;
 
+            if (value === '') {
+                return false;
+            }
+
             if (!value) {
                 inputEmail.current.value = '';
                 setErrorMessage("This field is required");
