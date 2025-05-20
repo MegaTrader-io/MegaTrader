@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
         const result: EmailReputationResponse = await response.json()
 
-        if (result.email_deliverability.status_detail === 'invalid_mailbox') {
+        if (result.email_deliverability.status !== 'undeliverable') {
             return NextResponse.json({success: false, message: 'Invalid email'})
         }
 
