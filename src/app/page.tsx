@@ -168,8 +168,8 @@ const Home = () => {
                         }))
                     }}
                     name="email_consent">
-                    <p className="select-none w-[315px] sm:w-[312px] sm:w-auto text-white text-base font-medium leading-normal">
-                        I consent to the use of my email address&nbsp;to receive updates and launch announcements.
+                    <p className="select-none w-full text-white text-base font-medium leading-normal">
+                        I consent to the use of my email address to<br/> receive updates and launch announcements.
                     </p>
                 </InputCheckbox>
             </div>
