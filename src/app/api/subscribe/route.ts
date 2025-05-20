@@ -86,9 +86,10 @@ async function getLocation(ip: string): Promise<KlaviyoLocation | undefined> {
         const url =
             `https://ipgeolocation.abstractapi.com/v1/?api_key=${ABSTRACT_GEO_API_KEY}&ip_address=${encodeURIComponent(ip)}`
         const res = await fetch(url)
+
         if (res.ok) {
             const data: IpGeolocationResponse = await res.json()
-            return {
+            const location = {
                 ip,
                 city: data.city,
                 region: data.region,
@@ -98,9 +99,17 @@ async function getLocation(ip: string): Promise<KlaviyoLocation | undefined> {
                 latitude: data.latitude,
                 timezone: data.timezone.name
             }
+
+            console.info(url, res.status, location);
+
+            return location;
         }
+
         if (res.status === 400) {
             const errBody = await res.json()
+
+            console.info(url, res.status, errBody);
+
             if (
                 errBody?.error?.code === 'validation_error' &&
                 errBody?.error?.details?.ip_address?.[0] === 'Invalid IP Address.'
@@ -125,8 +134,10 @@ async function createKlaviyoProfile(
             attributes: {email, locale: 'en-US', properties: {}, ...(location ? {location} : {})}
         }
     }
+
+    const url = 'https://a.klaviyo.com/api/profiles?additional-fields[profile]=subscriptions';
     const res = await fetch(
-        'https://a.klaviyo.com/api/profiles?additional-fields[profile]=subscriptions',
+        url,
         {
             method: 'POST',
             headers: {
@@ -139,6 +150,9 @@ async function createKlaviyoProfile(
         }
     )
     const text = await res.text()
+
+    console.info(url, res.status, text);
+
     if (res.status === 409) {
         const data = JSON.parse(text)
         return {profileId: data?.errors?.[0]?.meta?.duplicate_profile_id || null, duplicated: true}
@@ -151,8 +165,11 @@ async function createKlaviyoProfile(
 async function addProfileToList(
     profileId: string
 ): Promise<{ success: boolean; status: number; detail?: string; klaviyo?: any }> {
+
+    const body = {data: [{type: 'profile', id: profileId}]};
+    const url = `https://a.klaviyo.com/api/lists/${KLAVIYO_LIST_ID}/relationships/profiles`;
     const res = await fetch(
-        `https://a.klaviyo.com/api/lists/${KLAVIYO_LIST_ID}/relationships/profiles`,
+        url,
         {
             method: 'POST',
             headers: {
@@ -161,10 +178,19 @@ async function addProfileToList(
                 'content-type': 'application/vnd.api+json',
                 revision: '2025-04-15'
             },
-            body: JSON.stringify({data: [{type: 'profile', id: profileId}]})
+            body: JSON.stringify(body)
         }
     )
-    if (res.status === 204) return {success: true, status: 204}
+
+    if (res.status === 204) {
+        console.info(url, res.status);
+
+        return {success: true, status: 204}
+    }
+
     const detail = await res.text()
+
+    console.info(url, res.status, detail);
+
     return {success: false, status: res.status, detail}
 }
