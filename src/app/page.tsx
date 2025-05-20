@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import React, {ChangeEvent, useRef, useState} from "react";
+import React, {ChangeEvent, useEffect, useRef, useState} from "react";
 import InputText from "@/components/InputText";
 import clsx from "clsx";
 import {Button} from "@/components/Button";
@@ -21,6 +21,10 @@ const Home = () => {
     const inputEmail = useRef<HTMLInputElement | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const canSubscribe = form.email_consent === true;
+
+    useEffect(() => {
+        inputEmail.current?.focus();
+    }, [inputEmail]);
 
     const validateEmail = () => {
         if (inputEmail.current) {
@@ -101,6 +105,10 @@ const Home = () => {
             console.info(e);
         } finally {
             setLoading(false);
+
+            setTimeout(() => {
+                inputEmail.current?.focus();
+            }, 100);
         }
     }
 
@@ -156,7 +164,8 @@ const Home = () => {
                     placeholder={'Enter your email'}
                     name={'email'}/>
 
-                <Button disabled={!canSubscribe || sendingEmail || !!errorMessage} type={'submit'} className="w-full md:w-auto">
+                <Button disabled={!canSubscribe || sendingEmail || !!errorMessage} type={'submit'}
+                        className="w-full md:w-auto">
                     SUBSCRIBE
                 </Button>
             </form>

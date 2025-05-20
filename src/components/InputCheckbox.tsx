@@ -1,6 +1,6 @@
 'use client'
 
-import React, {forwardRef, InputHTMLAttributes, useState} from 'react';
+import React, {forwardRef, InputHTMLAttributes, useEffect, useState} from 'react';
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
@@ -12,6 +12,10 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
 export const InputCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(
     ({className = '', label, checked = false, children = null, ...props}, ref) => {
         const [isChecked, setIsChecked] = useState<boolean>(checked);
+
+        useEffect(() => {
+            setIsChecked(checked)
+        }, [checked]);
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setIsChecked(e.target.checked);
