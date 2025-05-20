@@ -1,5 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server'
 import {EmailReputationResponse} from "@/app/api/subscribe/interfaces";
+import {getClientIp} from "@/app/api/subscribe/util";
 
 const ABSTRACT_API_KEY = 'd481b3b5fcc7438f9970f43bfd0522c3'
 
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({success: false, message: 'Invalid email'})
         }
 
-        return NextResponse.json({success: true, data: result})
+        return NextResponse.json({success: true, data: result, ip: getClientIp(request)})
     } catch (error: any) {
         console.error('Error al verificar email:', error)
         return NextResponse.json(
