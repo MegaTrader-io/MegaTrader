@@ -86,6 +86,7 @@ export default function Header() {
 
             <div className="flex gap-2">
                 <NotificationLink/>
+                <ProfileIcon currentPath={currentPath}/>
                 <PopoverMenu collisionPadding={16}
                              className="block lg:hidden"
                              icon={<Bars3Icon className="w-6 h-6 text-white"/>}>
@@ -115,27 +116,24 @@ export default function Header() {
                     </div>
                 </PopoverMenu>
                 <div className="hidden lg:flex">
-                    <div className="flex items-center gap-2">
-                        <ProfileIcon currentPath={currentPath}/>
-                        <Link
-                            href="/auth/login"
-                            className="btn-dark-link rounded-xl w-12 h-12"
-                        >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <mask id="mask0_4562_2177" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
-                                      y="0"
-                                      width="24" height="24">
-                                    <rect width="24" height="24" fill="#D9D9D9"/>
-                                </mask>
-                                <g mask="url(#mask0_4562_2177)">
-                                    <path
-                                        d="M5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V5C3 4.45 3.19583 3.97917 3.5875 3.5875C3.97917 3.19583 4.45 3 5 3H12V5H5V19H12V21H5ZM16 17L14.625 15.55L17.175 13H9V11H17.175L14.625 8.45L16 7L21 12L16 17Z"
-                                        fill="white"/>
-                                </g>
-                            </svg>
-                        </Link>
-                    </div>
+                    <Link
+                        href="/auth/login"
+                        className="btn-dark-link rounded-xl w-12 h-12"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_4562_2177" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
+                                  y="0"
+                                  width="24" height="24">
+                                <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_4562_2177)">
+                                <path
+                                    d="M5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V5C3 4.45 3.19583 3.97917 3.5875 3.5875C3.97917 3.19583 4.45 3 5 3H12V5H5V19H12V21H5ZM16 17L14.625 15.55L17.175 13H9V11H17.175L14.625 8.45L16 7L21 12L16 17Z"
+                                    fill="white"/>
+                            </g>
+                        </svg>
+                    </Link>
                 </div>
             </div>
         </div>
