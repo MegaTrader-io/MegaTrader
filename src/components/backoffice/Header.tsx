@@ -48,7 +48,7 @@ export default function Header() {
                     className="flex gap-4 items-center"
                 >
                     <Image src={'/assets/images/logo-mt.svg'}
-                           className="w-[48px] h-[48px] lg:w-[60px] lg:h-[60px]"
+                           className="w-[60px]"
                            width={60} height={60} alt={'Logo Megatrader'}/>
 
                     <Image

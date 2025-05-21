@@ -90,7 +90,7 @@ function IncomeTracker() {
                     <div>
                         <div className="flex gap-2 items-center">
                             <Image src={'/assets/images/chart.svg'} alt={'chart'} width={24} height={24}/>
-                            <span className="text-2xl font-medium uppercase leading-7">IXncome Tracker</span>
+                            <span className="text-2xl font-medium uppercase leading-7">Income Tracker</span>
                         </div>
                         <div
                             className="normal-case text-stone-400 text-base font-medium leading-normal">Track

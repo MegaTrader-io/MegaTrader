@@ -20,7 +20,7 @@ const Home = () => {
     });
     const inputEmail = useRef<HTMLInputElement | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const canSubscribe = form.email_consent === true;
+    const canSubscribe = form.email_consent;
 
     useEffect(() => {
         inputEmail.current?.focus();
@@ -101,7 +101,7 @@ const Home = () => {
 
     return <HomeLayout>
         <div
-            className="mx-auto sm:w-[406px] xl:w-[406px] space-y-8 h-[calc(100dvh-64px)] h-full">
+            className="mx-auto sm:w-[406px] xl:w-[406px] space-y-8 h-[calc(100dvh-64px)]">
             {showAlert && (
                 <div className="w-full">
                     <Alert type={showAlert.type}
