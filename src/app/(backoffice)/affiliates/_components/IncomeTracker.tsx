@@ -4,9 +4,15 @@ import Image from "next/image";
 import {incomeTrackerPeriods} from "@/commons/data";
 import {Period} from "@/commons/interfaces";
 import ChartBar from "@/components/ChartBar";
+import NoData from "@/components/NoData";
+
+interface ChartData {
+    data: number[],
+    labels: string[]
+}
 
 function IncomeTracker() {
-    const [dataChart, setDataChart] = useState<{ data: number[], labels: string[] } | null>(null);
+    const [dataChart, setDataChart] = useState<ChartData | undefined>(undefined);
     const [selectPeriod, setSelectPeriod] = useState<Period>(incomeTrackerPeriods[0]);
 
     function changeValue(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -73,18 +79,7 @@ function IncomeTracker() {
                 ]
             });
         } else if (selectPeriod.id === 'last_7_days') {
-            setDataChart({
-                labels: Array(7).fill('').map((_, index) => (index + 1).toString().padStart(2, '0')),
-                data: [
-                    1114,
-                    1457,
-                    2284,
-                    1726,
-                    1931,
-                    1355,
-                    909,
-                ]
-            });
+            setDataChart(undefined);
         }
     }, [selectPeriod.id]);
 
@@ -95,7 +90,7 @@ function IncomeTracker() {
                     <div>
                         <div className="flex gap-2 items-center">
                             <Image src={'/assets/images/chart.svg'} alt={'chart'} width={24} height={24}/>
-                            <span className="text-2xl font-medium uppercase leading-7">Income Tracker</span>
+                            <span className="text-2xl font-medium uppercase leading-7">IXncome Tracker</span>
                         </div>
                         <div
                             className="normal-case text-stone-400 text-base font-medium leading-normal">Track
@@ -132,7 +127,23 @@ function IncomeTracker() {
                     </div>
                 </div>
             </div>
-            <div className="md:grid md:grid-cols-[200px_auto] align-bottom gap-4">
+            <ChartIncomeTracker dataChart={dataChart}/>
+        </Card>
+    );
+}
+
+function ChartIncomeTracker({dataChart}: { dataChart: ChartData | undefined }) {
+    if (!dataChart) {
+        return <div className="h-[354px] w-full">
+            <div className="h-full content-center flex justify-center items-center w-full">
+                <NoData/>
+            </div>
+        </div>
+    }
+
+    return (
+        <>
+            <div className="md:grid md:grid-cols-[200px_auto] h-[354px] align-bottom gap-4">
                 <div className={'h-full flex items-end'}>
                     <div>
                         <div
@@ -145,16 +156,14 @@ function IncomeTracker() {
                     </div>
                 </div>
                 <div className="w-full md:px-4 pt-16 h-auto overflow-x-auto">
-                    {dataChart && (
-                        <ChartBar
-                            data={dataChart.data}
-                            labels={dataChart.labels}
-                        />
-                    )}
+                    <ChartBar
+                        data={dataChart.data}
+                        labels={dataChart.labels}
+                    />
                 </div>
             </div>
-        </Card>
-    );
+        </>
+    )
 }
 
 export default IncomeTracker;
