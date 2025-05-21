@@ -6,14 +6,26 @@ import CustomBarChar, {ChartBarProps} from "@/components/CustomBarChar";
 
 function PerformanceAnalysis() {
     const container = useRef<HTMLDivElement | null>(null);
-    const [chartData, setChartData] = useState<ChartBarProps | undefined>(undefined);
-    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[0]);
+
+    const [chartData, setChartData] = useState<ChartBarProps>({
+        internalId: 0,
+        xAxis: [],
+        series: [],
+        yAxis: []
+    });
+
+    const [selectPeriod, setSelectPeriod] = useState<Period>(periods[1]);
 
     useEffect(() => {
         if (selectPeriod.id === 'last_7_days') {
             setChartData(generateRandomData(7));
         } else if (selectPeriod.id === 'last_14_days') {
-            setChartData(generateRandomData(14));
+            setChartData({
+                internalId: 0,
+                xAxis: [],
+                series: [],
+                yAxis: []
+            });
         } else if (selectPeriod.id === 'last_30_days') {
             setChartData(generateRandomData(30));
         }
