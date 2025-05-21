@@ -63,7 +63,7 @@ function IncomeTracker() {
                 labels: Array(14).fill('').map((_, index) => (index + 1).toString().padStart(2, '0')),
                 data: [
                     1114,
-                    1457,
+                    0,
                     2284,
                     1726,
                     1931,
