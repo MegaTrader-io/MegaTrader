@@ -1,14 +1,16 @@
 import React from "react";
 import Image from "next/image";
 
-const iconMap: Record<string, string> = {
-    megax: "/assets/images/trading-plans/logo/megaxIcon.svg",
+export type TradingType = "megax" | "ninjatrader" | "quantower" | "tradovate";
+
+const iconMap: Record<TradingType, string> = {
+    megax: "/assets/images/trading-plans/logo/projectX.svg",
     ninjatrader: "/assets/images/trading-plans/logo/ninjatraderIcon.svg",
     quantower: "/assets/images/trading-plans/logo/quantowerIcon.svg",
     tradovate: "/assets/images/trading-plans/logo/tradovateIcon.svg",
 };
 
-const sizeMap: Record<string, { width: number, height: number }> = {
+const sizeMap: Record<TradingType, { width: number, height: number }> = {
     megax: {
         width: 120,
         height: 36
@@ -28,7 +30,7 @@ const sizeMap: Record<string, { width: number, height: number }> = {
 };
 
 interface TradingPlanIconProps {
-    tradingType: "megax" | "ninjatrader" | "quantower" | "tradovate";
+    tradingType: TradingType;
     className?: string,
     alt?: string;
     size?: number;
