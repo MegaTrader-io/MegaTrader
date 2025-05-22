@@ -1,17 +1,18 @@
 import React from "react";
 import Image from "next/image";
 import AccountCircleStatus from "@/app/(backoffice)/account-overview/_components/AccountCircleStatus";
-import {AccountStatusType} from "@/commons/interfaces";
+import {AccountStatusType, TradingType} from "@/commons/interfaces";
 
-const iconMap: Record<string, string> = {
-    megax: "/assets/images/trading-plans/lg/megaxIcon.svg",
+
+const iconMap: Record<TradingType, string> = {
+    megax: "/assets/images/trading-plans/md/projectX.svg",
     ninjatrader: "/assets/images/trading-plans/lg/ninjatraderIcon.svg",
     quantower: "/assets/images/trading-plans/lg/quantowerIcon.svg",
     tradovate: "/assets/images/trading-plans/lg/tradovateIcon.svg",
 };
 
 interface TradingPlanIconProps {
-    tradingType: "megax" | "ninjatrader" | "quantower" | "tradovate";
+    tradingType: TradingType;
     status: AccountStatusType,
     alt?: string;
     size?: number;

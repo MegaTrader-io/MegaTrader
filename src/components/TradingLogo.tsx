@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
-
-export type TradingType = "megax" | "ninjatrader" | "quantower" | "tradovate";
+import {TradingType} from "@/commons/interfaces";
 
 const iconMap: Record<TradingType, string> = {
     megax: "/assets/images/trading-plans/logo/projectX.svg",
