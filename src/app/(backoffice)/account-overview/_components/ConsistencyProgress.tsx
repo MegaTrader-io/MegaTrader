@@ -63,9 +63,8 @@ function ConsistencyProgress({account}: { account: Account }) {
                         </div>
                         <div>
                             <span
-                                className="text-white text-xs font-medium leading-tight">You need to maintain at least {account.objectives.consistency.minPercentage}% consistency. </span>
-                            <span
-                                className="block text-[#ffd78a] text-xs font-medium underline leading-tight">Learn more</span>
+                                className="text-white text-xs font-medium leading-tight">You need to maintain at least {account.objectives.consistency.minPercentage}% <br className="hidden sm:block"/>
+                                consistency. <span className=" text-[#ffd78a] text-xs font-medium underline leading-tight">Learn more</span></span>
                         </div>
                     </div>
                 </div>
