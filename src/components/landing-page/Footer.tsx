@@ -28,7 +28,7 @@ export default function Footer() {
             className="w-full max-w-7xl flex-1 h-dvh mx-auto px-4 pb-8  flex items-center justify-between flex-col space-y-8">
             <div
                 className="w-full p-8 bg-[#131210] rounded-[20px] outline outline-1 outline-neutral-700">
-                <div className="w-full grid grid-cols-2 space-y-8 lg:space-x-8">
+                <div className="w-full grid grid-cols-2 space-y-8 lg:space-y-0 lg:space-x-8">
                     <div className="space-y-4 col-span-2 lg:col-span-1">
                         <div className="flex gap-4 items-center">
                             <Image src={'/assets/images/logo-mt.svg'}
@@ -49,9 +49,11 @@ export default function Footer() {
                     </div>
                     <div className="bg-gray-600 h-[144px] col-span-2 lg:col-span-1">
                     </div>
-                    <div className="self-stretch my-8 col-span-2">
-                        <div className="h-0 border-t-[0.5px] border-t-neutral-700"></div>
-                    </div>
+                </div>
+                <div className="self-stretch my-8 col-span-2">
+                    <div className="h-0 border-t-[0.5px] border-t-neutral-700"></div>
+                </div>
+                <div className="w-full grid grid-cols-2 space-y-8 lg:space-x-8">
                     <div className="self-stretch inline-flex justify-start items-start gap-8 col-span-2">
                         <div className="flex-1 justify-start text-stone-400 text-sm font-medium leading-tight">© 2024
                             Megatrader
