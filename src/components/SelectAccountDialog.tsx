@@ -47,8 +47,8 @@ export default function DropdownDialog<T extends Account>({
             <button
                 onClick={() => setOpen(true)}
                 className="rounded-xl p-3 w-full h-12 bg-stone-800 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800">
-                <div className="flex gap-2 items-center">
-                    <AccountStatus status={selected.status}/>
+                <div className="flex gap-2">
+                    <AccountStatus status={selected.status} size={'sm'}/>
                     <div
                         className="text-left text-neutral-50 text-base font-medium truncate grow w-0 sm:w-full">{selected.name}</div>
                     <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
