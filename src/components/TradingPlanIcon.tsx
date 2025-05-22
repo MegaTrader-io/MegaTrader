@@ -1,5 +1,7 @@
 import React from "react";
 import Image from "next/image";
+import AccountCircleStatus from "@/app/(backoffice)/account-overview/_components/AccountCircleStatus";
+import {AccountStatusType} from "@/commons/interfaces";
 
 const iconMap: Record<string, string> = {
     megax: "/assets/images/trading-plans/lg/megaxIcon.svg",
@@ -10,12 +12,14 @@ const iconMap: Record<string, string> = {
 
 interface TradingPlanIconProps {
     tradingType: "megax" | "ninjatrader" | "quantower" | "tradovate";
+    status: AccountStatusType,
     alt?: string;
     size?: number;
 }
 
 const TradingPlanIcon: React.FC<TradingPlanIconProps> = ({
                                                              tradingType,
+                                                             status,
                                                              alt = "Trading Platform Icon",
                                                              size = 40,
                                                          }) => {
@@ -26,7 +30,12 @@ const TradingPlanIcon: React.FC<TradingPlanIconProps> = ({
         return null;
     }
 
-    return <Image src={iconSrc} alt={alt} width={size} height={size}/>;
+    return (<div className="relative">
+        <Image src={iconSrc} alt={alt} width={size} height={size}/>
+        <div className="absolute -bottom-2.5 right-0">
+            <AccountCircleStatus status={status}/>
+        </div>
+    </div>)
 };
 
 export default TradingPlanIcon;

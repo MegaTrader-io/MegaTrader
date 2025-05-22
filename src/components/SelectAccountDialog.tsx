@@ -7,6 +7,7 @@ import {Account} from "@/commons/interfaces";
 import TradingPlanIcon from "@/components/TradingPlanIcon";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import {Button} from "@/components/Button";
+import AccountCircleStatus from "@/app/(backoffice)/account-overview/_components/AccountCircleStatus";
 
 interface DropdownDialogProps<T> {
     items: T[];
@@ -48,8 +49,9 @@ export default function DropdownDialog<T extends Account>({
                 onClick={() => setOpen(true)}
                 className="rounded-xl p-3 w-full h-12 bg-stone-800 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800">
                 <div className="flex gap-2 items-center">
-                    <AccountStatus status={selected.status} />
-                    <div className="text-left text-neutral-50 text-base font-medium truncate grow w-0 sm:w-full">{selected.name}</div>
+                    <AccountStatus status={selected.status}/>
+                    <div
+                        className="text-left text-neutral-50 text-base font-medium truncate grow w-0 sm:w-full">{selected.name}</div>
                     <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
                 </div>
             </button>
@@ -76,7 +78,9 @@ export default function DropdownDialog<T extends Account>({
                                         key={item.id}>
                                         <div className="text-center space-y-2 relative select-none w-full">
                                             <div className="w-full justify-center flex relative">
-                                                <TradingPlanIcon tradingType={item.tradingType}/>
+                                                <TradingPlanIcon
+                                                    tradingType={item.tradingType}
+                                                    status={item.status}/>
 
                                                 {selected.id === item.id &&
                                                     <CheckCircleIcon
@@ -85,13 +89,13 @@ export default function DropdownDialog<T extends Account>({
                                             <div>
                                                 <div
                                                     className="text-center text-white text-base font-medium leading-normal">
-                                                    {item.planDetail.level} <span className="capitalize">{item.planDetail.planType}</span> Plan
+                                                    {item.planDetail.level} <span
+                                                    className="capitalize">{item.planDetail.planType}</span> Plan
                                                 </div>
                                                 <div
                                                     className="text-stone-400 text-sm font-medium uppercase leading-tight truncate">
                                                     {item.name}</div>
                                             </div>
-                                            <AccountStatus size={'sm'} status={item.status}/>
                                         </div>
                                     </div>
                                 })}
