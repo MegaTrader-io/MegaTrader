@@ -35,9 +35,7 @@ export default function RootLayout({
     return (
         <html lang="en" className={`${roboto.variable} dark`}>
         <head>
-            {/* Otros meta tags generados por Next.js */}
             {isProduction && GTM_ID && (
-                // Carga asíncrona del script externo
                 <Script
                     src={`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`}
                     strategy="afterInteractive"
@@ -45,7 +43,6 @@ export default function RootLayout({
             )}
 
             {isProduction && GTM_ID && (
-                // Inyecta el snippet inline que inicializa dataLayer
                 <Script id="gtm-init" strategy="afterInteractive">
                     {`
               window.dataLayer = window.dataLayer || [];
@@ -77,8 +74,6 @@ export default function RootLayout({
             <LoadingProvider>
                 <LoadingOverlay />
                 {children}
-
-                {/* Script de Intercom, también con <Script> */}
                 {isProduction && (
                     <Script id="intercom" strategy="lazyOnload">
                         {`

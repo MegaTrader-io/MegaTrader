@@ -53,12 +53,14 @@ export default function Footer() {
                 <div className="my-8 col-span-2">
                     <div className="h-0 border-t-[0.5px] border-t-neutral-700"></div>
                 </div>
-                <div className="grid grid-cols-4 gap-4 lg:inline-flex lg:justify-start lg:items-start lg:gap-8 lg:w-full">
-                    <div className="col-span-full text-center lg:text-left lg:flex-1 text-stone-400 text-sm font-medium leading-tight">
+                <div
+                    className="grid grid-cols-4 gap-4 lg:inline-flex lg:justify-start lg:items-start lg:gap-8 lg:w-full">
+                    <div
+                        className="col-span-full text-center lg:text-left lg:flex-1 text-stone-400 text-sm font-medium leading-tight">
                         © 2024 Megatrader
                     </div>
                     <nav className="col-span-full flex justify-center gap-4 lg:contents">
-                        {links.map(({ href, title }, index) => (
+                        {links.map(({href, title}, index) => (
                             <Link
                                 key={index}
                                 href={href}
