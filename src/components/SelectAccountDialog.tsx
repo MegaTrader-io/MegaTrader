@@ -7,7 +7,6 @@ import {Account} from "@/commons/interfaces";
 import TradingPlanIcon from "@/components/TradingPlanIcon";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import {Button} from "@/components/Button";
-import AccountCircleStatus from "@/app/(backoffice)/account-overview/_components/AccountCircleStatus";
 
 interface DropdownDialogProps<T> {
     items: T[];
