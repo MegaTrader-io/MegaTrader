@@ -50,7 +50,7 @@ export default function DropdownDialog<T extends Account>({
                 <div className="flex gap-2">
                     <AccountStatus status={selected.status} size={'sm'}/>
                     <div
-                        className="text-left text-neutral-50 text-base font-medium truncate grow w-0 sm:w-full">{selected.name}</div>
+                        className="text-left text-neutral-50 text-base font-normal truncate grow w-0 sm:w-full">{selected.name}</div>
                     <Image src="/assets/images/arrow-down.svg" alt='selection' width={24} height={24}/>
                 </div>
             </button>
