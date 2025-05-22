@@ -3,7 +3,7 @@ import Image from "next/image";
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
 import {useLoading} from "@/context/LoadingContext";
-import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
+import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 import RequestPayoutsModal from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
 import {IRequestPayoutForm, IRequestPayoutTransfer} from "@/commons/interfaces";
 

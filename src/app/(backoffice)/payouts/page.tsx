@@ -5,8 +5,8 @@ import {PayoutMetrics} from "@/commons/data";
 import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
-import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
-import IncomeTracker from "@/app/(backoffice)/affiliates/_components/IncomeTracker";
+import {IShowAlert} from "@/app/(backoffice)/refferals/page";
+import IncomeTracker from "@/app/(backoffice)/refferals/_components/IncomeTracker";
 import PayoutsManager from "@/app/(backoffice)/payouts/_components/PayoutsManager";
 import DriverGuide from "@/components/on-boarding/DriverGuide";
 

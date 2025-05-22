@@ -4,9 +4,9 @@ import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
 import {OptionInterface} from "@/commons/interfaces";
-import URLVisitsTable from "@/app/(backoffice)/affiliates/_components/URLVisitsTable";
-import PayoutsTable from "@/app/(backoffice)/affiliates/_components/PayoutsTable";
-import Conversions from "@/app/(backoffice)/affiliates/_components/Conversions";
+import URLVisitsTable from "@/app/(backoffice)/refferals/_components/URLVisitsTable";
+import PayoutsTable from "@/app/(backoffice)/refferals/_components/PayoutsTable";
+import Conversions from "@/app/(backoffice)/refferals/_components/Conversions";
 
 const Options: OptionInterface[] = [
     {id: 'payouts', label: 'Payouts'},

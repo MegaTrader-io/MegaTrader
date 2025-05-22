@@ -1,7 +1,7 @@
 import React from 'react';
-import EarnWithMegatrader from "@/app/(backoffice)/affiliates/_components/EarnWithMegatrader";
-import InviteYourFriends from "@/app/(backoffice)/affiliates/_components/InviteYourFriends";
-import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
+import EarnWithMegatrader from "@/app/(backoffice)/refferals/_components/EarnWithMegatrader";
+import InviteYourFriends from "@/app/(backoffice)/refferals/_components/InviteYourFriends";
+import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 
 function ReferralAndEarningsSection({handleDisplayAlert}: { handleDisplayAlert: (payload: IShowAlert) => void }) {
     function displayMessage(response: { success: boolean, message: string }) {

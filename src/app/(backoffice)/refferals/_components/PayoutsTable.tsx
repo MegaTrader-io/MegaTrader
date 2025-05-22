@@ -1,28 +1,19 @@
-import {VisitDataEntry} from "@/commons/interfaces";
+import {PayoutsEntry} from "@/commons/interfaces";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/Table";
 import React, {useCallback, useEffect, useState} from "react";
-import {sleep} from "@/commons/utils";
+import {formatCurrency, sleep} from "@/commons/utils";
+import BadgePendingOrPaid from "@/components/BadgePendingOrPaid";
 import {Pagination, PaginationList, PaginationPage} from "@/components/Pagination";
 import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
-import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/20/solid";
+import {directionType} from "@/components/ArrowDown";
+import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
 
-function ConvertedIcon({converted}: { converted: boolean }) {
-    return <>
-        {
-            converted ? (
-                <CheckCircleIcon className={'fill-[#2DD4BF] w-5 h-5'}/>
-            ) : (
-                <XCircleIcon className={'fill-[#F43F5E] stroke-1 w-5 h-5'}/>
-            )
-        }
-
-    </>
-}
-
-const URLVisitsTable = () => {
+const PayoutsTable = () => {
+    const [sortBy] = useState<string>('id');
+    const [direction] = useState<directionType>('asc');
     const [loading, setLoading] = useState(false)
-    const [data, setData] = useState<VisitDataEntry[]>([]);
+    const [data, setData] = useState<PayoutsEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const limitPerPage = 10;
 
@@ -33,11 +24,11 @@ const URLVisitsTable = () => {
         last_page: 0,
     });
 
-    const fetchData = useCallback(async () => {
+    const fetchPayoutsData = useCallback(async () => {
         try {
             setLoading(true);
             await sleep(200);
-            const response = await fetch(`/api/affiliates/url-visits?page=${currentPage}&per_page=${limitPerPage}&sortBy=id&direction=desc`);
+            const response = await fetch(`/api/refferals/payouts?page=${currentPage}&per_page=${limitPerPage}&sortBy=${sortBy}&direction=${direction}`);
             if (!response.ok) {
                 throw new Error(`unable to fetch the end point: ${response.statusText}`);
             }
@@ -49,11 +40,11 @@ const URLVisitsTable = () => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage]);
+    }, [currentPage, sortBy, direction]);
 
     useEffect(() => {
-        void fetchData();
-    }, [fetchData]);
+        void fetchPayoutsData();
+    }, [fetchPayoutsData]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -64,27 +55,38 @@ const URLVisitsTable = () => {
             <Table>
                 <TableHead>
                     <TableRow className="text-white">
-                        <TableHeader className="!text-sm">URL</TableHeader>
-                        <TableHeader className="!text-sm">Referring URL</TableHeader>
-                        <TableHeader className="!text-sm">Converted</TableHeader>
+                        <TableHeader className='!text-sm'>Request ID</TableHeader>
+                        <TableHeader className='!text-sm'>Date</TableHeader>
+                        <TableHeader className="!text-sm">Status</TableHeader>
+                        <TableHeader className="!text-sm">Company/Beneficiary</TableHeader>
+                        <TableHeader className='!text-sm !w-[95px]'>Payment method</TableHeader>
+                        <TableHeader className="text-right !text-sm">Amount</TableHeader>
                     </TableRow>
                 </TableHead>
                 <TableBody className="p-0">
                     {loading && Array(limitPerPage).fill('1').map((_, index) => (
                         <TableRow key={index}>
                             <TableCell
-                                colSpan={4}
+                                colSpan={6}
                                 className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
                                 <div className="bg-slate-800/70 w-full h-full"></div>
                             </TableCell>
                         </TableRow>
                     ))}
                     {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-stone-400 text-sm font-medium leading-tight">
-                            <TableCell className="py-4">{entry.url}</TableCell>
-                            <TableCell className="py-4">{entry.referrer}</TableCell>
+                        <TableRow key={entry.id} className="text-stone-400 text-sm font-normal">
+                            <TableCell className="py-4">#{entry.id}</TableCell>
+                            <TableCell className="py-4">{entry.date}</TableCell>
                             <TableCell className="py-4">
-                                <ConvertedIcon converted={entry.converted}/>
+                                <BadgePendingOrPaid status={entry.status}/>
+                            </TableCell>
+                            <TableCell className="py-4">{entry.company}</TableCell>
+                            <TableCell className="py-4">
+                                <PaymentMethodImage
+                                    paymentMethod={entry.paymentMethod}/>
+                            </TableCell>
+                            <TableCell className="py-4 text-right">
+                                {formatCurrency(entry.amount)}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -126,4 +128,4 @@ const URLVisitsTable = () => {
     );
 };
 
-export default URLVisitsTable;
+export default PayoutsTable;

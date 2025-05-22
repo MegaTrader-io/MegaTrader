@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 import Card, {CardTitle} from "@/components/Card";
 import {Button} from "@/components/Button";
-import ShareReferralLink from "@/app/(backoffice)/affiliates/_components/ShareReferralLink";
+import ShareReferralLink from "@/app/(backoffice)/refferals/_components/ShareReferralLink";
 import InputText from "@/components/InputText";
 import {sleep} from "@/commons/utils";
 import {TARGET_EMAIL} from "@/commons/credentials";

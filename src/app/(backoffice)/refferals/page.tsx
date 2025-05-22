@@ -2,16 +2,16 @@
 
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import TrafficStatsTable from "@/app/(backoffice)/affiliates/_components/TrafficStatsTable";
-import ReferralAndEarningsSection from "@/app/(backoffice)/affiliates/_components/ReferralAndEarningsSection";
+import TrafficStatsTable from "@/app/(backoffice)/refferals/_components/TrafficStatsTable";
+import ReferralAndEarningsSection from "@/app/(backoffice)/refferals/_components/ReferralAndEarningsSection";
 import Alert from "@/components/Alert";
 import MetricsPanel from "@/components/MetricsPanel";
 import {AffiliatesMetrics} from "@/commons/data";
 import RequestWithdrawal from "@/components/RequestWithdrawal";
-import PerformanceAnalysis from "@/app/(backoffice)/affiliates/_components/PerformanceAnalysis";
+import PerformanceAnalysis from "@/app/(backoffice)/refferals/_components/PerformanceAnalysis";
 import DriverGuide from "@/components/on-boarding/DriverGuide";
-import {ActivateAffiliateModal} from "@/app/(backoffice)/affiliates/_components/activate_modal/ActivateAffiliateModal";
-import SkeletonAffiliate from "@/app/(backoffice)/affiliates/_components/SkeletonAffiliate";
+import {ActivateAffiliateModal} from "@/app/(backoffice)/refferals/_components/activate_modal/ActivateAffiliateModal";
+import SkeletonAffiliate from "@/app/(backoffice)/refferals/_components/SkeletonAffiliate";
 
 export interface IShowAlert {
     type: 'success' | 'error',
@@ -62,7 +62,7 @@ export default function Affiliates() {
     }
 
     return <>
-        <DriverGuide currentPath="/affiliates"/>
+        <DriverGuide currentPath="/refferals"/>
 
         {showAlert && (
             <div className="w-full">

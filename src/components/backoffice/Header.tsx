@@ -11,7 +11,7 @@ import clsx from "clsx";
 
 const navigationItems = [
     {href: '/account-overview', visibleOnDesktop: true, label: 'ACCOUNT OVERVIEW', sectionId: '/account-overview'},
-    {href: '/affiliates', visibleOnDesktop: true, label: 'AFFILIATES', sectionId: '/affiliates'},
+    {href: '/refferals', visibleOnDesktop: true, label: 'refferals', sectionId: '/refferals'},
     {href: '/payouts', visibleOnDesktop: true, label: 'PAYOUTS', sectionId: '/payouts'},
     {href: 'https://help.megatrader.io/en/', visibleOnDesktop: true, label: 'HELP CENTER', sectionId: '/help-center'},
 ];

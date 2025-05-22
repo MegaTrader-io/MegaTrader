@@ -6,7 +6,7 @@ import InputText from "@/components/InputText";
 import clsx from "clsx";
 import {Button} from "@/components/Button";
 import {useLoading} from "@/context/LoadingContext";
-import {IShowAlert} from "@/app/(backoffice)/affiliates/page";
+import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 import Alert from "@/components/Alert";
 import HomeLayout from "@/components/HomeLayout";
 import {InputCheckbox} from "@/components/InputCheckbox";

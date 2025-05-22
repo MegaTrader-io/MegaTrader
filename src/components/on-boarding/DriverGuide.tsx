@@ -100,7 +100,7 @@ export default function DriverGuide({currentPath}: IntroGuideProps) {
                         {id: 'daily-journal', top: 2780, behavior: 'smooth'}
                     ];
                     positionElement = positions.find(position => position.id === currentElementID)!;
-                } else if (currentPath === '/affiliates') {
+                } else if (currentPath === '/refferals') {
                     const positions: PositionElement[] = [
                         {id: 'affiliate-summary', top: 280, behavior: 'smooth'},
                         {id: 'available-payment-methods', top: 380, behavior: 'smooth'},
@@ -431,7 +431,7 @@ function getStepsForPath(path: string) {
                 },
             },
         ],
-        '/affiliates': [
+        '/refferals': [
             {
                 element: '#affiliate-summary',
                 popover: {
