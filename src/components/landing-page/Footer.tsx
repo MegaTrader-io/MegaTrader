@@ -41,7 +41,7 @@ export default function Footer() {
                             />
                         </div>
                         <div
-                            className="self-stretch justify-start text-stone-400 text-sm font-medium leading-tight">From
+                            className="justify-start text-stone-400 text-sm font-medium leading-tight">From
                             evaluation to funding, we{'\''}re redefining the trader journey with performance-driven
                             solutions and transparency.
                         </div>
@@ -50,23 +50,24 @@ export default function Footer() {
                     <div className="bg-gray-600 h-[144px] col-span-2 lg:col-span-1">
                     </div>
                 </div>
-                <div className="self-stretch my-8 col-span-2">
+                <div className="my-8 col-span-2">
                     <div className="h-0 border-t-[0.5px] border-t-neutral-700"></div>
                 </div>
-                <div className="w-full grid grid-cols-2 space-y-8 lg:space-x-8">
-                    <div className="self-stretch inline-flex justify-start items-start gap-8 col-span-2">
-                        <div className="flex-1 justify-start text-stone-400 text-sm font-medium leading-tight">© 2024
-                            Megatrader
-                        </div>
-                        {links.map((link, index) => (
+                <div className="grid grid-cols-4 gap-4 lg:inline-flex lg:justify-start lg:items-start lg:gap-8 lg:w-full">
+                    <div className="col-span-full text-center lg:text-left lg:flex-1 text-stone-400 text-sm font-medium leading-tight">
+                        © 2024 Megatrader
+                    </div>
+                    <nav className="col-span-full flex justify-center gap-4 lg:contents">
+                        {links.map(({ href, title }, index) => (
                             <Link
                                 key={index}
-                                className="justify-start text-stone-400 text-sm font-medium underline leading-tight"
-                                href={link.href}>
-                                {link.title}
+                                href={href}
+                                className="text-stone-400 text-sm font-medium underline leading-tight"
+                            >
+                                {title}
                             </Link>
                         ))}
-                    </div>
+                    </nav>
                 </div>
             </div>
         </footer>
