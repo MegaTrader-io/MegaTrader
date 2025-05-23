@@ -4,25 +4,6 @@ import React from "react";
 import FooterLinks from "@/components/landing-page/FooterLinks";
 import SubscribeForm from "@/components/SubscribeForm";
 
-const links: { href: string, title: string }[] = [
-    {
-        href: '#',
-        title: 'Disclaimer'
-    },
-    {
-        href: '#',
-        title: 'Privacy Policy'
-    },
-    {
-        href: '#',
-        title: 'Terms of Service'
-    },
-    {
-        href: '#',
-        title: 'Cookies Settings'
-    },
-]
-
 export default function Footer() {
     return (
         <footer
@@ -61,16 +42,36 @@ export default function Footer() {
                         className="col-span-full text-center lg:text-left lg:flex-1 text-stone-400 text-sm font-medium leading-tight">
                         © 2024 Megatrader
                     </div>
-                    <nav className="col-span-full flex justify-center gap-4 lg:contents">
-                        {links.map(({href, title}, index) => (
+                    <nav
+                        className="col-span-full flex-col space-y-4 sm:space-y-0 sm:text-center sm:flex-none sm:justify-center sm:gap-4 lg:contents">
+                        <div className="flex justify-center space-x-4 lg:space-x-0 sm:contents">
                             <Link
-                                key={index}
-                                href={href}
+                                href="#"
                                 className="text-stone-400 text-sm font-medium underline leading-tight"
                             >
-                                {title}
+                                Disclaimer
                             </Link>
-                        ))}
+                            <Link
+                                href="#"
+                                className="text-stone-400 text-sm font-medium underline leading-tight"
+                            >
+                                Privacy Policy
+                            </Link>
+                        </div>
+                        <div className="flex justify-center space-x-4 lg:space-x-0 sm:contents">
+                            <Link
+                                href="#"
+                                className="text-stone-400 text-sm font-medium underline leading-tight"
+                            >
+                                Terms of Service
+                            </Link>
+                            <Link
+                                href="#"
+                                className="text-stone-400 text-sm font-medium underline leading-tight"
+                            >
+                                Cookies Settings
+                            </Link>
+                        </div>
                     </nav>
                 </div>
             </div>
