@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
-import FooterLinks from "@/components/landing-page/FooterLinks";
+import SocialMedia from "@/components/landing-page/SocialMedia";
 import SubscribeForm from "@/components/SubscribeForm";
 
 export default function Footer() {
@@ -27,7 +27,7 @@ export default function Footer() {
                             evaluation to funding, we{'\''}re redefining the trader journey with performance-driven
                             solutions and transparency.
                         </div>
-                        <FooterLinks/>
+                        <SocialMedia/>
                     </div>
                     <div className="col-span-2 lg:col-span-1">
                         <SubscribeForm compact={true}/>

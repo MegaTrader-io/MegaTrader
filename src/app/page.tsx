@@ -6,6 +6,7 @@ import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 import Alert from "@/components/Alert";
 import HomeLayout from "@/components/HomeLayout";
 import SubscribeForm from "@/components/SubscribeForm";
+import SocialMedia from "@/components/landing-page/SocialMedia";
 
 const Home = () => {
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
@@ -34,7 +35,6 @@ const Home = () => {
                     className="w-[250px] h-[44.63px]"
                 />
             </div>
-
             <div className="space-y-4">
                 <h1 className="self-stretch text-center justify-start text-white text-[40px] font-medium font-['Roboto'] uppercase leading-[48px]">
                     Coming soon!
@@ -44,8 +44,8 @@ const Home = () => {
                     your trading journey to new heights.
                 </h2>
             </div>
-
             <SubscribeForm cbShowAlert={cbShowAlert}/>
+            <SocialMedia className="justify-center"/>
         </div>
     </HomeLayout>
 }
