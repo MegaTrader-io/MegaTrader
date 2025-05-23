@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import React from "react";
 import FooterLinks from "@/components/landing-page/FooterLinks";
+import SubscribeForm from "@/components/SubscribeForm";
 
 const links: { href: string, title: string }[] = [
     {
@@ -47,7 +48,8 @@ export default function Footer() {
                         </div>
                         <FooterLinks/>
                     </div>
-                    <div className="bg-gray-600 h-[144px] col-span-2 lg:col-span-1">
+                    <div className="col-span-2 lg:col-span-1">
+                        <SubscribeForm compact={true}/>
                     </div>
                 </div>
                 <div className="my-8 col-span-2">
