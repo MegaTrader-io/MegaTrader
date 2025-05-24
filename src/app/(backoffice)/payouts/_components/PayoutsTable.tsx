@@ -8,6 +8,7 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/16/solid";
 import clsx from "clsx";
 import {directionType} from "@/components/ArrowDown";
 import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
+import {Button} from "@/components/Button";
 
 const PayoutsTable = ({payoutStatus}: { payoutStatus: 'all_payouts' | 'approved' | 'pending' | 'rejected' }) => {
     const [sortBy] = useState<string>('id');
@@ -65,13 +66,14 @@ const PayoutsTable = ({payoutStatus}: { payoutStatus: 'all_payouts' | 'approved'
                         <TableHeader className="!text-sm">Company/Beneficiary</TableHeader>
                         <TableHeader className='!text-sm !w-[95px]'>Payment method</TableHeader>
                         <TableHeader className="text-right !text-sm">Amount</TableHeader>
+                        <TableHeader className="text-right !text-sm">Certificate</TableHeader>
                     </TableRow>
                 </TableHead>
                 <TableBody className="p-0">
                     {loading && Array(limitPerPage).fill('1').map((_, index) => (
                         <TableRow key={index}>
                             <TableCell
-                                colSpan={6}
+                                colSpan={7}
                                 className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
                                 <div className="bg-slate-800/70 w-full h-full"></div>
                             </TableCell>
@@ -92,12 +94,18 @@ const PayoutsTable = ({payoutStatus}: { payoutStatus: 'all_payouts' | 'approved'
                             <TableCell className="py-4 text-right">
                                 {formatCurrency(entry.amount)}
                             </TableCell>
+                            <TableCell className="py-4 flex justify-end">
+                                <Button size={'sm'}
+                                        disabled={entry.status !== 'approved'}
+                                        variant={'dark'}>VIEW CERTIFICATE
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     ))}
                     {!loading && data.length === 0 && (
                         <TableRow>
                             <TableCell
-                                colSpan={6}
+                                colSpan={7}
                                 className="h-[65px] bg-transparent text-center font-bold w-full text-zinc-400">
                                 <EmptyPanel status={payoutStatus}/>
                             </TableCell>

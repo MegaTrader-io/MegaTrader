@@ -2,7 +2,7 @@
   {
     "id": 332589,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "bitcoin",
     "amount": 1200.50
@@ -10,7 +10,7 @@
   {
     "id": 332590,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "paypal",
     "amount": 1950.75
@@ -18,7 +18,7 @@
   {
     "id": 332591,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "paypal",
     "amount": 2780.00
@@ -26,7 +26,7 @@
   {
     "id": 332592,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "wise",
     "amount": 890.00
@@ -34,7 +34,7 @@
   {
     "id": 332593,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "ethereum",
     "amount": 2110.25
@@ -50,7 +50,7 @@
   {
     "id": 332595,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "bitcoin",
     "amount": 1580.50
@@ -58,7 +58,7 @@
   {
     "id": 332596,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "bitcoin",
     "amount": 2490.00
@@ -66,7 +66,7 @@
   {
     "id": 332597,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "bitcoin",
     "amount": 1080.00
@@ -82,7 +82,7 @@
   {
     "id": 332599,
     "date": "01-01-2023",
-    "status": "pending",
+    "status": "approved",
     "company": "Michael Rozenfel",
     "paymentMethod": "paypal",
     "amount": 300.75
