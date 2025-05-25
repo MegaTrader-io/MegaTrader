@@ -9,6 +9,11 @@ function CertificateModal({open, onClose}: {
     open: boolean,
     onClose: () => void,
 }) {
+
+    const handlerDownload = (e: React.FormEvent<HTMLButtonElement>) => {
+        alert('download', e);
+    }
+
     return (
         <Dialog showModal={open}
                 childrenClassName={'max-h-dvh'}
@@ -75,7 +80,7 @@ function CertificateModal({open, onClose}: {
                     </div>
                     <SocialMedia className="justify-between w-full" size={'lg'}/>
                 </div>
-                <Button className="w-full">
+                <Button onClick={handlerDownload} className="w-full">
                     <div className="flex items-center gap-2">
                         <span className="leading-[25px]">DOWNLOAD</span>
                         <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
