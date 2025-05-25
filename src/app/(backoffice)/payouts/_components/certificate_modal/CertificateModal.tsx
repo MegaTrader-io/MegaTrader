@@ -78,8 +78,9 @@ function CertificateModal({open, onClose}: {
                     <div className="text-stone-400 text-base font-bold leading-normal">
                         Share on social media
                     </div>
-                    <SocialMedia className="justify-between w-full" size={'lg'}/>
+                    <SocialMedia className="justify-between !gap-0 sm:gap-4 w-full" size={'lg'}/>
                 </div>
+
                 <Button onClick={handlerDownload} className="w-full">
                     <div className="flex items-center gap-2">
                         <span className="leading-[25px]">DOWNLOAD</span>
