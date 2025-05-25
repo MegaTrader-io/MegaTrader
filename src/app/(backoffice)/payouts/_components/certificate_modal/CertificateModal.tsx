@@ -10,8 +10,8 @@ function CertificateModal({open, onClose}: {
     onClose: () => void,
 }) {
 
-    const handlerDownload = (e: React.FormEvent<HTMLButtonElement>) => {
-        alert('download', e);
+    const handlerDownload = () => {
+        console.info('download')
     }
 
     return (
