@@ -9,11 +9,13 @@ import clsx from "clsx";
 import {directionType} from "@/components/ArrowDown";
 import PaymentMethodImage from "@/app/(backoffice)/payouts/_components/PaymentMethodImage";
 import {Button} from "@/components/Button";
+import CertificateModal from "@/app/(backoffice)/payouts/_components/certificate_modal/CertificateModal";
 
 const PayoutsTable = ({payoutStatus}: { payoutStatus: 'all_payouts' | 'approved' | 'pending' | 'rejected' }) => {
     const [sortBy] = useState<string>('id');
     const [direction] = useState<directionType>('asc');
     const [loading, setLoading] = useState(false)
+    const [openCertificateModal, setOpenCertificateModal] = useState<boolean>(false);
     const [data, setData] = useState<PayoutsEntry[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const limitPerPage = 10;
@@ -55,97 +57,110 @@ const PayoutsTable = ({payoutStatus}: { payoutStatus: 'all_payouts' | 'approved'
         setCurrentPage(page);
     };
 
-    return (
-        <div className="overflow-x-auto">
-            <Table>
-                <TableHead>
-                    <TableRow className="text-white">
-                        <TableHeader className='!text-sm'>Request ID</TableHeader>
-                        <TableHeader className='!text-sm'>Date</TableHeader>
-                        <TableHeader className="!text-sm">Status</TableHeader>
-                        <TableHeader className="!text-sm">Company/Beneficiary</TableHeader>
-                        <TableHeader className='!text-sm !w-[95px]'>Payment method</TableHeader>
-                        <TableHeader className="text-right !text-sm">Amount</TableHeader>
-                        <TableHeader className="text-right !text-sm">Certificate</TableHeader>
-                    </TableRow>
-                </TableHead>
-                <TableBody className="p-0">
-                    {loading && Array(limitPerPage).fill('1').map((_, index) => (
-                        <TableRow key={index}>
-                            <TableCell
-                                colSpan={7}
-                                className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
-                                <div className="bg-slate-800/70 w-full h-full"></div>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                    {!loading && data.map((entry) => (
-                        <TableRow key={entry.id} className="text-stone-400 text-sm font-normal">
-                            <TableCell className="py-4">#{entry.id}</TableCell>
-                            <TableCell className="py-4">{entry.date}</TableCell>
-                            <TableCell className="py-4">
-                                <BadgePendingOrPaid status={entry.status}/>
-                            </TableCell>
-                            <TableCell className="py-4">{entry.company}</TableCell>
-                            <TableCell className="py-4">
-                                <PaymentMethodImage
-                                    paymentMethod={entry.paymentMethod}/>
-                            </TableCell>
-                            <TableCell className="py-4 text-right">
-                                {formatCurrency(entry.amount)}
-                            </TableCell>
-                            <TableCell className="py-4 flex justify-end">
-                                <Button size={'sm'}
-                                        disabled={entry.status !== 'approved'}
-                                        variant={'dark'}>VIEW CERTIFICATE
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                    {!loading && data.length === 0 && (
-                        <TableRow>
-                            <TableCell
-                                colSpan={7}
-                                className="h-[65px] bg-transparent text-center font-bold w-full text-zinc-400">
-                                <EmptyPanel status={payoutStatus}/>
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+    const handleCertificateModal = (entry: PayoutsEntry) => {
+        setOpenCertificateModal(true);
+        console.info('entry', entry);
+    }
 
-            {data.length > 0 && (<Pagination
-                className="mt-6 items-center flex justify-end text-stone-400 text-xs font-normal leading-tight">
-                {pagination.total >= limitPerPage ? `Showing ${pagination.per_page} of ${pagination.total}` : null}
-                <PaginationList className="text-white flex items-center">
-                    <PaginationPage
-                        as={'button'}
-                        className="h-7 p-1 bg-stone-800 rounded border border-neutral-700"
-                        onClick={() => handlePageChange(pagination.current_page - 1)}
-                        disabled={pagination.current_page === 1}>
-                        <ChevronLeftIcon className="text-white w-5 h-5 "/>
-                    </PaginationPage>
-                    {Array.from({length: pagination.last_page}, (_, i) => i + 1).map((page) => (
+    return (
+        <>
+            <CertificateModal
+                open={openCertificateModal}
+                onClose={() => setOpenCertificateModal(false)}
+            />
+
+            <div className="overflow-x-auto">
+                <Table>
+                    <TableHead>
+                        <TableRow className="text-white">
+                            <TableHeader className='!text-sm'>Request ID</TableHeader>
+                            <TableHeader className='!text-sm'>Date</TableHeader>
+                            <TableHeader className="!text-sm">Status</TableHeader>
+                            <TableHeader className="!text-sm">Company/Beneficiary</TableHeader>
+                            <TableHeader className='!text-sm !w-[95px]'>Payment method</TableHeader>
+                            <TableHeader className="text-right !text-sm">Amount</TableHeader>
+                            <TableHeader className="text-right !text-sm">Certificate</TableHeader>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody className="p-0">
+                        {loading && Array(limitPerPage).fill('1').map((_, index) => (
+                            <TableRow key={index}>
+                                <TableCell
+                                    colSpan={7}
+                                    className="h-[65px] animate-pulse bg-[#1e1e1e]/70 text-center font-bold w-full text-zinc-400">
+                                    <div className="bg-slate-800/70 w-full h-full"></div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {!loading && data.map((entry) => (
+                            <TableRow key={entry.id} className="text-stone-400 text-sm font-normal">
+                                <TableCell className="py-4">#{entry.id}</TableCell>
+                                <TableCell className="py-4">{entry.date}</TableCell>
+                                <TableCell className="py-4">
+                                    <BadgePendingOrPaid status={entry.status}/>
+                                </TableCell>
+                                <TableCell className="py-4">{entry.company}</TableCell>
+                                <TableCell className="py-4">
+                                    <PaymentMethodImage
+                                        paymentMethod={entry.paymentMethod}/>
+                                </TableCell>
+                                <TableCell className="py-4 text-right">
+                                    {formatCurrency(entry.amount)}
+                                </TableCell>
+                                <TableCell className="py-4 flex justify-end">
+                                    <Button size={'sm'}
+                                            onClick={() => handleCertificateModal(entry)}
+                                            disabled={entry.status !== 'approved'}
+                                            variant={'dark'}>VIEW CERTIFICATE
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {!loading && data.length === 0 && (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={7}
+                                    className="h-[65px] bg-transparent text-center font-bold w-full text-zinc-400">
+                                    <EmptyPanel status={payoutStatus}/>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+
+                {data.length > 0 && (<Pagination
+                    className="mt-6 items-center flex justify-end text-stone-400 text-xs font-normal leading-tight">
+                    {pagination.total >= limitPerPage ? `Showing ${pagination.per_page} of ${pagination.total}` : null}
+                    <PaginationList className="text-white flex items-center">
                         <PaginationPage
                             as={'button'}
-                            className={clsx('w-7 h-7 px-3 py-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex', {
-                                'bg-stone-950': currentPage === page
-                            })}
-                            key={page}
-                            onClick={() => handlePageChange(page)}>
-                            {page}
+                            className="h-7 p-1 bg-stone-800 rounded border border-neutral-700"
+                            onClick={() => handlePageChange(pagination.current_page - 1)}
+                            disabled={pagination.current_page === 1}>
+                            <ChevronLeftIcon className="text-white w-5 h-5 "/>
                         </PaginationPage>
-                    ))}
-                    <PaginationPage
-                        as={'button'}
-                        className="h-7 p-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex"
-                        onClick={() => handlePageChange(pagination.current_page + 1)}
-                        disabled={pagination.current_page === pagination.last_page}>
-                        <ChevronRightIcon className="text-white w-5 h-5"/>
-                    </PaginationPage>
-                </PaginationList>
-            </Pagination>)}
-        </div>
+                        {Array.from({length: pagination.last_page}, (_, i) => i + 1).map((page) => (
+                            <PaginationPage
+                                as={'button'}
+                                className={clsx('w-7 h-7 px-3 py-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex', {
+                                    'bg-stone-950': currentPage === page
+                                })}
+                                key={page}
+                                onClick={() => handlePageChange(page)}>
+                                {page}
+                            </PaginationPage>
+                        ))}
+                        <PaginationPage
+                            as={'button'}
+                            className="h-7 p-1 bg-stone-800 rounded border border-neutral-700 justify-center items-center gap-2 inline-flex"
+                            onClick={() => handlePageChange(pagination.current_page + 1)}
+                            disabled={pagination.current_page === pagination.last_page}>
+                            <ChevronRightIcon className="text-white w-5 h-5"/>
+                        </PaginationPage>
+                    </PaginationList>
+                </Pagination>)}
+            </div>
+        </>
     );
 };
 

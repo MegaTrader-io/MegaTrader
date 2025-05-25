@@ -10,6 +10,8 @@ export function useCopy(value: string) {
             return;
         }
 
+        console.info('buttonRef.current', buttonRef.current)
+
         const clipboard = new ClipboardJS(buttonRef.current as HTMLButtonElement, {
             text: () => value,
         });
