@@ -24,7 +24,7 @@ const data =
             }
         },
         {
-            href: 'https://www.instagram.com/megatrader.io/',
+            href: 'https://www.instagram.com/megatrader.io?igsh=MWc1dHJwY3dqeDdwcA%3D%3D&utm_source=q',
             svg: (size: 'sm' | 'lg') => {
                 if (size === 'sm') {
                     return <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"

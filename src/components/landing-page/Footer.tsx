@@ -1,10 +1,20 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
-import React from "react";
+import React, {useState} from "react";
 import SocialMedia from "@/components/landing-page/SocialMedia";
 import SubscribeForm from "@/components/SubscribeForm";
+import {IShowAlert} from "@/app/(backoffice)/refferals/page";
+import Alert from "@/components/Alert";
 
 export default function Footer() {
+    const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
+
+    function cbShowAlert(payload: IShowAlert | null) {
+        setShowAlert(payload)
+    }
+
     return (
         <footer
             className="w-full max-w-7xl flex-1 h-dvh mx-auto px-4 pb-8  flex items-center justify-between flex-col space-y-8">
@@ -29,8 +39,15 @@ export default function Footer() {
                         </div>
                         <SocialMedia/>
                     </div>
-                    <div className="col-span-2 lg:col-span-1">
-                        <SubscribeForm compact={true}/>
+                    <div className="col-span-2 space-y-4 lg:col-span-1">
+                        {showAlert && (
+                            <div className="w-full">
+                                <Alert type={showAlert.type}
+                                       message={showAlert.message}/>
+                            </div>
+                        )}
+
+                        <SubscribeForm compact={true} cbShowAlert={cbShowAlert}/>
                     </div>
                 </div>
                 <div className="my-8 col-span-2">
