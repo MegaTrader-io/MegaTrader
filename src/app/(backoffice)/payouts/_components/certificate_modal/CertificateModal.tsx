@@ -58,7 +58,8 @@ function CertificateModal({open, onClose}: {
                     <div
                         className="w-full py-3 px-4 bg-[#1e1e1e]/70 rounded-xl outline outline-1 outline-offset-[-1px] outline-neutral-700 inline-flex justify-start items-center">
                         <div
-                            className="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">https://megatrader.io/share/certificate/akl54as
+                            className="flex-1 justify-start truncate text-stone-400 text-base font-medium leading-normal">
+                            https://megatrader.io/share/certificate/akl54as
                         </div>
                         <CopyButton className="text-[#ffd78a] w-6 h-6"
                                     value="https://megatrader.io/share/certificate/akl54as"/>
