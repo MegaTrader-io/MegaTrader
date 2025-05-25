@@ -17,12 +17,12 @@ function CertificateModal({open, onClose}: {
     return (
         <Dialog showModal={open}
                 childrenClassName={'max-h-dvh'}
-                className="w-[calc(100vw-32px)] sm:w-[580px]"
+                className="w-[calc(100vw-32px)] md:w-[500px] lg:w-[580px] "
                 title={'CERTIFICATE'}
                 onClose={onClose}>
             <div className="space-y-8">
                 <div
-                    className="p-8  relative rounded-2xl w-full sm:w-[548px] h-auto flex bg-[url('/assets/images/bg-certificate.svg')] bg-no-repeat bg-center bg-cover">
+                    className="p-8  relative rounded-2xl w-full lg:w-[548px] h-auto flex bg-[url('/assets/images/bg-certificate.svg')] bg-no-repeat bg-center bg-cover">
                     <div className="text-center flex flex-col items-center space-y-4">
                         <LogoExpanded logoType={'black'}/>
                         <div>
