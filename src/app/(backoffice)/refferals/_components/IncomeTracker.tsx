@@ -143,8 +143,8 @@ function ChartIncomeTracker({dataChart}: { dataChart: ChartData | undefined }) {
 
     return (
         <>
-            <div className="md:grid md:grid-cols-[200px_auto] h-[354px] align-bottom gap-4">
-                <div className={'h-full flex items-end'}>
+            <div className="md:grid md:grid-cols-[200px_auto] min-h-[354px] align-bottom gap-4">
+                <div className={'h-full flex items-end pt-4 sm:pt-0'}>
                     <div>
                         <div
                             className="self-stretch text-teal-500 justify-start text-Success-500 text-5xl font-light  uppercase leading-[60px]">+20%
