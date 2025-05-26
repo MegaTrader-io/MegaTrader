@@ -5,7 +5,7 @@ import Card from "@/components/Card";
 import {useLoading} from "@/context/LoadingContext";
 import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 import RequestPayoutsModal from "@/app/(backoffice)/payouts/_components/payout_modal/RequestPayoutsModal";
-import {IRequestPayoutForm, IRequestPayoutTransfer} from "@/commons/interfaces";
+import {PayoutSummary, IRequestPayoutTransfer} from "@/commons/interfaces";
 
 function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload: IShowAlert) => void }) {
     const {setLoading} = useLoading();
@@ -15,7 +15,7 @@ function RequestWithdrawal({handleDisplayAlert}: { handleDisplayAlert: (payload:
         setOpenRequestModal(prev => !prev);
     }
 
-    function submitRequest(form: IRequestPayoutForm | IRequestPayoutTransfer) {
+    function submitRequest(form: PayoutSummary | IRequestPayoutTransfer) {
         setOpenRequestModal(false)
         setLoading(true);
 
