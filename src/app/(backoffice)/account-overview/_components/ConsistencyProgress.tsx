@@ -16,7 +16,7 @@ function ConsistencyProgress({account}: { account: Account }) {
             className="justify-between px-0 gap-4 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
         >
             <div className="w-full h-full">
-                <div className="flex items-center gap-2">
+                <div className="grid grid-cols-[24px_1fr] items-center gap-2">
                     {passConsistency &&
                         <CheckCircleIcon className="w-6 h-6 text-teal-400"/>}
                     {!passConsistency &&
@@ -63,8 +63,9 @@ function ConsistencyProgress({account}: { account: Account }) {
                         </div>
                         <div>
                             <span
-                                className="text-white text-xs font-medium leading-tight">You need to maintain at least {account.objectives.consistency.minPercentage}% <br className="hidden sm:block"/>
-                                consistency. <span className=" text-[#ffd78a] text-xs font-medium underline leading-tight">Learn more</span></span>
+                                className="text-white text-xs font-medium leading-tight tracking-tight">You need to maintain at least {account.objectives.consistency.minPercentage}%
+                                consistency. <span
+                                    className=" text-[#ffd78a] text-xs font-medium underline leading-tight">Learn more</span></span>
                         </div>
                     </div>
                 </div>

@@ -17,7 +17,7 @@ export function ObjectiveItemPoint({label, objective}: { label: string, objectiv
             className="justify-between px-0 gap-4 py-4 self-stretch w-full border-b border-neutral-700 flex items-center"
         >
             <div className="w-full h-full">
-                <div className="flex items-center gap-2">
+                <div className="grid grid-cols-[24px_1fr] items-center gap-2">
                     {currentValue < currentTarget &&
                         <CheckCircleIcon className="w-6 h-6 text-neutral-700"/>}
                     {currentValue >= currentTarget &&
