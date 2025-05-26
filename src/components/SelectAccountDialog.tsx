@@ -8,34 +8,43 @@ import TradingPlanIcon from "@/components/TradingPlanIcon";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import {Button} from "@/components/Button";
 
-interface DropdownDialogProps<T> {
+interface SelectAccountDialogProps<T> {
     items: T[];
     value: T;
-    onChange: (item: T) => void;
+    onChange: (item: T) => Promise<{ account: T }>;
     disabled?: boolean;
 }
 
-export default function DropdownDialog<T extends Account>({
-                                                              items = [],
-                                                              value,
-                                                              onChange
-                                                          }: DropdownDialogProps<T>) {
+export default function SelectAccountDialog<T extends Account>({
+                                                                   items = [],
+                                                                   value,
+                                                                   onChange
+                                                               }: SelectAccountDialogProps<T>) {
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState(value);
+    const [accountSelectedTmp, setAccountSelectedTmp] = useState(value);
 
     useEffect(() => {
         if (open) {
             setSelected(value);
+            setAccountSelectedTmp(value);
         }
     }, [open, value]);
 
     const switchOption = (item: T) => {
-        setSelected(item);
+        setAccountSelectedTmp(item);
     };
 
-    const selectAccount = () => {
-        if (onChange) onChange(selected);
+    const selectAccount = async () => {
         setOpen(false)
+
+        try {
+            await onChange(accountSelectedTmp);
+            setSelected(accountSelectedTmp);
+        } catch (err) {
+            console.error('handler error:', err);
+            setOpen(true);
+        }
     }
 
     const closeModal = () => {
@@ -72,7 +81,7 @@ export default function DropdownDialog<T extends Account>({
                                         }}
                                         className={clsx('cursor-pointer flex pl-4 pr-3 py-3 gap-2 items-center border-transparent rounded-xl',
                                             {
-                                                'bg-stone-800': selected.id === item.id
+                                                'bg-stone-800': accountSelectedTmp.id === item.id
                                             })}
                                         key={item.id}>
                                         <div className="text-center space-y-2 relative select-none w-full">
@@ -81,7 +90,7 @@ export default function DropdownDialog<T extends Account>({
                                                     tradingType={item.tradingType}
                                                     status={item.status}/>
 
-                                                {selected.id === item.id &&
+                                                {accountSelectedTmp.id === item.id &&
                                                     <CheckCircleIcon
                                                         className="w-6 h-6 fill-primary absolute right-0 -top-1"/>}
                                             </div>

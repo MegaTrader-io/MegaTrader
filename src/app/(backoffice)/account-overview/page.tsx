@@ -32,18 +32,28 @@ export default function AccountOverView() {
         {element: passwordMaskRef.current, value: credentials.password},
     ]);
 
-    function changeAccount(account: Account) {
-        fetchAccount(account).then(() => {
+    async function changeAccount(account: Account): Promise<{ account: Account }> {
+        try {
+            await fetchAccount(account);
             setSelectedAccount(account);
 
-            if (account.id === 1) {
-                setModalType('breach_modal')
-            } else if (account.id === 3) {
-                setModalType('congratulations_modal')
-            } else if (account.id === 4) {
-                setModalType('unpaid_modal')
+            switch (account.id) {
+                case 1:
+                    setModalType('breach_modal');
+                    break;
+                case 3:
+                    setModalType('congratulations_modal');
+                    break;
+                case 4:
+                    setModalType('unpaid_modal');
+                    break;
             }
-        })
+
+            return {account};
+        } catch (error) {
+            console.error('error handler:', error);
+            throw error;
+        }
     }
 
     function handleCloseDialog() {
