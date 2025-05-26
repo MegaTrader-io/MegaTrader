@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import InputText from "@/components/InputText";
 import {InputCheckbox} from "@/components/InputCheckbox";
