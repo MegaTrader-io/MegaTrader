@@ -376,9 +376,9 @@ export const AffiliatesMetrics: Metrics[] = [
         value: formatCurrency(5471)
     },
     {
-        title: 'Active Referrals',
-        subtitle: 'Subscribed user count',
-        value: 12
+        title: 'Commission Rate',
+        subtitle: 'Your referral commission percentage',
+        value: '20%'
     },
     {
         title: 'Total sold',
