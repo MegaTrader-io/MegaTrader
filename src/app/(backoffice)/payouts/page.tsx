@@ -15,6 +15,10 @@ export default function AccountOverView() {
 
     function handleDisplayAlert(payload: IShowAlert) {
         setShowAlert(payload)
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }
 
     return <>

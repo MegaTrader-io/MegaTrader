@@ -32,6 +32,10 @@ export default function Affiliates() {
 
     function handleDisplayAlert(payload: IShowAlert) {
         setShowAlert(payload)
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
     }
 
     function handleActivation() {
