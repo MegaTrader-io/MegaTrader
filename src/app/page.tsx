@@ -36,10 +36,10 @@ const Home = () => {
                 />
             </div>
             <div className="space-y-4">
-                <h1 className="self-stretch text-center justify-start text-white text-[40px] font-medium font-['Roboto'] uppercase leading-[48px]">
+                <h1 className="self-stretch text-center justify-start text-white text-[40px] font-medium uppercase leading-[48px]">
                     Coming soon!
                 </h1>
-                <h2 className="self-stretch text-center justify-start text-stone-400 text-base font-medium font-['Roboto'] leading-normal">
+                <h2 className="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">
                     Empowering traders with innovative solutions, unmatched reliability, and tools designed to elevate
                     your trading journey to new heights.
                 </h2>

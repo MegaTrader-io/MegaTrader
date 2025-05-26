@@ -10,8 +10,8 @@ import {useLoading} from "@/context/LoadingContext";
 
 const DefaultConsentMessage = () => (
     <>
-        I consent to the use of my email address to<br/>
-        receive updates and launch announcements.
+        I consent to the use of my email address to
+        receive<br className="hidden md:block"/> updates and launch announcements.
     </>
 );
 
