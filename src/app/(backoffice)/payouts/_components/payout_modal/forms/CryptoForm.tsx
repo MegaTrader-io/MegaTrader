@@ -19,9 +19,7 @@ function CryptoForm({showConfirmRequestDialog, network, onClose}: {
     const [isValidWalletAddress, setIsValidWalletAddress] = useState<boolean | null>(false);
 
     const [form, setForm] = useState<IRequestPayoutCrypto>({
-        fullName: undefined,
         walletAddress: undefined,
-        address: undefined,
         withdrawalAmount: undefined,
         netAmount: 0,
         transactionFee: 0,
@@ -62,9 +60,6 @@ function CryptoForm({showConfirmRequestDialog, network, onClose}: {
         const newErrors: { [key: string]: string } = {};
         if (!form.withdrawalAmount || !!form.withdrawalAmount && form.withdrawalAmount.toString().trim() === '') newErrors.withdrawalAmount = "This field is required.";
         if (!form.walletAddress) newErrors.walletAddress = "This field is required.";
-        if (!form.address) newErrors.address = "This field is required.";
-        if (!form.fullName) newErrors.fullName = "This field is required.";
-
         if (form.withdrawalAmount && (form.withdrawalAmount <= 0 || form.withdrawalAmount > MAX_WITHDRAWAL)) newErrors.withdrawalAmount = "Invalid amount.";
 
         return newErrors;
@@ -180,28 +175,6 @@ function CryptoForm({showConfirmRequestDialog, network, onClose}: {
                 </label>
             </div>
 
-            <div>
-                <label className="text-stone-400 text-base font-bold leading-normal">
-                    Full Name or Business Name
-                    <InputText type={"text"}
-                               name='fullName'
-                               defaultValue={form.fullName}
-                               onChange={changeFields}
-                               errorMessage={fieldErrors.fullName}/>
-                </label>
-            </div>
-
-            <div>
-                <label className="text-stone-400 text-base font-bold leading-normal">
-                    Address
-                    <InputText type={"text"}
-                               name='address'
-                               defaultValue={form.address}
-                               onChange={changeFields}
-                               errorMessage={fieldErrors.address}/>
-                </label>
-            </div>
-
             <div
                 className="flex flex-col !mt-4 space-y-4 sm:space-y-0 sm:flex sm:flex-row justify-center gap-2">
                 <Button onClick={onClose}
@@ -210,7 +183,7 @@ function CryptoForm({showConfirmRequestDialog, network, onClose}: {
                         variant={'light'}>
                     CANCEL
                 </Button>
-                <Button type='submit' className="w-full order-1 sm:order-2">
+                <Button type='submit' disabled={fieldErrors.walletAddress === invalidWalletAddressMessage} className="w-full order-1 sm:order-2">
                     CONTINUE
                 </Button>
             </div>

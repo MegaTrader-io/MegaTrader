@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button} from "@/components/Button";
 import Alert from "@/components/Alert";
-import {IRequestPayoutForm, IRequestPayoutTransfer, PaymentMethodType} from "@/commons/interfaces";
+import {PayoutSummary, IRequestPayoutTransfer, PaymentMethodType} from "@/commons/interfaces";
 import FormRequest from "@/app/(backoffice)/payouts/_components/payout_modal/_components/FormRequest";
 
 function ConfirmRequestPanel({
@@ -11,7 +11,7 @@ function ConfirmRequestPanel({
                                  goBack
                              }: {
     goBack: () => void,
-    payload: IRequestPayoutForm | IRequestPayoutTransfer,
+    payload: PayoutSummary | IRequestPayoutTransfer,
     submitForm: () => void,
     methodTypeSelected: PaymentMethodType
 }) {

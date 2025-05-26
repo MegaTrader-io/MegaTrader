@@ -14,9 +14,7 @@ function RiseworksForm({showConfirmRequestDialog, onClose}: {
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
     const [form, setForm] = useState<IRequestPayoutRiseWorks>({
-        fullName: undefined,
-        email: undefined,
-        address: undefined,
+        email: 'john@doe.com',
         withdrawalAmount: undefined,
         netAmount: 0,
         transactionFee: 0,
@@ -56,10 +54,6 @@ function RiseworksForm({showConfirmRequestDialog, onClose}: {
     function validateFields() {
         const newErrors: { [key: string]: string } = {};
         if (!form.withdrawalAmount || !!form.withdrawalAmount && form.withdrawalAmount.toString().trim() === '') newErrors.withdrawalAmount = "This field is required.";
-        if (!form.email) newErrors.email = "This field is required.";
-        if (!form.address) newErrors.address = "This field is required.";
-        if (!form.fullName) newErrors.fullName = "This field is required.";
-
         if (form.withdrawalAmount && (form.withdrawalAmount <= 0 || form.withdrawalAmount > MAX_WITHDRAWAL)) newErrors.withdrawalAmount = "Invalid amount.";
         if (form.email && inputEmail.current && !inputEmail.current.validity.valid) newErrors.email = "Invalid email address";
 
@@ -115,32 +109,11 @@ function RiseworksForm({showConfirmRequestDialog, onClose}: {
                     <InputText
                         ref={inputEmail}
                         type={"email"}
+                        disabled={true}
                         name='email'
                         defaultValue={form.email}
                         onChange={changeFields}
                         errorMessage={fieldErrors.email}/>
-                </label>
-            </div>
-
-            <div>
-                <label className="text-stone-400 text-base font-bold leading-normal">
-                    Full Name or Business Name
-                    <InputText type={"text"}
-                               name='fullName'
-                               defaultValue={form.fullName}
-                               onChange={changeFields}
-                               errorMessage={fieldErrors.fullName}/>
-                </label>
-            </div>
-
-            <div>
-                <label className="text-stone-400 text-base font-bold leading-normal">
-                    Address
-                    <InputText type={"text"}
-                               name='address'
-                               defaultValue={form.address}
-                               onChange={changeFields}
-                               errorMessage={fieldErrors.address}/>
                 </label>
             </div>
 

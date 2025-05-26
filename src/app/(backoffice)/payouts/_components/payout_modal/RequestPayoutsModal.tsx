@@ -7,7 +7,7 @@ import RiseworksForm from "@/app/(backoffice)/payouts/_components/payout_modal/f
 import {
     IPaymentMethod,
     IRequestPayoutCrypto,
-    IRequestPayoutForm,
+    PayoutSummary,
     IRequestPayoutRiseWorks, IRequestPayoutTransfer,
     PaymentMethodType
 } from "@/commons/interfaces";
@@ -23,10 +23,10 @@ export const PaymentMethodList: IPaymentMethod[] = [
 function RequestPayoutsModal({open, onClose, submitRequest}: {
     open: boolean,
     onClose: () => void,
-    submitRequest: (form: IRequestPayoutForm | IRequestPayoutTransfer) => void
+    submitRequest: (form: PayoutSummary | IRequestPayoutTransfer) => void
 }) {
     const [methodTypeSelected, setMethodTypeSelected] = useState<PaymentMethodType>(PayoutMethod.RISEWORKS);
-    const [confirmData, setConfirmData] = useState<IRequestPayoutForm | IRequestPayoutTransfer | null>(null);
+    const [confirmData, setConfirmData] = useState<PayoutSummary | IRequestPayoutTransfer | null>(null);
 
     function showConfirmRequestDialog(form: IRequestPayoutRiseWorks | IRequestPayoutCrypto | IRequestPayoutTransfer) {
         setConfirmData(form);

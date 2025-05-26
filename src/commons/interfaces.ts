@@ -11,16 +11,11 @@ export interface PayoutSummary {
     netAmount: number;
 }
 
-export interface IRequestPayoutForm extends PayoutSummary {
-    address: string | undefined,
-    fullName: string | undefined,
-}
-
-export interface IRequestPayoutRiseWorks extends IRequestPayoutForm {
+export interface IRequestPayoutRiseWorks extends PayoutSummary {
     email: string | undefined,
 }
 
-export interface IRequestPayoutCrypto extends IRequestPayoutForm {
+export interface IRequestPayoutCrypto extends PayoutSummary {
     walletAddress: string | undefined,
 }
 
