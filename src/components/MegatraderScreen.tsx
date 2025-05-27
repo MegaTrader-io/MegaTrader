@@ -10,7 +10,7 @@ import Image from "next/image";
 
 const sliders = [
     {
-        imageUrl: '/assets/images/screenshots/ac3.svg',
+        imageUrl: '/assets/images/screenshots/slider1.webp',
         imageUrlMobile: '/assets/images/screenshots/ac2-mobile.svg',
         title: 'Power up your trading with full control.',
         subtitle: 'Log in to manage your accounts, track performance, and unlock the full potential of your MegaTrader journey.'
@@ -35,21 +35,35 @@ const MegatraderScreen = () => <Swiper autoplay={{
 }}
                                        loop={true}
                                        pagination={true}
-                                       modules={[Pagination, Autoplay]}>
+                                       modules={[Pagination]}>
     {sliders.map(({imageUrl, imageUrlMobile, title, subtitle}, index) => (
         <SwiperSlide key={index}>
             <div
                 className="min-h-[668px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px]">
 
-                <Image
-                    src={imageUrl}
-                    className="hidden md:block size-3/4 md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
-                    alt="Account overview"
-                    width={684}
-                    height={659}
-                    style={{objectFit: 'fill', width: '100%', height: '100%'}}
-                    quality={100}
-                />
+                {index === 0 && (
+                    <Image
+                        src={imageUrl}
+                        className="hidden mx-auto md:block md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
+                        alt="Account overview"
+                        width={600}
+                        height={800}
+                        quality={100}
+                    />
+                )}
+
+                {index > 0 && (
+                    <Image
+                        src={imageUrl}
+                        className="hidden md:block size-3/4 md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
+                        alt="Account overview"
+                        width={684}
+                        height={659}
+                        style={{objectFit: 'fill', width: '100%', height: '100%'}}
+                        quality={100}
+                    />
+                )}
+
 
                 <Image
                     src={imageUrlMobile}
