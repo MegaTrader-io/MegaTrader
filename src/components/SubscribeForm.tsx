@@ -22,8 +22,9 @@ const DefaultCompactConsentMessage = () => (
 );
 
 
-function SubscribeForm({cbShowAlert, compact = false}: {
+function SubscribeForm({cbShowAlert, compact = false, focusForced = true}: {
     cbShowAlert?: (payload: IShowAlert | null) => void,
+    focusForced?: boolean,
     compact?: boolean
 }) {
     const {setLoading, isLoading: sendingEmail} = useLoading();
@@ -36,7 +37,9 @@ function SubscribeForm({cbShowAlert, compact = false}: {
     const canSubscribe = form.email_consent;
 
     useEffect(() => {
-        inputEmail.current?.focus();
+        if (focusForced) {
+            inputEmail.current?.focus();
+        }
     }, [inputEmail]);
 
     const validateEmail = () => {

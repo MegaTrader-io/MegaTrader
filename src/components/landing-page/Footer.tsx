@@ -47,7 +47,7 @@ export default function Footer() {
                             </div>
                         )}
 
-                        <SubscribeForm compact={true} cbShowAlert={cbShowAlert}/>
+                        <SubscribeForm focusForced={false} compact={true} cbShowAlert={cbShowAlert}/>
                     </div>
                 </div>
                 <div className="my-8 col-span-2">
