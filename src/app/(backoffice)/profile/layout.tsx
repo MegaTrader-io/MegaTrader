@@ -27,7 +27,7 @@ function Links({options}: { options: IOption[] }) {
 
     return <>
         <ProfileModal/>
-        
+
         <div className="block sm:hidden">
             <div className="relative w-full">
                 <select
