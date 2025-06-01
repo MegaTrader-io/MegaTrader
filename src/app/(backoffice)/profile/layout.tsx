@@ -12,6 +12,7 @@ import {defaultUser} from "@/commons/data";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import Pencil from "@/components/Pencil";
 import {XCircleIcon} from "@heroicons/react/20/solid";
+import ProfileModal from "@/app/(backoffice)/profile/ProfileModal";
 
 const Options: IOption[] = [
     {url: '/profile/identity-verification', label: 'Identity verification'},
@@ -25,6 +26,8 @@ function Links({options}: { options: IOption[] }) {
     const router = useRouter()
 
     return <>
+        <ProfileModal/>
+        
         <div className="block sm:hidden">
             <div className="relative w-full">
                 <select

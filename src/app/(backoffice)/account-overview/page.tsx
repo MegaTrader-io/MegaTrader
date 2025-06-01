@@ -22,6 +22,7 @@ import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
 import TradingLogo from "@/components/TradingLogo";
 import DriverGuide from "@/components/on-boarding/DriverGuide";
+import ProfileModal from "@/app/(backoffice)/profile/ProfileModal";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
