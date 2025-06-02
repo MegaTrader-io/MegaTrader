@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import clsx from "clsx";
 import PersonalInformation from "@/app/(backoffice)/profile/personal-information/personal_information";
+import Select from "@/components/Select";
 
 export type OPTIONS = 'personal_information' | 'verification' | 'password' | '2fa';
 
@@ -26,6 +27,16 @@ function ProfileForm() {
         setTab(tab);
     }
 
+    function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        const value = e.target.value;
+        const tabSelected = ITEMS.find(tab => tab.option === value);
+        if (!tabSelected) {
+            return;
+        }
+
+        changeTab(tabSelected);
+    }
+
     return (
         <div className="grid grid-cols-[300px_64px_1fr] my-1">
             <div className="h-full space-y-2">
@@ -40,6 +51,14 @@ function ProfileForm() {
                         {item.title}
                     </Button>
                 ))}
+
+                <div className="block sm:hidden">
+                    <Select value={tab.option} onChange={onChange}>
+                        {ITEMS.map((item, index) => (
+                            <option key={index} value={item.option}>{item.title}</option>
+                        ))}
+                    </Select>
+                </div>
             </div>
             <div className="flex justify-center">
                 <div className="outline outline-[0.1px] outline-[#1e1e1e] w-0 h-full"></div>

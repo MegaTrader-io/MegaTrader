@@ -7,7 +7,7 @@ interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
     children?: React.ReactNode;
 }
 
-const Select: React.FC<Props> = ({ onChange, children, className, ...props }) => {
+const Select: React.FC<Props> = ({onChange, children, className, ...props}) => {
     return (
         <div className="relative w-full">
             <select

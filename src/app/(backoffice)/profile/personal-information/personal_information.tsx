@@ -124,7 +124,8 @@ function PersonalInformation() {
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal w-full">
                             Address
-                            <InputText name={'address'} value={user.address} onChange={changeFields}
+                            <InputText name={'address'} placeholder={'Ex: Second Street'} value={user.address}
+                                       onChange={changeFields}
                                        errorMessage={errors.address}/>
                         </label>
                     </div>
@@ -133,6 +134,7 @@ function PersonalInformation() {
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             City
                             <InputText name={'city'}
+                                       placeholder={'Ex: Miami'}
                                        value={user.city}
                                        onChange={changeFields}
                                        errorMessage={errors.city}/>
@@ -142,7 +144,10 @@ function PersonalInformation() {
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal w-full">
                             Zip-code
-                            <InputText name={'zipCode'} value={user.zipCode} onChange={changeFields}
+                            <InputText name={'zipCode'}
+                                       placeholder={'Ex: 269574'}
+                                       value={user.zipCode}
+                                       onChange={changeFields}
                                        errorMessage={errors.zipCode}/>
                         </label>
                     </div>
@@ -152,6 +157,7 @@ function PersonalInformation() {
                             State
                             <InputText
                                 name={'state'}
+                                placeholder={'Ex: 269574'}
                                 value={user.state}
                                 onChange={changeFields}
                                 errorMessage={errors.state}/>
@@ -166,14 +172,21 @@ function PersonalInformation() {
                                     <select
                                         name="country"
                                         value={user.country}
-                                        className={clsx('w-full py-3 px-4 pr-10 rounded-xl border border-neutral-700 text-stone-400 bg-[#1e1e1e]/70 appearance-none focus:outline-none',
+                                        onChange={changeFields}
+                                        className={clsx(
+                                            'w-full py-3 px-4 pr-10 font-medium rounded-xl border border-neutral-700 bg-[#1e1e1e]/70 appearance-none focus:outline-none',
+                                            user.country === ''
+                                                ? 'text-neutral-700 '
+                                                : 'text-stone-400',
                                             errors.country
-                                                ? 'ring-1 ring-red-500 text-red-500 border-transparent'
+                                                ? 'ring-1 ring-red-500 border-transparent'
                                                 : ''
                                         )}
-                                        onChange={changeFields}
+                                        aria-describedby={errors.country ? 'country-error' : undefined}
                                     >
-                                        <option value=""></option>
+                                        <option value="" disabled hidden>Select a
+                                            Country
+                                        </option>
                                         {countries.map(country => (
                                             <option key={country.id}
                                                     value={country.id}>{country.description}</option>
