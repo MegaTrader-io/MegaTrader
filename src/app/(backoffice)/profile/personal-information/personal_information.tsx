@@ -59,8 +59,8 @@ function PersonalInformation() {
 
     return (
         <>
-            <div className="md:grid md:grid-cols-[auto_1fr] md:gap-4 space-y-8 md:space-y-0">
-                <div className="w-full justify-center items-center flex md:block">
+            <div className="space-y-8 grid grid-cols-[auto_1fr] gap-4">
+                <div className="w-full">
                     <Avatar user={user}/>
                 </div>
                 <div className="flex items-center">
@@ -100,7 +100,8 @@ function PersonalInformation() {
             </div>
 
             <div className="w-full space-y-4">
-                <form onSubmit={onSubmit} className="w-full space-y-4 md:space-y-0 text-white md:grid md:grid-cols-2 gap-4">
+                <form onSubmit={onSubmit}
+                      className="w-full gap-4 space-y-4 text-white lg:grid lg:grid-cols-2 lg:space-y-0">
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             First name
