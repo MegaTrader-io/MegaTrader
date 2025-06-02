@@ -18,6 +18,9 @@ function PersonalInformation() {
     const [updated, setUpdated] = useState<boolean>(false);
     const hasErrors = Object.values(errors).filter(error => error !== '').length > 0;
 
+    const validationErrors = validateFields();
+    const validToSubmit = Object.keys(validationErrors).length === 0;
+
     function changeFields(ev: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
         const {name, value} = ev.target;
         setUser(user => ({...user, [name]: value}));
@@ -27,6 +30,7 @@ function PersonalInformation() {
         }
     }
 
+
     function validateFields() {
         const newErrors: { [key: string]: string } = {};
 
@@ -35,11 +39,11 @@ function PersonalInformation() {
         if (!user.city.trim()) newErrors.city = "This field is required.";
         if (!user.state.trim()) newErrors.state = "This field is required.";
         if (!user.country.trim()) newErrors.country = "This field is required.";
-        if (!user.language.trim()) newErrors.language = "This field is required.";
         if (!user.phone.trim()) newErrors.phone = "This field is required.";
 
         return newErrors;
     }
+
 
     function onSubmit(ev: React.ChangeEvent<HTMLFormElement>) {
         ev.preventDefault();
@@ -233,7 +237,7 @@ function PersonalInformation() {
                     </div>
 
                     <div className="mt-4 md:mt-0">
-                        <Button type='submit' variant={'primary'}>
+                        <Button type='submit' disabled={!validToSubmit} variant={'primary'}>
                             Save changes
                         </Button>
                     </div>
