@@ -100,7 +100,7 @@ function PersonalInformation() {
             </div>
 
             <div className="w-full space-y-4">
-                <form onSubmit={onSubmit} className="w-full text-white md:grid md:grid-cols-2 gap-4">
+                <form onSubmit={onSubmit} className="w-full space-y-4 md:space-y-0 text-white md:grid md:grid-cols-2 gap-4">
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             First name
