@@ -223,6 +223,7 @@ function PersonalInformation() {
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             Phone
                             <InputText
+                                placeholder={'44-666-77-888'}
                                 name={'phone'}
                                 value={user.phone}
                                 onChange={changeFields}
