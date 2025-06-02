@@ -5,6 +5,7 @@ import {Button} from "@/components/Button";
 import clsx from "clsx";
 import PersonalInformation from "@/app/(backoffice)/profile/personal-information/personal_information";
 import Select from "@/components/Select";
+import Verification from "@/app/(backoffice)/profile/identity-verification/verification";
 
 export type OPTIONS = 'personal_information' | 'verification' | 'password' | '2fa';
 
@@ -67,6 +68,7 @@ function ProfileForm() {
             </div>
             <div className="text-white">
                 {tab.option === 'personal_information' && <PersonalInformation/>}
+                {tab.option === 'verification' && <Verification/>}
             </div>
         </div>
     );

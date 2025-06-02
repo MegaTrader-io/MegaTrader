@@ -20,6 +20,7 @@
 
 @layer base {
     :root {
+        --mgt-dark: #1e1e1e;
         --mgt-color-primary: #FFB34A;
         --mgt-color-teal: #14B8A6;
         --mgt-color-error: #FB7185;
