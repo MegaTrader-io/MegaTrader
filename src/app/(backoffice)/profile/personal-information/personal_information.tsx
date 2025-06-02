@@ -92,9 +92,10 @@ function PersonalInformation() {
 
             <div className="mb-4 mt-8">
                 {hasErrors &&
-                    <Alert className="w-full" type="error" message='Somethig went wrogn. Please try again later.'/>}
+                    <Alert className="w-full text-black" type="error"
+                           message='Somethig went wrogn. Please try again later.'/>}
                 {updated &&
-                    <Alert className="w-full" type="success"
+                    <Alert className="w-full text-black" type="success"
                            message='Great! Your personal information have been updated successfully'/>}
             </div>
 
