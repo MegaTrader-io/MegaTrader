@@ -38,19 +38,21 @@ function ProfileForm() {
     }
 
     return (
-        <div className="grid grid-cols-[300px_64px_1fr] my-1">
-            <div className="h-full space-y-2">
-                {ITEMS.map((item, index) => (
-                    <Button
-                        key={index}
-                        onClick={() => changeTab(item)}
-                        className={clsx('w-full px-4 tracking-tight', {'bg-[#1e1e1e]': tab.option === item.option})}
-                        styleType={'text'}
-                        variant={'light'}
-                        size={'md'}>
-                        {item.title}
-                    </Button>
-                ))}
+        <div className="lg:grid lg:grid-cols-[300px_64px_1fr] my-1">
+            <div className="h-full">
+                <div className="space-y-2 hidden sm:block">
+                    {ITEMS.map((item, index) => (
+                        <Button
+                            key={index}
+                            onClick={() => changeTab(item)}
+                            className={clsx('w-full px-4 tracking-tight', {'bg-[#1e1e1e]': tab.option === item.option})}
+                            styleType={'text'}
+                            variant={'light'}
+                            size={'md'}>
+                            {item.title}
+                        </Button>
+                    ))}
+                </div>
 
                 <div className="block sm:hidden">
                     <Select value={tab.option} onChange={onChange}>
@@ -61,7 +63,7 @@ function ProfileForm() {
                 </div>
             </div>
             <div className="flex justify-center">
-                <div className="outline outline-[0.1px] outline-[#1e1e1e] w-0 h-full"></div>
+                <div className="outline outline-[0.1px] outline-[#1e1e1e] my-8 w-full h-full lg:w-0 lg:my-0 "></div>
             </div>
             <div className="text-white">
                 {tab.option === 'personal_information' && <PersonalInformation/>}
