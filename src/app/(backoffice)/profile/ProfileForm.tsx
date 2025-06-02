@@ -3,6 +3,8 @@
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import clsx from "clsx";
+import Form from "@/app/(backoffice)/profile/personal-information/personal_information";
+import PersonalInformation from "@/app/(backoffice)/profile/personal-information/personal_information";
 
 export type OPTIONS = 'personal_information' | 'verification' | 'password' | '2fa';
 
@@ -44,7 +46,7 @@ function ProfileForm() {
                 <div className="outline outline-[0.1px] outline-[#1e1e1e] w-0 h-full"></div>
             </div>
             <div className="text-white">
-                {JSON.stringify(tab)}
+                {tab.option === 'personal_information' && <PersonalInformation/>}
             </div>
         </div>
     );

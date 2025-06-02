@@ -4,8 +4,9 @@ import {IUser} from "@/commons/interfaces";
 
 function Avatar({user}: { user: IUser }) {
     return (
-        <div className="w-32 h-32 bg-primary rounded-full relative">
-            <div className="flex items-center justify-center h-full text-5xl font-light uppercase leading-[60px]">
+        <div className="w-24 h-24 bg-primary rounded-full relative">
+            <div
+                className="flex h-full items-center justify-center text-[40px] text-black leading-[48px] font-light uppercase">
                 {getInitials(user.fullName)}
             </div>
 
