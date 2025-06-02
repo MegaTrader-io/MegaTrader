@@ -3,7 +3,6 @@
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import clsx from "clsx";
-import Form from "@/app/(backoffice)/profile/personal-information/personal_information";
 import PersonalInformation from "@/app/(backoffice)/profile/personal-information/personal_information";
 
 export type OPTIONS = 'personal_information' | 'verification' | 'password' | '2fa';
