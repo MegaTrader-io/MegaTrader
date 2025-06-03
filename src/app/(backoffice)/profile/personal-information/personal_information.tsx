@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import InputText from "@/components/InputText";
 import {countries, defaultUser} from "@/commons/data";
 import {IUser} from "@/commons/interfaces";
@@ -17,9 +17,8 @@ function PersonalInformation() {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [updated, setUpdated] = useState<boolean>(false);
     const hasErrors = Object.values(errors).filter(error => error !== '').length > 0;
-
-    const validationErrors = validateFields();
-    const validToSubmit = Object.keys(validationErrors).length === 0;
+    const [defaultUserData] = useState<IUser>(defaultUser);
+    const isDirty = JSON.stringify(defaultUserData) !== JSON.stringify(user);
 
     function changeFields(ev: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
         const {name, value} = ev.target;
@@ -237,7 +236,7 @@ function PersonalInformation() {
                     </div>
 
                     <div className="mt-4 md:mt-0">
-                        <Button type='submit' disabled={!validToSubmit} variant={'primary'}>
+                        <Button type='submit' disabled={!isDirty} variant={'primary'}>
                             Save changes
                         </Button>
                     </div>
