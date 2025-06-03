@@ -11,8 +11,11 @@ import Avatar from "@/app/(backoffice)/profile/_components/Avatar";
 import Pencil from "@/components/Pencil";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import {XCircleIcon} from "@heroicons/react/20/solid";
+import {useLoading} from "@/context/LoadingContext";
+import {sleep} from "@/commons/utils";
 
 function PersonalInformation() {
+    const {isLoading, setLoading} = useLoading();
     const [user, setUser] = useState<IUser>(defaultUser)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [updated, setUpdated] = useState<boolean>(false);
@@ -44,7 +47,7 @@ function PersonalInformation() {
     }
 
 
-    function onSubmit(ev: React.ChangeEvent<HTMLFormElement>) {
+    async function onSubmit(ev: React.ChangeEvent<HTMLFormElement>) {
         ev.preventDefault();
 
         const validationErrors = validateFields();
@@ -55,9 +58,15 @@ function PersonalInformation() {
             return;
         }
 
+        await sleep(1200);
+
+        setLoading(true);
+
         console.info('submit stuff', user);
         setErrors({});
         setUpdated(true)
+
+        setLoading(false);
     }
 
     return (
