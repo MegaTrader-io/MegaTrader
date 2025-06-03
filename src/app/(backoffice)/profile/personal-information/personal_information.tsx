@@ -140,7 +140,7 @@ function PersonalInformation() {
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal w-full">
                             Address
-                            <InputText name={'address'} placeholder={'Ex: Second Street'} value={user.address}
+                            <InputText name={'address'} placeholder={'13615 sw 157th ct'} value={user.address}
                                        onChange={changeFields}
                                        errorMessage={errors.address}/>
                         </label>
@@ -150,21 +150,10 @@ function PersonalInformation() {
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             City
                             <InputText name={'city'}
-                                       placeholder={'Ex: Miami'}
+                                       placeholder={'Miami'}
                                        value={user.city}
                                        onChange={changeFields}
                                        errorMessage={errors.city}/>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label className="text-stone-400 text-base font-bold leading-normal w-full">
-                            Zip-code
-                            <InputText name={'zipCode'}
-                                       placeholder={'Ex: 269574'}
-                                       value={user.zipCode}
-                                       onChange={changeFields}
-                                       errorMessage={errors.zipCode}/>
                         </label>
                     </div>
 
@@ -173,12 +162,24 @@ function PersonalInformation() {
                             State
                             <InputText
                                 name={'state'}
-                                placeholder={'Ex: 269574'}
+                                placeholder={'Florida'}
                                 value={user.state}
                                 onChange={changeFields}
                                 errorMessage={errors.state}/>
                         </label>
                     </div>
+
+                    <div>
+                        <label className="text-stone-400 text-base font-bold leading-normal w-full">
+                            Zip-code
+                            <InputText name={'zipCode'}
+                                       placeholder={'33196'}
+                                       value={user.zipCode}
+                                       onChange={changeFields}
+                                       errorMessage={errors.zipCode}/>
+                        </label>
+                    </div>
+
 
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal">
@@ -200,9 +201,7 @@ function PersonalInformation() {
                                         )}
                                         aria-describedby={errors.country ? 'country-error' : undefined}
                                     >
-                                        <option value="" disabled hidden>Select a
-                                            Country
-                                        </option>
+                                        <option value="" disabled hidden>United States</option>
                                         {countries.map(country => (
                                             <option key={country.id}
                                                     value={country.id}>{country.description}</option>
@@ -239,7 +238,7 @@ function PersonalInformation() {
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             Phone
                             <InputText
-                                placeholder={'44-666-77-888'}
+                                placeholder={'607-218-7292'}
                                 name={'phone'}
                                 value={user.phone}
                                 onChange={changeFields}
