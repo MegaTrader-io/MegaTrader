@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import InputText from "@/components/InputText";
 import {countries, defaultUser} from "@/commons/data";
 import {IUser} from "@/commons/interfaces";
@@ -15,7 +15,7 @@ import {useLoading} from "@/context/LoadingContext";
 import {sleep} from "@/commons/utils";
 
 function PersonalInformation() {
-    const {isLoading, setLoading} = useLoading();
+    const {setLoading} = useLoading();
     const [user, setUser] = useState<IUser>(defaultUser)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [updated, setUpdated] = useState<boolean>(false);
