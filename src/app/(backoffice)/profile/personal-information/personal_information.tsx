@@ -120,27 +120,38 @@ function PersonalInformation() {
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             First name
-                            <InputText readOnly={true} name={'first_name'} value={user.firstName}/>
+                            <InputText readOnly={true}
+                                       placeholder={'Enter your first name'}
+                                       name={'first_name'}
+                                       value={user.firstName}/>
                         </label>
                     </div>
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             Last name
-                            <InputText readOnly={true} name={'last_name'} value={user.lastName}/>
+                            <InputText readOnly={true}
+                                       placeholder={'Enter your last name'}
+                                       name={'last_name'}
+                                       value={user.lastName}/>
                         </label>
                     </div>
 
                     <div className="col-span-2">
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             Email
-                            <InputText readOnly={true} name={'email'} value={user.email}/>
+                            <InputText readOnly={true}
+                                       placeholder={'you@example.com'}
+                                       name={'email'}
+                                       value={user.email}/>
                         </label>
                     </div>
 
                     <div>
                         <label className="text-stone-400 text-base font-bold leading-normal w-full">
                             Address
-                            <InputText name={'address'} placeholder={'13615 sw 157th ct'} value={user.address}
+                            <InputText name={'address'}
+                                       placeholder={'House number and street name'}
+                                       value={user.address}
                                        onChange={changeFields}
                                        errorMessage={errors.address}/>
                         </label>
@@ -150,7 +161,7 @@ function PersonalInformation() {
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             City
                             <InputText name={'city'}
-                                       placeholder={'Miami'}
+                                       placeholder={'City'}
                                        value={user.city}
                                        onChange={changeFields}
                                        errorMessage={errors.city}/>
@@ -162,7 +173,7 @@ function PersonalInformation() {
                             State
                             <InputText
                                 name={'state'}
-                                placeholder={'Florida'}
+                                placeholder={'State or region'}
                                 value={user.state}
                                 onChange={changeFields}
                                 errorMessage={errors.state}/>
@@ -173,7 +184,7 @@ function PersonalInformation() {
                         <label className="text-stone-400 text-base font-bold leading-normal w-full">
                             Zip-code
                             <InputText name={'zipCode'}
-                                       placeholder={'33196'}
+                                       placeholder={'ZIP or postal code'}
                                        value={user.zipCode}
                                        onChange={changeFields}
                                        errorMessage={errors.zipCode}/>
@@ -201,7 +212,7 @@ function PersonalInformation() {
                                         )}
                                         aria-describedby={errors.country ? 'country-error' : undefined}
                                     >
-                                        <option value="" disabled hidden>United States</option>
+                                        <option value="" disabled hidden>Select country</option>
                                         {countries.map(country => (
                                             <option key={country.id}
                                                     value={country.id}>{country.description}</option>
@@ -238,7 +249,7 @@ function PersonalInformation() {
                         <label className="text-stone-400 text-base font-bold leading-normal">
                             Phone
                             <InputText
-                                placeholder={'607-218-7292'}
+                                placeholder={'Phone number'}
                                 name={'phone'}
                                 value={user.phone}
                                 onChange={changeFields}

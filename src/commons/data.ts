@@ -300,18 +300,18 @@ export const tooltipData: TooltipData = {
 
 
 export const defaultUser: IUser = {
-    fullName: 'JOHN DOE',
+    fullName: 'John Doe',
     firstName: 'Jane',
     lastName: 'Doe',
     email: 'janedoe@gmail.com',
-    zipCode: '',
+    address: '13615 sw 157th ct',
+    city: 'Miami',
+    state: 'Florida',
+    zipCode: '33196',
+    country: 'US',
     verified: false,
     memberSince: '21-12-2023',
-    address: '',
-    state: '',
-    city: '',
-    phone: '',
-    country: '',
+    phone: '607-218-7292',
     language: '',
 }
 
