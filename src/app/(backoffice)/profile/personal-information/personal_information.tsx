@@ -20,7 +20,7 @@ function PersonalInformation() {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [updated, setUpdated] = useState<boolean>(false);
     const hasErrors = Object.values(errors).filter(error => error !== '').length > 0;
-    const [defaultUserData] = useState<IUser>(defaultUser);
+    const [defaultUserData, setDefaultUserData] = useState<IUser>(defaultUser);
     const isDirty = JSON.stringify(defaultUserData) !== JSON.stringify(user);
 
     function changeFields(ev: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) {
@@ -58,13 +58,16 @@ function PersonalInformation() {
             return;
         }
 
-        await sleep(1200);
 
         setLoading(true);
+
+        await sleep(1200);
 
         console.info('submit stuff', user);
         setErrors({});
         setUpdated(true)
+
+        setDefaultUserData(user);
 
         setLoading(false);
     }
