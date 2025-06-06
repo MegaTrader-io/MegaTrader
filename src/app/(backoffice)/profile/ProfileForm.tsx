@@ -7,6 +7,7 @@ import PersonalInformation from "@/app/(backoffice)/profile/personal-information
 import Select from "@/components/Select";
 import Verification from "@/app/(backoffice)/profile/identity-verification/verification";
 import ChangePassword from "@/app/(backoffice)/profile/password/change_password";
+import TwoFactorAuthentication from "@/app/(backoffice)/profile/two-factor-authentication/two_factor_authentication";
 
 export type OPTIONS = 'personal_information' | 'verification' | 'password' | '2fa';
 
@@ -72,6 +73,7 @@ function ProfileForm() {
                 {tab.option === 'personal_information' && <PersonalInformation/>}
                 {tab.option === 'verification' && <Verification/>}
                 {tab.option === 'password' && <ChangePassword/>}
+                {tab.option === '2fa' && <TwoFactorAuthentication/>}
             </div>
         </div>
     );
