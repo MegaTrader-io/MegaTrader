@@ -64,22 +64,22 @@ const blocks = [
 
 const verificationProcesses = [
     {
-        title: 'Check your account information',
+        title: 'CHECK YOUR ACCOUNT INFORMATION',
         detail: 'Please check that your account information matches with your government-issued ID to avoid any inconveniences during verification. You will not be able to change this information afterward.',
         image: 'user-verified.svg'
     },
     {
-        title: 'Prepare your physical ID cards',
+        title: 'PREPARE YOUR PHYSICAL ID CARDS',
         detail: 'You will be asked to take a photo of either your ID card, driving license, or other government-issued cards. Make sure you take a photo of your physical ID. Copies, screenshots, or other forms will be declined.',
         image: 'credit-card.svg'
     },
     {
-        title: 'Begin the verification process',
+        title: 'BEGIN THE VERIFICATION PROCESS',
         detail: 'Click the button bellow to start the verification process. You will be asked to take a photo of your ID and yourself.',
         image: 'camera.svg'
     },
     {
-        title: 'Wait for confirmation',
+        title: 'WAIT FOR CONFIRMATION',
         detail: 'You will be notified that your account has been verified. Usually it takes under a minute. All accounts passwords waiting for verification will be released immediately.',
         image: 'trophy.svg'
     },
@@ -115,29 +115,34 @@ function Page() {
                            height={33}/>
                 </div>
             </Card>
-            <div className="mt-8 w-full space-y-4">
+            <div className="mt-8 w-full space-y-6">
                 <div
-                    className="text-white text-xl font-light uppercase leading-normal">Verification process
+                    className="justify-start text-white text-xl font-light font-['Roboto'] uppercase leading-normal">Verification
+                    process
                 </div>
 
-                {verificationProcesses.map(vp => (
-                    <div key={vp.title} className="flex gap-4">
-                        <div>
-                            <div className="rounded-full w-10 h-10 bg-[#1e1e1e] flex justify-center items-center">
-                                <Image src={`/assets/images/${vp.image}`} alt="veriff" width={24} height={24}/>
+                <div className="space-y-6 relative wrapper-vertical-line">
+                    {verificationProcesses.map(vp => (
+                        <div key={vp.title} className="flex gap-4 vertical-line">
+                            <div>
+                                <div
+                                    className="rounded-full w-10 h-10 bg-[#1e1e1e] outline outline-4 outline-neutral-700 flex justify-center items-center">
+                                    <Image src={`/assets/images/${vp.image}`} alt="veriff" width={24} height={24}/>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <div className="text-white text-xl font-medium uppercase leading-normal">
+                                    {vp.title}
+                                </div>
+                                <p
+                                    className="text-stone-400 text-base font-medium leading-normal">
+                                    {vp.detail}
+                                </p>
                             </div>
                         </div>
-                        <div>
-                            <div className="text-white text-xl font-light leading-loose">
-                                {vp.title}
-                            </div>
-                            <p
-                                className="text-stone-400 text-base font-normal leading-normal">
-                                {vp.detail}
-                            </p>
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+
 
             </div>
         </>

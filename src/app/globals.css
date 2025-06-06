@@ -190,3 +190,18 @@ path.apexcharts-bar-area[selected=true] {
     box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(64px);
 }
+
+.vertical-line::after {
+    content: ' ';
+    width: 2px;
+    z-index: -2;
+    transform: translateX(18px);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: #3d3d3d;
+}
+
+.wrapper-vertical-line > .vertical-line:last-child::after {
+
+}
