@@ -18,7 +18,7 @@ function ProfileModal() {
     return (
         <Dialog
             className="w-[calc(100vw-32px)] sm:max-w-[1024px] px-4 py-8"
-            childrenClassName="px-0 pb-0"
+            childrenClassName="px-0 !pb-0"
             showModal={showModal}
             onClose={handleCloseDialog}
             title={'MY PROFILE'}>
