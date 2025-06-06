@@ -64,7 +64,7 @@ function ProfileForm() {
                 </div>
             </div>
             <div className="flex justify-center">
-                <div className="outline outline-[0.1px] outline-[#1e1e1e] my-8 w-full h-full lg:w-0 lg:my-0 "></div>
+                <div className="outline outline-1 outline-[#404040] my-8 w-full h-full lg:w-0 lg:my-0 "></div>
             </div>
             <div className="text-white">
                 {tab.option === 'personal_information' && <PersonalInformation/>}
