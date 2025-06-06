@@ -123,21 +123,23 @@ function Page() {
 
                 <div className="space-y-6 relative wrapper-vertical-line">
                     {verificationProcesses.map(vp => (
-                        <div key={vp.title} className="flex gap-4 vertical-line">
-                            <div>
-                                <div
-                                    className="rounded-full w-10 h-10 bg-[#1e1e1e] outline outline-4 outline-neutral-700 flex justify-center items-center">
-                                    <Image src={`/assets/images/${vp.image}`} alt="veriff" width={24} height={24}/>
+                        <div key={vp.title} className="relative">
+                            <div className="flex gap-4 vertical-line">
+                                <div>
+                                    <div
+                                        className="rounded-full w-10 h-10 bg-[#1e1e1e] outline outline-4 outline-neutral-700 flex justify-center items-center">
+                                        <Image src={`/assets/images/${vp.image}`} alt="veriff" width={24} height={24}/>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="text-white text-xl font-medium uppercase leading-normal">
-                                    {vp.title}
+                                <div className="space-y-2">
+                                    <div className="text-white text-xl font-medium uppercase leading-normal">
+                                        {vp.title}
+                                    </div>
+                                    <p
+                                        className="text-stone-400 text-base font-medium leading-normal">
+                                        {vp.detail}
+                                    </p>
                                 </div>
-                                <p
-                                    className="text-stone-400 text-base font-medium leading-normal">
-                                    {vp.detail}
-                                </p>
                             </div>
                         </div>
                     ))}

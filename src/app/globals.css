@@ -195,13 +195,13 @@ path.apexcharts-bar-area[selected=true] {
     content: ' ';
     width: 2px;
     z-index: -2;
-    transform: translateX(18px);
+    transform: translateX(20px);
     position: absolute;
     top: 0;
-    bottom: 0;
+    bottom: -24px;
     background: #3d3d3d;
 }
 
-.wrapper-vertical-line > .vertical-line:last-child::after {
-
+.wrapper-vertical-line > div:last-child > div.vertical-line::after {
+    content: none;
 }
