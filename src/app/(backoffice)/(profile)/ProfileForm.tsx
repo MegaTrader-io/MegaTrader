@@ -3,11 +3,11 @@
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import clsx from "clsx";
-import PersonalInformation from "@/app/(backoffice)/profile/personal-information/personal_information";
+import PersonalInformation from "@/app/(backoffice)/(profile)/personal-information/personal_information";
 import Select from "@/components/Select";
-import Verification from "@/app/(backoffice)/profile/identity-verification/verification";
-import ChangePassword from "@/app/(backoffice)/profile/password/change_password";
-import TwoFactorAuthentication from "@/app/(backoffice)/profile/two-factor-authentication/two_factor_authentication";
+import Verification from "@/app/(backoffice)/(profile)/identity-verification/verification";
+import ChangePassword from "@/app/(backoffice)/(profile)/password/change_password";
+import TwoFactorAuthentication from "@/app/(backoffice)/(profile)/two-factor-authentication/two_factor_authentication";
 
 export type OPTIONS = 'personal_information' | 'verification' | 'password' | '2fa';
 

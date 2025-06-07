@@ -7,7 +7,7 @@ import {IUser} from "@/commons/interfaces";
 import {Button} from "@/components/Button";
 import clsx from "clsx";
 import Alert from "@/components/Alert";
-import Avatar from "@/app/(backoffice)/profile/_components/Avatar";
+import Avatar from "@/app/(backoffice)/(profile)/_components/Avatar";
 import Pencil from "@/components/Pencil";
 import {CheckCircleIcon} from "@heroicons/react/16/solid";
 import {XCircleIcon} from "@heroicons/react/20/solid";

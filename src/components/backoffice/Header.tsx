@@ -2,12 +2,14 @@
 
 import Image from 'next/image';
 import Link from "next/link";
-import React from "react";
+import React, {useState} from "react";
 import {Bars3Icon, UserCircleIcon} from "@heroicons/react/24/solid";
 import {usePathname} from "next/navigation";
 import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import NotificationLink from "@/components/backoffice/NotificationLink";
-import clsx from "clsx";
+import {Button} from "@/components/Button";
+import ProfileForm from "@/app/(backoffice)/(profile)/ProfileForm";
+import Dialog from "@/components/Dialog";
 
 const navigationItems = [
     {href: '/account-overview', visibleOnDesktop: true, label: 'ACCOUNT OVERVIEW', sectionId: '/account-overview'},
@@ -16,15 +18,28 @@ const navigationItems = [
     {href: 'https://help.megatrader.io/en/', visibleOnDesktop: true, label: 'HELP CENTER', sectionId: '/help-center'},
 ];
 
-function ProfileIcon({currentPath}: { currentPath: string }) {
-    const isProfileCurrentPath = currentPath.startsWith('/profile/');
+function ProfileIcon() {
+    const [showModal, setShowModal] = useState<boolean>(false);
+
     return (
-        <Link
-            href="/profile/identity-verification"
-            className={clsx('btn-dark-link rounded-xl w-12 h-12', {'!bg-stone-900': isProfileCurrentPath})}
-        >
-            <UserCircleIcon className="w-6 h-6 text-white"/>
-        </Link>
+        <>
+            <Dialog
+                className="w-[calc(100vw-32px)] sm:max-w-[1024px] px-4 py-8"
+                childrenClassName="px-0 !pb-0"
+                showModal={showModal}
+                onClose={() => setShowModal(false)}
+                title={'MY PROFILE'}>
+                <ProfileForm/>
+            </Dialog>
+            <Button
+                variant={'dark'}
+                onClick={() => {setShowModal(true)}}
+                className={'!p-0 w-12 h-12'}
+            >
+                <UserCircleIcon className="w-6 h-6 text-white"/>
+            </Button>
+        </>
+
     )
 }
 
@@ -79,7 +94,7 @@ export default function Header() {
 
             <div className="flex gap-2">
                 <NotificationLink/>
-                <ProfileIcon currentPath={currentPath}/>
+                <ProfileIcon/>
                 <PopoverMenu collisionPadding={16}
                              className="block lg:hidden"
                              icon={<Bars3Icon className="w-6 h-6 text-white"/>}>

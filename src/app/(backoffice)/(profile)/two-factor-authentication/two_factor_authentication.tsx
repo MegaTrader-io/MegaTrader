@@ -98,7 +98,7 @@ function TwoFactorAuthentication() {
                     </div>
 
                     <Button type={'submit'} className="w-full">
-                        CONTINUE
+                        Set Up 2FA
                     </Button>
                 </form>
             </div>
