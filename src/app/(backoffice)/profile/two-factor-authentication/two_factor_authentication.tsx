@@ -97,14 +97,9 @@ function TwoFactorAuthentication() {
                         />
                     </div>
 
-                    <div className="flex gap-4">
-                        <Button type={'submit'} className="w-full">
-                            CONTINUE
-                        </Button>
-                        <Button className="w-full" variant={'dark'}>
-                            CANCEL
-                        </Button>
-                    </div>
+                    <Button type={'submit'} className="w-full">
+                        CONTINUE
+                    </Button>
                 </form>
             </div>
         </div>
