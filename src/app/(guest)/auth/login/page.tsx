@@ -63,7 +63,7 @@ export default function Login() {
 
             if (email === TARGET_EMAIL && password === TARGET_PASSWORD) {
                 router.push(
-                    `/account-overview`
+                    `/auth/2fa`
                 );
 
                 return;
