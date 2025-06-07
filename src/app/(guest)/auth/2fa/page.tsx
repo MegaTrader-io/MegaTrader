@@ -2,7 +2,7 @@
 
 import InputText from "@/components/InputText";
 import React, {useState} from "react";
-import Alert, {AlertType} from "@/components/Alert";
+import Alert from "@/components/Alert";
 import {useRouter} from "next/navigation";
 import {useLoading} from "@/context/LoadingContext";
 import Image from "next/image";
