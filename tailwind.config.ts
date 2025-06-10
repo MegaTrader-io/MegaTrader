@@ -1,12 +1,13 @@
 import type {Config} from "tailwindcss";
+import tailwindScrollbar from 'tailwind-scrollbar';
 
 export default {
-    darkMode: 'class',
     content: [
         "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
+    darkMode: 'class',
     theme: {
         screens: {
             'sm': '640px',
@@ -57,24 +58,24 @@ export default {
                     '100%': {transform: 'rotate(0deg)'},
                 },
                 slideDownAndFade: {
-                    from: { opacity: "0", transform: "translateY(-2px)" },
-                    to: { opacity: "1", transform: "translateY(0)" },
+                    from: {opacity: "0", transform: "translateY(-2px)"},
+                    to: {opacity: "1", transform: "translateY(0)"},
                 },
                 slideLeftAndFade: {
-                    from: { opacity: "0", transform: "translateX(2px)" },
-                    to: { opacity: "1", transform: "translateX(0)" },
+                    from: {opacity: "0", transform: "translateX(2px)"},
+                    to: {opacity: "1", transform: "translateX(0)"},
                 },
                 slideUpAndFade: {
-                    from: { opacity: "0", transform: "translateY(2px)" },
-                    to: { opacity: "1", transform: "translateY(0)" },
+                    from: {opacity: "0", transform: "translateY(2px)"},
+                    to: {opacity: "1", transform: "translateY(0)"},
                 },
                 slideRightAndFade: {
-                    from: { opacity: "0", transform: "translateX(-2px)" },
-                    to: { opacity: "1", transform: "translateX(0)" },
+                    from: {opacity: "0", transform: "translateX(-2px)"},
+                    to: {opacity: "1", transform: "translateX(0)"},
                 },
                 shimmer: {
-                    '0%': { backgroundPosition: '200% 0' },
-                    '100%': { backgroundPosition: '-200% 0' },
+                    '0%': {backgroundPosition: '200% 0'},
+                    '100%': {backgroundPosition: '-200% 0'},
                 },
             },
             animation: {
@@ -93,5 +94,7 @@ export default {
             },
         },
     },
-    plugins: [],
+    plugins: [
+        tailwindScrollbar({}),
+    ],
 } satisfies Config;

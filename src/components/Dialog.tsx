@@ -110,7 +110,7 @@ function Dialog({
                         </div>
                     </AlertDialogTitle>
                     <div
-                        className={clsx('w-full h-full sm:h-auto overflow-auto lg:max-h-full pr-4 pl-4 pb-4', childrenClassName)}>
+                        className={clsx('w-full h-full sm:h-auto overflow-auto lg:max-h-full pr-4 pl-4 pb-4', childrenClassName, 'scrollbar scrollbar-track-mgt-dark scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-neutral-700')}>
                         {children}
                     </div>
                 </AlertDialogContent>
