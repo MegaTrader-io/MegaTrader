@@ -29,10 +29,8 @@ const ITEMS: TabOption[] = [
 function TermsOfService() {
     const [tab, setTab] = useState<TabOption>(ITEMS[0]);
 
-    // 1) Diccionario de refs, que luego llenamos con getElementById
     const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
 
-    // 2) Scroll-spy con IntersectionObserver
     useEffect(() => {
         const observer = new IntersectionObserver(
             entries => {
@@ -48,12 +46,11 @@ function TermsOfService() {
                 });
             },
             {
-                rootMargin: '0% 0px -50% 0px', // disparar cuando el centro del elemento entra al viewport
+                rootMargin: '0% 0px -50% 0px',
                 threshold: 0
             }
         );
 
-        // Asociamos cada <h3 id="..."> al observer
         ITEMS.forEach(item => {
             const el = document.getElementById(item.id);
             if (el) {
@@ -67,7 +64,6 @@ function TermsOfService() {
         };
     }, []);
 
-    // 3) changeTab ahora también hace scroll suave
     function changeTab(tabOption: TabOption) {
         setTab(tabOption);
         const el = sectionsRef.current[tabOption.id];

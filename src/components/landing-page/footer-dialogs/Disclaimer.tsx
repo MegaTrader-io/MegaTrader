@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import clsx from "clsx";
 import Select from "@/components/Select";
 
@@ -19,9 +19,47 @@ const ITEMS: TabOption[] = [
 
 function Disclaimer() {
     const [tab, setTab] = useState<TabOption>(ITEMS[0]);
+    const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
 
-    function changeTab(tab: TabOption) {
-        setTab(tab);
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        const tabSelected = ITEMS.find(t => t.id === id);
+                        console.info('eligibility', tabSelected, id)
+                        if (tabSelected) {
+                            setTab(tabSelected);
+                        }
+                    }
+                });
+            },
+            {
+                rootMargin: '0% 0px -50% 0px',
+                threshold: 0
+            }
+        );
+
+        ITEMS.forEach(item => {
+            const el = document.getElementById(item.id);
+            if (el) {
+                sectionsRef.current[item.id] = el;
+                observer.observe(el);
+            }
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    function changeTab(tabOption: TabOption) {
+        setTab(tabOption);
+        const el = sectionsRef.current[tabOption.id];
+        if (el) {
+            el.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
     }
 
     function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -30,7 +68,6 @@ function Disclaimer() {
         if (!tabSelected) {
             return;
         }
-
         changeTab(tabSelected);
     }
 
@@ -63,10 +100,10 @@ function Disclaimer() {
                 <div
                     className="sm:border-r-2 sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
-            <div className="text-white space-y-12 lg:mx-4">
+            <div className="text-white space-y-12 lg:mx-4" id='general-disclosure'>
                 <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='introduction'>Introduction</h3>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">General
+                        Disclosure</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         The materials and content provided by MegaTrader Holdings LLC (“MegaTrader”)—whether on our
                         website, in documents, or through any communications—are for general informational purposes
@@ -78,9 +115,9 @@ function Disclaimer() {
                         state, and federal laws. © 2025 MegaTrader. All rights reserved.
                     </p>
                 </div>
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='risk-disclosure'>Risk Disclosure</h3>
+                <div className="space-y-4" id='risk-disclosure'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Risk
+                        Disclosure</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         Trading in simulated financial markets carries inherent risk. The MegaTrader platform provides a
                         demo trading environment with virtual funds and does not expose users to actual financial risk;
@@ -90,9 +127,9 @@ function Disclaimer() {
                         Past simulated performance does not guarantee future results.
                     </p>
                 </div>
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='hypothetical-performance-disclosure'>Hypothetical Performance Disclosure</h3>
+                <div className="space-y-4" id='hypothetical-performance-disclosure'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Hypothetical
+                        Performance Disclosure</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         Any performance results shown or referenced on this platform are based on hypothetical or
                         simulated data and should not be interpreted as actual trading results. Simulated trading does
@@ -101,9 +138,9 @@ function Disclaimer() {
                         all users{'\\'} experiences and do not predict future success.
                     </p>
                 </div>
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='customer-compensation-disclosure'>Customer Compensation Disclosure</h3>
+                <div className="space-y-4" id='customer-compensation-disclosure'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Customer
+                        Compensation Disclosure</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         All examples and figures presented as part of the MegaTrader program—including funded account
                         structures and profit share examples—are for illustrative purposes only. They are hypothetical
@@ -111,9 +148,8 @@ function Disclaimer() {
                         account will or is likely to achieve profits or losses similar to those shown.
                     </p>
                 </div>
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='cftc-rule-4-41-compliance-notice'>CFTC Rule 4.41 Compliance Notice</h3>
+                <div className="space-y-4" id='cftc-rule-4-41-compliance-notice'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">CFTC Rule 4.41 Compliance Notice</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         Pursuant to CFTC Rule 4.41, any simulated or hypothetical performance results presented on this
                         website or in marketing communications have inherent limitations. Unlike actual performance

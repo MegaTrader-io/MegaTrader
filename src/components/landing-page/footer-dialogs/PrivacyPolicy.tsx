@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import clsx from 'clsx';
 import Select from '@/components/Select';
 
@@ -24,14 +24,56 @@ const ITEMS: TabOption[] = [
 
 function PrivacyPolicy() {
     const [tab, setTab] = useState<TabOption>(ITEMS[0]);
+    const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
 
-    function changeTab(option: TabOption) {
-        setTab(option);
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        const tabSelected = ITEMS.find(t => t.id === id);
+                        console.info('eligibility', tabSelected, id)
+                        if (tabSelected) {
+                            setTab(tabSelected);
+                        }
+                    }
+                });
+            },
+            {
+                rootMargin: '0% 0px -50% 0px',
+                threshold: 0
+            }
+        );
+
+        ITEMS.forEach(item => {
+            const el = document.getElementById(item.id);
+            if (el) {
+                sectionsRef.current[item.id] = el;
+                observer.observe(el);
+            }
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    function changeTab(tabOption: TabOption) {
+        setTab(tabOption);
+        const el = sectionsRef.current[tabOption.id];
+        if (el) {
+            el.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
     }
 
     function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        const selected = ITEMS.find(item => item.id === e.target.value);
-        if (selected) changeTab(selected);
+        const value = e.target.value;
+        const tabSelected = ITEMS.find(tab => tab.id === value);
+        if (!tabSelected) {
+            return;
+        }
+        changeTab(tabSelected);
     }
 
     return (
@@ -63,9 +105,8 @@ function PrivacyPolicy() {
                     className="sm:border-r-2 sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
             <div className="text-white space-y-12 lg:mx-4">
-                {/* Introduction */}
-                <div className='space-y-4'>
-                    <h3 id='introduction' className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                <div className='space-y-4' id='introduction'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Introduction
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
@@ -85,10 +126,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* Information We Collect */}
-                <div className='space-y-4'>
-                    <h3 id='information-we-collect'
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                <div className='space-y-4' id='information-we-collect'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Information We Collect
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
@@ -108,10 +147,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* How We Use Your Information */}
-                <div className='space-y-4'>
-                    <h3 id='how-we-use-your-information'
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                <div className='space-y-4' id='how-we-use-your-information'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         How We Use Your Information
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
@@ -130,9 +167,8 @@ function PrivacyPolicy() {
                     </ul>
                 </div>
 
-                {/* Sharing and Disclosure */}
-                <div className='space-y-4'>
-                    <h3 id='sharing-and-disclosure'
+                <div className='space-y-4' id='sharing-and-disclosure'>
+                    <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Sharing and Disclosure of Information
                     </h3>
@@ -145,9 +181,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* Data Retention */}
-                <div className='space-y-4'>
-                    <h3 id='data-retention'
+                <div className='space-y-4' id='data-retention'>
+                    <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Data Retention
                     </h3>
@@ -158,9 +193,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* Your Rights and Choices */}
-                <div className='space-y-4'>
-                    <h3 id='your-rights-and-choices'
+                <div className='space-y-4' id='your-rights-and-choices'>
+                    <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Your Rights and Choices
                     </h3>
@@ -172,9 +206,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* Data Security */}
-                <div className='space-y-4'>
-                    <h3 id='data-security' className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                <div className='space-y-4' id='data-security'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Data Security
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
@@ -185,9 +218,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* International Data Transfers */}
-                <div className='space-y-4'>
-                    <h3 id='international-data-transfers'
+                <div className='space-y-4' id='international-data-transfers'>
+                    <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         International Data Transfers
                     </h3>
@@ -198,9 +230,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* Cookie Settings */}
-                <div className='space-y-4'>
-                    <h3 id='cookie-settings'
+                <div className='space-y-4' id='cookie-settings'>
+                    <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Cookie Settings
                     </h3>
@@ -211,10 +242,8 @@ function PrivacyPolicy() {
                     </p>
                 </div>
 
-                {/* Updates to Privacy Policy */}
-                <div className='space-y-4'>
-                    <h3 id='updates-to-privacy-policy'
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                <div className='space-y-4' id='updates-to-privacy-policy'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
                         Updates to This Privacy Policy
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
