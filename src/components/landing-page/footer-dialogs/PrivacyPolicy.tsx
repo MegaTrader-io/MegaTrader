@@ -36,8 +36,8 @@ function PrivacyPolicy() {
 
     return (
         <div className='md:grid md:grid-cols-[300px_32px_1fr] my-1'>
-            <div className="h-full">
-                <div className="space-y-4 hidden md:block">
+            <div className="h-full w-[300px]">
+                <div className="space-y-4 hidden sticky top-1 md:block">
                     {ITEMS.map((item, idx) => (
                         <button
                             key={idx}
