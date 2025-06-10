@@ -205,3 +205,13 @@ path.apexcharts-bar-area[selected=true] {
 .wrapper-vertical-line > div:last-child > div.vertical-line::after {
     content: none;
 }
+
+.scroll-bar::after {
+    content: ' ';
+    border-right: 1px #FFD78A solid;
+    height: 100%;
+    width: 2px;
+    position: absolute;
+    right: -16px;
+    top: -1px;
+}

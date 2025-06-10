@@ -88,14 +88,14 @@ function TermsOfService() {
     return (
         <div className='md:grid md:grid-cols-[300px_32px_1fr] my-1'>
             <div className="h-full">
-                <div className="space-y-2 hidden md:block">
+                <div className="space-y-4 hidden md:block">
                     {ITEMS.map((item, index) => (
                         <button
                             key={index}
                             onClick={() => changeTab(item)}
-                            className={clsx('w-full text-left tracking-tight leading-normal', [
+                            className={clsx('w-full text-left tracking-tight leading-normal relative', [
                                 tab.id === item.id ?
-                                    'text-[#ffd78a] font-medium' : 'text-stone-400'
+                                    'text-[#ffd78a] font-medium scroll-bar' : 'text-stone-400'
                             ])}>
                             {item.title}
                         </button>
