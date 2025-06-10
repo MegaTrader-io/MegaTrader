@@ -1,5 +1,6 @@
 import type {Config} from "tailwindcss";
 import tailwindScrollbar from 'tailwind-scrollbar';
+import {ScrollbarOptions} from "swiper/types";
 
 export default {
     content: [
@@ -95,6 +96,6 @@ export default {
         },
     },
     plugins: [
-        tailwindScrollbar({}),
+        tailwindScrollbar({nocompatible: true, preferredStrategy: 'pseudoelements'} as ScrollbarOptions)
     ],
 } satisfies Config;
