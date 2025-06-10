@@ -94,7 +94,7 @@ function TermsOfService() {
                             key={index}
                             onClick={() => changeTab(item)}
                             className={clsx('w-full text-left tracking-tight', [
-                                tab.id === item.id ? 'text-[#ffd78a]' : 'text-stone-400'
+                                tab.id === item.id ? 'text-[#ffd78a] font-medium' : 'text-stone-400'
                             ])}>
                             {item.title}
                         </button>
