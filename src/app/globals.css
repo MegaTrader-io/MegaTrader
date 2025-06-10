@@ -208,7 +208,7 @@ path.apexcharts-bar-area[selected=true] {
 
 .scroll-bar::after {
     content: ' ';
-    border-right: 1px #FFD78A solid;
+    border-right: 2px #FFD78A solid;
     height: 100%;
     width: 2px;
     position: absolute;

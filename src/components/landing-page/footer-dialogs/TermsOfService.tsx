@@ -111,7 +111,7 @@ function TermsOfService() {
             </div>
             <div className="flex justify-center">
                 <div
-                    className="sm:border-r-[1px] sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
+                    className="sm:border-r-2 sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
             <div className="text-white space-y-12 lg:mx-4">
                 <div className="space-y-4">
