@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import clsx from "clsx";
 import Select from "@/components/Select";
 
@@ -10,69 +10,70 @@ interface TabOption {
 }
 
 const ITEMS: TabOption[] = [
-    {
-        "title": "Introduction",
-        "id": "introduction"
-    },
-    {
-        "title": "Eligibility",
-        "id": "eligibility"
-    },
-    {
-        "title": "Nature of Services",
-        "id": "nature-of-services"
-    },
-    {
-        "title": "Account Registration and Security",
-        "id": "account-registration-and-security"
-    },
-    {
-        "title": "Evaluation and Funded Programs",
-        "id": "evaluation-and-funded-programs"
-    },
-    {
-        "title": "Fees, Payments, and Refunds",
-        "id": "fees-payments-and-refunds"
-    },
-    {
-        "title": "Compliance and Prohibited Conduct",
-        "id": "compliance-and-prohibited-conduct"
-    },
-    {
-        "title": "Intellectual Property",
-        "id": "intellectual-property"
-    },
-    {
-        "title": "Disclaimers",
-        "id": "disclaimers"
-    },
-    {
-        "title": "Limitation of Liability",
-        "id": "limitation-of-liability"
-    },
-    {
-        "title": "Account Suspension or Termination",
-        "id": "account-suspension-or-termination"
-    },
-    {
-        "title": "Changes to Terms",
-        "id": "changes-to-terms"
-    },
-    {
-        "title": "Governing Law and Dispute Resolution",
-        "id": "governing-law-and-dispute-resolution"
-    },
-    {
-        "title": "Restricted Countries and Regions",
-        "id": "restricted-countries-and-regions"
-    }
-]
+    {"title": "Introduction", "id": "introduction"},
+    {"title": "Eligibility", "id": "eligibility"},
+    {"title": "Nature of Services", "id": "nature-of-services"},
+    {"title": "Account Registration and Security", "id": "account-registration-and-security"},
+    {"title": "Evaluation and Funded Programs", "id": "evaluation-and-funded-programs"},
+    {"title": "Fees, Payments, and Refunds", "id": "fees-payments-and-refunds"},
+    {"title": "Compliance and Prohibited Conduct", "id": "compliance-and-prohibited-conduct"},
+    {"title": "Intellectual Property", "id": "intellectual-property"},
+    {"title": "Disclaimers", "id": "disclaimers"},
+    {"title": "Limitation of Liability", "id": "limitation-of-liability"},
+    {"title": "Account Suspension or Termination", "id": "account-suspension-or-termination"},
+    {"title": "Changes to Terms", "id": "changes-to-terms"},
+    {"title": "Governing Law and Dispute Resolution", "id": "governing-law-and-dispute-resolution"},
+    {"title": "Restricted Countries and Regions", "id": "restricted-countries-and-regions"}
+];
 
 function TermsOfService() {
     const [tab, setTab] = useState<TabOption>(ITEMS[0]);
 
-    function changeTab(tab: TabOption) {
-        setTab(tab);
+    // 1) Diccionario de refs, que luego llenamos con getElementById
+    const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
+
+    // 2) Scroll-spy con IntersectionObserver
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        const tabSelected = ITEMS.find(t => t.id === id);
+                        console.info('eligibility', tabSelected, id)
+                        if (tabSelected) {
+                            setTab(tabSelected);
+                        }
+                    }
+                });
+            },
+            {
+                rootMargin: '0% 0px -50% 0px', // disparar cuando el centro del elemento entra al viewport
+                threshold: 0
+            }
+        );
+
+        // Asociamos cada <h3 id="..."> al observer
+        ITEMS.forEach(item => {
+            const el = document.getElementById(item.id);
+            if (el) {
+                sectionsRef.current[item.id] = el;
+                observer.observe(el);
+            }
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    // 3) changeTab ahora también hace scroll suave
+    function changeTab(tabOption: TabOption) {
+        setTab(tabOption);
+        const el = sectionsRef.current[tabOption.id];
+        if (el) {
+            el.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
     }
 
     function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -81,7 +82,6 @@ function TermsOfService() {
         if (!tabSelected) {
             return;
         }
-
         changeTab(tabSelected);
     }
 
@@ -114,9 +114,8 @@ function TermsOfService() {
                     className="sm:border-r-2 sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
             <div className="text-white space-y-12 lg:mx-4">
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='introduction'>Introduction</h3>
+                <div className="space-y-4" id='introduction'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Introduction</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         These Terms of Service (&#34;Terms&#34;) govern your access to and use of the MegaTrader
                         platform
@@ -138,9 +137,8 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='eligibility'>Eligibility</h3>
+                <div className="space-y-4" id='eligibility'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Eligibility</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">You
                         must meet the following criteria to use MegaTrader:</p>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Be
@@ -161,9 +159,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='nature-of-services'>Nature of Services</h3>
+                <div className="space-y-4" id='nature-of-services'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Nature
+                        of Services</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         MegaTrader provides access to a simulated trading platform for educational and evaluation
                         purposes
@@ -187,9 +185,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='account-registration-and-security'>Account Registration and Security</h3>
+                <div className="space-y-4" id='account-registration-and-security'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Account
+                        Registration and Security</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         To access MegaTrader’s services, users must create a registered account by submitting accurate,
                         complete information including a valid email address and secure password. You agree to:
@@ -212,9 +210,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='evaluation-and-funded-programs'>Evaluation and Funded Programs</h3>
+                <div className="space-y-4" id='evaluation-and-funded-programs'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Evaluation
+                        and Funded Programs</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         MegaTrader’s trading evaluations are structured challenges meant to assess trading performance
                         under
@@ -243,10 +241,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='fees-payments-and-refunds'>Fees, Payments, and Refunds</h3>
+                <div className="space-y-4" id='fees-payments-and-refunds'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Fees,
+                        Payments, and Refunds</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Users
                         are required to pay applicable fees to access certain features or services, including:</p>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Evaluation
@@ -274,9 +271,9 @@ function TermsOfService() {
                         on verification of user identity and payment preferences.</p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='compliance-and-prohibited-conduct'>Compliance and Prohibited Conduct</h3>
+                <div className="space-y-4" id='compliance-and-prohibited-conduct'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Compliance
+                        and Prohibited Conduct</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Users
                         agree to use the MegaTrader platform ethically and in compliance with all applicable laws. The
                         following activities are strictly prohibited:</p>
@@ -298,9 +295,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='intellectual-property'>Intellectual Property</h3>
+                <div className="space-y-4" id='intellectual-property'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Intellectual
+                        Property</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         All components of the MegaTrader platform are the exclusive property of MegaTrader Holdings LLC
                         or
@@ -324,9 +321,8 @@ function TermsOfService() {
                         of these rights may result in legal action and termination of access.</p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='disclaimers'>Disclaimers</h3>
+                <div className="space-y-4" id='disclaimers'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Disclaimers</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         MegaTrader provides its services &#34;as is&#34; without warranties of any kind. We do not
                         guarantee:
@@ -347,9 +343,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='limitation-of-liability'>Limitation of Liability</h3>
+                <div className="space-y-4" id='limitation-of-liability'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Limitation
+                        of Liability</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         To the maximum extent permitted by law, MegaTrader is not liable for:
                     </p>
@@ -367,9 +363,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='account-suspension-or-termination'>Account Suspension or Termination</h3>
+                <div className="space-y-4" id='account-suspension-or-termination'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Account
+                        Suspension or Termination</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">MegaTrader
                         reserves the right to suspend or permanently close accounts that violate these Terms,
                         platform rules, or applicable law.</p>
@@ -398,9 +394,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='changes-to-terms'>Changes to Terms</h3>
+                <div className="space-y-4" id='changes-to-terms'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Changes
+                        to Terms</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         We may update these Terms periodically to reflect operational changes, legal requirements, or
                         feature updates. When changes are made:
@@ -416,9 +412,9 @@ function TermsOfService() {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='governing-law-and-dispute-resolution'>Governing Law and Dispute Resolution</h3>
+                <div className="space-y-4" id='governing-law-and-dispute-resolution'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Governing
+                        Law and Dispute Resolution</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         These Terms shall be governed by and interpreted under the laws of the State of [Insert State],
                         excluding its conflict of law provisions.
@@ -437,9 +433,9 @@ function TermsOfService() {
                         waive any right to participate in class-action litigation or jury trials.</p>
                 </div>
 
-                <div className="space-y-4">
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
-                        id='restricted-countries-and-regions'>Restricted Countries and Regions</h3>
+                <div className="space-y-4" id='restricted-countries-and-regions'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Restricted
+                        Countries and Regions</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Due
                         to compliance restrictions, MegaTrader does not offer services to users in the following
                         jurisdictions:</p>
