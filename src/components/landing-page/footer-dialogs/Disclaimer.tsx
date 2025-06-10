@@ -35,9 +35,9 @@ function Disclaimer() {
     }
 
     return (
-        <div className="lg:grid lg:grid-cols-[300px_32px_1fr] my-1">
+        <div className='md:grid md:grid-cols-[300px_32px_1fr] my-1'>
             <div className="h-full">
-                <div className="space-y-2 hidden sm:block">
+                <div className="space-y-2 hidden md:block">
                     {ITEMS.map((item, index) => (
                         <button
                             key={index}
@@ -50,7 +50,7 @@ function Disclaimer() {
                     ))}
                 </div>
 
-                <div className="block sm:hidden">
+                <div className="block md:hidden">
                     <Select value={tab.id} onChange={onChange}>
                         {ITEMS.map((item, index) => (
                             <option key={index} value={item.id}>{item.title}</option>
@@ -60,9 +60,9 @@ function Disclaimer() {
             </div>
             <div className="flex justify-center">
                 <div
-                    className="border-t-[1px] border-t-[#404040] md:border-r-[1px] md:border-r-[#404040] my-8 w-full h-full lg:w-0 lg:my-0 "></div>
+                    className="sm:border-r-[1px] sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
-            <div className="text-white space-y-12 mx-4">
+            <div className="text-white space-y-12 lg:mx-4">
                 <div className="space-y-4">
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7"
                         id='introduction'>Introduction</h3>

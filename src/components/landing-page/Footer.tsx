@@ -55,7 +55,7 @@ export default function Footer() {
             {showModal && (
                 <Dialog
                     className="w-[calc(100vw-32px)] sm:max-w-[1024px] px-4 py-8"
-                    childrenClassName="px-0 !pb-0 !max-h-[847px]"
+                    childrenClassName="px-0 !pb-0 lg:!max-h-[847px]"
                     showModal={showModal}
                     onClose={() => setShowModal(false)}
                     title={modalForm?.title}>
