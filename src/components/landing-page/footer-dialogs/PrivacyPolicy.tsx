@@ -42,11 +42,10 @@ function PrivacyPolicy() {
                         <button
                             key={idx}
                             onClick={() => changeTab(item)}
-                            className={clsx('w-full text-left tracking-tight', {
-                                'text-[#ffd78a]': tab.id === item.id,
-                                'text-stone-400': tab.id !== item.id
-                            })}
-                        >
+                            className={clsx('w-full text-left tracking-tight leading-normal', [
+                                tab.id === item.id ?
+                                    'text-[#ffd78a] font-medium' : 'text-stone-400'
+                            ])}>
                             {item.title}
                         </button>
                     ))}
