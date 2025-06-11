@@ -12,18 +12,21 @@ import Image from "next/image";
 const sliders = [
     {
         imageUrl: '/assets/images/screenshots/ac2.svg',
+        imageUrlIOS: '/assets/images/screenshots/sd1.png',
         imageUrlMobile: '/assets/images/screenshots/ac2-mobile.svg',
         title: 'Power up your trading with full control.',
         subtitle: 'Log in to manage your accounts, track performance, and unlock the full potential of your MegaTrader journey.'
     },
     {
         imageUrl: '/assets/images/screenshots/affiliates3.svg',
+        imageUrlIOS: '/assets/images/screenshots/sd2.png',
         imageUrlMobile: '/assets/images/screenshots/affiliates3-mobile.png',
         title: 'Track, Grow, and Earn with Confidence',
         subtitle: 'Monitor your referrals, commissions, and performance using powerful tools designed to maximize your affiliate success.'
     },
     {
         imageUrl: '/assets/images/screenshots/payouts3.svg',
+        imageUrlIOS: '/assets/images/screenshots/sd3.png',
         imageUrlMobile: '/assets/images/screenshots/payouts3-mobile.svg',
         title: 'Stay Fully in Control of Every Payout',
         subtitle: 'View your earnings, check payment status, and stay in control of your withdrawals with clear, real-time updates.'

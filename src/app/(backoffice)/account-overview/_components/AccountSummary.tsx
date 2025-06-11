@@ -77,14 +77,17 @@ function AccountSummary({account}: { account: Account }) {
                     <div className="lg:flex flex-col items-start relative flex-1 grow space-y-8">
                         <div className="w-full px-4">
                             {account.objectives.profitTarget &&
-                                <ObjectiveItemMoney label={'Profit Target'}
-                                                    objective={account.objectives.profitTarget}/>
+                                <ObjectiveItemMoney
+                                    label={account.planDetail.planType === 'funded'
+                                        ? 'Payout Target' :
+                                        'Profit Target'}
+                                    objective={account.objectives.profitTarget}/>
                             }
                             {account.objectives.daysTraded &&
                                 <ObjectiveItemPoint label={'Days Traded'}
                                                     objective={account.objectives.daysTraded}/>}
-                            {account.objectives.profit &&
-                                <ObjectiveItemMoney label={'Profit'}
+                            {account.planDetail.planType === 'funded' &&
+                                <ObjectiveItemMoney label={'Payout Target'}
                                                     objective={account.objectives.profit}/>}
                             {account.objectives.tradingDayBetweenPayouts &&
                                 <ObjectiveItemPoint label={'Trading Days Between Payouts'}

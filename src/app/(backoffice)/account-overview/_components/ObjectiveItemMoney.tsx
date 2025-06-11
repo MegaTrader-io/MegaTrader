@@ -4,7 +4,7 @@ import NumericStyle from "@/components/NumericStyle";
 import {formatCurrency} from "@/commons/utils";
 import React from "react";
 
-export function ObjectiveItemMoney({label, objective}: { label: string, objective: ObjectiveType }) {
+export function ObjectiveItemMoney({label, objective}: { label: string, objective?: ObjectiveType }) {
     if (!objective) {
         return
     }
