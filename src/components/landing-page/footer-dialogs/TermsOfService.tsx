@@ -135,7 +135,7 @@ function TermsOfService() {
                 <div
                     className="sm:border-r-2 sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
-            <div className="text-white space-y-12 lg:mx-4">
+            <div className="text-white space-y-12 lg:mr-4">
                 <div className="space-y-4" id='acceptance-of-terms'>
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Acceptance
                         of Terms</h3>
