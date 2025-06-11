@@ -13,13 +13,14 @@ const ITEMS: TabOption[] = [
     {id: 'introduction', title: 'Introduction'},
     {id: 'information-we-collect', title: 'Information We Collect'},
     {id: 'how-we-use-your-information', title: 'How We Use Your Information'},
-    {id: 'sharing-and-disclosure', title: 'Sharing and Disclosure of Information'},
-    {id: 'data-retention', title: 'Data Retention'},
-    {id: 'your-rights-and-choices', title: 'Your Rights and Choices'},
-    {id: 'data-security', title: 'Data Security'},
+    {id: 'cookies-and-tracking-technologies', title: 'Cookies and Tracking Technologies'},
+    {id: 'data-sharing-and-disclosure', title: 'Data Sharing and Disclosure'},
     {id: 'international-data-transfers', title: 'International Data Transfers'},
-    {id: 'cookie-settings', title: 'Cookie Settings'},
-    {id: 'updates-to-privacy-policy', title: 'Updates to This Privacy Policy'}
+    {id: 'data-retention-and-security', title: 'Data Retention and Security'},
+    {id: 'your-rights-and-choices', title: 'Your Rights and Choices'},
+    {id: 'childrens-privacy', title: 'Children\'s Privacy'},
+    {id: 'changes-to-this-privacy-policy', title: 'Changes to This Privacy Policy'},
+    {id: 'contact-us', title: 'Contact Us'},
 ];
 
 function PrivacyPolicy() {
@@ -110,19 +111,17 @@ function PrivacyPolicy() {
                         Introduction
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        This Privacy Policy describes how MegaTrader Holdings LLC
-                        (&quot;MegaTrader,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;)
-                        collects, uses, discloses, and protects your personal information when you visit our website,
-                        register an account, or use any
-                        of our services (collectively, the &quot;Services&quot;). This policy is designed to help you
-                        understand what data we collect, why we collect it,
-                        how we use it, and the choices you have regarding your information.
-                    </p>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        Our goal is to be transparent about our data practices and ensure that your personal information
-                        is treated with respect and in accordance
-                        with applicable privacy laws. By using our Services, you consent to the practices described in
-                        this Privacy Policy.
+                        At MegaTrader Holdings Inc.
+                        (&quot;MegaTrader,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), we are committed
+                        to protecting your privacy and handling your personal information responsibly. This Privacy
+                        Policy describes how we collect, use, store, share, and protect the information you provide when
+                        accessing our website, platform, services, and any related tools. By using MegaTrader, you agree
+                        to the terms of this Privacy Policy. If you do not agree, you should not use our services. This
+                        policy applies to all users, including traders, affiliates, and visitors, regardless of
+                        geographic location. We encourage you to read this policy carefully and contact us if you have
+                        any questions. MegaTrader complies with applicable data protection laws, including but not
+                        limited to the California Consumer Privacy Act (CCPA), the General Data Protection Regulation
+                        (GDPR), and other relevant international privacy frameworks.
                     </p>
                 </div>
 
@@ -131,19 +130,15 @@ function PrivacyPolicy() {
                         Information We Collect
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We collect personal information that you provide directly to us, such as when you create an
-                        account, submit documents for
-                        verification, make a purchase, or contact support. This includes your full name, email address,
-                        phone number, country and state
-                        of residence, payment information, and any identification documents submitted for compliance
-                        purposes.
-                    </p>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We also collect data automatically when you access or use our platform. This may include your IP
-                        address, browser type, device type,
-                        session data, location data, and usage patterns (such as pages visited, time spent, and
-                        interaction history). This information is used
-                        for analytics, security, and to improve platform performance.
+                        MegaTrader collects both personally identifiable information (PII) and non-personal data when
+                        you register, trade, browse, or interact with our platform. This includes your name, email
+                        address, date of birth, billing address, IP address, device type, trading activity, payment
+                        details, and identity verification documents (such as passport or driver’s license). We also
+                        collect behavioral data via cookies and analytics tools to improve our platform performance and
+                        tailor user experiences. You may voluntarily submit additional information through surveys,
+                        support forms, or community channels. All data collected is processed in accordance with our
+                        legitimate business interests and for compliance with legal obligations under applicable
+                        financial regulations.
                     </p>
                 </div>
 
@@ -152,69 +147,48 @@ function PrivacyPolicy() {
                         How We Use Your Information
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We use the information we collect to operate and improve the MegaTrader platform and to provide
-                        services to you, including:
+                        We use the information we collect to provide, maintain, and improve MegaTrader’s services. This
+                        includes verifying your identity, facilitating transactions, analyzing platform usage,
+                        personalizing your experience, and enforcing platform rules and terms. We may also use your
+                        information for customer support, account administration, fraud prevention, promotional
+                        communication (only with consent), and compliance with regulatory obligations. Your data helps
+                        us conduct internal research and platform optimization, ensuring a secure and reliable user
+                        environment. We do not sell your personal information to third parties. Any use of your data is
+                        aligned with our commitment to confidentiality and lawful processing.
                     </p>
-                    <ul className='list-disc list-inside text-stone-400 space-y-1 ml-4'>
-                        <li>Managing your account and preferences</li>
-                        <li>Facilitating payments, withdrawals, and issuing payouts</li>
-                        <li>Performing identity checks and fulfilling compliance obligations (KYC and AML)</li>
-                        <li>Detecting and preventing fraud, unauthorized activity, or system abuse</li>
-                        <li>Sending platform notifications, alerts, and administrative messages</li>
-                        <li>Delivering customer support and responding to inquiries</li>
-                        <li>Analyzing usage to optimize features and functionality</li>
-                        <li>Meeting legal, regulatory, and contractual obligations</li>
-                    </ul>
                 </div>
 
-                <div className='space-y-4' id='sharing-and-disclosure'>
+                <div className='space-y-4' id='cookies-and-tracking-technologies'>
                     <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Sharing and Disclosure of Information
+                        Cookies and Tracking Technologies
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We share your personal information only when necessary to provide our Services or when legally
-                        required. This may include sharing data with payment
-                        providers, identity verification services, hosting providers, or authorities responding to
-                        lawful requests. We do not sell your personal information
-                        or allow third parties to use it for their own marketing.
+                        MegaTrader uses cookies, web beacons, and other tracking technologies to improve site
+                        functionality, user experience, and advertising relevance. Cookies are small files stored on
+                        your device that allow us to remember user preferences, track performance metrics, and deliver
+                        tailored content. You may control or delete cookies through your browser settings; however,
+                        disabling cookies may affect your ability to access certain features of our platform.
+                        Third-party analytics providers (e.g., Google Analytics) may collect aggregated data about your
+                        interactions with our services. We use this data to understand user behavior and to enhance the
+                        platform’s speed, accuracy, and usability in a compliant and transparent manner.
                     </p>
                 </div>
 
-                <div className='space-y-4' id='data-retention'>
+                <div className='space-y-4' id='data-sharing-and-disclosure'>
                     <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Data Retention
+                        Data Sharing and Disclosure
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We retain your personal information as long as your account is active or as necessary to comply
-                        with legal and operational obligations. Once data is no
-                        longer needed, it is securely deleted or anonymized.
-                    </p>
-                </div>
-
-                <div className='space-y-4' id='your-rights-and-choices'>
-                    <h3
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Your Rights and Choices
-                    </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        Depending on your jurisdiction, you may have rights to access, update, correct, or delete your
-                        data, object to processing, withdraw consent, or
-                        request a machine-readable copy. To exercise these rights, contact us at privacy@megatrader.io.
-                        We may require identity verification for such requests.
-                    </p>
-                </div>
-
-                <div className='space-y-4' id='data-security'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Data Security
-                    </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We implement technical and organizational measures to protect your data, including encryption,
-                        access controls, secure storage, and audits. However, no system is
-                        entirely secure. You are responsible for safeguarding your login credentials and notifying us of
-                        any unauthorized use.
+                        We may share your personal information with trusted service providers and business partners who
+                        assist in delivering our services, such as payment processors, KYC/AML providers, analytics
+                        vendors, and hosting providers. These third parties are contractually obligated to protect your
+                        data and use it only for authorized purposes. We may also disclose information to law
+                        enforcement or regulators if required by law, court order, or subpoena, or if necessary to
+                        protect the rights, safety, or property of MegaTrader, its users, or others. In the event of a
+                        merger, acquisition, or asset transfer, your information may be transferred to a new entity
+                        under the same privacy obligations.
                     </p>
                 </div>
 
@@ -224,31 +198,93 @@ function PrivacyPolicy() {
                         International Data Transfers
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        MegaTrader is based in the U.S. and may process data in other countries. By using our Services,
-                        you consent to transfers to jurisdictions with different
-                        data protections. We ensure legal compliance and safeguards for such transfers.
+                        MegaTrader operates globally, and your personal data may be transferred to, stored in, or
+                        processed in countries outside your jurisdiction, including the United States. We take
+                        appropriate safeguards to ensure your information is handled in accordance with applicable data
+                        protection laws, including standard contractual clauses approved by regulatory authorities.
+                        Where required, we obtain your explicit consent for international transfers. Our partners and
+                        vendors are vetted to ensure adequate data protection, whether they operate in the EU, UK,
+                        Canada, or other jurisdictions. By using our services, you acknowledge and agree to the
+                        potential cross-border transfer of your personal information.
                     </p>
                 </div>
 
-                <div className='space-y-4' id='cookie-settings'>
+                <div className='space-y-4' id='data-retention-and-security'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                        Data Retention and Security
+                    </h3>
+                    <p className='text-stone-400 text-base font-medium leading-normal'>
+                        We retain your personal information for as long as necessary to provide our services, fulfill
+                        contractual obligations, comply with legal requirements, resolve disputes, and enforce our
+                        agreements. When data is no longer needed, we securely delete or anonymize it. We implement
+                        industry-standard security measures, including encryption, secure access controls, firewalls,
+                        and regular audits, to protect your data against unauthorized access, misuse, or breach. Despite
+                        our efforts, no method of transmission or storage is 100% secure. We encourage users to use
+                        strong passwords and enable two-factor authentication when available to further protect their
+                        accounts.
+                    </p>
+                </div>
+
+                <div className='space-y-4' id='your-rights-and-choices'>
                     <h3
                         className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Cookie Settings
+                        Your Rights and Choices
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We use cookies for essential, performance, functional, and marketing purposes. You can manage
-                        settings on our site or via your browser. Disabling essential cookies may limit platform
-                        features.
+                        Depending on your jurisdiction, you may have certain rights regarding your personal data,
+                        including the right to access, correct, delete, restrict processing, object to processing, or
+                        receive a portable copy of your data. You may also withdraw consent for certain uses at any
+                        time. To exercise these rights, contact our support team through the designated privacy inquiry
+                        channels listed below. We will respond to all requests within legally mandated timeframes.
+                        Additionally, you may opt out of marketing emails by clicking “unsubscribe” in any message.
+                        Please note that some data may be retained for compliance, dispute resolution, or platform
+                        integrity purposes.
                     </p>
                 </div>
 
-                <div className='space-y-4' id='updates-to-privacy-policy'>
+                <div className='space-y-4' id='childrens-privacy'>
                     <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Updates to This Privacy Policy
+                        Children{'\''}s Privacy
                     </h3>
                     <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We may update this policy to reflect legal or operational changes. Updates will include a new
-                        effective date. Continued use after changes constitutes acceptance.
+                        MegaTrader{'\''}s services are not intended for or directed to individuals under the age of 18.
+                        We do not knowingly collect personal information from minors. If we become aware that we have
+                        inadvertently collected data from a person under 18, we will take steps to delete such
+                        information promptly. Parents or legal guardians who believe their child may have submitted
+                        personal data without their consent should contact us immediately. We encourage all users to be
+                        mindful of internet safety practices and to ensure that accounts are only used by individuals
+                        who meet our eligibility requirements as outlined in our Terms of Service.
+                    </p>
+                </div>
+
+                <div className='space-y-4' id='changes-to-this-privacy-policy'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                        Changes to This Privacy Policy
+                    </h3>
+                    <p className='text-stone-400 text-base font-medium leading-normal'>
+                        We may update this Privacy Policy from time to time to reflect changes in our practices, legal
+                        requirements, or platform features. When we make material changes, we will notify you through
+                        email, account notifications, or by posting the revised policy on our website with an updated
+                        effective date. We encourage you to review this page periodically to stay informed about how we
+                        protect your information. Continued use of MegaTrader’s services after a policy update
+                        constitutes your acceptance of the revised terms. If you do not agree to the new policy, you
+                        must discontinue use of the platform and request account closure and data deletion, if
+                        applicable.
+                    </p>
+                </div>
+
+                <div className='space-y-4' id='contact-us'>
+                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                        Contact Us
+                    </h3>
+                    <p className='text-stone-400 text-base font-medium leading-normal'>
+                        If you have any questions, concerns, or requests regarding this Privacy Policy or your personal
+                        data, please contact MegaTrader’s Data Protection Officer at privacy@megatrader.com. You may
+                        also reach us via postal mail at MegaTrader Holdings Inc., Attn: Privacy Department, 350 Lincoln
+                        Road, Miami Beach, FL 33139, USA. We are committed to resolving privacy-related inquiries
+                        promptly and transparently. Users in the EU or UK may also file complaints with their local data
+                        protection authorities. For faster resolution of platform-related questions, please use our
+                        in-app support or knowledge base before submitting privacy-specific requests.
                     </p>
                 </div>
             </div>
