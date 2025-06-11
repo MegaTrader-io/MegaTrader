@@ -10,21 +10,63 @@ interface TabOption {
 }
 
 const ITEMS: TabOption[] = [
-    {"title": "Introduction", "id": "introduction"},
-    {"title": "Eligibility", "id": "eligibility"},
-    {"title": "Nature of Services", "id": "nature-of-services"},
-    {"title": "Account Registration and Security", "id": "account-registration-and-security"},
-    {"title": "Evaluation and Funded Programs", "id": "evaluation-and-funded-programs"},
-    {"title": "Fees, Payments, and Refunds", "id": "fees-payments-and-refunds"},
-    {"title": "Compliance and Prohibited Conduct", "id": "compliance-and-prohibited-conduct"},
-    {"title": "Intellectual Property", "id": "intellectual-property"},
-    {"title": "Disclaimers", "id": "disclaimers"},
-    {"title": "Limitation of Liability", "id": "limitation-of-liability"},
-    {"title": "Account Suspension or Termination", "id": "account-suspension-or-termination"},
-    {"title": "Changes to Terms", "id": "changes-to-terms"},
-    {"title": "Governing Law and Dispute Resolution", "id": "governing-law-and-dispute-resolution"},
-    {"title": "Restricted Countries and Regions", "id": "restricted-countries-and-regions"}
-];
+    {
+        "title": "Acceptance of Terms",
+        "id": "acceptance-of-terms"
+    },
+    {
+        "title": "Eligibility and Account Registration",
+        "id": "eligibility-and-account-registration"
+    },
+    {
+        "title": "Nature of Services",
+        "id": "nature-of-services"
+    },
+    {
+        "title": "Account Types and Program Structure",
+        "id": "account-types-and-program-structure"
+    },
+    {
+        "title": "Fees, Payments, and Refunds",
+        "id": "fees,-payments,-and-refunds"
+    },
+    {
+        "title": "Taxes and Reporting Obligations",
+        "id": "taxes-and-reporting-obligations"
+    },
+    {
+        "title": "Identity Verification and Compliance",
+        "id": "identity-verification-and-compliance"
+    },
+    {
+        "title": "Platform Use and Conduct",
+        "id": "platform-use-and-conduct"
+    },
+    {
+        "title": "Intellectual Property",
+        "id": "intellectual-property"
+    },
+    {
+        "title": "Disclaimer of Warranties",
+        "id": "disclaimer-of-warranties"
+    },
+    {
+        "title": "Limitation of Liability",
+        "id": "limitation-of-liability"
+    },
+    {
+        "title": "Suspension and Termination",
+        "id": "suspension-and-termination"
+    },
+    {
+        "title": "Modifications to Services",
+        "id": "modifications-to-services"
+    },
+    {
+        "title": "Governing Law and Dispute Resolution",
+        "id": "governing-law-and-dispute-resolution"
+    }
+]
 
 function TermsOfService() {
     const [tab, setTab] = useState<TabOption>(ITEMS[0]);
@@ -110,350 +152,197 @@ function TermsOfService() {
                     className="sm:border-r-2 sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
             <div className="text-white space-y-12 lg:mx-4">
-                <div className="space-y-4" id='introduction'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Introduction</h3>
+                <div className="space-y-4" id='acceptance-of-terms'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Acceptance
+                        of Terms</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        These Terms of Service (&#34;Terms&#34;) govern your access to and use of the MegaTrader
-                        platform
-                        and
-                        associated services (the “Services”). By using MegaTrader, you agree to be legally bound by
-                        these
-                        Terms, our Privacy Policy, and all applicable laws and regulations.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader offers access to a simulated proprietary trading environment where users can evaluate
-                        their trading abilities in a risk-free setting. These Terms serve to define the rights,
-                        responsibilities, and limitations of users engaging with our platform, and to ensure a safe,
-                        compliant, and fair trading ecosystem for all participants.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Please read these Terms carefully before using our Services. If you do not agree to these Terms,
-                        you
-                        may not access or use the MegaTrader platform.
+                        By accessing or using the services offered by MegaTrader Holdings LLC (“MegaTrader”), you agree
+                        to be bound by these Terms of Service and all applicable laws and regulations. These terms
+                        govern your use of the MegaTrader platform, including all products, evaluation programs, and
+                        related services. If you do not agree with any part of these terms, you should not use the
+                        Services. We reserve the right to update or modify these Terms at any time, and continued use of
+                        the Services constitutes acceptance of any changes. By accessing the platform or completing a
+                        registration, you affirm that you understand and accept these conditions fully and voluntarily.
+                        The most recent version of these Terms will always be available on our website for your
+                        reference.
                     </p>
                 </div>
-
-                <div className="space-y-4" id='eligibility'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Eligibility</h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">You
-                        must meet the following criteria to use MegaTrader:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Be
-                        at least 18 years old or of legal majority age in your country of residence.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Possess
-                        the legal capacity to enter into contracts and be legally bound.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Not
-                        be a resident or national of a country or region listed in our Restricted Countries section.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Not
-                        be previously banned or terminated from our platform for breach of policies.</p>
+                <div className="space-y-4" id='eligibility-and-account-registration'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Eligibility
+                        and Account Registration</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader reserves the right to carry out identity verification (KYC), eligibility checks, and
-                        deny
-                        access to any user who fails to meet the required standards. Additional documentation may be
-                        requested to confirm identity, address, or source of funds as necessary to comply with
-                        compliance
-                        obligations.
+                        To access MegaTrader’s services, users must create a registered account by submitting accurate,
+                        complete information including a valid email address and secure password. You agree to maintain
+                        the confidentiality of your login credentials, ensure that your submitted information remains
+                        current and truthful, and take full responsibility for all activities occurring under your
+                        account. Sharing your account with others, registering with false information, or using another
+                        individual’s credentials is strictly prohibited and may lead to permanent account suspension.
+                        MegaTrader may suspend, investigate, or terminate accounts where unauthorized access, fraudulent
+                        registration, or suspicious activity is detected. We encourage users to use strong passwords and
+                        enable two-factor authentication for enhanced security. In addition, creating multiple accounts
+                        to bypass plan limitations or program restrictions is strictly forbidden.
                     </p>
                 </div>
-
                 <div className="space-y-4" id='nature-of-services'>
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Nature
                         of Services</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader provides access to a simulated trading platform for educational and evaluation
-                        purposes
-                        only. We do not provide brokerage services or access to live capital markets. All trading is
-                        conducted using demo accounts with virtual capital, replicating real-time market data and
-                        conditions.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Our
-                        primary services include:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Evaluation
-                        Challenges: Paid programs to assess a user’s trading skill, discipline, and strategy.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Simulated
-                        Funded Accounts: Provided to users who meet the evaluation criteria, allowing continued
-                        trading with payout potential.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Performance-Based
-                        Payouts: Reward structures for qualified users based on their performance and
-                        adherence to platform rules.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        The platform is designed to simulate professional trading without risking real money. However,
-                        successful simulated performance does not guarantee real-world trading success.
+                        MegaTrader provides a simulated trading environment for educational and evaluation purposes.
+                        Users do not engage in actual market trading, and no real capital is used or distributed during
+                        the simulation phase. Access to funded reward accounts is conditional and based entirely on
+                        performance within the simulation. Our platform is not a brokerage service and does not
+                        facilitate the purchase or sale of actual securities, futures, or commodities. Any
+                        representation of account funding, payout, or profit sharing is hypothetical and governed by
+                        specific program requirements. Participation in any program does not guarantee monetary
+                        compensation, and all rewards are subject to compliance with internal rules and eligibility
+                        criteria.
                     </p>
                 </div>
-
-                <div className="space-y-4" id='account-registration-and-security'>
+                <div className="space-y-4" id='account-types-and-program-structure'>
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Account
-                        Registration and Security</h3>
+                        Types and Program Structure</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        To access MegaTrader’s services, users must create a registered account by submitting accurate,
-                        complete information including a valid email address and secure password. You agree to:
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Maintain
-                        the confidentiality of your login credentials.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Ensure
-                        that all submitted information remains current and truthful.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Take
-                        full responsibility for all activities occurring under your account.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Sharing your account with others, registering with false information, or using another
-                        individual’s
-                        credentials is strictly prohibited and may lead to permanent account suspension.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader may suspend, investigate, or terminate accounts where unauthorized access, fraudulent
-                        registration, or suspicious activity is detected. We encourage users to use strong passwords and
-                        enable two-factor authentication for enhanced security.
+                        MegaTrader offers multiple evaluation programs, each with its own rules, objectives, and payout
+                        structures. Users are responsible for understanding the program terms before participation.
+                        Program eligibility may vary by region, and participation may require payment, identity
+                        verification, and compliance with daily or monthly trading objectives. Rules regarding minimum
+                        trading days, consistency, drawdown limits, and maximum position sizes are strictly enforced and
+                        subject to change. Each account type may impose specific restrictions on trading hours,
+                        permitted contract sizes, and payout timelines, and failure to adhere to these can result in
+                        disqualification or forfeiture of eligibility.
                     </p>
                 </div>
-
-                <div className="space-y-4" id='evaluation-and-funded-programs'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Evaluation
-                        and Funded Programs</h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader’s trading evaluations are structured challenges meant to assess trading performance
-                        under
-                        defined rules. Each program comes with its own set of metrics and conditions:
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Profit
-                        Targets</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Maximum
-                        Daily and Overall Drawdowns</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Minimum
-                        Trading Days</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Risk
-                        Management Expectations</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Participants who pass the evaluation gain access to a Simulated Funded Account, which allows
-                        them to
-                        continue trading under similar parameters and request performance-based payouts.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        All evaluations are conducted in a simulated environment. Any breach of the stated rules,
-                        manipulation of the demo system, or use of unauthorized strategies may result in
-                        disqualification.
-                        MegaTrader reserves the right to revoke access to funded accounts or suspend payouts where abuse
-                        or
-                        policy violation is suspected.
-                    </p>
-                </div>
-
                 <div className="space-y-4" id='fees-payments-and-refunds'>
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Fees,
                         Payments, and Refunds</h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Users
-                        are required to pay applicable fees to access certain features or services, including:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Evaluation
-                        plan entry fees</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Account
-                        reset and reactivation fees</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Add-on
-                        services (e.g., analytics tools or data feeds)</p>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        All payment terms are displayed at the time of purchase and must be accepted before access is
-                        granted. Fees are non-refundable unless otherwise stated or where required by law.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader accepts payments via various channels, including debit/credit card, cryptocurrency,
-                        and
-                        RiseWorks. Users are solely responsible for ensuring successful transaction completion.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">For
-                        qualified users, performance-based payouts may be requested. These are:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Subject
-                        to internal review for compliance with trading rules.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Issued
-                        through RiseWorks, Bitcoin, or Ethereum.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Dependent
-                        on verification of user identity and payment preferences.</p>
-                </div>
-
-                <div className="space-y-4" id='compliance-and-prohibited-conduct'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Compliance
-                        and Prohibited Conduct</h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Users
-                        agree to use the MegaTrader platform ethically and in compliance with all applicable laws. The
-                        following activities are strictly prohibited:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Use
-                        of automated bots, scripts, or AI unless explicitly permitted.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Exploitation
-                        of demo environment inconsistencies (e.g., latency arbitrage).</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Sharing
-                        or reselling of user accounts.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Attempting
-                        to bypass rules or falsely simulate legitimate trading.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Providing
-                        false information or misrepresenting geographic location.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader complies with applicable anti-money laundering (AML) and know-your-customer (KYC)
-                        laws.
-                        We reserve the right to request documentation or suspend accounts under review for suspicious
-                        activity.
+                        Some MegaTrader services require payment of non-refundable fees. This includes evaluation
+                        entries, resets, add-ons, and platform data access where applicable. Payment is due upon
+                        registration, and no refund will be issued unless otherwise stated in writing. Fees may differ
+                        based on account type or subscription level. Users are encouraged to review all charges before
+                        submitting payment. Third-party platform or exchange fees are not included in MegaTrader
+                        pricing. Refunds will not be issued due to performance-based disqualifications or failure to
+                        meet evaluation criteria. By purchasing any program, you agree to the full terms, costs, and
+                        non-refundable nature of your selected product.
                     </p>
                 </div>
-
+                <div className="space-y-4" id='taxes-and-reporting-obligations'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Taxes
+                        and Reporting Obligations</h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Users are solely responsible for reporting any compensation, payouts, or performance-based
+                        earnings received through the MegaTrader platform. We do not provide tax advice and do not
+                        withhold taxes unless legally required. Where applicable, U.S. users may receive IRS Form 1099.
+                        International users are expected to comply with local tax laws and consult their own tax
+                        advisors. MegaTrader may cooperate with lawful tax and regulatory inquiries when required. It is
+                        your responsibility to maintain accurate records of your trading performance and payout history
+                        for tax reporting purposes. Failure to report earnings or comply with applicable tax regulations
+                        may result in penalties from your local authority, not from MegaTrader.
+                    </p>
+                </div>
+                <div className="space-y-4" id='identity-verification-and-compliance'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Identity
+                        Verification and Compliance</h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        To protect the integrity of our programs and meet legal requirements, MegaTrader may require
+                        users to complete identity verification (KYC) and anti-money laundering (AML) screening.
+                        Verification may include submission of a government-issued ID, proof of address, and a selfie
+                        for facial matching. Failure to complete verification or providing false documentation may
+                        result in disqualification from payouts, account suspension, or termination. In some
+                        jurisdictions, we may also be required to collect tax identification numbers or additional
+                        documents before releasing any funds. Our compliance team reserves the right to request updated
+                        documentation or re-verification at any time if suspicious activity is detected.
+                    </p>
+                </div>
+                <div className="space-y-4" id='platform-use-and-conduct'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Platform
+                        Use and Conduct</h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Users agree to use the MegaTrader platform only for lawful purposes and in accordance with
+                        program rules. You must not engage in manipulative trading, exploit latency, use unauthorized
+                        software, or otherwise attempt to circumvent program criteria. We reserve the right to suspend,
+                        investigate, or permanently ban accounts engaged in prohibited conduct. MegaTrader may monitor
+                        activity for quality assurance, policy enforcement, and fraud detection. You must not attempt to
+                        access another user’s account or interfere with system operations through the use of bots,
+                        scripts, or malicious tools. All use of the Services must reflect good faith participation and
+                        adherence to the spirit of a fair and competitive trading environment.
+                    </p>
+                </div>
                 <div className="space-y-4" id='intellectual-property'>
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Intellectual
                         Property</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        All components of the MegaTrader platform are the exclusive property of MegaTrader Holdings LLC
-                        or
-                        its licensors, including but not limited to:
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Branding
-                        and logos</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Website
-                        content and platform design</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Source
-                        code, databases, and proprietary tools</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">You
-                        may not:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Reproduce,
-                        republish, or modify platform materials.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Use
-                        MegaTrader’s brand or assets without written authorization.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Develop
-                        competing services based on MegaTrader’s intellectual assets.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Violation
-                        of these rights may result in legal action and termination of access.</p>
-                </div>
-
-                <div className="space-y-4" id='disclaimers'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Disclaimers</h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader provides its services &#34;as is&#34; without warranties of any kind. We do not
-                        guarantee:
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Continuous,
-                        uninterrupted platform availability</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Accuracy
-                        or completeness of market data</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Profits
-                        or payouts to any user</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">That
-                        simulation reflects live-market behavior</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        We expressly disclaim any implied warranties including merchantability or fitness for a
-                        particular
-                        purpose. Users engage with the platform at their own risk and are advised to approach simulated
-                        trading with the same caution and discipline as real trading.
+                        All content, branding, technology, and systems on the MegaTrader platform are the exclusive
+                        property of MegaTrader Holdings LLC. Users are granted a limited, non-transferable license to
+                        use the platform solely for its intended purpose. Copying, reverse-engineering, redistributing,
+                        or modifying any part of the service without prior written consent is strictly prohibited. Any
+                        misuse of our intellectual property, including trademarks, graphics, or proprietary software,
+                        may result in legal action. Use of MegaTrader’s logo or brand elements in social media or
+                        promotional material must receive prior written authorization.
                     </p>
                 </div>
-
+                <div className="space-y-4" id='disclaimer-of-warranties'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Disclaimer
+                        of Warranties</h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader provides its Services “as is” and makes no warranties regarding availability,
+                        accuracy, or performance. We do not guarantee that the platform will be free from interruptions,
+                        errors, or vulnerabilities. Participation in simulated trading does not guarantee live trading
+                        success or future profitability. Users assume all risks associated with the use of the platform.
+                        No advice or information obtained from MegaTrader, whether oral or written, shall create any
+                        warranty not expressly stated in these Terms. Users should not rely solely on the functionality
+                        of the platform or simulation data for financial or trading decisions.
+                    </p>
+                </div>
                 <div className="space-y-4" id='limitation-of-liability'>
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Limitation
                         of Liability</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        To the maximum extent permitted by law, MegaTrader is not liable for:
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Losses
-                        arising from simulated trades</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Delayed
-                        or missing payouts</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Account
-                        access issues due to user negligence</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Suspension
-                        or termination resulting from rule violations</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Our total liability is limited to the amount you paid us within the 90-day period prior to any
-                        incident. This limitation applies regardless of the legal theory or remedy sought.
+                        Under no circumstances shall MegaTrader be liable for any direct, indirect, incidental,
+                        consequential, or punitive damages resulting from your use of, or inability to use, the
+                        Services. This includes but is not limited to loss of data, trading losses, opportunity costs,
+                        or damage to your equipment. MegaTrader’s liability is limited to the maximum extent permitted
+                        by law. In the event of a technical malfunction, data breach, or pricing error, we may take
+                        corrective action including but not limited to canceling simulated trades, resetting accounts,
+                        or adjusting performance metrics.
                     </p>
                 </div>
-
-                <div className="space-y-4" id='account-suspension-or-termination'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Account
-                        Suspension or Termination</h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">MegaTrader
-                        reserves the right to suspend or permanently close accounts that violate these Terms,
-                        platform rules, or applicable law.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Grounds
-                        for suspension include:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Use
-                        of unauthorized tools or strategies</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Fraudulent
-                        behavior</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Multiple
-                        or shared accounts</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Regulatory
-                        concerns or compliance flags</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Termination
-                        results in:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Immediate
-                        loss of access to the platform</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Cancellation
-                        of payouts</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Forfeiture
-                        of any active simulated accounts</p>
+                <div className="space-y-4" id='suspension-and-termination'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Suspension
+                        and Termination</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Appeals may be submitted to <a href='mailto:support@megatrader.io'
-                                                       className='text-blue-600 underline'>support@megatrader.io</a> but
-                        reinstatement is not guaranteed.
+                        MegaTrader reserves the right to suspend or terminate your account at any time, with or without
+                        notice, for violations of these Terms, suspicious activity, or for maintenance and operational
+                        needs. In cases involving suspected fraud, abuse, or legal risk, we may withhold payouts or take
+                        further investigative action. Terminated accounts may lose access to all platform features and
+                        historical data. Users may request a review of their case in writing, but reinstatement is not
+                        guaranteed. If your account is terminated for cause, you are not entitled to any refund or
+                        compensation.
                     </p>
                 </div>
-
-                <div className="space-y-4" id='changes-to-terms'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Changes
-                        to Terms</h3>
+                <div className="space-y-4" id='modifications-to-services'>
+                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Modifications
+                        to Services</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        We may update these Terms periodically to reflect operational changes, legal requirements, or
-                        feature updates. When changes are made:
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">The
-                        revised Terms will be posted on our website with the new effective date.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">We
-                        may notify users via email or in-platform alerts.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        By continuing to use the platform after changes take effect, you agree to the updated Terms. If
-                        you
-                        disagree with the changes, you must cease use of the Services immediately.
+                        We may update, modify, or discontinue any part of the Services at our sole discretion. This
+                        includes features, evaluation rules, platform access, and pricing. While we strive to notify
+                        users of significant changes, MegaTrader is not obligated to maintain any specific feature or
+                        service indefinitely. Continued use of the platform constitutes acceptance of such changes. You
+                        are responsible for reviewing these Terms regularly to remain informed of updates. Archived
+                        versions may be made available for your reference upon request.
                     </p>
                 </div>
-
                 <div className="space-y-4" id='governing-law-and-dispute-resolution'>
                     <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Governing
                         Law and Dispute Resolution</h3>
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        These Terms shall be governed by and interpreted under the laws of the State of [Insert State],
-                        excluding its conflict of law provisions.
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Dispute
-                        resolution procedures:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Users
-                        must first contact MegaTrader support to attempt informal resolution.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">If
-                        unresolved, disputes will be submitted to confidential binding arbitration in [Insert
-                        Location].</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Arbitration
-                        will be conducted in English under [Insert Arbitration Rules] and judgment may be entered
-                        in any court of competent jurisdiction.</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">You
-                        waive any right to participate in class-action litigation or jury trials.</p>
-                </div>
-
-                <div className="space-y-4" id='restricted-countries-and-regions'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">Restricted
-                        Countries and Regions</h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">Due
-                        to compliance restrictions, MegaTrader does not offer services to users in the following
-                        jurisdictions:</p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Restricted Countries:<br/>
-                        Afghanistan | Belarus | Burundi | Central African Republic | Congo (DRC) | Cuba | Eritrea | Iran
-                        |
-                        Iraq | Lebanon | Libya | Mali | Myanmar (Burma) | Nicaragua | North Korea | Russia | Somalia |
-                        South
-                        Sudan | Sudan | Syria | Venezuela | Yemen | Zimbabwe
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Restricted Regions/Territories:<br/>
-                        Crimea, Donetsk, and Luhansk regions of Ukraine<br/>
-                        Any area subject to international sanctions
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        Restricted U.S. States (if applicable):<br/>
-                        New York | Connecticut | Hawaii | New Hampshire (subject to review)
-                    </p>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader reserves the right to update this list at any time for legal or operational reasons.
+                        These Terms are governed by the laws of the State of \[Insert State], without regard to its
+                        conflict of law principles. Any dispute or claim arising from your use of the Services shall be
+                        resolved through binding arbitration in accordance with the rules of the American Arbitration
+                        Association. By agreeing to these Terms, you waive any right to participate in class action
+                        lawsuits or jury trials to the extent permitted by law. Arbitration shall take place in a
+                        mutually agreed location or remotely when applicable. If any part of these Terms is deemed
+                        unenforceable, the remaining provisions will remain in full effect.
                     </p>
                 </div>
             </div>
