@@ -23,10 +23,6 @@ const ITEMS: TabOption[] = [
         "id": "types-of-cookies-we-use"
     },
     {
-        "title": "Types of Cookies We Use",
-        "id": "types-of-cookies-we-use"
-    },
-    {
         "title": "Essential Cookies",
         "id": "essential-cookies"
     },
@@ -185,20 +181,6 @@ function Cookies() {
                         Some cookies are temporary and deleted after your session ends (session cookies), while others
                         remain on your device until you delete them or they expire (persistent cookies). MegaTrader
                         utilizes both types for various performance, security, and user experience purposes.
-                    </p>
-                </div>
-                <div className="space-y-4" id='types-of-cookies-we-use'>
-                    <h3 className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
-                        Types of Cookies We Use
-                    </h3>
-                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                        MegaTrader uses several categories of cookies: (1) Essential cookies, required for core platform
-                        functionality like authentication and security; (2) Performance cookies, which collect
-                        anonymized usage data to help us improve platform reliability and speed; (3) Functionality
-                        cookies, which remember your preferences, such as language or account settings; and (4)
-                        Targeting or advertising cookies, used to deliver relevant marketing based on your behavior and
-                        interests. These cookies may be placed by us or by third-party providers whose services we
-                        integrate. All cookies are categorized and managed according to their function and origin.
                     </p>
                 </div>
                 <div className="space-y-4" id='essential-cookies'>
