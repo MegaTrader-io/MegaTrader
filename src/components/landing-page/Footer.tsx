@@ -11,6 +11,7 @@ import TermsOfService from "@/components/landing-page/footer-dialogs/TermsOfServ
 import Disclaimer from "@/components/landing-page/footer-dialogs/Disclaimer";
 import PrivacyPolicy from "@/components/landing-page/footer-dialogs/PrivacyPolicy";
 import Cookies from "@/components/landing-page/footer-dialogs/Cookies";
+import Link from "next/link";
 
 
 export type DIALOG_FOOTER_TYPE = 'DISCLAIMER' | 'PRIVACY_POLICY' | 'TERMS_OF_SERVICE' | 'COOKIES_SETTINGS';
@@ -111,47 +112,35 @@ export default function Footer() {
                         <nav
                             className="col-span-full flex-col space-y-4 sm:space-y-0 sm:text-center sm:flex-none sm:justify-center sm:gap-4 lg:contents">
                             <div className="flex justify-center space-x-4 lg:space-x-0 sm:contents">
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        openDialog("DISCLAIMER")
-                                    }}
+                                <Link
+                                    href='https://help.megatrader.io/en/articles/11553854-megatrader-disclosure-policy'
+                                    target={'_blank'}
                                     className="text-stone-400 text-sm font-medium underline leading-tight"
                                 >
                                     Disclaimer
-                                </button>
-                                <button
-                                    className="text-stone-400 text-sm font-medium underline leading-tight"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        openDialog("PRIVACY_POLICY")
-                                    }}>
+                                </Link>
+                                <Link
+                                    href='https://help.megatrader.io/en/articles/11553837-megatrader-privacy-policy'
+                                    target={'_blank'}
+                                    className="text-stone-400 text-sm font-medium underline leading-tight">
                                     Privacy Policy
-                                </button>
+                                </Link>
                             </div>
                             <div className="flex justify-center space-x-4 lg:space-x-0 sm:contents">
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        openDialog("TERMS_OF_SERVICE")
-                                    }}
+                                <Link
+                                    href='https://help.megatrader.io/en/articles/11553770-megatrader-terms-of-service'
+                                    target={'_blank'}
                                     className="text-stone-400 text-sm font-medium underline leading-tight"
                                 >
                                     Terms of Service
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        openDialog("COOKIES_SETTINGS")
-                                    }}
+                                </Link>
+                                <Link
+                                    href='https://help.megatrader.io/en/articles/11553882-megatrader-cookies-policy'
+                                    target={'_blank'}
                                     className="text-stone-400 text-sm font-medium underline leading-tight"
                                 >
                                     Cookies Settings
-                                </button>
+                                </Link>
                             </div>
                         </nav>
                     </div>
