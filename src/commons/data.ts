@@ -393,7 +393,7 @@ export const chartConfig = {
     series: [
         {
             name: "Pro Plan Revenue",
-            data: [24850, 24600, 24300, 23950, 23500, 23250, 23000, 23250, 23500, 24000, 24300, 24550],
+            data: [23000, 23250, 23250, 23500, 23500, 23950, 24000, 24300, 24300, 24550, 24600, 24850],
         },
         {
             name: "Upper Bound",
@@ -450,7 +450,7 @@ export const chartConfig = {
         },
         yaxis: {
             labels: {
-                formatter: (value: number) => `$${value}`,
+                formatter: (value: number) => `$ ${value}`,
                 style: {
                     colors: "#A8A29E",
                     fontSize: "12px",
