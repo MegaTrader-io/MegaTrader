@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function EarnWithMegatrader() {
     return (
-        <Card id="referral-program" className="lg:col-span-7 w-full p-4 text-white">
+        <Card id="referral-program" className="lg:col-span-7 w-full text-white">
             <CardTitle className="mb-2">
                 EARN WITH MEGATRADER
             </CardTitle>
@@ -15,12 +15,12 @@ function EarnWithMegatrader() {
                         <Image src={'/assets/images/message.svg'} alt={'Send Invitation'} width={24} height={24}/>
                     </div>
                     <h2
-                        className="text-center text-white text-base font-bold leading-normal">
-                        Send Invitation
+                        className="text-center justify-start text-white text-base font-bold font-['Roboto'] leading-normal">Send
+                        Invitation
                     </h2>
                     <p
-                        className="text-center text-stone-400 text-base font-normal leading-normal">
-                        Send your referral link to friends and tell them how useful Megatrader is!
+                        className="text-center justify-start text-stone-400 text-base font-medium font-['Roboto'] leading-normal">Send
+                        your referral link to friends and tell them how useful Megatrader is!
                     </p>
                 </div>
                 {/** panel 2 **/}
@@ -45,11 +45,11 @@ function EarnWithMegatrader() {
                     </div>
                     <h2
                         className="text-center text-white text-base font-bold leading-normal">
-                        Use Megatrader for free!
+                        Withdraw Commissions
                     </h2>
                     <p
                         className="text-center text-stone-400 text-base font-normal leading-normal">
-                        Easily withdraw your earned rewards and enjoy the benefits of referring friends!
+                        Access earnings and collect commissions quickly with just a few clicks.
                     </p>
                 </div>
             </div>
