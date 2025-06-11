@@ -10,6 +10,7 @@ import Dialog from "@/components/Dialog";
 import TermsOfService from "@/components/landing-page/footer-dialogs/TermsOfService";
 import Disclaimer from "@/components/landing-page/footer-dialogs/Disclaimer";
 import PrivacyPolicy from "@/components/landing-page/footer-dialogs/PrivacyPolicy";
+import Cookies from "@/components/landing-page/footer-dialogs/Cookies";
 
 
 export type DIALOG_FOOTER_TYPE = 'DISCLAIMER' | 'PRIVACY_POLICY' | 'TERMS_OF_SERVICE' | 'COOKIES_SETTINGS';
@@ -39,6 +40,7 @@ export default function Footer() {
             component = <TermsOfService/>
         } else if (option === 'COOKIES_SETTINGS') {
             title = 'Cookies Settings';
+            component = <Cookies/>
         }
 
         setModalForm({
