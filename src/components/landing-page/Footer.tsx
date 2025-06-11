@@ -6,66 +6,17 @@ import SocialMedia from "@/components/landing-page/SocialMedia";
 import SubscribeForm from "@/components/SubscribeForm";
 import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 import Alert from "@/components/Alert";
-import Dialog from "@/components/Dialog";
-import TermsOfService from "@/components/landing-page/footer-dialogs/TermsOfService";
-import Disclaimer from "@/components/landing-page/footer-dialogs/Disclaimer";
-import PrivacyPolicy from "@/components/landing-page/footer-dialogs/PrivacyPolicy";
-import Cookies from "@/components/landing-page/footer-dialogs/Cookies";
 import Link from "next/link";
 
-
-export type DIALOG_FOOTER_TYPE = 'DISCLAIMER' | 'PRIVACY_POLICY' | 'TERMS_OF_SERVICE' | 'COOKIES_SETTINGS';
-
 export default function Footer() {
-    const [showModal, setShowModal] = useState<boolean>(false);
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
-    const [modalForm, setModalForm] = useState<{ title: string, component: React.ReactNode } | null>(null)
 
     function cbShowAlert(payload: IShowAlert | null) {
         setShowAlert(payload)
     }
 
-    function openDialog(option: DIALOG_FOOTER_TYPE): void {
-        console.info('option', option);
-
-        let title = '';
-        let component: React.ReactNode = <><span className="text-white">{option}</span></>
-        if (option === 'DISCLAIMER') {
-            title = 'Disclaimer';
-            component = <Disclaimer/>
-        } else if (option === 'PRIVACY_POLICY') {
-            title = 'Privacy Policy';
-            component = <PrivacyPolicy/>
-        } else if (option === 'TERMS_OF_SERVICE') {
-            title = 'Terms of Service';
-            component = <TermsOfService/>
-        } else if (option === 'COOKIES_SETTINGS') {
-            title = 'Cookies Settings';
-            component = <Cookies/>
-        }
-
-        setModalForm({
-            title,
-            component
-        })
-
-
-        setShowModal(true);
-    }
-
     return (
         <>
-            {showModal && (
-                <Dialog
-                    className="w-[calc(100vw-32px)] sm:max-w-[800px] px-4 py-8"
-                    childrenClassName="px-0 !pb-0 lg:!max-h-[847px] scrollbar scrollbar-track-mgt-dark scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-w-2 scrollbar-thumb-neutral-700 scrollbar-thumb-custom"
-                    showModal={showModal}
-                    onClose={() => setShowModal(false)}
-                    title={modalForm?.title}>
-                    {modalForm?.component}
-                </Dialog>
-            )}
-
             <footer
                 className="w-full max-w-7xl flex-1 h-dvh mx-auto px-4 pb-8  flex items-center justify-between flex-col space-y-8">
                 <div
