@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useState, useRef, useEffect} from 'react';
-import clsx from "clsx";
 import Select from "@/components/Select";
 
 interface TabOption {
@@ -28,7 +27,7 @@ const ITEMS: TabOption[] = [
     },
     {
         "title": "Fees, Payments, and Refunds",
-        "id": "fees,-payments,-and-refunds"
+        "id": "fees-payments-and-refunds"
     },
     {
         "title": "Taxes and Reporting Obligations",
@@ -124,28 +123,13 @@ function TermsOfService() {
     }
 
     return (
-        <div className='md:grid md:grid-cols-[300px_32px_1fr] my-1'>
-            <div className="h-full">
-                <div className="space-y-4 hidden sticky top-1 md:block">
+        <div className='md:grid my-1'>
+            <div className="block md:hidden">
+                <Select value={tab.id} onChange={onChange}>
                     {ITEMS.map((item, index) => (
-                        <button
-                            key={index}
-                            onClick={() => changeTab(item)}
-                            className={clsx('w-full text-left tracking-tight leading-normal font-medium relative', [
-                                tab.id === item.id ?
-                                    'text-[#ffd78a] scroll-bar' : 'text-stone-400'
-                            ])}>
-                            {item.title}
-                        </button>
+                        <option key={index} value={item.id}>{item.title}</option>
                     ))}
-                </div>
-                <div className="block md:hidden">
-                    <Select value={tab.id} onChange={onChange}>
-                        {ITEMS.map((item, index) => (
-                            <option key={index} value={item.id}>{item.title}</option>
-                        ))}
-                    </Select>
-                </div>
+                </Select>
             </div>
             <div className="flex justify-center">
                 <div
