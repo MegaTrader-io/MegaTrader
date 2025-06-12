@@ -4,43 +4,6 @@ import React from 'react';
 import Image from "next/image";
 
 function ScreenshotMg({children}: { children: React.ReactElement }) {
-    // const containerRef = useRef<HTMLDivElement | null>(null);
-    //
-    // useEffect(() => {
-    //     if (!containerRef.current) return;
-    //
-    //     let resizeTimeout: NodeJS.Timeout | null = null;
-    //
-    //     const handleResize = () => {
-    //         if (resizeTimeout) clearTimeout(resizeTimeout);
-    //
-    //         resizeTimeout = setTimeout(() => {
-    //             if (!containerRef.current) return;
-    //
-    //             const slickList = document.querySelector('.slick-list');
-    //             const containerHeight = containerRef.current.offsetHeight || 0;
-    //
-    //             if (!slickList) return;
-    //
-    //             const slickListHeight = slickList.getBoundingClientRect().height - (slickList.getBoundingClientRect().height - 659);
-    //             console.info('containerHeight', containerHeight);
-    //             console.info('slickListHeight', slickListHeight);
-    //             const maxHeight = Math.floor(Math.max(slickListHeight, containerHeight));
-    //
-    //             containerRef.current.style.height = `${maxHeight}px`;
-    //         }, 250);
-    //     };
-    //
-    //     window.addEventListener('resize', handleResize);
-    //
-    //     handleResize();
-    //
-    //     return () => {
-    //         window.removeEventListener('resize', handleResize);
-    //         if (resizeTimeout) clearTimeout(resizeTimeout);
-    //     };
-    // }, []);
-
     return (
         <div className="mx-auto relative h-auto overflow-hidden rounded-2xl">
             <div

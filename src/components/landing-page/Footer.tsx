@@ -58,7 +58,7 @@ export default function Footer() {
                         className="grid grid-cols-4 gap-4 lg:inline-flex lg:justify-start lg:items-start lg:gap-8 lg:w-full">
                         <div
                             className="col-span-full text-center lg:text-left lg:flex-1 text-stone-400 text-sm font-medium leading-tight">
-                            © 2024 Megatrader
+                            © {(new Date()).getFullYear()} Megatrader
                         </div>
                         <nav
                             className="col-span-full flex-col space-y-4 sm:space-y-0 sm:text-center sm:flex-none sm:justify-center sm:gap-4 lg:contents">
