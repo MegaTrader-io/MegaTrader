@@ -100,8 +100,12 @@ function TwoFactorAuthentication() {
                         </g>
                     </svg>
 
-                    Disabled
-                    Two-Factor Authentication
+                    <span className="hidden sm:block">
+                        Disabled Two-Factor Authentication
+                    </span>
+                    <span className="block sm:block">
+                        Disabled 2FA
+                    </span>
                 </Button>
             </div>
         </>
