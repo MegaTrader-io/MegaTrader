@@ -71,7 +71,12 @@ function AccountSummary({account}: { account: Account }) {
                 </div>
             </div>
             <div id="challenge-payout-objectives" className="space-y-4">
-                <div className="text-white text-xl font-light uppercase leading-normal px-4">Your Challenge Objective
+                <div className="text-white text-xl font-light uppercase leading-normal px-4">
+                    {
+                        account.planDetail.planType === 'funded'
+                            ? 'Your Payout Objectives' :
+                            'Your Challenge Objective'
+                    }
                 </div>
                 <div className="gap-4 lg:flex lg:items-center">
                     <div className="lg:flex flex-col items-start relative flex-1 grow space-y-8">
