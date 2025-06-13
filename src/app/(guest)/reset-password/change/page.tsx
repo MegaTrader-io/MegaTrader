@@ -75,7 +75,7 @@ export default function ChangePassword() {
 
             <div>
                 <h1 className="text-white xl:text-nowrap text-5xl font-light uppercase leading-[60px] mb-2">
-                    New password
+                    SET PASSWORD
                 </h1>
                 <h2 className="text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide">
                     Enter and confirm your new password.
