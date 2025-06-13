@@ -27,7 +27,7 @@ function CertificateModal({open, onClose}: {
                         <LogoExpanded logoType={'black'}/>
                         <div>
                             <div
-                                className="text-center justify-start text-[#131210] text-[32px] font-medium  uppercase leading-10">FUNDING
+                                className="text-center justify-start text-[#131210] text-[32px] font-medium  uppercase leading-10">PAYOUT
                             </div>
                             <div
                                 className="text-center justify-start text-[#131210] text-xl font-medium  uppercase leading-normal">Certificate
@@ -48,10 +48,8 @@ function CertificateModal({open, onClose}: {
                                 className="text-center justify-start text-black text-xl font-bold leading-loose">$50,000
                             </div>
                         </div>
-                        <div className="text-center justify-start text-[#131210] text-sm font-medium leading-tight">Who
-                            has
-                            demonstrated the capability to effectively achieve the MegaTrader profit target, you have
-                            exhibited commendable risk management skills and exceptional trading discipline.
+                        <div className="text-center justify-start text-[#131210] text-sm font-medium leading-tight">
+                            You have successfully qualified for a MegaTrader payout, demonstrating consistent profitability, disciplined trading, and strong risk management.
                         </div>
                     </div>
                 </div>
