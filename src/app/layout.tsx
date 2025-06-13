@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 import "./globals.css";
 import Script from "next/script";
-import { roboto } from "@/app/fonts/roboto";
-import { LoadingProvider } from "@/context/LoadingContext";
+import {roboto} from "@/app/fonts/roboto";
+import {LoadingProvider} from "@/context/LoadingContext";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import NavigationLoader from "@/components/NavigationLoader";
 import {
     LoadingBetweenPagesProvider,
 } from "@/context/LoadingBetweenPagesContext";
 import LoadingBetweenPagesOverlay from "@/components/LoadingBetweenPagesOverlay";
+import {FlashProvider} from "@/app/providers/FlashContext";
 
 export const metadata: Metadata = {
     title: "MegaTrader | Master the Path to Becoming a Funded Futures Trader.",
@@ -62,21 +63,21 @@ export default function RootLayout({
                     src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
                     height="0"
                     width="0"
-                    style={{ display: "none", visibility: "hidden" }}
+                    style={{display: "none", visibility: "hidden"}}
                 />
             </noscript>
         )}
 
         <LoadingBetweenPagesProvider>
-            <NavigationLoader />
-            <LoadingBetweenPagesOverlay />
-
-            <LoadingProvider>
-                <LoadingOverlay />
-                {children}
-                {isProduction && (
-                    <Script id="intercom" strategy="lazyOnload">
-                        {`
+            <NavigationLoader/>
+            <LoadingBetweenPagesOverlay/>
+            <FlashProvider>
+                <LoadingProvider>
+                    <LoadingOverlay/>
+                    {children}
+                    {isProduction && (
+                        <Script id="intercom" strategy="lazyOnload">
+                            {`
                   (function(){
                     var w = window;
                     var ic = w.Intercom;
@@ -115,9 +116,10 @@ export default function RootLayout({
                     created_at: new Date().getTime()
                   };
                 `}
-                    </Script>
-                )}
-            </LoadingProvider>
+                        </Script>
+                    )}
+                </LoadingProvider>
+            </FlashProvider>
         </LoadingBetweenPagesProvider>
         </body>
         </html>

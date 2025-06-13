@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import InputText from "@/components/InputText";
 import {InputCheckbox} from "@/components/InputCheckbox";
@@ -9,8 +9,10 @@ import {TARGET_EMAIL, TARGET_PASSWORD} from "@/commons/credentials";
 import {useRouter} from "next/navigation";
 import {useLoading} from "@/context/LoadingContext";
 import Image from "next/image";
+import {useFlash} from "@/app/providers/FlashContext";
 
 export default function Login() {
+    const {getFlash} = useFlash();
     const {setLoading, isLoading} = useLoading();
     const router = useRouter();
     const [successMessage, setSuccessMessage] = useState("");
@@ -29,6 +31,13 @@ export default function Login() {
         const message = params.get("success-message");
         if (message) {
             setSuccessMessage(message);
+        }
+    }, []);
+
+    useEffect(() => {
+        const msg = getFlash();
+        if (msg) {
+            setSuccessMessage(msg);
         }
     }, []);
 

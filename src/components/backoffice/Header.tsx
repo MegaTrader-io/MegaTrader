@@ -115,7 +115,7 @@ export default function Header() {
                             </Link>
                         ))}
                         <Link
-                            href="/auth/login"
+                            href="/logout"
                             data-dismiss="true"
                             className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 hover:bg-neutral-300`}
                         >
@@ -125,7 +125,7 @@ export default function Header() {
                 </PopoverMenu>
                 <div className="hidden lg:flex">
                     <Link
-                        href="/auth/login"
+                        href="/logout"
                         className="btn-dark-link rounded-xl w-12 h-12"
                     >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
