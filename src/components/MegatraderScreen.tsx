@@ -39,19 +39,19 @@ const MegatraderScreen = () => <Swiper autoplay={{
 }}
                                        loop={true}
                                        pagination={true}
-                                       modules={[Pagination, Autoplay]}>
-    {sliders.map(({imageUrl, imageUrlMobile, title, subtitle}, index) => (
+                                       modules={[Pagination]}>
+    {sliders.map(({imageUrlIOS, imageUrlMobile, title, subtitle}, index) => (
         <SwiperSlide key={index}>
             <div
                 className="min-h-[668px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px]">
 
                 <Image
-                    src={imageUrl}
-                    className="hidden md:block size-3/4 md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
+                    src={imageUrlIOS}
+                    className="hidden mx-auto md:block w-[calc(72%-52px)] md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
                     alt="Account overview"
                     width={684}
                     height={659}
-                    style={{objectFit: 'fill', width: '100%', height: '100%'}}
+                    style={{objectFit: 'fill'}}
                     quality={100}
                 />
 
