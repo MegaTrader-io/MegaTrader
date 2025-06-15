@@ -11,23 +11,20 @@ import Image from "next/image";
 
 const sliders = [
     {
-        imageUrl: '/assets/images/screenshots/ac2.svg',
-        imageUrlIOS: '/assets/images/screenshots/sd1.png',
-        imageUrlMobile: '/assets/images/screenshots/ac2-mobile.svg',
+        imageUrl: '/assets/images/screenshots/sd1.png',
+        imageUrlMobile: '/assets/images/screenshots/sd1-mobile.png',
         title: 'Power up your trading with full control.',
         subtitle: 'Log in to manage your accounts, track performance, and unlock the full potential of your MegaTrader journey.'
     },
     {
-        imageUrl: '/assets/images/screenshots/affiliates3.svg',
-        imageUrlIOS: '/assets/images/screenshots/sd2.png',
-        imageUrlMobile: '/assets/images/screenshots/affiliates3-mobile.png',
+        imageUrl: '/assets/images/screenshots/sd2.png',
+        imageUrlMobile: '/assets/images/screenshots/sd2-mobile.png',
         title: 'Track, Grow, and Earn with Confidence',
         subtitle: 'Monitor your referrals, commissions, and performance using powerful tools designed to maximize your affiliate success.'
     },
     {
-        imageUrl: '/assets/images/screenshots/payouts3.svg',
-        imageUrlIOS: '/assets/images/screenshots/sd3.png',
-        imageUrlMobile: '/assets/images/screenshots/payouts3-mobile.svg',
+        imageUrl: '/assets/images/screenshots/sd3.png',
+        imageUrlMobile: '/assets/images/screenshots/sd3-mobile.png',
         title: 'Stay Fully in Control of Every Payout',
         subtitle: 'View your earnings, check payment status, and stay in control of your withdrawals with clear, real-time updates.'
     },
@@ -40,13 +37,13 @@ const MegatraderScreen = () => <Swiper autoplay={{
                                        loop={true}
                                        pagination={true}
                                        modules={[Pagination, Autoplay]}>
-    {sliders.map(({imageUrlIOS, imageUrlMobile, title, subtitle}, index) => (
+    {sliders.map(({imageUrl, imageUrlMobile, title, subtitle}, index) => (
         <SwiperSlide key={index}>
             <div
                 className="min-h-[668px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px]">
 
                 <Image
-                    src={imageUrlIOS}
+                    src={imageUrl}
                     className="hidden mx-auto md:block w-[calc(72%-52px)] md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
                     alt="Account overview"
                     width={684}
