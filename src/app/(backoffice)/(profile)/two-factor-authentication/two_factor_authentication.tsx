@@ -103,7 +103,7 @@ function TwoFactorAuthentication() {
                     <span className="hidden sm:block">
                         Disabled Two-Factor Authentication
                     </span>
-                    <span className="block sm:block">
+                    <span className="block sm:hidden">
                         Disabled 2FA
                     </span>
                 </Button>
