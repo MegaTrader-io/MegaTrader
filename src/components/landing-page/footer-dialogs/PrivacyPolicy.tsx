@@ -1,30 +1,59 @@
 'use client';
 
-import React, {useEffect, useRef, useState} from 'react';
-import clsx from 'clsx';
-import Select from '@/components/Select';
+import React, {useState, useRef, useEffect} from 'react';
+import Select from "@/components/Select";
 
 interface TabOption {
-    id: string;
-    title: string;
+    id: string,
+    title: string
 }
 
 const ITEMS: TabOption[] = [
-    {id: 'introduction', title: 'Introduction'},
-    {id: 'information-we-collect', title: 'Information We Collect'},
-    {id: 'how-we-use-your-information', title: 'How We Use Your Information'},
-    {id: 'cookies-and-tracking-technologies', title: 'Cookies and Tracking Technologies'},
-    {id: 'data-sharing-and-disclosure', title: 'Data Sharing and Disclosure'},
-    {id: 'international-data-transfers', title: 'International Data Transfers'},
-    {id: 'data-retention-and-security', title: 'Data Retention and Security'},
-    {id: 'your-rights-and-choices', title: 'Your Rights and Choices'},
-    {id: 'childrens-privacy', title: 'Children\'s Privacy'},
-    {id: 'changes-to-this-privacy-policy', title: 'Changes to This Privacy Policy'},
-    {id: 'contact-us', title: 'Contact Us'},
-];
+    {
+        "title": "Information We Collect",
+        "id": "information-we-collect"
+    },
+    {
+        "title": "Use of Collected Data",
+        "id": "use-of-collected-data"
+    },
+    {
+        "title": "Data Sharing With Third Parties",
+        "id": "data-sharing-with-third-parties"
+    },
+    {
+        "title": "Data Storage and Protection",
+        "id": "data-storage-and-protection"
+    },
+    {
+        "title": "User Control and Data Rights",
+        "id": "user-control-and-data-rights"
+    },
+    {
+        "title": "Cookies and Tracking Technologies",
+        "id": "cookies-and-tracking-technologies"
+    },
+    {
+        "title": "Handling of Children’s Data",
+        "id": "handling-of-children-data"
+    },
+    {
+        "title": "Data Retention Practices",
+        "id": "data-retention-practices"
+    },
+    {
+        "title": "Policy Updates and Revisions",
+        "id": "policy-updates-and-revisions"
+    },
+    {
+        "title": "Contacting MegaTrader Regarding Privacy",
+        "id": "contacting-megatrader-regarding-privacy"
+    }
+]
 
-function PrivacyPolicy() {
+function TermsOfService() {
     const [tab, setTab] = useState<TabOption>(ITEMS[0]);
+
     const sectionsRef = useRef<Record<string, HTMLElement | null>>({});
 
     useEffect(() => {
@@ -78,213 +107,549 @@ function PrivacyPolicy() {
     }
 
     return (
-        <div className='md:grid md:grid-cols-[300px_32px_1fr] my-1'>
-            <div className="h-full w-[300px]">
-                <div className="space-y-4 hidden sticky top-1 md:block">
-                    {ITEMS.map((item, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => changeTab(item)}
-                            className={clsx('w-full text-left tracking-tight leading-normal font-medium relative', [
-                                tab.id === item.id ?
-                                    'text-[#ffd78a] font-medium scroll-bar' : 'text-stone-400'
-                            ])}>
-                            {item.title}
-                        </button>
+        <div className='md:grid my-1'>
+            <div className="block md:hidden">
+                <Select value={tab.id} onChange={onChange}>
+                    <option value="0" disabled={true}>Table of contents</option>
+                    {ITEMS.map((item, index) => (
+                        <option key={index} value={item.id}>{item.title}</option>
                     ))}
-                </div>
-                <div className="block md:hidden">
-                    <Select value={tab.id} onChange={onChange}>
-                        {ITEMS.map((item, idx) => (
-                            <option key={idx} value={item.id}>{item.title}</option>
-                        ))}
-                    </Select>
-                </div>
+                </Select>
             </div>
             <div className="flex justify-center">
                 <div
                     className="sm:border-r-2 sm:border-r-[#404040] mb-8 w-full h-full md:w-0 md:my-0 "></div>
             </div>
-            <div className="text-white space-y-12 lg:mx-4">
-                <div className='space-y-4' id='introduction'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Introduction
+            <div className="text-white space-y-12 lg:mr-4">
+                <div className="space-y-4">
+                    <h3 className="self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        MegaTrader Privacy Policy
                     </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        At MegaTrader Holdings Inc.
-                        (&quot;MegaTrader,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), we are committed
-                        to protecting your privacy and handling your personal information responsibly. This Privacy
-                        Policy describes how we collect, use, store, share, and protect the information you provide when
-                        accessing our website, platform, services, and any related tools. By using MegaTrader, you agree
-                        to the terms of this Privacy Policy. If you do not agree, you should not use our services. This
-                        policy applies to all users, including traders, affiliates, and visitors, regardless of
-                        geographic location. We encourage you to read this policy carefully and contact us if you have
-                        any questions. MegaTrader complies with applicable data protection laws, including but not
-                        limited to the California Consumer Privacy Act (CCPA), the General Data Protection Regulation
-                        (GDPR), and other relevant international privacy frameworks.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        This Privacy Policy explains how MegaTrader collects, uses, stores, and protects your personal
+                        data when you access our website, use our services, or engage with our platform in any way. We
+                        are committed to protecting your privacy and handling your data in compliance with applicable
+                        data protection laws.
                     </p>
                 </div>
-
-                <div className='space-y-4' id='information-we-collect'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                <div className="space-y-4">
+                    <h3 id="information-we-collect"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
                         Information We Collect
                     </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        MegaTrader collects both personally identifiable information (PII) and non-personal data when
-                        you register, trade, browse, or interact with our platform. This includes your name, email
-                        address, date of birth, billing address, IP address, device type, trading activity, payment
-                        details, and identity verification documents (such as passport or driver’s license). We also
-                        collect behavioral data via cookies and analytics tools to improve our platform performance and
-                        tailor user experiences. You may voluntarily submit additional information through surveys,
-                        support forms, or community channels. All data collected is processed in accordance with our
-                        legitimate business interests and for compliance with legal obligations under applicable
-                        financial regulations.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader collects various types of personal and technical information to operate the platform
+                        effectively and ensure compliance with applicable regulations. This includes information
+                        provided directly by users, data collected automatically through your interaction with the
+                        platform, and limited data from third-party integrations.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Collection practices are designed to
+                        balance operational needs with privacy and user transparency.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We may collect:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Identity Information</span>: Your full name,
+                                email address, country of residence, and username or password credentials.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Technical Information</span>:
+                                IP addresses, device identifiers, browser type, operating system, time zone settings,
+                                language preferences, and login timestamps.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Usage Data</span>: Simulated trades, session
+                                length, page views, clickstream data, account performance, behavioral trends, and
+                                interaction history.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Communications</span>: Chat transcripts, emails,
+                                and support ticket details that help us understand and resolve platform issues.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        In addition, we may use automated tools such as cookies, pixels, and analytics trackers to
+                        gather behavioral insights and enhance user experience. By using MegaTrader, you consent to the
+                        collection of this information in accordance with this Privacy Policy and applicable laws.
                     </p>
                 </div>
-
-                <div className='space-y-4' id='how-we-use-your-information'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        How We Use Your Information
-                    </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We use the information we collect to provide, maintain, and improve MegaTrader’s services. This
-                        includes verifying your identity, facilitating transactions, analyzing platform usage,
-                        personalizing your experience, and enforcing platform rules and terms. We may also use your
-                        information for customer support, account administration, fraud prevention, promotional
-                        communication (only with consent), and compliance with regulatory obligations. Your data helps
-                        us conduct internal research and platform optimization, ensuring a secure and reliable user
-                        environment. We do not sell your personal information to third parties. Any use of your data is
-                        aligned with our commitment to confidentiality and lawful processing.
-                    </p>
-                </div>
-
-                <div className='space-y-4' id='cookies-and-tracking-technologies'>
+                <div className="space-y-4">
                     <h3
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
+                        id="use-of-collected-data"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        Use of Collected Data
+                    </h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader uses your data to provide platform functionality, enhance performance, ensure user
+                        security, and support compliance efforts. All data is processed under a legitimate operational
+                        or legal basis, and we make every effort to minimize data collection to only what is strictly
+                        necessary for service delivery.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We may use your data to:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Authenticate and Manage Accounts</span>:
+                                Ensuring secure login access, verifying identities, and enabling account recovery.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Deliver Platform Features</span>: Running
+                                simulations, storing trading metrics, awarding rewards, and presenting personalized
+                                content.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Enable Communication</span>: Sending service
+                                updates, responding to support requests, or delivering reminders, offers, and
+                                notifications (where applicable).
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Monitor and Improve Services</span>: Tracking
+                                performance bottlenecks, crash data, platform usability, and user engagement analytics.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Ensure Compliance and Detect Abuse</span>:
+                                Investigating suspicious activity, enforcing terms of service, preventing fraud, and
+                                responding to legal inquiries.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        All data usage is restricted to internal operations and approved third-party processors under
+                        contract. You can modify preferences and withdraw consent for non-essential data usage at any
+                        time via your dashboard settings.
+                    </p>
+                </div>
+                <div className="space-y-4">
+                    <h3 id="data-sharing-with-third-parties"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        Data Sharing With Third Parties
+                    </h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader does not sell, rent, or commercially trade your personal information. We only share
+                        your data with trusted third-party vendors who help us operate the platform and meet legal or
+                        technical obligations. All sharing is done with care, under confidentiality agreements, and
+                        aligned with applicable data protection laws such as GDPR and CCPA.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We may share your data with:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Payment Processors</span>:
+                                To handle transactions, prevent fraud, and verify purchases (e.g., Stripe or
+                                cryptocurrency gateways).
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Analytics and Tracking Providers</span>:
+                                Services like Google Analytics help us understand platform performance and user
+                                behavior.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span
+                                    className="font-bold text-stone-300">Cloud Infrastructure and Storage Services</span>:
+                                Used for hosting, backups, and database operations (e.g., AWS, Firebase).
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Security and Fraud Monitoring Tools</span>: To
+                                detect abuse, account sharing, bot activity, or other violations.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Legal and Regulatory Authorities</span>:
+                                When required by law, subpoena, or government order to comply with regulatory
+                                obligations.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We never authorize third-party partners to reuse or repurpose your data for unrelated commercial
+                        use. All vendors must adhere to strict security and privacy standards as outlined in their Data
+                        Processing Agreements with MegaTrader.
+                    </p>
+                </div>
+                <div className="space-y-4">
+                    <h3 id="data-storage-and-protection"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        Data Storage and Protection
+                    </h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader uses advanced digital security frameworks and operational protocols to protect your
+                        data from unauthorized access, loss, or misuse. We treat your personal information with the
+                        highest level of confidentiality and implement multiple layers of protection, including
+                        physical, technical, and administrative safeguards.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Our security practices include:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Encryption Protocols</span>:
+                                All user data is encrypted both in transit and at rest using industry-standard TLS and
+                                AES-256.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Access Control</span>:
+                                Role-based access systems ensure that only authorized personnel can view or interact
+                                with sensitive data.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span
+                                    className="font-bold text-stone-300">Secure Infrastructure</span>:
+                                We host data on secured cloud services with redundancy, disaster recovery, and uptime
+                                guarantees.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Continuous Monitoring</span>: Our systems are
+                                monitored for anomalies, unauthorized access attempts, and potential breaches in real
+                                time.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Penetration Testing</span>: We conduct regular
+                                security audits and third-party assessments to identify and mitigate vulnerabilities.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        In addition to institutional safeguards, we encourage users to:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                Enable two-factor authentication (2FA) to further protect their accounts
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                Use strong, unique passwords and avoid credential reuse
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                Log out of their accounts when using public devices
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        If you detect suspicious activity, please notify us immediately at <a
+                        href="mailto:support@megatrader.io"
+                        className="text-[#ffb54d]">support@megatrader.io</a> so we
+                        can take corrective action.
+                    </p>
+                </div>
+                <div className="space-y-4">
+                    <h3 id="user-control-and-data-rights"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        User Control and Data Rights
+                    </h3>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader empowers users to control how their data is collected, stored, and used. You have
+                        full rights to access, correct, limit, or delete your personal data at any time, in accordance
+                        with international privacy regulations like the GDPR and CCPA. Our platform and support systems
+                        are built with data transparency and accessibility in mind.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        You may:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">View Stored Data</span>:
+                                Review your personal and activity-related information via your account dashboard.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Update or Correct Information</span>:
+                                Change your profile details, update contact preferences, or fix inaccuracies.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Limit Processing</span>:
+                                Restrict the use of your data for non-essential communications, cookies, or analytics.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Withdraw Consent</span>:
+                                Opt out of promotional emails or disable tracking features through privacy settings.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Request Deletion</span>:
+                                Submit an account deletion request to have your data permanently removed from our
+                                systems.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        To exercise these rights, submit a request through:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300 mr-1">Live Chat</span>
+                                on our platform, or
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Email</span>:
+                                <a href="mailto:support@megatrader.io"
+                                   className="text-[#ffb54d] ml-1">support@megatrader.io</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We will respond within a reasonable time frame, typically 2–5 business days, and fulfill
+                        validated deletion or access requests unless restricted by compliance requirements or legal
+                        holds.
+                    </p>
+                </div>
+                <div className="space-y-4">
+                    <h3 id="cookies-and-tracking-technologies"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
                         Cookies and Tracking Technologies
                     </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        MegaTrader uses cookies, web beacons, and other tracking technologies to improve site
-                        functionality, user experience, and advertising relevance. Cookies are small files stored on
-                        your device that allow us to remember user preferences, track performance metrics, and deliver
-                        tailored content. You may control or delete cookies through your browser settings; however,
-                        disabling cookies may affect your ability to access certain features of our platform.
-                        Third-party analytics providers (e.g., Google Analytics) may collect aggregated data about your
-                        interactions with our services. We use this data to understand user behavior and to enhance the
-                        platform’s speed, accuracy, and usability in a compliant and transparent manner.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader uses cookies and tracking technologies to enhance the functionality, security, and
+                        personalization of the platform. These tools allow us to recognize returning users, streamline
+                        login sessions, improve page load performance, and detect technical issues or malicious
+                        behavior. We are committed to maintaining transparency and giving you control over cookie
+                        settings.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Types of cookies we use:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Essential Cookies</span>:
+                                Required for core site functions like authentication, fraud detection, and session
+                                persistence.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Performance Cookies</span>:
+                                Collect data on how users interact with the platform to optimize layout, speed, and
+                                accessibility.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span
+                                    className="font-bold text-stone-300">Functional Cookies</span>:
+                                Store language preferences, user settings, and UI personalization details.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal"><span
+                                className="font-bold text-stone-300">Marketing Cookies (opt-in only)</span>: Help us
+                                deliver relevant ads and measure the effectiveness of promotional efforts across
+                                channels.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Cookie management options:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                You can modify cookie preferences at any time through our in-app cookie banner.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                Most browsers allow you to disable cookies, though this may affect functionality.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                You can clear cookies stored on your device through browser settings or private browsing
+                                modes.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        For more information about cookies used on MegaTrader and your opt-out choices, visit our
+                        Cookies Policy page or contact <a
+                        href="mailto:support@megatrader.io"
+                        className="text-[#ffb54d]">support@megatrader.io</a>.
                     </p>
                 </div>
-
-                <div className='space-y-4' id='data-sharing-and-disclosure'>
-                    <h3
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Data Sharing and Disclosure
+                <div className="space-y-4">
+                    <h3 id="handling-of-children-data"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        Handling of Children’s Data
                     </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We may share your personal information with trusted service providers and business partners who
-                        assist in delivering our services, such as payment processors, KYC/AML providers, analytics
-                        vendors, and hosting providers. These third parties are contractually obligated to protect your
-                        data and use it only for authorized purposes. We may also disclose information to law
-                        enforcement or regulators if required by law, court order, or subpoena, or if necessary to
-                        protect the rights, safety, or property of MegaTrader, its users, or others. In the event of a
-                        merger, acquisition, or asset transfer, your information may be transferred to a new entity
-                        under the same privacy obligations.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader’s platform is not designed or intended for individuals under the age of 18. We do not
+                        knowingly collect, process, or retain any personal data from minors, and we take strict measures
+                        to prevent underage access to our services.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Our policy includes:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Age Verification</span>:
+                                We may implement manual or automated tools to verify that users meet the minimum age
+                                requirement.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Account Monitoring</span>:
+                                If an account is suspected of belonging to a minor, we will take immediate steps to
+                                investigate and restrict access.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span
+                                    className="font-bold text-stone-300">Prompt Deletion</span>:
+                                In cases where underage usage is discovered, we will delete all associated data and
+                                suspend the account without delay.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Parents or guardians who believe that their child has used the MegaTrader platform without
+                        permission should contact us immediately at <a href="mailto:support@megatrader.io"
+                                                                       className="text-[#ffb54d]">support@megatrader.io</a>.
+                        Upon verification of such
+                        claims, we will take all necessary actions to secure and erase the child{'\''}s data.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We remain committed to compliance with child protection laws, including the Children’s Online
+                        Privacy Protection Act (COPPA) in the United States and similar global regulations. By using the
+                        platform, you affirm that you are 18 years of age or older and legally able to enter into
+                        binding agreements.
                     </p>
                 </div>
-
-                <div className='space-y-4' id='international-data-transfers'>
-                    <h3
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        International Data Transfers
+                <div className="space-y-4">
+                    <h3 id="data-retention-practices"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        Data Retention Practices
                     </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        MegaTrader operates globally, and your personal data may be transferred to, stored in, or
-                        processed in countries outside your jurisdiction, including the United States. We take
-                        appropriate safeguards to ensure your information is handled in accordance with applicable data
-                        protection laws, including standard contractual clauses approved by regulatory authorities.
-                        Where required, we obtain your explicit consent for international transfers. Our partners and
-                        vendors are vetted to ensure adequate data protection, whether they operate in the EU, UK,
-                        Canada, or other jurisdictions. By using our services, you acknowledge and agree to the
-                        potential cross-border transfer of your personal information.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader retains personal and technical data only as long as necessary to fulfill operational,
+                        legal, and regulatory obligations. Our retention schedules are designed to balance performance
+                        optimization, audit requirements, and your privacy rights.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Data retention timelines include:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Active User Accounts</span>:
+                                Retained indefinitely while the account remains in good standing and actively used.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Inactive Accounts</span>:
+                                May be marked for deletion or anonymization after 12 consecutive months of inactivity.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span
+                                    className="font-bold text-stone-300">Support Interactions</span>:
+                                Retained for up to 24 months to assist in dispute resolution, audits, and training.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span
+                                    className="font-bold text-stone-300">Deleted Accounts</span>:
+                                Once a deletion request is verified, all associated data is purged from live systems and
+                                queued for erasure from backup servers within 30–60 days.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Certain data may be preserved beyond these periods to:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                Comply with financial, tax, or legal obligations
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                Fulfill contractual audit or investigation requirements
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                Prevent fraud, abuse, or platform manipulation
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        You can request early deletion by contacting <a href="mailto:support@megatrader.io"
+                                                                        className="text-[#ffb54d]">support@megatrader.io</a> or
+                        through our live chat.
+                        Once processed, you will receive confirmation, and no residual data will be stored unless
+                        required by law.
                     </p>
                 </div>
-
-                <div className='space-y-4' id='data-retention-and-security'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Data Retention and Security
+                <div className="space-y-4">
+                    <h3 id="policy-updates-and-revisions"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        Policy Updates and Revisions
                     </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We retain your personal information for as long as necessary to provide our services, fulfill
-                        contractual obligations, comply with legal requirements, resolve disputes, and enforce our
-                        agreements. When data is no longer needed, we securely delete or anonymize it. We implement
-                        industry-standard security measures, including encryption, secure access controls, firewalls,
-                        and regular audits, to protect your data against unauthorized access, misuse, or breach. Despite
-                        our efforts, no method of transmission or storage is 100% secure. We encourage users to use
-                        strong passwords and enable two-factor authentication when available to further protect their
-                        accounts.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        MegaTrader may update or revise this Privacy Policy from time to time to reflect changes in data
+                        handling practices, legal requirements, or business operations. Any updates will be posted
+                        prominently on our website, and the &quot;Last Updated&quot; date at the top of the page will
+                        reflect the latest revision.
+                    </p>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Update protocols include:
+                    </p>
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Material Changes</span>:
+                                For significant changes affecting your rights, such as expanded data usage or
+                                third-party integrations, we will provide additional notice via email or in-dashboard
+                                alerts.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Minor or Technical Edits</span>:
+                                Updates that clarify language, restructure content, or revise terminology will be posted
+                                without separate notification.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span
+                                    className="font-bold text-stone-300">Version Control</span>:
+                                Older versions of the policy may be archived and made available upon request for
+                                transparency.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We encourage all users to review this policy periodically. Your continued use of the MegaTrader
+                        platform after changes take effect constitutes acceptance of the revised policy. If you do not
+                        agree with the changes, you should discontinue use and contact us to manage your data or close
+                        your account.
                     </p>
                 </div>
-
-                <div className='space-y-4' id='your-rights-and-choices'>
-                    <h3
-                        className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Your Rights and Choices
+                <div className="space-y-4">
+                    <h3 id="contacting-megatrader-regarding-privacy"
+                        className="title-dialog self-stretch justify-start text-white text-2xl font-medium uppercase leading-7">
+                        Contacting MegaTrader Regarding Privacy
                     </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        Depending on your jurisdiction, you may have certain rights regarding your personal data,
-                        including the right to access, correct, delete, restrict processing, object to processing, or
-                        receive a portable copy of your data. You may also withdraw consent for certain uses at any
-                        time. To exercise these rights, contact our support team through the designated privacy inquiry
-                        channels listed below. We will respond to all requests within legally mandated timeframes.
-                        Additionally, you may opt out of marketing emails by clicking “unsubscribe” in any message.
-                        Please note that some data may be retained for compliance, dispute resolution, or platform
-                        integrity purposes.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        If you have any questions, concerns, or requests related to MegaTrader’s Privacy Policy or how
+                        your data is handled, you are encouraged to reach out to our team. We value user feedback and
+                        take all inquiries seriously.
                     </p>
-                </div>
-
-                <div className='space-y-4' id='childrens-privacy'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Children{'\''}s Privacy
-                    </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        MegaTrader{'\''}s services are not intended for or directed to individuals under the age of 18.
-                        We do not knowingly collect personal information from minors. If we become aware that we have
-                        inadvertently collected data from a person under 18, we will take steps to delete such
-                        information promptly. Parents or legal guardians who believe their child may have submitted
-                        personal data without their consent should contact us immediately. We encourage all users to be
-                        mindful of internet safety practices and to ensure that accounts are only used by individuals
-                        who meet our eligibility requirements as outlined in our Terms of Service.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        You may contact us through:
                     </p>
-                </div>
-
-                <div className='space-y-4' id='changes-to-this-privacy-policy'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Changes to This Privacy Policy
-                    </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        We may update this Privacy Policy from time to time to reflect changes in our practices, legal
-                        requirements, or platform features. When we make material changes, we will notify you through
-                        email, account notifications, or by posting the revised policy on our website with an updated
-                        effective date. We encourage you to review this page periodically to stay informed about how we
-                        protect your information. Continued use of MegaTrader’s services after a policy update
-                        constitutes your acceptance of the revised terms. If you do not agree to the new policy, you
-                        must discontinue use of the platform and request account closure and data deletion, if
-                        applicable.
+                    <div className="pl-8">
+                        <ul className="list-disc text-stone-400 space-y-2">
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Live Chat Support</span>:
+                                Available directly on the MegaTrader website or user dashboard. You can open a support
+                                ticket for privacy-related matters.
+                            </li>
+                            <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                                <span className="font-bold text-stone-300">Email Contact</span>:
+                                Send your inquiries to <a
+                                href="mailto:support@megatrader.io"
+                                className="text-[#ffb54d]">support@megatrader.io</a> with the subject line &quot;Privacy
+                                Request&quot; for faster routing.
+                            </li>
+                        </ul>
+                    </div>
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        Whether you’re seeking clarification, requesting access to your data, or submitting a complaint,
+                        we are here to assist you. All submissions will be acknowledged promptly and handled within our
+                        standard response window of 2–5 business days, depending on the complexity of the request.
                     </p>
-                </div>
-
-                <div className='space-y-4' id='contact-us'>
-                    <h3 className='title-dialog text-white text-2xl font-medium uppercase leading-7'>
-                        Contact Us
-                    </h3>
-                    <p className='text-stone-400 text-base font-medium leading-normal'>
-                        If you have any questions, concerns, or requests regarding this Privacy Policy or your personal
-                        data, please contact MegaTrader’s Data Protection Officer at privacy@megatrader.com. You may
-                        also reach us via postal mail at MegaTrader Holdings Inc., Attn: Privacy Department, 350 Lincoln
-                        Road, Miami Beach, FL 33139, USA. We are committed to resolving privacy-related inquiries
-                        promptly and transparently. Users in the EU or UK may also file complaints with their local data
-                        protection authorities. For faster resolution of platform-related questions, please use our
-                        in-app support or knowledge base before submitting privacy-specific requests.
+                    <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
+                        We strive to respond clearly, respectfully, and with a commitment to protecting your rights and
+                        clarifying your data options.
                     </p>
                 </div>
             </div>
@@ -292,4 +657,4 @@ function PrivacyPolicy() {
     );
 }
 
-export default PrivacyPolicy;
+export default TermsOfService;

@@ -122,12 +122,16 @@ export default function Footer() {
                                 >
                                     Disclaimer
                                 </button>
-                                <Link
-                                    href='https://help.megatrader.io/en/articles/11553837-megatrader-privacy-policy'
-                                    target={'_blank'}
-                                    className="text-stone-400 text-sm font-medium underline leading-tight">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openDialog("PRIVACY_POLICY")
+                                    }}
+                                    className="text-stone-400 text-sm font-medium underline leading-tight"
+                                >
                                     Privacy Policy
-                                </Link>
+                                </button>
                             </div>
                             <div className="flex justify-center space-x-4 lg:space-x-0 sm:contents">
                                 <button
