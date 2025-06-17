@@ -112,13 +112,16 @@ export default function Footer() {
                         <nav
                             className="col-span-full flex-col space-y-4 sm:space-y-0 sm:text-center sm:flex-none sm:justify-center sm:gap-4 lg:contents">
                             <div className="flex justify-center space-x-4 lg:space-x-0 sm:contents">
-                                <Link
-                                    href='https://help.megatrader.io/en/articles/11553854-megatrader-disclosure-policy'
-                                    target={'_blank'}
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openDialog("DISCLAIMER")
+                                    }}
                                     className="text-stone-400 text-sm font-medium underline leading-tight"
                                 >
                                     Disclaimer
-                                </Link>
+                                </button>
                                 <Link
                                     href='https://help.megatrader.io/en/articles/11553837-megatrader-privacy-policy'
                                     target={'_blank'}
