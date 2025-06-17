@@ -654,13 +654,13 @@ function TermsOfService() {
                     <div className="pl-8">
                         <ul className="list-disc text-stone-400 space-y-2">
                             <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                                <span className="font-medium text-stone-300">Support Chat:</span> You can open a support
+                                <span className="font-bold text-stone-300">Support Chat:</span> You can open a support
                                 ticket directly through the live chat
                                 widget on the MegaTrader website or platform dashboard. This is the fastest way to
                                 receive responses to technical or account-related issues.
                             </li>
                             <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
-                                <span className="font-medium text-stone-300">Email Support:</span> For detailed
+                                <span className="font-bold text-stone-300">Email Support:</span> For detailed
                                 questions, documentation issues, or compliance
                                 concerns, email us at <a href="mailto:sopport@megatrader.io"
                                                          className="text-[#ffb54d]">sopport@megatrader.io</a>. Include
