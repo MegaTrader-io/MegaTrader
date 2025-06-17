@@ -662,8 +662,8 @@ function TermsOfService() {
                             <li className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                                 <span className="font-bold text-stone-300">Email Support:</span> For detailed
                                 questions, documentation issues, or compliance
-                                concerns, email us at <a href="mailto:sopport@megatrader.io"
-                                                         className="text-[#ffb54d]">sopport@megatrader.io</a>. Include
+                                concerns, email us at <a href="mailto:support@megatrader.io"
+                                                         className="text-[#ffb54d]">support@megatrader.io</a>. Include
                                 your registered email address and a
                                 clear subject line to ensure faster processing.
                             </li>
