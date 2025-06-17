@@ -48,10 +48,16 @@ function TwoFactorAuthentication() {
     }
 
     function handleDisable2FA() {
-        setForm({
-            code: ''
-        })
-        setValidCode(undefined);
+        setLoading(true);
+
+        setTimeout(() => {
+            setLoading(false);
+
+            setForm({
+                code: ''
+            })
+            setValidCode(undefined);
+        }, 1200);
     }
 
     if (validCode) {
