@@ -144,13 +144,16 @@ export default function Footer() {
                                 >
                                     Terms of Service
                                 </button>
-                                <Link
-                                    href='https://help.megatrader.io/en/articles/11553882-megatrader-cookies-policy'
-                                    target={'_blank'}
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openDialog("COOKIES_SETTINGS")
+                                    }}
                                     className="text-stone-400 text-sm font-medium underline leading-tight"
                                 >
                                     Cookies Settings
-                                </Link>
+                                </button>
                             </div>
                         </nav>
                     </div>
