@@ -7,7 +7,6 @@ import SubscribeForm from "@/components/SubscribeForm";
 import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 import Alert from "@/components/Alert";
 import Dialog from "@/components/Dialog";
-import Link from "next/link";
 import TermsOfService from "@/components/landing-page/footer-dialogs/TermsOfService";
 import Disclaimer from "@/components/landing-page/footer-dialogs/Disclaimer";
 import PrivacyPolicy from "@/components/landing-page/footer-dialogs/PrivacyPolicy";
