@@ -50,6 +50,16 @@ body.dialog-mg-open[data-scroll-locked] {
     scrollbar-width: none;
 }
 
+.scrollbar-hide-strict {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-y: hidden;
+}
+
+.scrollbar-hide-strict::-webkit-scrollbar {
+    display: none;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
 }

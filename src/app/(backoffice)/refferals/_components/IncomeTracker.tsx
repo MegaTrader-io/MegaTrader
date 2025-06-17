@@ -155,7 +155,8 @@ function ChartIncomeTracker({dataChart}: { dataChart: ChartData | undefined }) {
                         </div>
                     </div>
                 </div>
-                <div className="custom-scroll-chart w-full md:px-4 pt-16 h-auto overflow-x-auto scrollbar-hide">
+                <div
+                    className="custom-scroll-chart relative w-full md:px-4 pt-16 h-auto overflow-x-auto scrollbar-hide-strict">
                     <ChartBar
                         data={dataChart.data}
                         labels={dataChart.labels}
