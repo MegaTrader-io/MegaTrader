@@ -45,7 +45,7 @@ const CustomBarChar: React.FC<ChartBarProps> = ({internalId, xAxis, series, yAxi
         const marginLeft = 40;
         panelBars.style.marginLeft = `${marginLeft}px`;
         panelBars.style.width = `${panelBars.style.width || 0 - marginLeft}px`;
-        panelLines.style.width = `${panelChartWrapper.scrollWidth + maxWidthLabel - 16 - 8}px`;
+        panelLines.style.width = `${panelChartWrapper.scrollWidth + maxWidthLabel - 17 - 8 - 1}px`;
     };
 
     useEffect(() => {
