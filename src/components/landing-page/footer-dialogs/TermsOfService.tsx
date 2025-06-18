@@ -473,8 +473,8 @@ function TermsOfService() {
                     <p className="self-stretch justify-start text-stone-400 text-base font-medium leading-normal">
                         We retain your data only as long as necessary to fulfill its purpose or comply with legal
                         requirements. You may request deletion or data access in accordance with applicable privacy laws
-                        by contacting us at <a href="mailto:privacy@megatrader.io"
-                                               className="text-[#ffb54d]">privacy@megatrader.io</a>. Please allow up to
+                        by contacting us at <a href="mailto:support@megatrader.io"
+                                               className="text-[#ffb54d]">support@megatrader.io</a>. Please allow up to
                         30 days for a response, and note that certain requests may be limited based on legal obligations
                         or risk controls.
                     </p>
