@@ -138,7 +138,7 @@ function PerformanceAnalysis() {
                 </div>
             </div>
             <div ref={container}
-                 className="container-chart w-[calc(100%-40px)] h-[409px] overflow-x-auto">
+                 className="container-chart w-full h-[409px] overflow-x-auto scrollbar-hide-strict">
                 {chartData && <CustomBarChar {...chartData} />}
             </div>
         </Card>
