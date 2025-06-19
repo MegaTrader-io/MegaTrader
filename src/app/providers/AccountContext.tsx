@@ -5,7 +5,6 @@ import {Account} from "@/commons/interfaces";
 import {accounts} from "@/commons/data";
 import {useLoading} from "@/context/LoadingContext";
 import Intercom, {shutdown} from '@intercom/messenger-js-sdk';
-import {usePathname} from "next/navigation";
 
 interface User {
     id: string;
