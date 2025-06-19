@@ -27,7 +27,7 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
         return new Promise<{ account: Account }>((resolve) => {
             setTimeout(() => {
                 setLoading(false);
-                resolve({ account });
+                resolve({account});
             }, 2000);
         });
     }
