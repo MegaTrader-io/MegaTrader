@@ -30,7 +30,6 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
     const [selectedAccount, setSelectedAccountState] = useState<Account>(accounts[0])
     const [user, setUser] = useState<User | null>(null);
     const {setLoading, isLoading} = useLoading();
-    const pathname = usePathname()
 
     const setSelectedAccount = (account: Account) => {
         setSelectedAccountState(account);
