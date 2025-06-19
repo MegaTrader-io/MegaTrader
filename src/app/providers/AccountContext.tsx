@@ -1,10 +1,11 @@
-'use client'
+'use client';
 
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {Account} from "@/commons/interfaces";
 import {accounts} from "@/commons/data";
 import {useLoading} from "@/context/LoadingContext";
 import Intercom, {shutdown} from '@intercom/messenger-js-sdk';
+import {useRouter} from "next/navigation";
 
 interface User {
     id: string;
@@ -15,10 +16,10 @@ interface User {
 }
 
 interface AccountContextType {
-    selectedAccount: Account,
-    setSelectedAccount: (account: Account) => void,
-    isLoadingAccount: boolean
-    fetchAccount: (account: Account) => Promise<{ account: Account }>
+    selectedAccount: Account;
+    setSelectedAccount: (account: Account) => void;
+    isLoadingAccount: boolean;
+    fetchAccount: (account: Account) => Promise<{ account: Account }>;
     user: User | null;
     setUser: (user: User | null) => void;
 }
@@ -26,36 +27,39 @@ interface AccountContextType {
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
 
 export const AccountProvider = ({children}: { children: React.ReactNode }) => {
-    const [selectedAccount, setSelectedAccountState] = useState<Account>(accounts[0])
+    const [selectedAccount, setSelectedAccountState] = useState<Account>(accounts[0]);
     const [user, setUser] = useState<User | null>(null);
+    const [isVerified, setIsVerified] = useState<boolean | null>(null); // 👈 manejo de verificación
     const {setLoading, isLoading} = useLoading();
+    const router = useRouter();
 
     const setSelectedAccount = (account: Account) => {
         setSelectedAccountState(account);
-    }
+    };
 
     const fetchAccount = (account: Account): Promise<{ account: Account }> => {
-        setLoading(true)
+        setLoading(true);
         return new Promise<{ account: Account }>((resolve) => {
             setTimeout(() => {
                 setLoading(false);
                 resolve({account});
             }, 2000);
         });
-    }
+    };
 
     useEffect(() => {
-        const initializeIntercom = async () => {
+        const initialize = async () => {
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             if (!isLoggedIn) {
                 shutdown();
+                router.replace('/auth/login');
+                setIsVerified(false);
                 return;
             }
 
-            if (typeof window !== 'undefined' && window.__intercomInitialized) {
-                // Ya está activo, no hagas nada
-                return;
-            }
+            setIsVerified(true);
+
+            if (typeof window !== 'undefined' && window.__intercomInitialized) return;
 
             try {
                 const res = await fetch('/api/user/me');
@@ -86,28 +90,35 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
             }
         };
 
-        void initializeIntercom();
+        void initialize();
+
+        return () => {
+            shutdown();
+        }
     }, []);
 
-    return <AccountContext.Provider
-        value={{
-            selectedAccount,
-            fetchAccount,
-            isLoadingAccount: isLoading,
-            setSelectedAccount,
-            user,
-            setUser
-        }}>
-        {children}
-    </AccountContext.Provider>
-}
+    if (isVerified !== true) return null;
+
+    return (
+        <AccountContext.Provider
+            value={{
+                selectedAccount,
+                fetchAccount,
+                isLoadingAccount: isLoading,
+                setSelectedAccount,
+                user,
+                setUser,
+            }}
+        >
+            {children}
+        </AccountContext.Provider>
+    );
+};
 
 export const useAccount = () => {
     const context = useContext(AccountContext);
     if (!context) {
-        throw new Error('useAccount must be used within an AccountProvider')
+        throw new Error('useAccount must be used within an AccountProvider');
     }
-
     return context;
-}
-
+};

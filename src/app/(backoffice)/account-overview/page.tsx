@@ -2,7 +2,7 @@
 
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import Link from "next/link";
 import {ArrowUpRightIcon, PlusIcon} from "@heroicons/react/16/solid";
 import SelectAccountDialog from "@/components/SelectAccountDialog";
