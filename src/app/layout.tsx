@@ -110,10 +110,6 @@ export default function RootLayout({
                   window.intercomSettings = {
                     api_base: "https://api-iam.intercom.io",
                     app_id: "izt54gd4",
-                    user_id: "123",
-                    name: "foo bar",
-                    email: "test@megatrader.io",
-                    created_at: new Date().getTime()
                   };
                 `}
                         </Script>
