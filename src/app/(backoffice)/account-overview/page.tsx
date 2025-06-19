@@ -22,35 +22,11 @@ import {Account} from "@/commons/interfaces";
 import Dialog from "@/components/Dialog";
 import TradingLogo from "@/components/TradingLogo";
 import DriverGuide from "@/components/on-boarding/DriverGuide";
-import Intercom, {shutdown} from "@intercom/messenger-js-sdk";
 
 export default function AccountOverView() {
     const {selectedAccount, setSelectedAccount, fetchAccount} = useAccount();
     const [modalType, setModalType] = useState<'breach_modal' | 'unpaid_modal' | 'congratulations_modal' | 'delete_account' | null>(null);
     const passwordMaskRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const getUserInformation = async () => {
-            console.info('getUserInformation');
-            const response = await fetch(`/api/user/me`);
-            const user: { id: string, email: string, name: string, intercomUserJwt: string } = await response.json();
-
-            Intercom({
-                app_id: 'izt54gd4',
-                user_id: user.id,
-                name: user.name,
-                email: user.email,
-                created_at: new Date().getTime(),
-                intercom_user_jwt: user.intercomUserJwt
-            });
-        }
-
-        void getUserInformation();
-
-        return () => {
-            shutdown();
-        }
-    }, [])
 
     const {toggleMask, currentMask} = useToggleSecretsKeys([
         {element: passwordMaskRef.current, value: credentials.password},
