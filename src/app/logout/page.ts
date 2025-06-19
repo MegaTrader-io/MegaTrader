@@ -13,6 +13,8 @@ function Page() {
         const fakeDelay = async () => {
             await sleep(800);
             setFlash('You have successfully logged out');
+
+            localStorage.removeItem('isLoggedIn');
             router.replace('/auth/login');
         }
 

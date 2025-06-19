@@ -37,6 +37,8 @@ export default function Login() {
         setLoading(false);
 
         if (form.code === '123456') {
+            localStorage.setItem('isLoggedIn', 'true');
+
             router.push(
                 `/account-overview`
             );
