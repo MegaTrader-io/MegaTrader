@@ -11,7 +11,7 @@ export async function GET() {
     const userId = 123;
     const email = 'test@megatrader.io';
     const name = 'foo bar';
-    const phone = '+50760036763'//'+13054310620';
+    const phone = '+13054310620';
     const createdAt = dayjs().utc().unix()
 
     const user = {
