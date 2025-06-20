@@ -67,11 +67,11 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
                 const data = await res.json();
 
                 const userData: User = {
-                    id: data.id,
+                    id: data.user_id,
                     name: data.name,
                     email: data.email,
                     phone: data.phone,
-                    createdAt: data.createdAt,
+                    createdAt: data.created_at,
                     intercomUserJwt: data.intercomUserJwt,
                 };
 
@@ -83,7 +83,7 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
                     name: userData.name,
                     email: userData.email,
                     phone: userData.phone,
-                    created_at_utc: userData.createdAt,
+                    created_at: userData.createdAt,
                     intercom_user_jwt: userData.intercomUserJwt,
                 });
 
