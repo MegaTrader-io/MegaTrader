@@ -11,6 +11,7 @@ interface User {
     id: string;
     name: string;
     email: string;
+    phone: string;
     intercomUserJwt: string;
     createdAt: number;
 }
@@ -69,7 +70,8 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
                     id: data.id,
                     name: data.name,
                     email: data.email,
-                    createdAt: Math.floor(new Date(data.createdAt).getTime() / 1000),
+                    phone: data.phone,
+                    createdAt: data.createdAt,
                     intercomUserJwt: data.intercomUserJwt,
                 };
 
@@ -80,7 +82,8 @@ export const AccountProvider = ({children}: { children: React.ReactNode }) => {
                     user_id: userData.id,
                     name: userData.name,
                     email: userData.email,
-                    created_at: userData.createdAt,
+                    phone: userData.phone,
+                    created_at_utc: userData.createdAt,
                     intercom_user_jwt: userData.intercomUserJwt,
                 });
 
