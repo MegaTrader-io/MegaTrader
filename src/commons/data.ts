@@ -19,7 +19,7 @@ export const accounts: Account[] = [
                 percentage: -4.30
             },
             tradingDays: 4,
-            dailyLossLimit: 2000,
+            dailyLossLimit: null,
             currentEquity: 47850.30,
             weeklyNetPnL: -1560.40,
         },
@@ -39,7 +39,8 @@ export const accounts: Account[] = [
             rule: {
                 maximumLossLimit: {
                     pass: false,
-                    description: "Keep your Account Balance above $48,000"
+                    description: "Keep your Account Balance above $48,000",
+                    link: "https://help.megatrader.io/en/articles/10753681-elite-plan-rules-risk-parameters"
                 }
             },
         }
@@ -76,7 +77,8 @@ export const accounts: Account[] = [
             rule: {
                 maximumLossLimit: {
                     pass: true,
-                    description: "Keep your Account Balance above $96,500"
+                    description: "Keep your Account Balance above $96,500",
+                    link: "https://help.megatrader.io/en/articles/10753687-growth-plan-rules-risk-parameters"
                 }
             },
         },
@@ -94,7 +96,7 @@ export const accounts: Account[] = [
                 percentage: 6.28
             },
             tradingDays: 12,
-            dailyLossLimit: 3750,
+            dailyLossLimit: 3500,
             currentEquity: 159420.75,
             weeklyNetPnL: 2740.60
         },
@@ -114,7 +116,8 @@ export const accounts: Account[] = [
             rule: {
                 maximumLossLimit: {
                     pass: true,
-                    description: "Keep your Account Balance above $145,000"
+                    description: "Keep your Account Balance above $145,000",
+                    link: "https://help.megatrader.io/en/articles/10753687-growth-plan-rules-risk-parameters"
                 }
             },
         }
@@ -157,13 +160,15 @@ export const accounts: Account[] = [
             },
             consistency: {
                 percentage: 45,
-                minPercentage: 35
+                minPercentage: 35,
+                link: "https://help.megatrader.io/en/articles/10753780-understanding-the-35-20-consistency-rule-for-payouts"
             },
             highestProfitDaySinceLastPayout: 0,
             rule: {
                 maximumLossLimit: {
                     pass: false,
-                    description: "Keep your Account Balance above $48,000"
+                    description: "Keep your Account Balance above $48,000",
+                    link: "https://help.megatrader.io/en/articles/11372568-funded-plan-rules-risk-parameters"
                 }
             },
         }
@@ -205,13 +210,15 @@ export const accounts: Account[] = [
             },
             consistency: {
                 percentage: 30,
-                minPercentage: 35
+                minPercentage: 35,
+                link: "https://help.megatrader.io/en/articles/10753780-understanding-the-35-20-consistency-rule-for-payouts"
             },
             highestProfitDaySinceLastPayout: 0,
             rule: {
                 maximumLossLimit: {
                     pass: true,
-                    description: "Keep your Account Balance above $96,000"
+                    description: "Keep your Account Balance above $96,000",
+                    link: "https://help.megatrader.io/en/articles/11372568-funded-plan-rules-risk-parameters"
                 }
             },
         },
@@ -254,13 +261,15 @@ export const accounts: Account[] = [
             },
             consistency: {
                 percentage: 25,
-                minPercentage: 20
+                minPercentage: 20,
+                link: "https://help.megatrader.io/en/articles/10753780-understanding-the-35-20-consistency-rule-for-payouts"
             },
             highestProfitDaySinceLastPayout: 534.15,
             rule: {
                 maximumLossLimit: {
                     pass: true,
-                    description: "Keep your Account Balance above $144,000"
+                    description: "Keep your Account Balance above $144,000",
+                    link: "https://help.megatrader.io/en/articles/11372568-funded-plan-rules-risk-parameters"
                 }
             },
         },

@@ -70,7 +70,7 @@ export interface OverallPerformance {
     currentBalance: number,
     totalProfit: TotalProfit,
     tradingDays: number,
-    dailyLossLimit: number,
+    dailyLossLimit: number|null,
     currentEquity: number,
     weeklyNetPnL: number,
 }
@@ -87,11 +87,13 @@ export interface ObjectiveType {
 interface Consistency {
     minPercentage: number;
     percentage: number;
+    link?: string;
 }
 
 interface MaximumLossLimit {
     description: string;
     pass: boolean;
+    link?: string;
 }
 
 interface Rule {

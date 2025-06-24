@@ -3,6 +3,7 @@ import {Account} from "@/commons/interfaces";
 import {CheckCircleIcon, XCircleIcon} from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import {QuestionIcon} from "@/app/(backoffice)/account-overview/_components/QuestionIcon";
+import Link from "next/link";
 
 function ConsistencyProgress({account}: { account: Account }) {
     if (!account.objectives.consistency) {
@@ -64,8 +65,15 @@ function ConsistencyProgress({account}: { account: Account }) {
                         <div>
                             <span
                                 className="text-white text-xs font-medium leading-tight tracking-tight">You need to maintain at least {account.objectives.consistency.minPercentage}%
-                                consistency. <span
-                                    className=" text-[#ffd78a] text-xs font-medium underline leading-tight">Learn more</span></span>
+                                consistency. {!account.objectives.consistency.link && (
+                                    <span className="text-[#ffd78a] text-xs font-medium underline leading-tight">Learn more</span>
+                                )} {account.objectives.consistency.link && (
+                                    <Link target={'_blank'} href={account.objectives.consistency.link}
+                                          className=" text-[#ffd78a] text-xs font-medium underline leading-tight">
+                                        Learn more
+                                    </Link>
+                                )}
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -11,6 +11,7 @@ import HighestProfitDay from "@/app/(backoffice)/account-overview/_components/Hi
 import DailyLossLimit from "@/app/(backoffice)/account-overview/_components/DailyLossLimit";
 import ExclamationTooltip from "@/app/(backoffice)/account-overview/_components/ExclamationTooltip";
 import {TotalProfit} from "@/app/(backoffice)/account-overview/_components/TotalProfit";
+import Link from "next/link";
 
 
 function AccountSummary({account}: { account: Account }) {
@@ -126,10 +127,20 @@ function AccountSummary({account}: { account: Account }) {
                                             <div>
                                                 {account.objectives.rule.maximumLossLimit.description}
                                             </div>
-                                            <div
-                                                className="block lg:inline text-mgt-link text-xs font-medium underline leading-tight">
-                                                Maximum Loss Limit
-                                            </div>
+
+                                            {!account.objectives.rule.maximumLossLimit.link && (
+                                                <div
+                                                    className="block lg:inline text-mgt-link text-xs font-medium underline leading-tight">
+                                                    Maximum Loss Limit
+                                                </div>
+                                            )}
+                                            {account.objectives.rule.maximumLossLimit.link && (
+                                                <Link target={'_blank'}
+                                                      href={account.objectives.rule.maximumLossLimit.link || '#'}
+                                                      className="block lg:inline text-mgt-link text-xs font-medium underline leading-tight">
+                                                    Maximum Loss Limit
+                                                </Link>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

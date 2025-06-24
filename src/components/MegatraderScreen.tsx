@@ -44,7 +44,7 @@ const MegatraderScreen = () => <Swiper autoplay={{
 
                 <Image
                     src={imageUrl}
-                    className="hidden mx-auto md:block w-[calc(72%-52px)] md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
+                    className="hidden mx-auto md:block w-[calc(72%-52px)] min-h-[470px]  md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)]"
                     alt="Account overview"
                     width={684}
                     height={659}
