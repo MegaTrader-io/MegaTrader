@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from "next/link";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Bars3Icon} from "@heroicons/react/24/solid";
 
 const navigationItems = [
@@ -82,25 +82,21 @@ export default function Header() {
                 {/* Logo */}
                 <div className="w-auto">
                     <Link
-                        href="/"
-                        onClick={(e) => handleClick(e, '#home')}
+                        href="/landing-page"
+                        className="flex gap-4 items-center"
                     >
+                        <Image src={'/assets/images/logo-mt.svg'}
+                               width={60} height={60} alt={'Logo Megatrader'}/>
+
                         <Image
                             src="../assets/images/megatrader-original.svg"
                             alt="Logo"
-                            width={298}
-                            height={96}
-                            className="w-[197px] h-[47px] lg:w-[298px] lg:h-[96px]"
+                            width={250}
+                            height={45}
+                            className="w-[170px] h-[47px] lg:w-[250px] lg:h-[45px] hidden lg:block"
                         />
                     </Link>
                 </div>
-
-                <button
-                    className="btn-primary block lg:hidden"
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                >
-                    <Bars3Icon className="w-6 h-6 text-white"/>
-                </button>
 
                 <div
                     className={`${
@@ -121,15 +117,8 @@ export default function Header() {
                             {item.label}
                         </Link>
                     ))}
-
-                    <Link
-                        href="/auth/login"
-                        className={`${isMenuOpen ? 'block' : 'hidden'} text-xl text-neutral-50 font-light uppercase leading-6 px-4 py-3 transition-all duration-200`}>
-                        Sign In
-                    </Link>
                 </div>
 
-                {/* Navegación escritorio */}
                 <nav
                     className="hidden lg:flex justify-start items-center flex-row xl:gap-2"
                     aria-label="Main navigation"
@@ -150,15 +139,24 @@ export default function Header() {
                     ))}
                 </nav>
 
-                {/* Botón Sign In */}
-                <div className="hidden lg:flex">
+                <div className="">
                     <div className="flex items-center gap-3.5">
                         <Link
                             href="/auth/login"
-                            className="btn-dark-link  rounded-xl h-12 px-4 py-3"
+                            className="btn-dark-link rounded-xl h-12 px-4 py-3"
                         >
-                            Sign In
+                            LOGIN
                         </Link>
+
+                        <button
+                            className=" btn-primary max-w-[48px] !px-3 block lg:hidden"
+                            onClick={() => {
+                                console.info('setIsMenuOpen(!isMenuOpen)');
+                                // setIsMenuOpen(!isMenuOpen)
+                            }}
+                        >
+                            <Bars3Icon className="w-6 h-6 text-white"/>
+                        </button>
                     </div>
                 </div>
             </div>

@@ -33,7 +33,9 @@ function ProfileIcon() {
             </Dialog>
             <Button
                 variant={'dark'}
-                onClick={() => {setShowModal(true)}}
+                onClick={() => {
+                    setShowModal(true)
+                }}
                 className={'!p-0 w-12 h-12'}
             >
                 <UserCircleIcon className="w-6 h-6 text-white"/>

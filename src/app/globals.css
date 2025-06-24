@@ -98,6 +98,10 @@ body.dialog-mg-open[data-scroll-locked] {
     @apply btn-base bg-stone-800 hover:bg-stone-900 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800;
 }
 
+.btn-yellow-link {
+    @apply btn-base w-full md:w-auto btn-base text-base font-medium leading-normal bg-primary hover:bg-yellow-600 text-black focus:ring-primary disabled:bg-stone-600 disabled:text-stone-800;
+}
+
 .loader {
     width: 48px;
     height: 48px;
