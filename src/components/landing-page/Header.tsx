@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import {Bars3Icon} from "@heroicons/react/24/solid";
+import PopoverMenu from "@/components/backoffice/PopoverMenu";
+import {usePathname} from "next/navigation";
 
 const navigationItems = [
     {href: '#home', label: 'HOME', sectionId: 'home'},
@@ -15,6 +17,7 @@ export default function Header() {
     const [activeSection, setActiveSection] = useState('home');
     const [hasScrolled, setHasScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const currentPath = usePathname()
 
     console.info(hasScrolled);
     useEffect(() => {
@@ -148,15 +151,26 @@ export default function Header() {
                             LOGIN
                         </Link>
 
-                        <button
-                            className=" btn-primary max-w-[48px] !px-3 block lg:hidden"
-                            onClick={() => {
-                                console.info('setIsMenuOpen(!isMenuOpen)');
-                                // setIsMenuOpen(!isMenuOpen)
-                            }}
-                        >
-                            <Bars3Icon className="w-6 h-6 text-white"/>
-                        </button>
+                        <PopoverMenu collisionPadding={16}
+                                     className="block lg:hidden"
+                                     icon={<Bars3Icon className="w-6 h-6 text-white"/>}>
+                            <div className="gap1 flex flex-col">
+                                {navigationItems.map((item) => (
+                                    <Link
+                                        key={item.label}
+                                        href={item.href}
+                                        data-dismiss="true"
+                                        className={`text-stone-800 text-center text-xs font-bold uppercase leading-6 px-4 py-1 transition-all duration-200 ${
+                                            currentPath === item.sectionId
+                                                ? 'px-3 py-1 bg-neutral-300 rounded border border-neutral-300 justify-center items-center gap-2 inline-flex'
+                                                : ' hover:bg-neutral-300'
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        </PopoverMenu>
                     </div>
                 </div>
             </div>

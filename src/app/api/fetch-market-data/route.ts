@@ -30,7 +30,7 @@ export async function GET() {
             );
 
             if (!response.ok) {
-                throw new Error(`Error al obtener datos: ${response.statusText}`);
+                throw new Error(`Unable to retrieve the data: ${response.statusText}`);
             }
 
             const {body: bodyData} = await response.json() as ApiResponse || {body: []};
@@ -52,6 +52,7 @@ export async function GET() {
 
             cache.set(cacheKey, body);
         } catch (error) {
+            console.info(error);
             return new Response(
                 JSON.stringify({error: (error as Error).message}),
                 {status: 500}
