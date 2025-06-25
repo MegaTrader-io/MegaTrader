@@ -7,7 +7,9 @@ interface SymbolMarketData {
     name: string,
     price: number,
     change: number
-};
+}
+
+const RAPIDAPI_SECRET_KEY = process.env.RAPIDAPI_SECRET_KEY || 'ebadf';
 
 export async function GET() {
     const cacheKey = "marketData";
@@ -22,7 +24,7 @@ export async function GET() {
                 {
                     method: "GET",
                     headers: {
-                        "X-Rapidapi-Key": "da16701ec3msh8a73fda62b6dc70p1645d7jsn0d0e0d8bdca0",
+                        "X-Rapidapi-Key": RAPIDAPI_SECRET_KEY,
                         "X-Rapidapi-Host": "yahoo-finance15.p.rapidapi.com",
                         Cookie: "__cflb=02DiuDPiBzc7r3SEPt3hbb7G3S2VSWX6BEN69eKLuY3He",
                     },
