@@ -16,10 +16,11 @@ const Page = () => {
             <Header/>
         </header>
         <main
-            className="min-h-[calc(100vh-96px)] lg:h-full mt-[124px] w-full lg:max-w-7xl mx-auto">
+            className="min-h-[calc(100vh-96px)] lg:h-full mt-[124px] w-full lg:max-w-7xl space-y-12 mx-auto">
             <HeroSection className="px-4"/>
-            <div className="px-4 py-12 space-y-8">
+            <div className="px-4 pb-12 space-y-8">
                 <div className="mx-auto flex justify-center">
+
                     <Image
                         src="/assets/images/Window-mobile.png"
                         alt="window tablet"
@@ -47,12 +48,11 @@ const Page = () => {
                 </div>
 
                 <Suspense fallback={'loading...'}>
-                    <MarketOverviewSection />
+                    <MarketOverviewSection/>
                 </Suspense>
             </div>
-
             <SponsorLogosSection className="px-4"/>
-
+            <div></div>
         </main>
         <Footer/>
     </>
