@@ -16,7 +16,7 @@ const SkeletonCards = () => {
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(item => (
                 <Card
                     key={item}
-                    className="animate-pulse p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent inline-table"
+                    className="animate-pulse p-3 bg-[#1e1e1e] rounded-lg border border-transparent inline-table"
                 >
                     <div className="grid grid-cols-[1fr_auto] gap-4 w-[278px] h-[48px]">
                         <div>
@@ -125,17 +125,17 @@ const MarketOverviewSection = ({className = ''}: { className?: string }) => {
                     {data.map((instrument, index) => (
                         <Card
                             key={index}
-                            className=" p-3 bg-[#1e1e1e]/70 rounded-2xl border border-transparent inline-table"
+                            className="p-3 bg-[#1e1e1e] rounded-lg inline-table"
                         >
                             <div className="grid grid-cols-[1fr_auto] gap-4">
                                 <div>
-                                    <h3 className="text-white text-base font-bold text-nowrap">{instrument.name}</h3>
-                                    <p className="text-stone-400 font-normal">{instrument.price.toLocaleString()}</p>
+                                    <h3 className="text-white text-base font-bold leading-normal text-nowrap">{instrument.name}</h3>
+                                    <p className="text-stone-400 text-base font-medium leading-normal">{instrument.price.toLocaleString()}</p>
                                 </div>
 
                                 <div className="flex justify-center items-center text-nowrap">
                                     <p
-                                        className={`flex gap-2 text-base font-bold ${
+                                        className={`flex gap-2 text-base font-bold leading-normal ${
                                             instrument.change > 0 ? "text-teal-400" : "text-rose-500"
                                         }`}
                                     >
