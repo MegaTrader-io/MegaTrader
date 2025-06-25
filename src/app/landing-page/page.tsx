@@ -47,7 +47,7 @@ const Page = () => {
                 </div>
 
                 <Suspense fallback={'loading...'}>
-                    <MarketOverviewSection className="px-4"/>
+                    <MarketOverviewSection />
                 </Suspense>
             </div>
 
