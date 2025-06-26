@@ -9,6 +9,7 @@ import Image from "next/image";
 import React from "react";
 import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 import SponsorLogosSection from "@/components/landing-page/SponsorLogosSection";
+import MegatraderInNumbers from "@/components/landing-page/MegatraderInNumbers";
 
 const Page = () => {
     return <>
@@ -52,6 +53,7 @@ const Page = () => {
                 </Suspense>
             </div>
             <SponsorLogosSection className="px-4"/>
+            <MegatraderInNumbers/>
             <div></div>
         </main>
         <Footer/>
