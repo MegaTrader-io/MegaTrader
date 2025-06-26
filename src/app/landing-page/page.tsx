@@ -10,6 +10,7 @@ import React from "react";
 import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 import SponsorLogosSection from "@/components/landing-page/SponsorLogosSection";
 import MegatraderInNumbers from "@/components/landing-page/MegatraderInNumbers";
+import EasyWayToBecomeAFundedTrader from "@/components/landing-page/EasyWayToBecomeAFundedTrader";
 
 const Page = () => {
     return <>
@@ -54,6 +55,7 @@ const Page = () => {
             </div>
             <SponsorLogosSection className="px-4"/>
             <MegatraderInNumbers/>
+            <EasyWayToBecomeAFundedTrader/>
             <div></div>
         </main>
         <Footer/>
