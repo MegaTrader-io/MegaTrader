@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {IShowAlert} from "@/app/(backoffice)/refferals/page";
 import Alert from "@/components/Alert";
 import HomeLayout from "@/components/HomeLayout";
