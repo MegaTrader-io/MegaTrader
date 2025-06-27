@@ -9,16 +9,7 @@ import SubscribeForm from "@/components/SubscribeForm";
 import SocialMedia from "@/components/landing-page/SocialMedia";
 
 const Home = () => {
-    const [params, setParams] = useState<URLSearchParams | undefined>();
     const [showAlert, setShowAlert] = useState<IShowAlert | null>(null);
-
-    useEffect(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-
-        setParams(new URLSearchParams(window.location.search))
-    }, [])
 
     function cbShowAlert(payload: IShowAlert | null) {
         setShowAlert(payload)
@@ -45,14 +36,12 @@ const Home = () => {
                 />
             </div>
 
-            {params && params.get('banner') && [1, 2].includes(Number(params.get('banner'))) && (
-                <Image
-                    src={`/assets/images/50_Off_Banner_${params.get('banner')}.png`}
-                    width={553}
-                    quality={100}
-                    height={Number(params.get('banner')) === 1 ? 154 : 74}
-                    alt={'Logo Megatrader'}/>
-            )}
+            <Image
+                src={`/assets/images/50_Off_Banner_3.png`}
+                width={405}
+                height={80}
+                className="w-[405px] h-[80px]"
+                alt={'Logo Megatrader'}/>
 
             <div className="space-y-4">
                 <h1 className="self-stretch text-center justify-start text-white text-[40px] font-medium uppercase leading-[48px]">
