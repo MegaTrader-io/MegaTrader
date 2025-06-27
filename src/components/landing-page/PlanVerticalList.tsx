@@ -4,8 +4,8 @@ function PlanVerticalList() {
     return (
         <div className="space-y-2">
             <div
-                className="w-full max-w-[400px] p-6 relative bg-[#ffb34a] rounded-2xl">
-                <div className="inline-flex justify-start items-start gap-4">
+                className="w-full max-w-[321px] lg:max-w-[400px] p-6 relative bg-[#ffb34a] rounded-2xl">
+                <div className="inline-flex justify-start items-start gap-4 relative">
                     <div className="w-9 h-9 relative mt-1">
                         <svg width="37" height="36" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <mask id="mask0_11266_789" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
@@ -32,7 +32,7 @@ function PlanVerticalList() {
                             experienced traders seeking premium tools and insights.
                         </div>
                     </div>
-                    <div className="w-[30px] h-[30px] left-[362px] top-[8px] absolute">
+                    <div className="w-[30px] h-[30px] -right-[16px] -top-[16px] absolute">
                         <svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <mask id="mask0_11266_797" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
                                   y="0"
@@ -49,7 +49,7 @@ function PlanVerticalList() {
                 </div>
             </div>
             <div
-                className="w-full max-w-[400px] p-6 relative bg-transparent rounded-2xl outline outline-2 outline-offset-[-2px] outline-neutral-700">
+                className="w-full max-w-[321px] lg:max-w-[400px] p-6 relative bg-transparent rounded-2xl outline outline-2 outline-offset-[-2px] outline-neutral-700">
                 <div className="inline-flex justify-start items-start gap-4">
                     <div className="w-9 h-9 relative mt-1">
                         <svg width="37" height="36" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -80,9 +80,9 @@ function PlanVerticalList() {
                 </div>
             </div>
             <div
-                className="w-full max-w-[400px] p-6 relative bg-transparent rounded-2xl outline outline-2 outline-offset-[-2px] outline-neutral-700">
+                className="w-full max-w-[321px] lg:max-w-[400px] p-6 relative bg-transparent rounded-2xl outline outline-2 outline-offset-[-2px] outline-neutral-700">
                 <div className="inline-flex justify-start items-start gap-4">
-                    <div className="w-9 h-9 relative mt-1">
+                    <div className="w-9 h-9 relative">
                         <svg width="37" height="36" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <mask id="mask0_11266_561" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0"
                                   y="0"
