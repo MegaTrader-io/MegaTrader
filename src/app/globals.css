@@ -249,3 +249,24 @@ path.apexcharts-bar-area[selected=true] {
     position: absolute;
     background: #ffb34a;
 }
+
+.wrapper-timeline .vertical-line-timeline-before::before {
+    content: " ";
+    width: 2px;
+    z-index: -2;
+    top: 26px;
+    bottom: 0;
+    position: absolute;
+    background: #ffb34a;
+}
+
+.last-timeline-point::before {
+    content: ' ';
+    width: 2px;
+    height: 14px;
+    background: #e2a042;
+    position: absolute;
+    top: -14px;
+    right: 6px;
+}
+
