@@ -21,15 +21,15 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                 <div className="flex justify-center">
                     <PlanVerticalList/>
                 </div>
-                <div>
-                    <div className="w-3.5 h-3.5 mt-[13px] bg-[#ffb34a] rounded-full"></div>
-                </div>
-                <div className="flex wrapper-timeline">
+                <div></div>
+                <div className="flex wrapper-timeline pt-[26%]">
                     <div
                         className="vertical-line-timeline after:-left-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
                             className="justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             01
+                            <div
+                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -left-[46px]"></div>
                         </div>
                         <div
                             className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">Select
@@ -45,32 +45,35 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-2 gap-[78px]">
-                <div className="flex items-center">
-                    <div className="max-w-[585px] text-right">
+            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
+                <div className="flex wrapper-timeline">
+                    <div
+                        className="vertical-line-timeline text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
-                            className="justify-start text-white text-[32px] font-medium uppercase leading-10">
+                            className="mt-[26%] justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             02
+                            <div
+                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -right-[46px]"></div>
                         </div>
                         <div
-                            className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">Select
-                            Complete the Evaluation Challenge
+                            className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">
+                            Select Complete the Evaluation Challenge
                         </div>
                         <div
                             className="justify-start text-stone-400 text-base font-medium leading-normal">
                             Trade responsibly and meet the required profit targets while following risk management
-                            rules.
-                            Once you succeed, you can move on to the next step.
+                            rules. Once you succeed, you can move on to the next step.
                         </div>
                     </div>
                 </div>
+                <div></div>
                 <div className="flex justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0">
                         <Image src={`/assets/images/Window-congrats.svg`} alt="veriff" width={440} height={543}/>
                     </Card>
                 </div>
             </div>
-            <div className="grid grid-cols-2 gap-[78px]">
+            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
                 <div className="flex justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0 relative">
                         <Image src={`/assets/images/Window-request-payouts.svg`} alt="veriff" width={360} height={524}/>
@@ -78,11 +81,15 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                                width={160} height={48}/>
                     </Card>
                 </div>
-                <div className="flex items-center">
-                    <div className="max-w-[585px] text-left">
+                <div></div>
+                <div className="flex wrapper-timeline">
+                    <div
+                        className="vertical-line-timeline text-left after:!top-0 after:-left-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
-                            className="justify-start text-white text-[32px] font-medium uppercase leading-10">
+                            className="mt-[26%] justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             03
+                            <div
+                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -left-[46px]"></div>
                         </div>
                         <div
                             className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">
@@ -96,12 +103,16 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-2 gap-[78px]">
-                <div className="flex items-center">
-                    <div className="max-w-[585px] text-right">
+
+            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
+                <div className="flex wrapper-timeline">
+                    <div
+                        className="vertical-line-timeline text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
-                            className="justify-start text-white text-[32px] font-medium uppercase leading-10">
+                            className="mt-[26%] justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             04
+                            <div
+                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -right-[46px]"></div>
                         </div>
                         <div
                             className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">
@@ -114,6 +125,7 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                         </div>
                     </div>
                 </div>
+                <div></div>
                 <div className="flex justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0">
                         <Image src={`/assets/images/Window-selfie-veriff.svg`} alt="veriff" width={440} height={543}/>
