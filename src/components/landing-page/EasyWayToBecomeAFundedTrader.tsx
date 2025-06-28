@@ -17,14 +17,18 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
         </div>
 
         <div>
-            <div className="grid grid-cols-2 gap-[78px]">
+            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
                 <div className="flex justify-center">
                     <PlanVerticalList/>
                 </div>
-                <div className="flex items-center">
-                    <div className="w-full max-w-[321px] lg:max-w-[585px]">
+                <div>
+                    <div className="w-3.5 h-3.5 mt-[13px] bg-[#ffb34a] rounded-full"></div>
+                </div>
+                <div className="flex wrapper-timeline">
+                    <div
+                        className="vertical-line-timeline after:-left-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
-                            className="justify-start text-white text-[32px] font-medium uppercase leading-10">
+                            className="justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             01
                         </div>
                         <div
@@ -70,7 +74,8 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                 <div className="flex justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0 relative">
                         <Image src={`/assets/images/Window-request-payouts.svg`} alt="veriff" width={360} height={524}/>
-                        <Image src={`/assets/images/icons.png`} alt="veriff" className="absolute right-4 bottom-4" width={160} height={48}/>
+                        <Image src={`/assets/images/icons.png`} alt="veriff" className="absolute right-4 bottom-4"
+                               width={160} height={48}/>
                     </Card>
                 </div>
                 <div className="flex items-center">

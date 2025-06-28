@@ -229,3 +229,23 @@ path.apexcharts-bar-area[selected=true] {
     right: -17px;
     top: -1px;
 }
+
+.wrapper-point::after {
+    content: ' ';
+    background-color: #FFB34A;
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    border-radius: 100%;
+    transform: translateY(12px);
+}
+
+.wrapper-timeline .vertical-line-timeline::after {
+    content: " ";
+    width: 2px;
+    z-index: -2;
+    top: 26px;
+    bottom: 0;
+    position: absolute;
+    background: #ffb34a;
+}
