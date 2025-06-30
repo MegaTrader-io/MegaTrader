@@ -19,7 +19,6 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const currentPath = usePathname()
 
-    console.info(hasScrolled);
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 10) {

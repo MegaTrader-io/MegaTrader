@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+const GTM_VISITOR_ID = process.env.NEXT_PUBLIC_GTM_VISITOR_ID;
 const isProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
 
 export default function RootLayout({
@@ -51,6 +52,10 @@ export default function RootLayout({
                 'gtm.start': new Date().getTime(),
                 event: 'gtm.js'
               });
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GTM_VISITOR_ID}');
+              console.info('visitor loaded');
             `}
                 </Script>
             )}
