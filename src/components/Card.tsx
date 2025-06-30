@@ -16,7 +16,7 @@ export const CardTitle = ({children, className}: PropsTitle) => (
     </div>)
 
 const Card: React.FC<CardProps> = ({children, className = '', ...props}) => {
-    return <div {...props} className={`p-4 bg-[#1e1e1e]/70 border border-transparent rounded-2xl  ${className}`}>
+    return <div {...props} className={`p-4 bg-[#1e1e1e] border border-transparent rounded-2xl  ${className}`}>
         {children || ''}
     </div>
 }

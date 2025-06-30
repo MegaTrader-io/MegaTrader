@@ -11,6 +11,7 @@ import MarketOverviewSection from "@/components/landing-page/MarketOverviewSecti
 import SponsorLogosSection from "@/components/landing-page/SponsorLogosSection";
 import MegatraderInNumbers from "@/components/landing-page/MegatraderInNumbers";
 import EasyWayToBecomeAFundedTrader from "@/components/landing-page/EasyWayToBecomeAFundedTrader";
+import ChooseYourAccountSize from "@/components/landing-page/ChooseYourAccountSize";
 
 const Page = () => {
     return <>
@@ -56,6 +57,7 @@ const Page = () => {
             <SponsorLogosSection className="px-4"/>
             <MegatraderInNumbers/>
             <EasyWayToBecomeAFundedTrader/>
+            <ChooseYourAccountSize/>
             <div></div>
         </main>
         <Footer/>
