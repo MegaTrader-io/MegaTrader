@@ -1,6 +1,4 @@
-'use client';
-
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import ButtonsAccountSize, {ACCOUNT_SIZE_PLAN} from "@/components/landing-page/ButtonsAccountSize";
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
@@ -63,10 +61,118 @@ const items = [
                 ]
             }
         ]
-
+    },
+    {
+        plan: 'growth_plan',
+        levels: [
+            {
+                description: '$79.99 / Month',
+                features: [
+                    'Profit Target: $1,500',
+                    'Max Contracts: 1 Mini (50 Micros)',
+                    'Daily Loss Limit (Soft Breach): $500',
+                    'Trailing Max Drawdown: $1,000',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Pass: 1',
+                    'Reset Fee: $49.99',
+                    'Activation Fee: $0',
+                ]
+            },
+            {
+                description: '$129.99 / Month',
+                features: [
+                    'Profit Target: $3,000',
+                    'Max Contracts: 5 Minis (50 Micros)',
+                    'Daily Loss Limit (Soft Breach): $1,250',
+                    'Trailing Max Drawdown: $2,000',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Pass: 1',
+                    'Reset Fee: $79.99',
+                    'Activation Fee: $0',
+                ]
+            },
+            {
+                description: '$239.99 / Month',
+                features: [
+                    'Profit Target: $6,000',
+                    'Max Contracts: 10 Minis (100 Micros)',
+                    'Daily Loss Limit (Soft Breach): $2,500',
+                    'Trailing Max Drawdown: $3,500',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Pass: 1',
+                    'Reset Fee: $159.99',
+                    'Activation Fee: $0',
+                ]
+            },
+            {
+                description: '$329.99 / Month',
+                features: [
+                    'Profit Target: $9,000',
+                    'Max Contracts: 15 Minis (150 Micros)',
+                    'Daily Loss Limit (Soft Breach): $3,750',
+                    'Trailing Max Drawdown: $5,000',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Pass: 1',
+                    'Reset Fee: $189.99',
+                    'Activation Fee: $99.99',
+                ]
+            }
+        ]
+    },
+    {
+        plan: 'funded_plan',
+        levels: [
+            {
+                description: 'One-Time Fee: $339.99',
+                features: [
+                    'Max Contracts: 1 Minis (10 Micros)',
+                    'Daily Loss Limit (Soft Breach): None',
+                    'Trailing Max Drawdown: $1,000',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Payout: 10',
+                    'Consistency: 20%',
+                    'Max Accounts: 5'
+                ]
+            },
+            {
+                description: 'One-Time Fee: $499.99',
+                features: [
+                    'Max Contracts: 5 Minis (50 Micros)',
+                    'Daily Loss Limit (Soft Breach): $1,250',
+                    'Trailing Max Drawdown: $2,000',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Payout: 10',
+                    'Consistency: 20%',
+                    'Max Accounts: 5'
+                ]
+            },
+            {
+                description: 'One-Time Fee: $599.99',
+                features: [
+                    'Max Contracts: 10 Minis (100 Micros)',
+                    'Daily Loss Limit (Soft Breach): $2,500',
+                    'Trailing Max Drawdown: $4,000',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Payout: 10',
+                    'Consistency: 20%',
+                    'Max Accounts: 5'
+                ]
+            },
+            {
+                description: 'One-Time Fee: $699.99',
+                features: [
+                    'Max Contracts: 15 Minis (150 Micros)',
+                    'Daily Loss Limit (Soft Breach): $3,750',
+                    'Trailing Max Drawdown: $6,000',
+                    'Drawdown Mode: End Of Day',
+                    'Min Trading Days to Payout: 10',
+                    'Consistency: 20%',
+                    'Max Accounts: 5'
+                ]
+            }
+        ]
     }
 ]
-
 
 function ChooseYourAccountSize() {
     const [plan, setPlan] = useState<ACCOUNT_SIZE_PLAN>('elite_plan')
@@ -74,7 +180,6 @@ function ChooseYourAccountSize() {
     const planDetail = items.find(item => item.plan === plan);
 
     function changePlan(plan: ACCOUNT_SIZE_PLAN) {
-        console.info('plan', plan);
         setPlan(plan)
     }
 
@@ -108,12 +213,12 @@ function ChooseYourAccountSize() {
                 changePlan={changePlan}
             />
 
-            <div className="flex gap-2">
+            <div className="space-y-2 sm:space-y-0 sm:grid sm:grid-cols-2 gap-2 lg:flex lg:items-center">
                 {planDetail?.levels.map((level, index) => (
                     <Card key={index} className={clsx(
                         'group px-0 w-full !border-none !border-transparent',
                         [
-                            index === 2 ? 'py-12 bg-primary mark' : 'my-6'
+                            index === 2 ? 'lg:py-12 bg-primary mark' : ''
                         ]
                     )}>
                         <div className="px-4 flex items-center gap-2">
