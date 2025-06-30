@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
         object-src 'none';
         frame-src 'self' https://www.googletagmanager.com https://td.doubleclick.net;
         frame-ancestors 'self';
-        connect-src 'self' https://api.livechatinc.com https://api-iam.intercom.io https://js.intercomcdn.com wss://nexus-websocket-a.intercom.io https://www.google.com;
+        connect-src 'self' https://api.livechatinc.com https://api-iam.intercom.io https://js.intercomcdn.com wss://nexus-websocket-a.intercom.io https://www.google.com https://analytics.google.com;
     `.replace(/\s{2,}/g, ' ').trim();
 
         const commonHeaders = [
