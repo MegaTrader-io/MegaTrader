@@ -183,18 +183,6 @@ function ChooseYourAccountSize() {
         setPlan(plan)
     }
 
-    function getTitleByLevel(level: number) {
-        if (level === 1) {
-            return '25K Account'
-        } else if (level === 2) {
-            return '50k Account'
-        } else if (level === 3) {
-            return '100k Account'
-        }
-
-        return '150k Account'
-    }
-
     return (
         <section className="px-4">
             <div className="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
@@ -278,6 +266,18 @@ function ChooseYourAccountSize() {
             </div>
         </section>
     );
+}
+
+function getTitleByLevel(level: number) {
+    if (level === 1) {
+        return '25K Account'
+    } else if (level === 2) {
+        return '50k Account'
+    } else if (level === 3) {
+        return '100k Account'
+    }
+
+    return '150k Account'
 }
 
 function PlanIcon({plan}: { plan: ACCOUNT_SIZE_PLAN }) {
