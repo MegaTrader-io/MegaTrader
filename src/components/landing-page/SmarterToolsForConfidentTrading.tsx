@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from "@/components/Card";
 import clsx from "clsx";
+import {GetStaticProps} from "next";
 
 
 const items = [
@@ -107,9 +108,9 @@ function SmarterToolsForConfidentTrading() {
                 secure, and seamless trading experience.
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className=" grid md:justify-center md:grid-cols-2 lg:grid-cols-[335px_335px_335px] gap-4">
                 {items.map((item, index) => (
-                    <Card className={clsx('group p-8', {'bg-teal-400 active': index === 1})} key={index}>
+                    <Card className={clsx('w-full group p-8', {'bg-teal-400 active': index === 1})} key={index}>
                         <div className="flex items-center gap-2">
                             {item.icon}
                             <div
@@ -127,5 +128,11 @@ function SmarterToolsForConfidentTrading() {
         </section>
     );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+    return {
+        props: {},
+    };
+};
 
 export default SmarterToolsForConfidentTrading;

@@ -13,6 +13,7 @@ import MegatraderInNumbers from "@/components/landing-page/MegatraderInNumbers";
 import EasyWayToBecomeAFundedTrader from "@/components/landing-page/EasyWayToBecomeAFundedTrader";
 import ChooseYourAccountSize from "@/components/landing-page/ChooseYourAccountSize";
 import SmarterToolsForConfidentTrading from "@/components/landing-page/SmarterToolsForConfidentTrading";
+import YourPathToProfitable from "@/components/landing-page/YourPathToProfitable";
 
 const Page = () => {
     return <>
@@ -60,6 +61,7 @@ const Page = () => {
             <EasyWayToBecomeAFundedTrader/>
             <ChooseYourAccountSize/>
             <SmarterToolsForConfidentTrading/>
+            <YourPathToProfitable />
             <div></div>
         </main>
         <Footer/>
