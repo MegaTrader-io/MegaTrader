@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Button} from "@/components/Button";
 import Card from "@/components/Card";
+import Image from "next/image";
 
 const defaultOption = 'evaluation'
 type OPTIONS = 'evaluation' | 'get_funded' | 'trader_tools';
@@ -9,6 +10,7 @@ const items = [
     {
         option: 'evaluation',
         title: 'Pass the Challenge',
+        image: 'Window-your-payout-objectives.svg',
         description: 'Begin your journey by proving your trading discipline. Meet a set profit target while respecting daily and overall loss limits. This phase is designed to assess your risk management and consistency before granting access to funded capital.',
         features: [
             {
@@ -48,6 +50,7 @@ const items = [
     {
         option: 'get_funded',
         title: 'Trade With Firm Capital',
+        image: 'Window-funded-alert.svg',
         description: 'After successfully completing the evaluation, you’ll be granted a funded trading account. You’ll trade with zero personal risk while keeping up to 90% of profits, giving you the freedom to grow without the pressure of risking your own money.',
         features: [
             {
@@ -85,6 +88,7 @@ const items = [
     {
         option: 'trader_tools',
         title: 'Use Smart Trading Tools',
+        image: 'Window-avg-winning.svg',
         description: 'Access a suite of tools built for performance. Monitor your metrics, set risk limits, get instant feedback on your trades, and customize your workspace to fit your trading style. Everything is designed to help you trade smarter, not harder.',
         features: [
             {
@@ -157,7 +161,7 @@ function YourPathToProfitable() {
             </div>
 
             <div className="flex gap-12">
-                <div className="w-full space-y-12">
+                <div className="w-full space-y-12 content-center">
                     <div
                         className="self-stretch justify-start text-white text-[40px] font-light uppercase leading-[48px]">
                         {currentItem.title}
@@ -190,8 +194,12 @@ function YourPathToProfitable() {
                         ))}
                     </div>
                 </div>
-                <Card className="w-full max-w-[558px]">
-                    ..
+
+                <Card className="w-full !bg-[#1E1E1E] max-w-[558px] h-[680px] pb-0 pt-24 flex justify-center border-b-0">
+                    <Image src={`/assets/images/${currentItem.image}`}
+                           alt="window funded alert"
+                           width={360}
+                           height={604}/>
                 </Card>
             </div>
         </section>
