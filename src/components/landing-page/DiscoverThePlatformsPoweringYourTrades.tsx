@@ -171,10 +171,8 @@ function DiscoverThePlatformsPoweringYourTrades() {
                         {body.name}
                     </div>
                     <div
-                        className="self-stretch justify-start text-stone-400 text-base font-medium  leading-normal">Experience
-                        precision and speed with MegaX, a platform designed for traders who demand reliability and
-                        performance. Built for the futures market, MegaX combines cutting-edge tools and seamless
-                        execution to empower your trading success.
+                        className="self-stretch justify-start text-stone-400 text-base font-medium  leading-normal">
+                        {body.description}
                     </div>
                 </div>
             </Card>
