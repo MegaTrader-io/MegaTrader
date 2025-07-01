@@ -157,7 +157,7 @@ function DiscoverThePlatformsPoweringYourTrades() {
                                 {platform.name}
                             </div>
 
-                            {currentSelection === index && (
+                            {index === 1 && (
                                 <Badge size={'sm'} className='tracking-tight hidden text-nowrap lg:flex'>
                                     COMING SOON
                                 </Badge>
