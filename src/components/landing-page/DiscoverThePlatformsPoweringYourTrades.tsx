@@ -112,7 +112,7 @@ function DiscoverThePlatformsPoweringYourTrades() {
     }
 
     return (
-        <section className="lg:flex lg:gap-12 space-y-12 lg:space-y-0 px-4 py-12">
+        <section className="lg:flex lg:gap-12 space-y-12 lg:space-y-0 px-4">
             <div className="w-full space-y-12">
                 <div
                     className="justify-start text-white text-[40px] font-light uppercase leading-[48px]">
