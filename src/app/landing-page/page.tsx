@@ -15,6 +15,7 @@ import ChooseYourAccountSize from "@/components/landing-page/ChooseYourAccountSi
 import SmarterToolsForConfidentTrading from "@/components/landing-page/SmarterToolsForConfidentTrading";
 import YourPathToProfitable from "@/components/landing-page/YourPathToProfitable";
 import EarnMoreThrouchOurAffiliateProgram from "@/components/landing-page/EarnMoreThrouchOurAffiliateProgram";
+import DiscoverThePlatformsPoweringYourTrades from "@/components/landing-page/DiscoverThePlatformsPoweringYourTrades";
 
 const Page = () => {
     return <>
@@ -64,6 +65,7 @@ const Page = () => {
             <SmarterToolsForConfidentTrading/>
             <YourPathToProfitable/>
             <EarnMoreThrouchOurAffiliateProgram/>
+            <DiscoverThePlatformsPoweringYourTrades />
             <div></div>
         </main>
         <Footer/>
