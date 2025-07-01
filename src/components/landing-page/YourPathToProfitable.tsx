@@ -140,7 +140,7 @@ function YourPathToProfitable() {
             </div>
 
             <div
-                className="mx-auto max-w-[612px] text-center text-xl leading-loose font-medium text-stone-400 md:max-w-[780px]">
+                className="mx-auto max-w-[612px] text-center text-xl leading-8 font-medium text-stone-400 md:max-w-[780px]">
                 From your first trade to your first payout, every step is built to guide you toward consistent success
                 with powerful tools, clear rules, and real rewards.
             </div>
@@ -170,7 +170,7 @@ function YourPathToProfitable() {
                         {currentItem.title}
                     </div>
                     <div
-                        className="self-stretch justify-start text-stone-400 text-xl font-medium leading-loose">
+                        className="self-stretch justify-start text-stone-400 text-xl font-medium leading-8">
                         {currentItem.description}
                     </div>
 

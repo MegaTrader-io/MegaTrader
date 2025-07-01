@@ -103,7 +103,7 @@ function SmarterToolsForConfidentTrading() {
             </div>
 
             <div
-                className="mx-auto pb-12 max-w-[612px] text-center text-xl leading-loose font-medium text-stone-400 md:max-w-[780px]">
+                className="mx-auto pb-12 max-w-[612px] text-center text-xl leading-8 font-medium text-stone-400 md:max-w-[780px]">
                 Unlock advanced features built to boost performance, enhance control, and create a fully customized,
                 secure, and seamless trading experience.
             </div>

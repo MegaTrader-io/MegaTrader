@@ -11,7 +11,7 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
         </div>
 
         <div
-            className="mx-auto pb-8 max-w-[760px] text-center text-xl leading-loose font-medium text-stone-400 md:w-[760px]">
+            className="mx-auto pb-8 max-w-[760px] text-center text-xl leading-8 font-medium text-stone-400 md:w-[760px]">
             Guiding traders through a simple, step-by-step process to secure funding, prove their skills, and start
             earning with confidence and clarity.
         </div>

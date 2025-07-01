@@ -8,7 +8,7 @@ const SponsorLogosSection = ({className = ""}: { className?: string }) => (
         </div>
 
         <div
-            className="mx-auto max-w-[760px] text-center text-xl leading-loose font-medium text-stone-400 md:w-[760px]">
+            className="mx-auto max-w-[760px] text-center text-xl leading-8 font-medium text-stone-400 md:w-[760px]">
             Trade with confidence on industry-leading platforms trusted by
             professionals for their speed, reliability, and advanced trading
             capabilities.

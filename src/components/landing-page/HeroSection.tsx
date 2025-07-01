@@ -9,7 +9,7 @@ const HeroSection = ({className = ''}: { className?: string }) => (
                     Start Your Futures Journey
                 </div>
                 <div
-                    className="w-full max-w-[612px] mx-auto text-center justify-start text-stone-400 text-xl font-medium leading-loose">Empowering
+                    className="w-full max-w-[612px] mx-auto text-center justify-start text-stone-400 text-xl font-medium leading-8">Empowering
                     traders with innovative solutions, unmatched reliability, and tools designed to elevate your trading
                     journey
                     to new heights.

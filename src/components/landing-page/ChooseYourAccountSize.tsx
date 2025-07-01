@@ -190,7 +190,7 @@ function ChooseYourAccountSize() {
             </div>
 
             <div
-                className="mx-auto pb-8 max-w-[760px] text-center text-xl leading-loose font-medium text-stone-400 md:max-w-[860px]">
+                className="mx-auto pb-8 max-w-[760px] text-center text-xl leading-8 font-medium text-stone-400 md:max-w-[860px]">
                 Choose from flexible account sizes and plans tailored to your trading style—whether you{'\''}re growing
                 your skills or ready to trade real capital with confidence
             </div>

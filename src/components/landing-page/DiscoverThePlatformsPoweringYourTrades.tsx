@@ -171,7 +171,7 @@ function DiscoverThePlatformsPoweringYourTrades() {
                         {body.name}
                     </div>
                     <div
-                        className="self-stretch justify-start text-stone-400 text-base font-medium  leading-normal">
+                        className="self-stretch justify-start text-stone-400 text-base font-medium leading-6">
                         {body.description}
                     </div>
                 </div>

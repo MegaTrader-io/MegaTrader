@@ -37,7 +37,7 @@ const MegatraderInNumbers: NextPage = () => (
         </div>
 
         <div
-            className="mx-auto max-w-[760px] text-center text-xl leading-loose font-medium text-stone-400 md:w-[760px]">
+            className="mx-auto max-w-[760px] text-center text-xl leading-8 font-medium text-stone-400 md:w-[760px]">
             See how our commitment to excellence delivers real payouts, consistent performance, and trader success.
         </div>
 
