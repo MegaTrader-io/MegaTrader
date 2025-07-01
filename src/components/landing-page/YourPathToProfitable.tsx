@@ -10,7 +10,8 @@ const items = [
     {
         option: 'evaluation',
         title: 'Pass the Challenge',
-        image: 'Window-your-payout-objectives.svg',
+        image: 'Window-your-payout-objectives.png',
+        imageMobile: 'Window-your-payout-objectives-mobile.png',
         description: 'Begin your journey by proving your trading discipline. Meet a set profit target while respecting daily and overall loss limits. This phase is designed to assess your risk management and consistency before granting access to funded capital.',
         features: [
             {
@@ -50,7 +51,8 @@ const items = [
     {
         option: 'get_funded',
         title: 'Trade With Firm Capital',
-        image: 'Window-funded-alert.svg',
+        image: 'Window-funded-alert.png',
+        imageMobile: 'Window-funded-alert-mobile.png',
         description: 'After successfully completing the evaluation, you’ll be granted a funded trading account. You’ll trade with zero personal risk while keeping up to 90% of profits, giving you the freedom to grow without the pressure of risking your own money.',
         features: [
             {
@@ -88,7 +90,8 @@ const items = [
     {
         option: 'trader_tools',
         title: 'Use Smart Trading Tools',
-        image: 'Window-avg-winning.svg',
+        image: 'Window-avg-winning.png',
+        imageMobile: 'Window-avg-winning-mobile.png',
         description: 'Access a suite of tools built for performance. Monitor your metrics, set risk limits, get instant feedback on your trades, and customize your workspace to fit your trading style. Everything is designed to help you trade smarter, not harder.',
         features: [
             {
@@ -142,25 +145,25 @@ function YourPathToProfitable() {
                 with powerful tools, clear rules, and real rewards.
             </div>
 
-            <div className="mx-auto flex py-12">
+            <div className="lg:mx-auto flex py-12">
                 <div
-                    className="w-fit mx-auto p-1 bg-[#1e1e1e] rounded-xl outline outline-1 outline-offset-[-1px] outline-neutral-700 inline-flex justify-start items-center gap-1">
-                    <Button onClick={() => setOption('evaluation')} variant={'primary'}
+                    className="w-full gap-1 space-y-1 rounded-xl bg-[#1e1e1e] p-1 outline outline-1 outline-offset-[-1px] outline-neutral-700 md:mx-auto md:inline-flex md:w-fit md:items-center md:justify-start md:space-y-0">
+                    <Button className="w-full md:w-auto" onClick={() => setOption('evaluation')} variant={'primary'}
                             styleType={option === 'evaluation' ? 'filled' : 'text'}>
                         EVALUATION
                     </Button>
-                    <Button onClick={() => setOption('get_funded')} variant={'primary'}
+                    <Button className="w-full md:w-auto" onClick={() => setOption('get_funded')} variant={'primary'}
                             styleType={option === 'get_funded' ? 'filled' : 'text'}>
                         GET FUNDED
                     </Button>
-                    <Button onClick={() => setOption('trader_tools')} variant={'primary'}
+                    <Button className="w-full md:w-auto" onClick={() => setOption('trader_tools')} variant={'primary'}
                             styleType={option === 'trader_tools' ? 'filled' : 'text'}>
                         TRADER TOOLS
                     </Button>
                 </div>
             </div>
 
-            <div className="flex gap-12">
+            <div className="space-y-12 lg:space-y-0 lg:flex gap-12">
                 <div className="w-full space-y-12 content-center">
                     <div
                         className="self-stretch justify-start text-white text-[40px] font-light uppercase leading-[48px]">
@@ -195,12 +198,21 @@ function YourPathToProfitable() {
                     </div>
                 </div>
 
-                <Card className="w-full !bg-[#1E1E1E] max-w-[558px] h-[680px] pb-0 pt-24 flex justify-center border-b-0">
+                <Card
+                    className="hidden sm:flex h-[680px] w-full justify-center border-b-0 !bg-[#1E1E1E] pt-24 pb-0 lg:max-w-[558px]">
                     <Image src={`/assets/images/${currentItem.image}`}
-                           alt="window funded alert"
-                           width={360}
-                           height={604}/>
+                           alt={currentItem.title}
+                           width={440}
+                           height={583}/>
                 </Card>
+
+                <div className="block w-full sm:hidden">
+                    <Image src={`/assets/images/${currentItem.imageMobile}`}
+                           alt={currentItem.title}
+                           className="w-full"
+                           width={360}
+                           height={720}/>
+                </div>
             </div>
         </section>
     );
