@@ -40,8 +40,8 @@ function ArrowDown({className}: { className: string }) {
 const FaqsSection = ({className = '', faqs = []}: { className?: string, faqs: FAQ[] }) => {
     return (
         <div className={clsx(`mx-auto max-w-[1030px] space-y-8`, className)}>
-            {faqs.map((faq) => (
-                <Disclosure key={faq.question} as="div" className="group">
+            {faqs.map((faq, index) => (
+                <Disclosure key={faq.question} as="div" className="group" defaultOpen={index === 0}>
                     <DisclosureButton
                         className="px-4 group-data-[open]:border-none group-data-[open]:border-transparent group-data-[open]:bg-[#131210] rounded-2xl flex w-full items-center flex-col text-left ">
                         <div className="flex w-full items-center justify-between">

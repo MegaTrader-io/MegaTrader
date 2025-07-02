@@ -10,7 +10,7 @@ interface CopyButtonProps {
     defaultIcon?: React.ReactNode;
 }
 
-function DefaultIcon() {
+export function DefaultCopyIcon() {
     return <svg
         width="24"
         height="24"
@@ -41,7 +41,7 @@ function DefaultIcon() {
 export function CopyButton({
                                value,
                                className,
-                               defaultIcon = <DefaultIcon/>,
+                               defaultIcon = <DefaultCopyIcon/>,
                                color = "#A8A29E",
                                disabled = false
                            }: CopyButtonProps) {
@@ -91,7 +91,7 @@ export function CopyButton({
             {defaultIcon}
 
             {copySuccess && (
-                <span className="absolute top-[-20px] right-[-9px] text-xs text-gray-400">
+                <span className="absolute top-[-20px] -translate-x-[45%] text-xs text-gray-400">
           copied
         </span>
             )}

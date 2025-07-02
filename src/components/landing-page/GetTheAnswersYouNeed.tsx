@@ -3,7 +3,7 @@ import Faqs from "@/components/landing-page/Faqs";
 import clsx from "clsx";
 import {faqsData} from "@/commons/data";
 import Card from "@/components/Card";
-import {CopyButton} from "@/components/CopyButton";
+import {CopyButton, DefaultCopyIcon} from "@/components/CopyButton";
 
 const defaultCategory = 'Getting Started';
 
@@ -94,10 +94,14 @@ function GetTheAnswersYouNeed() {
                                 <div
                                     className="flex-1 justify-start text-stone-400 text-base font-medium font-['Roboto'] leading-normal">support@megatarder.io
                                 </div>
-                                <CopyButton className="text-[#ffd78a]" value={email}/>
-                                <div
-                                    className="text-right justify-start text-[#ffd78a] text-sm font-medium  uppercase leading-tight">Copy
-                                </div>
+                                <CopyButton className="text-[#ffd78a]" defaultIcon={<>
+                                    <div className="flex items-center gap-2">
+                                        <DefaultCopyIcon/>
+                                        <div
+                                            className="text-right justify-start text-[#ffd78a] text-sm font-medium  uppercase leading-tight">Copy
+                                        </div>
+                                    </div>
+                                </>} value={email}/>
                             </div>
                         </div>
                     </Card>
