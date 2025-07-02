@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Faqs from "@/components/landing-page/Faqs";
 import clsx from "clsx";
-import {credentials, faqsData} from "@/commons/data";
+import {faqsData} from "@/commons/data";
 import Card from "@/components/Card";
 import {CopyButton} from "@/components/CopyButton";
 
