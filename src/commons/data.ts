@@ -729,3 +729,111 @@ export const PayoutMethod = {
     CRYPTO_ETH: 'crypto_eth',
     WIRE_ACH: 'wire_ach',
 } as const;
+
+export const faqsData = [
+    {
+        "category": "Getting Started",
+        "faqs": [
+            {
+                "question": "How do I sign up for an account?",
+                "answer": "Choose your plan, create an account using your email, and get immediate access to your evaluation account."
+            },
+            {
+                "question": "What do I need to pass the evaluation?",
+                "answer": "Reach the profit target while staying within risk limits such as daily loss and trailing drawdown. Consistency is key."
+            },
+            {
+                "question": "Can I start right after payment?",
+                "answer": "Yes. As soon as your payment is processed, your evaluation account is instantly activated and ready for trading."
+            },
+            {
+                "question": "Is this suitable for beginners?",
+                "answer": "The program is built for traders with some experience, but motivated beginners who understand the basics are welcome to join."
+            }
+        ]
+    },
+    {
+        "category": "Pricing & Payouts",
+        "faqs": [
+            {
+                "question": "How much does it cost to join?",
+                "answer": "Plans start at $39.99/month depending on account size. Each plan includes access to the evaluation system and trading tools."
+            },
+            {
+                "question": "What is the profit split?",
+                "answer": "Funded traders keep 90% of their profits—among the most competitive payouts in the industry."
+            },
+            {
+                "question": "How do I receive my payouts?",
+                "answer": "Payouts are processed weekly and sent via RiseWorks, Bitcoin, or Ethereum—based on your selected method."
+            },
+            {
+                "question": "Are there any hidden or recurring fees?",
+                "answer": "No hidden fees. You only pay for your plan, plus optional fees for resets or activation if applicable."
+            }
+        ]
+    },
+    {
+        "category": "Affiliate Program",
+        "faqs": [
+            {
+                "question": "What is the MegaTrader affiliate program?",
+                "answer": "It’s a referral program where you earn recurring commissions for bringing new traders to the platform."
+            },
+            {
+                "question": "How do I earn commission?",
+                "answer": "Share your custom affiliate link. You earn every time someone signs up and remains active through your referral."
+            },
+            {
+                "question": "Can traders also become affiliates?",
+                "answer": "Absolutely. Many of our best affiliates are also funded traders building both income streams."
+            },
+            {
+                "question": "What’s the earning potential?",
+                "answer": "There’s no cap. Affiliates can earn from hundreds to thousands monthly, depending on referral volume and activity."
+            }
+        ]
+    },
+    {
+        "category": "Platform & Features",
+        "faqs": [
+            {
+                "question": "Which trading platforms can I use?",
+                "answer": "We support NinjaTrader, Quantower, Tradovate, and more—ensuring seamless and professional trading experiences."
+            },
+            {
+                "question": "Can I use automated trading systems?",
+                "answer": "Yes. Automation is allowed as long as your strategy stays within our risk parameters and trading rules."
+            },
+            {
+                "question": "Do I get a performance dashboard?",
+                "answer": "Yes. You’ll have access to a real-time dashboard tracking metrics like profit/loss, win rate, drawdown, and consistency."
+            },
+            {
+                "question": "Is there a mobile trading option?",
+                "answer": "Yes. Most supported platforms offer mobile apps for monitoring and managing trades on the go."
+            }
+        ]
+    },
+    {
+        "category": "Account & Compliance",
+        "faqs": [
+            {
+                "question": "What happens if I break a rule?",
+                "answer": "Violating rules—such as exceeding max drawdown—will invalidate your evaluation. You may restart by purchasing a reset."
+            },
+            {
+                "question": "How do I verify my identity for payouts?",
+                "answer": "You’ll complete a one-time KYC process before your first withdrawal to comply with payout and regulatory requirements."
+            },
+            {
+                "question": "Can I change my plan after signing up?",
+                "answer": "No. Plans are fixed once chosen. To use a different account size, start a new evaluation under the desired plan."
+            },
+            {
+                "question": "Is my data secure on your platform?",
+                "answer": "Yes. We implement enterprise-level encryption and strict data protocols to safeguard your personal and financial information."
+            }
+        ]
+    }
+];

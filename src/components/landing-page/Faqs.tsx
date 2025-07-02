@@ -1,130 +1,69 @@
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/react'
-import {ArrowDownIcon, ArrowUpIcon} from '@heroicons/react/24/outline'
 import React from "react";
 import clsx from "clsx";
 
-interface Faqs {
-    question: string;
-    answer: React.ReactElement | null;
+export interface FAQ {
+    question: string
+    answer: string
 }
 
-function Question1() {
-    return (
-        <p className="text-base/7 text-gray-300">
-            MegaTrader is a proprietary trading firm (prop firm) specializing in futures trading, offering traders
-            cutting-edge tools and capital to maximize their success.
-        </p>
-    )
+function ArrowUp({className}: { className: string }) {
+    return <div className={className}>
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <mask id="mask0_8223_24371" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0" width="30"
+                  height="30">
+                <rect width="30" height="30" fill="#D9D9D9"/>
+            </mask>
+            <g mask="url(#mask0_8223_24371)">
+                <path d="M13.75 16.25H6.25V13.75H13.75V6.25H16.25V13.75H23.75V16.25H16.25V23.75H13.75V16.25Z"
+                      fill="white"/>
+            </g>
+        </svg>
+    </div>
 }
 
-function Question2() {
-    return (
-        <p className="text-base/7 text-gray-300">
-            MegaTrader provides funded futures trading accounts to evaluate traders{"'"} skills. If you perform
-            successfully, you can earn profits without risking your own capital.
-        </p>
-    )
+function ArrowDown({className}: { className: string }) {
+    return <div className={className}>
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <mask id="mask0_8280_2980" style={{maskType: 'alpha'}} maskUnits="userSpaceOnUse" x="0" y="0" width="30"
+                  height="30">
+                <rect width="30" height="30" fill="#D9D9D9"/>
+            </mask>
+            <g mask="url(#mask0_8280_2980)">
+                <path d="M6.25 16.25V13.75H23.75V16.25H6.25Z" fill="white"/>
+            </g>
+        </svg>
+    </div>
 }
 
-function Question3() {
-    return (
-        <p className="text-base/7 text-gray-300">
-            Yes! MegaTrader allows you to trade on multiple accounts simultaneously, offering flexibility and
-            scalability for skilled traders.
-        </p>
-    )
-}
 
-function Question4() {
+const FaqsSection = ({className = '', faqs = []}: { className?: string, faqs: FAQ[] }) => {
     return (
-        <p className="text-base/7 text-gray-300">
-            Absolutely. MegaTrader is exclusively dedicated to futures trading, ensuring you have access to
-            specialized tools, resources, and opportunities tailored for this market.
-        </p>
-    )
-}
-
-function Question5() {
-    return (
-        <div className="text-left">
-            <p className="text-base/7 text-gray-300">
-                MegaTrader offers three account options:<br/>
-                You can choose the plan that best fits your trading goals and budget.<br/>
-                - Basic Plan: $89.99/month for a $50k account<br/>
-                - Premium Plan: $149.99/month for a $100k account<br/>
-                - Unlimited Plan: $199.99/month for a $150k account<br/>
-            </p>
+        <div className={clsx(`mx-auto max-w-[1030px] space-y-8`, className)}>
+            {faqs.map((faq) => (
+                <Disclosure key={faq.question} as="div" className="group">
+                    <DisclosureButton
+                        className="px-4 group-data-[open]:border-none group-data-[open]:border-transparent group-data-[open]:bg-[#131210] rounded-2xl flex w-full items-center flex-col text-left ">
+                        <div className="flex w-full items-center justify-between">
+                            <div
+                                className="text-white text-xl font-light w-full leading-6 uppercase py-2">{faq.question}
+                            </div>
+                            <div className="text-white">
+                                <ArrowUp aria-hidden="true" className="group-data-[open]:hidden"/>
+                                <ArrowDown aria-hidden="true"
+                                           className="group-[&:not([data-open])]:hidden"/>
+                            </div>
+                        </div>
+                        <DisclosurePanel as="div">
+                            <p className="text-stone-400 justify-start text-base font-medium leading-6 pt-2">
+                                {faq.answer}
+                            </p>
+                        </DisclosurePanel>
+                    </DisclosureButton>
+                </Disclosure>
+            ))}
         </div>
     )
 }
-
-function Question6() {
-    return (
-        <p className="text-base/7 text-gray-300">
-            Yes! MegaTrader adheres to all industry regulations and compliance standards to provide a safe,
-            secure, and professional trading environment.
-        </p>
-    )
-}
-
-const faqs: Faqs[] = [
-    {
-        question: '1. WHAT IS MEGATRADER?',
-        answer: <Question1/>
-    },
-    {
-        question: '2. HOW DOES MEGATRADER WORK?',
-        answer: <Question2/>
-    },
-    {
-        question: '3. CAN I TRADE ON MULTIPLE ACCOUNTS?',
-        answer: <Question3/>
-    },
-    {
-        question: '4. IS MEGATRADER FOCUSED ONLY ON FUTURES TRADING?',
-        answer: <Question4/>
-    },
-    {
-        question: '5. HOW MUCH DOES IT COST TO GET STARTED WITH MEGATRADER?',
-        answer: <Question5/>
-    },
-    {
-        question: '6. IS MEGATRADER COMPLIANT WITH INDUSTRY REGULATIONS?',
-        answer: <Question6/>
-    },
-];
-
-const FaqsSection = ({className = ''}: { className?: string }) => {
-    return (
-        <section id="faq" className={clsx(`mx-auto max-w-[1030px] mb-8`, className)}>
-            <h2 className="text-[32px] font-light lg:text-5xl text-white text-center pb-8 leading-10 lg:leading-[60px]">
-                FREQUENTLY ASKED QUESTIONS
-            </h2>
-            <div>
-                {faqs.map((faq) => (
-                    <Disclosure key={faq.question} as="div" className="mb-2 group">
-                        <DisclosureButton
-                            className=" bg-[#1e1e1e] p-4 group-data-[open]:border group-data-[open]:border-neutral-700 group-data-[open]:bg-[#131210] rounded-2xl flex w-full items-center flex-col text-left ">
-                            <div className="flex  w-full items-center justify-between">
-                                <div
-                                    className="text-white text-xl font-light w-full leading-6 py-2">{faq.question}
-                                </div>
-                                <div className="w-6 h-6 items-center  text-white">
-                                    <ArrowDownIcon aria-hidden="true" className="w-6 h-6 group-data-[open]:hidden"/>
-                                    <ArrowUpIcon aria-hidden="true"
-                                                 className="w-6 h-6 group-[&:not([data-open])]:hidden"/>
-                                </div>
-                            </div>
-                            <DisclosurePanel as="div" className="text-base text-white py-2 text-left w-full">
-                                {faq.answer}
-                            </DisclosurePanel>
-                        </DisclosureButton>
-                    </Disclosure>
-                ))}
-            </div>
-        </section>
-    )
-}
-
 
 export default FaqsSection;

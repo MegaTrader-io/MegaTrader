@@ -18,6 +18,7 @@ import EarnMoreThrouchOurAffiliateProgram from "@/components/landing-page/EarnMo
 import DiscoverThePlatformsPoweringYourTrades from "@/components/landing-page/DiscoverThePlatformsPoweringYourTrades";
 import OurWithDrawalMethods from "@/components/landing-page/OurWithDrawalMethods";
 import TrustedByLeadres from "@/components/landing-page/TrustedByLeadres";
+import GetTheAnswersYouNeed from "@/components/landing-page/GetTheAnswersYouNeed";
 
 const Page = () => {
     return <>
@@ -70,7 +71,8 @@ const Page = () => {
             <DiscoverThePlatformsPoweringYourTrades/>
             <OurWithDrawalMethods/>
             <TrustedByLeadres/>
-            <div></div>
+            <GetTheAnswersYouNeed/>
+            <div className="pb-12"></div>
         </main>
         <Footer/>
     </>

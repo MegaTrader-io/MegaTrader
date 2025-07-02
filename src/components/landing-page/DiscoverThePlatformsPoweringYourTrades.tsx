@@ -133,7 +133,7 @@ function DiscoverThePlatformsPoweringYourTrades() {
                                 {feature.icon}
                             </div>
                             <div
-                                className="justify-start text-teal-400 text-base font-medium font-['Roboto'] leading-normal">
+                                className="justify-start text-teal-400 text-base font-medium leading-normal">
                                 {feature.title}
                             </div>
                         </div>
@@ -141,10 +141,10 @@ function DiscoverThePlatformsPoweringYourTrades() {
                 </div>
             </div>
             <Card className="w-full py-8">
-                <div className="flex">
+                <div className="md:flex">
                     {platforms.map((platform, index) => (
                         <div key={index} onClick={() => changeOption(index)}
-                             className="flex flex-col w-full items-center p-4 space-y-2 cursor-pointer">
+                             className="gap-2 flex md:flex-col w-full md:items-center p-4 space-y-2 cursor-pointer">
                             <Image
                                 src={relativePath + (currentSelection === index ? `${platform.image}-on.png` : `${platform.image}-off.png`)}
                                 width={40}
@@ -165,7 +165,7 @@ function DiscoverThePlatformsPoweringYourTrades() {
                         </div>
                     ))}
                 </div>
-                <div className="px-4 space-y-4 mt-8">
+                <div className="px-4 space-y-4 mt-6 md:mt-8">
                     <div
                         className="justify-start text-white text-xl font-light uppercase leading-6">
                         {body.name}
