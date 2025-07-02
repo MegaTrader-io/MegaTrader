@@ -30,7 +30,7 @@ function EarnMoreThrouchOurAffiliateProgram() {
                 </div>
 
                 <div
-                    className="justify-start text-stone-400 text-xl font-medium font-['Roboto'] leading-8">Join
+                    className="justify-start text-stone-400 text-xl font-medium leading-8">Join
                     our affiliate program and earn recurring commissions by referring new traders to the platform. It’s
                     a simple way to build passive income while helping others start their funded trading journey.
                 </div>
