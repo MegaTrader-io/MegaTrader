@@ -31,7 +31,7 @@ function ToTopButton() {
     }
 
     return (
-        <div className={clsx("fixed bottom-5 right-5  transition-all duration-300 ease-in-out", {'opacity-100': visible, 'opacity-0': !visible})}>
+        <div className={clsx("fixed bottom-[1.875rem] right-24 transition-all duration-300 ease-in-out", {'opacity-100': visible, 'opacity-0': !visible})}>
             <Button
                 onClick={scrollToTop} styleType={'filled'} variant={'light'}>
                 <div className="flex gap-2">

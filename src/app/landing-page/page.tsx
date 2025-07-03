@@ -1,6 +1,6 @@
 'use client';
 
-import {Suspense} from 'react'
+import {Suspense, useEffect} from 'react'
 import HeroSection from "@/components/landing-page/HeroSection";
 import Header from "@/components/landing-page/Header";
 import Footer from "@/components/landing-page/Footer";
@@ -20,9 +20,26 @@ import OurWithDrawalMethods from "@/components/landing-page/OurWithDrawalMethods
 import TrustedByLeadres from "@/components/landing-page/TrustedByLeadres";
 import GetTheAnswersYouNeed from "@/components/landing-page/GetTheAnswersYouNeed";
 import ToTopButton from "@/components/ToTopButton";
+import Intercom, {shutdown} from '@intercom/messenger-js-sdk';
 
 const Page = () => {
+    useEffect(() => {
 
+        if (typeof window !== 'undefined' && window.__intercomInitialized) return;
+
+        Intercom({
+            app_id: 'izt54gd4',
+        });
+
+        window.__intercomInitialized = true;
+
+
+        return () => {
+            window.__intercomInitialized = false;
+
+            shutdown();
+        }
+    }, []);
 
 
     return <>
@@ -77,7 +94,7 @@ const Page = () => {
             <GetTheAnswersYouNeed/>
         </main>
         <Footer/>
-        <ToTopButton />
+        <ToTopButton/>
     </>
 }
 
