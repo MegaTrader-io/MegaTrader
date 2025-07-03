@@ -97,7 +97,7 @@ const items = [
 
 function SmarterToolsForConfidentTrading() {
     return (
-        <section className="px-4 py-12">
+        <section id="features" className="px-4 py-12">
             <div className="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
                 Smarter Tools for Confident Trading
             </div>

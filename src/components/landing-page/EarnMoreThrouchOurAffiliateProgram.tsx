@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function EarnMoreThrouchOurAffiliateProgram() {
     return (
-        <section className="flex flex-col lg:grid lg:grid-cols-[auto_1fr] gap-12 px-4 py-12">
+        <section id="feature-earn-more-throuch" className="flex flex-col lg:grid lg:grid-cols-[auto_1fr] gap-12 px-4 py-12">
             <Card className="hidden order-2 sm:flex h-full w-full items-center lg:order-none">
                 <Image src={`/assets/images/FeatureContent.png`}
                        width={689}

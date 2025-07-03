@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function TrustedByLeadres() {
     return (
-        <section className="space-y-12 pb-12 px-4">
+        <section id="feature-trusted-by-leadres" className="space-y-12 pb-12 px-4">
             <div className="w-full space-y-4">
                 <div
                     className="justify-start text-center text-white text-[40px] font-light uppercase leading-[48px]">

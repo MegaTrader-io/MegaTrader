@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const HeroSection = ({className = ''}: { className?: string }) => (
-    <section className={className}>
+    <section id="hero-section" className={className}>
         <div className="py-12 space-y-12">
             <div className="space-y-4">
                 <div

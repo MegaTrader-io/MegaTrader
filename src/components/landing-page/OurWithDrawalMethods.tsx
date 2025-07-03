@@ -3,7 +3,7 @@ import Image from "next/image";
 
 function OurWithDrawalMethods() {
     return (
-        <section className="px-4 py-12">
+        <section id="feature-our-with-drawal-methods" className="px-4 py-12">
             <div className="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
                 Our withdrawal Methods
             </div>

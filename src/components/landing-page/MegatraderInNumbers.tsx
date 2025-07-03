@@ -31,7 +31,7 @@ const Items = [
 ];
 
 const MegatraderInNumbers: NextPage = () => (
-    <section className="space-y-4 px-4 pb-12">
+    <section id="megatrader-numbers" className="space-y-4 px-4 pb-12">
         <div className="self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
             Megatrader in numbers
         </div>

@@ -6,38 +6,40 @@ import PopoverMenu from "@/components/backoffice/PopoverMenu";
 import {usePathname} from "next/navigation";
 
 const navigationItems = [
-    {href: '#home', label: 'HOME', sectionId: 'home'},
-    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works'},
-    {href: '#pricing', label: 'PRICING', sectionId: 'pricing'},
-    {href: '#features', label: 'FEATURES', sectionId: 'features'},
-    {href: '#faq', label: 'FAQ', sectionId: 'faq'},
+    {href: '#hero-section', label: 'HOME', sectionId: 'hero-section', visible: true},
+    {href: '#hero-section', label: '', sectionId: 'market-data', visible: false},
+    {href: '#hero-section', label: '', sectionId: 'sponsor', visible: false},
+    {href: '#hero-section', label: '', sectionId: 'megatrader-numbers', visible: false},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works', visible: true},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works-01', visible: false},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works-02', visible: false},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works-03', visible: false},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works-04', visible: false},
+    {href: '#how-it-works', label: 'HOW IT WORKS', sectionId: 'how-it-works-05', visible: false},
+    {href: '#pricing', label: 'PRICING', sectionId: 'pricing', visible: true},
+    {href: '#features', label: 'FEATURES', sectionId: 'features', visible: true},
+    {href: '#features', label: '', sectionId: 'feature-smarter-tools', visible: false},
+    {href: '#features', label: '', sectionId: 'feature-your-path', visible: false},
+    {href: '#features', label: '', sectionId: 'feature-earn-more-throuch', visible: false},
+    {href: '#features', label: '', sectionId: 'feature-discover-the-platforms', visible: false},
+    {href: '#features', label: '', sectionId: 'feature-our-with-drawal-methods', visible: false},
+    {href: '#features', label: '', sectionId: 'feature-trusted-by-leadres', visible: false},
+    {href: '#faq', label: 'FAQ', sectionId: 'faq', visible: true},
 ];
 
 export default function Header() {
-    const [activeSection, setActiveSection] = useState('home');
-    const [hasScrolled, setHasScrolled] = useState(false);
+    const [activeSection, setActiveSection] = useState('hero-section');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const currentPath = usePathname()
-
-    console.info(hasScrolled);
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 10) {
-                setHasScrolled(true);
-            } else {
-                setHasScrolled(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    const section = navigationItems.find(nav => nav.sectionId === activeSection)!
+    const activeSectionGroup = section.href.replace('#', '');
+    const visibleNavigationItems = navigationItems.filter(n => n.visible);
 
     useEffect(() => {
         const options = {
             root: null,
-            rootMargin: '0px',
-            threshold: 0.6,
+            rootMargin: '100px 0px 100px 0px',
+            threshold: 0.8,
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -48,16 +50,18 @@ export default function Header() {
             });
         }, options);
 
+        const observedElements: HTMLElement[] = [];
+
         navigationItems.forEach(({sectionId}) => {
             const element = document.getElementById(sectionId);
-            if (element) observer.observe(element);
+            if (element) {
+                observer.observe(element);
+                observedElements.push(element);
+            }
         });
 
         return () => {
-            navigationItems.forEach(({sectionId}) => {
-                const element = document.getElementById(sectionId);
-                if (element) observer.unobserve(element);
-            });
+            observedElements.forEach((el) => observer.unobserve(el));
         };
     }, []);
 
@@ -106,13 +110,13 @@ export default function Header() {
                         isMenuOpen ? 'block' : 'hidden'
                     } absolute top-[96px] left-0 w-full h-screen ${isMenuOpen ? 'bg-[#1e1e1e]' : 'bg-[#111]'}  flex flex-col items-center lg:hidden`}
                 >
-                    {navigationItems.map((item) => (
+                    {visibleNavigationItems.map((item) => (
                         <Link
                             key={item.label}
                             href={item.href}
                             onClick={(e) => handleClick(e, item.href)}
                             className={`text-xl text-neutral-50 font-light uppercase leading-6 px-4 py-3 transition-all duration-200 ${
-                                activeSection === item.sectionId
+                                activeSectionGroup === item.sectionId
                                     ? 'text-white bg-[#1e1e1e] rounded-lg'
                                     : 'text-gray-400 hover:text-white'
                             }`}
@@ -126,13 +130,13 @@ export default function Header() {
                     className="hidden lg:flex justify-start items-center flex-row xl:gap-2"
                     aria-label="Main navigation"
                 >
-                    {navigationItems.map((item) => (
+                    {visibleNavigationItems.map((item) => (
                         <Link
                             key={item.label}
                             href={item.href}
                             onClick={(e) => handleClick(e, item.href)}
                             className={`text-base text-neutral-50 text-nowrap font-light uppercase leading-6 px-4 py-3 transition-all duration-200 ${
-                                activeSection === item.sectionId
+                                activeSectionGroup === item.sectionId
                                     ? 'text-white bg-[#1e1e1e] rounded-lg'
                                     : 'text-gray-400 hover:text-white'
                             }`}
@@ -155,7 +159,7 @@ export default function Header() {
                                      className="block lg:hidden"
                                      icon={<Bars3Icon className="w-6 h-6 text-white"/>}>
                             <div className="gap1 flex flex-col">
-                                {navigationItems.map((item) => (
+                                {visibleNavigationItems.map((item) => (
                                     <Link
                                         key={item.label}
                                         href={item.href}

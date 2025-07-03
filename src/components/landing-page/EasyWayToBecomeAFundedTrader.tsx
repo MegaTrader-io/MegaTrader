@@ -5,7 +5,7 @@ import Image from "next/image";
 import React from "react";
 
 const EasyWayToBecomeAFundedTrader: NextPage = () => (
-    <section className="px-4">
+    <section id="how-it-works" className="px-4 relative">
         <div className="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
             Easy way to become a funded trader
         </div>
@@ -17,7 +17,7 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
         </div>
 
         <div>
-            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
+            <div id="how-it-works-01" className="grid grid-cols-[1fr_14px_1fr] gap-8">
                 <div className="flex justify-center">
                     <PlanVerticalList/>
                 </div>
@@ -47,7 +47,7 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
+            <div id="how-it-works-02" className="grid grid-cols-[1fr_14px_1fr] gap-8">
                 <div className="flex items-center justify-end">
                     <div
                         className="text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] space lg:max-w-[585px] relative">
@@ -77,7 +77,7 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </Card>
                 </div>
             </div>
-            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
+            <div id="how-it-works-03" className="grid grid-cols-[1fr_14px_1fr] gap-8">
                 <div className="flex justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0 relative">
                         <Image src={`/assets/images/Window-request-payouts.svg`} alt="veriff" width={360} height={524}/>
@@ -109,8 +109,7 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </div>
                 </div>
             </div>
-
-            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
+            <div id="how-it-works-04" className="grid grid-cols-[1fr_14px_1fr] gap-8">
                 <div className="flex items-center justify-end">
                     <div
                         className="text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
@@ -140,7 +139,7 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </Card>
                 </div>
             </div>
-            <div className="grid grid-cols-[1fr_14px_1fr] gap-8">
+            <div id="how-it-works-05" className="grid grid-cols-[1fr_14px_1fr] gap-8">
                 <div className="flex justify-center">
                     <Image src={`/assets/images/card-get-paid-keep-trading.svg`} alt="veriff" width={585}
                            height={457}/>
@@ -169,11 +168,8 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
-
     </section>
 );
 

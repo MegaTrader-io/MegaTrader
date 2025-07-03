@@ -184,7 +184,7 @@ function ChooseYourAccountSize() {
     }
 
     return (
-        <section className="px-4">
+        <section id="pricing" className="px-4">
             <div className="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
                 Choose your account size
             </div>

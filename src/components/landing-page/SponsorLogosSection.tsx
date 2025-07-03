@@ -2,7 +2,7 @@ import Image from "next/image";
 import clsx from "clsx";
 
 const SponsorLogosSection = ({className = ""}: { className?: string }) => (
-    <section className={clsx("space-y-4", className)}>
+    <section id="sponsor" className={clsx("space-y-4", className)}>
         <div className="self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
             Trusted Platforms
         </div>

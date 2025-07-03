@@ -43,13 +43,13 @@ const Page = () => {
 
 
     return <>
-        <header id="home" className="px-4 w-full z-50">
+        <header className="px-4 w-full z-50">
             <Header/>
         </header>
         <main
             className="min-h-[calc(100vh-96px)] relative lg:h-full mt-[124px] w-full lg:max-w-7xl space-y-12 mx-auto mb-24">
             <HeroSection className="px-4"/>
-            <div className="px-4 pb-12 space-y-8">
+            <section id="market-data" className="px-4 pb-12 space-y-8">
                 <div className="mx-auto flex justify-center">
 
                     <Image
@@ -80,7 +80,7 @@ const Page = () => {
                 <Suspense fallback={'loading...'}>
                     <MarketOverviewSection/>
                 </Suspense>
-            </div>
+            </section>
             <SponsorLogosSection className="px-4"/>
             <MegatraderInNumbers/>
             <EasyWayToBecomeAFundedTrader/>

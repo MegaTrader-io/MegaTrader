@@ -134,7 +134,7 @@ function YourPathToProfitable() {
     const currentItem = items.find(item => item.option === option)!;
 
     return (
-        <section className="px-4">
+        <section id="feature-your-path" className="px-4">
             <div className="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
                 Your Path to Profitable Trading Starts Here
             </div>
