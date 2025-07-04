@@ -16,14 +16,14 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
             earning with confidence and clarity.
         </div>
 
-        <div>
-            <div id="how-it-works-01" className="grid grid-cols-[1fr_14px_1fr] gap-8">
-                <div className="flex justify-center">
+        <div className="ml-2 sm:ml-auto">
+            <div id="how-it-works-01" className="grid grid-cols-[24px_1fr] sm:grid-cols-[1fr_14px_1fr] gap-8">
+                <div className="hidden sm:flex sm:justify-center">
                     <PlanVerticalList/>
                 </div>
-                <div></div>
-                <div className="grid grid-rows-[35%_1fr] wrapper-timeline">
-                    <div></div>
+                <div/>
+                <div className="sm:grid sm:grid-rows-[35%_1fr] wrapper-timeline">
+                    <div/>
                     <div
                         className="vertical-line-timeline after:-left-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
@@ -47,15 +47,15 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </div>
                 </div>
             </div>
-            <div id="how-it-works-02" className="grid grid-cols-[1fr_14px_1fr] gap-8">
-                <div className="flex items-center justify-end">
+            <div id="how-it-works-02" className="grid grid-cols-[24px_1fr] sm:grid-cols-[1fr_14px_1fr] gap-8">
+                <div className="order-2 sm:order-none flex sm:items-center sm:justify-end">
                     <div
-                        className="text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] space lg:max-w-[585px] relative">
+                        className="text-left sm:text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] space lg:max-w-[585px] relative">
                         <div
-                            className="justify-start relative text-white text-[32px] font-medium uppercase leading-10">
+                            className="mt-6 sm:mt-auto justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             02
                             <div
-                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -right-[46px]"></div>
+                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -left-[46px] sm:!left-[auto] sm:-right-[46px]"/>
                         </div>
                         <div
                             className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">
@@ -68,31 +68,31 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                         </div>
                     </div>
                 </div>
-                <div>
-                    <div className="timeline-vertica-line w-[2px] bg-[#ffb34a] h-full mx-auto"></div>
+                <div className="order-1 sm:order-none sm:mx-auto">
+                    <div className="w-[2px] bg-[#ffb34a] h-full ml-4 sm:ml-auto"/>
                 </div>
-                <div className="flex justify-center">
+                <div className="hidden sm:flex sm:justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0">
                         <Image src={`/assets/images/Window-congrats.svg`} alt="veriff" width={440} height={543}/>
                     </Card>
                 </div>
             </div>
-            <div id="how-it-works-03" className="grid grid-cols-[1fr_14px_1fr] gap-8">
-                <div className="flex justify-center">
+            <div id="how-it-works-03" className="grid grid-cols-[24px_1fr] sm:grid-cols-[1fr_14px_1fr] gap-8">
+                <div className="hidden sm:flex sm:flex justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0 relative">
                         <Image src={`/assets/images/Window-request-payouts.svg`} alt="veriff" width={360} height={524}/>
                         <Image src={`/assets/images/icons.png`} alt="veriff" className="absolute right-4 bottom-4"
                                width={160} height={48}/>
                     </Card>
                 </div>
-                <div>
-                    <div className="timeline-vertica-line w-[2px] bg-[#ffb34a] h-full mx-auto"></div>
+                <div className="order-1 sm:order-none sm:mx-auto">
+                    <div className="w-[2px] bg-[#ffb34a] h-full ml-4 sm:ml-auto"/>
                 </div>
-                <div className="flex items-center">
+                <div className="order-2 sm:order-none flex sm:items-center sm:justify-end">
                     <div
                         className="text-left after:!top-0 after:-left-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
-                            className="justify-start relative text-white text-[32px] font-medium uppercase leading-10">
+                            className="mt-6 sm:mt-auto justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             03
                             <div
                                 className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -left-[46px]"></div>
@@ -109,15 +109,15 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                     </div>
                 </div>
             </div>
-            <div id="how-it-works-04" className="grid grid-cols-[1fr_14px_1fr] gap-8">
-                <div className="flex items-center justify-end">
+            <div id="how-it-works-04" className="grid grid-cols-[24px_1fr] sm:grid-cols-[1fr_14px_1fr] gap-8">
+                <div className="order-2 sm:order-none flex sm:items-center sm:justify-end">
                     <div
-                        className="text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
+                        className="text-left sm:text-right after:!top-0 after:-right-[40px] w-full max-w-[321px] space lg:max-w-[585px] relative">
                         <div
-                            className="justify-start relative text-white text-[32px] font-medium uppercase leading-10">
+                            className="mt-6 sm:mt-auto justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             04
                             <div
-                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -right-[46px]"></div>
+                                className="w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -left-[46px] sm:!left-[auto] sm:-right-[46px]"/>
                         </div>
                         <div
                             className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">
@@ -130,32 +130,32 @@ const EasyWayToBecomeAFundedTrader: NextPage = () => (
                         </div>
                     </div>
                 </div>
-                <div>
-                    <div className="timeline-vertica-line w-[2px] bg-[#ffb34a] h-full mx-auto"></div>
+                <div className="order-1 sm:order-none sm:mx-auto">
+                    <div className="w-[2px] bg-[#ffb34a] h-full ml-4 sm:ml-auto"/>
                 </div>
-                <div className="flex justify-center">
+                <div className="hidden sm:flex sm:justify-center">
                     <Card className="w-full max-w-[585px] pb-0 flex justify-center border-b-0">
                         <Image src={`/assets/images/Window-selfie-veriff.svg`} alt="veriff" width={440} height={543}/>
                     </Card>
                 </div>
             </div>
-            <div id="how-it-works-05" className="grid grid-cols-[1fr_14px_1fr] gap-8">
-                <div className="flex justify-center">
+            <div id="how-it-works-05" className="grid grid-cols-[24px_1fr] sm:grid-cols-[1fr_14px_1fr] gap-8">
+                <div className="hidden sm:flex sm:justify-center">
                     <Image src={`/assets/images/card-get-paid-keep-trading.svg`} alt="veriff" width={585}
                            height={457}/>
                 </div>
-                <div></div>
-                <div className="grid grid-rows-[35%_1fr] wrapper-timeline">
-                    <div className="relative h-full">
-                        <div className=" w-[2px] bg-[#ffb34a] h-full absolute -left-[40px]"></div>
+                <div/>
+                <div className="sm:grid sm:grid-rows-[35%_1fr] wrapper-timeline">
+                    <div className="relative sm:h-full">
+                        <div className="w-[2px] bg-[#ffb34a] h-full absolute -left-[40px]"></div>
                     </div>
                     <div
                         className="after:-left-[40px] w-full max-w-[321px] lg:max-w-[585px] relative">
                         <div
-                            className="justify-start relative text-white text-[32px] font-medium uppercase leading-10">
+                            className="mt-6 sm:mt-auto justify-start relative text-white text-[32px] font-medium uppercase leading-10">
                             05
                             <div
-                                className="last-timeline-point w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -left-[46px]"></div>
+                                className="last-timeline-point before:!h-[38px] before:!-top-[38px] w-3.5 h-3.5 bg-[#ffb34a] rounded-full absolute top-[13px] -left-[46px]"/>
                         </div>
                         <div
                             className="justify-start text-[#ffb34a] text-xl font-medium leading-loose">

@@ -34,7 +34,7 @@ function ToTopButton() {
     }
 
     return (
-        <div className={clsx("fixed bottom-[1.875rem] right-24 transition-all duration-300 ease-in-out", {
+        <div className={clsx("fixed bottom-5 sm:bottom-[1.875rem] right-24 transition-all duration-300 ease-in-out", {
             'opacity-100': visible,
             'opacity-0': !visible
         })}>
