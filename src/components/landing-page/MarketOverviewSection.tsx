@@ -119,7 +119,7 @@ const MarketOverviewSection = ({className = ''}: { className?: string }) => {
     if (error) return null;
 
     return <>
-        <section className={clsx(`mb-8`, className)}>
+        <section className={className}>
             <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                 <div ref={carouselRef} className="flex gap-4 animate-carousel">
                     {data.map((instrument, index) => (
