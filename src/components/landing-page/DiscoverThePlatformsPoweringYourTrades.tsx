@@ -6,8 +6,8 @@ import clsx from "clsx";
 
 const platforms = [
     {
-        name: 'ProjectX',
-        image: 'projectxIcon',
+        name: 'Megatrader X',
+        image: 'MegatraderXIcon',
         description: 'Experience precision and speed with MegaX, a platform designed for traders who demand reliability and performance. Built for the futures market, MegaX combines cutting-edge tools and seamless execution to empower your trading success.'
     },
     {
@@ -157,8 +157,8 @@ function DiscoverThePlatformsPoweringYourTrades() {
                                 {platform.name}
                             </div>
 
-                            {index === 1 && (
-                                <Badge size={'sm'} className='tracking-tight hidden text-nowrap lg:flex'>
+                            {index > 0 && (
+                                <Badge size={'sm'} className='bg-white tracking-tight hidden text-nowrap lg:flex'>
                                     COMING SOON
                                 </Badge>
                             )}
