@@ -11,7 +11,7 @@ import Image from "next/image";
 
 const sliders = [
     {
-        imageUrl: '/assets/images/screenshots/sd1.png',
+        imageUrl: '/assets/images/screenshots/sd1-v2.png',
         imageUrlMobile: '/assets/images/screenshots/sd1-mobile.png',
         title: 'Power up your trading with full control.',
         subtitle: 'Log in to manage your accounts, track performance, and unlock the full potential of your MegaTrader journey.'
