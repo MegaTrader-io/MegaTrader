@@ -15,10 +15,10 @@ const SponsorLogosSection = ({className = ""}: { className?: string }) => (
         </div>
 
         <div
-            className="my-8 flex flex-col items-center gap-16 py-12 opacity-30 md:grid md:grid-cols-2 md:gap-12 lg:my-auto lg:flex lg:flex-row lg:justify-between lg:gap-8 lg:py-12 xl:gap-16">
+            className="my-8 flex flex-col items-center gap-16 py-12 md:grid md:grid-cols-2 md:gap-12 lg:my-auto lg:flex lg:flex-row lg:justify-between lg:gap-8 lg:py-12 xl:gap-16">
             <div className="contents md:flex md:justify-self-end">
                 <Image
-                    src="/assets/images/projectx.svg"
+                    src="/assets/images/mega-trader-x.svg"
                     alt="ProjectX Sponsor Logo"
                     width={224}
                     height={54}
