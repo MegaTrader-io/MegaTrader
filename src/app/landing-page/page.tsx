@@ -5,7 +5,6 @@ import HeroSection from "@/components/landing-page/HeroSection";
 import Header from "@/components/landing-page/Header";
 import Footer from "@/components/landing-page/Footer";
 
-import Image from "next/image";
 import React from "react";
 import MarketOverviewSection from "@/components/landing-page/MarketOverviewSection";
 import SponsorLogosSection from "@/components/landing-page/SponsorLogosSection";
