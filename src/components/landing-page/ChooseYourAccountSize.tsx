@@ -3,6 +3,7 @@ import ButtonsAccountSize, {ACCOUNT_SIZE_PLAN} from "@/components/landing-page/B
 import Card from "@/components/Card";
 import {Button} from "@/components/Button";
 import clsx from "clsx";
+import Link from "next/link";
 
 const items = [
     {
@@ -257,9 +258,11 @@ function ChooseYourAccountSize() {
                         </div>
 
                         <div className="px-4">
-                            <Button className="w-full" variant={'dark'}>
+                            <Link href={'https://subscriptions.megatrader.io/'}
+                                  target={'_blank'}
+                                  className='btn-dark-link rounded-xl h-12 px-4 py-3'>
                                 GET PLAN
-                            </Button>
+                            </Link>
                         </div>
                     </Card>
                 ))}

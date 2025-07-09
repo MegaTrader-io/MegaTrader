@@ -91,10 +91,13 @@ const HeroSection = ({className = ''}: { className?: string }) => (
                 </div>
             </div>
             <div className="space-y-4 md:space-y-0 md:flex md:justify-center md:gap-4">
-                <Link href={'#'} className='btn-yellow-link rounded-xl h-12 px-4 py-3'>
+                <Link href={'https://subscriptions.megatrader.io/'}
+                      className='btn-yellow-link rounded-xl h-12 px-4 py-3'>
                     Start trading
                 </Link>
-                <Link href={'#'} className='btn-dark-link rounded-xl h-12 px-4 py-3'>
+                <Link href={'https://discord.com/invite/megatrader'}
+                      target={'_blank'}
+                      className='btn-dark-link rounded-xl h-12 px-4 py-3'>
                     Join Discord
                 </Link>
             </div>
