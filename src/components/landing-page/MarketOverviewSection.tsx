@@ -3,7 +3,6 @@ import React, {useEffect, useRef, useState} from "react";
 import Card from "@/components/Card";
 import {ArrowDown, ArrowUp} from "@/components/Arrows";
 import {SymbolMarketData} from "@/commons/interfaces";
-import clsx from "clsx";
 
 const changeValue = (value: number) => {
     const symbol = value > 0 ? "+" : "-";
