@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import ButtonsAccountSize, {ACCOUNT_SIZE_PLAN} from "@/components/landing-page/ButtonsAccountSize";
 import Card from "@/components/Card";
-import {Button} from "@/components/Button";
 import clsx from "clsx";
 import Link from "next/link";
 
