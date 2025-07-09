@@ -216,11 +216,11 @@ function ChooseYourAccountSize() {
                             </div>
                             <div>
                                 <div
-                                    className="self-stretch justify-start text-[#ffb34a] group-[.mark]:text-black text-xl font-medium leading-8">
+                                    className="self-stretch justify-start text-white group-[.mark]:text-black text-xl font-medium leading-8">
                                     {getTitleByLevel(index + 1)}
                                 </div>
                                 <div
-                                    className="self-stretch justify-start text-[#ffb34a] group-[.mark]:text-black text-sm font-medium leading-5">
+                                    className="self-stretch justify-start text-[#ffb34a] group-[.mark]:text-black text-xl font-medium leading-8">
                                     {level.description}
                                 </div>
                             </div>
