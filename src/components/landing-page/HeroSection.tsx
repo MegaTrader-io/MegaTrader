@@ -166,7 +166,7 @@ const HeroSection = ({className = ''}: { className?: string }) => (
             <div
                 className="mx-auto flex justify-center items-center border-t-8 border-b-8  md:border-8 lg:rounded-lg border-[#3C383A] w-fit bg-[#3C383A]">
                 <Image
-                    src="/assets/images/metrics.png"
+                    src="/assets/images/metrics2.jpg"
                     alt="window tablet"
                     className="lg:rounded-lg"
                     width={1200}
