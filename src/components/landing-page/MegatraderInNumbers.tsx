@@ -50,15 +50,15 @@ const MegatraderInNumbers: NextPage = () => (
                     index === 3 ? 'md:col-start-4 md:col-end-7' : '',
                     index === 4 ? 'md:col-start-8 md:col-end-11' : ''
                 )}>
-                    <h3 className="self-stretch text-center justify-start text-[#ffb34a] text-6xl font-light uppercase leading-[72px]">
+                    <h3 className="text-center justify-start text-[#ffb34a] text-6xl font-light uppercase leading-[72px]">
                         {item.title}
                     </h3>
                     <div
-                        className="self-stretch text-center justify-start text-white text-xl font-medium leading-loose">
+                        className="text-center justify-start text-white text-xl font-medium leading-loose">
                         {item.subtitle}
                     </div>
                     <div
-                        className="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">
+                        className="text-center justify-start text-stone-400 text-base font-medium leading-6">
                         {item.detail.split('<br/>').map((line, i) => (
                             <p key={i}>{line}</p>
                         ))}
