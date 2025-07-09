@@ -3,6 +3,7 @@ import Card from "@/components/Card";
 import Image from "next/image";
 import Badge from "@/components/Badge";
 import clsx from "clsx";
+import {countries} from "@/commons/data";
 
 const platforms = [
     {
@@ -111,6 +112,12 @@ function DiscoverThePlatformsPoweringYourTrades() {
         setCurrentSelection(index);
     }
 
+
+    function changePlan(ev: React.ChangeEvent<HTMLSelectElement>) {
+        const index = Number(ev.target.value);
+        changeOption(index);
+    }
+
     return (
         <section id="feature-discover-the-platforms" className="lg:flex lg:gap-12 space-y-12 lg:space-y-0 px-4">
             <div className="w-full space-y-12">
@@ -141,7 +148,7 @@ function DiscoverThePlatformsPoweringYourTrades() {
                 </div>
             </div>
             <Card className="w-full py-8">
-                <div className="md:flex">
+                <div className="hidden md:flex">
                     {platforms.map((platform, index) => (
                         <div key={index} onClick={() => changeOption(index)}
                              className="gap-2 flex md:flex-col w-full md:items-center p-4 space-y-2 cursor-pointer">
@@ -165,6 +172,36 @@ function DiscoverThePlatformsPoweringYourTrades() {
                         </div>
                     ))}
                 </div>
+
+                <div className="block md:hidden relative w-full">
+                    <select
+                        name="changePlan"
+                        onChange={changePlan}
+                        className={clsx(
+                            'w-full text-white py-3 px-4 pr-10 font-medium rounded-xl border border-neutral-700 bg-[#1e1e1e]/70 appearance-none focus:outline-none',
+                        )}
+                    >
+                        {platforms.map((platform, index) => (
+                            <option key={index}
+                                    value={index}>{platform.name}</option>
+                        ))}
+                    </select>
+                    <div
+                        className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_5269_2288" style={{maskType: 'alpha'}}
+                                  maskUnits="userSpaceOnUse" x="0" y="0"
+                                  width="24" height="24">
+                                <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_5269_2288)">
+                                <path d="M12 15L7 10H17L12 15Z" fill="white"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
                 <div className="px-4 space-y-4 mt-6 md:mt-8">
                     <div
                         className="justify-start text-white text-xl font-light uppercase leading-6">
