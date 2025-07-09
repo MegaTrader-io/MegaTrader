@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import React from "react";
 import Card from "@/components/Card";
-import clsx from "clsx";
 
 const items = [
     {
