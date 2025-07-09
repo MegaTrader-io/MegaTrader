@@ -3,7 +3,6 @@ import Card from "@/components/Card";
 import Image from "next/image";
 import Badge from "@/components/Badge";
 import clsx from "clsx";
-import {countries} from "@/commons/data";
 
 const platforms = [
     {
