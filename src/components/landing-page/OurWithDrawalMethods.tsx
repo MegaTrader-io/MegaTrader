@@ -26,7 +26,7 @@ function OurWithDrawalMethods() {
                 </div>
                 <div className="px-4 w-full space-y-2 py-8 bg-[#1e1e1e] rounded-2xl">
                     <div
-                        className="self-stretch text-center justify-start text-white text-xl font-medium font-['Roboto'] uppercase leading-6">RISEWORKS
+                        className="self-stretch text-center justify-start text-white text-xl font-medium font-['Roboto'] uppercase leading-6">Bitcoin
                     </div>
 
                     <div className="flex justify-center">
@@ -35,7 +35,7 @@ function OurWithDrawalMethods() {
                 </div>
                 <div className="px-4 w-full space-y-2 py-8 bg-[#1e1e1e] rounded-2xl">
                     <div
-                        className="self-stretch text-center justify-start text-white text-xl font-medium font-['Roboto'] uppercase leading-6">RISEWORKS
+                        className="self-stretch text-center justify-start text-white text-xl font-medium font-['Roboto'] uppercase leading-6">Etherum
                     </div>
 
                     <div className="flex justify-center">
