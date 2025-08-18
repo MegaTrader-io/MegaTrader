@@ -98,9 +98,16 @@ function SubscribeForm({ cbShowAlert, compact = false, focusForced = true }: {
       if (!data.success) {
         if (data.message === "Email already exists") {
           dlPush({
-            event: "subscribed_success",
+            event: "subscribed_duplicate",
             form_id: "subscribe-form",
             source: "newsletter"
+          });
+        } else {
+          dlPush({
+            event: "subscribed_error",
+            form_id: "subscribe-form",
+            source: "newsletter",
+            error_code: `HTTP_${response.status}`
           });
         }
 
@@ -113,28 +120,37 @@ function SubscribeForm({ cbShowAlert, compact = false, focusForced = true }: {
         email_consent: false
       });
 
-      if (cbShowAlert) {
-        dlPush({
-          event: "newsletter_subscribe_success",
-          form_id: "subscribe-form",
-          source: "newsletter",
-          event_id: crypto.randomUUID()
-        });
 
+      dlPush({
+        event: "subscribed_success",
+        form_id: "subscribe-form",
+        source: "newsletter",
+        event_id: crypto.randomUUID()
+      });
+
+      if (cbShowAlert) {
         cbShowAlert({
           type: "success",
           message: "Congratulations! You have successfully subscribed."
         });
       }
     } catch (e) {
+      console.info("error", e);
+
       dlPush({
-        event: "newsletter_subscribe_error",
+        event: "subscribed_error",
         form_id: "subscribe-form",
         source: "newsletter",
         error_code: "NETWORK"
       });
 
-      console.info(e);
+      dlPush({
+        event: "subscribed_error",
+        form_id: "subscribe-form",
+        source: "newsletter",
+        error_code: "NETWORK"
+      });
+
       return false;
     } finally {
       setLoading(false);
