@@ -7,6 +7,7 @@ import { Button } from "@/components/Button";
 import { InputCheckbox } from "@/components/InputCheckbox";
 import { IShowAlert } from "@/app/(backoffice)/refferals/page";
 import { useLoading } from "@/context/LoadingContext";
+import { dlPush } from "@/commons/utils";
 
 const DefaultConsentMessage = () => (
   <>
@@ -95,6 +96,14 @@ function SubscribeForm({ cbShowAlert, compact = false, focusForced = true }: {
       const data: { success: boolean, message: string } = await response.json();
 
       if (!data.success) {
+        if (data.message === "Email already exists") {
+          dlPush({
+            event: "subscribed_success",
+            form_id: "subscribe-form",
+            source: "newsletter"
+          });
+        }
+
         setErrorMessage(data.message);
         return false;
       }
@@ -105,12 +114,26 @@ function SubscribeForm({ cbShowAlert, compact = false, focusForced = true }: {
       });
 
       if (cbShowAlert) {
+        dlPush({
+          event: "newsletter_subscribe_success",
+          form_id: "subscribe-form",
+          source: "newsletter",
+          event_id: crypto.randomUUID()
+        });
+
         cbShowAlert({
           type: "success",
           message: "Congratulations! You have successfully subscribed."
         });
       }
     } catch (e) {
+      dlPush({
+        event: "newsletter_subscribe_error",
+        form_id: "subscribe-form",
+        source: "newsletter",
+        error_code: "NETWORK"
+      });
+
       console.info(e);
       return false;
     } finally {

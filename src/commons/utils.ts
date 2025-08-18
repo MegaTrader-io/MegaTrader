@@ -102,3 +102,12 @@ export function debounce<T extends (...args: any[]) => void>(fn: T, delay: numbe
         timeoutId = setTimeout(() => fn(...args), delay);
     };
 }
+
+export function dlPush(payload: Record<string, any>) {
+  try {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(payload);
+  } catch (e) {
+    console.warn('dataLayer not available', e);
+  }
+}
