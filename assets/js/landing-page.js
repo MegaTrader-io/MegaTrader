@@ -378,8 +378,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     })
                 });
 
-                console.info(response.status, response.statusText);
-
                 const responseData = await response.json();
                 const {data} = responseData;
 
