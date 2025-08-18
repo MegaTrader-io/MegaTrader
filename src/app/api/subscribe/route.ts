@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         if (duplicated && profileId) {
             return NextResponse.json(
                 {success: false, message: 'Email already exists', profile_id: profileId},
-                {status: 200}
+                {status: 409}
             )
         }
 

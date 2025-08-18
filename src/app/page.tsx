@@ -45,7 +45,7 @@ const Home = () => {
 
             <div className="space-y-4">
                 <h1 className="self-stretch text-center justify-start text-white text-[40px] font-medium uppercase leading-[48px]">
-                    Coming soon!
+                    COMING SOON!
                 </h1>
                 <h2 className="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">
                     Empowering traders with innovative solutions, unmatched reliability, and tools designed to elevate
