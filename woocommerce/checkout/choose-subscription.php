@@ -107,7 +107,29 @@
 <style>
     /* To Migrate to CSS */ 
     .mt-tabs {
-        background: red;
+    
+    }
+    .mt-tabs__container {
+    
+    }
+    .mt-tabs__header,
+    .mt-tabs__body {
+        display: flex;
+    }
+    .mt-tabs__header__item {
+        padding: 12px;
+        border-radius: var(--Border-Radius-xl, 16px) var(--Border-Radius-xl, 16px) 0 0;
+        border-top: 1px solid var(--Colors-Gray-700, #404040);
+        border-right: 1px solid var(--Colors-Gray-700, #404040);
+        border-left: 1px solid var(--Colors-Gray-700, #404040);
+        background: var(--Surface-Page, #1E1E1E);
+        box-shadow: 0 2px 0 0 var(--Surface-Page, #1E1E1E);
+    }
+    .mt-tabs__body {
+        padding: 24px;
+        border-radius: 0 var(--Border-Radius-xl, 16px) var(--Border-Radius-xl, 16px) var(--Border-Radius-xl, 16px);
+        border: 1px solid var(--Colors-Gray-700, #404040);
+        background: var(--Surface-Page, #1E1E1E);
     }
 </style>
 
