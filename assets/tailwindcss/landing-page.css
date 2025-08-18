@@ -1,0 +1,325 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --font-roboto: 'Roboto', sans-serif;
+        --mgt-dark: #1e1e1e;
+        --mgt-color-primary: #FFB34A;
+        --mgt-color-teal: #14B8A6;
+        --mgt-color-error: #FB7185;
+        --mgt-color-link: #FFD78A;
+        --mgt-color-link-hover: var(--mgt-color-primary);
+    }
+}
+
+body {
+    font-family: var(--font-roboto), sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAiSURBVHgB7cNBDQAACMSwC07wL3IED/xYkwbonSMVSdJTA27fBj9svgvKAAAAAElFTkSuQmCC) 0% 0%/5px 5px repeat, #131210;
+    color: inherit;
+    font-weight: 400;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden
+}
+
+.btn-base {
+    @apply uppercase flex items-center justify-center transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1;
+}
+
+.btn-dark-link {
+    @apply btn-base bg-stone-800 hover:bg-stone-900 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800;
+}
+
+.btn-yellow-link {
+    @apply btn-base w-full md:w-auto btn-base text-base font-medium leading-normal bg-primary hover:bg-yellow-600 text-black focus:ring-primary disabled:bg-stone-600 disabled:text-stone-800;
+}
+
+.variant-style-primary-filled {
+    @apply bg-primary hover:bg-yellow-600 text-black focus:ring-primary disabled:bg-stone-600 disabled:text-stone-800;
+}
+
+.variant-style-primary-text {
+    @apply text-primary hover:text-yellow-600 hover:bg-yellow-100 focus:ring-primary;
+}
+
+.size-style-md {
+    @apply py-3 text-base font-medium leading-normal rounded-xl px-4
+}
+
+.size-style-sm {
+    @apply py-1 text-xs font-medium leading-tight rounded w-5 h-5 px-4
+}
+
+.btn-primary-filled {
+    @apply btn-base size-style-md variant-style-primary-filled bg-primary hover:bg-yellow-600 text-black focus:ring-primary disabled:bg-stone-600 disabled:text-stone-800;
+}
+
+.btn-primary-text {
+    @apply btn-base size-style-md variant-style-primary-text text-primary hover:text-yellow-600 hover:bg-yellow-100 focus:ring-primary
+}
+
+.mgt-card {
+    @apply p-4 bg-mgt-dark border border-transparent rounded-2xl;
+}
+
+.badge-base {
+    @apply text-[#131210] leading-normal font-bold uppercase justify-center items-center gap-2.5 inline-flex
+}
+
+.badge-rounded-sm {
+    @apply rounded h-6 px-2 py-1 text-sm
+}
+
+.badge-secondary-sm {
+    @apply badge-base badge-rounded-sm;
+}
+
+#slider-mgt {
+    height: 4px;
+}
+
+#slider-mgt .noUi-connect {
+    @apply bg-primary;
+}
+
+#slider-mgt .noUi-connects {
+    @apply bg-neutral-700;
+}
+
+#slider-mgt .noUi-handle {
+    border: 4px solid #FFF;
+    background: #FFB34A;
+    box-shadow: none;
+
+    height: 24px;
+    width: 24px;
+    top: -11px;
+    right: -12px;
+    border-radius: 64px;
+}
+
+#slider-mgt .noUi-handle::before, #slider-mgt .noUi-handle::after {
+    content: none;
+}
+
+#slider-mgt.noUi-target {
+    @apply border-none shadow-none;
+}
+
+#slider-mgt .noUi-marker {
+    @apply hidden;
+}
+
+#slider-mgt .noUi-pips > .noUi-value {
+    @apply text-base text-stone-400 leading-none font-medium uppercase;
+}
+
+#slider-mgt .noUi-pips > .noUi-value.active-pip {
+    @apply text-primary;
+}
+
+#slider-mgt .noUi-pips-horizontal {
+    @apply h-auto;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide-strict {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-y: hidden;
+}
+
+.scrollbar-hide-strict::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+@keyframes carousel {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-1 * var(--total-width)));
+    }
+}
+
+.animate-carousel {
+    animation: carousel 120s linear infinite;
+}
+
+.animate-carousel:hover {
+    animation-play-state: paused;
+}
+
+.wrapper-point::after {
+    content: ' ';
+    background-color: #FFB34A;
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    border-radius: 100%;
+    transform: translateY(12px);
+}
+
+.wrapper-timeline .vertical-line-timeline::after {
+    content: " ";
+    width: 2px;
+    z-index: -2;
+    top: 26px;
+    bottom: 0;
+    position: absolute;
+    background: #ffb34a;
+}
+
+.wrapper-timeline .vertical-line-timeline-before::before {
+    content: " ";
+    width: 2px;
+    z-index: -2;
+    top: 26px;
+    bottom: 0;
+    position: absolute;
+    background: #ffb34a;
+}
+
+.last-timeline-point::before {
+    content: ' ';
+    width: 2px;
+    height: 14px;
+    background: #ffb34a;
+    position: absolute;
+    top: -14px;
+    right: 6px;
+}
+
+.opt-active > .checkbox-custom {
+    @apply bg-primary;
+}
+
+.peer:checked ~ .peer-checked\:outline-primary .box-checked {
+    @apply bg-primary;
+    content: '';
+    background-image: url(/wp-content/themes/megatrader-addons/assets/img/checked.svg);
+    background-size: 11px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.account-type {
+    @apply bg-transparent  outline outline-2 outline-offset-[-2px] outline-neutral-700;
+}
+
+.account-type.account-active {
+    @apply bg-primary outline-none;
+}
+
+.mgt-input {
+    @apply h-12 px-4 py-3 read-only:bg-stone-600 bg-[#1e1e1e]/70 disabled:bg-stone-600 disabled:text-stone-400 placeholder:text-neutral-700 rounded-xl border w-full font-medium focus:border-transparent text-base focus:outline-none focus:ring-1 hover:border-white;
+}
+
+.mgt-input-ok {
+    @apply text-stone-400 border-neutral-700 focus:ring-mgt-primary;
+}
+
+.mgt-input-error {
+    @apply ring-1 ring-red-500 text-red-500 border-transparent placeholder:text-rose-500;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    border: 3px solid;
+    border-color: #FFF #FFF transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+.loader::after {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border: 3px solid;
+    border-color: transparent #F1A035 #F1A035;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    animation: rotationBack 0.5s linear infinite;
+    transform-origin: center center;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotationBack {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+.with-scroll-bars-hidden {
+    overflow: hidden !important;
+    padding-right: 0px !important;
+}
+
+body[data-scroll-locked] {
+    overflow: hidden !important;
+    overscroll-behavior: contain;
+    position: relative !important;
+    padding-left: 0px;
+    padding-top: 0px;
+    padding-right: 0px;
+    margin-left: 0;
+    margin-top: 0;
+    margin-right: 0px !important;
+
+}
+
+.right-scroll-bar-position {
+    right: 0px !important;
+}
+
+.width-before-scroll-bar {
+    margin-right: 0px !important;
+}
+
+.right-scroll-bar-position .right-scroll-bar-position {
+    right: 0 !important;
+}
+
+.width-before-scroll-bar .width-before-scroll-bar {
+    margin-right: 0 !important;
+}
+
+body[data-scroll-locked] {
+    --removed-body-scroll-bar-size: 0px;
+}

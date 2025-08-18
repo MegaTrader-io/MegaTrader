@@ -1,0 +1,165 @@
+@layer base, components, utilities, overrides;
+
+@import "./tokens.css" layer(base);
+@import "./utils.css" layer(utilities);
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/** theme */
+.mgt-theme .auth {
+    @apply m-4 flex-col xl:flex xl:h-dvh xl:max-h-[calc(100dvh-32px)] xl:flex-row;
+}
+
+.mgt-theme .auth-form {
+    @apply flex h-full w-full flex-col justify-center px-4 py-6 sm:py-12 sm:px-6 md:h-auto xl:w-2/5 xl:flex-none xl:px-24;
+}
+
+.mgt-theme .auth-form__container {
+    @apply mx-auto w-full md:max-w-[638px] lg:max-w-[409px];
+}
+
+.mgt-theme .auth-form__content {
+    @apply w-full mx-auto space-y-8;
+}
+
+.mgt-theme .auth-form__form-wrapper {
+    @apply space-y-4 lg:my-8;
+}
+
+.mgt-theme .auth-form__title {
+    @apply text-white text-[3rem] font-light uppercase leading-[60px] mb-2;
+}
+
+.mgt-theme .auth-form__subtitle {
+    @apply text-stone-400 text-base font-normal leading-normal tracking-wide;
+}
+
+.mgt-theme .auth-form__subtitle--mb-none {
+    @apply mb-0;
+}
+
+.mgt-theme .auth-form__forgot-password {
+    @apply text-mgt-link hover:text-mgt-link-hover underline;
+}
+
+.mgt-theme .auth-form__remember-link {
+    @apply text-white text-base font-normal leading-normal select-none;
+}
+
+.mgt-theme .auth-preview {
+    @apply relative hidden rounded-2xl pt-[60px] xl:pb-[32px] h-full xl:h-auto md:px-[52px] lg:flex-1 md:block bg-mgt-dark lg:overflow-hidden xl:flex flex-col;
+}
+
+.mgt-theme .auth-preview__container {
+    @apply content-center h-full flex items-center min-h-[calc(50dvh-60px-16px-32px)] justify-center flex-grow;
+}
+
+.mgt-theme .auth-preview__content {
+    @apply h-full w-full content-center;
+}
+
+.mgt-theme .slider-content {
+    @apply min-h-[668px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px];
+}
+
+.mgt-theme .slider-content__image-web {
+    @apply hidden mx-auto md:block w-[calc(72%-52px)] min-h-[470px]  md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)];
+}
+
+.mgt-theme .slider-content__info {
+    @apply space-y-2 text-center mx-4 sm:mx-0 relative top-[44px];
+}
+
+.mgt-theme .slider-content__title {
+    @apply min-h-[29px] text-center text-white text-[1.25rem] font-medium uppercase leading-normal;
+}
+
+.mgt-theme .slider-content__subtitle {
+    @apply mx-auto text-stone-400 text-[1rem] font-medium leading-normal max-w-[500px] text-center;
+}
+
+.mgt-theme .slider-content__image-web {
+    @apply hidden mx-auto md:block w-[calc(72%-52px)] min-h-[470px]  md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)];
+}
+
+.mgt-theme .swiper-pagination {
+    position: relative;
+    bottom: auto !important;
+    margin-top: 44px;
+    margin-bottom: 32px;
+}
+
+.mgt-theme .auth-form__footer-wrapper {
+    @apply text-center space-y-2;
+}
+
+.mgt-theme .auth-form__footer-dont-have-an-account {
+    @apply mb-2 text-center w-full text-stone-400 text-base font-normal font-roboto leading-normal tracking-wide;
+}
+
+.mgt-theme .auth-form__terms-and-conditions {
+    @apply text-mgt-link hover:text-mgt-link-hover underline inline-flex;
+}
+
+.mgt-theme .checkbox-container__input ~ label::before {
+    transition: none;
+}
+
+.mgt-theme .checkbox-container__input:checked ~ label::before {
+    content: '';
+    background-image: url(/wp-content/themes/megatrader-addons/assets/img/checked.svg);
+    background-size: 11px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.mgt-theme .password-wrapper {
+    @apply relative;
+}
+
+.mgt-theme .password-wrapper__password {
+    @apply pr-12;
+}
+
+.mgt-theme .password-wrapper__btn_eye {
+    @apply z-10 border-none absolute top-3 right-3.5 w-6 h-6 bg-transparent;
+}
+
+.mgt-theme .password-wrapper__btn_eye {
+    -webkit-mask-image: url('/wp-content/themes/megatrader-addons/assets/img/eye-close.svg');
+    mask-image: url('/wp-content/themes/megatrader-addons/assets/img/eye-close.svg');
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    background-color: #a8a29e;
+}
+
+.mgt-theme .password-wrapper__password[type=text] ~ .password-wrapper__btn_eye {
+    -webkit-mask-image: url('/wp-content/themes/megatrader-addons/assets/img/eye-open.svg');
+    mask-image: url('/wp-content/themes/megatrader-addons/assets/img/eye-open.svg');
+}
+
+.mgt-theme .auth-form__error_message {
+    @apply text-rose-500 text-xs mt-4 leading-tight;
+}
+
+.mgt-theme .form-control.auth-form--error-message {
+    @apply ring-1 ring-rose-500 text-rose-500 border-transparent;
+}
+
+.mgt-theme .checkbox-container--label-inline {
+    @apply inline;
+}
+
+.mgt-theme .auth-form__phone-wrapper .iti--allow-dropdown {
+    @apply w-full
+}
+
+.mgt-theme .auth-form__content .woocommerce-notices-wrapper .woocommerce-message {
+    margin: 0;
+}

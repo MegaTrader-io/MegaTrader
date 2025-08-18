@@ -1,0 +1,341 @@
+.footer-wrapper {
+    position: relative;
+    z-index: 2;
+    background-color: #1E1E1E;
+    padding: 32px 0 18px 0;
+    text-align: center;
+    .footer-logo {
+        margin-bottom: 12px;
+    }
+}
+.widget-area {
+    padding-bottom: 60px;
+    @include md {
+        padding-bottom: 20px;
+    }
+}
+.footer-sitcky.sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+.copyright-wrap {
+    padding: 20px 0;
+    border-top: 1px solid $border-color;
+}
+.copyright-text {
+    font-weight: 500;
+    margin: 0;
+    margin-top: 12px;
+    color: $body-color;
+    a {
+        color: $theme-color;
+        &:hover {
+            color: $body-color;
+        }
+    }
+}
+.social-links {
+    .social-title {
+        font-weight: 500;
+        font-size: 16px;
+        display: inline-block;
+        margin: 0 12px 0 0;
+        color: $body-color;
+    }
+
+    a {
+        font-size: 16px;
+        display: inline-block;
+        color: $body-color;
+        text-align: center;
+        transition: 0.4s ease-in-out;
+        margin-right: 8px;
+        &:last-child {
+            margin-right: 0;
+        }
+        svg {
+            width: auto;
+        }
+        path {
+            transition: 0.3s ease-in-out;
+        }
+        &:hover {
+            path {
+                fill: $theme-color;
+            }
+        }
+    }
+}
+.brand-wrap {
+    padding: 45px 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px 30px;
+    justify-content: space-around;
+    .brand-logo {
+        opacity: 0.3;
+    }
+}
+.footer-widget {
+    margin-bottom: 0;
+    height: 100%;
+    &,
+    .widget {
+        padding: 0;
+        background-color: transparent;
+        box-shadow: none;
+        @include md {
+            margin-bottom: 45px;
+        }
+    }
+
+    .box-title {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+    input,
+    select {
+        width: 100%;
+        height: 56px;
+    }
+
+    .widget_title {
+        font-size: 24px;
+        font-weight: 500;
+        margin-top: -0.2em;
+        color: $title-color;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    &.widget_categories,
+    &.widget_nav_menu {
+        .menu,
+        > ul {
+            padding: 0;
+            margin: 0;
+            margin-bottom: -5px;
+            display: inline-block;
+        }
+        a {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            font-family: $body-font;
+            color: $title-color;
+            display: block;
+            max-width: 100%;
+            width: max-content;
+            transition: 0.4s ease-in-out;
+            padding: 0;
+            &:hover {
+                color: $theme-color;
+            }
+        }
+
+        li {
+            list-style: none;
+            &:last-child {
+                a {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+}
+.widget_nav_menu.footer-widget {
+    position: relative;
+    z-index: 2;
+}
+
+.ot-widget-about {
+    height: 100%;
+    max-width: 375px;
+    .about-logo {
+        margin-bottom: 30px;
+    }
+    .about-text {
+        margin-bottom: 60px;
+        @include md {
+            margin-bottom: 40px;
+        }
+    }
+    .social-links {
+        margin-top: 40px;
+        @include md {
+            margin-top: 30px;
+        }
+    }
+}
+
+.footer-text {
+    color: $body-color;
+    margin-bottom: 0;
+}
+.newsletter-widget {
+    width: 330px;
+    max-width: 100%;
+    margin-left: auto;
+    .footer-text {
+        margin-bottom: 20px;
+    }
+    @include lg {
+        padding-left: 30px;
+        margin-left: 0;
+    }
+    @include sm {
+        padding-left: 0;
+    }
+}
+.newsletter-wrap {
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    text-align: center;
+    .newsletter-title {
+        font-weight: 600;
+    }
+    .newsletter-text {
+        font-weight: 400;
+        color: $title-color;
+        margin-bottom: 30px;
+    }
+}
+.newsletter-form {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    .wpcf7-spinner {
+        display: none;
+    }
+    .wpcf7-response-output {
+        margin: 15px 0 0 0;
+    }
+    input {
+        height: 56px;
+        background-color: $smoke-color;
+        &:focus {
+            border-color: $theme-color;
+        }
+    }
+    .ot-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        padding: 11.5px 16px;
+        height: 48px;
+        min-width: auto;
+        border-radius: 6px;
+        background: $theme-color2;
+        width: auto;
+        outline: none;
+        transition: 0.4s ease-in-out;
+        &:hover {
+            background: $title-color;
+        }
+    }
+    .icon-btn {
+        width: 44px;
+        height: 44px;
+        line-height: 42px;
+        border-radius: 10px;
+        background-image: $gr-bg1;
+        color: $white-color;
+        position: absolute;
+        top: 6px;
+        right: 6px;
+    }
+}
+
+.footer-links {
+    position: relative;
+    ul {
+        padding: 0;
+        margin: 0;
+        display: inline-flex;
+        gap: 10px 24px;
+        flex-wrap: wrap;
+        @include lg {
+            gap: 7px 20px;
+        }
+    }
+    li {
+        font-family: $body-font;
+        display: inline-block;
+        position: relative;
+        font-weight: 400;
+    }
+    a {
+        color: inherit;
+        &:hover {
+            color: $theme-color;
+        }
+    }
+}
+
+.footer-layout1 {
+
+}
+
+.offer-header {
+    background-color: $theme-color;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 15;
+    padding: 12px 0;
+    .header-notice {
+        margin: 0;
+        color: $white-color;
+        font-size: 18px;
+        @include md {
+            font-size: 14px;
+        }
+    }
+    .header-voucher {
+        font-weight: 500;
+        color: #fff;
+        @include md {
+            font-size: 14px;
+        }
+    }
+    .voucher-copy {
+        display: inline-block;
+        padding: 5px 12px;
+        font-size: 16px;
+        font-weight: 500;
+        color: $title-color;
+        border: none;
+        background-color: #B0E1FF;
+        border-radius: 8px;
+        margin-left: 6px;
+        margin-right: 6px;
+        svg {
+            vertical-align: middle;
+            transform: translateY(-1px);
+        }
+        .copy-check {
+            display: none;
+            max-width: 14px;
+        }
+    }
+    .close-offer {
+        cursor: pointer;
+    }
+    @include md {
+        padding-top: 3px;
+        .row {
+            --bs-gutter-x: 5px;
+        }
+        .close-offer {
+            position: absolute;
+            right: 10px;
+            bottom: 16px;
+        }
+    }
+}

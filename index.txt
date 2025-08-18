@@ -1,0 +1,30 @@
+1:"$Sreact.fragment"
+2:I[316,["177","static/chunks/app/layout-d8cfefd27d148976.js"],"LoadingBetweenPagesProvider"]
+3:I[5431,["177","static/chunks/app/layout-d8cfefd27d148976.js"],"default"]
+4:I[6632,["177","static/chunks/app/layout-d8cfefd27d148976.js"],"default"]
+5:I[7215,["177","static/chunks/app/layout-d8cfefd27d148976.js"],"FlashProvider"]
+6:I[3872,["177","static/chunks/app/layout-d8cfefd27d148976.js"],"LoadingProvider"]
+7:I[6308,["177","static/chunks/app/layout-d8cfefd27d148976.js"],"default"]
+8:I[7555,[],""]
+9:I[1295,[],""]
+a:I[894,[],"ClientPageRoot"]
+b:I[9160,["489","static/chunks/489-46885844ef548382.js","100","static/chunks/100-1f634d1c07f0090b.js","974","static/chunks/app/page-a93d20320e66cb04.js"],"default"]
+e:I[9665,[],"MetadataBoundary"]
+10:I[9665,[],"OutletBoundary"]
+13:I[4911,[],"AsyncMetadataOutlet"]
+15:I[9665,[],"ViewportBoundary"]
+17:I[6614,[],""]
+:HL["/_next/static/media/47cbc4e2adbc5db9-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/css/cb11ce6a8e4426e8.css","style"]
+:HL["/_next/static/css/eac5eeae85ea730d.css","style"]
+0:{"P":null,"b":"LV9lMx2CxEDZK0lTFM4qB","p":"","c":["",""],"i":false,"f":[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/cb11ce6a8e4426e8.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","className":"__variable_372368 dark","children":[["$","head",null,{"children":[false,false]}],["$","body",null,{"className":"font-roboto antialiased","children":[false,["$","$L2",null,{"children":[["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{"children":["$","$L6",null,{"children":[["$","$L7",null,{}],["$","$L8",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L9",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]]}]}]]}]]}]]}]]}],{"children":["__PAGE__",["$","$1","c",{"children":[["$","$La",null,{"Component":"$b","searchParams":{},"params":{},"promises":["$@c","$@d"]}],["$","$Le",null,{"children":"$Lf"}],[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/eac5eeae85ea730d.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","$L10",null,{"children":["$L11","$L12",["$","$L13",null,{"promise":"$@14"}]]}]]}],{},null,false]},null,false],["$","$1","h",{"children":[null,["$","$1","-95T2M9poDUj5xbsLZbsY",{"children":[["$","$L15",null,{"children":"$L16"}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],null]}],false]],"m":"$undefined","G":["$17","$undefined"],"s":false,"S":true}
+18:"$Sreact.suspense"
+19:I[4911,[],"AsyncMetadata"]
+c:{}
+d:{}
+f:["$","$18",null,{"fallback":null,"children":["$","$L19",null,{"promise":"$@1a"}]}]
+12:null
+16:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+11:null
+1a:{"metadata":[["$","title","0",{"children":"MegaTrader | Master the Path to Becoming a Funded Futures Trader."}],["$","meta","1",{"name":"description","content":"MegaTrader | Master the Path to Becoming a Funded Futures Trader."}],["$","link","2",{"rel":"icon","href":"/favicon.ico","type":"image/x-icon","sizes":"256x256"}],["$","link","3",{"rel":"icon","href":"/favicon.svg"}]],"error":null,"digest":"$undefined"}
+14:{"metadata":"$1a:metadata","error":null,"digest":"$undefined"}

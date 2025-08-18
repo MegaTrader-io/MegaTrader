@@ -1,0 +1,40 @@
+.repeater-field-container {
+    margin-bottom: 15px;
+}
+
+.repeater-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.repeater-input {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+#add-repeater-item,
+.remove-repeater-item {
+    padding: 5px 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.remove-repeater-item {
+    color: #d63638;
+}
+
+
+.repeater-container {
+    margin-bottom: 10px;
+}
+.repeater-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    .remove-row {
+        color: #d63638;
+        border-color: #d63638;
+    }
+}

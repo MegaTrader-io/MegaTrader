@@ -1,0 +1,41 @@
+/*
+Theme Name: Megatrader (Official)
+Theme URI: https://megatrader.com/
+Author: Megatrader
+Author URI: https://megatrader.com/
+Description: Megatrader
+Version: 1.0.0
+Tested up to: 5.4
+Requires PHP: 5.6
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: megatrader
+Tags: custom-background, custom-logo, custom-menu, featured-images, threaded-comments, translation-ready
+*/
+
+/*
+.d-none {
+	display: none;
+}
+
+form#order_review {
+    max-width: 1000px;
+    margin: auto;
+    margin-top: 90px;
+    margin-bottom: 100px;
+}
+
+li.wc_payment_method.payment_method_paytiko_gateway {
+    margin-top: 12px !important;
+}
+
+button#place_order {
+    background-color: #1da8f6;
+    padding: 19px 35px !important;
+    border-radius: 27px !important;
+}
+
+.woocommerce.wp-block-group > .woocommerce-notices-wrapper + .woocommerce-error {
+    margin: 60px auto -40px auto;
+}
+*/

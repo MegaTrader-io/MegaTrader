@@ -1,0 +1,240 @@
+// Primary Button
+.ot-btn {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    vertical-align: middle;
+    display: inline-block;
+    border: none;
+    text-align: center;
+    background-color: $theme-color;
+    color: $black-color;
+    font-family: $body-font;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: uppercase;
+    padding: 15px 18px;
+    min-width: auto;
+    border-radius: 12px;
+    .icon1 {
+        content: url('data:image/svg+xml,<svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.6 6L0 1.4L1.4 0L7.4 6L1.4 12L0 10.6L4.6 6Z" fill="black"/></svg>');
+        display: inline-block;
+        margin-left: 5px;
+    }
+    .discord-icon {
+        margin-right: 4px;
+        display: inline-block;
+    }
+    &.has-dots {
+        &:after {
+            content: url('data:image/svg+xml,<svg width="121" height="46" viewBox="0 0 121 46" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="5.19043" cy="13.5005" rx="0.5" ry="0.5" transform="rotate(90 5.19043 13.5005)" fill="white"/><circle cx="21.1895" cy="11.9452" r="1.04826" transform="rotate(90 21.1895 11.9452)" fill="%2353BCFF"/><ellipse cx="69.1904" cy="31.5005" rx="0.5" ry="0.5" transform="rotate(90 69.1904 31.5005)" fill="white"/><ellipse cx="24.1904" cy="33.5005" rx="0.5" ry="0.5" transform="rotate(90 24.1904 33.5005)" fill="white"/><ellipse cx="113.69" cy="29.0005" rx="1" ry="1" transform="rotate(-90 113.69 29.0005)" fill="%2353BCFF"/><circle cx="8.08622" cy="24.8068" r="0.524132" transform="rotate(90 8.08622 24.8068)" fill="%2353BCFF"/><circle cx="56.3059" cy="34.2414" r="0.524132" transform="rotate(90 56.3059 34.2414)" fill="%2353BCFF"/><circle cx="61.5481" cy="15.3733" r="0.524132" transform="rotate(90 61.5481 15.3733)" fill="white"/><circle cx="39.5342" cy="23.759" r="0.524132" transform="rotate(90 39.5342 23.759)" fill="%2353BCFF"/><circle cx="88.802" cy="35.049" r="0.524132" transform="rotate(90 88.802 35.049)" fill="%2353BCFF"/><circle cx="83.5608" cy="18.5178" r="0.524132" transform="rotate(90 83.5608 18.5178)" fill="%2353BCFF"/><circle cx="120.25" cy="4.89017" r="0.524132" transform="rotate(-90 120.25 4.89017)" fill="white"/><circle cx="0.524132" cy="40.9109" r="0.524132" transform="rotate(-90 0.524132 40.9109)" fill="%2353BCFF"/><circle cx="83.5608" cy="5.93844" r="0.524132" transform="rotate(90 83.5608 5.93844)" fill="%2353BCFF"/><circle cx="120.25" cy="17.4695" r="0.524132" transform="rotate(-90 120.25 17.4695)" fill="%2353BCFF"/><circle cx="16.9309" cy="0.524208" r="0.524132" transform="rotate(-90 16.9309 0.524208)" fill="%2353BCFF"/><circle cx="102.43" cy="13.2763" r="0.524132" transform="rotate(90 102.43 13.2763)" fill="%2353BCFF"/><circle cx="39.5342" cy="8.03512" r="0.524132" transform="rotate(90 39.5342 8.03512)" fill="%2353BCFF"/><circle cx="70.0872" cy="45.0476" r="0.184302" transform="rotate(92.3129 70.0872 45.0476)" fill="%2353BCFF"/><circle cx="91.7127" cy="42.1235" r="0.583525" transform="rotate(92.3129 91.7127 42.1235)" fill="%2353BCFF"/><circle cx="49.9879" cy="36.1825" r="0.524132" transform="rotate(92.3129 49.9879 36.1825)" fill="%2353BCFF"/><circle cx="115.805" cy="43.037" r="0.524132" transform="rotate(-87.6871 115.805 43.037)" fill="%2353BCFF"/><circle cx="21.3692" cy="43.42" r="0.524132" transform="rotate(92.3129 21.3692 43.42)" fill="white"/></svg>');
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+    // &:before {
+    //     content: '';
+    //     position: absolute;
+    //     inset: 0;
+    //     background: $smoke-color2;
+    //     visibility: hidden;
+    //     opacity: 0;
+    //     z-index: -1;
+    //     transition: 0.4s ease-in-out;
+    // }
+    &:hover,
+    &.active {
+        color: $black-color;
+        background-color: #F1A035;
+        &:before {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+    &:active {
+        background-color: #F1A035;
+    }
+    &:focus {
+        border: 1px solid #FFC666;
+    }
+    &:hover {
+        &:after {
+            animation: breathe 1.2s linear infinite;
+        }
+    }
+
+    &.style2 {
+        background-color: transparent;
+        border: 1px solid $border-color;
+        color: $white-color;
+        padding: 19px 24px;
+        svg {
+            transform: translateY(-1px);
+        }
+        &:before {
+            display: none;
+        }
+        &:hover {
+            background-color: $theme-color;
+            border-color: $theme-color;
+            color: $black-color;
+            svg {
+                path {
+                    fill: $black-color;
+                }
+            }
+        }
+    }
+    &.style3 {
+        background: $smoke-color2;
+        color: $title-color;
+        border: 1px solid $border-color;
+        outline: none;
+        .icon1 {
+            content: url('data:image/svg+xml,<svg width="8" height="12" viewBox="0 0 8 12" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 11L6.5 6L1.5 1" stroke="%231E42FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+        }
+        &:hover {
+            color: $black-color;
+            background-color: $theme-color;
+            border-color: $theme-color;
+            svg {
+                path {
+                    fill: $black-color;
+                }
+            }
+        }
+    }
+    &.style4 {
+        background: $theme-color2;
+        outline: none;
+        box-shadow: none;
+    }
+    &.btn-lg {
+        font-size: 18px;
+        padding: 21px 24px;
+    }
+    &.btn-xl {
+        font-size: 24px;
+        padding: 25px 30px;
+    }
+    &.btn-sm {
+        padding: 16px 30px;
+    }
+    &.w-100 {
+        &:hover,
+        &.active {
+            &::before {
+                height: 760%;
+            }
+        }
+    }
+}
+
+.mega-btn {
+    display: flex;
+    height: 48px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+.mega-btn-md {
+    padding: 12px 16px;
+}
+.mega-btn-sm {
+    padding: 12px 12px;
+}
+
+
+@keyframes shine {
+    0% {
+        left: -100px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes breathe {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.resend-otp {
+    color: #ffd78a;
+    cursor: pointer;
+}
+
+.resend-otp.otp-disabled {
+    color: #a8a29e !important;
+    cursor: default !important;
+    pointer-events: none;
+}
+
+.otp-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px !important;
+    height: 48px !important;
+    padding: 0 !important;
+    margin: 0;
+    text-align: center;
+    line-height: 1;
+    box-sizing: border-box;
+    appearance: textfield;
+}
+
+// Link Button
+.link-btn {
+    font-weight: 500;
+    font-size: 16px;
+    display: inline-block;
+    line-height: 0.8;
+    position: relative;
+    padding-bottom: 4px;
+    margin-bottom: -4px;
+    text-transform: capitalize;
+    color: $title-color;
+    text-decoration: none !important;
+
+    i {
+        margin-left: 5px;
+        font-size: 0.9rem;
+    }
+
+    &.title-color {
+        color: $title-color;
+        font-weight: 600;
+    }
+    &:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background-color: $theme-color;
+        transition: all ease 0.4s;
+    }
+
+    &:hover {
+        color: $theme-color;
+
+        &::before {
+            width: 100%;
+        }
+    }
+}

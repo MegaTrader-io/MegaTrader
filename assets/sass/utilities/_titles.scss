@@ -1,0 +1,152 @@
+.sec-title {
+    margin-bottom: calc(var(--section-title-space) - 13px);
+    margin-top: -0.25em;
+}
+
+.sub-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: $theme-color;
+    text-transform: uppercase;
+    margin-bottom: 26px;
+    position: relative;
+    display: block;
+}
+.text-gradient {
+    color: transparent;
+    background-image: $gr-bg1;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+} 
+.text-gradient2 {
+    color: transparent;
+    background-image: $gr-bg2;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.text-gradient3 {
+    color: transparent;
+    background-image: $gr-bg3;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.title-area {
+    margin-bottom: calc(var(--section-title-space) - 13px);
+    position: relative;
+    z-index: 2;
+    .sec-title {
+        margin-bottom: 15px;
+    }
+    .sec-text {
+        padding-bottom: 10px;
+    }
+    &.mb-0 {
+        .sec-title {
+            margin-bottom: -0.23em;
+        }
+    }
+}
+.mb-34 {
+    margin-bottom: 34px;
+}
+
+.title-black-color {
+    color: $black-color;
+}
+
+.box-title {
+    font-size: 24px;
+    line-height: 1.455;
+	margin-top: -0.32em;
+	font-weight: 500;
+    margin-bottom: 16px;
+    a {
+        color: inherit;
+        &:hover {
+            color: $theme-color;
+        }
+    }
+}
+.title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    .box-title {
+        margin: 0;
+    }
+}
+.sec-text {
+    max-width: 670px;
+    font-weight: 400;
+}
+.title-area.text-center {
+    .sec-text {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.sec-btn {
+    margin-bottom: var(--section-title-space);
+}
+
+@include lg {
+    .sub-title {
+        margin-bottom: 20px;
+    }
+    .title-area,
+    .sec-title {
+        --section-title-space: 40px;
+        &.mb-30 {
+            margin-bottom: 25px;
+        }
+        &.mb-40 {
+            margin-bottom: 30px;
+        }
+        &.mb-45 {
+            margin-bottom: 32px;
+        }
+        &.mb-50 {
+            margin-bottom: 35px;
+        }
+        &.mb-25 {
+            margin-bottom: 15px;
+        }
+        &.mb-35 {
+            margin-bottom: 25px;
+        }
+    }
+    .sec-btn {
+        --section-title-space: 50px;
+    }
+}
+
+@include md {
+    .title-area,
+    .sec-title {
+        --section-title-space: 40px;
+        &.mb-40 {
+            margin-bottom: 25px;
+        }
+        &.mb-45 {
+            margin-bottom: 27px;
+        }
+        &.mb-50 {
+            margin-bottom: 28px;
+        }
+    }
+    .sec-btn {
+        --section-title-space: 40px;
+    }
+}
+
+@include xs {
+    .sub-title {
+        .text {
+            padding: 2px 12px;
+            min-width: 120px;
+        }
+    }
+}

@@ -1,0 +1,5 @@
+.ot-header { display: none; }
+
+.mgt-theme .bg-surface-page {
+    background: var(--Surface-Page);
+}

@@ -1,0 +1,154 @@
+
+.account-type {
+    &-wrap {
+        margin-bottom: 32px;
+    }
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    @include sm {
+        grid-template-columns: repeat(2, 1fr);
+    } 
+    @include xs {
+        grid-template-columns: repeat(1, 1fr);
+    } 
+    > div {
+        background-color: transparent;
+        border: 1px solid $border-color;
+        padding: 24px;
+        border-radius: 16px;
+        transition: 0.4s ease-in-out;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+        &:after {
+            content: url('data:image/svg+xml,<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.25 18.75L20.0625 9.9375L18.3125 8.1875L11.25 15.25L7.6875 11.6875L5.9375 13.4375L11.25 18.75ZM13 25.5C11.2708 25.5 9.64583 25.1719 8.125 24.5156C6.60417 23.8594 5.28125 22.9688 4.15625 21.8438C3.03125 20.7188 2.14063 19.3958 1.48438 17.875C0.828125 16.3542 0.5 14.7292 0.5 13C0.5 11.2708 0.828125 9.64583 1.48438 8.125C2.14063 6.60417 3.03125 5.28125 4.15625 4.15625C5.28125 3.03125 6.60417 2.14063 8.125 1.48438C9.64583 0.828125 11.2708 0.5 13 0.5C14.7292 0.5 16.3542 0.828125 17.875 1.48438C19.3958 2.14063 20.7188 3.03125 21.8438 4.15625C22.9688 5.28125 23.8594 6.60417 24.5156 8.125C25.1719 9.64583 25.5 11.2708 25.5 13C25.5 14.7292 25.1719 16.3542 24.5156 17.875C23.8594 19.3958 22.9688 20.7188 21.8438 21.8438C20.7188 22.9688 19.3958 23.8594 17.875 24.5156C16.3542 25.1719 14.7292 25.5 13 25.5Z" fill="%23131210"/></svg>');
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            transition: 0.4s ease-in-out;
+            visibility: hidden;
+            opacity: 0;
+        }
+        img {
+            min-width: 36px;
+            transition: 0.4s ease-in-out;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: 700;
+            color: $title-color;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .text {
+            font-size: 16px;
+            font-weight: 700;
+            color: $body-color;
+            margin: 0;
+            display: block;
+        }
+        &.active {
+            background-color: $theme-color;
+            border-color: $theme-color;
+            &:after {
+                visibility: visible;
+                opacity: 1;
+            }
+            .title {
+                color: $black-color;
+            }
+            .text {
+                color: rgba($color: #000, $alpha: 0.6);
+            }
+            img {
+                filter: brightness(5) invert(1);
+            }
+        }
+    }
+}
+
+#checkoutAccordion {
+    .accordion-header {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        margin-bottom: 0;
+    }
+    .accordion-button {
+        font-size: 24px;
+        font-weight: 500;
+        text-transform: uppercase;
+        color: $theme-color;
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        box-shadow: none;
+        position: relative;
+        z-index: 2;
+        .icon {
+            margin-top: -3px;
+            // line-height: 34px;
+        }
+        img {
+            height: 30px;
+            // height: 24px;
+            // transform: translateY(-1px);
+            // margin-right: 3px;
+        }
+        b {
+            font-size: 16px;
+            font-weight: 500;
+            position: absolute;
+            top: 28px;
+            left: 37px;
+            text-transform: capitalize;
+        }
+        &:after {
+            content: url('data:image/svg+xml,<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 13.8438L16.8437 10L18.625 11.75L13 17.375L7.375 11.75L9.15625 10L13 13.8438ZM13 0.5C11.2708 0.5 9.64583 0.828125 8.125 1.48438C6.60417 2.14063 5.28125 3.03125 4.15625 4.15625C3.03125 5.28125 2.14063 6.60417 1.48438 8.125C0.828125 9.64583 0.5 11.2708 0.5 13C0.5 14.7292 0.828125 16.3542 1.48438 17.875C2.14063 19.3958 3.03125 20.7188 4.15625 21.8438C5.28125 22.9688 6.60417 23.8594 8.125 24.5156C9.64583 25.1719 11.2708 25.5 13 25.5C14.7292 25.5 16.3542 25.1719 17.875 24.5156C19.3958 23.8594 20.7188 22.9688 21.8438 21.8438C22.9688 20.7188 23.8594 19.3958 24.5156 17.875C25.1719 16.3542 25.5 14.7292 25.5 13C25.5 11.2708 25.1719 9.64583 24.5156 8.125C23.8594 6.60417 22.9688 5.28125 21.8438 4.15625C20.7188 3.03125 19.3958 2.14063 17.875 1.48438C16.3542 0.828125 14.7292 0.5 13 0.5Z" fill="%23FFB34A"/></svg>');
+            transform: rotateX(0deg);
+            // transform: translateY(-5px) translateX(-5px) rotateX(0deg);
+        }
+        &:not(.collapsed) {
+            &:after {
+                transform: rotateX(180deg) translateY(-6px);
+                // transform: rotateX(180deg) translateX(-5px) translateY(0);
+            }
+        }
+    }
+    .accordion-body {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        padding-top: 16px;
+    }
+}
+
+.activation-style {
+    .accordion-button.collapsed {    
+        padding-bottom: 15px !important;
+    }
+}
+
+.order-plan {
+    background-color: $theme-color;
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    img {
+        filter: brightness(5) invert(1);
+        width: 36px;
+    }
+    .box-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0;
+        color: $black-color;
+    }
+}

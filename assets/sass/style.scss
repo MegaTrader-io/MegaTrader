@@ -1,0 +1,107 @@
+/*
+Template Name: 
+Template URL: 
+Description: 
+Author: 
+Author URI: 
+Version: 1.0.0
+*/
+
+/*------------------- Mixin -------------------*/
+@import 'base/mixin';
+
+/*------------------- Function -------------------*/
+@import 'base/function';
+
+/*------------------- Fonts -------------------*/
+@import 'base/fonts';
+
+/*------------------- Variable-------------------*/
+@import 'base/variable';
+
+/*------------------- Typography -------------------*/
+@import 'base/typography';
+
+/*=================================
+    Reset
+==================================*/
+/*------------------- Container -------------------*/
+@import 'reset/container';
+
+/*------------------- Grid -------------------*/
+@import 'reset/grid';
+
+/*------------------- Input -------------------*/
+@import 'reset/input';
+
+/*------------------- Slick Slider -------------------*/
+@import 'reset/slick-slider';
+
+/*------------------- Mobile Menu -------------------*/
+@import 'reset/otmenu';
+
+/*=================================
+    03. Utilities
+==================================*/
+/*------------------- Preloader -------------------*/
+@import 'utilities/preloader';
+
+/*------------------- Buttons -------------------*/
+@import 'utilities/btns';
+
+/*------------------- Titles -------------------*/
+@import 'utilities/titles';
+
+/*------------------- Common -------------------*/
+@import 'utilities/common';
+
+/*------------------- Font -------------------*/
+// @import 'utilities/font';
+
+/*------------------- Background -------------------*/
+@import 'utilities/background';
+
+/*------------------- Text Color -------------------*/
+@import 'utilities/text-color';
+
+/*------------------- Overlay -------------------*/
+@import 'utilities/overlay';
+
+/*------------------- Animation -------------------*/
+@import 'utilities/animation';
+
+/*------------------- Header  -------------------*/
+@import 'template/headers/header';
+
+/*------------------- Footer  -------------------*/
+@import 'template/footers/footer';
+
+/*------------------- Breadcumb  -------------------*/
+@import 'template/breadcumb/breadcumb-v1';
+
+/*------------------- Simple Sections  -------------------*/
+@import 'template/sections/simple-sections';
+
+/*------------------- Table  -------------------*/
+@import 'template/sections/table';
+
+/*------------------- Affiliate  -------------------*/
+// @import 'template/sections/affiliate';
+
+/*------------------- Checkout  -------------------*/
+@import 'template/sections/checkout';
+
+/*------------------- My Account  -------------------*/
+@import 'template/sections/myaccount';
+
+/*------------------- Version 2  -------------------*/
+@import 'template/sections/version2';
+
+/*------------------- Version 3  -------------------*/
+@import 'template/sections/version3';
+
+
+/*=================================
+    05. Spacing
+==================================*/
+@import 'spacing/spacing';

@@ -1,0 +1,144 @@
+:root {
+  --theme-color         : #FFB34A;
+  --theme-color2        : #FFD78A;
+  --theme-color3        : #14B8A6;
+  --title-color         : #FFFFFF;
+  --body-color          : #A8A29E;
+  --smoke-color         : rgba(30, 30, 30, 0.7);
+  --smoke-color2        : #1E1E1E; 
+  --smoke-color3        : #1E1E1E; 
+  --body-bg             : #131210;
+  --black-color         : #131210;
+  --white-color         : #ffffff;
+  --light-color         : #57534E;
+  --gray-color          : #DEE8FF;
+  --yellow-color        : #FFB539;
+  --success-color       : #92F185;
+  --error-color         : #F43F5E;
+  --ot-border-color     : #404040;
+  --surface-dark        : #292524;
+  --title-font          : "Roboto", sans-serif;
+  --body-font           : "Roboto", sans-serif;
+  --icon-font           : "Font Awesome 6 Pro";
+  --main-container      : 1280px;
+  --container-gutters   : 30px;
+  --section-space       : 60px;
+  --section-space-mobile: 40px;
+  --section-title-space : 40px;
+  --ripple-ani-duration : 5s;
+}
+
+// Color Variation
+$theme-color          : var(--theme-color);
+$theme-color2         : var(--theme-color2);
+$theme-color3         : var(--theme-color3);
+$title-color          : var(--title-color);
+$body-color           : var(--body-color);
+$smoke-color          : var(--smoke-color);
+$smoke-color2         : var(--smoke-color2);
+$smoke-color3         : var(--smoke-color3);
+$body-bg              : var(--body-bg);
+$white-color          : var(--white-color);
+$light-color          : var(--light-color);
+$gray-color           : var(--gray-color);
+$black-color          : var(--black-color);
+$yellow-color         : var(--yellow-color);
+$success-color        : var(--success-color);
+$error-color          : var(--error-color);
+$border-color         : var(--ot-border-color);
+$surface-dark         : var(--surface-dark);
+
+
+$gr-bg1: linear-gradient(96.61deg, $theme-color 7.4%, $theme-color 92.85%);
+$gr-bg2: linear-gradient(96.61deg, $theme-color2 7.4%, $theme-color3 92.85%);
+$gr-bg3: linear-gradient(to right, $theme-color, $theme-color2);
+$gr-bg4: linear-gradient(to top, $theme-color, $theme-color2);
+$gr-bg5: linear-gradient(to left, $theme-color, $theme-color2);
+
+
+// Font Variation
+$icon-font   : var(--icon-font);
+
+// Typography
+$title-font      : var(--title-font);
+$body-font       : var(--body-font);
+$body-font-size  : 16px;
+$body-line-Height: 24px;
+$body-font-weight: 500;
+$p-line-Height   : 1.5; 
+
+// Device Variation
+$hd: 1921px; // Large Device Than 1920
+$xxl: 1700px; // Extra large Device
+$ml: 1399px; // Medium Large Device
+$xl: 1299px; // Medium Large Device
+$lg: 1199px; // Large Device (Laptop)
+$md: 991px; // Medium Device (Tablet)
+$sm: 767px; // Small Device
+$xs: 575px; // Extra Small Device
+$vxs: 375px; // Extra Small Device
+
+// Spacing Count with 5x
+$space-count: 10;
+
+// Section Space  For large Device
+$space         : var(--section-space);
+$space-extra   : calc(var(--section-space) - 30px);
+$space-extra2   : calc(var(--section-space) - 40px);
+
+// Section Space On small Device
+$space-mobile         : var(--section-space-mobile);
+$space-mobile-extra: calc(var(--section-space-mobile) - 30px);
+
+
+// BG Color Mapping 
+$bgcolorMap  : ();
+$bgcolorMap  : map-merge((
+  "theme"    : $theme-color,
+  "theme2"   : $theme-color2,
+  "smoke"    : $smoke-color,
+  "smoke2"   : $smoke-color2,
+  "smoke3"   : $smoke-color3,
+  "white"    : $white-color,
+  "black"    : $black-color,
+  "title"    : $title-color,
+  "body"     : $body-color,
+  // "surface-dark": $surface-dark,
+), $bgcolorMap);
+
+
+// Overlay Color Mapping 
+$overlaycolorMap : ();
+$overlaycolorMap : map-merge((
+  "theme"        : $theme-color,
+  "theme2"       : $theme-color2,
+  "title"        : $title-color,
+  "white"        : $white-color,
+  "black"        : $black-color,
+  "overlay1"     : #0E121D,
+), $overlaycolorMap);
+
+
+// Text Color Mapping 
+$textColorsMap : ();
+$textColorsMap : map-merge((
+  "theme"      : $theme-color,
+  "theme2"     : $theme-color2,
+  "title"      : $title-color,
+  "body"       : $body-color,
+  "white"      : $white-color,
+  "light"      : $light-color,
+  "gray"       : $gray-color,
+  "yellow"     : $yellow-color,
+  "success"    : $success-color,
+  "error"      : $error-color), 
+$textColorsMap);
+
+
+// Font Mapping 
+$fontsMap    : ();
+$fontsMap    : map-merge((
+  "icon"     : $icon-font,
+  "title"    : $title-font,
+  "body"     : $body-font,
+), $fontsMap);

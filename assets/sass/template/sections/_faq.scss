@@ -1,0 +1,174 @@
+/*
+.faq-tab {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    button {
+        font-size: 16px;
+        font-weight: 500;
+        color: $title-color;
+        background-color: rgba($color: #D9D9D9, $alpha: 0.06);
+        border: 1px solid $border-color;
+        padding: 14px 20px;
+        border-radius: 12px;
+        position: relative;
+        z-index: 2;
+        &:before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: $gr-bg2;
+            border-radius: inherit;
+            transition: 0.4s ease-in-out;
+            opacity: 0;
+            visibility: hidden;
+            z-index: -1;
+        }
+        &.active {
+            color: $white-color;
+            border: none;
+            &:before {
+                visibility: visible;
+                opacity: 1;
+            }
+        }
+    }
+}
+*/
+
+.accordion-card {
+    transition: 0.4s ease-in-out;
+    overflow: hidden;
+    background-color: transparent;
+    text-align: left;
+    position: relative;
+    z-index: 3;
+    border: none;
+    border-top: 1px solid rgba($color: #1894E3, $alpha: 0.5);
+    border-radius: 0;
+    // box-shadow: 0px 6px 30px rgba(0, 0, 0, 0.08);
+    margin-bottom: 0;
+    .accordion-button {
+        font-size: 32px;
+        font-weight: 700;
+        font-family: $title-font;
+        border: 0;
+        border-color: $border-color;
+        color: rgba($color: #1894E3, $alpha: 0.5);
+        background-color: transparent;
+        // box-shadow: 0px 2px 14px rgba(4, 6, 66, 0.1);
+        border-radius: 0;
+        padding: 40px 0 40px 0;
+        min-height: 56px;
+        gap: 10px;
+        margin-bottom: 0;
+        text-align: left;
+        transition: 0.3s;
+        position: relative;
+        &:after {
+            content: "+";
+            height: 24px;
+            background-color: transparent;
+            background-image: none;
+            color: $title-color;
+            font-weight: 300;
+            font-size: 32px;
+            line-height: 20px;
+            display: grid;
+            position: absolute;
+            top: calc(50% - 12px);
+            right: 30px;
+            transition: 0.3s ease-in-out;
+            display: none;
+        }
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        &:not(.collapsed) {
+            box-shadow: none;
+            border-radius: 0;
+            color: $theme-color;
+            &:after {
+                content: '_';
+                transform: rotateX(180deg);
+                color: $white-color;
+                font-weight: 300;
+            }
+        }
+        @include sm {
+            font-size: 26px;
+        }
+        @include vxs {
+            font-size: 22px;
+        }
+    }
+    .accordion-collapse {
+        border: none;
+    }
+    .accordion-body {
+        border-radius: 0;
+        border: none;
+        padding: 0 0 40px 0;
+        margin-top: 0;
+        font-weight: 500;
+        color: $title-color;
+    }
+    .faq-text {
+        font-size: 22px;
+        margin-top: -0.5em;
+        margin-bottom: -0.3em;
+        color: $body-color;
+        @include sm {
+            font-size: 20px;
+        }
+        @include vxs {
+            font-size: 18px;
+        }
+    }
+    &.active {
+        border-color: $theme-color;
+    }
+}
+
+.faq-area {
+    display: flex;
+    align-items: center;
+    max-width: 752px;
+    margin: 0 auto;
+    justify-content: space-between;
+    gap: 40px 20px;
+    .faq-wrap {
+        flex: 424px;
+        max-width: 424px;
+        border-bottom: 1px solid rgba($color: #1894E3, $alpha: 0.5);
+    }
+    .img-wrap {
+        flex: 200px;
+        max-width: 200px;
+        text-align: center;
+    }
+    @include sm {
+        flex-direction: column;
+        .faq-wrap {
+            flex: 100%;
+            max-width: 100%;
+        }
+        .img-wrap {
+            flex: 100%;
+            max-width: 100%;
+        }
+    }
+}
+
+// #faqAccordion {
+//     column-count: 2;
+//     gap: 24px;
+//     column-width: calc(50% -12px);
+//     margin-bottom: -23px;
+//     @include md {
+//         column-count: 1;
+//         column-width: 100%;
+//     }
+// }

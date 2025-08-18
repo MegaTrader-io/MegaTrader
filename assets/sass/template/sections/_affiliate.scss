@@ -1,0 +1,270 @@
+.aff-feature {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid #FFFFFF;
+    box-shadow: 0px 15px 60px -20px rgba(9, 67, 104, 0.17);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 30px 24px;
+    text-align: center;
+    height: 100%;
+    .box-icon {
+        margin-bottom: 24px;
+        transition: 0.4s ease-in-out;
+    }
+    &:hover {
+        .box-icon {
+            // transform: rotateY(180deg);
+        }
+    }
+}
+
+.reward-box {
+    position: relative;
+    z-index: 3;
+    padding-top: 92px;
+    height: 100%;
+    .box-content {
+        padding: 30px;
+        border-radius: 24px;
+        height: 100%;
+    }
+    .box-shape {
+        position: absolute;
+        right: 45px;
+        top: 0;
+        pointer-events: none;
+    }
+    .box-subtitle {
+        display: inline-block;
+        background-color: rgba(255, 255, 255, 0.4);
+        border: 1.5px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0px 20px 20px -15px rgba(9, 67, 104, 0.12);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 10px 22px;
+        color: $title-color;
+        margin-bottom: 24px;
+    }
+    .box-title {
+        font-size: 32px;
+        color: $theme-color;
+        margin-bottom: 36px;
+        position: relative;
+        z-index: 3;
+    }
+    &.box-1 {
+        .box-shape {
+            transform: scale(0.66);
+        }
+    }
+    &.box-2 {
+        .box-shape {
+            transform: scale(0.77);
+        }
+        @include sm {
+            margin-top: -15px;
+        }
+    }
+}
+
+@include md {
+    .reward-row {
+        margin-top: -40px;
+    }
+}
+@include xs {
+    .reward-row {
+        margin-top: -50px;
+    }
+}
+
+
+// Affiliate Plugin Helper -------------------------------------
+.affwp-form {
+    margin-bottom: 0;
+    input {
+        background-color: $smoke-color;
+        border: 1px solid $border-color;
+        border-radius: 12px;
+        height: 56px;
+        padding: 0 20px;
+        margin-bottom: 15px;
+        color: $light-color;
+        @include inputPlaceholder {
+            color: $light-color;
+        }
+    }
+    textarea {
+        background-color: $smoke-color;
+        border: 1px solid $border-color;
+        border-radius: 12px;
+        padding: 0 20px;
+        min-height: 150px;
+        color: $light-color;
+        @include inputPlaceholder {
+            color: $light-color;
+        }
+    }
+    input.button {
+        font-size: 16px;
+        border: none;
+        background: $theme-color;
+        padding: 16px 30px;
+        border-radius: 12px;
+        color: $white-color;
+        transition: 0.4s ease-in-out;
+        cursor: pointer;
+        &:hover {
+            background: #1e54be;
+        }
+    }
+    .affwp-lost-password {
+        margin-bottom: 0;
+    }
+    label {
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+    input[type=checkbox] {
+        width: 18px;
+        height: 18px;
+        background-color: $smoke-color2;
+        border: 1px solid $title-color;
+        opacity: 1;
+        visibility: visible;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-right: 5px;
+        margin-top: 0;
+        transform: translateY(3px);
+    }
+}
+.woocommerce-ResetPassword, 
+.lost_reset_password {
+    input {
+        background-color: $smoke-color;
+        border: 1px solid $border-color;
+        border-radius: 12px;
+        height: 56px;
+        padding: 0 20px;
+        margin-bottom: 15px;
+        color: $light-color;
+        @include inputPlaceholder {
+            color: $light-color;
+        }
+    }
+}
+.space {
+    padding-top: $space;
+    padding-bottom: $space;
+    @include md {
+        padding-top: $space-mobile;
+        padding-bottom: $space-mobile;
+    }
+}
+.space-bottom {
+    padding-bottom: $space;
+    @include md {
+        padding-bottom: $space-mobile;
+    }
+}
+.pt-60 {
+    padding-top: 60px;
+    @include md {
+        padding-top: 45px;
+    }
+}
+.screen-reader-text {
+    display: none;
+}
+.affwp-card {
+    .button {
+        border: none;
+        background: $theme-color2;
+        padding: 16px 30px;
+        border-radius: 12px;
+        color: $white-color;
+        transition: 0.4s ease-in-out;
+        white-space: nowrap;
+        &:hover {
+            background: $theme-color;
+        }
+    }
+    h3 {
+        margin-bottom: 16px !important;
+    }
+    .affwp-card__header {
+        padding: 0;
+    }
+    .affwp-card__content, .affwp-card__footer {
+        padding: 0;
+        margin-top: 20px;
+    }
+}
+
+#affwp-graphs-filter {
+    .button {
+        border: none;
+        background: $theme-color2;
+        padding: 16px 30px;
+        border-radius: 12px;
+        color: $white-color;
+        transition: 0.4s ease-in-out;
+        white-space: nowrap;
+        margin-top: 15px;
+        &:hover {
+            background: $theme-color;
+        }
+    }
+    select {
+        height: 46px;
+        background-color: $smoke-color;
+        border-radius: 12px;
+        color: $light-color;
+        padding: 0 15px;
+    }
+}
+
+#affwp-affiliate-dashboard {
+    #affwp-affiliate-dashboard-tabs {
+        margin-bottom: 40px;
+        li {
+            margin-bottom: 10px;
+            a {
+                text-decoration: none;
+                display: inline-block;
+                padding: 5px 18px;
+                background-color: $smoke-color;
+                border: 1px solid $border-color;
+                border-radius: 8px;
+                color: $white-color;
+            }
+            &.active {
+                a {
+                    font-weight: 400;
+                    background-color: $theme-color2;
+                    color: $white-color;
+                    border-color: $theme-color2;
+                }
+            }
+        }
+    }
+}
+
+.affwp-affiliate-link {
+    margin-bottom: 50px !important;
+}
+
+table.affwp-table {
+    th, td {
+        padding: 10px 20px;
+    }
+    th {
+        background: $smoke-color;
+        color: $white-color;
+        font-weight: 500;
+    }
+    td {
+        color: $body-color;
+    }
+}

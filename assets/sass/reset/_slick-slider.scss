@@ -1,0 +1,166 @@
+.slick-track > [class*="col"] {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: calc(var(--bs-gutter-x) / 2);
+    padding-left: calc(var(--bs-gutter-x) / 2);
+    margin-top: var(--bs-gutter-y);
+}
+.slick-list {
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+}
+  
+.slick-track {
+    min-width: 100%;
+}
+
+.slick-slide img {
+    display: inline-block;
+}
+
+.slick-dots {
+    list-style-type: none;
+    padding: 0 0;
+    margin: 40px 0 0 0;
+    line-height: 0;
+    text-align: center;
+    height: max-content;
+
+    li {
+        display: inline-block;
+        margin-right: 5px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    button {
+        font-size: 0;
+        padding: 0;
+        background-color: transparent;
+        width: 10px;
+        height: 10px;
+        line-height: 0;
+        border-radius: 9999px;
+        border: none;
+        background-color: $theme-color;
+        transition: all ease 0.4s;
+
+        &:hover {
+            border-color: $title-color;
+        }
+    }
+
+    .slick-active {
+        button {
+            width: 60px;
+            transform: scale(1);
+            background-color: $theme-color;
+        }
+    }
+}
+
+.slick-arrow {
+    display: inline-block;
+    padding: 0;
+    background-color: #F8F8FB;
+    color: $title-color;
+    position: absolute;
+    top: 50%;
+    border: none;
+    box-shadow: none;
+    left: var(--pos-x, -14px);
+    width: var(--icon-size, 52px);
+    height: var(--icon-size, 52px);
+    line-height: var(--icon-size, 52px);
+    font-size: var(--icon-font-size, 16px);
+    margin-top: calc(var(--icon-size, 52px) / -2);
+    border-radius: 99px;
+    z-index: 2;
+    .icon {
+        content: url('data:image/svg+xml,<svg width="18" height="14" viewBox="0 0 18 14" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 7L1 7M1 7L7 13M1 7L7 0.999999" stroke="%230E0E1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+        transition: 0.4s ease-in-out;
+    }
+
+    &:hover {
+        background-color: $theme-color;
+        .icon {
+            filter: brightness(0) invert(1);
+        }
+    }
+    &.slick-next {
+        right: var(--pos-x, -14px);
+        left: auto;
+        .icon {
+            content: url('data:image/svg+xml,<svg width="18" height="14" viewBox="0 0 18 14" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 7H17M17 7L11 1M17 7L11 13" stroke="%230E0E1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+        }
+    }
+}
+
+.arrow-margin {
+    .slick-arrow {
+        top: calc(50% - 30px);
+    }
+}
+.arrow-wrap {
+    .slick-arrow {
+        opacity: 0;
+        visibility: hidden;
+        transform: scale(0.5);
+    }
+
+    &:hover {
+        .slick-arrow {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+    }
+}
+.slick-arrow {
+    &.default {
+        position: relative;
+        --pos-x: 0;
+        margin-top: 0;
+        visibility: visible;
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@include xl {
+    .slick-arrow {
+        --arrow-horizontal: -20px;
+        --pos-x: -70px;
+    }
+}
+
+@include ml {
+    .slick-arrow {
+        --arrow-horizontal: 40px;
+        --pos-x: -6px;
+    }
+}
+
+@include md {
+    .slick-arrow {
+        margin-right: 40px;
+        font-size: 14px;
+        &.slick-next {
+            margin-right: 0;
+            margin-left: 40px;
+        }
+    }
+
+    .slick-dots {
+        margin: 40px 0 0 0;
+    }
+    .icon-box {
+        .slick-arrow {
+            margin-right: 0;
+        }
+    }
+}
