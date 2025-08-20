@@ -40,23 +40,6 @@ function mt_enqueue_auth_script_on_login_form(): void
 
 add_action('woocommerce_login_form', 'mt_enqueue_auth_script_on_login_form');
 
-add_filter('template_include', 'load_custom_auth_template', 99);
-function load_custom_auth_template($template)
-{
-    if (!function_exists('wc_get_page_id')) return $template;
-
-    $is_register = get_query_var('register', null);
-    $my_account_id = wc_get_page_id('myaccount');
-
-    if ($my_account_id > 0 && (is_page($my_account_id) && !is_user_logged_in() || $is_register && !is_user_logged_in())) {
-        $auth_template = get_theme_file_path('page-auth.php');
-        if (file_exists($auth_template)) {
-            return $auth_template;
-        }
-    }
-    return $template;
-}
-
 add_action('init', function () {
     remove_action('woocommerce_before_customer_login_form', 'woocommerce_output_all_notices', 10);
 }, 10);
@@ -181,3 +164,86 @@ add_action('wp_enqueue_scripts', function () {
 JS;
     wp_add_inline_script('mt-auth', $inline, 'after');
 });
+
+/**
+ * Auth routes redirector (/auth/* <-> /my-account).
+ * - Si usuario logueado entra a /auth/* => redirige a /my-account.
+ * - Si NO logueado entra a /my-account o endpoints => redirige a /auth/* correspondiente.
+ * - Preserva redirect_to con la URL original.
+ */
+add_action('template_redirect', function () {
+    if (!function_exists('is_account_page') || !function_exists('wc_get_page_permalink')) {
+        return;
+    }
+
+    // Ruta solicitada (sin query ni hash)
+    $path = (string)wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    $path = trailingslashit($path);
+
+    // ¿Es una ruta /auth/* ?
+    $is_auth_route = (strpos($path, '/auth/') === 0);
+
+    // URL absoluta actual (para redirect_to)
+    $current_url = (is_ssl() ? 'https://' : 'http://') .
+        ($_SERVER['HTTP_HOST'] ?? '') .
+        ($_SERVER['REQUEST_URI'] ?? '/');
+
+    // 1) Ya logueado en /auth/* => manda al dashboard
+    if (is_user_logged_in() && $is_auth_route) {
+        wp_safe_redirect(wc_get_page_permalink('myaccount'), 302);
+        exit;
+    }
+
+    // 2) No logueado en /my-account o endpoints => manda a /auth/*
+    if (!is_user_logged_in() && (is_account_page() || is_wc_endpoint_url())) {
+        // Mapea endpoint a la página de auth correspondiente
+        $target = '/auth/login';
+        if (is_wc_endpoint_url('lost-password') || isset($_GET['lost-password'])) {
+            $target = '/auth/lost-password';
+        } elseif (is_wc_endpoint_url('register') || (isset($_GET['action']) && $_GET['action'] === 'register')) {
+            $target = '/auth/register';
+        }
+
+        // Preserva hacia dónde quería ir el usuario
+        $redir = add_query_arg('redirect_to', rawurlencode($current_url), home_url($target));
+        wp_safe_redirect($redir, 302);
+        exit;
+    }
+}, 9); // prioridad baja para que ocurra antes de elegir plantilla
+
+/**
+ * Post-login: respeta ?redirect_to si es mismo host, si no, manda a /my-account.
+ */
+add_filter('woocommerce_login_redirect', function ($redirect, $user) {
+    $requested = isset($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : '';
+    if ($requested) {
+        $homeHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
+        $reqHost = wp_parse_url($requested, PHP_URL_HOST);
+        if ($homeHost && $homeHost === $reqHost) {
+            return $requested;
+        }
+    }
+    return wc_get_page_permalink('myaccount');
+}, 10, 2);
+
+/**
+ * Post-register: igual que login.
+ */
+add_filter('woocommerce_registration_redirect', function ($redirect) {
+    $requested = isset($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : '';
+    if ($requested) {
+        $homeHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
+        $reqHost = wp_parse_url($requested, PHP_URL_HOST);
+        if ($homeHost && $homeHost === $reqHost) {
+            return $requested;
+        }
+    }
+    return wc_get_page_permalink('myaccount');
+}, 10);
+
+add_action('wp_head', function () {
+    $path = (string)wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if (strpos(trailingslashit($path), '/auth/') === 0) {
+        echo "<meta name=\"robots\" content=\"noindex,nofollow\" />\n";
+    }
+}, 1);
