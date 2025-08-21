@@ -195,17 +195,22 @@ add_action('template_redirect', function () {
     }
 
     // 2) No logueado en /my-account o endpoints => manda a /auth/*
-    if (!is_user_logged_in() && (is_account_page() || is_wc_endpoint_url())) {
-        // Mapea endpoint a la página de auth correspondiente
+    if (!is_user_logged_in() && !$is_auth_route && (is_account_page() || is_wc_endpoint_url())) {
+
+        // Mapea endpoint -> ruta de auth
         $target = '/auth/login';
-        if (is_wc_endpoint_url('lost-password') || isset($_GET['lost-password'])) {
+        if (is_wc_endpoint_url('lost-password') || get_query_var('lost-password')) {
             $target = '/auth/lost-password';
         } elseif (is_wc_endpoint_url('register') || (isset($_GET['action']) && $_GET['action'] === 'register')) {
             $target = '/auth/register';
         }
 
-        // Preserva hacia dónde quería ir el usuario
-        $redir = add_query_arg('redirect_to', rawurlencode($current_url), home_url($target));
+        // Solo agrega redirect_to si NO existe (evita nesting infinito)
+        $redir = home_url($target);
+        if (!isset($_GET['redirect_to']) && !isset($_POST['redirect_to'])) {
+            $redir = add_query_arg('redirect_to', rawurlencode($current_url), $redir);
+        }
+
         wp_safe_redirect($redir, 302);
         exit;
     }
@@ -247,3 +252,24 @@ add_action('wp_head', function () {
         echo "<meta name=\"robots\" content=\"noindex,nofollow\" />\n";
     }
 }, 1);
+
+add_action('init', function () {
+    // Obtiene el path real (soporta jerarquías si algún día "Auth" tiene padre)
+    $auth = get_page_by_path('auth');
+
+    if (!$auth instanceof WP_Post) {
+        return;
+    }
+    $auth_path = trim(get_page_uri($auth->ID), '/'); // ej: 'auth'
+    $re = preg_quote($auth_path, '/');
+
+    // IMPORTANTE: 'top' para que quede antes que las reglas de endpoints
+    add_rewrite_rule('^' . $re . '/login/?$', 'index.php?pagename=' . $auth_path . '/login', 'top');
+    add_rewrite_rule('^' . $re . '/register/?$', 'index.php?pagename=' . $auth_path . '/register', 'top');
+    add_rewrite_rule('^' . $re . '/lost-password/?$', 'index.php?pagename=' . $auth_path . '/lost-password', 'top');
+}, 1);
+
+// Haz flush una vez (cambia tema o guarda permalinks) o deja este hook de una sola ejecución.
+add_action('after_switch_theme', function () {
+    flush_rewrite_rules(false);
+});
