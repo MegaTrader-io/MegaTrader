@@ -88,7 +88,7 @@ foreach ($errors as $error) {
                     <span class="auth-form__remember-link"><?php esc_html_e('Remember me', 'woocommerce'); ?></span>
                 </label>
             </div>
-            <a href="<?php echo esc_url(wp_lostpassword_url()); ?>"
+            <a href="<?php echo home_url('/auth/lost-password'); ?>"
                class="auth-form__forgot-password"><?php esc_html_e('Forgot Password?', 'woocommerce'); ?>
             </a>
         </div>
@@ -114,7 +114,7 @@ foreach ($errors as $error) {
             Don’t have an account?
         </div>
         <a class="btn w-100 mega-btn-md mega-btn-secondary-md w-100"
-           href="<?= home_url('/my-account/register') ?>">
+           href="<?= home_url('/auth/register') ?>">
             <div class="text-neutral-50 text-base font-medium uppercase leading-normal">Create
                 account
             </div>
