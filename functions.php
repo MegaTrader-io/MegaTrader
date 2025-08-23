@@ -125,8 +125,9 @@ function megatrader_scripts() {
 	wp_enqueue_style( 'bootstrap',				MEGATRADER_CSS .'bootstrap.min.css', array(), _MEGATRADER_VERSION );
 	// wp_enqueue_style( 'scrollCue-css',		MEGATRADER_CSS .'scrollCue.min.css', array(), _MEGATRADER_VERSION );
 	wp_enqueue_style( 'megatrader-main',		MEGATRADER_CSS .'style.css', array(), REALTIME_VERSION );
-    wp_enqueue_style( 'megatrader-style', get_stylesheet_uri(), array(), _MEGATRADER_VERSION );
+    wp_enqueue_style( 'megatrader-style',       get_stylesheet_uri(), array(), _MEGATRADER_VERSION );
 	wp_enqueue_style( 'megatrader-dev',         MEGATRADER_CSS .'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION);
+    wp_enqueue_style( 'mt-components',          MEGATRADER_CSS .'mt-components.css', array(), REALTIME_VERSION);
 
 
     
@@ -199,7 +200,10 @@ function custom_search_filter( $query ) {
 }
 add_action( 'pre_get_posts', 'custom_search_filter' );
 
-
+/**
+ *Constant.
+ */
+require get_template_directory() . '/inc/constants.php';
 /**
  * Custom Widget & Function
  */

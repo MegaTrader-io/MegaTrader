@@ -28,7 +28,18 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
     return;
 }
 
-?>
+$fflag = isset($_GET['v2']);
+
+if($fflag): ?>
+
+    <div class="main-container pt-32 pb-32">
+        <div class="container">
+            <?php include get_stylesheet_directory() . '/woocommerce/checkout/step_2.php'; ?>
+        </div>
+    </div>
+
+<?php else: ?>
+
 <div class="page-banner-area pt-32 pb-32">
     <div class="container">
         <div class="top-menu">
@@ -618,3 +629,5 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
 
 
 <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
+
+<?php endif; ?>

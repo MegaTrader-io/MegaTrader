@@ -29,7 +29,12 @@ if ( ! is_ajax() ) {
             ?>
             <br/><button type="submit" class="button alt" name="woocommerce_checkout_update_totals" value="<?php esc_attr_e( 'Update totals', 'woocommerce' ); ?>"><?php esc_html_e( 'Update totals', 'woocommerce' ); ?></button>
         </noscript>
+        
+        <!-- COUPONS SECTION GOES HERE -->
+
+
         <?php do_action( 'woocommerce_review_order_before_submit' ); ?>
+
 
         <?php echo apply_filters( 'woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr( $order_button_text ) . '" data-value="' . esc_attr( $order_button_text ) . '">' . esc_html( $order_button_text ) . '</button>' ); // @codingStandardsIgnoreLine ?>
 
