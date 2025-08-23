@@ -39,10 +39,7 @@ foreach ($errors as $error) {
 }
 
 $default_country = 'US';
-
 $valid_states = WC()->countries->get_states($default_country);
-
-echo '>> ' . MT_WC_Error::has_error('firstname');
 ?>
 
 <?php //do_action('woocommerce_before_customer_login_form'); ?>
@@ -276,14 +273,6 @@ echo '>> ' . MT_WC_Error::has_error('firstname');
         <?php endif; ?>
     </div>
     <?php do_action('woocommerce_register_form'); ?>
-    <p class="">
-        <?php wp_nonce_field('woocommerce-register', 'woocommerce-register-nonce'); ?>
-        <button type="submit"
-                class="btn w-100 mega-btn-md mega-btn-primary-md w-100 <?php echo esc_attr(wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : ''); ?>"
-                name="register"
-                value="<?php esc_attr_e('Register', 'woocommerce'); ?>"><?php esc_html_e('REGISTER', 'woocommerce'); ?>
-        </button>
-    </p>
 
     <div class="google-signin-btn">
         <div class="googlesitekit-sign-in-with-google__frontend-output-button">
