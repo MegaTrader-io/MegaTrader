@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 ob_start();
-wc_get_template('myaccount/partials/sign-in-inner.php');
+wc_get_template('myaccount/partials/sign-up-inner.php');
 $slot = ob_get_clean();
 
 wc_get_template('myaccount/partials/auth-layout.php', [

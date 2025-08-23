@@ -178,7 +178,7 @@ foreach ($errors as $error) {
         Already have an account?
     </div>
     <a class="btn w-100 mega-btn-md mega-btn-secondary-md w-100"
-       href="<?= home_url('/my-account') ?>">
+       href="<?= home_url('/auth/login') ?>">
         <div class="text-neutral-50 text-base font-medium uppercase leading-normal">
             GO TO LOGIN
         </div>

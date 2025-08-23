@@ -5,61 +5,61 @@ if (!defined('ABSPATH')) exit;
  * Registra la regla /{my-account-slug}/register -> index.php?pagename={slug}&register=1
  * usando el slug real de la página "Mi cuenta" (soporta traducciones tipo /mi-cuenta).
  */
-add_action('init', function () {
-    if (!function_exists('wc_get_page_id')) return;
-
-    $page_id = wc_get_page_id('myaccount');
-    if ($page_id <= 0) return;
-
-    $slug = get_post_field('post_name', $page_id);
-    if (!$slug) $slug = 'my-account';
-
-    // Ej: ^mi-cuenta/register/?$ -> index.php?pagename=mi-cuenta&register=1
-    add_rewrite_rule(
-        '^' . preg_quote($slug, '/') . '/register/?$',
-        'index.php?pagename=' . $slug . '&register=1',
-        'top'
-    );
-}, 1);
+//add_action('init', function () {
+//    if (!function_exists('wc_get_page_id')) return;
+//
+//    $page_id = wc_get_page_id('myaccount');
+//    if ($page_id <= 0) return;
+//
+//    $slug = get_post_field('post_name', $page_id);
+//    if (!$slug) $slug = 'my-account';
+//
+//    // Ej: ^mi-cuenta/register/?$ -> index.php?pagename=mi-cuenta&register=1
+//    add_rewrite_rule(
+//        '^' . preg_quote($slug, '/') . '/register/?$',
+//        'index.php?pagename=' . $slug . '&register=1',
+//        'top'
+//    );
+//}, 1);
 
 // Expone la query var
-add_filter('query_vars', function ($vars) {
-    $vars[] = 'register';
-    return $vars;
-});
+//add_filter('query_vars', function ($vars) {
+//    $vars[] = 'register';
+//    return $vars;
+//});
 
 // Flush una sola vez al activar/cambiar theme
-add_action('after_switch_theme', function () {
-    flush_rewrite_rules(false);
-});
+//add_action('after_switch_theme', function () {
+//    flush_rewrite_rules(false);
+//});
 
 /**
  * 1) Si el usuario está logueado y visita /my-account/register,
  *    redirige al dashboard de Mi cuenta.
  */
-add_action('template_redirect', function () {
-    if (!function_exists('wc_get_page_id')) return;
-
-    $my_account_id = wc_get_page_id('myaccount');
-    if ($my_account_id <= 0) return;
-
-    // Estamos en la página My Account
-    if (!is_page($my_account_id)) return;
-
-    $is_register_endpoint = get_query_var('register', null);
-    $is_register_action = isset($_GET['action']) && $_GET['action'] === 'register';
-
-    if (is_user_logged_in() && (!empty($is_register_endpoint) || $is_register_action)) {
-        $target = wc_get_page_permalink('myaccount');
-        $scheme = is_ssl() ? 'https://' : 'http://';
-        $current = $scheme . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '');
-
-        if (trailingslashit($current) !== trailingslashit($target)) {
-            wp_safe_redirect($target, 302);
-            exit;
-        }
-    }
-}, 1);
+//add_action('template_redirect', function () {
+//    if (!function_exists('wc_get_page_id')) return;
+//
+//    $my_account_id = wc_get_page_id('myaccount');
+//    if ($my_account_id <= 0) return;
+//
+//    // Estamos en la página My Account
+//    if (!is_page($my_account_id)) return;
+//
+//    $is_register_endpoint = get_query_var('register', null);
+//    $is_register_action = isset($_GET['action']) && $_GET['action'] === 'register';
+//
+//    if (is_user_logged_in() && (!empty($is_register_endpoint) || $is_register_action)) {
+//        $target = wc_get_page_permalink('myaccount');
+//        $scheme = is_ssl() ? 'https://' : 'http://';
+//        $current = $scheme . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '');
+//
+//        if (trailingslashit($current) !== trailingslashit($target)) {
+//            wp_safe_redirect($target, 302);
+//            exit;
+//        }
+//    }
+//}, 1);
 
 /**
  * 2) Si NO está logueado y llegó por /register (o ?action=register),
@@ -90,6 +90,7 @@ add_action('init', function () {
 
 function mt_process_registration(): void
 {
+
     // 1) Gate: solo procesa cuando viene el submit correcto + nonce válido.
     $nonce = isset($_POST['woocommerce-register-nonce'])
         ? wp_unslash($_POST['woocommerce-register-nonce'])
@@ -212,12 +213,6 @@ function mt_process_registration(): void
             }
         }
         return;
-    }
-
-    if ( 'yes' === get_option( 'woocommerce_registration_generate_password' ) ) {
-        wc_add_notice( __( 'Your account was created successfully and a password has been sent to your email address.', 'woocommerce' ) );
-    } else {
-        wc_add_notice( __( 'Your account was created successfully. Your login details have been sent to your email address.', 'woocommerce' ) );
     }
 
     // 8) Guardar metadatos y nombre
