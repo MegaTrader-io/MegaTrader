@@ -1309,6 +1309,15 @@ html, body {
   margin: 0;
 }
 
+.mgt-theme .full-name-wrapper{
+  display: flex;
+  gap: 1rem;
+}
+
+.mgt-theme .full-name-wrapper__field{
+  width: 100%;
+}
+
 .placeholder\:text-neutral-700::-moz-placeholder{
   --tw-text-opacity: 1;
   color: rgb(64 64 64 / var(--tw-text-opacity, 1));

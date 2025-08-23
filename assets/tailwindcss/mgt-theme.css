@@ -163,3 +163,11 @@
 .mgt-theme .auth-form__content .woocommerce-notices-wrapper .woocommerce-message {
     margin: 0;
 }
+
+.mgt-theme .full-name-wrapper {
+    @apply flex gap-4;
+}
+
+.mgt-theme .full-name-wrapper__field {
+    @apply w-full
+}

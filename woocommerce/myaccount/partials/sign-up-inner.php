@@ -2,15 +2,18 @@
 
 $errors = wc_get_notices('error');
 
-$error_fullname = $error_email = $error_phone = $error_password = $error_confirm_password = $error_privacy_policy = '';
+$error_firstname = $error_lastname = $error_email = $error_phone = $error_password = $error_confirm_password = $error_privacy_policy = '';
 
 foreach ($errors as $error) {
     if (!isset($error['data']['field'])) {
         continue;
     }
     switch ($error['data']['field']) {
-        case 'fullname':
-            $error_fullname = $error['notice'];
+        case 'firstname':
+            $error_firstname = $error['notice'];
+            break;
+        case 'lastname':
+            $error_lastname = $error['notice'];
             break;
         case 'email':
             $error_email = $error['notice'];
@@ -52,19 +55,36 @@ foreach ($errors as $error) {
 
     <?php do_action('woocommerce_register_form_start'); ?>
 
-    <div>
-        <input type="text"
-               class="form-control <?= !empty($error_fullname) ? 'auth-form--error-message' : '' ?>"
-               name="fullname" id="fullname"
-               autocomplete="fullname"
-               placeholder="Full Name"
-               value="<?php echo (!empty($_POST['fullname']) && is_string($_POST['fullname'])) ? esc_attr(wp_unslash($_POST['fullname'])) : ''; ?>"
-               required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
+    <div class="full-name-wrapper">
+        <div class="full-name-wrapper__field">
+            <input type="text"
+                   class="form-control <?= !empty($error_firstname) ? 'auth-form--error-message' : '' ?>"
+                   name="firstname" id="firstname"
+                   autocomplete="firstname"
+                   placeholder="First Name"
+                   value="<?php echo (!empty($_POST['firstname']) && is_string($_POST['firstname'])) ? esc_attr(wp_unslash($_POST['firstname'])) : ''; ?>"
+                   required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
 
-        <?php if (!empty($error_fullname)): ?>
-            <span id="error-fullname"
-                  class="auth-form__error_message"> <?= $error_fullname ?></span>
-        <?php endif; ?>
+            <?php if (!empty($error_firstname)): ?>
+                <span id="error-firstname"
+                      class="auth-form__error_message"> <?= $error_firstname ?></span>
+            <?php endif; ?>
+        </div>
+
+        <div class="full-name-wrapper__field">
+            <input type="text"
+                   class="form-control <?= !empty($error_lastname) ? 'auth-form--error-message' : '' ?>"
+                   name="lastname" id="lastname"
+                   autocomplete="lastname"
+                   placeholder="Last Name"
+                   value="<?php echo (!empty($_POST['lastname']) && is_string($_POST['lastname'])) ? esc_attr(wp_unslash($_POST['lastname'])) : ''; ?>"
+                   required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
+
+            <?php if (!empty($error_lastname)): ?>
+                <span id="error-lastname"
+                      class="auth-form__error_message"> <?= $error_lastname ?></span>
+            <?php endif; ?>
+        </div>
     </div>
 
     <div>
@@ -72,7 +92,7 @@ foreach ($errors as $error) {
                class="form-control <?= !empty($error_email) ? 'auth-form--error-message' : '' ?>"
                name="email" id="email"
                autocomplete="email"
-               placeholder="Email"
+               placeholder="Email Address"
                value="<?php echo (!empty($_POST['email']) && is_string($_POST['email'])) ? esc_attr(wp_unslash($_POST['email'])) : ''; ?>"
                required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
 

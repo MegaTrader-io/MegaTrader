@@ -2,67 +2,7 @@
 if (!defined('ABSPATH')) exit;
 
 /**
- * Registra la regla /{my-account-slug}/register -> index.php?pagename={slug}&register=1
- * usando el slug real de la página "Mi cuenta" (soporta traducciones tipo /mi-cuenta).
- */
-//add_action('init', function () {
-//    if (!function_exists('wc_get_page_id')) return;
-//
-//    $page_id = wc_get_page_id('myaccount');
-//    if ($page_id <= 0) return;
-//
-//    $slug = get_post_field('post_name', $page_id);
-//    if (!$slug) $slug = 'my-account';
-//
-//    // Ej: ^mi-cuenta/register/?$ -> index.php?pagename=mi-cuenta&register=1
-//    add_rewrite_rule(
-//        '^' . preg_quote($slug, '/') . '/register/?$',
-//        'index.php?pagename=' . $slug . '&register=1',
-//        'top'
-//    );
-//}, 1);
-
-// Expone la query var
-//add_filter('query_vars', function ($vars) {
-//    $vars[] = 'register';
-//    return $vars;
-//});
-
-// Flush una sola vez al activar/cambiar theme
-//add_action('after_switch_theme', function () {
-//    flush_rewrite_rules(false);
-//});
-
-/**
- * 1) Si el usuario está logueado y visita /my-account/register,
- *    redirige al dashboard de Mi cuenta.
- */
-//add_action('template_redirect', function () {
-//    if (!function_exists('wc_get_page_id')) return;
-//
-//    $my_account_id = wc_get_page_id('myaccount');
-//    if ($my_account_id <= 0) return;
-//
-//    // Estamos en la página My Account
-//    if (!is_page($my_account_id)) return;
-//
-//    $is_register_endpoint = get_query_var('register', null);
-//    $is_register_action = isset($_GET['action']) && $_GET['action'] === 'register';
-//
-//    if (is_user_logged_in() && (!empty($is_register_endpoint) || $is_register_action)) {
-//        $target = wc_get_page_permalink('myaccount');
-//        $scheme = is_ssl() ? 'https://' : 'http://';
-//        $current = $scheme . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '');
-//
-//        if (trailingslashit($current) !== trailingslashit($target)) {
-//            wp_safe_redirect($target, 302);
-//            exit;
-//        }
-//    }
-//}, 1);
-
-/**
- * 2) Si NO está logueado y llegó por /register (o ?action=register),
+ * 1) Si NO está logueado y llegó por /register (o ?action=register),
  *    ocultamos el bloque de login para que se vea SOLO el formulario de registro.
  *    Si el registro está deshabilitado, no ocultamos el login.
  */
@@ -90,7 +30,6 @@ add_action('init', function () {
 
 function mt_process_registration(): void
 {
-
     // 1) Gate: solo procesa cuando viene el submit correcto + nonce válido.
     $nonce = isset($_POST['woocommerce-register-nonce'])
         ? wp_unslash($_POST['woocommerce-register-nonce'])
@@ -104,8 +43,11 @@ function mt_process_registration(): void
     }
 
     // 2) Inputs (sanitizados y tipados)
-    $fullname = isset($_POST['fullname']) && is_string($_POST['fullname'])
-        ? trim((string)wp_unslash($_POST['fullname'])) : '';
+    $firstname = isset($_POST['firstname']) && is_string($_POST['firstname'])
+        ? (string)sanitize_text_field($_POST['firstname']) : '';
+
+    $lastname = isset($_POST['lastname']) && is_string($_POST['lastname'])
+        ? (string)sanitize_text_field($_POST['lastname']) : '';
 
     $email = isset($_POST['email']) && is_string($_POST['email'])
         ? sanitize_email(wp_unslash($_POST['email'])) : '';
@@ -122,8 +64,12 @@ function mt_process_registration(): void
     $privacy_ok = isset($_POST['privacy_policy']) && (string)$_POST['privacy_policy'] === '1';
 
     // 3) Validaciones propias (antes de filtros de Woo)
-    if ($fullname === '') {
-        wc_add_notice(__('Full name is required.', 'your-td'), 'error', ['field' => 'fullname']);
+    if ($firstname === '') {
+        wc_add_notice(__('First Name is required.', 'your-td'), 'error', ['field' => 'firstname']);;
+    }
+
+    if ($lastname === '') {
+        wc_add_notice(__('Last Name is required.', 'your-td'), 'error', ['field' => 'lastname']);;
     }
 
     if ($email === '') {
@@ -219,15 +165,11 @@ function mt_process_registration(): void
     // billing_phone (Woo estándar)
     update_user_meta($new_customer, 'billing_phone', $phone);
 
-    // first_name / last_name / display_name desde fullname
-    $parts = preg_split('/\s+/', $fullname, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-    $first = array_shift($parts) ?: '';
-    $last = implode(' ', $parts);
     wp_update_user([
         'ID' => $new_customer,
-        'first_name' => $first,
-        'last_name' => $last,
-        'display_name' => $fullname,
+        'first_name' => $firstname,
+        'last_name' => $lastname,
+        'display_name' => $firstname . ' ' . $lastname,
     ]);
 
     // 9) Mensaje de éxito (coherente con ajustes de Woo)
