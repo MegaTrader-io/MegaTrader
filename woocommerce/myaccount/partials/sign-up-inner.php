@@ -2,7 +2,7 @@
 
 $errors = wc_get_notices('error');
 
-$error_firstname = $error_lastname = $error_email = $error_phone = $error_password = $error_confirm_password = $error_privacy_policy = '';
+$error_firstname = $error_lastname = $error_address = $error_email = $error_phone = $error_password = $error_confirm_password = $error_privacy_policy = '';
 
 foreach ($errors as $error) {
     if (!isset($error['data']['field'])) {
@@ -20,6 +20,9 @@ foreach ($errors as $error) {
             break;
         case 'phone':
             $error_phone = $error['notice'];
+            break;
+        case 'address':
+            $error_address = $error['notice'];
             break;
         case 'password':
             $error_password = $error['notice'];
@@ -114,6 +117,21 @@ foreach ($errors as $error) {
         <?php if (!empty($error_phone)): ?>
             <span id="error-phone"
                   class="auth-form__error_message"> <?= $error_phone ?></span>
+        <?php endif; ?>
+    </div>
+
+    <div class="form-group auth-form__address-wrapper">
+        <input type="text"
+               class="form-control <?= !empty($error_address) ? 'auth-form--error-message' : '' ?>"
+               name="address" id="address"
+               autocomplete="address"
+               placeholder="Address"
+               value="<?php echo (!empty($_POST['address']) && is_string($_POST['address'])) ? esc_attr(wp_unslash($_POST['address'])) : ''; ?>"
+               required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
+
+        <?php if (!empty($error_address)): ?>
+            <span id="error-address"
+                  class="auth-form__error_message"> <?= $error_address ?></span>
         <?php endif; ?>
     </div>
 

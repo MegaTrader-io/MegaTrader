@@ -55,6 +55,9 @@ function mt_process_registration(): void
     $phone = isset($_POST['phone']) && is_string($_POST['phone'])
         ? trim((string)wp_unslash($_POST['phone'])) : '';
 
+    $address = isset($_POST['address']) && is_string($_POST['address'])
+        ? trim((string)sanitize_text_field($_POST['address'])) : '';
+
     $password = isset($_POST['password']) && is_string($_POST['password'])
         ? (string)$_POST['password'] : '';
 
@@ -70,6 +73,10 @@ function mt_process_registration(): void
 
     if ($lastname === '') {
         wc_add_notice(__('Last Name is required.', 'your-td'), 'error', ['field' => 'lastname']);;
+    }
+
+    if ($address === '') {
+        wc_add_notice(__('Address is required.', 'your-td'), 'error', ['field' => 'address']);;
     }
 
     if ($email === '') {
@@ -164,6 +171,7 @@ function mt_process_registration(): void
     // 8) Guardar metadatos y nombre
     // billing_phone (Woo estándar)
     update_user_meta($new_customer, 'billing_phone', $phone);
+    update_user_meta($new_customer, 'billing_address_1', $address);
 
     wp_update_user([
         'ID' => $new_customer,
