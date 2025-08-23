@@ -116,74 +116,65 @@
     .mt-tabs__list {
         display: flex;
         gap: 2px;
-    }
-    .mt-tabs__panels {
-        margin-top: -1px;
-        padding: 24px;
-        border-radius: 0 var(--Border-Radius-xl, 16px) var(--Border-Radius-xl, 16px) var(--Border-Radius-xl, 16px);
-        border: 1px solid var(--Colors-Gray-700, #404040);
-        background: var(--Surface-Page, #1E1E1E);
+        min-width: 100%;
     }
 
-.tabs {}
+    .mt-tabs__item {
+      color: var(--Text-Headings, white);
+      font-size: 20px;
+      font-family: Roboto;
+      font-weight: 700;
+      line-height: 32px;
+      word-wrap: break-word;
+      padding: 12px;
 
-[role="tablist"] {
-  min-width: 100%;
-}
+      border-radius: 16px 16px 0 0;
+      border-style: solid;
+      border-width: 1px;
 
-[role="tab"] {
-  color: var(--Text-Headings, white);
-  font-size: 20px;
-  font-family: Roboto;
-  font-weight: 700;
-  line-height: 32px;
-  word-wrap: break-word;
-  padding: 12px;
-  
-}
+      cursor: pointer;
 
-[role="tab"]:not([disabled]) {
-  border-radius: var(--Border-Radius-xl, 16px) var(--Border-Radius-xl, 16px) 0 0;
-  border-top: 1px solid var(--Colors-Gray-700, #404040);
-  border-right: 1px solid var(--Colors-Gray-700, #404040);
-  border-left: 1px solid var(--Colors-Gray-700, #404040);
-  background: var(--Surface-Page, #1E1E1E);
-  cursor: pointer;
-}
+      transition: none;
+    }
 
-[role="tab"]:focus {
-  
-} 
+    .mt-tabs__item[aria-selected="true"] {
+      border-color: var(--Colors-Gray-700, #404040);
+      border-bottom-color: transparent;
+      background: var(--Surface-Page, #1E1E1E);
+    }
 
-[role="tab"]:hover {
-  
-} 
+    .mt-tabs__item[disabled],
+    .mt-tabs__item[aria-selected="false"] {
+      border-color: transparent;
+      border-bottom-color: var(--Colors-Gray-700, #404040);
+      background: transparent;
+    }
 
-[role="tab"][aria-selected="true"] {
-  border-bottom-color: transparent;
-}
+    .mt-tabs__item[aria-selected="false"]:hover {
+      background: var(--Surface-Page, #1E1E1E); 
+    }
 
-[role="tab"][aria-selected="false"] {
-  border-bottom: 1px solid var(--Colors-Gray-700, #404040);
-}
+    .mt-tabs__item[disabled] {
+      pointer-events: none;
+      opacity: 0.40;
+    }
 
-[role="tab"][disabled] {
-  pointer-events: none;
-}
+    .mt-tabs__panel {
+      margin-top: -1px;
+      padding: 24px;
+      border-radius: 16px;
+      border-top-left-radius: 0;
+      border: 1px solid var(--Colors-Gray-700, #404040);
+      background: var(--Surface-Page, #1E1E1E);
+    }
 
-[role="tab"]{}
+    .mt-tabs__panel.is-first {
+      /* border-top-left-radius: 0; */
+    }
 
-[role="tab"]:hover,
-[role="tab"]:focus,
-[role="tab"]:active, {
-  border: 2px solid rgb(36 116 214);
-}
-
-[role="tabpanel"] {}
-
-[role="tabpanel"].is-hidden {
-  display: none;
-}
+    .mt-tabs__panel.is-hidden {
+      display: none;
+    }
 
 </style>
 
@@ -191,32 +182,30 @@
     <div class="mt-tabs">
         <div class="mt-tabs__container">
             <div class="mt-tabs__list" role="tablist" aria-labelledby="tablist-1">
-                <button id="tab-1" type="button" role="tab" aria-selected="true" aria-controls="tabpanel-1">
+                <a id="tab-1" class="mt-tabs__item" role="tab" aria-selected="true" aria-controls="tabpanel-1" href="#">
                   <span class="focus">Futures</span>
-                </button>
-                <button id="tab-2" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-2" tabindex="-1">
+                </a>
+                <a id="tab-2" class="mt-tabs__item" role="tab" aria-selected="false" aria-controls="tabpanel-2" tabindex="-1" href="#">
                   <span class="focus">Forex</span>
-                </button>
-                <div id="tab-3" type="button" role="tab" aria-selected="false" aria-controls="tabpanel-3" tabindex="-1" disabled>
+                </a>
+                <a id="tab-3" class="mt-tabs__item" role="tab" aria-selected="false" aria-controls="tabpanel-3" tabindex="-1" disabled  href="#">
                   <span class="focus">Crypto</span>
-                </div>
+                </a>
             </div>
-            <div class="mt-tabs__panels">
-                <div id="tabpanel-1" role="tabpanel" tabindex="0" aria-labelledby="tab-1">
-                    <p>
-                    Futures Content
-                    </p>
-                </div>
-                <div id="tabpanel-2" role="tabpanel" tabindex="0" aria-labelledby="tab-2" class="is-hidden">
-                    <p>
-                    Forex Content
-                    </p>
-                </div>
-                <div id="tabpanel-3" role="tabpanel" tabindex="0" aria-labelledby="tab-3" class="is-hidden">
-                    <p>
-                    Crypto Content
-                    </p>
-                </div>
+            <div id="tabpanel-1" class="mt-tabs__panel"role="tabpanel" aria-labelledby="tab-1">
+                <p>
+                Futures Content
+                </p>
+            </div>
+            <div id="tabpanel-2" class="mt-tabs__panel is-hidden" role="tabpanel" aria-labelledby="tab-2">
+                <p>
+                Forex Content
+                </p>
+            </div>
+            <div id="tabpanel-3" class="mt-tabs__panel is-hidden" role="tabpanel" aria-labelledby="tab-3">
+                <p>
+                Crypto Content
+                </p>
             </div>
         </div>
     </div>
@@ -250,6 +239,7 @@ class MT_Tabs {
 
       if (!this.firstTab) {
         this.firstTab = tab;
+        tabpanel.classList.add('is-first');
       }
       this.lastTab = tab;
     }

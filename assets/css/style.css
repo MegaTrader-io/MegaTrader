@@ -6459,9 +6459,9 @@ div#wc_checkout_add_ons {
     color: var(--light-color);
 }
 
-p#billing_address_1_field {
+/*p#billing_address_1_field {
     display: none;
-}
+}*/
 
 #billing_details_new_field h3 {
     font-size: 20px;

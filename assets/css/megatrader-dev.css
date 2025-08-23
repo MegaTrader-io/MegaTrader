@@ -2806,28 +2806,33 @@ a.pagination-number {
 }
 
 .addons-header {
-    padding-left: 30px;
+  padding-left: 30px;
 }
-.available-info .addons-item.addons-item-new{
+
+.available-info .addons-item.addons-item-new {
   margin-bottom: 0;
 }
 
 .available-info .addons-item-new:before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 16px;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--theme-color);
-    border-radius: 4px;
-    -webkit-transition: 0.2s ease-in-out;
-    transition: 0.2s ease-in-out;
-    text-align: center;
-    line-height: 11px;
-    padding: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translateY(-50%);
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--theme-color);
+  border-radius: 4px;
+  -webkit-transition: 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
+  text-align: center;
+  line-height: 11px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+.mt-billing-card .iti {
+  width: 100%;
 }

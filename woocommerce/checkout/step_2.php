@@ -2,7 +2,7 @@
 /**
  * Template Name: Checkout Step 2 (New)
  * URL soporte: /checkout/?v2&add-to-cart=ID[&variation_id=VID&attribute_pa_*=...&quantity=n]
- * Enfocado en usar SOLO WC_Product y un debug visual simple + enriquecido.
+ * Enfocado en usar SOLO WC_Product, debug enriquecido + Billing + Payment.
  */
 
 if (!defined('ABSPATH')) {
@@ -18,7 +18,6 @@ if (!function_exists('mt_get_param')) {
         return wc_clean(wp_unslash($_GET[$key]));
     }
 }
-
 if (!function_exists('mt_collect_variation_attrs_from_query')) {
     function mt_collect_variation_attrs_from_query()
     {
@@ -31,8 +30,6 @@ if (!function_exists('mt_collect_variation_attrs_from_query')) {
         return $attrs;
     }
 }
-
-/** Consigue el producto seleccionado (variación si hay; si no, parent/simple; si nada, 1º del cart) */
 if (!function_exists('mt_get_selected_product')) {
     function mt_get_selected_product()
     {
@@ -61,8 +58,6 @@ if (!function_exists('mt_get_selected_product')) {
         return null;
     }
 }
-
-/** Añade al carrito si viene por URL; luego limpia la query manteniendo ?v2 (para evitar duplicados al refrescar) */
 if (!function_exists('mt_maybe_add_to_cart_from_query')) {
     function mt_maybe_add_to_cart_from_query()
     {
@@ -122,11 +117,6 @@ if (!function_exists('mt_maybe_add_to_cart_from_query')) {
         }
     }
 }
-
-/**
- * Devuelve el valor “bonito” de un atributo taxonómico (ej. 'pa_account-size').
- * Si es variación y solo hay slug, mapea a nombre de término; si no existe, devuelve el slug.
- */
 if (!function_exists('mt_get_attr_label')) {
     function mt_get_attr_label(WC_Product $product = null, $taxonomy = '')
     {
@@ -134,9 +124,9 @@ if (!function_exists('mt_get_attr_label')) {
             return '';
         $val = $product->get_attribute($taxonomy);
         if (!empty($val))
-            return $val; // p.ej. "$150,000"
+            return $val;
         if ('variation' === $product->get_type()) {
-            $va = $product->get_variation_attributes(); // ['attribute_pa_*' => 'slug']
+            $va = $product->get_variation_attributes();
             $key = 'attribute_' . $taxonomy;
             if (isset($va[$key]) && $va[$key] !== '') {
                 $slug = $va[$key];
@@ -148,7 +138,7 @@ if (!function_exists('mt_get_attr_label')) {
     }
 }
 
-/** ---------- Debug enriquecido con slugs y term meta (logo, repeater, attribute_meta, description) ---------- */
+/** ---------- Debug enriquecido ---------- */
 if (!function_exists('mt_build_rich_debug_payload')) {
     function mt_build_rich_debug_payload($product = null)
     {
@@ -177,9 +167,8 @@ if (!function_exists('mt_build_rich_debug_payload')) {
             }
         }
 
-        if (!($product instanceof WC_Product)) {
+        if (!($product instanceof WC_Product))
             return $payload;
-        }
 
         $pid = $product->get_id();
         $ptype = $product->get_type();
@@ -211,11 +200,10 @@ if (!function_exists('mt_build_rich_debug_payload')) {
             }
 
             $term = null;
-            if ($slug) {
+            if ($slug)
                 $term = get_term_by('slug', $slug, $tx);
-            } elseif ($label) {
+            elseif ($label)
                 $term = get_term_by('name', $label, $tx);
-            }
 
             $term_data = null;
             if ($term && !is_wp_error($term)) {
@@ -225,7 +213,6 @@ if (!function_exists('mt_build_rich_debug_payload')) {
                     $src = wp_get_attachment_image_src($img_id, 'full');
                     $img_url = is_array($src) ? ($src[0] ?? '') : '';
                 }
-
                 $custom_repeater = get_term_meta($term->term_id, 'custom_repeater_field', true);
                 if (!is_array($custom_repeater)) {
                     $custom_repeater = $custom_repeater ? (array) $custom_repeater : [];
@@ -294,6 +281,11 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
     return;
 }
 
+/* Cargar scripts nativos Woo para países/estados + validaciones + pago */
+wp_enqueue_script('wc-country-select');
+wp_enqueue_script('wc-address-i18n');
+wp_enqueue_script('wc-checkout');
+
 /* -------------------- DATA para la card -------------------- */
 $product = mt_get_selected_product();
 $plan_size = $product ? mt_get_attr_label($product, 'pa_account-size') : '';
@@ -306,19 +298,18 @@ $plan_size_slug = $product
 $plan_type = $product ? $product->get_attribute('pa_account-types') : '';
 $market_type = $product ? $product->get_attribute('pa_market-type') : '';
 
-/* -------------------- Payload enriquecido y datos de plataforma (logo) -------------------- */
-$rich = mt_build_rich_debug_payload($product); // lo generamos UNA vez
+/* -------------------- Payload enriquecido y datos de plataforma -------------------- */
+$rich = mt_build_rich_debug_payload($product);
 $platform_logo_url = $rich['attributes']['pa_platform']['term']['image_url'] ?? '';
-$platform_label = $rich['attributes']['pa_platform']['label']
-    ?? ($rich['attributes']['pa_platform']['term']['name'] ?? 'Platform');
+$platform_label = $rich['attributes']['pa_platform']['label'] ?? ($rich['attributes']['pa_platform']['term']['name'] ?? 'Platform');
 $platform_desc = $rich['attributes']['pa_platform']['term']['description'] ?? '';
 $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom_repeater_field'] ?? []);
 
 ?>
-<!-- =================== CARD + FORM =================== -->
 <form id="checkout-form" name="checkout" method="post" class="checkout woocommerce-checkout d-flex flex-column gap-32"
     novalidate action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
 
+    <!-- ===== Card de producto ===== -->
     <div class="mt-card">
         <div class="mt-card-wrapper d-flex flex-column gap-4">
             <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
@@ -363,6 +354,7 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
 
             <hr class="border-gray my-4" />
 
+            <!-- metas -->
             <div class="mt-card-body">
                 <?php
                 $meta_order = [
@@ -379,7 +371,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     'consistency',
                     'max_accounts',
                 ];
-
                 $icon_map = [
                     'profit_target' => 'mt-icon_profit',
                     'max_contracts' => 'mt-icon_max-contract',
@@ -394,29 +385,19 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     'consistency' => 'mt-icon',
                     'max_accounts' => 'mt-icon_max-contract',
                 ];
-
                 $items = [];
                 $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
-
                 if ($pid) {
                     foreach ($meta_order as $key) {
                         if (!isset(Label::PRODUCT_META[$key]))
                             continue;
-
                         $val = $rich['meta'][$key] ?? get_post_meta($pid, $key, true);
                         if ($val === '' || $val === null)
                             continue;
-
-                        $items[] = [
-                            'key' => $key,
-                            'label' => Label::PRODUCT_META[$key],
-                            'value' => $val,
-                            'icon_class' => $icon_map[$key] ?? 'mt-icon',
-                        ];
+                        $items[] = ['key' => $key, 'label' => Label::PRODUCT_META[$key], 'value' => $val, 'icon_class' => $icon_map[$key] ?? 'mt-icon'];
                     }
                 }
                 ?>
-
                 <?php if (!empty($items)): ?>
                     <div class="mt-meta-grid">
                         <?php foreach ($items as $it): ?>
@@ -435,35 +416,26 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
         </div>
     </div>
 
+    <!-- ===== Add-ons ===== -->
     <?php
-    /* ================== Available Add-ons (como en form-checkout) ================== */
-
-    // 1) Detectar si hay suscripción en el carrito o en el producto actual
     $has_subscription = false;
-
     if (isset($product) && $product instanceof WC_Product) {
         $ptype = $product->get_type();
         if (
-            $ptype === 'subscription' ||
-            $ptype === 'variable-subscription' ||
-            $ptype === 'subscription_variation' ||
+            $ptype === 'subscription' || $ptype === 'variable-subscription' || $ptype === 'subscription_variation' ||
             (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product)) ||
             has_term('subscription', 'product_type', $product->get_id())
         ) {
             $has_subscription = true;
         }
     }
-
-    // Si no lo determinamos por el producto seleccionado, revisa todo el carrito
     if (!$has_subscription && function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) {
         foreach (WC()->cart->get_cart() as $ci) {
             $p = $ci['data'];
             if ($p instanceof WC_Product) {
                 $ptype = $p->get_type();
                 if (
-                    $ptype === 'subscription' ||
-                    $ptype === 'variable-subscription' ||
-                    $ptype === 'subscription_variation' ||
+                    $ptype === 'subscription' || $ptype === 'variable-subscription' || $ptype === 'subscription_variation' ||
                     (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($p)) ||
                     has_term('subscription', 'product_type', $p->get_id())
                 ) {
@@ -473,68 +445,163 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
             }
         }
     }
-
-    // 2) Leer los add-ons definidos por el plugin en los checkout fields
     $add_on_fields = WC()->checkout()->checkout_fields['add_ons'] ?? [];
-
-    // 3) Pintar bloque “Available Add-ons” si aplica
     if ($has_subscription && !empty($add_on_fields)): ?>
         <div class="addons-block d-flex flex-column gap-3">
             <div class="fw-medium leading-8 text-size-20 text-white">Customize Your Plan (Optional)</div>
             <div class="checkout-addons">
                 <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
-                    <?php
-                    foreach ($add_on_fields as $field_key => $field_conf) {
+                    <?php foreach ($add_on_fields as $field_key => $field_conf):
                         $options = $field_conf['options'] ?? [];
-
-                        foreach ($options as $option_key => $option_data) {
-                            // $option_data puede ser string o array con 'label' y 'description'
+                        foreach ($options as $option_key => $option_data):
                             $label_full = is_array($option_data) ? ($option_data['label'] ?? '') : $option_data;
-
-                            // Separar “texto (precio/periodo)” si viene en el label
                             $label_text = wp_strip_all_tags((string) $label_full);
                             $price_html = '';
                             if (preg_match('/^(.*?)\s*\((.*?)\)$/', $label_text, $m)) {
                                 $label_text = trim($m[1]);
-                                $price_html = $m[2]; // lo que estaba dentro de paréntesis
+                                $price_html = $m[2];
                             }
-
-                            $desc = (is_array($option_data) && !empty($option_data['description']))
-                                ? trim((string) $option_data['description'])
-                                : '';
-
+                            $desc = (is_array($option_data) && !empty($option_data['description'])) ? trim((string) $option_data['description']) : '';
                             ?>
-                            <div class="addons-item addons-item-new d-flex gap-3 bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
+                            <div
+                                class="addons-item addons-item-new d-flex gap-3 bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
                                 <div class="addons-header d-flex flex-column gap-1">
                                     <div class="text-base text-white fw-medium"><?php echo esc_html($label_text); ?></div>
                                     <?php if ($desc): ?>
                                         <div class="text-a8a29e text-14px-line-20px fw-bold"><?php echo esc_html($desc); ?></div>
                                     <?php endif; ?>
                                 </div>
-                                <div class="price">
-                                    <?php
-                                    if ($price_html) {
-                                        echo ' <div>' . esc_html($price_html) . '</div>';
-                                    }
-                                    ?>
-                                </div>
-
+                                <div class="price"><?php if ($price_html)
+                                    echo '<div>' . esc_html($price_html) . '</div>'; ?></div>
                             </div>
-                            <?php
+                        <?php endforeach; endforeach; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- ===== Billing Details (campos nativos Woo) ===== -->
+    <div class="mt-billing-card mt-card" id="mt-billing">
+        <div class="text-white fw-medium text-base mb-3">Billing Details</div>
+
+        <div class="row g-3">
+            <!-- First / Last -->
+            <div class="col-md-6">
+                <label class="visually-hidden"
+                    for="billing_first_name"><?php esc_html_e('First Name', 'megatrader'); ?></label>
+                <input type="text" class="form-control" name="billing_first_name" id="billing_first_name"
+                    placeholder="<?php esc_attr_e('First Name', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_first_name')); ?>" required />
+            </div>
+            <div class="col-md-6">
+                <label class="visually-hidden"
+                    for="billing_last_name"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
+                <input type="text" class="form-control" name="billing_last_name" id="billing_last_name"
+                    placeholder="<?php esc_attr_e('Last Name', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_last_name')); ?>" required />
+            </div>
+
+            <!-- Email -->
+            <div class="col-12">
+                <label class="visually-hidden"
+                    for="billing_email"><?php esc_html_e('Email Address', 'megatrader'); ?></label>
+                <input type="email" class="form-control" name="billing_email" id="billing_email"
+                    placeholder="<?php esc_attr_e('Email Address', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_email')); ?>" required />
+            </div>
+
+            <!-- Phone -->
+            <div class="col-12">
+                <label class="visually-hidden" for="billing_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
+                <input type="tel" class="form-control" name="billing_phone" id="billing_phone"
+                    placeholder="<?php esc_attr_e('Phone', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_phone')); ?>" required />
+            </div>
+
+
+
+            <!-- Address 1 -->
+            <div class="col-12">
+                <label class="visually-hidden"
+                    for="billing_address_1"><?php esc_html_e('Address', 'megatrader'); ?></label>
+                <input type="text" class="form-control" name="billing_address_1" id="billing_address_1"
+                    placeholder="<?php esc_attr_e('House number and street name', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_address_1')); ?>" required />
+            </div>
+
+            <!-- Address 2 -->
+            <div class="col-12">
+                <label class="visually-hidden"
+                    for="billing_address_2"><?php esc_html_e('Apartment, suite, etc. (optional)', 'megatrader'); ?></label>
+                <input type="text" class="form-control" name="billing_address_2" id="billing_address_2"
+                    placeholder="<?php esc_attr_e('Apartment, suite, etc. (optional)', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_address_2')); ?>" />
+            </div>
+            <!-- Country -->
+            <div class="col-lg-3 col-md-6">
+                <label class="visually-hidden"
+                    for="billing_country"><?php esc_html_e('Country/Region', 'megatrader'); ?></label>
+                <select name="billing_country" id="billing_country" class="form-select form-control woocommerce-select"
+                    required>
+                    <?php foreach (WC()->countries->get_allowed_countries() as $key => $value) {
+                        echo '<option value="' . esc_attr($key) . '" ' . selected($checkout->get_value('billing_country'), $key, false) . '>' . esc_html($value) . '</option>';
+                    } ?>
+                </select>
+            </div>
+
+            <!-- State (select o text según país) -->
+            <div class="col-lg-3 col-md-6">
+                <div id="billing_state_wrapper">
+                    <?php
+                    $country = $checkout->get_value('billing_country');
+                    $state = $checkout->get_value('billing_state');
+                    $states = WC()->countries->get_states($country);
+                    if (!empty($states)) {
+                        echo '<select name="billing_state" id="billing_state" class="form-select form-control" required>';
+                        echo '<option value="" disabled selected>' . esc_html__('Select an option', 'megatrader') . '</option>';
+                        foreach ($states as $key => $label) {
+                            echo '<option value="' . esc_attr($key) . '" ' . selected($state, $key, false) . '>' . esc_html($label) . '</option>';
                         }
+                        echo '</select>';
+                    } elseif ($country) {
+                        echo '<input type="text" name="billing_state" id="billing_state" class="form-control" placeholder="' . esc_attr__('State / County', 'megatrader') . '" value="' . esc_attr($state) . '" required />';
+                    } else {
+                        echo '<input type="hidden" name="billing_state" id="billing_state" value="' . esc_attr($state) . '" />';
                     }
                     ?>
                 </div>
             </div>
+
+            <!-- City -->
+            <div class="col-lg-3 col-md-6">
+                <label class="visually-hidden" for="billing_city"><?php esc_html_e('City', 'megatrader'); ?></label>
+                <input type="text" class="form-control" name="billing_city" id="billing_city"
+                    placeholder="<?php esc_attr_e('City', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_city')); ?>" required />
+            </div>
+
+            <!-- Postcode -->
+            <div class="col-lg-3 col-md-6">
+                <label class="visually-hidden"
+                    for="billing_postcode"><?php esc_html_e('Postcode / ZIP', 'megatrader'); ?></label>
+                <input type="text" class="form-control" name="billing_postcode" id="billing_postcode"
+                    placeholder="<?php esc_attr_e('Postcode / ZIP', 'megatrader'); ?>"
+                    value="<?php echo esc_attr($checkout->get_value('billing_postcode')); ?>" required />
+            </div>
         </div>
-        <?php
-    endif;
-    ?>
+    </div>
+
+    <!-- ===== Payment + Place order (nativo Woo) ===== -->
+    <?php do_action('woocommerce_checkout_before_order_review'); ?>
+    <div id="order_review" class="woocommerce-checkout-review-order">
+        <?php do_action('woocommerce_checkout_order_review'); ?>
+    </div>
+    <?php do_action('woocommerce_checkout_after_order_review'); ?>
 
 </form>
 
 <?php
-/* -------------------- DEBUG ENRIQUECIDO (reutiliza $rich) -------------------- */
+/* -------------------- DEBUG ENRIQUECIDO -------------------- */
 ?>
 <details open style="margin-top:24px;">
     <summary style="cursor:pointer;">Debug enriquecido (attrs + slugs + term meta + metas custom)</summary>
@@ -542,3 +609,21 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
     echo esc_html(print_r($rich, true));
     ?></pre>
 </details>
+
+<script>
+    jQuery(function ($) {
+        // refrescar estados al cambiar país (usa tu endpoint actual)
+        $('#billing_country').on('change', function () {
+            var country = $(this).val();
+            $.post(
+                (typeof woocommerce_params !== 'undefined' ? woocommerce_params.ajax_url : '<?php echo admin_url('admin-ajax.php'); ?>'),
+                {
+                    action: 'get_cities',
+                    country: country,
+                    state: $('#billing_state').val() || ''
+                },
+                function (html) { $('#billing_state_wrapper').html(html); }
+            );
+        });
+    });
+</script>

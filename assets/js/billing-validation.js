@@ -11,10 +11,39 @@ const Selector = {
   ErrorMessageClass: "invalid-feedback",
   PaymentId: '#payment',
   NotificationsErrorGroupClass: 'woocommerce-error',
-  SavedPaymentMethodRadioSelector:  '.woocommerce-SavedPaymentMethods [type="radio"]',
+  SavedPaymentMethodRadioSelector: '.woocommerce-SavedPaymentMethods [type="radio"]',
   NewPaymentMethodRadioSelector: '.woocommerce-SavedPaymentMethods-new [type="radio"]',
   PlaceOrderBtnId: 'place_order',
 }
+
+function setStateWhenReady(stateCode) {
+  if (!stateCode) return;
+
+  const wrapper = document.getElementById("billing_state_wrapper");
+
+  const tryApply = () => {
+    const select = document.getElementById("billing_state");
+    if (!select) return false;
+
+    const match = [...select.options].find((o) => o.value === stateCode);
+    if (!match) return false;
+
+    select.value = stateCode;
+    select.dispatchEvent(new Event("change"));
+    select.dataset.googleSet = "true";
+    return true;
+  };
+
+  // intenta inmediatamente
+  if (tryApply()) return;
+
+  // espera a que AJAX regenere el select
+  const obs = new MutationObserver(() => {
+    if (tryApply()) obs.disconnect();
+  });
+  obs.observe(wrapper, { childList: true, subtree: true });
+}
+
 
 document.addEventListener("DOMContentLoaded", function () {
   // ========== DETECT COUNTRY ON FIRST LOAD (IP) ==========
@@ -22,22 +51,26 @@ document.addEventListener("DOMContentLoaded", function () {
   let hasBeenOverwrittenByAutocomplete = false;
 
   if (countrySelect) {
-    fetch("https://ipapi.co/json/")
-      .then((res) => res.json())
-      .then((data) => {
-        const detectedCountry = data.country || "US";
-        if (!hasBeenOverwrittenByAutocomplete && detectedCountry) {
-          const opt = [...countrySelect.options].find(
-            (o) => o.value === detectedCountry
-          );
-          if (opt) {
-            countrySelect.value = detectedCountry;
-            countrySelect.dispatchEvent(new Event("change"));
+    const hasInitialCountry =
+      !!countrySelect.value && !!countrySelect.querySelector("option:checked")?.value;
+
+    if (!hasInitialCountry) {
+      fetch("https://ipapi.co/json/")
+        .then((res) => res.json())
+        .then((data) => {
+          const detectedCountry = data.country || "US";
+          if (!hasBeenOverwrittenByAutocomplete && detectedCountry) {
+            const opt = [...countrySelect.options].find((o) => o.value === detectedCountry);
+            if (opt && countrySelect.value !== detectedCountry) {
+              countrySelect.value = detectedCountry;
+              countrySelect.dispatchEvent(new Event("change"));
+            }
           }
-        }
-      })
-      .catch(() => console.warn("🌎 No se pudo detectar país por IP"));
+        })
+        .catch(() => console.warn("🌎 No se pudo detectar país por IP"));
+    }
   }
+
 
   // ========== GOOGLE AUTOCOMPLETE ==========
   const addressInput = document.getElementById("billing_address_1");
@@ -109,51 +142,36 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      const stateSelect = document.getElementById("billing_state");
+      setStateWhenReady(fields.billing_state);
 
-      if (stateSelect && fields.billing_state) {
-        const match = [...stateSelect.options].find(
-          (opt) => opt.value === fields.billing_state
-        );
-
-        if (match) {
-          stateSelect.value = fields.billing_state;
-          stateSelect.dispatchEvent(new Event("change"));
-          stateSelect.dataset.googleSet = "true";
-          console.log(
-            "✅ Estado asignado por autocomplete:",
-            fields.billing_state
-          );
-        } else {
-          console.warn(
-            "⚠️ Estado no encontrado en opciones:",
-            fields.billing_state
-          );
-        }
-      }
     });
-  } else {
-    console.warn("❌ Google Autocomplete no disponible o no cargado.");
   }
 
   // ========== FORCE EMPTY STATE BY DEFAULT ==========
   const stateWrapper = document.getElementById("billing_state_wrapper");
-
   if (stateWrapper) {
     const observer = new MutationObserver(() => {
       const select = document.getElementById("billing_state");
-      if (select && !select.dataset.googleSet) {
-        select.value = "";
-        [...select.options].forEach((opt) => opt.removeAttribute("selected"));
-        const defaultOpt = select.querySelector('option[value=""]');
-        if (defaultOpt) defaultOpt.setAttribute("selected", "selected");
+      if (!select) return;
 
+      // Si ya viene un valor seleccionado desde PHP, no toques nada
+      const hasPrefilled =
+        !!select.value || !!select.querySelector("option:checked")?.value;
+      if (hasPrefilled) {
         observer.disconnect();
+        return;
       }
+
+      // Si realmente está vacío, asegúrate de que quede el placeholder
+      const defaultOpt = select.querySelector('option[value=""]') || select.options[0];
+      if (defaultOpt) defaultOpt.selected = true;
+
+      observer.disconnect();
     });
 
     observer.observe(stateWrapper, { childList: true, subtree: true });
   }
+
 
   // ========== FORMAT AND VALIDATION FOR TELEPHONE ==========
   const phoneInput = document.getElementById("billing_phone");
@@ -293,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return errors;
   }
 
-  function clearErrors(form){
+  function clearErrors(form) {
     form.querySelectorAll(`.${Selector.ErrorMessageClass}`).forEach((el) => el.remove());
     form
       .querySelectorAll(`.${Selector.InvalidFieldClass}`)
@@ -310,10 +328,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const errorNode = document.createElement("div");
       errorNode.className = Selector.ErrorMessageClass;
       errorNode.textContent = message;
-      
+
       // Prevent Douplicate Errors
       const existingErrorNode = input.parentNode.querySelector(`.${Selector.ErrorMessageClass}`);
-      if(existingErrorNode) {
+      if (existingErrorNode) {
         existingErrorNode.remove()
       }
 
@@ -349,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   startErrorProtection();
 
-  
+
   function formActionHandler(e) {
     checkoutFormIsInvalid = false;
     document.activeElement?.blur();
@@ -389,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (checkoutForm) {
     checkoutForm.addEventListener("submit", (e) => {
-      if(checkoutFormIsInvalid){
+      if (checkoutFormIsInvalid) {
         // e.stopPropagation();
       }
     }, true);
@@ -404,22 +422,22 @@ document.addEventListener("DOMContentLoaded", function () {
   //   document.documentElement.style.setProperty(saveNewDisplayCssVar, "none");
   // }
 
-  
-  function mutationObserver(configMap = []){
+
+  function mutationObserver(configMap = []) {
     const observer = new MutationObserver((mutations, obs) => {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
-          configMap.forEach( config => {
+          configMap.forEach(config => {
             if (
               node.nodeType === 1 &&
               node.matches(config.matches)
             ) {
-              if(!config.completed){
+              if (!config.completed) {
                 config.callbacks.forEach(callback => {
                   callback(node);
                 })
 
-                if(config.once){
+                if (config.once) {
                   config.completed = true;
                 }
               }
@@ -432,12 +450,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ========== PLACE ORDER BTN EVENT ==========
-  function addPlaceOrderBtnListeners(){
+  function addPlaceOrderBtnListeners() {
     placeOrderBtn = document.getElementById(Selector.PlaceOrderBtnId);
-    if(placeOrderBtn){
+    if (placeOrderBtn) {
       placeOrderBtn.addEventListener(
         "click",
-        (e)=> {
+        (e) => {
           clearErrors(checkoutForm);
           formActionHandler(e);
         }
@@ -446,14 +464,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ========== JQUERY SLIDE ANIMATION ==========
-  function slideCollapse(targetElement, isExpanded, useCustom){
+  function slideCollapse(targetElement, isExpanded, useCustom) {
     jQuery(function ($) {
       const duration = 300;
       $targetEl = $(targetElement);
-      if(isExpanded){
-        if(useCustom){
-          targetElement.style.display='';
-          targetElement.style.overflow='hidden';
+      if (isExpanded) {
+        if (useCustom) {
+          targetElement.style.display = '';
+          targetElement.style.overflow = 'hidden';
           targetElement.style.height = `${targetElement.scrollHeight}px`;
           targetElement.style['padding-bottom'] = '';
           setTimeout(() => {
@@ -464,9 +482,9 @@ document.addEventListener("DOMContentLoaded", function () {
           $targetEl.slideDown(duration);
         }
       } else {
-        if(useCustom){
-          requestAnimationFrame(()=>{
-            targetElement.style.overflow='hidden';
+        if (useCustom) {
+          requestAnimationFrame(() => {
+            targetElement.style.overflow = 'hidden';
             targetElement.style.height = '0';
             targetElement.style['padding-bottom'] = '0';
           })
@@ -478,9 +496,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ========== TOGGLE CC BOX COLLAPSE ==========
-  function addPaymentMethodBoxToggleListeners(){
+  function addPaymentMethodBoxToggleListeners() {
     const savedMethods = document.querySelector('.woocommerce-SavedPaymentMethods');
-    if(!savedMethods || !savedMethods.getAttribute('data-count') || !parseInt(savedMethods.getAttribute('data-count')) > 0){
+    if (!savedMethods || !savedMethods.getAttribute('data-count') || !parseInt(savedMethods.getAttribute('data-count')) > 0) {
       return;
     }
     const newMethodRadio = document.querySelector(Selector.NewPaymentMethodRadioSelector);
@@ -490,7 +508,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Cannot Use Animations Ending on "display: none" like jQuery toggle
     // or NMI input fields iframes won't render properly
-    if(paymentForm.id.includes('nmi')){
+    if (paymentForm.id.includes('nmi')) {
       useCustom = true;
       paymentForm.classList.add('collapsable');
       saveNewCardCheckbox.classList.add('collapsable');
@@ -501,7 +519,7 @@ document.addEventListener("DOMContentLoaded", function () {
       slideCollapse(saveNewCardCheckbox, newMethodRadio.checked);
     }
 
-    document.querySelectorAll(Selector.SavedPaymentMethodRadioSelector).forEach(radio => 
+    document.querySelectorAll(Selector.SavedPaymentMethodRadioSelector).forEach(radio =>
       radio.addEventListener("click", togglePaymentFormCollapse, true)
     )
 
@@ -509,10 +527,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ========== AUTO SELECT SAVED CREDIT CARD ==========
-  function selectFirstSavedPaymentMethodRadio(node = document.body){
+  function selectFirstSavedPaymentMethodRadio(node = document.body) {
     node.querySelector(Selector.SavedPaymentMethodRadioSelector).click();
   }
-  
+
   // ========== MOVE GLOBAL ERRORS TO TARGET FORM FIELD ==========
   const errorsBlackList = new Set(
     [
@@ -532,17 +550,17 @@ document.addEventListener("DOMContentLoaded", function () {
   )
 
   function migrateGlobalFieldErrors(node) {
-    const errorGroupList =  [...document.getElementsByClassName(Selector.NotificationsErrorGroupClass)];
+    const errorGroupList = [...document.getElementsByClassName(Selector.NotificationsErrorGroupClass)];
 
-    errorGroupList.forEach( errorGroup => {
-      const inputErrors = Array.from(errorGroup.children).reduce((messageByField, currentError)  => {
+    errorGroupList.forEach(errorGroup => {
+      const inputErrors = Array.from(errorGroup.children).reduce((messageByField, currentError) => {
         const fieldName = currentError.getAttribute('data-id');
         const message = currentError.textContent;
 
-        if(fieldName){
+        if (fieldName) {
           messageByField[fieldName] = message;
           currentError.remove()
-        } else if(errorsBlackList.has(message.trim())){
+        } else if (errorsBlackList.has(message.trim())) {
           currentError.remove()
         }
 
@@ -553,7 +571,7 @@ document.addEventListener("DOMContentLoaded", function () {
       showErrors(checkoutForm, inputErrors);
 
       // Delete Error Group If Empty
-      if(!errorGroup.children.length) {
+      if (!errorGroup.children.length) {
         errorGroup.remove()
       }
 
@@ -562,12 +580,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ========== UTILS ==========
 
-    function formatCurrency(value, format = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    })){
+  function formatCurrency(value, format = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })) {
 
     return format.format(value);
   }
@@ -575,7 +593,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ========== UPDATE PLAN DESCRIPTION WITH ADD-ONS ==========
 
-  function addonsConfigRun(addonsNode){
+  function addonsConfigRun(addonsNode) {
 
     const AddonAction = {
       subtract: subtractActionAdd,
@@ -588,28 +606,28 @@ document.addEventListener("DOMContentLoaded", function () {
       planItemAddonValue: 'metaInfo__addon',
     }
 
-    function planItemAppendAddonValue(planItemEl, value){
+    function planItemAppendAddonValue(planItemEl, value) {
       const newEl = document.createElement('span');
       newEl.classList.add('metaInfo__addon');
-      newEl.innerText = value; 
+      newEl.innerText = value;
       planItemEl.appendChild(newEl);
     }
 
-    function planApplyAddon(planItemEl, value){
+    function planApplyAddon(planItemEl, value) {
       planItemEl.classList.add(AddonClass.planItemAddonApplied);
       planItemAppendAddonValue(planItemEl, value)
     }
 
-    function planClearAddon(planItemEl){
+    function planClearAddon(planItemEl) {
       planItemEl.classList.remove(AddonClass.planItemAddonApplied);
       planItemEl.querySelector(`.${AddonClass.planItemAddonValue}`)?.remove();
     }
 
-    function planGetDefaulValue(planItemEl){
+    function planGetDefaulValue(planItemEl) {
       return planItemEl.querySelector(`span.metaInfo__value`)?.textContent ?? '';
     }
 
-    function addonActionAdd(planItemEl, { value }, sign = 1){
+    function addonActionAdd(planItemEl, { value }, sign = 1) {
       const defaultValue = planGetDefaulValue(planItemEl)
       const number = parseFloat(defaultValue.replace(/[^0-9.-]+/g, ""));
       const result = number + (value * sign);
@@ -618,32 +636,32 @@ document.addEventListener("DOMContentLoaded", function () {
       planApplyAddon(planItemEl, newValue);
     }
 
-    function subtractActionAdd(planItemEl, {value}){
-      addonActionAdd(planItemEl, {value}, -1)
+    function subtractActionAdd(planItemEl, { value }) {
+      addonActionAdd(planItemEl, { value }, -1)
     }
-    
-    function addonActionUpdateValue(planItemEl, {value, labelValue} ){
+
+    function addonActionUpdateValue(planItemEl, { value, labelValue }) {
       newValue = planGetDefaulValue(planItemEl) ? value : labelValue ?? value;
       planApplyAddon(planItemEl, newValue);
     }
 
-    function updatePlan(planConfig, active){
+    function updatePlan(planConfig, active) {
       const planItemEl = document.querySelector(`.metaInfo .${planConfig.field}`);
 
-      if(!planItemEl || !(planConfig.action in AddonAction)){ return; }
-      
+      if (!planItemEl || !(planConfig.action in AddonAction)) { return; }
+
       planClearAddon(planItemEl);
 
-      if(active){
+      if (active) {
         AddonAction[planConfig.action](planItemEl, planConfig.params);
       }
     }
 
-    function getAddonsMeta(checkboxEl){
+    function getAddonsMeta(checkboxEl) {
       const name = checkboxEl.value;
-      const dataMeta = checkboxEl.getAttribute('data-meta');      
+      const dataMeta = checkboxEl.getAttribute('data-meta');
       const config = dataMeta ? JSON.parse(dataMeta) ?? null : null
-      if(name && config){
+      if (name && config) {
         config.name = name;
         config.active = checkboxEl.checked;
       }
@@ -651,13 +669,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return config;
     }
 
-    function run(){
+    function run() {
       addonsNode.querySelectorAll('[type="checkbox"]').forEach(checkboxEl => {
         const config = getAddonsMeta(checkboxEl);
 
-        if(!config) { return; }
+        if (!config) { return; }
 
-        if(config.plan){
+        if (config.plan) {
           updatePlan(config.plan, config.active);
         }
       })
@@ -668,8 +686,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ========== ADDONS UI INIT/SYNC ==========
 
-  function updateAddonsCard(addonsNode){
-     const addons = {};
+  function updateAddonsCard(addonsNode) {
+    const addons = {};
 
     // 1. Obtener precio base desde el carrito
     const basePriceEl = document.querySelector(
@@ -718,14 +736,14 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       const descriptionEl = labelEl?.nextElementSibling;
       const staticDescEl = document.querySelector(`.addons-item.${addonKey} .addons-des`);
-            
+
       if (descriptionEl && staticDescEl) {
         staticDescEl.textContent = descriptionEl.textContent.trim();
-        }      
+      }
     });
   }
 
-// ========= MUTATION OBSERVER POOL - ADDITION ============
+  // ========= MUTATION OBSERVER POOL - ADDITION ============
 
   mutationObserver([
     {
@@ -751,7 +769,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //   matches: '*', callbacks: [ (node)=>{ console.info('Node Added:', node) } ]
     // }
   ]);
-  
+
   // ========== BLOCK ENTER TO SEND FORM ==========
   const checkoutFormEnterBlock = document.querySelector("form.checkout");
   if (checkoutFormEnterBlock) {
