@@ -49,7 +49,7 @@ if (!function_exists('mgt_footer_links')) {
 }
 
 if (!function_exists('megatrader_get_market_data')) {
-    function megatrader_get_market_data(): WP_Error|WP_REST_Response|WP_HTTP_Response
+    function megatrader_get_market_data()
     {
         $cache_key = 'megatrader_market_data';
         $cached_data = get_transient($cache_key);

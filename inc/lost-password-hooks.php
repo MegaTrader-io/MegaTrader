@@ -36,14 +36,120 @@ add_action('woocommerce_lostpassword_form', 'mt_enqueue_auth_script_form');
 add_action('woocommerce_resetpassword_form', 'mt_enqueue_auth_script_form');
 
 add_action('init', function () {
+    remove_filter('lostpassword_url', 'wc_lostpassword_url', 10);
+    add_filter('lostpassword_url', 'mt_lostpassword_url', 10, 1);
+}, 20);
+
+add_action('init', function () {
+    add_shortcode('mt_auth_lost_password', 'mt_render_auth_lost_password_shortcode');
+});
+
+add_action('init', function () {
     if (class_exists('WC_Form_Handler')) {
         remove_action('wp_loaded', ['WC_Form_Handler', 'process_lost_password'], 20);
         add_action('wp_loaded', 'mt_process_lost_password', 20);
 
         remove_action('wp_loaded', ['WC_Form_Handler', 'process_reset_password'], 20);
         add_action('wp_loaded', 'mt_process_reset_password', 20);
+
+        remove_action('wp_loaded', ['WC_Form_Handler', 'redirect_reset_password_link'], 20);
+        add_action('wp_loaded', 'mt_redirect_reset_password_link', 20);
     }
 }, 11);
+
+function mt_render_auth_lost_password_shortcode(): string
+{
+    ob_start();
+
+    // Encola assets solo aquí (o usa tu add_action existente si prefieres)
+    mt_enqueue_auth_script_form();
+
+    // 1) Confirmación de envío (core agrega ?reset-link-sent=1)
+    if (!empty($_GET['reset-link-sent'])) {
+        wc_get_template('myaccount/lost-password-confirmation.php');
+        return ob_get_clean();
+    }
+
+    // 2) Mostrar reset form si vienes del email y la cookie está OK
+    if (!empty($_GET['show-reset-form'])) {
+        $cookie_name = 'wp-resetpass-' . COOKIEHASH;
+
+        if (!empty($_COOKIE[$cookie_name]) && strpos($_COOKIE[$cookie_name], ':') > 0) {
+            list($rp_id, $rp_key) = array_map('wc_clean', explode(':', wp_unslash($_COOKIE[$cookie_name]), 2));
+            $userdata = get_userdata(absint($rp_id));
+            $rp_login = $userdata ? $userdata->user_login : '';
+            $user     = WC_Shortcode_My_Account::check_password_reset_key($rp_key, $rp_login);
+
+            if ($user instanceof WP_User) {
+                wc_get_template('myaccount/form-reset-password.php', [
+                    'key'   => $rp_key,
+                    'login' => $rp_login,
+                ]);
+                return ob_get_clean();
+            }
+
+            // Si la key no es válida, cae al formulario de lost password
+            wc_add_notice(__('The reset link is invalid or has expired. Please request a new one.', 'your-td'), 'error');
+        }
+    }
+
+    // 3) Por defecto, formulario de lost password
+    wc_get_template('myaccount/form-lost-password.php', ['form' => 'lost_password']);
+
+    return ob_get_clean();
+}
+
+function mt_lostpassword_url(string $default_url = ''): string
+{
+    if (!did_action('init') || did_action('login_form_login')) {
+        return $default_url;
+    }
+
+    // Si usas multisite y detectas redirect_to al network admin, respeta el default
+    if (is_multisite() && isset($_GET['redirect_to']) && false !== strpos(wp_unslash($_GET['redirect_to']), network_admin_url())) {
+        return $default_url;
+    }
+
+    // Manda todo a tu página
+    return home_url('/auth/lost-password/');
+}
+
+function mt_redirect_reset_password_link()
+{
+    $current_path = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+
+    if ($current_path === 'auth/lost-password' && isset($_GET['key']) && (isset($_GET['id']) || isset($_GET['login']))) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        // If available, get $user_id from query string parameter for fallback purposes.
+        if (isset($_GET['login'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $user = get_user_by('login', sanitize_user(wp_unslash($_GET['login']))); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $user_id = $user ? $user->ID : 0;
+        } else {
+            $user_id = absint($_GET['id']); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        }
+
+        // If the reset token is not for the current user, ignore the reset request (don't redirect).
+        $logged_in_user_id = get_current_user_id();
+        if ($logged_in_user_id && $logged_in_user_id !== $user_id) {
+            wc_add_notice(__('This password reset key is for a different user account. Please log out and try again.', 'woocommerce'), 'error');
+            return;
+        }
+
+        $action = isset($_GET['action']) ? sanitize_text_field(wp_unslash($_GET['action'])) : '';
+        $value = sprintf('%d:%s', $user_id, wp_unslash($_GET['key'])); // phpcs:ignore
+        WC_Shortcode_My_Account::set_reset_password_cookie($value);
+
+        wp_safe_redirect(
+            add_query_arg(
+                array(
+                    'show-reset-form' => 'true',
+                    'action' => $action,
+                ),
+                mt_lostpassword_url()
+            )
+        );
+        exit;
+    }
+}
 
 function mt_process_reset_password()
 {
@@ -111,7 +217,7 @@ function mt_process_reset_password()
 
             wc_clear_notices();
 
-            $redirect = add_query_arg('reset-pass', 'success', wc_get_page_permalink('myaccount') ?: home_url('/'));
+            $redirect = add_query_arg('reset-pass', 'success', home_url('/auth/login'));
             wp_safe_redirect($redirect);
             exit;
         }
