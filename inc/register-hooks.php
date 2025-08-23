@@ -58,6 +58,9 @@ function mt_process_registration(): void
     $address = isset($_POST['address']) && is_string($_POST['address'])
         ? trim((string)sanitize_text_field($_POST['address'])) : '';
 
+    $address_optional = isset($_POST['address_optional']) && is_string($_POST['address_optional'])
+        ? trim((string)sanitize_text_field($_POST['address_optional'])) : '';
+
     $password = isset($_POST['password']) && is_string($_POST['password'])
         ? (string)$_POST['password'] : '';
 
@@ -172,6 +175,7 @@ function mt_process_registration(): void
     // billing_phone (Woo estándar)
     update_user_meta($new_customer, 'billing_phone', $phone);
     update_user_meta($new_customer, 'billing_address_1', $address);
+    update_user_meta($new_customer, 'billing_address_2', $address_optional);
 
     wp_update_user([
         'ID' => $new_customer,
