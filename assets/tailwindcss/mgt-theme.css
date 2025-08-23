@@ -168,6 +168,14 @@
     @apply flex gap-4;
 }
 
+.mgt-theme .auth-form__container {
+    @apply flex gap-4;
+}
+
 .mgt-theme .full-name-wrapper__field {
     @apply w-full
+}
+
+.mgt-theme .auth--full-height {
+    @apply h-full max-h-full;
 }

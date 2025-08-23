@@ -58,6 +58,18 @@ function mt_process_registration(): void
     $address = isset($_POST['address']) && is_string($_POST['address'])
         ? trim((string)sanitize_text_field($_POST['address'])) : '';
 
+    $billing_country = isset($_POST['billing_country']) && is_string($_POST['billing_country'])
+        ? trim((string)sanitize_text_field($_POST['billing_country'])) : '';
+
+    $billing_state = isset($_POST['billing_state']) && is_string($_POST['billing_state'])
+        ? trim((string)sanitize_text_field($_POST['billing_state'])) : '';
+
+    $billing_city = isset($_POST['billing_city']) && is_string($_POST['billing_city'])
+        ? trim((string)sanitize_text_field($_POST['billing_city'])) : '';
+
+    $billing_postcode = isset($_POST['billing_postcode']) && is_string($_POST['billing_postcode'])
+        ? trim((string)sanitize_text_field($_POST['billing_postcode'])) : '';
+
     $address_optional = isset($_POST['address_optional']) && is_string($_POST['address_optional'])
         ? trim((string)sanitize_text_field($_POST['address_optional'])) : '';
 
@@ -80,6 +92,22 @@ function mt_process_registration(): void
 
     if ($address === '') {
         wc_add_notice(__('Address is required.', 'your-td'), 'error', ['field' => 'address']);;
+    }
+
+    if ($billing_country === '') {
+        wc_add_notice(__('Country is required.', 'your-td'), 'error', ['field' => 'billing_country']);;
+    }
+
+    if ($billing_state === '') {
+        wc_add_notice(__('State is required.', 'your-td'), 'error', ['field' => 'billing_state']);;
+    }
+
+    if ($billing_city === '') {
+        wc_add_notice(__('City is required.', 'your-td'), 'error', ['field' => 'billing_city']);;
+    }
+
+    if ($billing_postcode === '') {
+        wc_add_notice(__('Zip code is required.', 'your-td'), 'error', ['field' => 'billing_postcode']);;
     }
 
     if ($email === '') {
@@ -176,6 +204,14 @@ function mt_process_registration(): void
     update_user_meta($new_customer, 'billing_phone', $phone);
     update_user_meta($new_customer, 'billing_address_1', $address);
     update_user_meta($new_customer, 'billing_address_2', $address_optional);
+
+
+    update_user_meta($new_customer, 'billing_country', $billing_country);
+    update_user_meta($new_customer, 'billing_state', $billing_state);
+    update_user_meta($new_customer, 'billing_city', $billing_city);
+    update_user_meta($new_customer, 'billing_postcode', $billing_postcode);
+
+
 
     wp_update_user([
         'ID' => $new_customer,

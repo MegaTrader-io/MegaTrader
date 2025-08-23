@@ -1,10 +1,11 @@
 <?php
 
 if (!isset($content) || !is_string($content)) $content = '<!-- empty content -->';
+if (!isset($classes) || !is_string($classes)) $classes = '';
 
 ?>
 
-<div class="auth">
+<div class="auth <?= $classes; ?>">
     <div class="auth-form">
         <div class="auth-form__container">
             <div class="auth-form__content">
