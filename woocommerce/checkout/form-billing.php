@@ -15,8 +15,7 @@ defined( 'ABSPATH' ) || exit;
     <span><?php esc_html_e( ' Set up a new account in just a few steps to start trading instantly.', 'megatrader' ); ?></span>
     <?php endif; ?>
 	<div class="line-input-no row gap-3 <?php if ( ! is_user_logged_in() ) : ?>pt-32<?php endif; ?>">
-        <div class="col-lg-12 d-flex flex-column gap-3">
-            <h6 class="text m-0 text-size-20">1. CUSTOMER INFORMATION</h6>
+        <div class="col-lg-12 d-flex flex-column gap-3">        
             <div class="row row-gap-3">
                 <div class="col-lg-6">
                     <div class="form-group no-label">
@@ -41,9 +40,6 @@ defined( 'ABSPATH' ) || exit;
             </div>
         </div>
           <!--
-        <div class="col-12 pt-3">
-            <h6 class="text m-0 text-size-20">2. BILLING DETAILS</h6>
-        </div>
       
         <div class="col-lg-12">
             <div class="form-group no-label">
@@ -52,19 +48,7 @@ defined( 'ABSPATH' ) || exit;
             </div>
         </div>
         -->
-        <div class="col-lg-12">
-            <div class="form-group no-label">
-                <label class="label" for="billing_country"><?php esc_html_e( 'Country/Region', 'megatrader' ); ?>*</label>
-                <select name="billing_country" id="billing_country" class="form-select form-control woocommerce-select">
-                    <?php
-                    foreach( WC()->countries->get_allowed_countries() as $key => $value ) {  
-                        echo '<option value="' . esc_attr( $key ) . '"' . selected( $checkout->get_value( 'billing_country' ), $key, false ) . '>' . esc_html( $value ) . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        <div class="col-lg-12">
+         <div class="col-lg-12">
             <div class="form-group no-label">
                 <label class="label" for="billing_address_1"><?php esc_html_e( 'House number and street name', 'megatrader' ); ?>*</label>
                 <input type="text" class="form-control" name="billing_address_1" id="billing_address_1" placeholder="<?php esc_attr_e( 'Street address (e.g., 123 Main St)', 'megatrader' ); ?>" value="<?php echo esc_attr( $checkout->get_value( 'billing_address_1' ) ); ?>">
@@ -76,13 +60,26 @@ defined( 'ABSPATH' ) || exit;
                 <input type="text" class="form-control" name="billing_address_2" id="billing_address_2" placeholder="<?php esc_attr_e( 'Aparment, Suite, Unit, etc, (opcional)', 'megatrader' ); ?>" value="<?php echo esc_attr( $checkout->get_value( 'billing_address_2' ) ); ?>">
             </div>
         </div>
-        <div class="col-lg-12">
+        <div class="col-lg-3">
+            <div class="form-group no-label">
+                <label class="label" for="billing_country"><?php esc_html_e( 'Country/Region', 'megatrader' ); ?>*</label>
+                <select name="billing_country" id="billing_country" class="form-select form-control woocommerce-select">
+                    <?php
+                    foreach( WC()->countries->get_allowed_countries() as $key => $value ) {  
+                        echo '<option value="' . esc_attr( $key ) . '"' . selected( $checkout->get_value( 'billing_country' ), $key, false ) . '>' . esc_html( $value ) . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+       
+        <div class="col-lg-3">
             <div class="form-group no-label">
                 <label class="label" for="billing_city"><?php esc_html_e( 'Town / City', 'megatrader' ); ?>*</label>
                 <input type="text" class="form-control" name="billing_city" id="billing_city" placeholder="<?php esc_attr_e( 'Town / City', 'megatrader' ); ?>" value="<?php echo esc_attr( $checkout->get_value( 'billing_city' ) ); ?>">
             </div>
         </div>
-        <div class="col-lg-12">
+        <div class="col-lg-3">
             <div class="form-group no-label">
                 <label class="label" for="billing_state"><?php esc_html_e( 'State / County', 'megatrader' ); ?>*</label>
                 <div id="billing_state_wrapper">
@@ -107,7 +104,7 @@ defined( 'ABSPATH' ) || exit;
                 </div>
             </div>
         </div>
-        <div class="col-lg-12">
+        <div class="col-lg-3">
             <div class="form-group no-label">
                 <label class="label" for="billing_postcode"><?php esc_html_e( 'Post code/ZIP*', 'megatrader' ); ?>*</label>
                 <input type="text" class="form-control" name="billing_postcode" id="billing_postcode" placeholder="<?php esc_attr_e( 'Post code/ZIP*', 'megatrader' ); ?>" value="<?php echo esc_attr( $checkout->get_value( 'billing_postcode' ) ); ?>">
