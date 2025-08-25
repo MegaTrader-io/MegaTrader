@@ -31,6 +31,7 @@ defined('ABSPATH') || exit;
 							</div>
 							<div class="clear"></div>
 						</div>
+						<hr class="border-gray">
 					</div>
 				</td>
 			</tr>
@@ -94,11 +95,12 @@ defined('ABSPATH') || exit;
 		<tfoot>
 
 
-
+<?php /* ?>
 			<tr class="cart-subtotal">
 				<th class="fw-medium"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
 				<td><?php wc_cart_totals_subtotal_html(); ?></td>
 			</tr>
+			<?php */ ?>
 
 			<?php foreach (WC()->cart->get_coupons() as $code => $coupon): ?>
 				<tr class="cart-discount coupon-<?php echo esc_attr(sanitize_title($code)); ?>">

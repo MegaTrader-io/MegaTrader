@@ -6605,8 +6605,7 @@ body.woocommerce-checkout.woocommerce-page * {
 .woocommerce-checkout table.shop_table .product-name {
     font-size: 16px;
     font-weight: 500;
-    color: var(--theme-color);
-    padding-left: 16px;
+      
     /* Extra small devices */
 }
 
@@ -6745,11 +6744,11 @@ body.woocommerce-checkout.woocommerce-page * {
 .woocommerce-checkout table.shop_table tfoot td:first-child {
     color: var(--body-color);
 }
-
+/*
 .woocommerce-checkout table.shop_table tfoot tr:first-child th,
 .woocommerce-checkout table.shop_table tfoot tr:first-child td {
     padding-top: 20px !important;
-}
+}*/
 
 .woocommerce-checkout table.shop_table tfoot bdi {
     font-weight: 500;
