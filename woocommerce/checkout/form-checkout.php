@@ -395,7 +395,7 @@ if ($fflag): ?>
                     <?php endif; ?>
                 </div>
 
-                <div class="billing-block mt-billing-card mt-card">
+                <div class="billing-container mt-billing-card mt-card">
                     <div class="text-white fw-medium text-base">Billing Details</div>
                     <div class="billing-details">
                         <?php
@@ -463,7 +463,9 @@ if ($fflag): ?>
                         </div>
                         -->
                         <?php
-                        do_action('woocommerce_checkout_order_review');
+                        remove_all_actions( 'woocommerce_checkout_order_review' ); // evita dobles
+
+                        wc_get_template( 'checkout/review-order.php' );
                         ?>
                         <div class="form-row place-order">
                             <noscript>
