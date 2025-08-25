@@ -234,7 +234,8 @@ if ($fflag): ?>
                 <span>3</span>
             </div>
 
-            <form id="checkout-form" name="checkout" method="post" class="checkout woocommerce-checkout" novalidate
+            <form id="checkout-form" name="checkout" method="post"
+                class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
                 action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
                 <div class="product-container">
                     <div class="mt-card">
@@ -421,7 +422,9 @@ if ($fflag): ?>
                     </div>
                 </div>
 
-                <div class="payment-container">
+                <div class="payment-container review-container">
+                    <div class="fw-medium leading-8 text-size-20 text-white">Payment Method</div>
+
                     <div class="mt-payment-cards" id="mt-payment">
                         <?php
                         wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
@@ -429,9 +432,8 @@ if ($fflag): ?>
                     </div>
                 </div>
 
-                <div class="review-container">
-                    <div class="mt-card">
-                        <!--
+                <div class="mt-card">
+                    <!--
                         <div class="coupon-message-container w-100 mb-32 position-relative d-block">
                            
                             <div class="error-otp-message notifications notifications-error w-100">
@@ -461,48 +463,47 @@ if ($fflag): ?>
                             </div>
                         </div>
                         -->
-                        <?php
-                        wc_get_template( 'checkout/review-order.php' );
-                        ?>
-                        <hr class="border-gray">
-                        <div class="form-row place-order">
-                            <noscript>
-                                <?php
-                                /* translators: $1 and $2 opening and closing emphasis tags respectively */
-                                printf(esc_html__('Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce'), '<em>', '</em>');
-                                ?>
-                                <br /><button type="submit" class="button alt" name="woocommerce_checkout_update_totals"
-                                    value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
-                            </noscript>
-
-
-                            <?php do_action('woocommerce_review_order_before_submit'); ?>
-
+                    <?php
+                    wc_get_template('checkout/review-order.php');
+                    ?>
+                    <hr class="border-gray m-0">
+                    <div class="form-row place-order">
+                        <noscript>
                             <?php
-                            if (!isset($order_button_text)) {
-                                $order_button_text = apply_filters(
-                                    'woocommerce_order_button_text',
-                                    __('Place order', 'woocommerce')
-                                );
-                            }
+                            /* translators: $1 and $2 opening and closing emphasis tags respectively */
+                            printf(esc_html__('Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce'), '<em>', '</em>');
                             ?>
-                            <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
+                            <br /><button type="submit" class="button alt" name="woocommerce_checkout_update_totals"
+                                value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
+                        </noscript>
 
-                            <p class="info-text fw-light">
-                                <svg width="16" height="21" viewBox="0 0 16 21" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M2 21C1.45 21 0.979167 20.8042 0.5875 20.4125C0.195833 20.0208 0 19.55 0 19V9C0 8.45 0.195833 7.97917 0.5875 7.5875C0.979167 7.19583 1.45 7 2 7H3V5C3 3.61667 3.4875 2.4375 4.4625 1.4625C5.4375 0.4875 6.61667 0 8 0C9.38333 0 10.5625 0.4875 11.5375 1.4625C12.5125 2.4375 13 3.61667 13 5V7H14C14.55 7 15.0208 7.19583 15.4125 7.5875C15.8042 7.97917 16 8.45 16 9V19C16 19.55 15.8042 20.0208 15.4125 20.4125C15.0208 20.8042 14.55 21 14 21H2ZM8 16C8.55 16 9.02083 15.8042 9.4125 15.4125C9.80417 15.0208 10 14.55 10 14C10 13.45 9.80417 12.9792 9.4125 12.5875C9.02083 12.1958 8.55 12 8 12C7.45 12 6.97917 12.1958 6.5875 12.5875C6.19583 12.9792 6 13.45 6 14C6 14.55 6.19583 15.0208 6.5875 15.4125C6.97917 15.8042 7.45 16 8 16ZM5 7H11V5C11 4.16667 10.7083 3.45833 10.125 2.875C9.54167 2.29167 8.83333 2 8 2C7.16667 2 6.45833 2.29167 5.875 2.875C5.29167 3.45833 5 4.16667 5 5V7Z"
-                                        fill="var(--body-color)" />
-                                </svg>
-                                <span>All payments are secured and encrypted. </span>
-                            </p>
 
-                            <?php do_action('woocommerce_review_order_after_submit'); ?>
+                        <?php do_action('woocommerce_review_order_before_submit'); ?>
 
-                            <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
-                        </div>
+                        <?php
+                        if (!isset($order_button_text)) {
+                            $order_button_text = apply_filters(
+                                'woocommerce_order_button_text',
+                                __('Place order', 'woocommerce')
+                            );
+                        }
+                        ?>
+                        <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
+
+                        <p class="info-text fw-light pt-3">
+                            <svg width="16" height="21" viewBox="0 0 16 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M2 21C1.45 21 0.979167 20.8042 0.5875 20.4125C0.195833 20.0208 0 19.55 0 19V9C0 8.45 0.195833 7.97917 0.5875 7.5875C0.979167 7.19583 1.45 7 2 7H3V5C3 3.61667 3.4875 2.4375 4.4625 1.4625C5.4375 0.4875 6.61667 0 8 0C9.38333 0 10.5625 0.4875 11.5375 1.4625C12.5125 2.4375 13 3.61667 13 5V7H14C14.55 7 15.0208 7.19583 15.4125 7.5875C15.8042 7.97917 16 8.45 16 9V19C16 19.55 15.8042 20.0208 15.4125 20.4125C15.0208 20.8042 14.55 21 14 21H2ZM8 16C8.55 16 9.02083 15.8042 9.4125 15.4125C9.80417 15.0208 10 14.55 10 14C10 13.45 9.80417 12.9792 9.4125 12.5875C9.02083 12.1958 8.55 12 8 12C7.45 12 6.97917 12.1958 6.5875 12.5875C6.19583 12.9792 6 13.45 6 14C6 14.55 6.19583 15.0208 6.5875 15.4125C6.97917 15.8042 7.45 16 8 16ZM5 7H11V5C11 4.16667 10.7083 3.45833 10.125 2.875C9.54167 2.29167 8.83333 2 8 2C7.16667 2 6.45833 2.29167 5.875 2.875C5.29167 3.45833 5 4.16667 5 5V7Z"
+                                    fill="var(--body-color)" />
+                            </svg>
+                            <span>All payments are secured and encrypted. </span>
+                        </p>
+
+                        <?php do_action('woocommerce_review_order_after_submit'); ?>
+
+                        <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
                     </div>
+
                 </div>
             </form>
 
