@@ -151,6 +151,15 @@ defined('ABSPATH') || exit;
 		</tfoot>
 	</table>
 
-	   
+	   <div class="checkout-terms-wrapper mt-3">
+    <?php
+    if ( function_exists( 'woocommerce_checkout_terms_and_conditions' ) ) {
+        woocommerce_checkout_terms_and_conditions();
+    } else {
+        wc_get_template( 'checkout/terms.php' ); // fallback
+    }
+    ?>
+</div>
+
 
 </div>

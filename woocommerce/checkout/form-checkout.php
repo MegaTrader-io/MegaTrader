@@ -423,7 +423,6 @@ if ($fflag): ?>
 
                 <div class="payment-container">
                     <div class="mt-payment-cards" id="mt-payment">
-                        <div class="text-white fw-medium text-base">Billing Details</div>
                         <?php
                         wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
                         ?>
@@ -433,9 +432,9 @@ if ($fflag): ?>
                 <div class="review-container">
                     <div class="mt-card">
                         <div class="text-white fw-medium text-base">Review Order</div>
-
+                        <!--
                         <div class="coupon-message-container w-100 mb-32 position-relative d-block">
-                            <!-- Error -->
+                           
                             <div class="error-otp-message notifications notifications-error w-100">
                                 <div
                                     class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
@@ -448,7 +447,7 @@ if ($fflag): ?>
                                 </div>
                                 <span class="error-otp-text">Coupon has been removed.</span>
                             </div>
-                            <!-- Éxito -->
+                          
                             <div class="success-otp-message notifications notifications-success w-100">
                                 <div
                                     class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
@@ -462,6 +461,7 @@ if ($fflag): ?>
                                 <span class="success-otp-text">Coupon code applied successfully.</span>
                             </div>
                         </div>
+                        -->
                         <?php
                         do_action('woocommerce_checkout_order_review');
                         ?>
