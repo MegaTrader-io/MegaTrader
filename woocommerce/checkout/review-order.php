@@ -8,8 +8,7 @@
 defined('ABSPATH') || exit;
 ?>
 
-<div class="mb-32 your-order">
-	                    <div class="text-white fw-medium text-base">Order Summary</div>
+<div class="your-order">
 
 	<table class="single-checkout-widget shop_table woocommerce-checkout-review-order-table">
 		<thead>
@@ -151,5 +150,7 @@ defined('ABSPATH') || exit;
 
 		</tfoot>
 	</table>
+
+	   
 
 </div>
