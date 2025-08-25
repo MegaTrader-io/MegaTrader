@@ -732,7 +732,7 @@ if ($fflag): ?>
                 </div>
 
                 <div class="billing-block mt-billing-card mt-card">
-                    <div class="text-white fw-medium text-base mb-3">Billing Details</div>
+                    <div class="text-white fw-medium text-base">Billing Details</div>
                     <div class="billing-details">
                         <?php
                         // Display the WooCommerce checkout form
