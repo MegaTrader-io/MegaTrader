@@ -15,7 +15,7 @@ class Label
         "activation_fee" => "Activation Fee",
         "consistency" => "Consistency",
         "max_accounts" => "Max Accounts",
-        "objectives_rules" => "Objectives & Rules",
+        "objectives_rules" => "Objectives & Rules",
     ];
     public const PLATFORM = [
         "title" => "Platform"        
