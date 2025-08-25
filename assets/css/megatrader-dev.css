@@ -2870,7 +2870,6 @@ a.pagination-number {
 .mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
   display: flex;
   flex-direction: row;
-  padding-bottom: 16px;
 }
 
 @media (max-width: 767.98px) {
