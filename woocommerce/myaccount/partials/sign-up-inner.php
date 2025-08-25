@@ -2,15 +2,6 @@
 
 $errors = wc_get_notices('error');
 
-$error_firstname = $error_lastname =
-$error_address = $error_billing_country = $error_billing_city =
-$error_address_optional =
-$error_email = $error_phone =
-$error_password = $error_confirm_password =
-$error_privacy_policy = '';
-
-$field_errors = array();
-
 final class MT_WC_Error
 {
     public static $field_errors = array();
@@ -124,31 +115,31 @@ $valid_states = WC()->countries->get_states($default_country);
     <div class="auth-form__container">
         <div class="form-group auth-form__address-wrapper">
             <input type="text"
-                   class="form-control <?= MT_WC_Error::has_error('address') ? 'auth-form--error-message' : '' ?>"
-                   name="address" id="address"
-                   autocomplete="address"
+                   class="form-control <?= MT_WC_Error::has_error('billing_address_1') ? 'auth-form--error-message' : '' ?>"
+                   name="billing_address_1" id="billing_address_1"
+                   autocomplete="billing_address_1"
                    placeholder="Address"
-                   value="<?php echo (!empty($_POST['address']) && is_string($_POST['address'])) ? esc_attr(wp_unslash($_POST['address'])) : ''; ?>"
+                   value="<?php echo (!empty($_POST['billing_address_1']) && is_string($_POST['billing_address_1'])) ? esc_attr(wp_unslash($_POST['billing_address_1'])) : ''; ?>"
                    required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
 
-            <?php if (MT_WC_Error::has_error('phone')): ?>
+            <?php if (MT_WC_Error::has_error('billing_address_1')): ?>
                 <span id="error-address"
-                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('address') ?></span>
+                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_address_1') ?></span>
             <?php endif; ?>
         </div>
 
         <div class="form-group auth-form__address-wrapper">
             <input type="text"
-                   class="form-control <?= MT_WC_Error::has_error('address_optional') ? 'auth-form--error-message' : '' ?>"
-                   name="address_optional" id="address_optional"
-                   autocomplete="address_optional"
+                   class="form-control <?= MT_WC_Error::has_error('billing_address_2') ? 'auth-form--error-message' : '' ?>"
+                   name="billing_address_2" id="billing_address_2"
+                   autocomplete="billing_address_2"
                    placeholder="Apartment, suite, etc. (optional)"
-                   value="<?php echo (!empty($_POST['address_optional']) && is_string($_POST['address_optional'])) ? esc_attr(wp_unslash($_POST['address_optional'])) : ''; ?>"
+                   value="<?php echo (!empty($_POST['billing_address_2']) && is_string($_POST['billing_address_2'])) ? esc_attr(wp_unslash($_POST['billing_address_2'])) : ''; ?>"
                    required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
 
-            <?php if (MT_WC_Error::has_error('address_optional')): ?>
+            <?php if (MT_WC_Error::has_error('billing_address_2')): ?>
                 <span id="error-address_optional"
-                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('address_optional') ?></span>
+                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_address_2') ?></span>
             <?php endif; ?>
         </div>
     </div>

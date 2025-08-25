@@ -55,8 +55,11 @@ function mt_process_registration(): void
     $phone = isset($_POST['phone']) && is_string($_POST['phone'])
         ? trim((string)wp_unslash($_POST['phone'])) : '';
 
-    $address = isset($_POST['address']) && is_string($_POST['address'])
-        ? trim((string)sanitize_text_field($_POST['address'])) : '';
+    $billing_address_1 = isset($_POST['billing_address_1']) && is_string($_POST['billing_address_1'])
+        ? trim((string)sanitize_text_field($_POST['billing_address_1'])) : '';
+
+    $billing_address_2 = isset($_POST['billing_address_2']) && is_string($_POST['billing_address_2'])
+        ? trim((string)sanitize_text_field($_POST['billing_address_2'])) : '';
 
     $billing_country = isset($_POST['billing_country']) && is_string($_POST['billing_country'])
         ? trim((string)sanitize_text_field($_POST['billing_country'])) : '';
@@ -70,8 +73,6 @@ function mt_process_registration(): void
     $billing_postcode = isset($_POST['billing_postcode']) && is_string($_POST['billing_postcode'])
         ? trim((string)sanitize_text_field($_POST['billing_postcode'])) : '';
 
-    $address_optional = isset($_POST['address_optional']) && is_string($_POST['address_optional'])
-        ? trim((string)sanitize_text_field($_POST['address_optional'])) : '';
 
     $password = isset($_POST['password']) && is_string($_POST['password'])
         ? (string)$_POST['password'] : '';
@@ -90,8 +91,8 @@ function mt_process_registration(): void
         wc_add_notice(__('Last Name is required.', 'your-td'), 'error', ['field' => 'lastname']);;
     }
 
-    if ($address === '') {
-        wc_add_notice(__('Address is required.', 'your-td'), 'error', ['field' => 'address']);;
+    if ($billing_address_1 === '') {
+        wc_add_notice(__('Address is required.', 'your-td'), 'error', ['field' => 'billing_address_1']);;
     }
 
     if ($billing_country === '') {
@@ -202,8 +203,8 @@ function mt_process_registration(): void
     // 8) Guardar metadatos y nombre
     // billing_phone (Woo estándar)
     update_user_meta($new_customer, 'billing_phone', $phone);
-    update_user_meta($new_customer, 'billing_address_1', $address);
-    update_user_meta($new_customer, 'billing_address_2', $address_optional);
+    update_user_meta($new_customer, 'billing_address_1', $billing_address_1);
+    update_user_meta($new_customer, 'billing_address_2', $billing_address_2);
 
 
     update_user_meta($new_customer, 'billing_country', $billing_country);
