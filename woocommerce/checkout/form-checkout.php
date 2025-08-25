@@ -568,102 +568,102 @@ if ($fflag): ?>
 
 
 
-                        <?php
-                        // your-order variation-list right-box
-                        wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
-                        ?>
+
                     </div>
                 </div>
 
-
-                <div class="mt-card">
-                    <div class="mt-card-wrapper d-flex flex-column gap-4">
-                        <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
-                            <div class="mt-card-plan d-flex flex-column flex-grow-1">
-                                <div class="mt-card-plan-size text-white text-40px fw-medium text-uppercase leading-48px">
-                                    <?php echo esc_html($plan_size); ?>
-                                </div>
-                                <div class="mt-card-plan-info d-flex gap-3 align-items-center flex-wrap">
-                                    <div class="text-white fw-bold text-size-20 leading-36px">
-                                        <?php echo esc_html($plan_size_slug . ' - ' . Label::PRICE['price_sufix']); ?>
+                <div class="product-conatiner">
+                    <div class="mt-card">
+                        <div class="mt-card-wrapper d-flex flex-column gap-4">
+                            <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
+                                <div class="mt-card-plan d-flex flex-column flex-grow-1">
+                                    <div
+                                        class="mt-card-plan-size text-white text-40px fw-medium text-uppercase leading-48px">
+                                        <?php echo esc_html($plan_size); ?>
                                     </div>
-                                    <div class="d-flex gap-3">
-                                        <div class="badge-mega badge-mega-sm badge-mega-default">
-                                            <?php echo esc_html($plan_type); ?>
+                                    <div class="mt-card-plan-info d-flex gap-3 align-items-center flex-wrap">
+                                        <div class="text-white fw-bold text-size-20 leading-36px">
+                                            <?php echo esc_html($plan_size_slug . ' - ' . Label::PRICE['price_sufix']); ?>
                                         </div>
-                                        <div class="badge-mega badge-mega-sm badge-mega-primary">
-                                            <?php echo esc_html($market_type); ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mt-card-plataform d-flex align-items-center bg-131210 gap-3 p-3 rounded-3">
-                                <div class="mt-card-plataform-logo">
-                                    <?php if ($platform_logo_url): ?>
-                                        <img src="<?php echo esc_url($platform_logo_url); ?>"
-                                            alt="<?php echo esc_attr($platform_label); ?>" width="57" height="57" />
-                                    <?php endif; ?>
-                                </div>
-                                <div class="mt-card-plataform-info d-flex flex-column">
-                                    <div class="mt-platform-title text-white fw-medium text-base">
-                                        <?php echo esc_html(Label::PLATFORM['title']); ?>
-                                    </div>
-                                    <?php if ($platform_label): ?>
-                                        <div class="mt-platform-name fw-medium text-a8a29e text-base">
-                                            <?php echo esc_html($platform_label); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="border-gray my-4" />
-
-                        <!-- metas -->
-                        <div class="mt-card-body">
-                            <?php
-                            $meta_order = (defined('Label::META_ORDER') ? Label::META_ORDER : array_keys(Label::PRODUCT_META));
-                            $icon_map = (defined('Label::PRODUCT_META_ICONS') ? Label::PRODUCT_META_ICONS : []);
-
-                            $items = [];
-                            $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
-                            if ($pid) {
-                                foreach ($meta_order as $key) {
-                                    if (!isset(Label::PRODUCT_META[$key]))
-                                        continue;
-                                    $val = $rich['meta'][$key] ?? get_post_meta($pid, $key, true);
-                                    if ($val === '' || $val === null)
-                                        continue;
-
-                                    $items[] = [
-                                        'key' => $key,
-                                        'label' => Label::PRODUCT_META[$key],
-                                        'value' => $val,
-                                        'icon_class' => $icon_map[$key] ?? 'mt-icon',
-                                    ];
-                                }
-                            }
-                            ?>
-
-                            <?php if (!empty($items)): ?>
-                                <div class="mt-meta-grid">
-                                    <?php foreach ($items as $it): ?>
-                                        <div class="mt-meta-item">
-                                            <i class="mt-icon <?php echo esc_attr($it['icon_class']); ?>"></i>
-                                            <div class="mt-meta-text">
-                                                <span class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
-                                                <span class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
+                                        <div class="d-flex gap-3">
+                                            <div class="badge-mega badge-mega-sm badge-mega-default">
+                                                <?php echo esc_html($plan_type); ?>
+                                            </div>
+                                            <div class="badge-mega badge-mega-sm badge-mega-primary">
+                                                <?php echo esc_html($market_type); ?>
                                             </div>
                                         </div>
-                                    <?php endforeach; ?>
+                                    </div>
                                 </div>
-                            <?php endif; ?>
-                        </div>
 
+                                <div class="mt-card-plataform d-flex align-items-center bg-131210 gap-3 p-3 rounded-3">
+                                    <div class="mt-card-plataform-logo">
+                                        <?php if ($platform_logo_url): ?>
+                                            <img src="<?php echo esc_url($platform_logo_url); ?>"
+                                                alt="<?php echo esc_attr($platform_label); ?>" width="57" height="57" />
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="mt-card-plataform-info d-flex flex-column">
+                                        <div class="mt-platform-title text-white fw-medium text-base">
+                                            <?php echo esc_html(Label::PLATFORM['title']); ?>
+                                        </div>
+                                        <?php if ($platform_label): ?>
+                                            <div class="mt-platform-name fw-medium text-a8a29e text-base">
+                                                <?php echo esc_html($platform_label); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="border-gray my-4" />
+
+                            <!-- metas -->
+                            <div class="mt-card-body">
+                                <?php
+                                $meta_order = (defined('Label::META_ORDER') ? Label::META_ORDER : array_keys(Label::PRODUCT_META));
+                                $icon_map = (defined('Label::PRODUCT_META_ICONS') ? Label::PRODUCT_META_ICONS : []);
+
+                                $items = [];
+                                $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
+                                if ($pid) {
+                                    foreach ($meta_order as $key) {
+                                        if (!isset(Label::PRODUCT_META[$key]))
+                                            continue;
+                                        $val = $rich['meta'][$key] ?? get_post_meta($pid, $key, true);
+                                        if ($val === '' || $val === null)
+                                            continue;
+
+                                        $items[] = [
+                                            'key' => $key,
+                                            'label' => Label::PRODUCT_META[$key],
+                                            'value' => $val,
+                                            'icon_class' => $icon_map[$key] ?? 'mt-icon',
+                                        ];
+                                    }
+                                }
+                                ?>
+
+                                <?php if (!empty($items)): ?>
+                                    <div class="mt-meta-grid">
+                                        <?php foreach ($items as $it): ?>
+                                            <div class="mt-meta-item">
+                                                <i class="mt-icon <?php echo esc_attr($it['icon_class']); ?>"></i>
+                                                <div class="mt-meta-text">
+                                                    <span class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
+                                                    <span class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-                <div class="addons-block">
+
+                <div class="addons-container">
                     <?php
                     $has_subscription = true;
                     if (!WC()->cart->is_empty()) {
@@ -735,11 +735,9 @@ if ($fflag): ?>
                     <div class="text-white fw-medium text-base">Billing Details</div>
                     <div class="billing-details">
                         <?php
-                        // Display the WooCommerce checkout form
                         do_action('woocommerce_before_checkout_form');
                         ?>
                         <?php
-                        // Display checkout fields
                         do_action('woocommerce_checkout_before_customer_details');
                         ?>
                         <div id="customer_details">
@@ -754,11 +752,15 @@ if ($fflag): ?>
                         do_action('woocommerce_checkout_after_customer_details');
                         ?>
                         <?php
-                        // Display the order review section
-                        // do_action('woocommerce_checkout_order_review');
-                        ?>
-                        <?php
                         do_action('woocommerce_after_checkout_form');
+                        ?>
+                    </div>
+                </div>
+
+                <div class="payment-container">
+                    <div class="mt-payment-cards" id="mt-payment">
+                        <?php
+                        wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
                         ?>
                     </div>
                 </div>
