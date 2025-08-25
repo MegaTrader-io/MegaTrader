@@ -28,11 +28,9 @@
         if (empty($account_sizes)) return;
 
         foreach ($account_sizes as $index => $item) {
-            $slug = esc_attr($item['slug']); // e.g. 25k
-            $name = esc_html($item['name']); // e.g. $25.000
+            $slug = esc_attr($item['slug']);
+            $name = esc_html($item['name']);
             $description = esc_html($item['description']);
-            $thumbnail = esc_url($item['thumbnail_url']);
-            $price = ''; // this price is updated in the frontend based on selection [type][platform][size]
             $is_active = $index === 0 ? ' active' : '';
 
             $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
@@ -105,7 +103,9 @@
                     <?php endif; ?>    
                 </div>
                 <div class="mt-card__title disabled-target">
-                    <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
+                    <?php if ($thumbnail): ?>
+                        <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
+                    <?php endif; ?>   
                     <span class="mt-card__title__text"><?= $name; ?></span>
                 </div>
                 <?php if (!empty($parsed['data'])): ?>
@@ -160,19 +160,19 @@
                  data-value="<?= $slug ?>" 
                  title="<?= $description ?>"
             >
-                <?php if ($badge): 
+                <div class="mt-card__header">
+                    <i class="mt-card__radio disabled-target"></i>
+                    <?php if ($badge): 
                         $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
                         $badge_text =  isset($badge['text']) ? $badge['text'] : '';
                     ?>
-                        <div class="mt-card__badge mt-card__badge_outline mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
-                <?php endif; ?>    
-                <div class="mt-card__header">
-                    <i class="mt-card__radio disabled-target"></i>
-                    <?php if ($thumbnail): ?>
-                        <img class="mt-card__image" src="<?= $thumbnail ?>" alt="Icon" width="57" height="57">
-                    <?php endif; ?>   
+                        <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
+                    <?php endif; ?> 
                 </div>
                 <div class="mt-card__title disabled-target">
+                    <?php if ($thumbnail): ?>
+                        <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
+                    <?php endif; ?>   
                     <span class="mt-card__title__text"><?= $name; ?></span>
                 </div>
                 <?php if (!empty($parsed['data'])): ?>
@@ -224,7 +224,7 @@ console.log(
             <i class="mt-icon mt-icon_wallet mt-icon-md mt-icon-primary"></i>
             <span class="product-section__title"><?= Label::FUTURES['size_section_title']; ?></span>
         </h3>
-        <div class="product-section__list">
+        <div class="product-section__list product-section__list_grid">
             <?php render_account_sizes($account_sizes); ?>
         </div>
     </div>
