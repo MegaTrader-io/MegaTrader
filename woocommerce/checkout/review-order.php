@@ -35,6 +35,12 @@ defined('ABSPATH') || exit;
 					</div>
 				</td>
 			</tr>
+			<tr>
+				<td>
+					<div class="text-white fw-medium text-base text-start">Order Summary</div>
+
+				</td>
+			</tr>
 			<?php
 			do_action('woocommerce_review_order_before_cart_contents');
 
@@ -95,12 +101,12 @@ defined('ABSPATH') || exit;
 		<tfoot>
 
 
-<?php /* ?>
-			<tr class="cart-subtotal">
-				<th class="fw-medium"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
-				<td><?php wc_cart_totals_subtotal_html(); ?></td>
-			</tr>
-			<?php */ ?>
+			<?php /* ?>
+	   <tr class="cart-subtotal">
+		   <th class="fw-medium"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
+		   <td><?php wc_cart_totals_subtotal_html(); ?></td>
+	   </tr>
+	   <?php */ ?>
 
 			<?php foreach (WC()->cart->get_coupons() as $code => $coupon): ?>
 				<tr class="cart-discount coupon-<?php echo esc_attr(sanitize_title($code)); ?>">
@@ -154,6 +160,6 @@ defined('ABSPATH') || exit;
 		</tfoot>
 	</table>
 
-	   
+
 
 </div>

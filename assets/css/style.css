@@ -6579,7 +6579,7 @@ body.woocommerce-checkout.woocommerce-page * {
 .woocommerce-checkout table.shop_table {
     border-radius: 16px;
     background: var(--smoke-color) !important;
-    padding: 16px 16px 8px 16px !important;
+    padding: 0px !important;
     border: none !important;
     margin-bottom: 0 !important;
     margin-top: 0 !important;
@@ -7132,10 +7132,10 @@ button#place_order.checkout-place-order:hover:before {
 .secured-text svg path {
     stroke: var(--body-color);
 }
-
+/*
 .coupon-form {
     margin-bottom: 32px;
-}
+}*/
 
 .coupon-form .info-text {
     color: var(--white-color);

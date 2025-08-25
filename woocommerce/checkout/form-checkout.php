@@ -431,7 +431,6 @@ if ($fflag): ?>
 
                 <div class="review-container">
                     <div class="mt-card">
-                        <div class="text-white fw-medium text-base">Review Order</div>
                         <!--
                         <div class="coupon-message-container w-100 mb-32 position-relative d-block">
                            
@@ -465,6 +464,7 @@ if ($fflag): ?>
                         <?php
                         wc_get_template( 'checkout/review-order.php' );
                         ?>
+                        <hr class="border-gray">
                         <div class="form-row place-order">
                             <noscript>
                                 <?php
