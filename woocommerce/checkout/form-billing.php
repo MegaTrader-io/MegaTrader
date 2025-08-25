@@ -40,10 +40,11 @@ defined( 'ABSPATH' ) || exit;
                 <input type="tel" class="form-control" name="billing_phone" id="billing_phone" placeholder="<?php esc_attr_e( 'Phone Number', 'megatrader' ); ?>" value="<?php echo esc_attr( $checkout->get_value( 'billing_phone' ) ); ?>">
             </div>
         </div>
+          <!--
         <div class="col-12 pt-3">
             <h6 class="text m-0 text-size-20">2. BILLING DETAILS</h6>
         </div>
-        <!--
+      
         <div class="col-lg-12">
             <div class="form-group no-label">
                 <label class="label" for="billing_company"><?php esc_html_e( 'Company Name', 'megatrader' ); ?>*</label>
