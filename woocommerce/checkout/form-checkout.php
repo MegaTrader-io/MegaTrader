@@ -475,12 +475,17 @@ if ($fflag): ?>
                                     value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
                             </noscript>
 
-                            <!-- COUPONS SECTION GOES HERE -->
-
 
                             <?php do_action('woocommerce_review_order_before_submit'); ?>
 
-
+                            <?php
+                            if (!isset($order_button_text)) {
+                                $order_button_text = apply_filters(
+                                    'woocommerce_order_button_text',
+                                    __('Place order', 'woocommerce')
+                                );
+                            }
+                            ?>
                             <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
 
                             <p class="info-text fw-light">

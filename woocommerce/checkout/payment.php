@@ -21,6 +21,7 @@ if ( ! is_ajax() ) {
             ?>
         </ul>
     <?php endif; ?>
+    
  
 </div>
 <?php
