@@ -328,34 +328,7 @@ if ($fflag): ?>
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <div class="billing-details">
-                            <?php
-                            // Display the WooCommerce checkout form
-                            do_action('woocommerce_before_checkout_form');
-                            ?>
-                            <?php
-                            // Display checkout fields
-                            do_action('woocommerce_checkout_before_customer_details');
-                            ?>
-                            <div id="customer_details">
-                                <?php
-                                do_action('woocommerce_checkout_billing');
-                                ?>
-                                <?php
-                                do_action('woocommerce_checkout_shipping');
-                                ?>
-                            </div>
-                            <?php
-                            do_action('woocommerce_checkout_after_customer_details');
-                            ?>
-                            <?php
-                            // Display the order review section
-                            // do_action('woocommerce_checkout_order_review');
-                            ?>
-                            <?php
-                            do_action('woocommerce_after_checkout_form');
-                            ?>
-                        </div>
+
                     </div>
                     <div class="two-columns__col">
                         <div class="variation-list right-box mb-32">
@@ -690,221 +663,255 @@ if ($fflag): ?>
 
                     </div>
                 </div>
-
-                <?php
-                $has_subscription = true; //TODO: currently set to True, verify if product.type is needed, otherwise remove block
-                if (!WC()->cart->is_empty()) {
-                    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                        $product = $cart_item['data'];
-                        $product_id = $cart_item['product_id'];
-
-                        $wc_product = wc_get_product($product_id);
-                        $product_type = $product->get_type();
-
-                        // echo 'Product Type: ' . $product_type . '<br>';
-                        if (
-                            $product_type === 'subscription' ||
-                            $product_type === 'variable-subscription' ||
-                            $product_type === 'subscription_variation' ||
-                            (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product)) ||
-                            has_term('subscription', 'product_type', $product_id)
-                        ) {
-                            $has_subscription = true;
-                            break;
-                        }
-                    }
-                } ?>
-
-                <?php if (function_exists('WC') && WC()->cart): ?>
+                <div class="addons-block">
                     <?php
-                    $add_on_fields = WC()->checkout()->checkout_fields['add_ons'] ?? [];
-                    $addon_options = $add_on_fields['e0e87f1']['options'] ?? [];
-                    ?>
-                    <?php if ($has_subscription && !empty($addon_options)): ?>
-                        <div class="addons-block d-flex flex-column gap-3">
-                            <div class="fw-medium leading-8 text-size-20 text-white">Customize Your Plan (Optional)</div>
-                            <div class="checkout-addons">
-                                <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
-                                    <?php foreach ($addon_options as $option_key => $option_data): ?>
-                                        <div
-                                            class="addons-item addons-item-new d-flex gap-3 bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
-                                            <div class="addons-header d-flex flex-column gap-1">
-                                                <div class="text-base text-white fw-medium">
-                                                    <?php
-                                                    $label_full = $option_data['label'];
-                                                    preg_match('/^(.*?)\s*\((.*?)\)$/', wp_strip_all_tags($label_full), $matches);
-                                                    $label_text = $matches[1] ?? wp_strip_all_tags($label_full);
-                                                    $price_html = $matches[2] ?? '';
+                    $has_subscription = true;
+                    if (!WC()->cart->is_empty()) {
+                        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                            $product = $cart_item['data'];
+                            $product_id = $cart_item['product_id'];
 
-                                                    echo esc_html($label_text);
+                            $wc_product = wc_get_product($product_id);
+                            $product_type = $product->get_type();
 
-                                                    ?>
+                            // echo 'Product Type: ' . $product_type . '<br>';
+                            if (
+                                $product_type === 'subscription' ||
+                                $product_type === 'variable-subscription' ||
+                                $product_type === 'subscription_variation' ||
+                                (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product)) ||
+                                has_term('subscription', 'product_type', $product_id)
+                            ) {
+                                $has_subscription = true;
+                                break;
+                            }
+                        }
+                    } ?>
+                    <?php if (function_exists('WC') && WC()->cart): ?>
+                        <?php
+                        $add_on_fields = WC()->checkout()->checkout_fields['add_ons'] ?? [];
+                        $addon_options = $add_on_fields['e0e87f1']['options'] ?? [];
+                        ?>
+                        <?php if ($has_subscription && !empty($addon_options)): ?>
+                            <div class="addons-block d-flex flex-column gap-3">
+                                <div class="fw-medium leading-8 text-size-20 text-white">Customize Your Plan (Optional)</div>
+                                <div class="checkout-addons">
+                                    <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
+                                        <?php foreach ($addon_options as $option_key => $option_data): ?>
+                                            <div
+                                                class="addons-item addons-item-new d-flex gap-3 bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
+                                                <div class="addons-header d-flex flex-column gap-1">
+                                                    <div class="text-base text-white fw-medium">
+                                                        <?php
+                                                        $label_full = $option_data['label'];
+                                                        preg_match('/^(.*?)\s*\((.*?)\)$/', wp_strip_all_tags($label_full), $matches);
+                                                        $label_text = $matches[1] ?? wp_strip_all_tags($label_full);
+                                                        $price_html = $matches[2] ?? '';
+
+                                                        echo esc_html($label_text);
+
+                                                        ?>
+                                                    </div>
+                                                    <?php if (!empty($option_data['description'])): ?>
+                                                        <p class="text-a8a29e text-14px-line-20px fw-bold">
+                                                            <?php echo esc_html(trim($option_data['description'])); ?>
+                                                        </p>
+                                                    <?php endif; ?>
                                                 </div>
-                                                <?php if (!empty($option_data['description'])): ?>
-                                                    <p class="text-a8a29e text-14px-line-20px fw-bold">
-                                                        <?php echo esc_html(trim($option_data['description'])); ?>
-                                                    </p>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="title"><?php if ($price_html)
-                                                echo '<div>' . esc_html($price_html) . '</div>'; ?>
-                                            </div>
+                                                <div class="title"><?php if ($price_html)
+                                                    echo '<div>' . esc_html($price_html) . '</div>'; ?>
+                                                </div>
 
-                                        </div>
-                                    <?php endforeach; ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
-            <?php endif; ?>
-        <?php endif; ?>
+                
+                <div class="billing-block">
+                    <div class="billing-details">
+                        <?php
+                        // Display the WooCommerce checkout form
+                        do_action('woocommerce_before_checkout_form');
+                        ?>
+                        <?php
+                        // Display checkout fields
+                        do_action('woocommerce_checkout_before_customer_details');
+                        ?>
+                        <div id="customer_details">
+                            <?php
+                            do_action('woocommerce_checkout_billing');
+                            ?>
+                            <?php
+                            do_action('woocommerce_checkout_shipping');
+                            ?>
+                        </div>
+                        <?php
+                        do_action('woocommerce_checkout_after_customer_details');
+                        ?>
+                        <?php
+                        // Display the order review section
+                        // do_action('woocommerce_checkout_order_review');
+                        ?>
+                        <?php
+                        do_action('woocommerce_after_checkout_form');
+                        ?>
+                    </div>
+                </div>
 
+            </form>
 
-        </form>
+        </div>
 
-    </div>
-    </div>
-    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-            <div class="authentication-form modal-content align-items-center d-flex flex-column flex-shrink-0">
-                <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-                    <h5 class="modal-title text-white heading-sm-medium" id="emailModalLabel">SIGN IN</h5>
-                    <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
-                        aria-label="Close">
-                        <span aria-hidden="true">
+        <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+                <div class="authentication-form modal-content align-items-center d-flex flex-column flex-shrink-0">
+                    <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
+                        <h5 class="modal-title text-white heading-sm-medium" id="emailModalLabel">SIGN IN</h5>
+                        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">
+                                <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
+                                    alt="Close" style="width: 24px; height: 24px;" /></span>
+                        </button>
+                    </div>
+                    <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
+                        <div class="otp-message-container w-100 d-flex justify-content-start d-none">
+                            <!-- Error -->
+                            <div class="error-otp-message notifications notifications-error">
+                                <div
+                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
+                                        <path
+                                            d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span class="error-otp-text">This is an error message</span>
+                            </div>
+                            <!-- Éxito -->
+                            <div class="success-otp-message notifications notifications-success" style="max-width: 600px;">
+                                <div
+                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
+                                        <path fill-rule="evenodd"
+                                            d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+
+                                <span class="success-otp-text">A new code has been sent to your email.</span>
+                            </div>
+                        </div>
+                        <div class="sign-in__logo" style="height: 72px; width:72px">
+                            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg"
+                                alt="mt logo" class="rounded-4" />
+                        </div>
+                        <form method="post" class="woocommerce-form woocommerce-form-login login w-100 m-0"
+                            style="max-width: 360px;">
+                            <p class="text-body pb-2 text-center">Enter your email, and We will send an email with a code
+                                verification.</p>
+                            <input type="email" name="username" class="form-control otp-email-input" placeholder="Email"
+                                data-gtm-form-interact-field-id="1"
+                                style="background-color: var(--smoke-color) !important;">
+                            <button type="button" class="get-otp-btn mt-4 ot-btn text-black w-100"
+                                style="color: #000 !important;font-weight: 500 !important;">SEND</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Second Modal: OTP Input -->
+        <!-- OTP Verification Modal -->
+        <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+                <div class="authentication-form modal-content align-items-center d-flex flex-column gap-4">
+                    <!-- Header -->
+                    <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
+                        <h5 class="modal-title text-white heading-sm-medium" id="otpModalLabel">VERIFY OTP</h5>
+                        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
+                            aria-label="Close">
                             <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
-                                alt="Close" style="width: 24px; height: 24px;" /></span>
-                    </button>
-                </div>
-                <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
-                    <div class="otp-message-container w-100 d-flex justify-content-start d-none">
-                        <!-- Error -->
-                        <div class="error-otp-message notifications notifications-error">
-                            <div class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                    aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                    <path
-                                        d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <span class="error-otp-text">This is an error message</span>
-                        </div>
-                        <!-- Éxito -->
-                        <div class="success-otp-message notifications notifications-success" style="max-width: 600px;">
-                            <div class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                    aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                    <path fill-rule="evenodd"
-                                        d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-
-                            <span class="success-otp-text">A new code has been sent to your email.</span>
-                        </div>
+                                alt="Close" style="width: 24px; height: 24px;" />
+                        </button>
                     </div>
-                    <div class="sign-in__logo" style="height: 72px; width:72px">
-                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg" alt="mt logo"
-                            class="rounded-4" />
+                    <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
+                        <!-- Unified message container (copiar igual al de otpModal) -->
+                        <div class="otp-message-container w-100 d-flex justify-content-start d-none">
+                            <!-- Error -->
+                            <div class="error-otp-message notifications notifications-error">
+                                <div
+                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
+                                        <path
+                                            d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span class="error-otp-text">Some error</span>
+                            </div>
+                            <!-- Success -->
+                            <div class="success-otp-message notifications notifications-success">
+                                <div
+                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
+                                        <path fill-rule="evenodd"
+                                            d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <span class="success-otp-text">A new code has been sent</span>
+                            </div>
+                        </div>
+                        <!-- Logo -->
+                        <div class="sign-in__logo" style="height: 72px; width: 72px;">
+                            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg"
+                                alt="mt logo" class="rounded-4" />
+                        </div>
+                        <!-- Instruction -->
+                        <p class="text-body text-center mb-0" style="color: #E4E4E7;">
+                            We sent an OTP to <strong class="text-white" id="otp-email-display">john@doe.com</strong><br>
+                            Enter it below to continue
+                        </p>
+                        <!-- OTP input boxes -->
+                        <form method="post" class="woocommerce-form w-100 px-4" style="max-width: 360px;">
+                            <div class="otp-inputs d-flex justify-content-between gap-2 mb-4">
+                                <input type="hidden" name="username" value="">
+                                <input type="text" maxlength="1" class="otp-box" />
+                                <input type="text" maxlength="1" class="otp-box" />
+                                <input type="text" maxlength="1" class="otp-box" />
+                                <input type="text" maxlength="1" class="otp-box" />
+                                <input type="text" maxlength="1" class="otp-box" />
+                                <input type="text" maxlength="1" class="otp-box" />
+                            </div>
+                            <!-- Resend + Timer -->
+                            <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
+                                <a href="#" class="resend-otp fw-semibold text-decoration-underline">Resend OTP</a>
+                            </div>
+                            <!-- Submit buttons -->
+                            <button type="submit"
+                                class="verify-otp-btn mt-2 ot-btn w-100 fw-medium text-black rounded-xl p-y-12-mega p-x-16-mega bg-mgt-primary">
+                                <?php esc_html_e('VERIFY', 'woocommerce'); ?>
+                            </button>
+                            <button
+                                class="btn w-100 d-flex back-otp-back justify-content-center align-items-center text-uppercase text-white mt-3 fw-medium rounded-xl border border-neutral-700 bg-stone-800 p-x-16-mega p-y-12-mega"
+                                type="button">
+                                <?php esc_html_e('BACK TO LOGIN', 'woocommerce'); ?>
+                            </button>
+                        </form>
                     </div>
-                    <form method="post" class="woocommerce-form woocommerce-form-login login w-100 m-0"
-                        style="max-width: 360px;">
-                        <p class="text-body pb-2 text-center">Enter your email, and We will send an email with a code
-                            verification.</p>
-                        <input type="email" name="username" class="form-control otp-email-input" placeholder="Email"
-                            data-gtm-form-interact-field-id="1" style="background-color: var(--smoke-color) !important;">
-                        <button type="button" class="get-otp-btn mt-4 ot-btn text-black w-100"
-                            style="color: #000 !important;font-weight: 500 !important;">SEND</button>
-                    </form>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Second Modal: OTP Input -->
-    <!-- OTP Verification Modal -->
-    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-            <div class="authentication-form modal-content align-items-center d-flex flex-column gap-4">
-                <!-- Header -->
-                <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-                    <h5 class="modal-title text-white heading-sm-medium" id="otpModalLabel">VERIFY OTP</h5>
-                    <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
-                        aria-label="Close">
-                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
-                            alt="Close" style="width: 24px; height: 24px;" />
-                    </button>
-                </div>
-                <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
-                    <!-- Unified message container (copiar igual al de otpModal) -->
-                    <div class="otp-message-container w-100 d-flex justify-content-start d-none">
-                        <!-- Error -->
-                        <div class="error-otp-message notifications notifications-error">
-                            <div class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                    aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                    <path
-                                        d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <span class="error-otp-text">Some error</span>
-                        </div>
-                        <!-- Success -->
-                        <div class="success-otp-message notifications notifications-success">
-                            <div class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                    aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                    <path fill-rule="evenodd"
-                                        d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="success-otp-text">A new code has been sent</span>
-                        </div>
-                    </div>
-                    <!-- Logo -->
-                    <div class="sign-in__logo" style="height: 72px; width: 72px;">
-                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg" alt="mt logo"
-                            class="rounded-4" />
-                    </div>
-                    <!-- Instruction -->
-                    <p class="text-body text-center mb-0" style="color: #E4E4E7;">
-                        We sent an OTP to <strong class="text-white" id="otp-email-display">john@doe.com</strong><br>
-                        Enter it below to continue
-                    </p>
-                    <!-- OTP input boxes -->
-                    <form method="post" class="woocommerce-form w-100 px-4" style="max-width: 360px;">
-                        <div class="otp-inputs d-flex justify-content-between gap-2 mb-4">
-                            <input type="hidden" name="username" value="">
-                            <input type="text" maxlength="1" class="otp-box" />
-                            <input type="text" maxlength="1" class="otp-box" />
-                            <input type="text" maxlength="1" class="otp-box" />
-                            <input type="text" maxlength="1" class="otp-box" />
-                            <input type="text" maxlength="1" class="otp-box" />
-                            <input type="text" maxlength="1" class="otp-box" />
-                        </div>
-                        <!-- Resend + Timer -->
-                        <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
-                            <a href="#" class="resend-otp fw-semibold text-decoration-underline">Resend OTP</a>
-                        </div>
-                        <!-- Submit buttons -->
-                        <button type="submit"
-                            class="verify-otp-btn mt-2 ot-btn w-100 fw-medium text-black rounded-xl p-y-12-mega p-x-16-mega bg-mgt-primary">
-                            <?php esc_html_e('VERIFY', 'woocommerce'); ?>
-                        </button>
-                        <button
-                            class="btn w-100 d-flex back-otp-back justify-content-center align-items-center text-uppercase text-white mt-3 fw-medium rounded-xl border border-neutral-700 bg-stone-800 p-x-16-mega p-y-12-mega"
-                            type="button">
-                            <?php esc_html_e('BACK TO LOGIN', 'woocommerce'); ?>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
-    <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
+        <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
 
-<?php endif; ?>
+    <?php endif; ?>
