@@ -136,8 +136,9 @@ function megatrader_scripts() {
 	wp_enqueue_script( 'bootstrap-bundle',	MEGATRADER_JS .'bootstrap.bundle.min.js', array('jquery'), _MEGATRADER_VERSION, true);
 	// wp_enqueue_script( 'scrollCue',			MEGATRADER_JS .'scrollCue.min.js', array('jquery'), _MEGATRADER_VERSION, true);
 	// wp_enqueue_script( 'smoothscroll',		MEGATRADER_JS .'smoothscroll.min.js', array('jquery'), _MEGATRADER_VERSION, true);
-	wp_enqueue_script( 'megatrader-main',	MEGATRADER_JS .'main.js', array('jquery'), REALTIME_VERSION, true);
     wp_enqueue_script( 'megatrader-modal',	MEGATRADER_JS .'modal.js', array('jquery', 'bootstrap-bundle'), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-tabs',	        MEGATRADER_JS .'mt-tabs.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'megatrader-main',	MEGATRADER_JS .'main.js', array('jquery', 'mt-tabs'), REALTIME_VERSION, true);
 
 	wp_localize_script('megatrader-main', 'theme_ajax', array(
         'ajax_url' => admin_url('admin-ajax.php')
@@ -256,6 +257,11 @@ require get_template_directory() . '/inc/otp-login.php';
  * Payment Methods
  */
 require get_template_directory() . '/inc/class-mt-payment-methods.php';
+
+/**
+ * Utils Functions
+ */
+require_once get_template_directory() . '/inc/attributes-meta-parser.php';
 
 
 /**
@@ -1392,24 +1398,36 @@ add_filter( 'wc_stripe_save_to_account_text', function( $text ) {
 
 /* --------- MODAL Render Function -------- */
 
-function render_modal( $args = [] ) {
-	$args = wp_parse_args( $args, [
-		'notice'      => null,
-		'autoshow'    => null,
-        'modalType'   => '',
-		'modalId'     => 'mtModal_' . wp_generate_password(8, false, false),
-		'modalTitle'  => '',
-		'imageSrc'    => null,
-		'imageClass'  => null,
-		'bodyContent' => null,
-		'footer'      => null,
-		'labelId'     => null,
-		'closeHref'   => 'javascript:void(0);',
-	] );
+if (!function_exists('render_modal')) {
+    function render_modal( $args = [] ) {
+        $args = wp_parse_args( $args, [
+            'notice'      => null,
+            'autoshow'    => null,
+            'modalType'   => '',
+            'modalId'     => 'mtModal_' . wp_generate_password(8, false, false),
+            'modalTitle'  => '',
+            'imageSrc'    => null,
+            'imageClass'  => null,
+            'bodyContent' => null,
+            'footer'      => null,
+            'labelId'     => null,
+            'closeHref'   => 'javascript:void(0);',
+        ] );
 
-	ob_start();
-	include locate_template( 'template-parts/modal.php' );
-	return ob_get_clean();
+        ob_start();
+        include locate_template( 'template-parts/modal.php' );
+        return ob_get_clean();
+    }
+}
+
+/* --------- TABS Render Function -------- */
+
+if (!function_exists('render_tabs')) {
+    function render_tabs($tabs, $selected_id = null) {
+        set_query_var('tabs', $tabs);
+        set_query_var('selected_id', $selected_id);
+        get_template_part('template-parts/mt-tabs');
+    }
 }
 
 

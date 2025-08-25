@@ -18,14 +18,13 @@ const Selector = {
 
 function setStateWhenReady(stateCode) {
   if (!stateCode) return;
-
   const wrapper = document.getElementById("billing_state_wrapper");
 
   const tryApply = () => {
     const select = document.getElementById("billing_state");
     if (!select) return false;
 
-    const match = [...select.options].find((o) => o.value === stateCode);
+    const match = [...select.options].find(o => o.value === stateCode);
     if (!match) return false;
 
     select.value = stateCode;
@@ -34,33 +33,64 @@ function setStateWhenReady(stateCode) {
     return true;
   };
 
-  // intenta inmediatamente
   if (tryApply()) return;
 
-  // espera a que AJAX regenere el select
   const obs = new MutationObserver(() => {
     if (tryApply()) obs.disconnect();
   });
   obs.observe(wrapper, { childList: true, subtree: true });
 }
 
+// Reaplica durante unos segundos por si otro script vuelve a sustituir el select
+function lockStateSelection(stateCode, ttlMs = 7000) {
+  if (!stateCode) return;
+  const wrapper = document.getElementById("billing_state_wrapper");
+  if (!wrapper) return;
+
+  const start = Date.now();
+  const apply = () => {
+    const select = document.getElementById("billing_state");
+    if (!select) return;
+    const opt = [...select.options].find(o => o.value === stateCode);
+    if (opt) {
+      select.value = stateCode;
+      select.dataset.googleSet = "true";
+    }
+  };
+
+  apply();
+
+  const obs = new MutationObserver(() => {
+    apply();
+    if (Date.now() - start > ttlMs) {
+      obs.disconnect();
+    }
+  });
+  obs.observe(wrapper, { childList: true, subtree: true });
+}
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
+
   // ========== DETECT COUNTRY ON FIRST LOAD (IP) ==========
   const countrySelect = document.getElementById("billing_country");
   let hasBeenOverwrittenByAutocomplete = false;
 
   if (countrySelect) {
     const hasInitialCountry =
-      !!countrySelect.value && !!countrySelect.querySelector("option:checked")?.value;
+      !!countrySelect.value &&
+      !!countrySelect.querySelector("option:checked")?.value;
 
+    // Solo detecta por IP si NO hay país preseleccionado
     if (!hasInitialCountry) {
       fetch("https://ipapi.co/json/")
         .then((res) => res.json())
         .then((data) => {
           const detectedCountry = data.country || "US";
+          // No sobrescribir si Google ya lo puso
           if (!hasBeenOverwrittenByAutocomplete && detectedCountry) {
-            const opt = [...countrySelect.options].find((o) => o.value === detectedCountry);
+            const opt = [...countrySelect.options].find(o => o.value === detectedCountry);
             if (opt && countrySelect.value !== detectedCountry) {
               countrySelect.value = detectedCountry;
               countrySelect.dispatchEvent(new Event("change"));
@@ -70,6 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(() => console.warn("🌎 No se pudo detectar país por IP"));
     }
   }
+
 
 
   // ========== GOOGLE AUTOCOMPLETE ==========
@@ -143,18 +174,20 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       setStateWhenReady(fields.billing_state);
+      lockStateSelection(fields.billing_state, 7000);
+
 
     });
   }
 
   // ========== FORCE EMPTY STATE BY DEFAULT ==========
+  // (opcional, versión segura — no vacía si ya hay valor)
   const stateWrapper = document.getElementById("billing_state_wrapper");
   if (stateWrapper) {
     const observer = new MutationObserver(() => {
       const select = document.getElementById("billing_state");
       if (!select) return;
 
-      // Si ya viene un valor seleccionado desde PHP, no toques nada
       const hasPrefilled =
         !!select.value || !!select.querySelector("option:checked")?.value;
       if (hasPrefilled) {
@@ -162,15 +195,13 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Si realmente está vacío, asegúrate de que quede el placeholder
       const defaultOpt = select.querySelector('option[value=""]') || select.options[0];
       if (defaultOpt) defaultOpt.selected = true;
-
       observer.disconnect();
     });
-
     observer.observe(stateWrapper, { childList: true, subtree: true });
   }
+
 
 
   // ========== FORMAT AND VALIDATION FOR TELEPHONE ==========

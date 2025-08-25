@@ -322,3 +322,5 @@ const $ = jQuery; //TODO: remove, temp for dev mode
 
 // scrollCue
 // scrollCue.init();
+
+MT_Tabs.init();

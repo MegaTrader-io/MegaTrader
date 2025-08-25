@@ -32,7 +32,7 @@ if ( apply_filters( 'woocommerce_checkout_show_terms', true ) && function_exists
 						<input class="form-check-input" type="checkbox" value="" name="terms" <?php checked( apply_filters( 'woocommerce_terms_is_checked_default', isset( $_POST['terms'] ) ), true ); // WPCS: input var ok, csrf ok. ?> id="terms" required>
 						<input type="hidden" name="terms-field" value="1" />
 						<label class="form-check-label woocommerce-form__label woocommerce-form__label-for-checkbox checkbox" for="terms">
-							Agree to our <a href="/terms-of-service/">Terms of Use</a> and <a href="/privacy-policy/">Privacy Policy</a>
+							Agree to our123 <a href="/terms-of-service/">Terms of Use</a> and <a href="/privacy-policy/">Privacy Policy</a>
 						</label>
 					</div>
 

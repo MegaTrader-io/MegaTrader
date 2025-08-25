@@ -21,9 +21,14 @@ class Label
         "title" => "Platform"        
     ];
 
-     public const PRICE = [
-        "price_sufix" => "Buying Power"        
+    public const PRICE = [
+        "price_sufix" => "Buying Power",      
     ];
-   
+
+    public const FUTURES = [
+        "size_section_title" => "Trading capital",
+        "plan_section_title" => "Challenge type",
+        "platform_section_title" => "Platform",
+    ];   
  
 }

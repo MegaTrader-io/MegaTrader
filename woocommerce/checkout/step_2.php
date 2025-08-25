@@ -1,13 +1,12 @@
 <?php
 /**
  * Template Name: Checkout Step 2 (New)
- * URL soporte: /checkout/?v2&add-to-cart=ID[&variation_id=VID&attribute_pa_*=...&quantity=n]
- * Enfocado en usar SOLO WC_Product, debug enriquecido + Billing + Payment.
+ * URL: /checkout/?v2&add-to-cart=ID[&variation_id=VID&attribute_pa_*=...&quantity=n]
+ * Enfocado en WC_Product, debug enriquecido + Billing + Payment (sin T&C ni botón) + Order Summary.
  */
 
-if (!defined('ABSPATH')) {
+if (!defined('ABSPATH'))
     exit;
-}
 
 /* -------------------- Helpers mínimos -------------------- */
 if (!function_exists('mt_get_param')) {
@@ -18,6 +17,7 @@ if (!function_exists('mt_get_param')) {
         return wc_clean(wp_unslash($_GET[$key]));
     }
 }
+
 if (!function_exists('mt_collect_variation_attrs_from_query')) {
     function mt_collect_variation_attrs_from_query()
     {
@@ -30,6 +30,8 @@ if (!function_exists('mt_collect_variation_attrs_from_query')) {
         return $attrs;
     }
 }
+
+/** Consigue el producto seleccionado (variación si hay; si no, parent/simple; si nada, 1º del cart) */
 if (!function_exists('mt_get_selected_product')) {
     function mt_get_selected_product()
     {
@@ -47,7 +49,8 @@ if (!function_exists('mt_get_selected_product')) {
                 return $p;
         }
         if (function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) {
-            $first = reset(WC()->cart->get_cart());
+            $cart = WC()->cart->get_cart();               // <- evitar notice de referencia
+            $first = $cart ? reset($cart) : null;
             if ($first) {
                 $pid = !empty($first['variation_id']) ? (int) $first['variation_id'] : (int) $first['product_id'];
                 $p = wc_get_product($pid);
@@ -58,6 +61,8 @@ if (!function_exists('mt_get_selected_product')) {
         return null;
     }
 }
+
+/** Añade al carrito si viene por URL; luego limpia la query manteniendo ?v2 (para evitar duplicados al refrescar) */
 if (!function_exists('mt_maybe_add_to_cart_from_query')) {
     function mt_maybe_add_to_cart_from_query()
     {
@@ -99,7 +104,7 @@ if (!function_exists('mt_maybe_add_to_cart_from_query')) {
             }
         }
 
-        // Limpia URL para evitar re-inserción (mantén ?v2)
+        // Limpia URL (mantén ?v2)
         $params_to_remove = ['add-to-cart', 'variation_id', 'quantity', 'type', 'platform', 'size'];
         foreach ($_GET as $k => $v) {
             if (strpos($k, 'attribute_') === 0)
@@ -117,6 +122,10 @@ if (!function_exists('mt_maybe_add_to_cart_from_query')) {
         }
     }
 }
+
+/**
+ * Devuelve el valor “bonito” de un atributo taxonómico (ej. 'pa_account-size').
+ */
 if (!function_exists('mt_get_attr_label')) {
     function mt_get_attr_label(WC_Product $product = null, $taxonomy = '')
     {
@@ -124,9 +133,9 @@ if (!function_exists('mt_get_attr_label')) {
             return '';
         $val = $product->get_attribute($taxonomy);
         if (!empty($val))
-            return $val;
+            return $val; // ej. "$150,000"
         if ('variation' === $product->get_type()) {
-            $va = $product->get_variation_attributes();
+            $va = $product->get_variation_attributes(); // ['attribute_pa_*' => 'slug']
             $key = 'attribute_' . $taxonomy;
             if (isset($va[$key]) && $va[$key] !== '') {
                 $slug = $va[$key];
@@ -156,7 +165,8 @@ if (!function_exists('mt_build_rich_debug_payload')) {
         ];
 
         if (function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) {
-            $first = reset(WC()->cart->get_cart());
+            $cart = WC()->cart->get_cart();               // <- evitar notice de referencia
+            $first = $cart ? reset($cart) : null;
             if ($first) {
                 $payload['cart_first_item'] = [
                     'product_id' => $first['product_id'] ?? null,
@@ -183,10 +193,8 @@ if (!function_exists('mt_build_rich_debug_payload')) {
         ];
 
         $taxos = ['pa_account-size', 'pa_account-types', 'pa_platform', 'pa_market-type'];
-
         foreach ($taxos as $tx) {
             $label = $product->get_attribute($tx);
-
             $slug = '';
             if ($ptype === 'variation') {
                 $va = (array) $product->get_variation_attributes();
@@ -214,9 +222,8 @@ if (!function_exists('mt_build_rich_debug_payload')) {
                     $img_url = is_array($src) ? ($src[0] ?? '') : '';
                 }
                 $custom_repeater = get_term_meta($term->term_id, 'custom_repeater_field', true);
-                if (!is_array($custom_repeater)) {
+                if (!is_array($custom_repeater))
                     $custom_repeater = $custom_repeater ? (array) $custom_repeater : [];
-                }
                 $attribute_meta = get_term_meta($term->term_id, 'attribute_meta', true);
 
                 $term_data = [
@@ -281,7 +288,7 @@ if (!$checkout->is_registration_enabled() && $checkout->is_registration_required
     return;
 }
 
-/* Cargar scripts nativos Woo para países/estados + validaciones + pago */
+/* Scripts nativos Woo */
 wp_enqueue_script('wc-country-select');
 wp_enqueue_script('wc-address-i18n');
 wp_enqueue_script('wc-checkout');
@@ -289,12 +296,10 @@ wp_enqueue_script('wc-checkout');
 /* -------------------- DATA para la card -------------------- */
 $product = mt_get_selected_product();
 $plan_size = $product ? mt_get_attr_label($product, 'pa_account-size') : '';
-$plan_size_slug = $product
-    ? ($product->is_type('variation')
-        ? ($product->get_variation_attributes()['attribute_pa_account-size'] ?? '')
-        : (wc_get_product_terms($product->get_id(), 'pa_account-size', ['fields' => 'slugs'])[0] ?? '')
-    )
-    : '';
+$plan_size_slug = $product ? ($product->is_type('variation')
+    ? ($product->get_variation_attributes()['attribute_pa_account-size'] ?? '')
+    : (wc_get_product_terms($product->get_id(), 'pa_account-size', ['fields' => 'slugs'])[0] ?? '')
+) : '';
 $plan_type = $product ? $product->get_attribute('pa_account-types') : '';
 $market_type = $product ? $product->get_attribute('pa_market-type') : '';
 
@@ -309,7 +314,7 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
 <form id="checkout-form" name="checkout" method="post" class="checkout woocommerce-checkout d-flex flex-column gap-32"
     novalidate action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
 
-    <!-- ===== Card de producto ===== -->
+    <!-- ===== CARD de producto ===== -->
     <div class="mt-card">
         <div class="mt-card-wrapper d-flex flex-column gap-4">
             <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
@@ -322,12 +327,10 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                             <?php echo esc_html($plan_size_slug . ' - ' . Label::PRICE['price_sufix']); ?>
                         </div>
                         <div class="d-flex gap-3">
-                            <div class="badge-mega badge-mega-sm badge-mega-default">
-                                <?php echo esc_html($plan_type); ?>
+                            <div class="badge-mega badge-mega-sm badge-mega-default"><?php echo esc_html($plan_type); ?>
                             </div>
                             <div class="badge-mega badge-mega-sm badge-mega-primary">
-                                <?php echo esc_html($market_type); ?>
-                            </div>
+                                <?php echo esc_html($market_type); ?></div>
                         </div>
                     </div>
                 </div>
@@ -341,12 +344,10 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     </div>
                     <div class="mt-card-plataform-info d-flex flex-column">
                         <div class="mt-platform-title text-white fw-medium text-base">
-                            <?php echo esc_html(Label::PLATFORM['title']); ?>
-                        </div>
+                            <?php echo esc_html(Label::PLATFORM['title']); ?></div>
                         <?php if ($platform_label): ?>
                             <div class="mt-platform-name fw-medium text-a8a29e text-base">
-                                <?php echo esc_html($platform_label); ?>
-                            </div>
+                                <?php echo esc_html($platform_label); ?></div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -378,12 +379,12 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     'daily_loss_limit_soft_breach' => 'mt-icon_daily-loss-limit',
                     'trailing_max_drawdown' => 'mt-icon_max-drawdown',
                     'drawdown_mode' => 'mt-icon_drawdown-mode',
-                    'min_trading_days' => 'mt-icon_min-trading',
-                    'min_trading_days_to_payout' => 'mt-icon_min-trading',
+                    'min_trading_days' => 'mt-icon_calendar',
+                    'min_trading_days_to_payout' => 'mt-icon_calendar',
                     'reset_fee' => 'mt-icon_reset-fee',
-                    'activation_fee' => 'mt-icon_activation-fee',
-                    'consistency' => 'mt-icon',
-                    'max_accounts' => 'mt-icon_max-contract',
+                    'activation_fee' => 'mt-icon_lightning',
+                    'consistency' => 'mt-icon_checkmark-solid',
+                    'max_accounts' => 'mt-icon_arrow-circle-solid',
                 ];
                 $items = [];
                 $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
@@ -402,7 +403,7 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     <div class="mt-meta-grid">
                         <?php foreach ($items as $it): ?>
                             <div class="mt-meta-item">
-                                <i class="mt-icon <?php echo esc_attr($it['icon_class']); ?>"></i>
+                                <i class="mt-icon mt-icon-white <?php echo esc_attr($it['icon_class']); ?>"></i>
                                 <div class="mt-meta-text">
                                     <span class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
                                     <span class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
@@ -416,15 +417,15 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
         </div>
     </div>
 
-    <!-- ===== Add-ons ===== -->
+    <!-- ===== Add-ons (si aplica) ===== -->
     <?php
     $has_subscription = false;
-    if (isset($product) && $product instanceof WC_Product) {
+    if ($product instanceof WC_Product) {
         $ptype = $product->get_type();
         if (
-            $ptype === 'subscription' || $ptype === 'variable-subscription' || $ptype === 'subscription_variation' ||
-            (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product)) ||
-            has_term('subscription', 'product_type', $product->get_id())
+            $ptype === 'subscription' || $ptype === 'variable-subscription' || $ptype === 'subscription_variation'
+            || (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product))
+            || has_term('subscription', 'product_type', $product->get_id())
         ) {
             $has_subscription = true;
         }
@@ -435,9 +436,9 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
             if ($p instanceof WC_Product) {
                 $ptype = $p->get_type();
                 if (
-                    $ptype === 'subscription' || $ptype === 'variable-subscription' || $ptype === 'subscription_variation' ||
-                    (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($p)) ||
-                    has_term('subscription', 'product_type', $p->get_id())
+                    $ptype === 'subscription' || $ptype === 'variable-subscription' || $ptype === 'subscription_variation'
+                    || (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($p))
+                    || has_term('subscription', 'product_type', $p->get_id())
                 ) {
                     $has_subscription = true;
                     break;
@@ -480,12 +481,11 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
         </div>
     <?php endif; ?>
 
-    <!-- ===== Billing Details (campos nativos Woo) ===== -->
+    <!-- ===== Billing Details ===== -->
     <div class="mt-billing-card mt-card" id="mt-billing">
         <div class="text-white fw-medium text-base mb-3">Billing Details</div>
 
         <div class="row g-3">
-            <!-- First / Last -->
             <div class="col-md-6">
                 <label class="visually-hidden"
                     for="billing_first_name"><?php esc_html_e('First Name', 'megatrader'); ?></label>
@@ -501,7 +501,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     value="<?php echo esc_attr($checkout->get_value('billing_last_name')); ?>" required />
             </div>
 
-            <!-- Email -->
             <div class="col-12">
                 <label class="visually-hidden"
                     for="billing_email"><?php esc_html_e('Email Address', 'megatrader'); ?></label>
@@ -510,7 +509,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     value="<?php echo esc_attr($checkout->get_value('billing_email')); ?>" required />
             </div>
 
-            <!-- Phone -->
             <div class="col-12">
                 <label class="visually-hidden" for="billing_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
                 <input type="tel" class="form-control" name="billing_phone" id="billing_phone"
@@ -518,9 +516,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     value="<?php echo esc_attr($checkout->get_value('billing_phone')); ?>" required />
             </div>
 
-
-
-            <!-- Address 1 -->
             <div class="col-12">
                 <label class="visually-hidden"
                     for="billing_address_1"><?php esc_html_e('Address', 'megatrader'); ?></label>
@@ -529,7 +524,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     value="<?php echo esc_attr($checkout->get_value('billing_address_1')); ?>" required />
             </div>
 
-            <!-- Address 2 -->
             <div class="col-12">
                 <label class="visually-hidden"
                     for="billing_address_2"><?php esc_html_e('Apartment, suite, etc. (optional)', 'megatrader'); ?></label>
@@ -537,7 +531,7 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     placeholder="<?php esc_attr_e('Apartment, suite, etc. (optional)', 'megatrader'); ?>"
                     value="<?php echo esc_attr($checkout->get_value('billing_address_2')); ?>" />
             </div>
-            <!-- Country -->
+
             <div class="col-lg-3 col-md-6">
                 <label class="visually-hidden"
                     for="billing_country"><?php esc_html_e('Country/Region', 'megatrader'); ?></label>
@@ -549,7 +543,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                 </select>
             </div>
 
-            <!-- State (select o text según país) -->
             <div class="col-lg-3 col-md-6">
                 <div id="billing_state_wrapper">
                     <?php
@@ -572,7 +565,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                 </div>
             </div>
 
-            <!-- City -->
             <div class="col-lg-3 col-md-6">
                 <label class="visually-hidden" for="billing_city"><?php esc_html_e('City', 'megatrader'); ?></label>
                 <input type="text" class="form-control" name="billing_city" id="billing_city"
@@ -580,7 +572,6 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
                     value="<?php echo esc_attr($checkout->get_value('billing_city')); ?>" required />
             </div>
 
-            <!-- Postcode -->
             <div class="col-lg-3 col-md-6">
                 <label class="visually-hidden"
                     for="billing_postcode"><?php esc_html_e('Postcode / ZIP', 'megatrader'); ?></label>
@@ -591,24 +582,71 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
         </div>
     </div>
 
-    <!-- ===== Payment + Place order (nativo Woo) ===== -->
-    <?php do_action('woocommerce_checkout_before_order_review'); ?>
-    <div id="order_review" class="woocommerce-checkout-review-order">
-        <?php do_action('woocommerce_checkout_order_review'); ?>
+    <!-- ===== Payment (solo métodos) ===== -->
+    <div class="mt-payment-cards" id="mt-payment">
+        <div class="text-white fw-medium text-base mb-3"><?php esc_html_e('Payment', 'megatrader'); ?></div>
+        <?php
+        // Render del template nativo y eliminación del bloque "place-order" (T&C + botón)
+        ob_start();
+        // Esto trae la UI completa de gateways (incluye tokens guardados si el gateway los pinta)
+        if (function_exists('woocommerce_checkout_payment')) {
+            woocommerce_checkout_payment();
+        }
+        $payment_html = ob_get_clean();
+
+        // Quitar el contenedor de submit/T&C (coincide con .place-order)
+        $payment_html = preg_replace('/<div[^>]*class="[^"]*place-order[^"]*"[^>]*>.*?<\/div>\s*/is', '', $payment_html);
+
+        echo $payment_html; // queda igual que tu captura, sin T&C ni botón
+        ?>
     </div>
-    <?php do_action('woocommerce_checkout_after_order_review'); ?>
+
+    <!-- ===== Order Summary  ===== -->
+
+    <div class="mt-card">
+        <?php
+        do_action('woocommerce_checkout_order_review');
+        ?>
+        <div class="form-row place-order">
+            <noscript>
+                <?php
+                /* translators: $1 and $2 opening and closing emphasis tags respectively */
+                printf(esc_html__('Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce'), '<em>', '</em>');
+                ?>
+                <br /><button type="submit" class="button alt" name="woocommerce_checkout_update_totals"
+                    value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
+            </noscript>
+
+            <!-- COUPONS SECTION GOES HERE -->
+
+
+            <?php do_action('woocommerce_review_order_before_submit'); ?>
+
+
+            <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
+
+            <p class="info-text fw-light">
+                <svg width="16" height="21" viewBox="0 0 16 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M2 21C1.45 21 0.979167 20.8042 0.5875 20.4125C0.195833 20.0208 0 19.55 0 19V9C0 8.45 0.195833 7.97917 0.5875 7.5875C0.979167 7.19583 1.45 7 2 7H3V5C3 3.61667 3.4875 2.4375 4.4625 1.4625C5.4375 0.4875 6.61667 0 8 0C9.38333 0 10.5625 0.4875 11.5375 1.4625C12.5125 2.4375 13 3.61667 13 5V7H14C14.55 7 15.0208 7.19583 15.4125 7.5875C15.8042 7.97917 16 8.45 16 9V19C16 19.55 15.8042 20.0208 15.4125 20.4125C15.0208 20.8042 14.55 21 14 21H2ZM8 16C8.55 16 9.02083 15.8042 9.4125 15.4125C9.80417 15.0208 10 14.55 10 14C10 13.45 9.80417 12.9792 9.4125 12.5875C9.02083 12.1958 8.55 12 8 12C7.45 12 6.97917 12.1958 6.5875 12.5875C6.19583 12.9792 6 13.45 6 14C6 14.55 6.19583 15.0208 6.5875 15.4125C6.97917 15.8042 7.45 16 8 16ZM5 7H11V5C11 4.16667 10.7083 3.45833 10.125 2.875C9.54167 2.29167 8.83333 2 8 2C7.16667 2 6.45833 2.29167 5.875 2.875C5.29167 3.45833 5 4.16667 5 5V7Z"
+                        fill="var(--body-color)" />
+                </svg>
+                <span>All payments are secured and encrypted. </span>
+            </p>
+
+            <?php do_action('woocommerce_review_order_after_submit'); ?>
+
+            <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
+        </div>
+    </div>
+
+
 
 </form>
 
-<?php
-/* -------------------- DEBUG ENRIQUECIDO -------------------- */
-?>
-<details open style="margin-top:24px;">
-    <summary style="cursor:pointer;">Debug enriquecido (attrs + slugs + term meta + metas custom)</summary>
-    <pre style="white-space:pre-wrap;background:#111;color:#0f0;padding:16px;border-radius:8px;overflow:auto;"><?php
-    echo esc_html(print_r($rich, true));
-    ?></pre>
-</details>
+
+
+
 
 <script>
     jQuery(function ($) {
@@ -617,11 +655,7 @@ $platform_features = (array) ($rich['attributes']['pa_platform']['term']['custom
             var country = $(this).val();
             $.post(
                 (typeof woocommerce_params !== 'undefined' ? woocommerce_params.ajax_url : '<?php echo admin_url('admin-ajax.php'); ?>'),
-                {
-                    action: 'get_cities',
-                    country: country,
-                    state: $('#billing_state').val() || ''
-                },
+                { action: 'get_cities', country: country, state: $('#billing_state').val() || '' },
                 function (html) { $('#billing_state_wrapper').html(html); }
             );
         });

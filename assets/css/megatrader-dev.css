@@ -2746,7 +2746,37 @@ a.pagination-number {
   background-color: var(--theme-color);
 }
 
+/*------------- (step 1) -------------------- */
 
+.product-section__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-section__title {
+  font-size: var(--Text-FontSize-Body-lg, 20px);
+  font-weight: 700;
+  line-height: var(--Text-Lineheight-Body-lg, 32px);
+}
+
+.product-section__list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: auto; 
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .product-section__list {
+    grid-auto-flow: row;              
+    grid-template-columns: 1fr;
+    grid-auto-columns: unset;
+  }
+  .product-section__list.product-section__list_grid {  
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 /*-------------New Checkout (step 2) -------------------- */
 
@@ -2835,4 +2865,48 @@ a.pagination-number {
 
 .mt-billing-card .iti {
   width: 100%;
+}
+
+.mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 16px;
+}
+
+@media (max-width: 767.98px) {
+  .mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
+    flex-direction: column;
+  }
+}
+
+.mt-payment-cards .saved-cc-badge {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mt-payment-cards .woocommerce-SavedPaymentMethods-token {
+  flex: 1 1 0;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+}
+
+.mt-payment-cards .woocommerce-SavedPaymentMethods-new {
+  border-radius: 16px;
+  flex: 1 1 0;
+  display: flex;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+}
+
+.mt-payment-cards .saved-cc-content {
+  align-items: start;
+}
+
+.mt-payment-cards .wc-upe-form.wc-payment-form {
+  border-radius: 16px;
+  padding: 16px !important;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+}
+
+.mt-payment-cards .saved-cc-body {
+  gap: 4px;
 }
