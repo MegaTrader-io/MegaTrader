@@ -726,17 +726,31 @@ if ($fflag): ?>
                             <div class="checkout-addons">
                                 <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
                                     <?php foreach ($addon_options as $option_key => $option_data): ?>
-                                          <div
-                                class="addons-item addons-item-new d-flex gap-3 bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
-                                <div class="addons-header d-flex flex-column gap-1">
-                                    <div class="text-base text-white fw-medium"><?php echo esc_html($label_text); ?></div>
-                                    <?php if ($desc): ?>
-                                        <div class="text-a8a29e text-14px-line-20px fw-bold"><?php echo esc_html($desc); ?></div>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="price"><?php if ($price_html)
-                                    echo '<div>' . esc_html($price_html) . '</div>'; ?></div>
-                            </div>
+                                        <div
+                                            class="addons-item addons-item-new d-flex gap-3 bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
+                                            <div class="addons-header d-flex flex-column gap-1">
+                                                <div class="text-base text-white fw-medium">
+                                                    <?php
+                                                    $label_full = $option_data['label'];
+                                                    preg_match('/^(.*?)\s*\((.*?)\)$/', wp_strip_all_tags($label_full), $matches);
+                                                    $label_text = $matches[1] ?? wp_strip_all_tags($label_full);
+                                                    $price_html = $matches[2] ?? '';
+
+                                                    echo esc_html($label_text);
+
+                                                    ?>
+                                                </div>
+                                                <?php if (!empty($option_data['description'])): ?>
+                                                    <p class="text-a8a29e text-14px-line-20px fw-bold">
+                                                        <?php echo esc_html(trim($option_data['description'])); ?>
+                                                    </p>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="title"><?php if ($price_html)
+                                                echo '<div>' . esc_html($price_html) . '</div>'; ?>
+                                            </div>
+
+                                        </div>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
