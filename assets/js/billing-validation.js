@@ -812,6 +812,76 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // === BILLING SUMMARY: TOGGLE & SAVE (AJAX) ===
+(function billingToggleAndSave() {
+  const summary  = document.getElementById('mt-billing-summary');
+  const formWrap = document.getElementById('mt-billing-form');
+  const changeLink = document.getElementById('mt-billing-change');
+  const saveBtn  = document.getElementById('mt-save-billing');
+
+  // Mostrar formulario al hacer "Change"
+  if (changeLink && summary && formWrap) {
+    changeLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      summary.style.display = 'none';
+      formWrap.style.display = '';
+    });
+  }
+
+  // Guardar billing en el perfil y volver al resumen
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async function() {
+      const nonce = document.getElementById('mt_save_billing_nonce')?.value || '';
+      const fields = ['first_name','last_name','email','phone','address_1','address_2','city','state','postcode','country'];
+
+      const fd = new FormData();
+      fd.append('action', 'mt_save_billing_profile');
+      fd.append('nonce', nonce);
+      fields.forEach(k => {
+        const el = document.getElementById('billing_' + k);
+        if (el) fd.append(`fields[${k}]`, el.value);
+      });
+
+      const ajaxUrl =
+        (window.wc_checkout_params && wc_checkout_params.ajax_url) ||
+        window.ajaxurl ||
+        '/wp-admin/admin-ajax.php';
+
+      try {
+        const res = await fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd });
+        const json = await res.json();
+
+        if (json && json.success) {
+          const d = json.data || {};
+          const name  = ((d.first_name || '') + ' ' + (d.last_name || '')).trim() || '—';
+          const email = d.email || '—';
+          const phone = d.phone || '—';
+          const addr  = d.formatted_address ||
+                        [d.address_1, d.address_2, [d.city, d.state, d.postcode].filter(Boolean).join(', '), d.country]
+                        .filter(Boolean).join(' ');
+
+          const setText = (id, val) => { const n = document.getElementById(id); if (n) n.textContent = val; };
+          setText('mt-sum-name', name);
+          setText('mt-sum-email', email);
+          setText('mt-sum-phone', phone);
+          setText('mt-sum-address', addr);
+
+          // Toggle back
+          if (formWrap) formWrap.style.display = 'none';
+          if (summary) summary.style.display = '';
+        } else {
+          const msg = (json && json.data && json.data.message) ? json.data.message : 'Could not save billing details.';
+          alert(msg);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error saving billing.');
+      }
+    });
+  }
+})();
+
+
   // ========== HIDE AUTOMATIC WOOCOMMERCE ERRORS ==========
   // TODO: remove block
   /* 

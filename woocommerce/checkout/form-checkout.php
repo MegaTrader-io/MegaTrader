@@ -396,31 +396,110 @@ if ($fflag): ?>
                     <?php endif; ?>
                 </div>
 
-                <div class="billing-container mt-billing-card mt-card">
-                    <div class="text-white fw-medium text-base">Billing Details</div>
-                    <div class="billing-details">
-                        <?php
-                        do_action('woocommerce_before_checkout_form');
-                        ?>
-                        <?php
-                        do_action('woocommerce_checkout_before_customer_details');
-                        ?>
-                        <div id="customer_details">
-                            <?php
-                            do_action('woocommerce_checkout_billing');
-                            ?>
-                            <?php
-                            do_action('woocommerce_checkout_shipping');
-                            ?>
-                        </div>
-                        <?php
-                        do_action('woocommerce_checkout_after_customer_details');
-                        ?>
-                        <?php
-                        do_action('woocommerce_after_checkout_form');
-                        ?>
-                    </div>
-                </div>
+                <?php
+  // === Datos del usuario para decidir qué vista mostrar ===
+  $user_id = get_current_user_id();
+  $billing = array_fill_keys(
+    ['first_name','last_name','email','phone','address_1','address_2','city','state','postcode','country'],
+    ''
+  );
+  if ( $user_id ) {
+    foreach ($billing as $k => $v) {
+      $billing[$k] = (string) get_user_meta($user_id, 'billing_' . $k, true);
+    }
+    if ( empty($billing['email']) ) {
+      // fallback al email de la cuenta
+      $u = wp_get_current_user();
+      if ( $u && $u->user_email ) $billing['email'] = $u->user_email;
+    }
+  }
+  $has_billing = ! empty($billing['first_name']) || ! empty($billing['address_1']) || ! empty($billing['phone']) || ! empty($billing['email']);
+
+  // Mapeo legible de país/estado (si existen)
+  $country_name = $billing['country'];
+  $state_name   = $billing['state'];
+  if ( function_exists('WC') && WC()->countries ) {
+    $country_name = WC()->countries->countries[$billing['country']] ?? $billing['country'];
+    $state_name   = WC()->countries->states[$billing['country']][$billing['state']] ?? $billing['state'];
+  }
+  $mt_billing_nonce = wp_create_nonce('mt_save_billing');
+?>
+
+<div class="billing-container mt-billing-card mt-card">
+
+  <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
+  <div id="mt-billing-summary" style="<?php echo $has_billing ? '' : 'display:none;'; ?>">
+    <div style="width: 100%; height: 100%; padding: 24px; background: var(--Surface-Page, #1E1E1E); border-radius: 16px; outline: 1px var(--Colors-Gray-700, #404040) solid; outline-offset: -1px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: inline-flex">
+      <div style="align-self: stretch; justify-content: space-between; align-items: flex-start; gap: 16px; display: inline-flex">
+        <div style="flex: 1 1 0; color: var(--Text-Headings, white); font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Billing Details</div>
+        <a href="#" id="mt-billing-change" style="color: var(--Text-Link, #FFD78A); font-size: 16px; font-family: Roboto; font-weight: 500; text-decoration: underline; line-height: 24px; word-wrap: break-word">Change</a>
+      </div>
+
+      <div style="align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+        <div style="align-self: stretch; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
+          <div style="width: 24px; height: 24px; background: var(--Text-Body, #A8A29E)"></div>
+          <div id="mt-sum-name" style="color: var(--Text-Headings, white); font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px;">
+            <?php echo esc_html(trim(($billing['first_name'] ?? '').' '.($billing['last_name'] ?? '')) ?: '—'); ?>
+          </div>
+        </div>
+
+        <div style="align-self: stretch; padding-top: 4px; padding-bottom: 4px; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
+          <div style="width: 24px; height: 24px; background: var(--Text-Body, #A8A29E)"></div>
+          <div id="mt-sum-email" style="flex: 1 1 0; color: #fff; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px;">
+            <?php echo esc_html($billing['email'] ?: '—'); ?>
+          </div>
+        </div>
+
+        <div style="align-self: stretch; padding-top: 4px; padding-bottom: 4px; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
+          <div style="width: 24px; height: 24px; background: var(--Text-Body, #A8A29E)"></div>
+          <div id="mt-sum-phone" style="flex: 1 1 0; color: #fff; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px;">
+            <?php echo esc_html($billing['phone'] ?: '—'); ?>
+          </div>
+        </div>
+
+        <div style="align-self: stretch; padding-top: 4px; padding-bottom: 4px; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
+          <div style="width: 24px; height: 24px; background: var(--Text-Body, #A8A29E)"></div>
+          <div id="mt-sum-address" style="flex: 1 1 0; color: #fff; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; white-space: pre-line;">
+            <?php
+              $addr_lines = array_filter([
+                trim(($billing['address_1'] ?? '') . ( $billing['address_2'] ? ', '.$billing['address_2'] : '' )),
+                trim(($billing['city'] ?? '') . ( $state_name ? ', '.$state_name : '' ) . ( $billing['postcode'] ? ' '.$billing['postcode'] : '' )),
+                trim($country_name ?: '')
+              ]);
+              echo esc_html( $addr_lines ? implode("\n", $addr_lines) : '—' );
+            ?>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== VISTA FORM (WooCommerce) ====== -->
+  <div id="mt-billing-form" style="<?php echo $has_billing ? 'display:none;' : ''; ?>">
+    <div class="text-white fw-medium text-base">Billing Details</div>
+    <div class="billing-details">
+      <?php
+        do_action('woocommerce_before_checkout_form');
+        do_action('woocommerce_checkout_before_customer_details');
+      ?>
+      <div id="customer_details">
+        <?php do_action('woocommerce_checkout_billing'); ?>
+        <?php do_action('woocommerce_checkout_shipping'); ?>
+      </div>
+      <?php
+        do_action('woocommerce_checkout_after_customer_details');
+        do_action('woocommerce_after_checkout_form');
+      ?>
+
+      <!-- Botón para guardar en el perfil -->
+      <input type="hidden" id="mt_save_billing_nonce" value="<?php echo esc_attr($mt_billing_nonce); ?>">
+      <button type="button" id="mt-save-billing" class="ot-btn bg-mgt-primary text-black fw-medium mt-3">
+        Save billing details
+      </button>
+    </div>
+  </div>
+</div>
+
 
                 <div class="payment-container review-container">
                     <div class="fw-medium leading-8 text-size-20 text-white">Payment Method</div>
