@@ -758,7 +758,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (labelText) {
           if (basePrice && price) {
             const percent = Math.round((price / basePrice) * 100);
-            displayText = `${labelText} <i>${percent}%</i>`;
+            displayText = `<i>${percent}%</i>`;
           } else if (priceText) {
             displayText = `${labelText} <i>$${priceText}</i>`;
           }
