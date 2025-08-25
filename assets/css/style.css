@@ -6675,9 +6675,10 @@ body.woocommerce-checkout.woocommerce-page * {
     margin-left: 2px;
 }
 
+/*
 .woocommerce-checkout table.shop_table .product-total {
     padding-right: 16px;
-}
+}*/
 
 .woocommerce-checkout table.shop_table .product-total .woocommerce-Price-amount {
     font-size: 16px;
@@ -6805,7 +6806,7 @@ body.woocommerce-checkout.woocommerce-page * {
     color: var(--theme-color);
     font-weight: 600 !important;
 }
-
+/*
 .woocommerce-checkout table.shop_table .cart_item td {
     background-color: rgba(255, 179, 74, 0.1);
 }
@@ -6814,7 +6815,7 @@ body.woocommerce-checkout.woocommerce-page * {
     border-top-left-radius: 64px;
     border-bottom-left-radius: 64px;
 }
-
+*/
 .woocommerce-checkout table.shop_table .cart_item td.product-total {
     border-top-right-radius: 64px;
     border-bottom-right-radius: 64px;
