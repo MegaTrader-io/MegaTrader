@@ -463,8 +463,6 @@ if ($fflag): ?>
                         </div>
                         -->
                         <?php
-                        remove_all_actions( 'woocommerce_checkout_order_review' ); // evita dobles
-
                         wc_get_template( 'checkout/review-order.php' );
                         ?>
                         <div class="form-row place-order">
