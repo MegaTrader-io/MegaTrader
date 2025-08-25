@@ -23,7 +23,7 @@ defined('ABSPATH') || exit;
 				<td colspan="2">
 					<div class="apply-item">
 						<div class="coupon-form">
-							<div class="form-group position-relative d-flex flex-column flex-lg-row">
+							<div class="form-group position-relative d-flex flex-column flex-lg-row flex-md-row">
 								<input type="text" name="coupon_code" placeholder="Enter coupon code"
 									class="form-control" id="coupon_code" value="">
 								<button type="button" name="apply_coupon" value="Apply coupon"
