@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const obs = new MutationObserver(() => {
             if (tryApply()) obs.disconnect();
         });
-        obs.observe(wrapper, { childList: true, subtree: true });
+        obs.observe(wrapper, {childList: true, subtree: true});
     }
 
     function lockStateSelection(stateCode, ttlMs = 7000) {
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 obs.disconnect();
             }
         });
-        obs.observe(wrapper, { childList: true, subtree: true });
+        obs.observe(wrapper, {childList: true, subtree: true});
     }
 
     // Initialize Slider
@@ -185,27 +185,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
+
         function fallbackToIP() {
             fetch("https://ipapi.co/json/")
                 .then((resp) => resp.json())
                 .then((resp) => {
                     const countryCode = resp.country || "us";
+                    console.log("Country Code 1:", countryCode);
                     initPhoneInput(countryCode);
+
+                    if (countryCode) {
+                        document.getElementById("billing_country").value = countryCode;
+                    }
                 })
                 .catch(() => {
                     initPhoneInput("auto");
                 });
         }
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const { latitude, longitude } = position.coords;
+                    const {latitude, longitude} = position.coords;
                     fetch(
                         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
                     )
                         .then((res) => res.json())
                         .then((data) => {
                             const countryCode = data.address?.country_code?.toUpperCase();
+                            console.log("Country Code 2:", countryCode);
                             initPhoneInput(countryCode || "auto");
                         })
                         .catch(() => {
@@ -216,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.warn("⚠️ Geolocation blocked or failed:", err.message);
                     fallbackToIP();
                 },
-                { timeout: 5000 }
+                {timeout: 5000}
             );
         } else {
             fallbackToIP();
@@ -229,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (addressInput && window.google && google.maps && google.maps.places) {
         const autocomplete = new google.maps.places.Autocomplete(addressInput, {
             types: ["address"],
-            componentRestrictions: { country: ["us"] },
+            componentRestrictions: {country: ["us"]},
         });
 
         autocomplete.addListener("place_changed", function () {
