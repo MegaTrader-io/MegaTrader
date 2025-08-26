@@ -812,74 +812,180 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // === BILLING SUMMARY: TOGGLE & SAVE (AJAX) ===
-(function billingToggleAndSave() {
+// ===== Billing summary toggle & save =====
+
+// --- helpers para el overlay nativo de Woo ---
+function wcBlockCheckout() {
+  if (typeof jQuery === 'undefined') return;
+  const $form = jQuery('form.checkout, #checkout-form');
+  if ($form.length && typeof $form.block === 'function') {
+    $form.addClass('processing').block({
+      message: null,
+      overlayCSS: { background: '#000', opacity: 0.3 }
+    });
+  } else {
+    $form.addClass('processing');
+  }
+}
+function wcUnblockCheckout() {
+  if (typeof jQuery === 'undefined') return;
+  const $form = jQuery('form.checkout, #checkout-form');
+  if ($form.length && typeof $form.unblock === 'function') {
+    $form.removeClass('processing').unblock();
+  } else {
+    $form.removeClass('processing');
+  }
+}
+
+// --- helpers para TU preloader (.preloader) ---
+function showSitePreloader() {
+  if (typeof jQuery === 'undefined') return;
+  const $pre = jQuery('.preloader');
+  if ($pre.length) $pre.stop(true, true).fadeIn(150);
+}
+function hideSitePreloader() {
+  if (typeof jQuery === 'undefined') return;
+  const $pre = jQuery('.preloader');
+  if ($pre.length) $pre.stop(true, true).fadeOut(150);
+}
+
+// --- asegura que Woo “vea” los cambios en los inputs ---
+function setWooVal(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.value !== val) el.value = val;
+  el.dispatchEvent(new Event('input',  { bubbles: true }));
+  el.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function initBillingSummary() {
   const summary  = document.getElementById('mt-billing-summary');
-  const formWrap = document.getElementById('mt-billing-form');
-  const changeLink = document.getElementById('mt-billing-change');
+  const formBox  = document.getElementById('mt-billing-form');
+  const changeLn = document.getElementById('mt-billing-change');
   const saveBtn  = document.getElementById('mt-save-billing');
 
-  // Mostrar formulario al hacer "Change"
-  if (changeLink && summary && formWrap) {
-    changeLink.addEventListener('click', function(e) {
-      e.preventDefault();
-      summary.style.display = 'none';
-      formWrap.style.display = '';
-    });
+  function showForm() {
+    if (!summary || !formBox) return;
+    formBox.classList.remove('d-none');
+    summary.classList.add('d-none');
+    if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.slideDown) {
+      jQuery(formBox).stop(true, true).hide().slideDown(200);
+    }
+  }
+  function showSummary() {
+    if (!summary || !formBox) return;
+    summary.classList.remove('d-none');
+    formBox.classList.add('d-none');
+    if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.slideDown) {
+      jQuery(summary).stop(true, true).hide().slideDown(200);
+    }
   }
 
-  // Guardar billing en el perfil y volver al resumen
-  if (saveBtn) {
-    saveBtn.addEventListener('click', async function() {
-      const nonce = document.getElementById('mt_save_billing_nonce')?.value || '';
-      const fields = ['first_name','last_name','email','phone','address_1','address_2','city','state','postcode','country'];
+  // evita listeners duplicados cuando Woo refresca fragmentos
+  if (changeLn && !changeLn.dataset.bound) {
+    changeLn.dataset.bound = '1';
+    changeLn.addEventListener('click', (e) => { e.preventDefault(); showForm(); });
+  }
 
-      const fd = new FormData();
-      fd.append('action', 'mt_save_billing_profile');
-      fd.append('nonce', nonce);
-      fields.forEach(k => {
-        const el = document.getElementById('billing_' + k);
-        if (el) fd.append(`fields[${k}]`, el.value);
-      });
+  if (saveBtn && !saveBtn.dataset.bound) {
+    saveBtn.dataset.bound = '1';
+    saveBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      // 🔥 levantar preloader + overlay
+      showSitePreloader();
+      wcBlockCheckout();
+
+      const originalTxt = saveBtn.textContent;
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      const v = id => document.getElementById(id)?.value?.trim() || '';
+      const payload = {
+        action: 'mt_save_billing_profile',
+        nonce: document.getElementById('mt_save_billing_nonce')?.value || '',
+        billing_first_name: v('billing_first_name'),
+        billing_last_name:  v('billing_last_name'),
+        billing_email:      v('billing_email'),
+        billing_phone:      v('billing_phone'),
+        billing_address_1:  v('billing_address_1'),
+        billing_address_2:  v('billing_address_2'),
+        billing_city:       v('billing_city'),
+        billing_state:      v('billing_state'),
+        billing_postcode:   v('billing_postcode'),
+        billing_country:    v('billing_country'),
+      };
 
       const ajaxUrl =
-        (window.wc_checkout_params && wc_checkout_params.ajax_url) ||
-        window.ajaxurl ||
+        (window.wc_checkout_params && window.wc_checkout_params.ajax_url) ||
         '/wp-admin/admin-ajax.php';
 
       try {
-        const res = await fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: fd });
-        const json = await res.json();
+        const resp = await fetch(ajaxUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+          body: new URLSearchParams(payload).toString(),
+        });
+        const json = await resp.json();
+        if (!json?.success) throw new Error(json?.data?.message || 'Could not save billing details.');
 
-        if (json && json.success) {
-          const d = json.data || {};
-          const name  = ((d.first_name || '') + ' ' + (d.last_name || '')).trim() || '—';
-          const email = d.email || '—';
-          const phone = d.phone || '—';
-          const addr  = d.formatted_address ||
-                        [d.address_1, d.address_2, [d.city, d.state, d.postcode].filter(Boolean).join(', '), d.country]
-                        .filter(Boolean).join(' ');
+        // actualizar la tarjeta resumen
+        const name = `${payload.billing_first_name} ${payload.billing_last_name}`.trim() || '—';
+        const countryText = json.data?.country_name || '';
+        const stateText   = json.data?.state_name || '';
+        const cityLine = [payload.billing_city, stateText, payload.billing_postcode].filter(Boolean).join(', ');
+        const addrLines = [
+          [payload.billing_address_1, payload.billing_address_2].filter(Boolean).join(', '),
+          cityLine,
+          countryText
+        ].filter(Boolean).join('\n');
 
-          const setText = (id, val) => { const n = document.getElementById(id); if (n) n.textContent = val; };
-          setText('mt-sum-name', name);
-          setText('mt-sum-email', email);
-          setText('mt-sum-phone', phone);
-          setText('mt-sum-address', addr);
+        const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '—'; };
+        setText('mt-sum-name', name);
+        setText('mt-sum-email', payload.billing_email);
+        setText('mt-sum-phone', payload.billing_phone);
+        setText('mt-sum-address', addrLines);
 
-          // Toggle back
-          if (formWrap) formWrap.style.display = 'none';
-          if (summary) summary.style.display = '';
-        } else {
-          const msg = (json && json.data && json.data.message) ? json.data.message : 'Could not save billing details.';
-          alert(msg);
+        // sincroniza inputs de Woo (para Place order)
+        setWooVal('billing_first_name', payload.billing_first_name);
+        setWooVal('billing_last_name',  payload.billing_last_name);
+        setWooVal('billing_email',      payload.billing_email);
+        setWooVal('billing_phone',      payload.billing_phone);
+        setWooVal('billing_address_1',  payload.billing_address_1);
+        setWooVal('billing_address_2',  payload.billing_address_2);
+        setWooVal('billing_city',       payload.billing_city);
+        setWooVal('billing_state',      payload.billing_state);
+        setWooVal('billing_postcode',   payload.billing_postcode);
+        setWooVal('billing_country',    payload.billing_country);
+
+        // recalcular checkout (impuestos/totales)
+        if (typeof jQuery !== 'undefined') {
+          jQuery(document.body).trigger('update_checkout');
         }
+
+        // volver a la vista resumen
+        showSummary();
+
       } catch (err) {
-        console.error(err);
-        alert('Network error saving billing.');
+        alert(err.message || 'Error saving billing.');
+      } finally {
+        // 🔥 ocultar preloader + overlay y restaurar botón
+        wcUnblockCheckout();
+        hideSitePreloader();
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalTxt;
       }
     });
   }
-})();
+}
+
+// Inicializa y reata tras fragment refresh
+initBillingSummary();
+if (typeof jQuery !== 'undefined') {
+  jQuery(document.body).on('updated_checkout', initBillingSummary);
+}
+
+
 
 
   // ========== HIDE AUTOMATIC WOOCOMMERCE ERRORS ==========
