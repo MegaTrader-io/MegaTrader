@@ -112,34 +112,32 @@ $valid_states = WC()->countries->get_states($default_country);
         <?php endif; ?>
     </div>
 
-    <div class="auth-form__container">
-        <div class="form-group auth-form__address-wrapper billing_state_wrapper">
-            <input type="text"
-                   class="form-control <?= MT_WC_Error::has_error('billing_address_1') ? 'auth-form--error-message' : '' ?>"
-                   name="billing_address_1" id="billing_address_1"
-                   placeholder="Address"
-                   value="<?php echo (!empty($_POST['billing_address_1']) && is_string($_POST['billing_address_1'])) ? esc_attr(wp_unslash($_POST['billing_address_1'])) : ''; ?>"
-                   required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
+    <div class="form-group auth-form__address-wrapper billing_state_wrapper">
+        <input type="text"
+               class="form-control <?= MT_WC_Error::has_error('billing_address_1') ? 'auth-form--error-message' : '' ?>"
+               name="billing_address_1" id="billing_address_1"
+               placeholder="Address"
+               value="<?php echo (!empty($_POST['billing_address_1']) && is_string($_POST['billing_address_1'])) ? esc_attr(wp_unslash($_POST['billing_address_1'])) : ''; ?>"
+               required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
 
-            <?php if (MT_WC_Error::has_error('billing_address_1')): ?>
-                <span id="error-address"
-                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_address_1') ?></span>
-            <?php endif; ?>
-        </div>
+        <?php if (MT_WC_Error::has_error('billing_address_1')): ?>
+            <span id="error-address"
+                  class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_address_1') ?></span>
+        <?php endif; ?>
+    </div>
 
-        <div class="form-group auth-form__address-wrapper">
-            <input type="text"
-                   class="form-control <?= MT_WC_Error::has_error('billing_address_2') ? 'auth-form--error-message' : '' ?>"
-                   name="billing_address_2" id="billing_address_2"
-                   placeholder="Apartment, suite, etc. (optional)"
-                   value="<?php echo (!empty($_POST['billing_address_2']) && is_string($_POST['billing_address_2'])) ? esc_attr(wp_unslash($_POST['billing_address_2'])) : ''; ?>"
-                   required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
+    <div class="form-group auth-form__address-wrapper">
+        <input type="text"
+               class="form-control <?= MT_WC_Error::has_error('billing_address_2') ? 'auth-form--error-message' : '' ?>"
+               name="billing_address_2" id="billing_address_2"
+               placeholder="Apartment, suite, etc. (optional)"
+               value="<?php echo (!empty($_POST['billing_address_2']) && is_string($_POST['billing_address_2'])) ? esc_attr(wp_unslash($_POST['billing_address_2'])) : ''; ?>"
+               required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
 
-            <?php if (MT_WC_Error::has_error('billing_address_2')): ?>
-                <span id="error-address_optional"
-                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_address_2') ?></span>
-            <?php endif; ?>
-        </div>
+        <?php if (MT_WC_Error::has_error('billing_address_2')): ?>
+            <span id="error-address_optional"
+                  class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_address_2') ?></span>
+        <?php endif; ?>
     </div>
 
     <div class="auth-form__container">
@@ -204,37 +202,35 @@ $valid_states = WC()->countries->get_states($default_country);
     </div>
 
     <?php if ('no' === get_option('woocommerce_registration_generate_password')) : ?>
-        <div class="auth-form__container">
-            <div class="password-wrapper">
-                <input class="form-control password-wrapper__password <?= MT_WC_Error::has_error('password') ? 'auth-form--error-message' : '' ?>"
-                       type="password"
-                       name="password"
-                       id="password"
-                       autocomplete="current-password"
-                       placeholder="Password" required
-                       value="<?php echo (!empty($_POST['password']) && is_string($_POST['password'])) ? esc_attr(wp_unslash($_POST['password'])) : ''; ?>"
-                       aria-required="true"/>
+        <div class="password-wrapper">
+            <input class="form-control password-wrapper__password <?= MT_WC_Error::has_error('password') ? 'auth-form--error-message' : '' ?>"
+                   type="password"
+                   name="password"
+                   id="password"
+                   autocomplete="current-password"
+                   placeholder="Password" required
+                   value="<?php echo (!empty($_POST['password']) && is_string($_POST['password'])) ? esc_attr(wp_unslash($_POST['password'])) : ''; ?>"
+                   aria-required="true"/>
 
-                <?php if (MT_WC_Error::has_error('password')): ?>
-                    <span id="error-password"
-                          class="auth-form__error_message"> <?= MT_WC_Error::get_error('password') ?></span>
-                <?php endif; ?>
-            </div>
-            <div class="password-wrapper">
-                <input class="form-control password-wrapper__password <?= MT_WC_Error::has_error('confirm_password') ? 'auth-form--error-message' : '' ?>"
-                       type="password"
-                       name="confirm_password"
-                       id="confirm_password"
-                       autocomplete="current-confirm_password"
-                       placeholder="Confirm Password" required
-                       value="<?php echo (!empty($_POST['confirm_password']) && is_string($_POST['confirm_password'])) ? esc_attr(wp_unslash($_POST['confirm_password'])) : ''; ?>"
-                       aria-required="true"/>
+            <?php if (MT_WC_Error::has_error('password')): ?>
+                <span id="error-password"
+                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('password') ?></span>
+            <?php endif; ?>
+        </div>
+        <div class="password-wrapper">
+            <input class="form-control password-wrapper__password <?= MT_WC_Error::has_error('confirm_password') ? 'auth-form--error-message' : '' ?>"
+                   type="password"
+                   name="confirm_password"
+                   id="confirm_password"
+                   autocomplete="current-confirm_password"
+                   placeholder="Confirm Password" required
+                   value="<?php echo (!empty($_POST['confirm_password']) && is_string($_POST['confirm_password'])) ? esc_attr(wp_unslash($_POST['confirm_password'])) : ''; ?>"
+                   aria-required="true"/>
 
-                <?php if (MT_WC_Error::has_error('confirm_password')): ?>
-                    <span id="error-confirm-password"
-                          class="auth-form__error_message"> <?= MT_WC_Error::get_error('confirm_password') ?></span>
-                <?php endif; ?>
-            </div>
+            <?php if (MT_WC_Error::has_error('confirm_password')): ?>
+                <span id="error-confirm-password"
+                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('confirm_password') ?></span>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 
