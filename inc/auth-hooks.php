@@ -95,6 +95,11 @@ function mt_enqueue_auth_script_on_login_form(): void
         wp_localize_script('map-script', 'woocommerce_default_country', array('woocommerce_country' => $woocommerce_default_country));
 
         wp_enqueue_style('map-style', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/css/map-style.css', array(), SHIPPING_WORKSHOP_VERSION, false);
+
+        remove_action('admin_menu', 'add_intercom_settings_page');
+        remove_action('network_admin_menu', 'add_intercom_settings_page');
+        remove_action('admin_init', 'intercom_settings');
+        remove_action('wp_footer', 'add_intercom_snippet', 999);
     }
 }
 

@@ -29,6 +29,11 @@ function mt_enqueue_auth_script_form()
             [],
             filemtime(get_stylesheet_directory() . '/assets/css/mgt-theme.css')
         );
+
+        remove_action('admin_menu', 'add_intercom_settings_page');
+        remove_action('network_admin_menu', 'add_intercom_settings_page');
+        remove_action('admin_init', 'intercom_settings');
+        remove_action('wp_footer', 'add_intercom_snippet', 999);
     }
 }
 
@@ -78,11 +83,11 @@ function mt_render_auth_lost_password_shortcode(): string
             list($rp_id, $rp_key) = array_map('wc_clean', explode(':', wp_unslash($_COOKIE[$cookie_name]), 2));
             $userdata = get_userdata(absint($rp_id));
             $rp_login = $userdata ? $userdata->user_login : '';
-            $user     = WC_Shortcode_My_Account::check_password_reset_key($rp_key, $rp_login);
+            $user = WC_Shortcode_My_Account::check_password_reset_key($rp_key, $rp_login);
 
             if ($user instanceof WP_User) {
                 wc_get_template('myaccount/form-reset-password.php', [
-                    'key'   => $rp_key,
+                    'key' => $rp_key,
                     'login' => $rp_login,
                 ]);
                 return ob_get_clean();
