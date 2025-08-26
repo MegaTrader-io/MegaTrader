@@ -24,6 +24,5 @@ wc_get_template('myaccount/partials/sign-up-inner.php');
 $slot = ob_get_clean();
 
 wc_get_template('myaccount/partials/auth-layout.php', [
-    'content' => $slot,
-    'classes' => 'auth--full-height'
+    'content' => $slot
 ]);

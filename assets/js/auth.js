@@ -191,12 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then((resp) => resp.json())
                 .then((resp) => {
                     const countryCode = resp.country || "us";
-                    console.log("Country Code 1:", countryCode);
                     initPhoneInput(countryCode);
-
-                    if (countryCode) {
-                        document.getElementById("billing_country").value = countryCode;
-                    }
                 })
                 .catch(() => {
                     initPhoneInput("auto");
@@ -213,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         .then((res) => res.json())
                         .then((data) => {
                             const countryCode = data.address?.country_code?.toUpperCase();
-                            console.log("Country Code 2:", countryCode);
                             initPhoneInput(countryCode || "auto");
                         })
                         .catch(() => {
@@ -229,82 +223,5 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             fallbackToIP();
         }
-    }
-
-    // ========== GOOGLE AUTOCOMPLETE ==========
-    const addressInput = document.getElementById("billing_address_1");
-
-    if (addressInput && window.google && google.maps && google.maps.places) {
-        const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-            types: ["address"],
-            componentRestrictions: {country: ["us"]},
-        });
-
-        autocomplete.addListener("place_changed", function () {
-            const place = autocomplete.getPlace();
-            if (!place.address_components) return;
-
-            const fields = {
-                billing_address_1: "",
-                billing_address_2: "",
-                billing_city: "",
-                billing_state: "",
-                billing_postcode: "",
-                billing_country: "",
-            };
-
-            place.address_components.forEach((component) => {
-                const types = component.types;
-
-                if (types.includes("street_number")) {
-                    fields.billing_address_1 =
-                        component.long_name + " " + fields.billing_address_1;
-                }
-                if (types.includes("route")) {
-                    fields.billing_address_1 += component.long_name;
-                }
-                if (types.includes("subpremise")) {
-                    fields.billing_address_2 = component.long_name;
-                }
-                if (types.includes("locality")) {
-                    fields.billing_city = component.long_name;
-                }
-                if (types.includes("administrative_area_level_1")) {
-                    fields.billing_state = component.short_name;
-                }
-                if (types.includes("postal_code")) {
-                    fields.billing_postcode = component.long_name;
-                }
-                if (types.includes("country")) {
-                    fields.billing_country = component.short_name;
-                }
-            });
-
-            document.getElementById("billing_address_1").value =
-                fields.billing_address_1;
-            document.getElementById("billing_address_2").value =
-                fields.billing_address_2;
-            document.getElementById("billing_city").value = fields.billing_city;
-            document.getElementById("billing_postcode").value =
-                fields.billing_postcode;
-
-            const countrySelect = document.getElementById("billing_country");
-            if (fields.billing_country && countrySelect) {
-                const option = [...countrySelect.options].find(
-                    (opt) => opt.value === fields.billing_country
-                );
-                if (option) {
-                    countrySelect.value = fields.billing_country;
-                    countrySelect.classList.add("selected-by-google");
-                    countrySelect.dispatchEvent(new Event("change"));
-                    hasBeenOverwrittenByAutocomplete = true;
-                }
-            }
-
-            setStateWhenReady(fields.billing_state);
-            lockStateSelection(fields.billing_state, 7000);
-
-
-        });
     }
 });
