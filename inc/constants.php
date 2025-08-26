@@ -59,6 +59,10 @@ class Label
         'activation_fee' => 'mt-icon_lightning',
         'consistency' => 'mt-icon_checkmark-solid',
         'max_accounts' => 'mt-icon_arrow-circle-solid',
+        'account' => 'mt-icon_account',
+        'mail' => 'mt-icon_mail',
+        'phone' => 'mt-icon_phone',
+        'home' => 'mt-icon_home',
     ];
  
 }

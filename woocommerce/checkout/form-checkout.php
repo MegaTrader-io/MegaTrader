@@ -205,7 +205,34 @@ if (empty($platform_logo_url)) {
     $platform_logo_url = get_template_directory_uri() . '/assets/img/diamond.svg';
 }
 
+/** ==== Data for User Billing ==== */
 
+$user_id = get_current_user_id();
+$billing = array_fill_keys(
+    ['first_name', 'last_name', 'email', 'phone', 'address_1', 'address_2', 'city', 'state', 'postcode', 'country'],
+    ''
+);
+if ($user_id) {
+    foreach ($billing as $k => $v) {
+        $billing[$k] = (string) get_user_meta($user_id, 'billing_' . $k, true);
+    }
+    if (empty($billing['email'])) {
+        // fallback al email de la cuenta
+        $u = wp_get_current_user();
+        if ($u && $u->user_email)
+            $billing['email'] = $u->user_email;
+    }
+}
+$has_billing = !empty($billing['first_name']) || !empty($billing['address_1']) || !empty($billing['phone']) || !empty($billing['email']);
+
+// Mapeo legible de país/estado (si existen)
+$country_name = $billing['country'];
+$state_name = $billing['state'];
+if (function_exists('WC') && WC()->countries) {
+    $country_name = WC()->countries->countries[$billing['country']] ?? $billing['country'];
+    $state_name = WC()->countries->states[$billing['country']][$billing['state']] ?? $billing['state'];
+}
+$mt_billing_nonce = wp_create_nonce('mt_save_billing');
 
 
 $fflag = isset($_GET['v2']);
@@ -396,31 +423,91 @@ if ($fflag): ?>
                     <?php endif; ?>
                 </div>
 
+
+
                 <div class="billing-container mt-billing-card mt-card">
-                    <div class="text-white fw-medium text-base">Billing Details</div>
-                    <div class="billing-details">
-                        <?php
-                        do_action('woocommerce_before_checkout_form');
-                        ?>
-                        <?php
-                        do_action('woocommerce_checkout_before_customer_details');
-                        ?>
-                        <div id="customer_details">
-                            <?php
-                            do_action('woocommerce_checkout_billing');
-                            ?>
-                            <?php
-                            do_action('woocommerce_checkout_shipping');
-                            ?>
+
+                    <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
+                    <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
+                        <div class="d-flex flex-column gap-3 w-100">
+                            <div class="d-flex gap-3 justify-content-between align-items-start">
+                                <div class="text-white fw-medium text-base">Billing Details</div>
+                                <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
+                                    style="color:#FFD78A;">Change</a>
+                            </div>
+
+                            <div class="d-flex justify-content-between gap-3">
+                                <div class="flex-fill d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="mt-icon mt-icon_account"></i>
+                                        <div class="text-base fw-medium text-white" id="mt-sum-name">
+                                            <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="mt-icon mt-icon_mail"></i>
+                                        <div class="text-base fw-medium text-white" id="mt-sum-email">
+                                            <?php echo esc_html($billing['email'] ?: '—'); ?></div>
+                                    </div>
+                                </div>
+                                <div class="flex-fill d-flex flex-column gap-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="mt-icon mt-icon_phone"></i>
+                                        <div class="text-base fw-medium text-white" id="mt-sum-phone">
+                                            <?php echo esc_html($billing['phone'] ?: '—'); ?></div>
+                                    </div>
+
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="mt-icon mt-icon_home"></i>
+                                        <?php
+$addr_lines = array_filter([
+  trim(($billing['address_1'] ?? '') . (!empty($billing['address_2']) ? ', ' . $billing['address_2'] : '')),
+  trim(implode(', ', array_filter([($billing['city'] ?? ''), $state_name, ($billing['postcode'] ?? '')]))),
+  trim($country_name ?: ''),
+]);
+
+$addr_text = ltrim(implode("\n", $addr_lines)); // <-- quita salto inicial
+?>
+<div id="mt-sum-address" class="text-base fw-medium text-white" style="white-space:pre-line;"><?php
+  echo esc_html($addr_text);
+?></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <?php
-                        do_action('woocommerce_checkout_after_customer_details');
-                        ?>
-                        <?php
-                        do_action('woocommerce_after_checkout_form');
-                        ?>
+                    </div>
+
+                    <!-- ====== VISTA FORM (WooCommerce) ====== -->
+                    <div id="mt-billing-form" class="<?php echo $has_billing ? 'd-none' : ''; ?>">
+                        <div class="text-white fw-medium text-base">Billing Details</div>
+                        <div class="billing-details pt-3">
+
+                            <?php
+                            do_action('woocommerce_before_checkout_form');
+                            do_action('woocommerce_checkout_before_customer_details');
+                            ?>
+                            <div id="customer_details">
+                                <?php do_action('woocommerce_checkout_billing'); ?>
+                                <?php do_action('woocommerce_checkout_shipping'); ?>
+                            </div>
+                            <?php
+                            do_action('woocommerce_checkout_after_customer_details');
+                            do_action('woocommerce_after_checkout_form');
+                            ?>
+
+                            <!-- Botón para guardar en el perfil -->
+                            <input type="hidden" id="mt_save_billing_nonce"
+                                value="<?php echo esc_attr($mt_billing_nonce); ?>">
+                            <button type="button" id="mt-save-billing"
+                                class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
+                                Save details
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+
 
                 <div class="payment-container review-container">
                     <div class="fw-medium leading-8 text-size-20 text-white">Payment Method</div>
