@@ -428,8 +428,8 @@ if ($fflag): ?>
 <div class="billing-container mt-billing-card mt-card">
 
   <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
-  <div id="mt-billing-summary" style="<?php echo $has_billing ? '' : 'display:none;'; ?>">
-    <div style="width: 100%; height: 100%; padding: 24px; background: var(--Surface-Page, #1E1E1E); border-radius: 16px; outline: 1px var(--Colors-Gray-700, #404040) solid; outline-offset: -1px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: inline-flex">
+  <div id="mt-billing-summary" style="<?php echo $has_billing ? '' : 'display:none;'; ?>" >
+    <div class="d-flex flex-column gap-3 w-100">
       <div style="align-self: stretch; justify-content: space-between; align-items: flex-start; gap: 16px; display: inline-flex">
         <div style="flex: 1 1 0; color: var(--Text-Headings, white); font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Billing Details</div>
         <a href="#" id="mt-billing-change" style="color: var(--Text-Link, #FFD78A); font-size: 16px; font-family: Roboto; font-weight: 500; text-decoration: underline; line-height: 24px; word-wrap: break-word">Change</a>
