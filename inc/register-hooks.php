@@ -202,6 +202,8 @@ function mt_process_registration(): void
 
     // 8) Guardar metadatos y nombre
     // billing_phone (Woo estándar)
+    update_user_meta($new_customer, 'billing_first_name', $firstname);
+    update_user_meta($new_customer, 'billing_last_name', $lastname);
     update_user_meta($new_customer, 'billing_phone', $phone);
     update_user_meta($new_customer, 'billing_address_1', $billing_address_1);
     update_user_meta($new_customer, 'billing_address_2', $billing_address_2);
