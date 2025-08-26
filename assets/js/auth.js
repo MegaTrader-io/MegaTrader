@@ -1,4 +1,56 @@
 document.addEventListener('DOMContentLoaded', function () {
+    function setStateWhenReady(stateCode) {
+        if (!stateCode) return;
+        const wrapper = document.getElementById("billing_state_wrapper");
+
+        const tryApply = () => {
+            const select = document.getElementById("billing_state");
+            if (!select) return false;
+
+            const match = [...select.options].find(o => o.value === stateCode);
+            if (!match) return false;
+
+            select.value = stateCode;
+            select.dispatchEvent(new Event("change"));
+            select.dataset.googleSet = "true";
+            return true;
+        };
+
+        if (tryApply()) return;
+
+        const obs = new MutationObserver(() => {
+            if (tryApply()) obs.disconnect();
+        });
+        obs.observe(wrapper, { childList: true, subtree: true });
+    }
+
+    function lockStateSelection(stateCode, ttlMs = 7000) {
+        if (!stateCode) return;
+        const wrapper = document.getElementById("billing_state_wrapper");
+        if (!wrapper) return;
+
+        const start = Date.now();
+        const apply = () => {
+            const select = document.getElementById("billing_state");
+            if (!select) return;
+            const opt = [...select.options].find(o => o.value === stateCode);
+            if (opt) {
+                select.value = stateCode;
+                select.dataset.googleSet = "true";
+            }
+        };
+
+        apply();
+
+        const obs = new MutationObserver(() => {
+            apply();
+            if (Date.now() - start > ttlMs) {
+                obs.disconnect();
+            }
+        });
+        obs.observe(wrapper, { childList: true, subtree: true });
+    }
+
     // Initialize Slider
     function initializeSwiper() {
         (new Swiper('.swiper', {

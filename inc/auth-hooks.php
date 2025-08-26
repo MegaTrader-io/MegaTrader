@@ -35,6 +35,66 @@ function mt_enqueue_auth_script_on_login_form(): void
             [],
             filemtime(get_stylesheet_directory() . '/assets/css/mgt-theme.css')
         );
+
+        $selling_location = get_option('woocommerce_allowed_countries');
+        $my_post_language_details = apply_filters('wpml_post_language_details', null);
+        $google_map_api_key = get_option('google_map_api_key', null);
+        $mapJS = 'map-script.js';
+        if (!empty($my_post_language_details) && !empty($my_post_language_details['language_code'])) {
+            $current_language = $my_post_language_details['language_code'];
+            wp_enqueue_script('google-map', '//maps.googleapis.com/maps/api/js?key=' . trim($google_map_api_key) . '&language=' . $current_language . '&libraries=places,geometry', array(), SHIPPING_WORKSHOP_VERSION, false);
+        } else {
+            wp_enqueue_script('google-map', '//maps.googleapis.com/maps/api/js?key=' . trim($google_map_api_key) . '&libraries=places,geometry', array(), SHIPPING_WORKSHOP_VERSION, false);
+        }
+        wp_enqueue_script('map-script', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/js/' . $mapJS . '?rand=' . wp_rand(), array('google-map'), SHIPPING_WORKSHOP_VERSION, true);
+        wp_localize_script(
+            'map-script', 'countries',
+            array(
+                'countries' => [],
+                'map_display' => get_option('aafw_enable_map', 1),
+                'map_validation' => get_option('aafw_allow_manual_address'),
+                'enable_restriction' => get_option('aafw_enable_restriction'),
+                'aafw_enable_map' => get_option('aafw_enable_map'),
+                'map_style' => get_option('map_style', 1),
+                'custom_msg' => '',
+                'custom_zoom_map' => get_option('custom_zoom_map', 8),
+                'selling_location' => $selling_location,
+            )
+        );
+
+        $woo_default_country = explode(':', get_option('woocommerce_default_country'));
+        $woocommerce_default_country = WC()->countries->countries[$woo_default_country[0]];
+        $back_end_map = array();
+        $billing_data = array();
+        $shipping_data = array();
+        $fieldsettings = array(
+            'Postalcc' => get_option('Postalcc', 1),
+            'Countryaddr' => get_option('Countryaddr', 1),
+            'administrative_area_level_1addr' => get_option('administrative_area_level_1addr', 1),
+            'administrative_area_level_2addr' => get_option('administrative_area_level_2addr', 1),
+            'localityaddr' => get_option('localityaddr', 1),
+            'neighborhoodaddr' => get_option('neighborhoodaddr', 1),
+            'routeaddr' => get_option('routeaddr', 1),
+            'street_numberrouteaddr' => get_option('street_numberrouteaddr', 1),
+        );
+
+        wp_localize_script(
+            'map-script',
+            'map_data',
+            array(
+                wp_json_encode(
+                    array(
+                        'billing_data' => $billing_data,
+                        'shipping_data' => $shipping_data,
+                        'fieldsettings' => $fieldsettings,
+                    )
+                ),
+            )
+        );
+        wp_localize_script('map-script', 'back_end_map', $back_end_map);
+        wp_localize_script('map-script', 'woocommerce_default_country', array('woocommerce_country' => $woocommerce_default_country));
+
+        wp_enqueue_style('map-style', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/css/map-style.css', array(), SHIPPING_WORKSHOP_VERSION, false);
     }
 }
 

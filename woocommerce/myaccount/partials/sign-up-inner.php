@@ -113,11 +113,10 @@ $valid_states = WC()->countries->get_states($default_country);
     </div>
 
     <div class="auth-form__container">
-        <div class="form-group auth-form__address-wrapper">
+        <div class="form-group auth-form__address-wrapper billing_state_wrapper">
             <input type="text"
                    class="form-control <?= MT_WC_Error::has_error('billing_address_1') ? 'auth-form--error-message' : '' ?>"
                    name="billing_address_1" id="billing_address_1"
-                   autocomplete="billing_address_1"
                    placeholder="Address"
                    value="<?php echo (!empty($_POST['billing_address_1']) && is_string($_POST['billing_address_1'])) ? esc_attr(wp_unslash($_POST['billing_address_1'])) : ''; ?>"
                    required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
@@ -132,7 +131,6 @@ $valid_states = WC()->countries->get_states($default_country);
             <input type="text"
                    class="form-control <?= MT_WC_Error::has_error('billing_address_2') ? 'auth-form--error-message' : '' ?>"
                    name="billing_address_2" id="billing_address_2"
-                   autocomplete="billing_address_2"
                    placeholder="Apartment, suite, etc. (optional)"
                    value="<?php echo (!empty($_POST['billing_address_2']) && is_string($_POST['billing_address_2'])) ? esc_attr(wp_unslash($_POST['billing_address_2'])) : ''; ?>"
                    required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
