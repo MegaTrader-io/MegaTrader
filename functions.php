@@ -1431,6 +1431,24 @@ if (!function_exists('render_tabs')) {
 }
 
 
+/* --------- Step Selector Render Function -------- */
+
+if (!function_exists('render_step')) {
+    function render_step_selector($step) {
+        set_query_var('step', $step);
+        get_template_part('template-parts/step-selector');
+    }
+}
+
+
+/* --------- Step Selector Render Function -------- */
+
+if (!function_exists('render_sidebar')) {
+    function render_sidebar($step) {
+        get_template_part('template-parts/sidebar');
+    }
+}
+
 /**** Block Subscription list page */
 
 add_action( 'template_redirect', 'mt_redirect_subscriptions_endpoint', 1 );

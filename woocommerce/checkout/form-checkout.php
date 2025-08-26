@@ -260,6 +260,9 @@ if ($fflag): ?>
                 <span class="active">2</span>
                 <span>3</span>
             </div>
+            <div class="top-menu">
+                <?php render_step_selector(true); ?>
+            </div>
 
             <form id="checkout-form" name="checkout" method="post"
                 class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
