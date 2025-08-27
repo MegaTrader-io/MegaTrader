@@ -1444,7 +1444,7 @@ if (!function_exists('render_step')) {
 /* --------- Step Selector Render Function -------- */
 
 if (!function_exists('render_sidebar')) {
-    function render_sidebar($step) {
+    function render_sidebar() {
         get_template_part('template-parts/sidebar');
     }
 }
@@ -1674,6 +1674,7 @@ function mt_save_billing_profile_cb() {
         'state_name'   => $state_name,
     ]);
 }
+
 
 
 

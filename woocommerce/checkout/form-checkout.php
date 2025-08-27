@@ -248,282 +248,293 @@ if ($fflag): ?>
 <?php else: ?>
 
     <div class="page-banner-area pt-32 pb-32">
-        <div class="container">
-            <div class="top-menu">
-                <a href="<?php echo esc_url(home_url('/')); ?>" class="actived">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M12.1333 20.1334L21.5333 10.7334L19.6667 8.86669L12.1333 16.4L8.33332 12.6L6.46666 14.4667L12.1333 20.1334ZM14 27.3334C12.1555 27.3334 10.4222 26.9834 8.79999 26.2834C7.17777 25.5834 5.76666 24.6334 4.56666 23.4334C3.36666 22.2334 2.41666 20.8222 1.71666 19.2C1.01666 17.5778 0.666656 15.8445 0.666656 14C0.666656 12.1556 1.01666 10.4222 1.71666 8.80002C2.41666 7.1778 3.36666 5.76669 4.56666 4.56669C5.76666 3.36669 7.17777 2.41669 8.79999 1.71669C10.4222 1.01669 12.1555 0.666687 14 0.666687C15.8444 0.666687 17.5778 1.01669 19.2 1.71669C20.8222 2.41669 22.2333 3.36669 23.4333 4.56669C24.6333 5.76669 25.5833 7.1778 26.2833 8.80002C26.9833 10.4222 27.3333 12.1556 27.3333 14C27.3333 15.8445 26.9833 17.5778 26.2833 19.2C25.5833 20.8222 24.6333 22.2334 23.4333 23.4334C22.2333 24.6334 20.8222 25.5834 19.2 26.2834C17.5778 26.9834 15.8444 27.3334 14 27.3334Z"
-                            fill="#FFB34A" />
-                    </svg>
-                </a>
-                <span class="active">2</span>
-                <span>3</span>
-            </div>
-            <div class="top-menu">
-                <?php render_step_selector(true); ?>
-            </div>
+        <div class="overflow-hidden">
+            <div class="container">
+                <div class="two-columns my-account flex-column flex-lg-row m-auto">
+                    <div class="two-columns__col">
+                        <?php render_sidebar() ?>
+                    </div>
+                    <div class="two-columns__col">
+                        <div class="top-menu">
+                            <a href="<?php echo esc_url(home_url('/')); ?>" class="actived">
+                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12.1333 20.1334L21.5333 10.7334L19.6667 8.86669L12.1333 16.4L8.33332 12.6L6.46666 14.4667L12.1333 20.1334ZM14 27.3334C12.1555 27.3334 10.4222 26.9834 8.79999 26.2834C7.17777 25.5834 5.76666 24.6334 4.56666 23.4334C3.36666 22.2334 2.41666 20.8222 1.71666 19.2C1.01666 17.5778 0.666656 15.8445 0.666656 14C0.666656 12.1556 1.01666 10.4222 1.71666 8.80002C2.41666 7.1778 3.36666 5.76669 4.56666 4.56669C5.76666 3.36669 7.17777 2.41669 8.79999 1.71669C10.4222 1.01669 12.1555 0.666687 14 0.666687C15.8444 0.666687 17.5778 1.01669 19.2 1.71669C20.8222 2.41669 22.2333 3.36669 23.4333 4.56669C24.6333 5.76669 25.5833 7.1778 26.2833 8.80002C26.9833 10.4222 27.3333 12.1556 27.3333 14C27.3333 15.8445 26.9833 17.5778 26.2833 19.2C25.5833 20.8222 24.6333 22.2334 23.4333 23.4334C22.2333 24.6334 20.8222 25.5834 19.2 26.2834C17.5778 26.9834 15.8444 27.3334 14 27.3334Z"
+                                        fill="#FFB34A" />
+                                </svg>
+                            </a>
+                            <span class="active">2</span>
+                            <span>3</span>
+                        </div>
+                        <div class="top-menu">
+                            <?php render_step_selector(true); ?>
+                        </div>
+                        <form id="checkout-form" name="checkout" method="post"
+                            class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
+                            action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
+                            <div class="product-container">
+                                <div class="mt-card">
+                                    <div class="mt-card-wrapper d-flex flex-column gap-4">
+                                        <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
+                                            <div class="mt-card-plan d-flex flex-column flex-grow-1">
+                                                <div
+                                                    class="mt-card-plan-size text-white text-40px fw-medium text-uppercase leading-48px">
+                                                    <?php echo esc_html($plan_size); ?>
+                                                </div>
+                                                <div class="mt-card-plan-info d-flex gap-3 align-items-center flex-wrap">
+                                                    <div class="text-white fw-bold text-size-20 leading-36px">
+                                                        <?php echo esc_html($plan_size_slug . ' - ' . Label::PRICE['price_sufix']); ?>
+                                                    </div>
+                                                    <div class="d-flex gap-3">
+                                                        <div class="badge-mega badge-mega-sm badge-mega-default">
+                                                            <?php echo esc_html($plan_type); ?>
+                                                        </div>
+                                                        <div class="badge-mega badge-mega-sm badge-mega-primary">
+                                                            <?php echo esc_html($market_type); ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-            <form id="checkout-form" name="checkout" method="post"
-                class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
-                action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
-                <div class="product-container">
-                    <div class="mt-card">
-                        <div class="mt-card-wrapper d-flex flex-column gap-4">
-                            <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
-                                <div class="mt-card-plan d-flex flex-column flex-grow-1">
-                                    <div
-                                        class="mt-card-plan-size text-white text-40px fw-medium text-uppercase leading-48px">
-                                        <?php echo esc_html($plan_size); ?>
-                                    </div>
-                                    <div class="mt-card-plan-info d-flex gap-3 align-items-center flex-wrap">
-                                        <div class="text-white fw-bold text-size-20 leading-36px">
-                                            <?php echo esc_html($plan_size_slug . ' - ' . Label::PRICE['price_sufix']); ?>
-                                        </div>
-                                        <div class="d-flex gap-3">
-                                            <div class="badge-mega badge-mega-sm badge-mega-default">
-                                                <?php echo esc_html($plan_type); ?>
-                                            </div>
-                                            <div class="badge-mega badge-mega-sm badge-mega-primary">
-                                                <?php echo esc_html($market_type); ?>
+                                            <div
+                                                class="mt-card-plataform d-flex align-items-center bg-131210 gap-3 p-3 rounded-3">
+                                                <div class="mt-card-plataform-logo">
+                                                    <?php if ($platform_logo_url): ?>
+                                                        <img src="<?php echo esc_url($platform_logo_url); ?>"
+                                                            alt="<?php echo esc_attr($platform_label); ?>" width="57"
+                                                            height="57" />
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="mt-card-plataform-info d-flex flex-column">
+                                                    <div class="mt-platform-title text-white fw-medium text-base">
+                                                        <?php echo esc_html(Label::PLATFORM['title']); ?>
+                                                    </div>
+                                                    <?php if ($platform_label): ?>
+                                                        <div class="mt-platform-name fw-medium text-a8a29e text-base">
+                                                            <?php echo esc_html($platform_label); ?>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div class="mt-card-plataform d-flex align-items-center bg-131210 gap-3 p-3 rounded-3">
-                                    <div class="mt-card-plataform-logo">
-                                        <?php if ($platform_logo_url): ?>
-                                            <img src="<?php echo esc_url($platform_logo_url); ?>"
-                                                alt="<?php echo esc_attr($platform_label); ?>" width="57" height="57" />
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="mt-card-plataform-info d-flex flex-column">
-                                        <div class="mt-platform-title text-white fw-medium text-base">
-                                            <?php echo esc_html(Label::PLATFORM['title']); ?>
+                                        <hr class="border-gray m-0" />
+
+                                        <!-- metas -->
+                                        <div class="mt-card-body">
+                                            <?php
+                                            $meta_order = (defined('Label::META_ORDER') ? Label::META_ORDER : array_keys(Label::PRODUCT_META));
+                                            $icon_map = (defined('Label::PRODUCT_META_ICONS') ? Label::PRODUCT_META_ICONS : []);
+
+                                            $items = [];
+                                            $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
+                                            if ($pid) {
+                                                foreach ($meta_order as $key) {
+                                                    if (!isset(Label::PRODUCT_META[$key]))
+                                                        continue;
+                                                    $val = $rich['meta'][$key] ?? get_post_meta($pid, $key, true);
+                                                    if ($val === '' || $val === null)
+                                                        continue;
+
+                                                    $items[] = [
+                                                        'key' => $key,
+                                                        'label' => Label::PRODUCT_META[$key],
+                                                        'value' => $val,
+                                                        'icon_class' => $icon_map[$key] ?? 'mt-icon',
+                                                    ];
+                                                }
+                                            }
+                                            ?>
+
+                                            <?php if (!empty($items)): ?>
+                                                <div class="mt-meta-grid">
+                                                    <?php foreach ($items as $it): ?>
+                                                        <div class="mt-meta-item">
+                                                            <i class="mt-icon <?php echo esc_attr($it['icon_class']); ?>"></i>
+                                                            <div class="mt-meta-text">
+                                                                <span
+                                                                    class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
+                                                                <span
+                                                                    class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
-                                        <?php if ($platform_label): ?>
-                                            <div class="mt-platform-name fw-medium text-a8a29e text-base">
-                                                <?php echo esc_html($platform_label); ?>
-                                            </div>
-                                        <?php endif; ?>
+
                                     </div>
                                 </div>
                             </div>
 
-                            <hr class="border-gray my-4" />
-
-                            <!-- metas -->
-                            <div class="mt-card-body">
+                            <div class="addons-container">
                                 <?php
-                                $meta_order = (defined('Label::META_ORDER') ? Label::META_ORDER : array_keys(Label::PRODUCT_META));
-                                $icon_map = (defined('Label::PRODUCT_META_ICONS') ? Label::PRODUCT_META_ICONS : []);
+                                $has_subscription = true;
+                                if (!WC()->cart->is_empty()) {
+                                    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                                        $product = $cart_item['data'];
+                                        $product_id = $cart_item['product_id'];
 
-                                $items = [];
-                                $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
-                                if ($pid) {
-                                    foreach ($meta_order as $key) {
-                                        if (!isset(Label::PRODUCT_META[$key]))
-                                            continue;
-                                        $val = $rich['meta'][$key] ?? get_post_meta($pid, $key, true);
-                                        if ($val === '' || $val === null)
-                                            continue;
+                                        $wc_product = wc_get_product($product_id);
+                                        $product_type = $product->get_type();
 
-                                        $items[] = [
-                                            'key' => $key,
-                                            'label' => Label::PRODUCT_META[$key],
-                                            'value' => $val,
-                                            'icon_class' => $icon_map[$key] ?? 'mt-icon',
-                                        ];
+                                        // echo 'Product Type: ' . $product_type . '<br>';
+                                        if (
+                                            $product_type === 'subscription' ||
+                                            $product_type === 'variable-subscription' ||
+                                            $product_type === 'subscription_variation' ||
+                                            (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product)) ||
+                                            has_term('subscription', 'product_type', $product_id)
+                                        ) {
+                                            $has_subscription = true;
+                                            break;
+                                        }
                                     }
-                                }
-                                ?>
+                                } ?>
+                                <?php if (function_exists('WC') && WC()->cart): ?>
+                                    <?php
+                                    $add_on_fields = WC()->checkout()->checkout_fields['add_ons'] ?? [];
+                                    $addon_options = $add_on_fields['e0e87f1']['options'] ?? [];
+                                    ?>
+                                    <?php if ($has_subscription && !empty($addon_options)): ?>
+                                        <div class="addons-block d-flex flex-column gap-3">
+                                            <div class="fw-medium leading-8 text-size-20 text-white">Customize Your Plan (Optional)
+                                            </div>
+                                            <div class="checkout-addons">
+                                                <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
+                                                    <?php foreach ($addon_options as $option_key => $option_data): ?>
+                                                        <div
+                                                            class="addons-item addons-item-new d-flex gap-3 align-items-center bg-1e1e1e rounded-16px w-100  <?php echo esc_attr($option_key); ?>">
+                                                            <div class="addons-header d-flex flex-column gap-1">
+                                                                <div class="text-base text-white fw-medium">
+                                                                    <?php
+                                                                    $label_full = $option_data['label'];
+                                                                    preg_match('/^(.*?)\s*\((.*?)\)$/', wp_strip_all_tags($label_full), $matches);
+                                                                    $label_text = $matches[1] ?? wp_strip_all_tags($label_full);
+                                                                    $price_html = $matches[2] ?? '';
 
-                                <?php if (!empty($items)): ?>
-                                    <div class="mt-meta-grid">
-                                        <?php foreach ($items as $it): ?>
-                                            <div class="mt-meta-item">
-                                                <i class="mt-icon <?php echo esc_attr($it['icon_class']); ?>"></i>
-                                                <div class="mt-meta-text">
-                                                    <span class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
-                                                    <span class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
+                                                                    echo esc_html($label_text);
+
+                                                                    ?>
+                                                                </div>
+                                                                <?php if (!empty($option_data['description'])): ?>
+                                                                    <span class="text-a8a29e text-14px-line-20px fw-bold">
+                                                                        <?php echo esc_html(trim($option_data['description'])); ?>
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <div class="title"><?php if ($price_html)
+                                                                echo '<div>' . esc_html($price_html) . '</div>'; ?>
+                                                            </div>
+
+                                                        </div>
+                                                    <?php endforeach; ?>
                                                 </div>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
+                                        </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </div>
 
-                        </div>
-                    </div>
-                </div>
 
-                <div class="addons-container">
-                    <?php
-                    $has_subscription = true;
-                    if (!WC()->cart->is_empty()) {
-                        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                            $product = $cart_item['data'];
-                            $product_id = $cart_item['product_id'];
 
-                            $wc_product = wc_get_product($product_id);
-                            $product_type = $product->get_type();
+                            <div class="billing-container mt-billing-card mt-card">
 
-                            // echo 'Product Type: ' . $product_type . '<br>';
-                            if (
-                                $product_type === 'subscription' ||
-                                $product_type === 'variable-subscription' ||
-                                $product_type === 'subscription_variation' ||
-                                (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product)) ||
-                                has_term('subscription', 'product_type', $product_id)
-                            ) {
-                                $has_subscription = true;
-                                break;
-                            }
-                        }
-                    } ?>
-                    <?php if (function_exists('WC') && WC()->cart): ?>
-                        <?php
-                        $add_on_fields = WC()->checkout()->checkout_fields['add_ons'] ?? [];
-                        $addon_options = $add_on_fields['e0e87f1']['options'] ?? [];
-                        ?>
-                        <?php if ($has_subscription && !empty($addon_options)): ?>
-                            <div class="addons-block d-flex flex-column gap-3">
-                                <div class="fw-medium leading-8 text-size-20 text-white">Customize Your Plan (Optional)</div>
-                                <div class="checkout-addons">
-                                    <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
-                                        <?php foreach ($addon_options as $option_key => $option_data): ?>
-                                            <div
-                                                class="addons-item addons-item-new d-flex gap-3 bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
-                                                <div class="addons-header d-flex flex-column gap-1">
-                                                    <div class="text-base text-white fw-medium">
-                                                        <?php
-                                                        $label_full = $option_data['label'];
-                                                        preg_match('/^(.*?)\s*\((.*?)\)$/', wp_strip_all_tags($label_full), $matches);
-                                                        $label_text = $matches[1] ?? wp_strip_all_tags($label_full);
-                                                        $price_html = $matches[2] ?? '';
+                                <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
+                                <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
+                                    <div class="d-flex flex-column gap-3 w-100">
+                                        <div class="d-flex gap-3 justify-content-between align-items-start">
+                                            <div class="text-white fw-medium text-base">Billing Details</div>
+                                            <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
+                                                style="color:#FFD78A;">Change</a>
+                                        </div>
 
-                                                        echo esc_html($label_text);
-
-                                                        ?>
+                                        <div class="d-flex justify-content-between gap-3">
+                                            <div class="flex-fill d-flex flex-column gap-3">
+                                                <div class="d-flex align-items-start gap-2">
+                                                    <i class="mt-icon mt-icon_account"></i>
+                                                    <div class="text-base fw-medium text-white" id="mt-sum-name">
+                                                        <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
                                                     </div>
-                                                    <?php if (!empty($option_data['description'])): ?>
-                                                        <p class="text-a8a29e text-14px-line-20px fw-bold">
-                                                            <?php echo esc_html(trim($option_data['description'])); ?>
-                                                        </p>
-                                                    <?php endif; ?>
-                                                </div>
-                                                <div class="title"><?php if ($price_html)
-                                                    echo '<div>' . esc_html($price_html) . '</div>'; ?>
                                                 </div>
 
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="mt-icon mt-icon_mail"></i>
+                                                    <div class="text-base fw-medium text-white" id="mt-sum-email">
+                                                        <?php echo esc_html($billing['email'] ?: '—'); ?>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                </div>
+                                            <div class="flex-fill d-flex flex-column gap-3">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="mt-icon mt-icon_phone"></i>
+                                                    <div class="text-base fw-medium text-white" id="mt-sum-phone">
+                                                        <?php echo esc_html($billing['phone'] ?: '—'); ?>
+                                                    </div>
+                                                </div>
 
+                                                <div class="d-flex align-items-start gap-2">
+                                                    <i class="mt-icon mt-icon_home"></i>
+                                                    <?php
+                                                    $line1 = trim(($billing['address_1'] ?? '') . (!empty($billing['address_2']) ? ', ' . $billing['address_2'] : ''));
+                                                    $line2 = trim(implode(', ', array_filter([($billing['city'] ?? ''), $state_name, ($billing['postcode'] ?? '')])));
+                                                    $line3 = trim($country_name ?: '');
 
-
-                <div class="billing-container mt-billing-card mt-card">
-
-                    <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
-                    <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
-                        <div class="d-flex flex-column gap-3 w-100">
-                            <div class="d-flex gap-3 justify-content-between align-items-start">
-                                <div class="text-white fw-medium text-base">Billing Details</div>
-                                <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
-                                    style="color:#FFD78A;">Change</a>
-                            </div>
-
-                            <div class="d-flex justify-content-between gap-3">
-                                <div class="flex-fill d-flex flex-column gap-3">
-                                    <div class="d-flex align-items-start gap-2">
-                                        <i class="mt-icon mt-icon_account"></i>
-                                        <div class="text-base fw-medium text-white" id="mt-sum-name">
-                                            <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
+                                                    $addr_lines = array_filter([$line1, $line2, $line3], fn($v) => $v !== '');
+                                                    ?>
+                                                    <div id="mt-sum-address" class="text-base fw-medium text-white">
+                                                        <?php echo implode('<br>', array_map('esc_html', $addr_lines)); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="mt-icon mt-icon_mail"></i>
-                                        <div class="text-base fw-medium text-white" id="mt-sum-email">
-                                            <?php echo esc_html($billing['email'] ?: '—'); ?></div>
-                                    </div>
                                 </div>
-                                <div class="flex-fill d-flex flex-column gap-3">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="mt-icon mt-icon_phone"></i>
-                                        <div class="text-base fw-medium text-white" id="mt-sum-phone">
-                                            <?php echo esc_html($billing['phone'] ?: '—'); ?></div>
-                                    </div>
 
-                                    <div class="d-flex align-items-start gap-2">
-                                        <i class="mt-icon mt-icon_home"></i>
+                                <!-- ====== VISTA FORM (WooCommerce) ====== -->
+                                <div id="mt-billing-form" class="<?php echo $has_billing ? 'd-none' : ''; ?>">
+                                    <div class="text-white fw-medium text-base">Billing Details</div>
+                                    <div class="billing-details pt-3">
+
                                         <?php
-$addr_lines = array_filter([
-  trim(($billing['address_1'] ?? '') . (!empty($billing['address_2']) ? ', ' . $billing['address_2'] : '')),
-  trim(implode(', ', array_filter([($billing['city'] ?? ''), $state_name, ($billing['postcode'] ?? '')]))),
-  trim($country_name ?: ''),
-]);
+                                        do_action('woocommerce_before_checkout_form');
+                                        do_action('woocommerce_checkout_before_customer_details');
+                                        ?>
+                                        <div id="customer_details">
+                                            <?php do_action('woocommerce_checkout_billing'); ?>
+                                            <?php do_action('woocommerce_checkout_shipping'); ?>
+                                        </div>
+                                        <?php
+                                        do_action('woocommerce_checkout_after_customer_details');
+                                        do_action('woocommerce_after_checkout_form');
+                                        ?>
 
-$addr_text = ltrim(implode("\n", $addr_lines)); // <-- quita salto inicial
-?>
-<div id="mt-sum-address" class="text-base fw-medium text-white" style="white-space:pre-line;"><?php
-  echo esc_html($addr_text);
-?></div>
+                                        <!-- Botón para guardar en el perfil -->
+                                        <input type="hidden" id="mt_save_billing_nonce"
+                                            value="<?php echo esc_attr($mt_billing_nonce); ?>">
+                                        <button type="button" id="mt-save-billing"
+                                            class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
+                                            Save details
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- ====== VISTA FORM (WooCommerce) ====== -->
-                    <div id="mt-billing-form" class="<?php echo $has_billing ? 'd-none' : ''; ?>">
-                        <div class="text-white fw-medium text-base">Billing Details</div>
-                        <div class="billing-details pt-3">
-
-                            <?php
-                            do_action('woocommerce_before_checkout_form');
-                            do_action('woocommerce_checkout_before_customer_details');
-                            ?>
-                            <div id="customer_details">
-                                <?php do_action('woocommerce_checkout_billing'); ?>
-                                <?php do_action('woocommerce_checkout_shipping'); ?>
-                            </div>
-                            <?php
-                            do_action('woocommerce_checkout_after_customer_details');
-                            do_action('woocommerce_after_checkout_form');
-                            ?>
-
-                            <!-- Botón para guardar en el perfil -->
-                            <input type="hidden" id="mt_save_billing_nonce"
-                                value="<?php echo esc_attr($mt_billing_nonce); ?>">
-                            <button type="button" id="mt-save-billing"
-                                class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
-                                Save details
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
 
 
-                <div class="payment-container review-container">
-                    <div class="fw-medium leading-8 text-size-20 text-white">Payment Method</div>
+                            <div class="payment-container review-container">
+                                <div class="fw-medium leading-8 text-size-20 text-white">Payment Method</div>
 
-                    <div class="mt-payment-cards" id="mt-payment">
-                        <?php
-                        wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
-                        ?>
-                    </div>
+                                <div class="mt-payment-cards" id="mt-payment">
+                                    <?php
+                                    wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
+                                    ?>
+                                </div>
 
 
-                    <div class="mt-card mt-3">
-                        <!--
+                                <div class="mt-card mt-3">
+                                    <!--
                         <div class="coupon-message-container w-100 mb-32 position-relative d-block">
                            
                             <div class="error-otp-message notifications notifications-error w-100">
@@ -553,200 +564,211 @@ $addr_text = ltrim(implode("\n", $addr_lines)); // <-- quita salto inicial
                             </div>
                         </div>
                         -->
-                        <?php
-                        wc_get_template('checkout/review-order.php');
-                        ?>
-                        <hr class="border-gray m-0">
-                        <div class="form-row place-order">
-                            <noscript>
-                                <?php
-                                /* translators: $1 and $2 opening and closing emphasis tags respectively */
-                                printf(esc_html__('Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce'), '<em>', '</em>');
-                                ?>
-                                <br /><button type="submit" class="button alt" name="woocommerce_checkout_update_totals"
-                                    value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
-                            </noscript>
+                                    <?php
+                                    wc_get_template('checkout/review-order.php');
+                                    ?>
+                                    <hr class="border-gray m-0">
+                                    <div class="form-row place-order">
+                                        <noscript>
+                                            <?php
+                                            /* translators: $1 and $2 opening and closing emphasis tags respectively */
+                                            printf(esc_html__('Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce'), '<em>', '</em>');
+                                            ?>
+                                            <br /><button type="submit" class="button alt"
+                                                name="woocommerce_checkout_update_totals"
+                                                value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
+                                        </noscript>
 
 
-                            <?php do_action('woocommerce_review_order_before_submit'); ?>
+                                        <?php do_action('woocommerce_review_order_before_submit'); ?>
 
-                            <?php
-                            if (!isset($order_button_text)) {
-                                $order_button_text = apply_filters(
-                                    'woocommerce_order_button_text',
-                                    __('Place order', 'woocommerce')
-                                );
-                            }
-                            ?>
-                            <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
+                                        <?php
+                                        if (!isset($order_button_text)) {
+                                            $order_button_text = apply_filters(
+                                                'woocommerce_order_button_text',
+                                                __('Place order', 'woocommerce')
+                                            );
+                                        }
+                                        ?>
+                                        <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
 
-                            <p class="info-text fw-light pt-3">
-                                <svg width="16" height="21" viewBox="0 0 16 21" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M2 21C1.45 21 0.979167 20.8042 0.5875 20.4125C0.195833 20.0208 0 19.55 0 19V9C0 8.45 0.195833 7.97917 0.5875 7.5875C0.979167 7.19583 1.45 7 2 7H3V5C3 3.61667 3.4875 2.4375 4.4625 1.4625C5.4375 0.4875 6.61667 0 8 0C9.38333 0 10.5625 0.4875 11.5375 1.4625C12.5125 2.4375 13 3.61667 13 5V7H14C14.55 7 15.0208 7.19583 15.4125 7.5875C15.8042 7.97917 16 8.45 16 9V19C16 19.55 15.8042 20.0208 15.4125 20.4125C15.0208 20.8042 14.55 21 14 21H2ZM8 16C8.55 16 9.02083 15.8042 9.4125 15.4125C9.80417 15.0208 10 14.55 10 14C10 13.45 9.80417 12.9792 9.4125 12.5875C9.02083 12.1958 8.55 12 8 12C7.45 12 6.97917 12.1958 6.5875 12.5875C6.19583 12.9792 6 13.45 6 14C6 14.55 6.19583 15.0208 6.5875 15.4125C6.97917 15.8042 7.45 16 8 16ZM5 7H11V5C11 4.16667 10.7083 3.45833 10.125 2.875C9.54167 2.29167 8.83333 2 8 2C7.16667 2 6.45833 2.29167 5.875 2.875C5.29167 3.45833 5 4.16667 5 5V7Z"
-                                        fill="var(--body-color)" />
-                                </svg>
-                                <span>All payments are secured and encrypted. </span>
-                            </p>
+                                        <div class="d-flex gap-1 align-items-center pt-3">
+                                            <i class="mt-icon mt-icon_lock"></i>
+                                            <span class="text-base fw-light text-a8a29e">All payments are secured and
+                                                encrypted.</span>
+                                        </div>
 
-                            <?php do_action('woocommerce_review_order_after_submit'); ?>
+                                        <?php do_action('woocommerce_review_order_after_submit'); ?>
 
-                            <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
-                        </div>
+                                        <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
+                                    </div>
 
-                    </div>
-                </div>
-            </form>
-
-        </div>
-
-        <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-                <div class="authentication-form modal-content align-items-center d-flex flex-column flex-shrink-0">
-                    <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-                        <h5 class="modal-title text-white heading-sm-medium" id="emailModalLabel">SIGN IN</h5>
-                        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
-                            aria-label="Close">
-                            <span aria-hidden="true">
-                                <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
-                                    alt="Close" style="width: 24px; height: 24px;" /></span>
-                        </button>
-                    </div>
-                    <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
-                        <div class="otp-message-container w-100 d-flex justify-content-start d-none">
-                            <!-- Error -->
-                            <div class="error-otp-message notifications notifications-error">
-                                <div
-                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                        <path
-                                            d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
-                                        </path>
-                                    </svg>
                                 </div>
-                                <span class="error-otp-text">This is an error message</span>
                             </div>
-                            <!-- Éxito -->
-                            <div class="success-otp-message notifications notifications-success" style="max-width: 600px;">
-                                <div
-                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                        <path fill-rule="evenodd"
-                                            d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                </div>
-
-                                <span class="success-otp-text">A new code has been sent to your email.</span>
-                            </div>
-                        </div>
-                        <div class="sign-in__logo" style="height: 72px; width:72px">
-                            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg"
-                                alt="mt logo" class="rounded-4" />
-                        </div>
-                        <form method="post" class="woocommerce-form woocommerce-form-login login w-100 m-0"
-                            style="max-width: 360px;">
-                            <p class="text-body pb-2 text-center">Enter your email, and We will send an email with a code
-                                verification.</p>
-                            <input type="email" name="username" class="form-control otp-email-input" placeholder="Email"
-                                data-gtm-form-interact-field-id="1"
-                                style="background-color: var(--smoke-color) !important;">
-                            <button type="button" class="get-otp-btn mt-4 ot-btn text-black w-100"
-                                style="color: #000 !important;font-weight: 500 !important;">SEND</button>
                         </form>
+
                     </div>
+
+                    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+                            <div
+                                class="authentication-form modal-content align-items-center d-flex flex-column flex-shrink-0">
+                                <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
+                                    <h5 class="modal-title text-white heading-sm-medium" id="emailModalLabel">SIGN IN</h5>
+                                    <button type="button" class="p-0 border-0 bg-transparent shadow-none"
+                                        data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">
+                                            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
+                                                alt="Close" style="width: 24px; height: 24px;" /></span>
+                                    </button>
+                                </div>
+                                <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
+                                    <div class="otp-message-container w-100 d-flex justify-content-start d-none">
+                                        <!-- Error -->
+                                        <div class="error-otp-message notifications notifications-error">
+                                            <div
+                                                class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                                                    fill="currentColor" aria-hidden="true" data-slot="icon"
+                                                    class="w-5 h-5 text-black">
+                                                    <path
+                                                        d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
+                                                    </path>
+                                                </svg>
+                                            </div>
+                                            <span class="error-otp-text">This is an error message</span>
+                                        </div>
+                                        <!-- Éxito -->
+                                        <div class="success-otp-message notifications notifications-success"
+                                            style="max-width: 600px;">
+                                            <div
+                                                class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                                                    fill="currentColor" aria-hidden="true" data-slot="icon"
+                                                    class="w-5 h-5 text-black">
+                                                    <path fill-rule="evenodd"
+                                                        d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                                        clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
+
+                                            <span class="success-otp-text">A new code has been sent to your email.</span>
+                                        </div>
+                                    </div>
+                                    <div class="sign-in__logo" style="height: 72px; width:72px">
+                                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg"
+                                            alt="mt logo" class="rounded-4" />
+                                    </div>
+                                    <form method="post" class="woocommerce-form woocommerce-form-login login w-100 m-0"
+                                        style="max-width: 360px;">
+                                        <p class="text-body pb-2 text-center">Enter your email, and We will send an email
+                                            with a code
+                                            verification.</p>
+                                        <input type="email" name="username" class="form-control otp-email-input"
+                                            placeholder="Email" data-gtm-form-interact-field-id="1"
+                                            style="background-color: var(--smoke-color) !important;">
+                                        <button type="button" class="get-otp-btn mt-4 ot-btn text-black w-100"
+                                            style="color: #000 !important;font-weight: 500 !important;">SEND</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Second Modal: OTP Input -->
+                    <!-- OTP Verification Modal -->
+                    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+                            <div class="authentication-form modal-content align-items-center d-flex flex-column gap-4">
+                                <!-- Header -->
+                                <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
+                                    <h5 class="modal-title text-white heading-sm-medium" id="otpModalLabel">VERIFY OTP</h5>
+                                    <button type="button" class="p-0 border-0 bg-transparent shadow-none"
+                                        data-bs-dismiss="modal" aria-label="Close">
+                                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
+                                            alt="Close" style="width: 24px; height: 24px;" />
+                                    </button>
+                                </div>
+                                <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
+                                    <!-- Unified message container (copiar igual al de otpModal) -->
+                                    <div class="otp-message-container w-100 d-flex justify-content-start d-none">
+                                        <!-- Error -->
+                                        <div class="error-otp-message notifications notifications-error">
+                                            <div
+                                                class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                                                    fill="currentColor" aria-hidden="true" data-slot="icon"
+                                                    class="w-5 h-5 text-black">
+                                                    <path
+                                                        d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
+                                                    </path>
+                                                </svg>
+                                            </div>
+                                            <span class="error-otp-text">Some error</span>
+                                        </div>
+                                        <!-- Success -->
+                                        <div class="success-otp-message notifications notifications-success">
+                                            <div
+                                                class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                                                    fill="currentColor" aria-hidden="true" data-slot="icon"
+                                                    class="w-5 h-5 text-black">
+                                                    <path fill-rule="evenodd"
+                                                        d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                                        clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
+                                            <span class="success-otp-text">A new code has been sent</span>
+                                        </div>
+                                    </div>
+                                    <!-- Logo -->
+                                    <div class="sign-in__logo" style="height: 72px; width: 72px;">
+                                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg"
+                                            alt="mt logo" class="rounded-4" />
+                                    </div>
+                                    <!-- Instruction -->
+                                    <p class="text-body text-center mb-0" style="color: #E4E4E7;">
+                                        We sent an OTP to <strong class="text-white"
+                                            id="otp-email-display">john@doe.com</strong><br>
+                                        Enter it below to continue
+                                    </p>
+                                    <!-- OTP input boxes -->
+                                    <form method="post" class="woocommerce-form w-100 px-4" style="max-width: 360px;">
+                                        <div class="otp-inputs d-flex justify-content-between gap-2 mb-4">
+                                            <input type="hidden" name="username" value="">
+                                            <input type="text" maxlength="1" class="otp-box" />
+                                            <input type="text" maxlength="1" class="otp-box" />
+                                            <input type="text" maxlength="1" class="otp-box" />
+                                            <input type="text" maxlength="1" class="otp-box" />
+                                            <input type="text" maxlength="1" class="otp-box" />
+                                            <input type="text" maxlength="1" class="otp-box" />
+                                        </div>
+                                        <!-- Resend + Timer -->
+                                        <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
+                                            <a href="#" class="resend-otp fw-semibold text-decoration-underline">Resend
+                                                OTP</a>
+                                        </div>
+                                        <!-- Submit buttons -->
+                                        <button type="submit"
+                                            class="verify-otp-btn mt-2 ot-btn w-100 fw-medium text-black rounded-xl p-y-12-mega p-x-16-mega bg-mgt-primary">
+                                            <?php esc_html_e('VERIFY', 'woocommerce'); ?>
+                                        </button>
+                                        <button
+                                            class="btn w-100 d-flex back-otp-back justify-content-center align-items-center text-uppercase text-white mt-3 fw-medium rounded-xl border border-neutral-700 bg-stone-800 p-x-16-mega p-y-12-mega"
+                                            type="button">
+                                            <?php esc_html_e('BACK TO LOGIN', 'woocommerce'); ?>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
                 </div>
             </div>
         </div>
-        <!-- Second Modal: OTP Input -->
-        <!-- OTP Verification Modal -->
-        <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-                <div class="authentication-form modal-content align-items-center d-flex flex-column gap-4">
-                    <!-- Header -->
-                    <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-                        <h5 class="modal-title text-white heading-sm-medium" id="otpModalLabel">VERIFY OTP</h5>
-                        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
-                            aria-label="Close">
-                            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
-                                alt="Close" style="width: 24px; height: 24px;" />
-                        </button>
-                    </div>
-                    <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
-                        <!-- Unified message container (copiar igual al de otpModal) -->
-                        <div class="otp-message-container w-100 d-flex justify-content-start d-none">
-                            <!-- Error -->
-                            <div class="error-otp-message notifications notifications-error">
-                                <div
-                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                        <path
-                                            d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <span class="error-otp-text">Some error</span>
-                            </div>
-                            <!-- Success -->
-                            <div class="success-otp-message notifications notifications-success">
-                                <div
-                                    class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                        aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                        <path fill-rule="evenodd"
-                                            d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                </div>
-                                <span class="success-otp-text">A new code has been sent</span>
-                            </div>
-                        </div>
-                        <!-- Logo -->
-                        <div class="sign-in__logo" style="height: 72px; width: 72px;">
-                            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/06/appIcon.svg"
-                                alt="mt logo" class="rounded-4" />
-                        </div>
-                        <!-- Instruction -->
-                        <p class="text-body text-center mb-0" style="color: #E4E4E7;">
-                            We sent an OTP to <strong class="text-white" id="otp-email-display">john@doe.com</strong><br>
-                            Enter it below to continue
-                        </p>
-                        <!-- OTP input boxes -->
-                        <form method="post" class="woocommerce-form w-100 px-4" style="max-width: 360px;">
-                            <div class="otp-inputs d-flex justify-content-between gap-2 mb-4">
-                                <input type="hidden" name="username" value="">
-                                <input type="text" maxlength="1" class="otp-box" />
-                                <input type="text" maxlength="1" class="otp-box" />
-                                <input type="text" maxlength="1" class="otp-box" />
-                                <input type="text" maxlength="1" class="otp-box" />
-                                <input type="text" maxlength="1" class="otp-box" />
-                                <input type="text" maxlength="1" class="otp-box" />
-                            </div>
-                            <!-- Resend + Timer -->
-                            <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
-                                <a href="#" class="resend-otp fw-semibold text-decoration-underline">Resend OTP</a>
-                            </div>
-                            <!-- Submit buttons -->
-                            <button type="submit"
-                                class="verify-otp-btn mt-2 ot-btn w-100 fw-medium text-black rounded-xl p-y-12-mega p-x-16-mega bg-mgt-primary">
-                                <?php esc_html_e('VERIFY', 'woocommerce'); ?>
-                            </button>
-                            <button
-                                class="btn w-100 d-flex back-otp-back justify-content-center align-items-center text-uppercase text-white mt-3 fw-medium rounded-xl border border-neutral-700 bg-stone-800 p-x-16-mega p-y-12-mega"
-                                type="button">
-                                <?php esc_html_e('BACK TO LOGIN', 'woocommerce'); ?>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
-
-    <?php endif; ?>
+    </div>
+    </div>
+<?php endif; ?>

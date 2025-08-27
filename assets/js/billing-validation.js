@@ -985,6 +985,38 @@ if (typeof jQuery !== 'undefined') {
   jQuery(document.body).on('updated_checkout', initBillingSummary);
 }
 
+(function($){
+  function patchNewPaymentLabel(){
+    // Puede haber varios gateways; parchea todos los "NEW"
+    document.querySelectorAll('li.woocommerce-SavedPaymentMethods-new label[for$="-payment-token-new"]').forEach(label => {
+      if (!label || label.dataset.patched) return;
+
+      const title = (label.textContent || 'Use a new payment method').trim();
+
+      // Construimos el contenido con el subtítulo
+      const wrap  = document.createElement('div');
+      const line1 = document.createElement('div');
+      const line2 = document.createElement('div');
+
+      line1.textContent = title;
+      line2.textContent = 'Securely pay with a new card';
+      line2.className   = 'fw-bold text-14px-line-20px text-a8a29e';
+
+      wrap.appendChild(line1);
+      wrap.appendChild(line2);
+
+      label.textContent = '';    // limpiamos el texto original
+      label.appendChild(wrap);   // insertamos nuestro bloque
+      label.dataset.patched = '1';
+    });
+  }
+
+  // 1) Primera pasada
+  patchNewPaymentLabel();
+
+  // 2) Cuando Woo refresca el checkout o re-inicializa tarjetas
+  $(document.body).on('updated_checkout wc-credit-card-form-init payment_method_selected', patchNewPaymentLabel);
+})(jQuery);
 
 
 
