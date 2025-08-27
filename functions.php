@@ -138,6 +138,8 @@ function megatrader_scripts() {
 	// wp_enqueue_script( 'smoothscroll',		MEGATRADER_JS .'smoothscroll.min.js', array('jquery'), _MEGATRADER_VERSION, true);
     wp_enqueue_script( 'megatrader-modal',	MEGATRADER_JS .'modal.js', array('jquery', 'bootstrap-bundle'), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-tabs',	        MEGATRADER_JS .'mt-tabs.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-addons',	        MEGATRADER_JS .'mt-addons.js', array(), REALTIME_VERSION, true);
+
     wp_enqueue_script( 'megatrader-main',	MEGATRADER_JS .'main.js', array('jquery', 'mt-tabs'), REALTIME_VERSION, true);
 
 	wp_localize_script('megatrader-main', 'theme_ajax', array(

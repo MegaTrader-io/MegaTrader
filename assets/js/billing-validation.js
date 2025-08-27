@@ -609,170 +609,12 @@ document.addEventListener("DOMContentLoaded", function () {
     })
   }
 
-  // ========== UTILS ==========
-
-  function formatCurrency(value, format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })) {
-
-    return format.format(value);
-  }
+ 
 
 
-  // ========== UPDATE PLAN DESCRIPTION WITH ADD-ONS ==========
+  
 
-  function addonsConfigRun(addonsNode) {
-
-    const AddonAction = {
-      subtract: subtractActionAdd,
-      add: addonActionAdd,
-      update: addonActionUpdateValue,
-    }
-
-    const AddonClass = {
-      planItemAddonApplied: 'addon-applied',
-      planItemAddonValue: 'metaInfo__addon',
-    }
-
-    function planItemAppendAddonValue(planItemEl, value) {
-      const newEl = document.createElement('span');
-      newEl.classList.add('metaInfo__addon');
-      newEl.innerText = value;
-      planItemEl.appendChild(newEl);
-    }
-
-    function planApplyAddon(planItemEl, value) {
-      planItemEl.classList.add(AddonClass.planItemAddonApplied);
-      planItemAppendAddonValue(planItemEl, value)
-    }
-
-    function planClearAddon(planItemEl) {
-      planItemEl.classList.remove(AddonClass.planItemAddonApplied);
-      planItemEl.querySelector(`.${AddonClass.planItemAddonValue}`)?.remove();
-    }
-
-    function planGetDefaulValue(planItemEl) {
-      return planItemEl.querySelector(`span.metaInfo__value`)?.textContent ?? '';
-    }
-
-    function addonActionAdd(planItemEl, { value }, sign = 1) {
-      const defaultValue = planGetDefaulValue(planItemEl)
-      const number = parseFloat(defaultValue.replace(/[^0-9.-]+/g, ""));
-      const result = number + (value * sign);
-
-      const newValue = defaultValue.includes('$') ? formatCurrency(result) : result;
-      planApplyAddon(planItemEl, newValue);
-    }
-
-    function subtractActionAdd(planItemEl, { value }) {
-      addonActionAdd(planItemEl, { value }, -1)
-    }
-
-    function addonActionUpdateValue(planItemEl, { value, labelValue }) {
-      newValue = planGetDefaulValue(planItemEl) ? value : labelValue ?? value;
-      planApplyAddon(planItemEl, newValue);
-    }
-
-    function updatePlan(planConfig, active) {
-      const planItemEl = document.querySelector(`.metaInfo .${planConfig.field}`);
-
-      if (!planItemEl || !(planConfig.action in AddonAction)) { return; }
-
-      planClearAddon(planItemEl);
-
-      if (active) {
-        AddonAction[planConfig.action](planItemEl, planConfig.params);
-      }
-    }
-
-    function getAddonsMeta(checkboxEl) {
-      const name = checkboxEl.value;
-      const dataMeta = checkboxEl.getAttribute('data-meta');
-      const config = dataMeta ? JSON.parse(dataMeta) ?? null : null
-      if (name && config) {
-        config.name = name;
-        config.active = checkboxEl.checked;
-      }
-
-      return config;
-    }
-
-    function run() {
-      addonsNode.querySelectorAll('[type="checkbox"]').forEach(checkboxEl => {
-        const config = getAddonsMeta(checkboxEl);
-
-        if (!config) { return; }
-
-        if (config.plan) {
-          updatePlan(config.plan, config.active);
-        }
-      })
-    }
-
-    run();
-  }
-
-  // ========== ADDONS UI INIT/SYNC ==========
-
-  function updateAddonsCard(addonsNode) {
-    const addons = {};
-
-    // 1. Obtener precio base desde el carrito
-    const basePriceEl = document.querySelector(
-      ".cart_item .product-total .woocommerce-Price-amount.amount bdi"
-    );
-    const basePriceText = basePriceEl?.textContent
-      ?.replace(/[^\d.,]/g, "")
-      .replace(",", "");
-    const basePrice = basePriceText ? parseFloat(basePriceText) : null;
-
-    addonsNode.querySelectorAll('[type="checkbox"]').forEach((checkboxEl) => {
-      addons[checkboxEl.value] = checkboxEl.checked;
-    });
-
-    Object.entries(addons).forEach(([addonKey]) => {
-      const labelEl = addonsNode.querySelector(
-        `label[for^="e0e87f1_${addonKey}"]`
-      );
-      const staticEl = document.querySelector(
-        `.addons-item.${addonKey} .title`
-      );
-
-      if (labelEl && staticEl) {
-        const labelText = labelEl.childNodes[0]?.textContent
-          ?.trim()
-          .split("(")[0]
-          .trim();
-        const priceText = labelEl
-          .querySelector(".woocommerce-Price-amount")
-          ?.textContent?.trim()
-          ?.replace(/[^\d.,]/g, "")
-          ?.replace(",", "");
-        const price = priceText ? parseFloat(priceText) : null;
-
-        // 2. Si hay precio base y del addon, calcular %
-        let displayText = "";
-        if (labelText) {
-          if (basePrice && price) {
-            const percent = Math.round((price / basePrice) * 100);
-            displayText = `<i>${percent}%</i>`;
-          } else if (priceText) {
-            displayText = `${labelText} <i>$${priceText}</i>`;
-          }
-          staticEl.innerHTML = displayText;
-        }
-      }
-      const descriptionEl = labelEl?.nextElementSibling;
-      const staticDescEl = document.querySelector(`.addons-item.${addonKey} .addons-des`);
-
-      if (descriptionEl && staticDescEl) {
-        staticDescEl.textContent = descriptionEl.textContent.trim();
-      }
-    });
-  }
+  
 
   // ========= MUTATION OBSERVER POOL - ADDITION ============
 
@@ -789,13 +631,7 @@ document.addEventListener("DOMContentLoaded", function () {
         migrateGlobalFieldErrors,
       ]
     },
-    {
-      matches: '#wc_checkout_add_ons',
-      callbacks: [
-        addonsConfigRun,
-        updateAddonsCard,
-      ]
-    },
+   
     // { // Debug Added Nodes
     //   matches: '*', callbacks: [ (node)=>{ console.info('Node Added:', node) } ]
     // }

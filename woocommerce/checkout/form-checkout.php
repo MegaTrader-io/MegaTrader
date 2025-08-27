@@ -350,7 +350,8 @@ if ($fflag): ?>
                                             <?php if (!empty($items)): ?>
                                                 <div class="mt-meta-grid">
                                                     <?php foreach ($items as $it): ?>
-                                                        <div class="mt-meta-item">
+                                                        <div class="mt-meta-item"
+                                                            data-meta-key="<?php echo esc_attr($it['key']); ?>">
                                                             <i class="mt-icon <?php echo esc_attr($it['icon_class']); ?>"></i>
                                                             <div class="mt-meta-text">
                                                                 <span
