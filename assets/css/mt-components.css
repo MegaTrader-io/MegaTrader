@@ -101,15 +101,20 @@
     font-weight: 700;
     line-height: 32px;
 }
+
 .mt-tabs__subtitle {
     color: var(--Text-Body, #A8A29E);
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
-    text-wrap: nowrap;
-    text-overflow: ellipsis;
+}
+
+.mt-tabs__title,
+.mt-tabs__subtitle {
     overflow: hidden;
     width: 100%;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
     text-align: center;
 }
 /* END TABS COMPONENT */
@@ -364,7 +369,6 @@
 /* END ICONS */
 
 /* BADGE */
-
 .mt-badge {
     display: flex;
     justify-content: center;
@@ -375,7 +379,7 @@
     font-size: var(--Text-FontSize-Body-sm, 14px);
     font-style: normal;
     font-weight: 700;
-    line-height: normal;
+    line-height: 16px;
     padding: 4px 8px;
     border-radius: 12px;
     height: fit-content;
@@ -384,7 +388,11 @@
 .mt-badge.mt-badge-md {
     padding: 2px 12px;
     border-radius: 16px;
-    min-height: 28px;
+    line-height: 24px;
+}
+
+.mt-badge.mt-badge-pill {
+    border-radius: 16px;
 }
 
 .mt-badge.mt-badge-primary {
@@ -405,6 +413,6 @@
 
 .mt-badge.mt-badge-dark {
     color: var(--Text-Body, #A8A29E);
-    background: var(--Surface-Body, #131210);
+    background: var(--Surface-Page, #1E1E1E);
 }
 /* END BADGE */

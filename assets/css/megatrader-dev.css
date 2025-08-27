@@ -2763,7 +2763,7 @@ a.pagination-number {
 .product-section__list {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: auto; 
+  grid-auto-columns: 1fr; 
   gap: 8px;
 }
 

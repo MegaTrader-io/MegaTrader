@@ -190,16 +190,16 @@
                         <?php foreach ($config['links'] as $link): 
                             $href = isset($link['url']) ? $link['icon'] : 'javascript:void(0);';
                         ?>
-                            <a class="mt-card__links__item" href="<?= esc_attr($href); ?>">
-                                <div class="mt-badge mt-badge-dark">
-                                    <?php if(isset($link['icon'])): ?>
-                                        <i class="mt-icon mt-icon_<?= esc_attr($link['icon']) ?>"></i>
-                                    <?php endif; ?>
-                                    <?php if(isset($link['text'])): ?>
-                                        <span class="mt-card__links__text"><?= esc_html($link['text']); ?></span>
-                                    <?php endif; ?>
-                                    </div>
-                            </a>
+                        <a class="mt-card__links__item" href="<?= esc_attr($href); ?>">
+                            <div class="mt-badge mt-badge-md mt-badge-pill mt-badge-dark">
+                            <?php if(isset($link['icon'])): ?>
+                                <i class="mt-icon mt-icon_<?= esc_attr($link['icon']) ?>"></i>
+                            <?php endif; ?>
+                            <?php if(isset($link['text'])): ?>
+                                <span class="mt-card__links__text"><?= esc_html($link['text']); ?></span>
+                            <?php endif; ?>
+                            </div>
+                        </a>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
