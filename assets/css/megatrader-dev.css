@@ -161,30 +161,31 @@
 /*
    * Notifications
 */
-.coupon-message-container {
+/* Oculto por defecto: no reserva espacio */
+.coupon-message-container { 
+  display: none; 
+  margin-bottom: 0;
+}
+
+/* Cuando tu JS quite d-none, que se muestre y tenga margen */
+.coupon-message-container:not(.d-none) {
   display: block;
 }
+
 
 .notifications {
   gap: 1rem;
   align-content: flex-start;
   border-radius: var(--bs-border-radius-lg);
-  padding: 1rem;
+  padding-bottom: 0.5rem;
   background-color: var(--smoke-color2);
   display: none;
 }
 
-.notifications.show {
-  display: flex !important;
-}
+.notifications.show { display: flex !important; }
+.notifications.notifications-success { color: var(--success-message); }
+.notifications.notifications-error   { color: var(--error-message); }
 
-.notifications.notifications-success {
-  color: var(--success-message);
-}
-
-.notifications.notifications-error {
-  color: var(--error-message);
-}
 
 /*--- Reset Bootstrap container ---*/
 .container {
@@ -2887,6 +2888,9 @@ a.pagination-number {
 .mt-billing-card .iti {
   width: 100%;
 }
+
+.pac-hidden .pac-container { display: none !important; }
+.pac-container { z-index: 999999 !important; } 
 
 .mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
   display: flex;

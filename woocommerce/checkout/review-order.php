@@ -27,7 +27,7 @@ defined('ABSPATH') || exit;
 								<input type="text" name="coupon_code" placeholder="Enter coupon code"
 									class="form-control" id="coupon_code" value="">
 								<button type="button" name="apply_coupon" value="Apply coupon"
-									class="apply-btn ot-btn bg-title">Apply</button>
+									class="apply-btn ot-btn bg-title ell-pepinillo">Apply</button>
 							</div>
 							<div class="clear"></div>
 						</div>

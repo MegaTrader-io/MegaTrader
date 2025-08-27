@@ -694,6 +694,28 @@ function setWooVal(id, val) {
   el.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+const PAC_HIDE_CLASS = 'pac-hidden';
+
+function forceClosePlaces() {
+  document.body.classList.add(PAC_HIDE_CLASS);
+
+  const addr = document.getElementById('billing_address_1');
+  if (addr) addr.blur();
+
+  document.querySelectorAll('.pac-container').forEach(el => {
+    el.style.display = 'none';
+    el.setAttribute('aria-hidden', 'true');
+  });
+}
+
+function allowPlaces() {
+  document.body.classList.remove(PAC_HIDE_CLASS);
+  document.querySelectorAll('.pac-container[aria-hidden="true"]').forEach(el => {
+    el.style.display = '';
+    el.removeAttribute('aria-hidden');
+  });
+}
+
 function initBillingSummary() {
   const summary  = document.getElementById('mt-billing-summary');
   const formBox  = document.getElementById('mt-billing-form');
@@ -701,21 +723,23 @@ function initBillingSummary() {
   const saveBtn  = document.getElementById('mt-save-billing');
 
   function showForm() {
-    if (!summary || !formBox) return;
-    formBox.classList.remove('d-none');
-    summary.classList.add('d-none');
-    if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.slideDown) {
-      jQuery(formBox).stop(true, true).hide().slideDown(200);
-    }
+  if (!summary || !formBox) return;
+  allowPlaces(); // <- permitir dropdown al entrar al form
+  formBox.classList.remove('d-none');
+  summary.classList.add('d-none');
+  if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.slideDown) {
+    jQuery(formBox).stop(true, true).hide().slideDown(200);
   }
-  function showSummary() {
-    if (!summary || !formBox) return;
-    summary.classList.remove('d-none');
-    formBox.classList.add('d-none');
-    if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.slideDown) {
-      jQuery(summary).stop(true, true).hide().slideDown(200);
-    }
+}
+ function showSummary() {
+  if (!summary || !formBox) return;
+  forceClosePlaces(); // <- cerrarlo al volver al resumen
+  summary.classList.remove('d-none');
+  formBox.classList.add('d-none');
+  if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.slideDown) {
+    jQuery(summary).stop(true, true).hide().slideDown(200);
   }
+}
 
   // evita listeners duplicados cuando Woo refresca fragmentos
   if (changeLn && !changeLn.dataset.bound) {
