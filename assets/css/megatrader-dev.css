@@ -935,7 +935,7 @@
 }
 
 .border-mgt-primary {
-  border-color: var(--mgt-color-primary);
+  border:1px solid var(--mgt-color-primary);
 }
 
 .border-neutral-300 {

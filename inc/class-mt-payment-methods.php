@@ -3,15 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// remove_action( 'woocommerce_account_add-payment-method_endpoint', 'woocommerce_account_add_payment_method' );
-
-// add_action( 'woocommerce_account_add-payment-method_endpoint', 'custom_add_payment_method_content' );
-
-// function custom_add_payment_method_content() {
-//     // Load the same template content as payment-methods
-//     wc_get_template( 'myaccount/payment-methods.php' );
-// }
-
 add_action( 'template_redirect', 'redirect_add_payment_method_to_payment_methods' );
 
 function redirect_add_payment_method_to_payment_methods() {
