@@ -3000,3 +3000,17 @@ a.pagination-number {
   font-weight: 500;
   color: var(--title-color);
 }
+
+.place-order .privacy.woocommerce-invalid.woocommerce-invalid-required-field{
+  flex-direction: column;
+  align-items: stretch !important;
+}
+
+.place-order .privacy.woocommerce-invalid.woocommerce-invalid-required-field .invalid-feedback.privacy-policy-error {
+  margin-bottom: 8px;
+   margin-top: -8px;
+}
+
+.place-order .woocommerce-validated .invalid-feedback.privacy-policy-error {
+  display: none !important;
+}
