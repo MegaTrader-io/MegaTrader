@@ -3,29 +3,29 @@
 $defaultOption = 'evaluation';
 
 $options = [
-    [
-        'label' => 'EVALUATION', 'option' => 'evaluation'
-    ],
-    [
-        'label' => 'GET FUNDED', 'option' => 'get_funded'
-    ],
-    [
-        'label' => 'TRADER TOOLS', 'option' => 'trader_tools'
-    ],
+        [
+                'label' => 'EVALUATION', 'option' => 'evaluation'
+        ],
+        [
+                'label' => 'GET FUNDED', 'option' => 'get_funded'
+        ],
+        [
+                'label' => 'TRADER TOOLS', 'option' => 'trader_tools'
+        ],
 ];
 
 $items = [
-    [
-        'option' => 'evaluation',
-        'title' => 'Pass the Challenge',
-        'image' => 'Window-your-payout-objectives.png',
-        'imageMobile' => 'Window-your-payout-objectives-mobile.png',
-        'description' => 'Begin your journey by proving your trading discipline. Meet a set profit target while respecting daily and overall loss limits. This phase is designed to assess your risk management and consistency before granting access to funded capital.',
-        'features' => [
-            [
-                'title' => 'Profit Target',
-                'description' => 'Reach the required profit target within the challenge period while following all trading rules and maintaining consistency.',
-                'icon' => '
+        [
+                'option' => 'evaluation',
+                'title' => 'Pass the Challenge',
+                'image' => 'Window-your-payout-objectives.png',
+                'imageMobile' => 'Window-your-payout-objectives-mobile.png',
+                'description' => 'Begin your journey by proving your trading discipline. Meet a set profit target while respecting daily and overall loss limits. This phase is designed to assess your risk management and consistency before granting access to funded capital.',
+                'features' => [
+                        [
+                                'title' => 'Profit Target',
+                                'description' => 'Reach the required profit target within the challenge period while following all trading rules and maintaining consistency.',
+                                'icon' => '
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="mask0_5167_2825" maskUnits="userSpaceOnUse" x="0" y="0"
           width="24"
@@ -38,11 +38,11 @@ $items = [
             fill="black"/>
     </g>
 </svg>'
-            ],
-            [
-                'title' => 'Risk Limits',
-                'description' => 'Stay within daily and overall drawdown thresholds to remain eligible and avoid violating your evaluation account.',
-                'icon' => '
+                        ],
+                        [
+                                'title' => 'Risk Limits',
+                                'description' => 'Stay within daily and overall drawdown thresholds to remain eligible and avoid violating your evaluation account.',
+                                'icon' => '
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="mask0_5167_2832" maskUnits="userSpaceOnUse" x="0" y="0"
           width="24"
@@ -56,20 +56,20 @@ $items = [
     </g>
 </svg>                
                 '
-            ],
+                        ],
+                ],
         ],
-    ],
-    [
-        'option' => 'get_funded',
-        'title' => 'Trade With Firm Capital',
-        'image' => 'Window-funded-alert.png',
-        'imageMobile' => 'Window-funded-alert-mobile.png',
-        'description' => 'After successfully completing the evaluation, you’ll be granted a funded trading account. You’ll trade with zero personal risk while keeping up to 90% of profits, giving you the freedom to grow without the pressure of risking your own money.',
-        'features' => [
-            [
-                'title' => 'Profit Split',
-                'description' => 'Receive up to 90% of your trading profits with no capital risk, allowing you to scale your earnings without limitations.',
-                'icon' => '
+        [
+                'option' => 'get_funded',
+                'title' => 'Trade With Firm Capital',
+                'image' => 'Window-funded-alert.png',
+                'imageMobile' => 'Window-funded-alert-mobile.png',
+                'description' => 'After successfully completing the evaluation, you’ll be granted a funded trading account. You’ll trade with zero personal risk while keeping up to 90% of profits, giving you the freedom to grow without the pressure of risking your own money.',
+                'features' => [
+                        [
+                                'title' => 'Profit Split',
+                                'description' => 'Receive up to 90% of your trading profits with no capital risk, allowing you to scale your earnings without limitations.',
+                                'icon' => '
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="mask0_8220_15132" maskUnits="userSpaceOnUse" x="0" y="0"
           width="24" height="24">
@@ -82,11 +82,11 @@ $items = [
     </g>
 </svg>
                 '
-            ],
-            [
-                'title' => 'Real-Time Payouts',
-                'description' => 'Submit a payout request anytime after qualifying, with fast and consistent processing each week via your preferred method.',
-                'icon' => '
+                        ],
+                        [
+                                'title' => 'Real-Time Payouts',
+                                'description' => 'Submit a payout request anytime after qualifying, with fast and consistent processing each week via your preferred method.',
+                                'icon' => '
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="mask0_8220_15139" maskUnits="userSpaceOnUse" x="0" y="0"
           width="24" height="24">
@@ -99,20 +99,20 @@ $items = [
     </g>
 </svg>
                 '
-            ],
+                        ],
+                ],
         ],
-    ],
-    [
-        'option' => 'trader_tools',
-        'title' => 'Use Smart Trading Tools',
-        'image' => 'Window-avg-winning.png',
-        'imageMobile' => 'Window-avg-winning-mobile.png',
-        'description' => 'Access a suite of tools built for performance. Monitor your metrics, set risk limits, get instant feedback on your trades, and customize your workspace to fit your trading style. Everything is designed to help you trade smarter, not harder.',
-        'features' => [
-            [
-                'title' => 'Performance Dashboard',
-                'description' => 'Visualize your trades, profits, win rate, and more—all in one place to track progress and stay focused on your goals.',
-                'icon' => '
+        [
+                'option' => 'trader_tools',
+                'title' => 'Use Smart Trading Tools',
+                'image' => 'Window-avg-winning.png',
+                'imageMobile' => 'Window-avg-winning-mobile.png',
+                'description' => 'Access a suite of tools built for performance. Monitor your metrics, set risk limits, get instant feedback on your trades, and customize your workspace to fit your trading style. Everything is designed to help you trade smarter, not harder.',
+                'features' => [
+                        [
+                                'title' => 'Performance Dashboard',
+                                'description' => 'Visualize your trades, profits, win rate, and more—all in one place to track progress and stay focused on your goals.',
+                                'icon' => '
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="mask0_8220_14947" maskUnits="userSpaceOnUse" x="0" y="0"
           width="24" height="24">
@@ -125,11 +125,11 @@ $items = [
     </g>
 </svg>
                 '
-            ],
-            [
-                'title' => 'Risk Management Alerts',
-                'description' => 'Stay protected with automated alerts that warn you when you’re approaching your drawdown or overtrading limits.',
-                'icon' => '
+                        ],
+                        [
+                                'title' => 'Risk Management Alerts',
+                                'description' => 'Stay protected with automated alerts that warn you when you’re approaching your drawdown or overtrading limits.',
+                                'icon' => '
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_8220_14954" maskUnits="userSpaceOnUse" x="0" y="0"
                           width="24" height="24">
@@ -142,28 +142,28 @@ $items = [
                     </g>
                 </svg>
                 '
-            ],
+                        ],
+                ],
         ],
-    ],
 ];
 ?>
 
-<section id="feature-your-path" class="px-4">
-    <div class="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
+<section id="feature-your-path" class="tw-px-4">
+    <div class="tw-pb-4 tw-text-center tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
         Your Path to Profitable Trading Starts Here
     </div>
 
     <div
-            class="mx-auto max-w-[612px] text-center text-xl leading-8 font-medium text-stone-400 md:max-w-[780px]">
+            class="tw-mx-auto tw-max-w-[612px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium tw-text-stone-400 md:tw-max-w-[780px]">
         From your first trade to your first payout, every step is built to guide you toward consistent success
         with powerful tools, clear rules, and real rewards.
     </div>
 
-    <div class="lg:mx-auto flex py-12">
-        <div class="w-full gap-1 space-y-1 rounded-xl bg-mgt-dark p-1 outline outline-1 outline-offset-[-1px] outline-neutral-700 md:mx-auto md:inline-flex md:w-fit md:items-center md:justify-start md:space-y-0">
+    <div class="lg:tw-mx-auto tw-flex tw-py-12">
+        <div class="tw-w-full tw-gap-1 tw-space-y-1 tw-rounded-xl tw-bg-mgt-dark tw-p-1 tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-neutral-700 md:tw-mx-auto md:tw-inline-flex md:tw-w-fit md:tw-items-center md:tw-justify-start md:tw-space-y-0">
             <?php foreach ($options as $option): ?>
                 <button data-option="<?= $option['option'] ?>" type="button"
-                        class="feature-tab w-full lg:w-auto <?= $option['option'] == $defaultOption ? 'btn-primary-filled' : 'btn-primary-text'; ?>">
+                        class="feature-tab tw-w-full lg:tw-w-auto <?= $option['option'] == $defaultOption ? 'btn-primary-filled' : 'btn-primary-text'; ?>">
                     <?= $option['label'] ?>
                 </button>
             <?php endforeach; ?>
@@ -171,28 +171,29 @@ $items = [
     </div>
 
     <?php foreach ($items as $index => $item): ?>
-        <div data-panel="<?= $item['option'] ?>" class="<?= $item['option'] == $defaultOption ? 'block' : 'hidden' ?>">
-            <div class="space-y-12 lg:space-y-0 lg:flex gap-12">
-                <div class="w-full space-y-12 content-center">
-                    <div class="self-stretch justify-start text-white text-[40px] font-light uppercase leading-[48px]">
+        <div data-panel="<?= $item['option'] ?>"
+             class="<?= $item['option'] == $defaultOption ? 'tw-block' : 'tw-hidden' ?>">
+            <div class="tw-space-y-12 lg:tw-space-y-0 lg:tw-flex tw-gap-12">
+                <div class="tw-w-full tw-space-y-12 tw-content-center">
+                    <div class="tw-justify-start tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
                         <?= $item['title'] ?>
                     </div>
-                    <div class="self-stretch justify-start text-stone-400 text-xl font-medium leading-8">
+                    <div class="tw-justify-start tw-text-stone-400 tw-text-xl tw-font-medium tw-leading-8">
                         <?= $item['description'] ?>
                     </div>
-                    <div class="space-y-4">
+                    <div class="tw-space-y-4">
                         <?php foreach ($item['features'] as $feature): ?>
-                            <div class="mgt-card space-y-2 border-transparent border-0">
-                                <div class="grid grid-cols-[40px_1fr] gap-4">
-                                    <div class="w-10 h-10 bg-teal-400 rounded-full flex justify-center items-center">
+                            <div class="mgt-card tw-space-y-2 tw-border-transparent tw-border-0">
+                                <div class="tw-grid tw-grid-cols-[40px_1fr] tw-gap-4">
+                                    <div class="tw-w-10 tw-h-10 tw-bg-teal-400 tw-rounded-full tw-flex tw-justify-center tw-items-center">
                                         <?= $feature['icon'] ?>
                                     </div>
-                                    <div class="self-stretch justify-start text-teal-400 text-xl font-bold leading-loose">
+                                    <div class="tw-justify-start tw-text-teal-400 tw-text-xl tw-font-bold tw-leading-loose">
                                         <?= $feature['title'] ?>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-[40px_1fr] gap-4">
-                                    <div class="col-start-2 justify-start text-stone-400 text-base font-medium leading-normal">
+                                <div class="tw-grid tw-grid-cols-[40px_1fr] tw-gap-4">
+                                    <div class="tw-col-start-2 tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">
                                         <?= $feature['description'] ?>
                                     </div>
                                 </div>
@@ -201,17 +202,17 @@ $items = [
                     </div>
                 </div>
 
-                <div class="mgt-card hidden sm:flex h-[680px] w-full justify-center border-b-0 !bg-[#1E1E1E] !pt-24 !pb-0 lg:max-w-[558px]">
+                <div class="mgt-card tw-hidden sm:tw-flex tw-h-[680px] tw-w-full tw-justify-center tw-border-b-0 !tw-bg-[#1E1E1E] !tw-pt-24 !tw-pb-0 lg:tw-max-w-[558px]">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/<?= $item['image'] ?>"
                          alt="<?= $item['title'] ?>"
                          width="440"
                          height="583"/>
                 </div>
 
-                <div class="block w-full sm:hidden">
+                <div class="tw-block tw-w-full sm:tw-hidden">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/<?= $item['imageMobile'] ?>"
                          alt="<?= $item['title'] ?>"
-                         class="w-full"
+                         class="tw-w-full"
                          width="360"
                          height="720"/>
                 </div>

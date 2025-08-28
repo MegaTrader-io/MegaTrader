@@ -57,9 +57,9 @@ HTML
 ?>
 
 
-<div class="flex gap-4 items-center">
+<div class="tw-flex tw-gap-4 tw-items-center">
     <?php foreach ($socialList as $social): ?>
-        <a href="<?= $social['href'] ?>" target="_blank" class="flex items-end text-white hover:text-[#FFB539]">
+        <a href="<?= $social['href'] ?>" target="_blank" class="tw-flex tw-items-end tw-text-white hover:tw-text-[#FFB539]">
             <?= $social['svg'] ?>
         </a>
     <?php endforeach; ?>

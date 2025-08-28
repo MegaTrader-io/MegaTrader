@@ -6,7 +6,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class('font-roboto antialiased'); ?>>
-<div class="loading-overlay hidden fixed inset-0 bg-[#131210]/90 justify-center items-center z-[9999999]">
+<div class="tw-loading-overlay tw-hidden tw-fixed tw-inset-0 tw-bg-[#131210]/90 tw-justify-center tw-items-center tw-z-[9999999]">
     <div class="loader"></div>
 </div>
 <?php require 'landing-page/header.php' ?>

@@ -16,6 +16,11 @@
     }
 }
 
+*, :after, :before {
+    box-sizing: border-box;
+    border: 0 solid #e5e7eb;
+}
+
 body {
     font-family: var(--font-roboto), sans-serif;
     margin: 0;
@@ -29,52 +34,143 @@ body {
     overflow-x: hidden
 }
 
+/* Container base */
+.container,
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
+    @apply tw-w-full tw-px-3 tw-mx-auto;
+    /* px-3 = 0.75rem ≈ calc(1.5rem * 0.5) */
+}
+
+/* Breakpoints */
+@screen sm {
+    .container,
+    .container-sm {
+        max-width: 540px;
+    }
+}
+
+@screen md {
+    .container,
+    .container-md,
+    .container-sm {
+        max-width: 720px;
+    }
+}
+
+@screen lg {
+    .container,
+    .container-lg,
+    .container-md,
+    .container-sm {
+        max-width: 960px;
+    }
+}
+
+@screen xl {
+    .container,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container-xl {
+        max-width: 1140px;
+    }
+}
+
+@screen 2xl {
+    .container,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container-xl,
+    .container-xxl {
+        max-width: 1320px;
+    }
+}
+
+.container {
+    width: 100% !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Mobile >768px */
+@media (max-width: 767.98px) {
+    .container {
+        max-width: 540px !important;
+    }
+}
+
+/* Laptop fluido hasta 1279px */
+@media (min-width: 768px) and (max-width: 1279.98px) {
+    .container {
+        max-width: 100% !important;
+    }
+}
+
+/* Desktop fijo (1280px en adelante) */
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1280px !important;
+    }
+}
+
 .btn-base {
-    @apply uppercase flex items-center justify-center transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1;
+    @apply tw-uppercase tw-no-underline tw-flex tw-items-center tw-justify-center tw-transition-colors focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-offset-1;
 }
 
 .btn-dark-link {
-    @apply btn-base bg-stone-800 hover:bg-stone-900 border border-neutral-700 text-white focus:ring-gray-700 disabled:bg-stone-600 disabled:text-stone-800;
+    @apply btn-base tw-bg-stone-800 hover:tw-bg-stone-900 tw-border tw-border-neutral-700 tw-text-white focus:tw-ring-gray-700 disabled:tw-bg-stone-600 disabled:tw-text-stone-800;
 }
 
 .btn-yellow-link {
-    @apply btn-base w-full md:w-auto btn-base text-base font-medium leading-normal bg-primary hover:bg-yellow-600 text-black focus:ring-primary disabled:bg-stone-600 disabled:text-stone-800;
+    @apply btn-base tw-w-full md:tw-w-auto tw-text-base tw-font-medium tw-leading-normal tw-bg-primary hover:tw-bg-yellow-600 tw-text-black focus:tw-ring-primary disabled:tw-bg-stone-600 disabled:tw-text-stone-800;
 }
 
 .variant-style-primary-filled {
-    @apply bg-primary hover:bg-yellow-600 text-black focus:ring-primary disabled:bg-stone-600 disabled:text-stone-800;
+    @apply tw-bg-primary hover:tw-bg-yellow-600 tw-text-black focus:tw-ring-primary disabled:tw-bg-stone-600 disabled:tw-text-stone-800;
 }
 
 .variant-style-primary-text {
-    @apply text-primary hover:text-yellow-600 hover:bg-yellow-100 focus:ring-primary;
+    @apply tw-text-primary hover:tw-text-yellow-600 hover:tw-bg-yellow-100 focus:tw-ring-primary;
 }
 
 .size-style-md {
-    @apply py-3 text-base font-medium leading-normal rounded-xl px-4
+    @apply tw-py-3 tw-text-base tw-font-medium tw-leading-normal tw-rounded-xl tw-px-4;
 }
 
 .size-style-sm {
-    @apply py-1 text-xs font-medium leading-tight rounded w-5 h-5 px-4
+    @apply tw-py-1 tw-text-xs tw-font-medium tw-leading-tight tw-rounded tw-w-5 tw-h-5 tw-px-4;
 }
 
 .btn-primary-filled {
-    @apply btn-base size-style-md variant-style-primary-filled bg-primary hover:bg-yellow-600 text-black focus:ring-primary disabled:bg-stone-600 disabled:text-stone-800;
+    @apply btn-base size-style-md variant-style-primary-filled tw-bg-primary hover:tw-bg-yellow-600 tw-text-black focus:tw-ring-primary disabled:tw-bg-stone-600 disabled:tw-text-stone-800;
 }
 
 .btn-primary-text {
-    @apply btn-base size-style-md variant-style-primary-text text-primary hover:text-yellow-600 hover:bg-yellow-100 focus:ring-primary
+    @apply btn-base size-style-md variant-style-primary-text tw-bg-transparent tw-text-primary hover:tw-text-yellow-600 hover:tw-bg-yellow-100 focus:tw-ring-primary;
 }
 
 .mgt-card {
-    @apply p-4 bg-mgt-dark border border-transparent rounded-2xl;
+    @apply tw-p-4 tw-bg-mgt-dark tw-border tw-border-transparent tw-rounded-2xl;
 }
 
 .badge-base {
-    @apply text-[#131210] leading-normal font-bold uppercase justify-center items-center gap-2.5 inline-flex
+    @apply tw-text-[#131210] tw-leading-normal tw-font-bold tw-uppercase tw-justify-center tw-items-center tw-gap-2.5 tw-inline-flex;
 }
 
 .badge-rounded-sm {
-    @apply rounded h-6 px-2 py-1 text-sm
+    @apply tw-rounded tw-h-6 tw-px-2 tw-py-1 tw-text-sm;
+}
+
+.badge-secondary-sm {
+    @apply badge-base badge-rounded-sm;
 }
 
 .badge-secondary-sm {
@@ -86,47 +182,31 @@ body {
 }
 
 #slider-mgt .noUi-connect {
-    @apply bg-primary;
+    @apply tw-bg-primary;
 }
 
 #slider-mgt .noUi-connects {
-    @apply bg-neutral-700;
-}
-
-#slider-mgt .noUi-handle {
-    border: 4px solid #FFF;
-    background: #FFB34A;
-    box-shadow: none;
-
-    height: 24px;
-    width: 24px;
-    top: -11px;
-    right: -12px;
-    border-radius: 64px;
-}
-
-#slider-mgt .noUi-handle::before, #slider-mgt .noUi-handle::after {
-    content: none;
+    @apply tw-bg-neutral-700;
 }
 
 #slider-mgt.noUi-target {
-    @apply border-none shadow-none;
+    @apply tw-border-none tw-shadow-none;
 }
 
 #slider-mgt .noUi-marker {
-    @apply hidden;
+    @apply tw-hidden;
 }
 
 #slider-mgt .noUi-pips > .noUi-value {
-    @apply text-base text-stone-400 leading-none font-medium uppercase;
+    @apply tw-text-base tw-text-stone-400 tw-leading-none tw-font-medium tw-uppercase;
 }
 
 #slider-mgt .noUi-pips > .noUi-value.active-pip {
-    @apply text-primary;
+    @apply tw-text-primary;
 }
 
 #slider-mgt .noUi-pips-horizontal {
-    @apply h-auto;
+    @apply tw-h-auto;
 }
 
 .scrollbar-hide {
@@ -140,11 +220,8 @@ body {
     overflow-y: hidden;
 }
 
+.scrollbar-hide::-webkit-scrollbar,
 .scrollbar-hide-strict::-webkit-scrollbar {
-    display: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
     display: none;
 }
 
@@ -206,36 +283,36 @@ body {
 }
 
 .opt-active > .checkbox-custom {
-    @apply bg-primary;
+    @apply tw-bg-primary;
 }
 
-.peer:checked ~ .peer-checked\:outline-primary .box-checked {
-    @apply bg-primary;
+.tw-peer:checked ~ .peer-checked\:tw-outline-primary .box-checked {
+    @apply tw-bg-primary;
     content: '';
     background-image: url(/wp-content/themes/megatrader-addons/assets/img/checked.svg);
     background-size: 11px;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: right;
 }
 
 .account-type {
-    @apply bg-transparent  outline outline-2 outline-offset-[-2px] outline-neutral-700;
+    @apply tw-bg-transparent  tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700;
 }
 
 .account-type.account-active {
-    @apply bg-primary outline-none;
+    @apply tw-bg-primary tw-outline-none;
 }
 
 .mgt-input {
-    @apply h-12 px-4 py-3 read-only:bg-stone-600 bg-[#1e1e1e]/70 disabled:bg-stone-600 disabled:text-stone-400 placeholder:text-neutral-700 rounded-xl border w-full font-medium focus:border-transparent text-base focus:outline-none focus:ring-1 hover:border-white;
+    @apply tw-h-12 tw-px-4 tw-py-3 read-only:tw-bg-stone-600 tw-bg-[#1e1e1e]/70 disabled:tw-bg-stone-600 disabled:tw-text-stone-400 placeholder:tw-text-neutral-700 tw-rounded-xl tw-border tw-w-full tw-font-medium focus:tw-border-transparent tw-text-base focus:tw-outline-none focus:tw-ring-1 hover:tw-border-white;
 }
 
 .mgt-input-ok {
-    @apply text-stone-400 border-neutral-700 focus:ring-mgt-primary;
+    @apply tw-text-stone-400 tw-border-neutral-700 focus:tw-ring-mgt-primary;
 }
 
 .mgt-input-error {
-    @apply ring-1 ring-red-500 text-red-500 border-transparent placeholder:text-rose-500;
+    @apply tw-ring-1 tw-ring-red-500 tw-text-red-500 tw-border-transparent placeholder:tw-text-rose-500;
 }
 
 .loader {

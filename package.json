@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npx tailwindcss -i ./assets/tailwindcss/landing-page.css -o ./assets/css/style-landing-page.css --watch",
     "build-theme": "npx tailwindcss -c tailwind.config.mgt-theme.js -i ./assets/tailwindcss/mgt-theme.css -o ./assets/css/mgt-theme.css",
-    "build": "npx tailwindcss -i ./assets/tailwindcss/input.css -o ./assets/css/style-landing-page.css --minify"
+    "build": "npx tailwindcss -i ./assets/tailwindcss/landing-page.css -o ./assets/css/style-landing-page.css --minify"
   },
   "keywords": [],
   "author": "",

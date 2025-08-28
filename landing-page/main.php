@@ -1,4 +1,4 @@
-<main class="min-h-[calc(100vh-96px)] relative lg:h-full mt-[124px] w-full lg:max-w-7xl space-y-12 mx-auto mb-24">
+<main class="tw-min-h-[calc(100vh-96px)] tw-relative lg:tw-h-full tw-mt-[124px] tw-w-full lg:tw-max-w-7xl tw-space-y-12 tw-mx-auto tw-mb-24">
     <?php require 'sections/hero.php'; ?>
     <?php require 'sections/market_overview.php'; ?>
     <?php require 'sections/sponsor_logos.php'; ?>

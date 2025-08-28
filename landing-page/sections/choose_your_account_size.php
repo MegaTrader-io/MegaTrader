@@ -28,35 +28,35 @@ $variation_fields = bmc_get_custom_variation_fields();
 $mostPopular = '150k';
 ?>
 
-<section id="pricing" class="px-4">
-    <div class="pb-4 self-stretch text-center text-white text-[40px] font-light uppercase leading-[48px]">
+<section id="pricing" class="tw-px-4">
+    <div class="tw-pb-4 tw-text-center tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
         Choose your account size
     </div>
 
-    <div class="mx-auto pb-8 max-w-[760px] text-center text-xl leading-8 font-medium text-stone-400 md:max-w-[ 860px]">
+    <div class="tw-mx-auto tw-pb-8 tw-max-w-[760px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium tw-text-stone-400 md:tw-max-w-[ 860px]">
         Choose from flexible account sizes and plans tailored to your trading style—whether you're growing your skills
         or ready to trade real capital with confidence
     </div>
 
-    <div class="space-y-2 flex-1 md:space-y-0 md:flex gap-2 mb-4">
+    <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2 tw-mb-4">
         <?php foreach ($account_types as $index => $account_type) : ?>
             <button data-value="<?= $account_type['slug'] ?>"
-                    class="btn-account-type group relative w-full rounded-2xl p-6 text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
-                <div class="inline-flex justify-start items-start gap-4">
-                    <div class="text-primary group-[.account-active]:text-black mt-1 group-[.account-active]:filter group-[.account-active]:brightness-[5] group-[.account-active]:invert">
-                        <img src="<?= $account_type['thumbnail_url'] ?>" class="w-9 h-9" alt="Icon">
+                    class="btn-account-type tw-group tw-relative tw-w-full tw-rounded-2xl tw-p-6 tw-text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
+                <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4">
+                    <div class="tw-mt-1 group-[.account-active]:tw-filter group-[.account-active]:tw-brightness-[5] group-[.account-active]:tw-invert">
+                        <img src="<?= $account_type['thumbnail_url'] ?>" class="tw-w-9 tw-h-9" alt="Icon">
                     </div>
-                    <div class="flex-1 inline-flex flex-col justify-center items-start gap-2">
-                        <div class="self-stretch inline-flex justify-start items-start gap-1">
-                            <div class="justify-start text-white group-[.account-active]:text-black text-xl font-bold leading-loose">
+                    <div class="tw-flex-1 tw-inline-flex tw-flex-col tw-justify-center tw-items-start tw-gap-2">
+                        <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-1">
+                            <div class="tw-justify-start tw-text-white group-[.account-active]:tw-text-black tw-text-xl tw-font-bold tw-leading-loose">
                                 <?= $account_type['name'] ?>
                             </div>
                         </div>
-                        <div class="self-stretch justify-start group-[.account-active]:opacity-60 group-[.account-active]:text-black text-stone-400 text-base font-bold leading-normal group-[.plan-selected]:opacity-60 group-[.plan-selected]:text-black">
+                        <div class="tw-justify-start group-[.account-active]:tw-opacity-60 group-[.account-active]:tw-text-black tw-text-stone-400 tw-text-base tw-font-bold tw-leading-normal group-[.plan-selected]:tw-opacity-60 group-[.plan-selected]:tw-text-black">
                             <?= $account_type['description'] ?>
                         </div>
                     </div>
-                    <div class="w-[30px] h-[30px] right-[8px] top-[8px] absolute group-[.account-active]:block">
+                    <div class="tw-w-[30px] twh-[30px] tw-right-[8px] tw-top-[8px] tw-absolute group-[.account-active]:tw-block">
                         <svg width="31" height="30" viewBox="0 0 31 30" fill="none"
                              xmlns="http://www.w3.org/2000/svg">
                             <mask id="mask0_11266_797" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
@@ -75,7 +75,7 @@ $mostPopular = '150k';
         <?php endforeach; ?>
     </div>
 
-    <div class="space-y-2 md:space-y-0 md:grid md:grid-cols-2 lg:flex lg:items-center mb-4">
+    <div class="tw-space-y-2 md:tw-space-y-0 md:tw-grid md:tw-grid-cols-2 lg:tw-flex lg:tw-items-center tw-mb-4">
         <?php foreach ($account_sizes as $index => $size) : ?>
             <?php
             $properties = $product[$defaultSlug][$size][$defaultSlug][$defaultPlatform];
@@ -99,30 +99,30 @@ $mostPopular = '150k';
             }
             ?>
             <div class="<?= $mostPopular == $size
-                ? 'most-popular bg-[#131210] pb-8 flex flex-col border-2 border-primary rounded-2xl'
-                : 'bg-mgt-dark w-full border-t-2 border-b-2 border-stone-800 px-0 first:rounded-tl-2xl first:rounded-bl-2xl first:border-l-2 last:rounded-tr-2xl last:rounded-br-2xl last:border-r-2'
-            ?> group  <?= $mostPopular == $size ? 'last-element' : '' ?>">
-                <div class="px-4 bg-[#131210] <?= $mostPopular == $size ? 'py-4 flex flex-col space-y-2 rounded-[inherit]' : 'py-4 uppercase text-white font-medium first:rounded-tl-[inherit] rounded-tr-[inherit]' ?>">
+                    ? 'most-popular tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl'
+                    : 'tw-bg-mgt-dark tw-w-full tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
+            ?> tw-group  <?= $mostPopular == $size ? 'last-element' : '' ?>">
+                <div class="tw-px-4 tw-bg-[#131210] <?= $mostPopular == $size ? 'tw-py-4 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit]' : 'tw-py-4 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit]' ?>">
                     <?php if ($mostPopular == $size): ?>
-                        <div class="inline-flex">
-                            <span class="justify-start text-black inline-flex rounded-xl text-sm font-bold uppercase leading-[normal] py-1 px-2 bg-primary">
+                        <div class="tw-inline-flex">
+                            <span class="tw-justify-start tw-text-black tw-inline-flex tw-rounded-xl tw-text-sm tw-font-bold tw-uppercase tw-leading-[normal] tw-py-1 tw-px-2 tw-bg-primary">
                             Most popular
                         </span>
                         </div>
                     <?php endif; ?>
-                    <div class="justify-start text-white text-2xl font-medium uppercase leading-7"><?= $size ?>
+                    <div class="tw-justify-start tw-text-white tw-text-2xl tw-font-medium tw-uppercase tw-leading-7"><?= $size ?>
                         Account
                     </div>
                 </div>
-                <div class="px-4 py-3 flex border-r-2 group-[.last-element]:border-r-0 border-stone-800">
-                    <div class="text-[#ffb34a] font-medium">
-                        <span class="text-4xl leading-[48px] price-plan"
+                <div class="tw-px-4 tw-py-3 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                    <div class="tw-text-[#ffb34a] tw-font-medium">
+                        <span class="tw-text-4xl tw-leading-[48px] price-plan"
                               data-price="<?= $size ?>">$<?= number_format($price) ?></span>
-                        <span class="text-xl frequency-plan"
+                        <span class="tw-text-xl frequency-plan"
                               data-price="<?= $size ?>">/ <?= $defaultSlug !== 'funded-plan' ? 'Month' : 'One-Time Fee' ?></span>
                     </div>
                 </div>
-                <div class="px-6 border-r-2 group-[.last-element]:border-r-0 border-stone-800 metaInfo"
+                <div class="tw-px-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
                      data-price="<?= $size ?>">
                     <?php foreach ($metaInfoList as $field => $value): ?>
                         <?php
@@ -136,19 +136,19 @@ $mostPopular = '150k';
                         }
 
                         ?>
-                        <div class="w-full pb-2 pt-[6px] border-t border-stone-800 inline-flex justify-start items-center gap-2 <?= $field ?>">
-                            <div class="flex-1 justify-start text-stone-400 text-base font-medium">
-                                <div class="grid grid-cols-[1fr_auto]">
-                                    <div class="col-span-1 leading-6"
+                        <div class="tw-w-full tw-pb-2 tw-pt-[6px] tw-border-t tw-border-stone-800 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 <?= $field ?>">
+                            <div class="tw-flex-1 tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium">
+                                <div class="tw-grid tw-grid-cols-[1fr_auto]">
+                                    <div class="tw-col-span-1 tw-leading-6"
                                          title="<?= $field ?>"><?= $label; ?></div>
-                                    <div class="col-auto no-wrap content-center text-right leading-6 metaValue"><?= $value ?></div>
+                                    <div class="tw-col-auto tw-no-wrap tw-content-center tw-text-right tw-leading-6 metaValue"><?= $value ?></div>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="px-6 py-3 border-r-2 group-[.last-element]:border-r-0 border-stone-800">
-                    <a target="_blank" class="btn-dark-link rounded-xl h-12 px-4 py-3"
+                <div class="tw-px-6 tw-py-3 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                    <a target="_blank" class="btn-dark-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3"
                        href="https://subscriptions.megatrader.io/">
                         GET PLAN
                     </a>
@@ -156,7 +156,7 @@ $mostPopular = '150k';
             </div>
 
             <?php if (($index + 1) % 2 == 0): ?>
-                <div class="h-2 hidden sm:block col-span-2 lg:contents"></div>
+                <div class="tw-h-2 tw-hidden sm:tw-block tw-col-span-2 lg:tw-contents"></div>
             <?php endif ?>
         <?php endforeach ?>
     </div>

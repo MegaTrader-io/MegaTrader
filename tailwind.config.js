@@ -1,5 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    prefix: 'tw-',
+    corePlugins: {
+        preflight: false, // ✅ evita conflictos con Bootstrap Reset/Reboot
+    },
     content: [
         './header-landing-page.php',
         './landing-page.php',
@@ -33,7 +37,7 @@ module.exports = {
         require('tailwind-scrollbar')({
             nocompatible: true,
             preferredStrategy: 'pseudoelements',
-        }),
+        })
     ],
 }
 

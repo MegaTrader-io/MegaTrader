@@ -5,7 +5,7 @@ foreach (mgt_footer_links() as $index => $link) {
     $modalId = $link['id'];
     $title = $link['title'];
     $buttons[] = <<<HTML
-<button data-dialog-id="{$modalId}" class="btn-dialog text-stone-400 text-sm font-medium underline leading-tight">
+<button data-dialog-id="{$modalId}" class="btn-dialog tw-text-stone-400 tw-bg-transparent tw-text-sm tw-font-medium tw-underline tw-leading-tight">
     {$title}
 </button>
 HTML;
@@ -14,12 +14,12 @@ HTML;
 $btnRows = array_chunk($buttons, 2);
 ?>
     <footer
-            class="w-full max-w-7xl flex-1 h-dvh mx-auto px-4 pb-8  flex items-center justify-between flex-col space-y-8">
+            class="tw-w-full tw-max-w-7xl tw-flex-1 tw-h-dvh tw-mx-auto tw-px-4 tw-pb-8  tw-flex tw-items-center tw-justify-between tw-flex-col tw-space-y-8">
         <div
-                class="w-full p-8 bg-[#131210] rounded-[20px] outline outline-1 outline-neutral-700">
-            <div class="w-full grid grid-cols-2 space-y-8 lg:space-y-0 lg:space-x-8">
-                <div class="space-y-4 col-span-2 lg:col-span-1">
-                    <div class="flex gap-4 items-center">
+                class="tw-w-full tw-p-8 bg-[#131210] tw-rounded-[20px] tw-outline tw-outline-1 tw-outline-neutral-700">
+            <div class="tw-w-full tw-grid tw-grid-cols-2 tw-space-y-8 lg:tw-space-y-0 lg:tw-space-x-8">
+                <div class="tw-space-y-4 tw-col-span-2 lg:tw-col-span-1">
+                    <div class="tw-flex tw-gap-4 tw-items-center">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/logo-mt.svg"
                              width="60" height="60" alt="Logo MegaTraderX"/>
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/megatrader-original.svg"
@@ -29,29 +29,29 @@ $btnRows = array_chunk($buttons, 2);
                         />
                     </div>
                     <div
-                            class="justify-start text-stone-400 text-sm font-medium leading-tight">From
+                            class="tw-justify-start tw-text-stone-400 tw-text-sm tw-font-medium tw-leading-tight">From
                         evaluation to funding, we're redefining the trader journey with performance-driven
                         solutions and transparency.
                     </div>
                     <?php require_once 'sections/partials/social_media.php' ?>
                 </div>
-                <div class="col-span-2 space-y-4 lg:col-span-1">
+                <div class="tw-col-span-2 tw-space-y-4 lg:tw-col-span-1">
                     <?php require_once 'sections/partials/subscribe_form.php' ?>
                 </div>
             </div>
-            <div class="my-8 col-span-2">
-                <div class="h-0 border-t-[0.5px] border-t-neutral-700"></div>
+            <div class="tw-my-8 tw-col-span-2">
+                <div class="tw-h-0 tw-border-t-[0.5px] border-t-neutral-700"></div>
             </div>
             <div
-                    class="grid grid-cols-4 gap-4 lg:inline-flex lg:justify-start lg:items-start lg:gap-8 lg:w-full">
+                    class="tw-grid tw-grid-cols-4 tw-gap-4 lg:tw-inline-flex lg:tw-justify-start lg:tw-items-start lg:tw-gap-8 lg:tw-w-full">
                 <div
-                        class="col-span-full text-center lg:text-left lg:flex-1 text-stone-400 text-sm font-medium leading-tight">
+                        class="tw-col-span-full tw-text-center lg:tw-text-left lg:tw-flex-1 tw-text-stone-400 tw-text-sm tw-font-medium tw-leading-tight">
                     © <?= date('Y') ?> MegaTraderX
                 </div>
                 <nav
-                        class="col-span-full flex-col space-y-4 sm:space-y-0 sm:text-center sm:flex-none sm:justify-center sm:gap-4 lg:contents">
+                        class="tw-col-span-full tw-flex-col tw-space-y-4 sm:tw-space-y-0 sm:tw-text-center sm:tw-flex-none sm:tw-justify-center sm:tw-gap-4 lg:tw-contents">
                     <?php foreach ($btnRows as $index => $buttons) : ?>
-                        <div class="flex justify-center space-x-4 lg:space-x-0 sm:contents">
+                        <div class="tw-flex tw-justify-center tw-space-x-4 lg:tw-space-x-0 sm:tw-contents">
                             <?php foreach ($buttons as $button) : ?>
                                 <?= $button ?>
                             <?php endforeach; ?>

@@ -1,5 +1,5 @@
 <div data-state="open"
-     class="overlay-footer-top fixed inset-0 data-[state=open]:animate-overlayShow z-[60] bg-[#131210]/90"
+     class="overlay-footer-top tw-fixed tw-inset-0 data-[state=open]:tw-animate-overlayShow tw-z-[60] tw-bg-[#131210]/90"
      style="pointer-events: auto;display: none;" data-aria-hidden="true" aria-hidden="true">
 </div>
 

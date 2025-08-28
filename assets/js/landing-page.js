@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!marketWrapper) return;
 
         const carousel = document.createElement('div');
-        carousel.classList.add('carousel', 'flex', 'gap-4', 'animate-carousel');
+        carousel.classList.add('tw-carousel', 'tw-flex', 'tw-gap-4', 'tw-animate-carousel');
 
         const changeValue = (value) => {
             const symbol = value > 0 ? "+" : "-";
@@ -109,20 +109,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         marketList.forEach((instrument) => {
             const card = document.createElement('div');
-            card.classList.add('p-3', 'rounded-lg', 'inline-table', 'bg-mgt-dark');
+            card.classList.add('tw-p-3', 'tw-rounded-lg', 'tw-inline-table', 'tw-bg-mgt-dark');
 
             const grid = document.createElement('div');
-            grid.classList.add('grid', 'grid-cols-[1fr_auto]', 'gap-4');
+            grid.classList.add('tw-grid', 'tw-grid-cols-[1fr_auto]', 'tw-gap-4');
 
             // Instrument name and price
             const left = document.createElement('div');
 
             const h3 = document.createElement('h3');
-            h3.classList.add('text-white', 'text-base', 'font-bold', 'leading-normal', 'text-nowrap');
+            h3.classList.add('tw-text-white', 'mb-0', 'tw-text-base', 'tw-font-bold', 'tw-leading-normal', 'tw-text-nowrap');
             h3.textContent = instrument.name;
 
             const price = document.createElement('p');
-            price.classList.add('text-stone-400', 'text-base', 'font-medium', 'leading-normal');
+            price.classList.add('tw-text-stone-400', 'mb-0', 'tw-text-base', 'tw-font-medium', 'tw-leading-normal');
             price.textContent = instrument.price.toLocaleString();
 
             left.appendChild(h3);
@@ -130,14 +130,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Change value and arrow
             const right = document.createElement('div');
-            right.classList.add('flex', 'justify-center', 'items-center', 'text-nowrap');
+            right.classList.add('tw-flex', 'tw-justify-center', 'tw-items-center', 'tw-text-nowrap');
 
             const change = document.createElement('p');
-            change.classList.add('flex', 'gap-2', 'text-base', 'font-bold', 'leading-normal');
-            change.classList.add(instrument.change > 0 ? 'text-teal-400' : 'text-rose-500');
+            change.classList.add('tw-flex', 'mb-0', 'tw-gap-2', 'tw-text-base', 'tw-font-bold', 'tw-leading-normal');
+            change.classList.add(instrument.change > 0 ? 'tw-text-teal-400' : 'tw-text-rose-500');
             change.textContent = changeValue(instrument.change);
 
-            const svg = instrument.change > 0 ? ArrowUp(true, 'w-5 h-5') : ArrowDown(true, 'w-5 h-5');
+            const svg = instrument.change > 0 ? ArrowUp(true, 'tw-w-5 tw-h-5') : ArrowDown(true, 'tw-w-5 tw-h-5');
             change.insertAdjacentHTML('beforeend', svg);
 
             right.appendChild(change);
@@ -232,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     element.querySelectorAll('[type=radio]').forEach((checkboxElement, index) => {
                         checkboxElement.checked = index === 0;
                     })
-                    element.classList.add('hidden');
+                    element.classList.add('tw-hidden');
                 })
 
                 const categorySelected = ev.currentTarget.value;
-                faqsByCategoryPanel.querySelector(`[data-category="${categorySelected}"]`).classList.remove('hidden');
+                faqsByCategoryPanel.querySelector(`[data-category="${categorySelected}"]`).classList.remove('tw-hidden');
             })
         })
     }
@@ -264,9 +264,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         tempBtn.remove();
                     }
 
-                    element.querySelector('.mgt-copy-tooltip').classList.remove('hidden');
+                    element.querySelector('.mgt-copy-tooltip').classList.remove('tw-hidden');
                     setTimeout(() => {
-                        element.querySelector('.mgt-copy-tooltip').classList.add('hidden');
+                        element.querySelector('.mgt-copy-tooltip').classList.add('tw-hidden');
                     }, 800);
                 } catch (err) {
                     console.error("Error copying to clipboard:", err);
@@ -283,11 +283,11 @@ document.addEventListener('DOMContentLoaded', function () {
             featureDiscoverPlatform.querySelectorAll('[data-platform-description]')
                 .forEach(element => {
                     if (element.dataset.platformDescription === platformSelected) {
-                        element.classList.remove('hidden');
+                        element.classList.remove('tw-hidden');
                         return;
                     }
 
-                    element.classList.add('hidden');
+                    element.classList.add('tw-hidden');
                 })
         }
 
@@ -329,12 +329,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 submitBtn.disabled = true;
                 input.classList.add('mgt-input-error');
                 input.classList.remove('mgt-input-ok');
-                emailError.classList.remove('hidden')
+                emailError.classList.remove('tw-hidden')
             } else {
                 input.classList.remove('mgt-input-error');
                 input.classList.add('mgt-input-ok');
                 submitBtn.disabled = !emailConsent.checked;
-                emailError.classList.add('hidden');
+                emailError.classList.add('tw-hidden');
             }
         }
 
@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
             input?.blur();
 
             const alertSuccess = document.querySelector('.alert-success');
-            alertSuccess.classList.add('hidden');
+            alertSuccess.classList.add('tw-hidden');
 
             try {
                 showLoading(true);
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
-                alertSuccess.classList.remove('hidden');
+                alertSuccess.classList.remove('tw-hidden');
 
                 input.value = '';
                 emailConsent.checked = false;

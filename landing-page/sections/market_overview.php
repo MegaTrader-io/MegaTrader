@@ -1,4 +1,4 @@
-<section id="market-data" class="px-4 !mt-0 pb-12 space-y-8">
+<section id="market-data" class="tw-px-4 !tw-mt-0 tw-pb-12 tw-space-y-8">
     <?= skeleton_cards(); ?>
 </section>
 

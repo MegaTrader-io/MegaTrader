@@ -53,16 +53,16 @@ $items = [
 
 ?>
 
-<div class="grid md:justify-center md:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="tw-grid md:tw-justify-center md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-8">
     <?php foreach ($items as $item): ?>
-        <div class="group w-full p-8 rounded-xl bg-mgt-dark">
-            <div class="flex items-center gap-2 mb-2">
+        <div class="tw-group tw-w-full tw-p-8 tw-rounded-xl tw-bg-mgt-dark">
+            <div class="tw-flex tw-items-center tw-gap-2 tw-mb-2">
                 <?= $item['icon'] ?>
-                <div class="text-teal-400 text-xl font-bold leading-loose group-[.active]:text-[#131210]">
+                <div class="tw-text-teal-400 tw-text-xl tw-font-bold tw-leading-loose tw-group-[.active]:tw-text-[#131210]">
                     <?= $item['title'] ?>
                 </div>
             </div>
-            <div class="text-stone-400 text-base font-medium leading-normal group-[.active]:text-[#131210]">
+            <div class="tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal tw-group-[.active]:tw-text-[#131210]">
                 <?= $item['subtitle'] ?>
             </div>
         </div>

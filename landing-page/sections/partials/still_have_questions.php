@@ -1,26 +1,26 @@
 <?php
 $email = 'support@megatrader.io';
 ?>
-<div class="mgt-card space-y-4 mt-8 border-none border-transparent">
+<div class="mgt-card tw-space-y-4 tw-mt-8 tw-border-none tw-border-transparent">
     <div
-            class="justify-start text-white text-xl font-medium leading-8">Still
+            class="tw-justify-start tw-text-white tw-text-xl tw-font-medium tw-leading-8">Still
         have questions?
     </div>
 
     <div
-            class="justify-start text-stone-400 text-base font-medium leading-8">Contact
+            class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-8">Contact
         our support team and we will make sure everything is clear and intuitive for you!
     </div>
 
     <div>
-        <div class="w-full px-4 py-3 bg-[#1e1e1e]/70 rounded-xl outline outline-1 outline-offset-[-1px] outline-neutral-700 inline-flex justify-start items-center gap-2">
-            <div class="flex-1 justify-start text-stone-400 text-base font-medium leading-normal">
+        <div class="tw-w-full tw-px-4 tw-py-3 tw-bg-[#1e1e1e]/70 tw-rounded-xl tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
+            <div class="tw-flex-1 tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">
                 <?= $email ?>
             </div>
             <button type="button"
                     data-copy-text="<?= $email ?>"
-                    class="btn-copy relative disabled:text-stone-600 disabled:cursor-not-allowed text-[#ffd78a]">
-                <div class="flex items-center gap-2">
+                    class="btn-copy tw-bg-transparent tw-relative disabled:tw-text-stone-600 disabled:tw-cursor-not-allowed tw-text-[#ffd78a]">
+                <div class="tw-flex tw-items-center tw-gap-2">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <mask id="clipboard-mask" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
                               width="24" height="24">
@@ -31,11 +31,11 @@ $email = 'support@megatrader.io';
                                   fill="currentColor"></path>
                         </g>
                     </svg>
-                    <div class="text-right justify-start text-[#ffd78a] text-sm font-medium  uppercase leading-tight">
+                    <div class="tw-text-right tw-justify-start tw-text-[#ffd78a] tw-text-sm tw-font-medium  tw-uppercase tw-leading-tight">
                         Copy
                     </div>
                 </div>
-                <span class="absolute top-[-20px] -translate-x-[45%] text-xs text-gray-400 hidden mgt-copy-tooltip">copied</span>
+                <span class="tw-absolute tw-top-[-20px] -tw-translate-x-[45%] tw-text-xs tw-text-gray-400 tw-hidden mgt-copy-tooltip">copied</span>
             </button>
         </div>
     </div>

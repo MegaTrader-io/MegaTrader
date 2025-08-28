@@ -1,8 +1,8 @@
-<div class="space-y-2">
+<div class="tw-space-y-2">
     <div
-            class="w-full max-w-[321px] lg:max-w-[400px] p-6 relative bg-[#ffb34a] rounded-2xl">
-        <div class="inline-flex justify-start items-start gap-4 relative">
-            <div class="w-9 h-9 relative mt-1">
+            class="tw-w-full tw-max-w-[321px] lg:tw-max-w-[400px] tw-p-6 tw-relative tw-bg-[#ffb34a] tw-rounded-2xl">
+        <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4 tw-relative">
+            <div class="tw-w-9 tw-h-9 tw-relative tw-mt-1">
                 <svg width="37" height="36" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_11266_789" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="37"
                           height="36">
@@ -15,20 +15,20 @@
                     </g>
                 </svg>
             </div>
-            <div class="flex-1 inline-flex flex-col justify-center items-start gap-2">
-                <div class="self-stretch inline-flex justify-start items-start gap-1">
+            <div class="tw-flex-1 tw-inline-flex tw-flex-col tw-justify-center tw-items-start gap-2">
+                <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-1">
                     <div
-                            class="justify-start text-black text-xl font-bold font-['Roboto'] leading-loose">Elite
+                            class="tw-justify-start tw-text-black tw-text-xl tw-font-bold tw-leading-loose">Elite
                         Plan
                     </div>
                 </div>
                 <div
-                        class="self-stretch opacity-60 justify-start text-black text-base font-bold font-['Roboto'] leading-normal">
+                        class="tw-opacity-60 tw-justify-start tw-text-black tw-text-base tw-font-bold tw-leading-normal">
                     For
                     experienced traders seeking premium tools and insights.
                 </div>
             </div>
-            <div class="w-[30px] h-[30px] -right-[16px] -top-[16px] absolute">
+            <div class="tw-w-[30px] tw-h-[30px] -tw-right-[16px] -tw-top-[16px] tw-absolute">
                 <svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_11266_797" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="31"
                           height="30">
@@ -44,9 +44,9 @@
         </div>
     </div>
     <div
-            class="w-full max-w-[321px] lg:max-w-[400px] p-6 relative bg-transparent rounded-2xl outline outline-2 outline-offset-[-2px] outline-neutral-700">
-        <div class="inline-flex justify-start items-start gap-4">
-            <div class="w-9 h-9 relative mt-1">
+            class="tw-w-full tw-max-w-[321px] lg:tw-max-w-[400px] tw-p-6 tw-relative tw-bg-transparent tw-rounded-2xl tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700">
+        <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4">
+            <div class="tw-w-9 tw-h-9 tw-relative tw-mt-1">
                 <svg width="37" height="36" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_11266_1045" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="37"
                           height="36">
@@ -59,24 +59,24 @@
                     </g>
                 </svg>
             </div>
-            <div class="flex-1 inline-flex flex-col justify-center items-start gap-2">
-                <div class="self-stretch inline-flex justify-start items-start gap-1">
+            <div class="tw-flex-1 tw-inline-flex tw-flex-col tw-justify-center tw-items-start tw-gap-2">
+                <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-1">
                     <div
-                            class="justify-start text-white text-xl font-bold font-['Roboto'] leading-loose">
+                            class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose">
                         Growth Plan
                     </div>
                 </div>
                 <div
-                        class="self-stretch justify-start text-stone-400 text-base font-bold font-['Roboto'] leading-normal">
+                        class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-bold tw-leading-normal">
                     For growing traders focused on skill and portfolio development.
                 </div>
             </div>
         </div>
     </div>
     <div
-            class="w-full max-w-[321px] lg:max-w-[400px] p-6 relative bg-transparent rounded-2xl outline outline-2 outline-offset-[-2px] outline-neutral-700">
-        <div class="inline-flex justify-start items-start gap-4">
-            <div class="w-9 h-9 relative">
+            class="tw-w-full tw-max-w-[321px] lg:tw-max-w-[400px] tw-p-6 tw-relative tw-bg-transparent tw-rounded-2xl tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700">
+        <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4">
+            <div class="tw-w-9 tw-h-9 tw-relative">
                 <svg width="37" height="36" viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <mask id="mask0_11266_561" mask-type="alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="37"
                           height="36">
@@ -89,15 +89,15 @@
                     </g>
                 </svg>
             </div>
-            <div class="flex-1 inline-flex flex-col justify-center items-start gap-2">
-                <div class="self-stretch inline-flex justify-start items-start gap-1">
+            <div class="tw-flex-1 tw-inline-flex tw-flex-col tw-justify-center tw-items-start tw-gap-2">
+                <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-1">
                     <div
-                            class="justify-start text-white text-xl font-bold font-['Roboto'] leading-loose">
+                            class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose">
                         Funded Plan
                     </div>
                 </div>
                 <div
-                        class="self-stretch justify-start text-stone-400 text-base font-bold font-['Roboto'] leading-normal">
+                        class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-bold tw-leading-normal">
                     Jump straight into a simulated funded account.
                 </div>
             </div>
