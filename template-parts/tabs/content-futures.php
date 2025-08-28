@@ -31,7 +31,8 @@
             $slug = esc_attr($item['slug']);
             $name = esc_html($item['name']);
             $description = esc_html($item['description']);
-            $is_active = $index === 0 ? ' active' : '';
+            
+            $is_checked = $index === 0 ? 'true' : 'false';
 
             $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
             $config = isset($parsed['config']) ? $parsed['config'] : [];
@@ -40,35 +41,37 @@
             $disabled_class = $is_disabled ? ' disabled-within' : '';
             $radio_id = esc_attr('account-size-' . $slug);
             ?>
-            <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $is_active . $disabled_class?>"
-                 for="<?= $radio_id ?>" 
-                 data-value="<?= $slug ?>" 
-                 title="<?= $description ?>"
-            >
-                <input type="radio" name="account-size" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden/>
-                <div class="mt-card__header">
-                    <i class="mt-card__radio disabled-target"></i>
-                    <?php if ($badge): 
-                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
-                    ?>
-                        <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
-                    <?php endif; ?>    
-                </div>
-                <div class="mt-card__title disabled-target justify-content-center">
-                    <span class="mt-card__title__text"><?= esc_html($name); ?></span>
-                </div>
-                <?php if (!empty($parsed['data'])): ?>
-                    <ul class="mt-card__check-list disabled-target">
-                        <?php foreach ($parsed['data'] as $text): ?>
-                            <li class="mt-card__check-list__item">
-                                <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
-                                <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-            </label>
+            <input type="radio" name="account-size" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden checked="<?= $checked_attr ?>">
+            <div class="radio__label__wrapper">
+                <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $disabled_class?>"
+                    for="<?= $radio_id ?>" 
+                    data-value="<?= $slug ?>" 
+                    title="<?= $description ?>"
+                >
+                    <div class="mt-card__header">
+                        <i class="mt-card__radio disabled-target"></i>
+                        <?php if ($badge): 
+                            $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                            $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+                        ?>
+                            <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
+                        <?php endif; ?>    
+                    </div>
+                    <div class="mt-card__title disabled-target justify-content-center">
+                        <span class="mt-card__title__text"><?= esc_html($name); ?></span>
+                    </div>
+                    <?php if (!empty($parsed['data'])): ?>
+                        <ul class="mt-card__check-list disabled-target">
+                            <?php foreach ($parsed['data'] as $text): ?>
+                                <li class="mt-card__check-list__item">
+                                    <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
+                                    <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </label>
+            </div>
             <?php
         }
     }
@@ -81,7 +84,8 @@
             $name = esc_html($item['name']);
             $description = esc_attr($item['description']);
             $thumbnail = esc_url($item['thumbnail_url']);
-            $is_active = $index === 0 ? ' active' : '';
+            
+            $checked_attr = $index === 0 ? 'checked' : '';
 
             $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
             $config = isset($parsed['config']) ? $parsed['config'] : [];
@@ -91,38 +95,40 @@
             $disabled_class = $is_disabled ? ' disabled-within' : '';
             $radio_id = esc_attr('account-type-' . $slug);
             ?>
-            <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $is_active . $disabled_class?>"
-                 for="<?= $radio_id ?>" 
-                 data-value="<?= $slug ?>" 
-                 title="<?= $description ?>"
-            >
-                <input type="radio" name="account-type" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden/>
-                <div class="mt-card__header">
-                    <i class="mt-card__radio disabled-target"></i>
-                    <?php if ($badge): 
-                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
-                    ?>
-                        <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
-                    <?php endif; ?>    
-                </div>
-                <div class="mt-card__title disabled-target">
-                    <?php if ($thumbnail): ?>
-                        <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
-                    <?php endif; ?>   
-                    <span class="mt-card__title__text"><?= $name; ?></span>
-                </div>
-                <?php if (!empty($parsed['data'])): ?>
-                    <ul class="mt-card__check-list disabled-target">
-                        <?php foreach ($parsed['data'] as $text): ?>
-                            <li class="mt-card__check-list__item">
-                                <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
-                                <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-            </label>
+            <input type="radio" name="account-type" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden <?= $checked_attr ?>/>
+            <div class="radio__label__wrapper">
+                <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
+                    for="<?= $radio_id ?>" 
+                    data-value="<?= $slug ?>" 
+                    title="<?= $description ?>"
+                >
+                    <div class="mt-card__header">
+                        <i class="mt-card__radio disabled-target"></i>
+                        <?php if ($badge): 
+                            $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                            $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+                        ?>
+                            <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
+                        <?php endif; ?>    
+                    </div>
+                    <div class="mt-card__title disabled-target">
+                        <?php if ($thumbnail): ?>
+                            <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
+                        <?php endif; ?>   
+                        <span class="mt-card__title__text"><?= $name; ?></span>
+                    </div>
+                    <?php if (!empty($parsed['data'])): ?>
+                        <ul class="mt-card__check-list disabled-target">
+                            <?php foreach ($parsed['data'] as $text): ?>
+                                <li class="mt-card__check-list__item">
+                                    <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
+                                    <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </label>
+            </div>
             <?php
         }
     }
