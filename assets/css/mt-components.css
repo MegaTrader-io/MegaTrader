@@ -134,7 +134,7 @@
 }
 
 .mt-card.mt-card-dark {
-    border: none;
+    border-color: transparent;
     background: var(--Surface-Body, #131210);
 }
 
@@ -156,10 +156,15 @@
     opacity: 0.40;
 }
 
+.mt-card-radio {
+    border-width: 2px;
+    cursor: pointer;
+}
+
 input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio,
 .mt-card.active {
     border-radius: var(--Border-Radius-xl, 16px);
-    border: var(--Border-Width-md, 2px) solid var(--Primary-400, #FFB34A);
+    border-color: var(--Primary-400, #FFB34A);
     background: rgba(255, 179, 74, 0.20);
 }
 
@@ -168,10 +173,6 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio,
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-}
-
-.mt-card.mt-card-radio {
-    cursor: pointer;
 }
 
 input[type="radio"] + .radio__label__wrapper > label.mt-card-radio  .mt-card__radio,
