@@ -338,7 +338,7 @@ if ($fflag): ?>
                                                     <?php foreach ($items as $it): ?>
                                                         <div class="mt-meta-item"
                                                             data-meta-key="<?php echo esc_attr($it['key']); ?>">
-                                                            <i class="mt-icon <?php echo esc_attr($it['icon_class']); ?>"></i>
+                                                            <i class="mt-icon mt-icon-white <?php echo esc_attr($it['icon_class']); ?>"></i>
                                                             <div class="mt-meta-text">
                                                                 <span
                                                                     class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>

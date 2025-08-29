@@ -162,8 +162,8 @@
    * Notifications
 */
 /* Oculto por defecto: no reserva espacio */
-.coupon-message-container { 
-  display: none; 
+.coupon-message-container {
+  display: none;
   margin-bottom: 0;
 }
 
@@ -182,9 +182,17 @@
   display: none;
 }
 
-.notifications.show { display: flex !important; }
-.notifications.notifications-success { color: var(--success-message); }
-.notifications.notifications-error   { color: var(--error-message); }
+.notifications.show {
+  display: flex !important;
+}
+
+.notifications.notifications-success {
+  color: var(--success-message);
+}
+
+.notifications.notifications-error {
+  color: var(--error-message);
+}
 
 
 /*--- Reset Bootstrap container ---*/
@@ -936,7 +944,7 @@
 }
 
 .border-mgt-primary {
-  border:1px solid var(--mgt-color-primary);
+  border: 1px solid var(--mgt-color-primary);
 }
 
 .border-neutral-300 {
@@ -1691,7 +1699,7 @@ label[for="wc-nmi-new-payment-method"] {
 .woocommerce .woocommerce-checkout #payment ul.payment_methods .wc-saved-payment-methods li,
 .woocommerce-checkout #payment div.payment_box p:last-child,
 .woocommerce-checkout #payment div.form-row.place-order {
-  background-color: var(--smoke-color) !important;
+  background-color: var(--smoke-color);
   padding: 16px;
   margin: 0 !important;
 }
@@ -2889,8 +2897,13 @@ a.pagination-number {
   width: 100%;
 }
 
-.pac-hidden .pac-container { display: none !important; }
-.pac-container { z-index: 999999 !important; } 
+.pac-hidden .pac-container {
+  display: none !important;
+}
+
+.pac-container {
+  z-index: 999999 !important;
+}
 
 .mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
   display: flex;
@@ -3001,16 +3014,220 @@ a.pagination-number {
   color: var(--title-color);
 }
 
-.place-order .privacy.woocommerce-invalid.woocommerce-invalid-required-field{
+.place-order .privacy.woocommerce-invalid.woocommerce-invalid-required-field {
   flex-direction: column;
   align-items: stretch !important;
 }
 
 .place-order .privacy.woocommerce-invalid.woocommerce-invalid-required-field .invalid-feedback.privacy-policy-error {
   margin-bottom: 8px;
-   margin-top: -8px;
+  margin-top: -8px;
 }
 
 .place-order .woocommerce-validated .invalid-feedback.privacy-policy-error {
   display: none !important;
+}
+
+.mt-payment-cards .woocommerce-SavedPaymentMethods-saveNew {
+  background-color: transparent !important;
+}
+
+/* ===== Navbar base ===== */
+.mega-navbar {
+  --nav-h: 72px;
+  /* desktop */
+  height: var(--nav-h);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  background: rgba(18, 18, 18, 0.80);
+  backdrop-filter: blur(12.5px);
+  -webkit-backdrop-filter: blur(12.5px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(64, 64, 64, 0.3);
+}
+
+.ot-header .sticky-wrapper {
+  position: static;
+}
+
+/* evita doble sticky del wrapper anterior */
+
+/* clusters */
+.mega-navbar .nav-left,
+.mega-navbar .nav-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mega-navbar .nav-left {
+  justify-content: flex-start;
+}
+
+.mega-navbar .nav-right {
+  justify-content: flex-end;
+}
+
+/* brand tile (60x60) */
+.mega-navbar .brand-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  outline: 1px solid #404040;
+  outline-offset: -1px;
+  background: #131210;
+  overflow: hidden;
+}
+
+.mega-navbar .brand-tile img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+/* wordmark */
+.mega-navbar .brand-wordmark img.logo {
+  height: 28px;
+  display: block;
+}
+
+/* center tabs (desktop) */
+.mega-navbar .nav-tabs {
+  display: none;
+  /* visible en ≥992px */
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.mega-navbar .nav-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  font: 500 16px/24px Roboto, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color: #FAFAFA;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.mega-navbar .nav-tab.is-active {
+  background: #1E1E1E;
+}
+
+.mega-navbar .nav-tab[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* icon buttons (right) */
+.mega-navbar .icon-btn {
+  padding: 12px;
+  border-radius: 12px;
+  background: #292524;
+  outline: 1px solid #404040;
+  outline-offset: -1px;
+  border: 0;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mega-navbar .icon-btn svg {
+  display: block;
+}
+
+/* Burger visible solo en <992px */
+.mega-navbar .burger {
+  display: inline-flex;
+}
+
+@media (min-width: 992px) {
+  .mega-navbar {
+    --nav-h: 80px;
+  }
+
+  /* si quieres un poco más alto en desktop */
+  .mega-navbar .nav-tabs {
+    display: inline-flex;
+  }
+
+  .mega-navbar .burger {
+    display: none;
+  }
+}
+
+/* ===== Mobile drawer ===== */
+.mega-mobile-menu[hidden] {
+  display: none !important;
+}
+
+.mega-mobile-menu {
+  position: fixed;
+  inset: var(--nav-h, 72px) 0 0 0;
+  background: rgba(18, 18, 18, 0.98);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  overflow: auto;
+  border-top: 1px solid rgba(64, 64, 64, 0.3);
+}
+
+.mega-mobile-menu .mm-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.mega-mobile-menu .mm-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.mega-mobile-menu .mm-link {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  font: 500 16px/24px Roboto, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color: #FAFAFA;
+  background: #1E1E1E;
+  text-decoration: none;
+  text-align: center;
+}
+
+.mega-mobile-menu .mm-link.is-active {
+  outline: 1px solid #404040;
+}
+
+.mega-mobile-menu .mm-link[disabled] {
+  opacity: .5;
+  pointer-events: none;
+}
+
+/* ===== Body padding-top para evitar salto de contenido ===== */
+:root {
+  --mt-header-height: 0px;
+}
+
+body {
+  padding-top: var(--mt-header-height);
 }

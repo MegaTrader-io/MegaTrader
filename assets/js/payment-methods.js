@@ -283,38 +283,40 @@
 
       saveP.classList.add('p-0');
       const saveFs = saveP.closest('fieldset') || saveP;
+      saveFs.classList.add('payment-save-card', 'pt-2');
+
 
       if (dest.contains(saveFs)) return;
 
       const newRadio = document.querySelector('li.woocommerce-SavedPaymentMethods-new input[type="radio"]');
       if (newRadio && !newRadio.checked) return;
 
-      saveFs.classList.add('payment-save-card pt-2');
+      //saveFs.style.marginTop = '12px';
       dest.appendChild(saveFs);   
     }
 
-    // 1) Carga inicial
+    // 1) Initial load
     document.addEventListener('DOMContentLoaded', () => moveSaveCheckboxInside('DOMContentLoaded'));
 
-    // 2) Refrescos de Woo/Stripe
+    // 2) Woo/Stripe Refreshments
     if (typeof jQuery !== 'undefined') {
       jQuery(document.body).on('updated_checkout wc-credit-card-form-init payment_method_selected', () => {
         setTimeout(() => moveSaveCheckboxInside('updated_checkout'), 0);
       });
     }
 
-    // 3) Click en “Use a new payment method”
+    // 3) Click on “Use a new payment method”
     document.addEventListener('click', (e) => {
       if (e.target && e.target.matches('li.woocommerce-SavedPaymentMethods-new input[type="radio"]')) {
         setTimeout(() => moveSaveCheckboxInside('radio:new-click'), 0);
       }
     });
 
-    // 4) Fallback: aparición del form en el DOM
+    // 4) Fallback: appearance of the form in the DOM
     const obs = new MutationObserver(() => setTimeout(() => moveSaveCheckboxInside('mutation'), 0));
     obs.observe(document.body, { childList: true, subtree: true });
   })();
 
-  // Señal de arranque
-  log('payment-methods inicializado');
+  // Start signal
+  log('payment-methods initialized');
 })();
