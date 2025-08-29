@@ -54,10 +54,17 @@
     return (node) => {
       if (!node) return;
       try {
-        if (stringsToRemove.includes(node.textContent.trim())) {
+        // Borra <li> concretos si existen; si solo hay 1 <li>, borrar el UL entero
+        const items = node.querySelectorAll ? node.querySelectorAll('li') : [];
+        if (items.length) {
+          items.forEach(li => {
+            if (stringsToRemove.includes(li.textContent.trim())) li.remove();
+          });
+          if (!node.querySelector('li')) node.remove();
+        } else if (stringsToRemove.includes(node.textContent.trim())) {
           node.remove();
-          log('Oculté error global:', node.textContent.trim());
         }
+        log('Filtro de errores aplicado');
       } catch (e) {}
     };
   }
@@ -157,7 +164,17 @@
     }, true);
   })();
 
-  // C) Eventos jQuery propios de Woo
+  // C) Cambios sobre el checkbox de términos (mostrar/ocultar inline al instante)
+  document.addEventListener('change', (e) => {
+    if (!e.target || !e.target.matches(PM_SEL.termsCheckbox)) return;
+    if (e.target.checked) {
+      clearTermsError();
+    } else {
+      ensureTermsError();
+    }
+  });
+
+  // D) Eventos jQuery propios de Woo
   if (window.jQuery) {
     jQuery(document.body).on('checkout_place_order', function () {
       log('Evento checkout_place_order');
@@ -186,6 +203,13 @@
     { matches: PM_SEL.paymentRoot, callbacks: [addPaymentMethodBoxToggleListeners] },
     { matches: '.woocommerce-error', callbacks: [filterErrors(ERR_BLACKLIST)] },
   ]);
+
+  // Llamada inicial por si #payment ya está en el DOM
+  try {
+    if (document.querySelector(PM_SEL.paymentRoot)) {
+      addPaymentMethodBoxToggleListeners();
+    }
+  } catch (e) { log('init toggle error', e); }
 
   // ========== Animación y toggle de métodos de pago ==========
   function slideCollapse(targetElement, isExpanded, useCustom) {
@@ -246,6 +270,50 @@
     );
     toggle();
   }
+
+  // ===== Mover “Save payment method” dentro del UPE form (robusto) =====
+  (function () {
+    const DEST_SEL = '#wc-stripe-upe-form, #wc-stripe-cc-form, .wc-payment-form';
+    const SAVE_SEL = '.woocommerce-SavedPaymentMethods-saveNew'; // <p> dentro de un fieldset
+
+    function moveSaveCheckboxInside(reason) {
+      const dest = document.querySelector(DEST_SEL);
+      const saveP = document.querySelector(SAVE_SEL);
+      if (!dest || !saveP) return;
+
+      saveP.classList.add('p-0');
+      const saveFs = saveP.closest('fieldset') || saveP;
+
+      if (dest.contains(saveFs)) return;
+
+      const newRadio = document.querySelector('li.woocommerce-SavedPaymentMethods-new input[type="radio"]');
+      if (newRadio && !newRadio.checked) return;
+
+      saveFs.classList.add('payment-save-card pt-2');
+      dest.appendChild(saveFs);   
+    }
+
+    // 1) Carga inicial
+    document.addEventListener('DOMContentLoaded', () => moveSaveCheckboxInside('DOMContentLoaded'));
+
+    // 2) Refrescos de Woo/Stripe
+    if (typeof jQuery !== 'undefined') {
+      jQuery(document.body).on('updated_checkout wc-credit-card-form-init payment_method_selected', () => {
+        setTimeout(() => moveSaveCheckboxInside('updated_checkout'), 0);
+      });
+    }
+
+    // 3) Click en “Use a new payment method”
+    document.addEventListener('click', (e) => {
+      if (e.target && e.target.matches('li.woocommerce-SavedPaymentMethods-new input[type="radio"]')) {
+        setTimeout(() => moveSaveCheckboxInside('radio:new-click'), 0);
+      }
+    });
+
+    // 4) Fallback: aparición del form en el DOM
+    const obs = new MutationObserver(() => setTimeout(() => moveSaveCheckboxInside('mutation'), 0));
+    obs.observe(document.body, { childList: true, subtree: true });
+  })();
 
   // Señal de arranque
   log('payment-methods inicializado');

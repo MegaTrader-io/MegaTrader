@@ -32,7 +32,7 @@
             $name = esc_html($item['name']);
             $description = esc_html($item['description']);
             
-            $is_checked = $index === 0 ? 'true' : 'false';
+            $checked_attr = $index === 0 ? 'checked="true"' : '';
 
             $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
             $config = isset($parsed['config']) ? $parsed['config'] : [];
@@ -41,7 +41,7 @@
             $disabled_class = $is_disabled ? ' disabled-within' : '';
             $radio_id = esc_attr('account-size-' . $slug);
             ?>
-            <input type="radio" name="account-size" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden checked="<?= $checked_attr ?>">
+            <input type="radio" name="account-size" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden <?= $checked_attr ?>">
             <div class="radio__label__wrapper">
                 <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $disabled_class?>"
                     for="<?= $radio_id ?>" 
