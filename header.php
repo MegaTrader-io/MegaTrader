@@ -87,7 +87,7 @@ global $product;
               <button class="icon-btn" type="button" aria-label="Profile">
                 <div class="mt-icon mt-icon-white mt-icon_account"></div>
               </button>
-              <button class="icon-btn" type="button" aria-label="Logout" onclick="handleLogout(event)">
+              <button id="mega-logout" class="icon-btn logout" type="button" aria-label="Logout" onclick="handleLogout(event)">
                 <div class="mt-icon mt-icon-white mt-icon_logout"></div>
               </button>
 
