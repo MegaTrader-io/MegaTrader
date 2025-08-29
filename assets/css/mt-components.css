@@ -381,6 +381,12 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
 .mt-icon_logout {
     mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_14103_1828" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_14103_1828)"><path d="M5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V5C3 4.45 3.19583 3.97917 3.5875 3.5875C3.97917 3.19583 4.45 3 5 3H12V5H5V19H12V21H5ZM16 17L14.625 15.55L17.175 13H9V11H17.175L14.625 8.45L16 7L21 12L16 17Z" fill="white"/></g></svg>');
 }
+
+.mt-icon_menu {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_14110_3035" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-1" y="0" width="25" height="24"><rect x="-0.5" width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_14110_3035)"><path d="M2.5 18V16H20.5V18H2.5ZM2.5 13V11H20.5V13H2.5ZM2.5 8V6H20.5V8H2.5Z" fill="white"/></g></svg>');
+}
+
+
 /* END ICONS */
 
 /* BADGE */

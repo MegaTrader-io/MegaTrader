@@ -43,12 +43,16 @@ global $product;
           <nav class="mega-navbar" role="navigation" aria-label="Primary">
             <!-- Left cluster -->
             <div class="nav-left">
-              <div class="header-logo">
-									<a href="https://megatrader.io/">
-										<img class="logo" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-original.svg" alt="Logo" width="326" height="60">
-										<img class="mobile-logo" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="Logo" width="60" height="60">
-									</a>
-								</div>
+              <a class="brand-tile" href="https://megatrader.io/">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
+                  alt="MegaTrader" width="60" height="60" loading="eager" />
+              </a>
+
+              <!-- Wordmark / logotipo ancho (usa el que ya tienes) -->
+              <a class="brand-wordmark" href="https://megatrader.io/">
+                <img class="logo" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-original.svg"
+                  alt="MegaTrader" height="28" loading="eager" />
+              </a>
             </div>
 
             <!-- Center tabs (oculto en mobile) -->
@@ -90,11 +94,7 @@ global $product;
               <!-- Burger (solo visible en ≤lg) -->
               <button id="mega-burger" class="icon-btn burger" type="button" aria-label="Open menu"
                 aria-controls="mega-mobile-menu" aria-expanded="false">
-                <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
-                  <rect y="5" width="24" height="2" fill="#fff" />
-                  <rect y="11" width="24" height="2" fill="#fff" />
-                  <rect y="17" width="24" height="2" fill="#fff" />
-                </svg>
+                <div class="mt-icon mt-icon-white mt-icon_menu"></div>
               </button>
             </div>
           </nav>
