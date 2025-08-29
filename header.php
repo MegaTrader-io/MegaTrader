@@ -98,28 +98,35 @@ global $product;
                 <div class="mt-icon mt-icon-white mt-icon_menu"></div>
               </button>
             </div>
+            <div id="mega-mobile-menu" class="mega-mobile-menu" hidden>
+              <div class="mm-inner">
+                <ul class="mm-links" role="menu">
+                  <li>
+                    <a class="nav-tab is-active" href="/account-overview/">
+                      Account overview
+                    </a>
+                  </li>
+                  <li>
+                    <button class="nav-tab" type="button" title="Coming soon">
+                      Referrals
+                    </button>
+                  </li>
+                  <li>
+                    <button class="nav-tab" type="button" title="Coming soon">
+                      Payouts
+                    </button>
+                  </li>
+                  <li>
+                    <a class="nav-tab" href="https://help.megatrader.io/en/" target="_blank" rel="noopener">
+                      Help center
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </nav>
           <!-- Mobile drawer -->
-          <div id="mega-mobile-menu" class="mega-mobile-menu" hidden>
-            <div class="mm-header d-flex align-items-center justify-content-between">
-              <a class="brand-tile" href="https://megatrader.io/">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
-                  alt="MegaTrader" width="40" height="40" loading="eager" />
-              </a>
-              <button id="mega-burger-close" class="icon-btn burger-close" type="button" aria-label="Close menu">
-                <div class="mt-icon mt-icon-white mt-icon_close"></div>
-              </button>
-            <div class="mm-inner">
-              <ul class="mm-links" role="menu">
-                <li role="none"><a role="menuitem" href="/account-overview/" class="mm-link is-active">Account
-                    overview</a></li>
-                <li role="none"><button role="menuitem" class="mm-link" type="button">Referrals</button></li>
-                <li role="none"><button role="menuitem" class="mm-link" type="button">Payouts</button></li>
-                <li role="none"><a role="menuitem" href="https://help.megatrader.io/en/" target="_blank" rel="noopener"
-                    class="mm-link">Help center</a></li>
-              </ul>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>

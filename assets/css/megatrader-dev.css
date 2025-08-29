@@ -3202,50 +3202,40 @@ a.pagination-number {
   }
 }
 
-/* ===== Mobile drawer: offcanvas desde la derecha ===== */
-#mega-mobile-menu {
-  position: fixed;
-  top: var(--mt-header-height, var(--nav-h, 72px)); /* justo debajo del header/banda */
+/* Drawer dentro del nav, oculto por defecto */
+.mega-navbar .mega-mobile-menu[hidden] { display: none !important; }
+
+.mega-navbar .mega-mobile-menu {
+  position: absolute;     /* clave: relativo al nav (sticky) */
+  top: 100%;              /* justo debajo del header */
+  left: 0;
   right: 0;
-  bottom: 0;
-  width: min(92vw, 360px);
-  max-width: 420px;
   background: rgba(18,18,18,.98);
   backdrop-filter: blur(8px);
-  border-left: 1px solid rgba(64,64,64,.3);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  transform: translateX(100%);     /* cerrado */
-  transition: transform .35s ease;
-  will-change: transform;
-  z-index: 1040;                   /* por encima del contenido */
+  border-top: 1px solid rgba(64,64,64,.3);
+  z-index: 2;             /* más que el fondo del nav, menor que modales */
+  display: none;          /* toggle con .is-open */
 }
 
-/* Abierto */
-#mega-mobile-menu.is-open {
-  transform: translateX(0);
+.mega-navbar .mega-mobile-menu.is-open {
+  display: block;
 }
 
-/* Si el HTML trae hidden por defecto, que NO lo esconda visualmente
-   (usaremos .is-open / transform para animar) */
-#mega-mobile-menu[hidden] {
-  display: block !important;
-}
-
-/* Contenido interno del drawer */
-#mega-mobile-menu .mm-inner {
+.mega-navbar .mega-mobile-menu .mm-inner {
   max-width: 1280px;
   margin: 0 auto;
   padding: 16px;
 }
-#mega-mobile-menu .mm-links {
+
+.mega-navbar .mega-mobile-menu .mm-links {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   gap: 8px;
 }
-#mega-mobile-menu .mm-link {
+
+.mega-navbar .mega-mobile-menu .mm-link {
   display: block;
   width: 100%;
   padding: 12px 16px;
@@ -3257,27 +3247,11 @@ a.pagination-number {
   text-decoration: none;
   text-align: center;
 }
-#mega-mobile-menu .mm-link.is-active { outline: 1px solid #404040; }
-#mega-mobile-menu .mm-link[disabled] { opacity: .5; pointer-events: none; }
 
-/* Backdrop (capa oscura clicable) */
-.mm-backdrop {
-  position: fixed;
-  top: var(--mt-header-height, var(--nav-h, 72px));
-  right: 0; bottom: 0; left: 0;
-  background: rgba(0,0,0,.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .35s ease;
-  z-index: 1030;                   /* justo debajo del panel */
-}
-.mm-backdrop.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
+.mega-navbar .mega-mobile-menu .mm-link.is-active { outline: 1px solid #404040; }
+.mega-navbar .mega-mobile-menu .mm-link[disabled] { opacity: .5; pointer-events: none; }
 
-/* Opcional: oculta drawer/backdrop en desktop */
+/* Por seguridad, no mostrar el drawer en desktop */
 @media (min-width: 1024.98px) {
-  #mega-mobile-menu { display: none !important; }
-  .mm-backdrop { display: none !important; }
+  .mega-navbar .mega-mobile-menu { display: none !important; }
 }
