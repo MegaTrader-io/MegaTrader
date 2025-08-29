@@ -264,7 +264,6 @@
     max-width: calc(43% - var(--two-columns-gap) / 2);
   }
 
-
 }
 
 /* Tablet */
@@ -1476,6 +1475,9 @@
 
 .badge-mega-primary {
   background-color: var(--Surface-Primary-Hover);
+}
+.badge-mega-secondary {
+  background-color: #14b8a6;
 }
 
 
@@ -3042,39 +3044,37 @@ a.pagination-number {
   position: static;
 }
 
-/* ===== Navbar base ===== */
 .mega-navbar {
   --nav-h: 72px;
-  /* antes: height; ahora: min-height para que pueda crecer */
   min-height: var(--nav-h);
   display: flex;
-  flex-wrap: wrap;           /* clave: permite que el drawer baje a otra línea */
+  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
   gap: 8px;
-
   backdrop-filter: blur(12.5px);
   -webkit-backdrop-filter: blur(12.5px);
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: linear-gradient(0deg, rgba(19, 18, 16, 0.80) 0%, rgba(19, 18, 16, 0.80) 100%);
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .25);
-  isolation: isolate;
 }
+
 @media (min-width: 992px) {
-  .mega-navbar { --nav-h: 80px; }
+  .mega-navbar {
+    --nav-h: 80px;
+  }
 }
 
-/* ==== clusters: que NO crezcan, solo lo que ocupa el contenido */
-.mega-navbar > .nav-left,
-.mega-navbar > .nav-tabs,
-.mega-navbar > .nav-right {
-  flex: 0 0 auto;            /* no se estiran */
-  min-width: 0;              /* evita overflow en textos largos */
+.mega-navbar>.nav-left,
+.mega-navbar>.nav-tabs,
+.mega-navbar>.nav-right {
+  flex: 0 0 auto;
+  min-width: 0;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
 }
 
-/* right cluster pegado a la derecha */
 .mega-navbar .nav-right {
   display: inline-flex;
   justify-content: flex-end;
@@ -3082,51 +3082,60 @@ a.pagination-number {
   gap: 8px;
 }
 
-/* left cluster */
 .mega-navbar .nav-left {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
-/* ===== LOGOS: toggle por breakpoint ===== */
 /* Mobile & tablet: SOLO el logo cuadrado */
-.mega-navbar .brand-tile { display: inline-flex; }
-.mega-navbar .brand-wordmark { display: none; }
-
-/* Desktop (≥ 992px): SOLO el wordmark */
-@media (min-width: 992px) {
-  .mega-navbar .brand-tile { display: none; }
-  .mega-navbar .brand-wordmark { display: inline-flex; }
+.mega-navbar .brand-tile {
+  display: inline-flex;
 }
 
-/* Tamaños consistentes de imágenes */
+.mega-navbar .brand-wordmark {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .mega-navbar .brand-tile {
+    display: none;
+  }
+
+  .mega-navbar .brand-wordmark {
+    display: inline-flex;
+  }
+}
+
 .mega-navbar .brand-tile img {
   width: 60px;
   height: 60px;
   object-fit: cover;
 }
+
 @media (min-width: 992px) {
   .mega-navbar .brand-wordmark img {
-    height: 60px; /* respeta figma (60px) */
+    height: 60px;
     width: auto;
     display: block;
   }
 }
 
-/* ===== center tabs (desktop) ===== */
 .mega-navbar .nav-tabs {
-  display: none;             /* visible en ≥1024.98px */
+  display: none;
   gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
   align-items: center;
-  justify-content: center;   /* centra su propio contenido */
+  justify-content: center;
   border: none;
 }
+
 @media (min-width: 1024.98px) {
-  .mega-navbar .nav-tabs { display: inline-flex; }
+  .mega-navbar .nav-tabs {
+    display: inline-flex;
+  }
 }
 
 .mega-navbar .nav-tab {
@@ -3140,12 +3149,18 @@ a.pagination-number {
   background: transparent;
   border: 0;
   cursor: pointer;
-  text-decoration: none;     /* para los <a> */
+  text-decoration: none;
 }
-.mega-navbar .nav-tab.is-active { background: #1E1E1E; }
-.mega-navbar .nav-tab[disabled] { opacity: .5; cursor: not-allowed; }
 
-/* ===== icon buttons (right) ===== */
+.mega-navbar .nav-tab.is-active {
+  background: #1E1E1E;
+}
+
+.mega-navbar .nav-tab[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
 .mega-navbar .icon-btn {
   padding: 12px;
   border-radius: 12px;
@@ -3158,56 +3173,53 @@ a.pagination-number {
   align-items: center;
   justify-content: center;
 }
-.mega-navbar .icon-btn svg { display: block; }
 
-/* Burger visible solo en <1024.98px */
-.mega-navbar .burger { display: inline-flex; }
+.mega-navbar .icon-btn svg {
+  display: block;
+}
+
+.mega-navbar .burger {
+  display: inline-flex;
+}
+
 @media (min-width: 1024.98px) {
-  .mega-navbar .burger { display: none; }
+  .mega-navbar .burger {
+    display: none;
+  }
 }
 
-/* Oculta botón de logout en mobile si quieres */
 @media (max-width: 1024.98px) {
-  .mega-navbar .logout { display: none; }
+  .mega-navbar .logout {
+    display: none;
+  }
 }
 
-/* ===========================
-   MOBILE DRAWER: efecto collapse que EMPUJA
-   =========================== */
-
-/* Mantener oculto cuando tenga [hidden] */
-.mega-navbar .mega-mobile-menu[hidden] {
-  display: none !important;
-}
-
-/* Drawer EN EL FLUJO, ocupa toda la fila debajo del header */
 .mega-navbar .mega-mobile-menu {
-  position: static;                 /* en el flujo */
-  flex: 0 0 100%;                   /* ocupa 100% del ancho de la fila */
+  position: static;
+  flex: 0 0 100%;
   width: 100%;
-  order: 999;                       /* asegúralo al final de la fila */
+  order: 999;
 
-  background: rgba(18,18,18,.98);
+  background: rgba(18, 18, 18, .98);
   backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(64,64,64,.3);
-
-  overflow: hidden;                 /* clip durante la animación */
-  height: 0;                        /* colapsado */
-  opacity: 0;                       /* pequeño fade */
-  transition: height 280ms ease, opacity 180ms linear;
+  overflow: hidden;
+  height: 0;
+  opacity: 0;
+  transition: height 520ms cubic-bezier(.22, .85, .36, 1),
+    opacity 520ms linear;
   will-change: height;
+  pointer-events: none; 
 }
 
-/* Abierto: la altura la maneja JS; aquí solo el fade */
 .mega-navbar .mega-mobile-menu.is-open {
   opacity: 1;
+  pointer-events: auto;
 }
 
-/* Contenido interno del drawer */
 .mega-navbar .mega-mobile-menu .mm-inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 16px 0;
 }
 
 .mega-navbar .mega-mobile-menu .mm-links {
@@ -3225,17 +3237,22 @@ a.pagination-number {
   padding: 12px 16px;
   border-radius: 12px;
   text-transform: uppercase;
-  font: 500 16px/24px Roboto, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: #FAFAFA;
-  background: #1E1E1E;
   text-decoration: none;
   text-align: center;
 }
 
-.mega-navbar .mega-mobile-menu .mm-link.is-active { outline: 1px solid #404040; }
-.mega-navbar .mega-mobile-menu .mm-link[disabled] { opacity: .5; pointer-events: none; }
+.mega-navbar .mega-mobile-menu .mm-link.is-active {
+  outline: 1px solid #404040;
+}
 
-/* Por seguridad, no mostrar drawer en desktop */
+.mega-navbar .mega-mobile-menu .mm-link[disabled] {
+  opacity: .5;
+  pointer-events: none;
+}
+
 @media (min-width: 1024.98px) {
-  .mega-navbar .mega-mobile-menu { display: none !important; }
+  .mega-navbar .mega-mobile-menu {
+    display: none !important;
+  }
 }

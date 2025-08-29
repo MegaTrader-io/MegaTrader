@@ -1309,13 +1309,13 @@ function custom_saved_payment_method_li_html( $html, $token, $gateway ) {
                         <span class="saved-cc-mask"><?php echo esc_html( "••••" ); ?></span>
                         <span class="saved-cc-last4"><?php echo esc_html( "$last4" ); ?></span>
                     </div>
-                    <div class="saved-cc-exp-date">Expires <?php echo esc_html( "$exp_month/$exp_year" ); ?><?php echo $is_default ? ' - Current payment method' : ''; ?></div>
+                    <div class="saved-cc-exp-date">Expires <?php echo esc_html( "$exp_month/$exp_year" ); ?></div>
                     <?php if ( $is_default && ! $is_change_payment_method) : ?>
                         <a class="saved-cc-change" href="<?php echo esc_url( $change_url ); ?>">Change Default Card</a>
                     <?php endif; ?>
                 </div>
                 <?php if ( $is_default ) : ?>
-                    <div class="saved-cc-badge">DEFAULT</div>
+                    <div class="saved-cc-badge badge-mega badge-mega-md badge-mega-secondary">DEFAULT</div>
                 <?php endif; ?>
             </div>
         </label>

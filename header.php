@@ -32,7 +32,6 @@ global $product;
     <div class="menu-area">
       <div class="container">
         <nav class="mega-navbar" role="navigation" aria-label="Primary">
-          <!-- Left cluster -->
           <div class="nav-left">
             <a class="brand-tile" href="https://megatrader.io/">
               <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
@@ -44,7 +43,6 @@ global $product;
             </a>
           </div>
 
-          <!-- Center tabs (oculto en mobile) -->
           <ul class="nav-tabs">
             <li><a class="nav-tab is-active" href="/account-overview/">Account overview</a></li>
             <li><button class="nav-tab" type="button" title="Coming soon">Referrals</button></li>
@@ -52,7 +50,6 @@ global $product;
             <li><a class="nav-tab" href="https://help.megatrader.io/en/" target="_blank" rel="noopener">Help center</a></li>
           </ul>
 
-          <!-- Right cluster -->
           <div class="nav-right">
             <button class="icon-btn" type="button" aria-label="Notifications">
               <div class="mt-icon mt-icon-success mt-icon_notifications"></div>
@@ -64,15 +61,13 @@ global $product;
               <div class="mt-icon mt-icon-white mt-icon_logout"></div>
             </button>
 
-            <!-- Burger (solo visible en ≤lg) -->
             <button id="mega-burger" class="icon-btn burger" type="button" aria-label="Open menu"
                     aria-controls="mega-mobile-menu" aria-expanded="false">
               <div class="mt-icon mt-icon-white mt-icon_menu"></div>
             </button>
           </div>
 
-          <!-- Mobile drawer (en el flujo) -->
-          <div id="mega-mobile-menu" class="mega-mobile-menu" hidden>
+          <div id="mega-mobile-menu" class="mega-mobile-menu">
             <div class="mm-inner">
               <ul class="mm-links" role="menu">
                 <li><a class="nav-tab is-active" href="/account-overview/">Account overview</a></li>
@@ -83,7 +78,6 @@ global $product;
             </div>
           </div>
         </nav>
-        <!-- Mobile drawer -->
       </div>
     </div>
   </div>
@@ -100,68 +94,73 @@ global $product;
     const drawer = document.getElementById('mega-mobile-menu');
     if (!burger || !drawer) return;
 
-    // === Config animación (misma duración abrir/cerrar, más lento)
-    const SPEED = 480; // ms
+    const SPEED = 520;
     const EASING = 'cubic-bezier(.22,.85,.36,1)';
     const prefersReduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-    // Evitar el "brinco" por border-top: usamos outline que NO afecta layout
-    drawer.style.borderTop = '0';
-    drawer.style.outline = '1px solid rgba(64,64,64,.3)';
-    drawer.style.outlineOffset = '-1px';
-
-    // Forzar transición consistente
     drawer.style.transitionProperty = 'height, opacity';
     drawer.style.transitionDuration = `${SPEED}ms, ${SPEED}ms`;
     drawer.style.transitionTimingFunction = `${EASING}, linear`;
 
+    setClosedStyles();
+
     let animating = false;
 
-    function onEndHeight(cb) {
+    function setClosedStyles() {
+      drawer.classList.remove('is-open');
+      drawer.style.height = '0px';
+      drawer.style.opacity = '0';
+      drawer.style.pointerEvents = 'none';
+    }
+    function setOpenInteractive() {
+      drawer.style.pointerEvents = 'auto';
+    }
+
+    function onHeightEnd(cb) {
       let done = false;
-      const handler = (e) => {
+      const end = (e) => {
         if (e.target === drawer && e.propertyName === 'height') {
-          drawer.removeEventListener('transitionend', handler);
-          if (!done) { done = true; cb && cb(); }
+          cleanup();
         }
       };
-      drawer.addEventListener('transitionend', handler);
-      // Fallback si no dispara
-      setTimeout(() => {
-        if (!done) { try { drawer.removeEventListener('transitionend', handler); } catch {} cb && cb(); }
-      }, SPEED + 80);
+      const cleanup = () => {
+        if (done) return;
+        done = true;
+        drawer.removeEventListener('transitionend', end);
+        animating = false;
+        cb && cb();
+      };
+      drawer.addEventListener('transitionend', end);
+      setTimeout(cleanup, SPEED + 100); 
     }
 
     function openDrawer() {
       if (animating || drawer.classList.contains('is-open')) return;
       animating = true;
       burger.setAttribute('aria-expanded', 'true');
-
-      // Mostrar sin parpadeo
-      drawer.hidden = false;
       drawer.classList.add('is-open');
 
       if (prefersReduce) {
         drawer.style.opacity = '1';
         drawer.style.height = 'auto';
+        setOpenInteractive();
         animating = false;
         return;
       }
 
-      // Estado inicial invisible y sin altura en el MISMO frame
       drawer.style.opacity = '0';
       drawer.style.height = '0px';
+      drawer.offsetHeight; 
 
-      // Siguiente frame: medir y animar a su altura real + fade-in sincronizado
+      const target = drawer.scrollHeight;
       requestAnimationFrame(() => {
-        const target = drawer.scrollHeight;
         drawer.style.height = target + 'px';
         drawer.style.opacity = '1';
+        setOpenInteractive();
+      });
 
-        onEndHeight(() => {
-          drawer.style.height = 'auto'; // flexible a cambios de contenido
-          animating = false;
-        });
+      onHeightEnd(() => {
+        drawer.style.height = 'auto'; 
       });
     }
 
@@ -171,49 +170,45 @@ global $product;
       burger.setAttribute('aria-expanded', 'false');
 
       if (prefersReduce) {
-        drawer.classList.remove('is-open');
-        drawer.hidden = true;
-        drawer.style.height = '';
-        drawer.style.opacity = '';
-        animating = false;
+        setClosedStyles();
         return;
       }
 
-      // Partimos desde su altura real (si estaba en auto)
-      const start = drawer.scrollHeight;
+      const start = drawer.getBoundingClientRect().height || drawer.scrollHeight;
       drawer.style.height = start + 'px';
+      drawer.style.opacity = '1';
+      drawer.offsetHeight; 
 
-      // Siguiente frame: colapsar y hacer fade-out con la MISMA duración
       requestAnimationFrame(() => {
-        drawer.style.opacity = '0';
-        drawer.style.height = '0px';
-
-        onEndHeight(() => {
-          drawer.classList.remove('is-open');
-          drawer.hidden = true;
-          drawer.style.height = '';
-          drawer.style.opacity = '';
-          animating = false;
+        requestAnimationFrame(() => {
+          drawer.style.height = '0px';
+          drawer.style.opacity = '0';
+          drawer.style.pointerEvents = 'none';
         });
+      });
+
+      onHeightEnd(() => {
+        drawer.style.height = '0px';
+        drawer.style.opacity = '0';
+        drawer.style.pointerEvents = 'none';
+        drawer.classList.remove('is-open');
       });
     }
 
     function toggleDrawer(e) {
       if (e) e.preventDefault();
+      if (animating) return;
       drawer.classList.contains('is-open') ? closeDrawer() : openDrawer();
     }
 
-    // Eventos
     burger.addEventListener('click', toggleDrawer);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
 
-    // Cerrar al hacer click en un link del menú
     drawer.addEventListener('click', (e) => {
       const el = e.target.closest('a.nav-tab, button.nav-tab, .mm-link');
       if (el) closeDrawer();
     });
 
-    // Ajustar si cambia el contenido mientras está abierto y animando
     if ('ResizeObserver' in window) {
       const ro = new ResizeObserver(() => {
         if (!drawer.classList.contains('is-open')) return;
@@ -225,3 +220,4 @@ global $product;
     }
   })();
 </script>
+

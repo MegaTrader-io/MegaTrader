@@ -164,8 +164,9 @@ html {
     top: 0 !important;
 }
 
+
 .admin-bar .ot-header {
-    padding-top: 32px;
+    top: 32px;
     /* Medium devices */
 }
 
@@ -175,10 +176,11 @@ html {
     }
 }
 
+/*
 body {
     padding-top: 100px;
-    /* Medium devices */
-}
+
+}*/
 
 @media (max-width: 991px) {
     body {
@@ -187,7 +189,7 @@ body {
 }
 
 body.admin-bar {
-    padding-top: 132px;
+    padding-top: 32px;
     /* Medium devices */
 }
 
@@ -3699,7 +3701,7 @@ a.text-theme:hover,
 /* Header 1 ---------------------------------- */
 .header-layout1 {
     width: 100%;
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     width: 100%;
