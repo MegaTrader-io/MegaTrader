@@ -3035,9 +3035,9 @@ a.pagination-number {
 
 /* ===== Navbar base ===== */
 .mega-navbar {
-  --nav-h: 72px;                 
+  --nav-h: 72px;
   height: var(--nav-h);
-  display: flex;                 
+  display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
@@ -3047,24 +3047,30 @@ a.pagination-number {
   top: 0;
   z-index: 1000;
   background: linear-gradient(0deg, rgba(19, 18, 16, 0.80) 0%, rgba(19, 18, 16, 0.80) 100%);
-  box-shadow: 0 4px 4px 0 rgba(0,0,0,.25);
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, .25);
+  isolation: isolate;
 }
 
 /* evita doble sticky del wrapper anterior */
-.ot-header .sticky-wrapper { position: static; }
+.ot-header .sticky-wrapper {
+  position: static;
+}
 
 /* ==== clusters: que NO crezcan, solo lo que ocupa el contenido */
-.mega-navbar > .nav-left,
-.mega-navbar > .nav-tabs,
-.mega-navbar > .nav-right {
-  flex: 0 0 auto;   /* << clave para que no se estiren */
-  min-width: 0;     /* evita overflow en tabs con textos largos */
+.mega-navbar>.nav-left,
+.mega-navbar>.nav-tabs,
+.mega-navbar>.nav-right {
+  flex: 0 0 auto;
+  /* << clave para que no se estiren */
+  min-width: 0;
+  /* evita overflow en tabs con textos largos */
 }
 
 /* right cluster pegado a la derecha */
 .mega-navbar .nav-right {
   display: inline-flex;
-  justify-content: flex-end;  /* como en figma */
+  justify-content: flex-end;
+  /* como en figma */
   align-items: center;
   gap: 8px;
 }
@@ -3078,14 +3084,28 @@ a.pagination-number {
 
 /* ===== LOGOS: toggle por breakpoint ===== */
 /* Mobile & tablet: SOLO el logo cuadrado */
-.mega-navbar .brand-tile { display: inline-flex; }
-.mega-navbar .brand-wordmark { display: none; }
+.mega-navbar .brand-tile {
+  display: inline-flex;
+}
+
+.mega-navbar .brand-wordmark {
+  display: none;
+}
 
 /* Desktop (≥ 992px): SOLO el wordmark */
 @media (min-width: 992px) {
-  .mega-navbar { --nav-h: 80px; } /* un pelín más alto en desktop si quieres */
-  .mega-navbar .brand-tile { display: none; }
-  .mega-navbar .brand-wordmark { display: inline-flex; }
+  .mega-navbar {
+    --nav-h: 80px;
+  }
+
+  /* un pelín más alto en desktop si quieres */
+  .mega-navbar .brand-tile {
+    display: none;
+  }
+
+  .mega-navbar .brand-wordmark {
+    display: inline-flex;
+  }
 }
 
 /* Tamaños consistentes de imágenes */
@@ -3094,9 +3114,11 @@ a.pagination-number {
   height: 60px;
   object-fit: cover;
 }
+
 @media (min-width: 992px) {
   .mega-navbar .brand-wordmark img {
-    height: 60px;   /* respeta figma (60px) */
+    height: 60px;
+    /* respeta figma (60px) */
     width: auto;
     display: block;
   }
@@ -3104,17 +3126,22 @@ a.pagination-number {
 
 /* ===== center tabs (desktop) ===== */
 .mega-navbar .nav-tabs {
-  display: none;            /* visible en ≥1025px */
+  display: none;
+  /* visible en ≥1025px */
   gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
   align-items: center;
-  justify-content: center;  /* centra su propio contenido */
+  justify-content: center;
+  /* centra su propio contenido */
   border: none;
 }
+
 @media (min-width: 1024.98px) {
-  .mega-navbar .nav-tabs { display: inline-flex; }
+  .mega-navbar .nav-tabs {
+    display: inline-flex;
+  }
 }
 
 .mega-navbar .nav-tab {
@@ -3124,14 +3151,20 @@ a.pagination-number {
   padding: 12px 16px;
   border-radius: 12px;
   text-transform: uppercase;
-  font: 500 16px/24px Roboto, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   color: #FAFAFA;
   background: transparent;
   border: 0;
   cursor: pointer;
 }
-.mega-navbar .nav-tab.is-active { background: #1E1E1E; }
-.mega-navbar .nav-tab[disabled] { opacity: .5; cursor: not-allowed; }
+
+.mega-navbar .nav-tab.is-active {
+  background: #1E1E1E;
+}
+
+.mega-navbar .nav-tab[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+}
 
 /* ===== icon buttons (right) ===== */
 .mega-navbar .icon-btn {
@@ -3146,39 +3179,73 @@ a.pagination-number {
   align-items: center;
   justify-content: center;
 }
-.mega-navbar .icon-btn svg { display: block; }
+
+.mega-navbar .icon-btn svg {
+  display: block;
+}
 
 /* Burger visible solo en <1025px */
-.mega-navbar .burger { display: inline-flex; }
-@media (min-width: 1024.98px) { .mega-navbar .burger { display: none; } }
+.mega-navbar .burger {
+  display: inline-flex;
+}
+
+@media (min-width: 1024.98px) {
+  .mega-navbar .burger {
+    display: none;
+  }
+}
 
 /* Oculta botón de logout en mobile si quieres */
-@media (max-width: 1024.98px) { .mega-navbar .logout { display: none; } }
+@media (max-width: 1024.98px) {
+  .mega-navbar .logout {
+    display: none;
+  }
+}
 
-/* ===== Mobile drawer ===== */
-.mega-mobile-menu[hidden] { display: none !important; }
-.mega-mobile-menu {
+/* ===== Mobile drawer: offcanvas desde la derecha ===== */
+#mega-mobile-menu {
   position: fixed;
-  inset: var(--nav-h, 72px) 0 0 0;   /* usa --nav-h si existe; fallback 72px */
+  top: var(--mt-header-height, var(--nav-h, 72px)); /* justo debajo del header/banda */
+  right: 0;
+  bottom: 0;
+  width: min(92vw, 360px);
+  max-width: 420px;
   background: rgba(18,18,18,.98);
   backdrop-filter: blur(8px);
-  z-index: 999;
-  overflow: auto;
-  border-top: 1px solid rgba(64,64,64,.3);
+  border-left: 1px solid rgba(64,64,64,.3);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  transform: translateX(100%);     /* cerrado */
+  transition: transform .35s ease;
+  will-change: transform;
+  z-index: 1040;                   /* por encima del contenido */
 }
-.mega-mobile-menu .mm-inner {
+
+/* Abierto */
+#mega-mobile-menu.is-open {
+  transform: translateX(0);
+}
+
+/* Si el HTML trae hidden por defecto, que NO lo esconda visualmente
+   (usaremos .is-open / transform para animar) */
+#mega-mobile-menu[hidden] {
+  display: block !important;
+}
+
+/* Contenido interno del drawer */
+#mega-mobile-menu .mm-inner {
   max-width: 1280px;
   margin: 0 auto;
   padding: 16px;
 }
-.mega-mobile-menu .mm-links {
+#mega-mobile-menu .mm-links {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   gap: 8px;
 }
-.mega-mobile-menu .mm-link {
+#mega-mobile-menu .mm-link {
   display: block;
   width: 100%;
   padding: 12px 16px;
@@ -3190,6 +3257,27 @@ a.pagination-number {
   text-decoration: none;
   text-align: center;
 }
-.mega-mobile-menu .mm-link.is-active { outline: 1px solid #404040; }
-.mega-mobile-menu .mm-link[disabled] { opacity: .5; pointer-events: none; }
+#mega-mobile-menu .mm-link.is-active { outline: 1px solid #404040; }
+#mega-mobile-menu .mm-link[disabled] { opacity: .5; pointer-events: none; }
 
+/* Backdrop (capa oscura clicable) */
+.mm-backdrop {
+  position: fixed;
+  top: var(--mt-header-height, var(--nav-h, 72px));
+  right: 0; bottom: 0; left: 0;
+  background: rgba(0,0,0,.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  z-index: 1030;                   /* justo debajo del panel */
+}
+.mm-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Opcional: oculta drawer/backdrop en desktop */
+@media (min-width: 1024.98px) {
+  #mega-mobile-menu { display: none !important; }
+  .mm-backdrop { display: none !important; }
+}
