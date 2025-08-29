@@ -3,14 +3,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const loadingOverlay = document.querySelector('.loading-overlay');
 
         if (show) {
-            loadingOverlay.classList.add('flex');
-            loadingOverlay.classList.remove('hidden');
+            loadingOverlay.classList.add('tw-flex');
+            loadingOverlay.classList.remove('tw-hidden');
 
             return;
         }
 
-        loadingOverlay.classList.remove('flex');
-        loadingOverlay.classList.add('hidden');
+        loadingOverlay.classList.remove('tw-flex');
+        loadingOverlay.classList.add('tw-hidden');
     }
 
     const ArrowUpWithCircle = () => {
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!marketWrapper) return;
 
         const carousel = document.createElement('div');
-        carousel.classList.add('tw-carousel', 'tw-flex', 'tw-gap-4', 'tw-animate-carousel');
+        carousel.classList.add('carousel', 'tw-flex', 'tw-gap-4', 'animate-carousel');
 
         const changeValue = (value) => {
             const symbol = value > 0 ? "+" : "-";
