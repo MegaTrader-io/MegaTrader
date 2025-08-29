@@ -4,18 +4,9 @@ $products_data = get_products_with_attributes();
 $attributes = $products_data['attributes'] ?? [];
 $platforms = [];
 
-$descriptions = [
-        'megatraderx' => 'Experience precision and speed with MegaTraderX, a platform designed for traders who demand reliability and performance. Built for the futures market, MegaTraderX combines cutting-edge tools and seamless execution to empower your trading success.',
-        'ninjatrader' => 'Empower your trading with advanced analytics, dynamic charting tools, and seamless execution designed for futures traders worldwide. NinjaTrader provides a powerful platform for those seeking precision and reliability. Elevate your strategies and achieve exceptional performance.',
-        'tradovate' => 'Streamline your trading experience with Tradovate\'s cloud-based platform, built for speed, simplicity, and modern efficiency. Enjoy a user-friendly interface, powerful tools, and seamless connectivity to ensure success in the futures market.',
-        'quantower' => 'Quantower delivers unmatched versatility for traders with advanced tools, intuitive features, and comprehensive strategy support. Tailored for adaptability, this platform is designed to enhance your trading journey and optimize your performance.',
-];
-
 foreach ($attributes as $attr) {
     switch ($attr['taxonomy']) {
         case 'pa_platform':
-            $attr['description'] = $descriptions[$attr['slug']];
-
             $platforms[] = $attr;
             break;
     }
@@ -112,15 +103,11 @@ $features = [
                 <?php
                 $id = 'id_' . $platform['slug'];
                 $attribute_meta = $platform['attribute_meta'] ?? [];
-                $isComingSoon = false;
-                foreach ($attribute_meta as $meta) {
-                    $normalized = strtolower(str_replace(' ', '', trim($meta)));
-                    if ($normalized === 'comingsoon') {
-                        $isComingSoon = true;
-                    }
-                }
-
+                $parsed = parse_attribute_meta($attribute_meta);
+                $badge_text = $parsed['config']['badge']['text'] ?? '';
+                $is_coming_soon = mt_is_coming_soon($badge_text);
                 ?>
+
                 <label
                         for="<?= $id ?>"
                         class="peer/platform tw-gap-2 tw-flex md:tw-flex-col tw-w-full md:tw-items-center tw-p-4 tw-space-y-2 tw-cursor-pointer">
@@ -141,9 +128,9 @@ $features = [
                         <?= $platform['name'] ?>
                     </div>
 
-                    <?php if ($isComingSoon) : ?>
+                    <?php if ($is_coming_soon) : ?>
                         <div class='badge-secondary-sm tw-bg-white tw-tracking-tight tw-hidden tw-text-nowrap lg:tw-flex'>
-                            COMING SOON
+                            <?= $badge_text ?>
                         </div>
                     <?php endif ?>
                 </label>

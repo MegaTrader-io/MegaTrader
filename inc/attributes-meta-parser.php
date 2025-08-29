@@ -96,3 +96,11 @@ if (!function_exists('parse_attribute_meta')) {
         return $result;
     }
 }
+
+if (!function_exists('mt_is_coming_soon')) {
+    function mt_is_coming_soon($badge_text = ''): bool
+    {
+        return strtolower(str_replace(' ', '', trim($badge_text))) == 'comminsoon'
+            || strtolower(str_replace(' ', '', trim($badge_text))) == 'comingsoon';
+    }
+}

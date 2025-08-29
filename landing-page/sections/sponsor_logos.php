@@ -1,3 +1,60 @@
+<?php
+$products_data = get_products_with_attributes();
+$attributes = $products_data['attributes'] ?? [];
+$platforms = [];
+
+foreach ($attributes as $attr) {
+    switch ($attr['taxonomy']) {
+        case 'pa_platform':
+            $attribute_meta = $attr['attribute_meta'] ?? [];
+
+            $parsed = parse_attribute_meta($attribute_meta);
+            $badge_text = $parsed['config']['badge']['text'] ?? '';
+
+            $platforms[] = [
+                    'name' => $attr['name'],
+                    'slug' => $attr['slug'],
+                    'order' => $parsed['config']['order']['value'] ?? 5,
+                    'is_coming_soon' => mt_is_coming_soon($badge_text)
+            ];
+
+            break;
+    }
+}
+
+function sort_platforms_by_order(array $platforms): array
+{
+    try {
+        usort($platforms, function ($a, $b) {
+            $orderA = isset($a['order']) ? (int)$a['order'] : 0;
+            $orderB = isset($b['order']) ? (int)$b['order'] : 0;
+
+            return $orderA <=> $orderB;
+        });
+    } catch (\Throwable $e) {
+        error_log("Error sorting platforms: " . $e->getMessage());
+        return $platforms;
+    }
+
+    return $platforms;
+}
+
+if (count($platforms) < 4) {
+    $total_platforms = count($platforms);
+    for ($i = 0; $i < 4 - $total_platforms; $i++) {
+        $platforms[] = [
+                'name' => '',
+                'slug' => '',
+                'order' => 5,
+                'is_coming_soon' => false
+        ];
+    }
+}
+
+$platforms_chunk_list = array_chunk(sort_platforms_by_order($platforms), 4);
+
+?>
+
 <section id="sponsor" class="tw-space-y-4 tw-px-4">
     <div class="tw-self-stretch tw-text-center tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
         Trusted Platforms
@@ -12,37 +69,30 @@
 
     <div
             class="tw-my-8 tw-flex tw-flex-col tw-items-center tw-gap-16 tw-py-12 md:tw-grid md:tw-grid-cols-2 md:tw-gap-12 lg:tw-my-auto lg:tw-flex lg:tw-flex-row lg:tw-justify-between lg:tw-gap-8 lg:tw-py-12 xl:tw-gap-16">
-        <div class="tw-contents md:tw-flex md:tw-justify-self-end tw-items-start tw-pt-2 tw-h-[88px]">
-            <img
-                    src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/mega-trader-x.svg"
-                    alt="ProjectX Sponsor Logo"
-                    width={224}
-                    height={54}
-            />
-        </div>
-        <div class="tw-contents md:tw-flex md:tw-justify-self-start">
-            <img
-                    src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/ninjatrader.svg"
-                    alt="NinjaTrader Sponsor Logo"
-                    width={281}
-                    height={36}
-            />
-        </div>
-        <div class="tw-contents md:tw-flex md:tw-justify-self-end">
-            <img
-                    src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/tradovate.svg"
-                    alt="Tradovate Sponsor Logo"
-                    width={185}
-                    height={56}
-            />
-        </div>
-        <div class="tw-contents md:tw-flex md:tw-justify-self-start">
-            <img
-                    src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/quantower.svg"
-                    alt="Quantower Sponsor Logo"
-                    width={235}
-                    height={52}
-            />
-        </div>
+        <?php foreach ($platforms_chunk_list as $chunk): ?>
+            <?php foreach ($chunk as $index => $platform): ?>
+                <?php
+                $is_coming_prefix = $platform['is_coming_soon'] ? '-coming-soon' : '';
+                $image = $platform['slug'] ? "{$platform['slug']}$is_coming_prefix.svg" : '';
+                $name = $platform['name'];
+
+                $classes = [
+                        0 => 'tw-contents md:tw-flex md:tw-justify-self-end',
+                        1 => 'tw-contents md:tw-flex md:tw-justify-self-start',
+                        2 => 'tw-contents md:tw-flex md:tw-justify-self-end',
+                        3 => 'tw-contents md:tw-flex md:tw-justify-self-start',
+                ];
+                ?>
+
+                <div class="<?= $classes[$index] ?>">
+                    <?php if ($image) : ?>
+                        <img
+                                src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/platforms/<?= $image ?>"
+                                alt="<?= $name ?> Sponsor Logo"
+                        />
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
     </div>
 </section>
