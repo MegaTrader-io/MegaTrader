@@ -22,23 +22,6 @@ foreach ($attributes as $attr) {
     }
 }
 
-function sort_platforms_by_order(array $platforms): array
-{
-    try {
-        usort($platforms, function ($a, $b) {
-            $orderA = isset($a['order']) ? (int)$a['order'] : 0;
-            $orderB = isset($b['order']) ? (int)$b['order'] : 0;
-
-            return $orderA <=> $orderB;
-        });
-    } catch (\Throwable $e) {
-        error_log("Error sorting platforms: " . $e->getMessage());
-        return $platforms;
-    }
-
-    return $platforms;
-}
-
 if (count($platforms) < 4) {
     $total_platforms = count($platforms);
     for ($i = 0; $i < 4 - $total_platforms; $i++) {
@@ -51,7 +34,7 @@ if (count($platforms) < 4) {
     }
 }
 
-$platforms_chunk_list = array_chunk(sort_platforms_by_order($platforms), 4);
+$platforms_chunk_list = array_chunk(mt_sort_list_by_order($platforms), 4);
 
 ?>
 

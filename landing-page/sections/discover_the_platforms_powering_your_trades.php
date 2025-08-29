@@ -7,6 +7,9 @@ $platforms = [];
 foreach ($attributes as $attr) {
     switch ($attr['taxonomy']) {
         case 'pa_platform':
+            $attribute_meta = $attr['attribute_meta'] ?? [];
+            $parsed = parse_attribute_meta($attribute_meta);
+            $attr['order'] = $parsed['config']['order']['value'] ?? 5;
             $platforms[] = $attr;
             break;
     }
@@ -99,7 +102,7 @@ $features = [
     </div>
     <div class="mgt-card tw-w-full tw-py-8">
         <div class="tw-hidden md:tw-flex">
-            <?php foreach ($platforms as $index => $platform): ?>
+            <?php foreach (mt_sort_list_by_order($platforms) as $index => $platform): ?>
                 <?php
                 $id = 'id_' . $platform['slug'];
                 $attribute_meta = $platform['attribute_meta'] ?? [];

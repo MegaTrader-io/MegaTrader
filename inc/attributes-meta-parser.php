@@ -18,26 +18,33 @@
  * 1. @status
  *    Marks an element with a status string (e.g., "hidden", "disabled").
  *    Example:
- *      @status "hidden"
+ * @status "hidden"
  *    Output:
  *      [ 'status' => 'hidden' ]
  *
  * 2. @badge
  *    Adds a badge with text and a status.
  *    Example:
- *      @badge {"text": "Coming Soon", "style": "neutral"}
+ * @badge {"text": "Coming Soon", "style": "neutral"}
  *    Output:
  *      [ 'badge' => [ 'text' => 'Coming Soon', 'style' => 'neutral' ] ]
  *
  * 3. @link
  *    Defines a list of links with icon, text, and URL.
  *    Example:
- *      @link [{"icon":"path_to_icon","text":"Web App","url":"url…"}]"
+ * @link [{"icon":"path_to_icon","text":"Web App","url":"url…"}]"
  *    Output:
  *      [ 'link' => [
  *          [ 'icon' => 'path_to_icon', 'text' => 'Web App', 'url' => 'url…' ]
  *        ]
  *      ]
+ *
+ *  4. @order
+ *     Add order to a list of platforms
+ *     Example:
+ * @order {"value": 1}
+ *     Output:
+ *       [ 'order' => [ 'value' => 1] ]
  *
  * ------------------------------------------------------------
  * Notes
@@ -56,7 +63,8 @@ if (!function_exists('parse_attribute_meta')) {
      * @param array $input
      * @return array { data: [...], config: [...] }
      */
-    function parse_attribute_meta(array $input): array {
+    function parse_attribute_meta(array $input): array
+    {
         $result = [
             'data' => [],
             'config' => []
@@ -69,7 +77,7 @@ if (!function_exists('parse_attribute_meta')) {
                 if (preg_match('/^@([a-zA-Z0-9_-]+)\s*(.*)$/', $item, $matches)) {
                     $key = $matches[1];
                     $payload = trim($matches[2]);
-                    $payload = str_replace(['“','”'], '"', $payload);
+                    $payload = str_replace(['“', '”'], '"', $payload);
 
                     $value = $payload;
 
@@ -77,7 +85,7 @@ if (!function_exists('parse_attribute_meta')) {
                         $decoded = json_decode($payload, true);
                         if (json_last_error() === JSON_ERROR_NONE) {
                             $value = $decoded;
-                        }else {
+                        } else {
                             error_log(sprintf(
                                 '[parse_attribute_meta] JSON decode error "%s" on payload: %s',
                                 json_last_error_msg(),
@@ -102,5 +110,24 @@ if (!function_exists('mt_is_coming_soon')) {
     {
         return strtolower(str_replace(' ', '', trim($badge_text))) == 'comminsoon'
             || strtolower(str_replace(' ', '', trim($badge_text))) == 'comingsoon';
+    }
+}
+
+if (!function_exists('mt_sort_list_by_order')) {
+    function mt_sort_list_by_order(array $list, $column = 'order'): array
+    {
+        try {
+            usort($list, function ($a, $b) use ($column) {
+                $orderA = isset($a[$column]) ? (int)$a[$column] : 0;
+                $orderB = isset($b[$column]) ? (int)$b[$column] : 0;
+
+                return $orderA <=> $orderB;
+            });
+        } catch (\Throwable $e) {
+            error_log("Error sorting platforms: " . $e->getMessage());
+            return $list;
+        }
+
+        return $list;
     }
 }
