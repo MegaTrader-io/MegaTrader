@@ -40,7 +40,7 @@ $btnRows = array_chunk($buttons, 2);
                 </div>
             </div>
             <div class="tw-my-8 tw-col-span-2">
-                <div class="tw-h-0 tw-border-t-[0.5px] border-t-neutral-700"></div>
+                <div class="tw-h-0 tw-border-t-[0.5px] tw-border-t-neutral-700"></div>
             </div>
             <div
                     class="tw-grid tw-grid-cols-4 tw-gap-4 lg:tw-inline-flex lg:tw-justify-start lg:tw-items-start lg:tw-gap-8 lg:tw-w-full">
