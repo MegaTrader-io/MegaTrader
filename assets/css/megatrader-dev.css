@@ -1476,6 +1476,7 @@
 .badge-mega-primary {
   background-color: var(--Surface-Primary-Hover);
 }
+
 .badge-mega-secondary {
   background-color: #14b8a6;
 }
@@ -3208,7 +3209,7 @@ a.pagination-number {
   transition: height 520ms cubic-bezier(.22, .85, .36, 1),
     opacity 520ms linear;
   will-change: height;
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 .mega-navbar .mega-mobile-menu.is-open {
@@ -3255,4 +3256,10 @@ a.pagination-number {
   .mega-navbar .mega-mobile-menu {
     display: none !important;
   }
+}
+
+/****** Sidebar Sticky*/
+.mt-sidebar {
+  position: sticky;
+  top: 200px;
 }

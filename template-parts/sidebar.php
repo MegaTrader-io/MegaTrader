@@ -61,7 +61,7 @@ $logout_url = wp_logout_url(home_url('/'));
 
 ?>
 
-<div class="w-100 d-flex gap-32 flex-column">
+<aside class="mt-sidebar w-100 d-flex gap-32 flex-column">
     <div class="d-flex gap-3 align-items-center justify-content-start">
         <div class="align-items-center d-flex flex-fill gap-3">
             <?php if ($has_real_avatar): ?>
@@ -131,7 +131,7 @@ $logout_url = wp_logout_url(home_url('/'));
         <div class="text-16px fw-medium text-a8a29e text-wrap">
             Find the perfect plan to enhance your experience.</div>
         <div class="btn-challenge">
-            <a href="https://subscriptions.megatrader.io/"
+            <a href="https://subscriptions.megatrader.io/subscriptions"
                 class="mega-btn-md mega-btn-default-md w-100">
                 Buy a new chanllenge
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24"
@@ -148,4 +148,4 @@ $logout_url = wp_logout_url(home_url('/'));
             </a>
         </div>
     </div>
-</div>
+</aside>
