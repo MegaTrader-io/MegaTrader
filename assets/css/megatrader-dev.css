@@ -2779,6 +2779,12 @@ a.pagination-number {
   background-color: var(--theme-color);
 }
 
+.list-reboot {
+  list-style-type: none;
+  margin-block: 0;
+  padding: 0;
+}
+
 /*------------- (step 1) -------------------- */
 
 .product-section__header {
@@ -2787,6 +2793,7 @@ a.pagination-number {
   gap: 8px;
 }
 
+.plan-includes__title,
 .product-section__title {
   font-size: var(--Text-FontSize-Body-lg, 20px);
   font-weight: 700;

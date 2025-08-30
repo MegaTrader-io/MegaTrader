@@ -228,9 +228,9 @@ console.log(
 </script>
 
 
-<article class="d-flex flex-column gap-32">
+<article class="subscriptions d-flex flex-column gap-32">
     <section class="product-section" id="account-size">
-        <h2 class="product-section__header">
+        <h2 class="product-section__header mb-3">
             <i class="mt-icon mt-icon_wallet mt-icon-md mt-icon-primary" aria-hidden="true"></i>
             <span class="product-section__title"><?= Label::FUTURES['size_section_title']; ?></span>
         </h2>
@@ -239,7 +239,7 @@ console.log(
         </div>
     </section>
     <section class="product-section" id="account-type">
-        <h2 class="product-section__header">
+        <h2 class="product-section__header mb-3">
             <i class="mt-icon mt-icon_lightning mt-icon-md mt-icon-primary" aria-hidden="true"></i>
             <span class="product-section__title"><?= Label::FUTURES['plan_section_title']; ?></span>
         </h2>
@@ -248,7 +248,7 @@ console.log(
         </div>
     </section>
     <section class="product-section" id="account-platform">
-        <h2 class="product-section__header">
+        <h2 class="product-section__header mb-3">
             <i class="mt-icon mt-icon_grid mt-icon-md mt-icon-primary" aria-hidden="true"></i>
             <span class="product-section__title"><?= Label::FUTURES['platform_section_title']; ?></span>
         </h2>
@@ -260,8 +260,8 @@ console.log(
         $plan_includes_list = Label::FUTURES['plan_includes_list'];
         if (!empty($plan_includes_list) && count($plan_includes_list) > 0): ?>
         <section class="plan-includes">
-            <h2 class="plan-includes__title mb-3 text-white text-size-30 fw-medium"><?= Label::FUTURES['plan_includes_title']; ?></h2>
-            <ul class="plan-includes__list row">
+            <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
+            <ul class="plan-includes__list row list-reboot">
             <?php foreach ($plan_includes_list as $item) : ?>
                 <li class="plan-includes-list__item col-6 py-1 d-flex align-items-center gap-2">
                     <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0" aria-hidden="true"></i>
@@ -271,6 +271,8 @@ console.log(
             </ul>
         </section>
     <?php endif; ?>
+    <hr class="m-0">
+    <button class="mega-btn-md mega-btn-primary-md"><?= Label::FUTURES['submit_btn_text'] ?></button>
 </article>
 
 

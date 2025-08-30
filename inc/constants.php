@@ -53,7 +53,8 @@ class Label
                 'icon' => 'mail',
                 'text' => 'Customer Support available 24/5',
             ],
-        ]
+        ],
+        'submit_btn_text' => 'Procede to checkout',
     ];   
 
     public const PLANS_FEATURES = [
