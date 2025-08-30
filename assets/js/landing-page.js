@@ -475,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function () {
             threshold: 0.8,
         };
 
-        new IntersectionObserver((entries) => {
+        const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     const activeSection = entry.target.id;
@@ -494,6 +494,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }, options);
+
+        navigationItems.forEach(({sectionId}) => {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                observer.observe(element);
+            }
+        });
 
         document.querySelectorAll('.btn-nav-link')
             .forEach(btn => {
