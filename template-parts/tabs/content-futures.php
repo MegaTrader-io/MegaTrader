@@ -227,52 +227,54 @@ console.log(
   );
 </script>
 
-
-<article class="subscriptions d-flex flex-column gap-32">
-    <section class="product-section" id="account-size">
-        <h2 class="product-section__header mb-3">
-            <i class="mt-icon mt-icon_wallet mt-icon-md mt-icon-primary" aria-hidden="true"></i>
-            <span class="product-section__title"><?= Label::FUTURES['size_section_title']; ?></span>
-        </h2>
-        <div class="product-section__list product-section__list_grid">
-            <?php render_account_sizes($account_sizes); ?>
-        </div>
-    </section>
-    <section class="product-section" id="account-type">
-        <h2 class="product-section__header mb-3">
-            <i class="mt-icon mt-icon_lightning mt-icon-md mt-icon-primary" aria-hidden="true"></i>
-            <span class="product-section__title"><?= Label::FUTURES['plan_section_title']; ?></span>
-        </h2>
-        <div class="product-section__list">
-            <?php render_account_types($account_types); ?>
-        </div>
-    </section>
-    <section class="product-section" id="account-platform">
-        <h2 class="product-section__header mb-3">
-            <i class="mt-icon mt-icon_grid mt-icon-md mt-icon-primary" aria-hidden="true"></i>
-            <span class="product-section__title"><?= Label::FUTURES['platform_section_title']; ?></span>
-        </h2>
-        <div class="product-section__list">
-            <?php render_platforms($platforms); ?>
-        </div>
-    </section>
-    <?php 
-        $plan_includes_list = Label::FUTURES['plan_includes_list'];
-        if (!empty($plan_includes_list) && count($plan_includes_list) > 0): ?>
-        <section class="plan-includes">
-            <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
-            <ul class="plan-includes__list row list-reboot">
-            <?php foreach ($plan_includes_list as $item) : ?>
-                <li class="plan-includes-list__item col-6 py-1 d-flex align-items-center gap-2">
-                    <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0" aria-hidden="true"></i>
-                    <span><?= htmlspecialchars($item['text']); ?></span>
-                </li>
-            <?php endforeach; ?>
-            </ul>
+<form action="https://subscriptions.megatrader.io/product/" method="post" enctype="multipart/form-data">
+    <input name="attribute_pa_market-type" value="futures" hidden />
+    <article class="subscriptions d-flex flex-column gap-32">
+        <section class="product-section" id="account-size">
+            <h2 class="product-section__header mb-3">
+                <i class="mt-icon mt-icon_wallet mt-icon-md mt-icon-primary" aria-hidden="true"></i>
+                <span class="product-section__title"><?= Label::FUTURES['size_section_title']; ?></span>
+            </h2>
+            <div class="product-section__list product-section__list_grid">
+                <?php render_account_sizes($account_sizes); ?>
+            </div>
         </section>
-    <?php endif; ?>
-    <hr class="m-0">
-    <button class="mega-btn-md mega-btn-primary-md"><?= Label::FUTURES['submit_btn_text'] ?></button>
-</article>
+        <section class="product-section" id="account-type">
+            <h2 class="product-section__header mb-3">
+                <i class="mt-icon mt-icon_lightning mt-icon-md mt-icon-primary" aria-hidden="true"></i>
+                <span class="product-section__title"><?= Label::FUTURES['plan_section_title']; ?></span>
+            </h2>
+            <div class="product-section__list">
+                <?php render_account_types($account_types); ?>
+            </div>
+        </section>
+        <section class="product-section" id="account-platform">
+            <h2 class="product-section__header mb-3">
+                <i class="mt-icon mt-icon_grid mt-icon-md mt-icon-primary" aria-hidden="true"></i>
+                <span class="product-section__title"><?= Label::FUTURES['platform_section_title']; ?></span>
+            </h2>
+            <div class="product-section__list">
+                <?php render_platforms($platforms); ?>
+            </div>
+        </section>
+        <?php 
+            $plan_includes_list = Label::FUTURES['plan_includes_list'];
+            if (!empty($plan_includes_list) && count($plan_includes_list) > 0): ?>
+            <section class="plan-includes">
+                <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
+                <ul class="plan-includes__list row list-reboot">
+                <?php foreach ($plan_includes_list as $item) : ?>
+                    <li class="plan-includes-list__item col-6 py-1 d-flex align-items-center gap-2">
+                        <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0" aria-hidden="true"></i>
+                        <span><?= htmlspecialchars($item['text']); ?></span>
+                    </li>
+                <?php endforeach; ?>
+                </ul>
+            </section>
+        <?php endif; ?>
+        <hr class="m-0">
+        <button type="submit" class="mega-btn-md mega-btn-primary-md"><?= Label::FUTURES['submit_btn_text'] ?></button>
+    </article>
+</form>
 
 
