@@ -239,7 +239,7 @@ const $ = jQuery; //TODO: remove, temp for dev mode
 
         function updateSizePrices(activeProductSizes, activeType, activePlatform) {
             Object.entries(activeProductSizes).forEach(([size, content]) => {
-                const pInfo = getProductInfo(content[activeType][activePlatform]);
+                const pInfo = getProductInfo(content[activeType][activePlatform]['futures']);
                 const priceObj = getPrice(pInfo);
 
                 $("#trading-capital [data-value='" + size + "'] .a-price").text(priceObj.value);
@@ -263,7 +263,6 @@ const $ = jQuery; //TODO: remove, temp for dev mode
         function updateWidgetAccountSizeChecklist(productInfo) {
             const metaInfo = productInfo['meta-info'];
             if (metaInfo) {
-                console.log({metaInfo})
                 $(".metaInfo li").hide();
                 Object.keys(metaInfo).forEach(key => {
                     const selector = `.metaInfo li.${key}`;
@@ -287,7 +286,7 @@ const $ = jQuery; //TODO: remove, temp for dev mode
                 const $platformMetaList = $('.cat-meta-list');
                 $platformMetaList.empty(); // Clear existing items
 
-                attribute.attribute_meta.forEach(metaItem => {
+                attribute.attribute_meta.filter(metaItem => metaItem[0] !== '@').forEach(metaItem => {
                     $platformMetaList.append(`<li>${metaItem}</li>`);
                 });
             }
@@ -311,7 +310,7 @@ const $ = jQuery; //TODO: remove, temp for dev mode
                 , {});
 
             const activeProductSizes = products?.[activeType]?.[activeType];
-            const productInfoArray = activeProductSizes?.[activeCapital]?.[activeType]?.[activePlatform] ?? [];
+            const productInfoArray = activeProductSizes?.[activeCapital]?.[activeType]?.[activePlatform]?.['futures'] ?? [];
             const productInfo = getProductInfo(productInfoArray);
 
             if (!objectIsEmpty(productInfo)) {
