@@ -131,7 +131,7 @@ $logout_url = wp_logout_url(home_url('/'));
         <div class="text-16px fw-medium text-a8a29e text-wrap">
             Find the perfect plan to enhance your experience.</div>
         <div class="btn-challenge">
-            <a href="https://subscriptions.megatrader.io/subscriptions"
+            <a href="<?php echo esc_url(home_url('/subscriptions')); ?>"
                 class="mega-btn-md mega-btn-default-md w-100">
                 Buy a new chanllenge
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24"

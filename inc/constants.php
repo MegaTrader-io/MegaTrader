@@ -17,6 +17,7 @@ class Label
         "max_accounts" => "Max Accounts",
         "objectives_rules" => "Objectives & Rules",
     ];
+
     public const PLATFORM = [
         "title" => "Platform"        
     ];
@@ -26,9 +27,33 @@ class Label
     ];
 
     public const FUTURES = [
-        "size_section_title" => "Trading capital",
-        "plan_section_title" => "Challenge type",
-        "platform_section_title" => "Platform",
+        'size_section_title' => 'Trading capital',
+        'plan_section_title' => 'Challenge type',
+        'platform_section_title' => 'Platform',
+        'plan_includes_title' => 'Included with your plan',
+        'plan_includes_list' => [
+            [
+                'icon' => 'wallet',
+                'text' => 'Demo trading account with a starting balance of your choice (virtual money)',
+            ],
+            [
+                'icon' => 'desktop',
+                'text' => 'Access to the Trading Platform of your choice',
+            ],
+            [
+                'icon' => 'lightning',
+                'text' => 'Professional Trading Simulator utilizing real-time market data from liquidity providers',
+
+            ],
+            [
+                'icon' => 'pencil',
+                'text' => 'Trading Journal and other supporting tools',
+            ],
+            [
+                'icon' => 'mail',
+                'text' => 'Customer Support available 24/5',
+            ],
+        ]
     ];   
 
     public const PLANS_FEATURES = [
