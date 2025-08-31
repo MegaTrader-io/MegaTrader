@@ -46,7 +46,7 @@ function megatrader_setup() {
 		*/
 	add_theme_support( 'title-tag' );
 
-	
+
 	add_theme_support( 'woocommerce' );
 
 	/*
@@ -130,7 +130,7 @@ function megatrader_scripts() {
     wp_enqueue_style( 'mt-components',          MEGATRADER_CSS .'mt-components.css', array(), REALTIME_VERSION);
 
 
-    
+
 
 	//Register All JS
 	wp_enqueue_script( 'bootstrap-bundle',	MEGATRADER_JS .'bootstrap.bundle.min.js', array('jquery'), _MEGATRADER_VERSION, true);
@@ -162,7 +162,9 @@ add_action('wp', function () {
 require_once get_template_directory() . '/inc/landing-page-hooks.php';
 
 add_action('wp_enqueue_scripts', function () {
-    if (is_page_template('landing-page.php')) {
+    if (
+            is_front_page()
+    ) {
         megatrader_landing_page_scripts();
     }
 });
@@ -512,7 +514,7 @@ function check_username_availability() {
 add_filter( 'woocommerce_checkout_fields' , 'custom_override_checkout_fields' );
 
 function custom_override_checkout_fields( $fields ) {
- 
+
     // unset($fields['billing']['billing_company']);
     // unset($fields['billing']['billing_address_1']);
     // unset($fields['billing']['billing_address_2']);
@@ -659,7 +661,7 @@ function empty_cart_redirection(){
 }
 
 add_filter( 'woocommerce_add_cart_item_data', 'wdm_empty_cart', 10,  3);
-function wdm_empty_cart( $cart_item_data, $product_id, $variation_id ) 
+function wdm_empty_cart( $cart_item_data, $product_id, $variation_id )
 {
     global $woocommerce;
     $woocommerce->cart->empty_cart();
@@ -716,8 +718,8 @@ function populate_product_category_and_tags_in_orders( $order ) {
     $items = $order->get_items();
 
     foreach ( $items as $item_id => $item ) {
-        $_product = $item->get_product(); 
-        
+        $_product = $item->get_product();
+
         if ( $_product ) {
             $terms = get_the_terms($_product->get_id(), 'product_cat');
             $is_activation_fee = false;
@@ -732,14 +734,14 @@ function populate_product_category_and_tags_in_orders( $order ) {
                         $is_reset_fee = true;
                         break;
                     }
-                    
+
                 }
             }
 
             if ($is_activation_fee) {
-                echo '<div>' . esc_html( $_product->get_title() ) . '</div>'; 
+                echo '<div>' . esc_html( $_product->get_title() ) . '</div>';
             } else if ($is_reset_fee) {
-                echo '<div>' . esc_html( $_product->get_title() ) . '</div>'; 
+                echo '<div>' . esc_html( $_product->get_title() ) . '</div>';
             } else {
                 echo '<div>' . esc_html( $_product->get_attribute('pa_account-size') . ' - ' . $_product->get_attribute('pa_platform') ) . '</div>';
             }
@@ -873,8 +875,8 @@ add_filter('wp_check_filetype_and_ext', 'sanitize_svg_on_upload', 10, 4);  // Ch
 
 add_filter( 'email_change_email', 'custom_megatrader_email_changed_template', 10, 3 );
 function custom_megatrader_email_changed_template( $email, $user, $userdata ) {
-    $username = isset($user['display_name']) && !empty($user['display_name']) 
-        ? esc_html($user['display_name']) 
+    $username = isset($user['display_name']) && !empty($user['display_name'])
+        ? esc_html($user['display_name'])
         : esc_html($user['user_login']);
 
     $new_email = sanitize_email( $userdata['user_email'] );
@@ -1243,7 +1245,7 @@ function custom_show_only_default_payment_method( $html, $gateway ) {
         // Fallback: first token for gateway
         if ( ! $default_token ) {
             // $default_token = reset( $tokens ); //grabs first token
-            
+
             // Sort tokens descending by ID
             usort( $tokens, function( $a, $b ) {
                 return $b->get_id() - $a->get_id();
@@ -1277,7 +1279,7 @@ function custom_saved_payment_method_li_html( $html, $token, $gateway ) {
     $is_change_payment_method = isset($_GET['pay_for_order']) && isset($_GET['key']) && isset($_GET['change_payment_method']);
 
     // Get card info
-    $brand_raw = $token->get_card_type(); 
+    $brand_raw = $token->get_card_type();
 	$brand     = wc_get_credit_card_type_label( $brand_raw );
     // $brand     = ucfirst( $token->get_card_type() );
     $last4     = $token->get_last4();
@@ -1293,7 +1295,7 @@ function custom_saved_payment_method_li_html( $html, $token, $gateway ) {
 
     ob_start(); ?>
     <li class="woocommerce-SavedPaymentMethods-token">
-        <input 
+        <input
             id="<?php echo esc_attr( $input_id ); ?>"
             type="radio"
             name="<?php echo esc_attr( $input_name ); ?>"
