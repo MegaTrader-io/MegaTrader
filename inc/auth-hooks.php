@@ -237,6 +237,12 @@ JS;
  * - Preserva redirect_to con la URL original.
  */
 add_action('template_redirect', function () {
+    if (isset($_GET['logged_out']) && $_GET['logged_out'] == 1) {
+        if (function_exists('wc_add_notice')) {
+            wc_add_notice(__('You have successfully logged out.', 'your-td'), 'success');
+        }
+    }
+
     if (!function_exists('is_account_page') || !function_exists('wc_get_page_permalink')) {
         return;
     }

@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const url = new URL(window.location.href);
+
+    if (url.searchParams.has("logged_out")) {
+        // Aquí ya WooCommerce debió agregar el notice desde PHP,
+        // pero si quieres forzar un mensaje en el front:
+        // alert("You have successfully logged out");
+
+        // Eliminar el parámetro de la URL sin recargar la página
+        url.searchParams.delete("logged_out");
+        window.history.replaceState({}, document.title, url.toString());
+    }
+
     function setStateWhenReady(stateCode) {
         if (!stateCode) return;
         const wrapper = document.getElementById("billing_state_wrapper");

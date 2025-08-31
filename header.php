@@ -57,9 +57,12 @@ global $product;
             <button class="icon-btn" type="button" aria-label="Profile">
               <div class="mt-icon mt-icon-white mt-icon_account"></div>
             </button>
-            <button id="mega-logout" class="icon-btn logout" type="button" aria-label="Logout" onclick="handleLogout(event)">
+            <a id="mega-logout"
+               href="<?php echo esc_url( wp_logout_url( home_url('/auth/login?logged_out=1') ) ); ?>"
+               class="icon-btn logout"
+               aria-label="Logout">
               <div class="mt-icon mt-icon-white mt-icon_logout"></div>
-            </button>
+            </a>
 
             <button id="mega-burger" class="icon-btn burger" type="button" aria-label="Open menu"
                     aria-controls="mega-mobile-menu" aria-expanded="false">
@@ -84,11 +87,6 @@ global $product;
 </div>
 
 <script>
-  function handleLogout(e) {
-    fetch('<?php echo wp_logout_url(); ?>', { method: 'GET', credentials: 'include' })
-      .then(() => { window.location.href = 'https://megatrader.io/'; });
-  }
-
   (function () {
     const burger = document.getElementById('mega-burger');
     const drawer = document.getElementById('mega-mobile-menu');

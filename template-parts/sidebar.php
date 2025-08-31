@@ -57,7 +57,7 @@ if (!is_wp_error($response)) {
     }
 }
 
-$logout_url = wp_logout_url(home_url('/'));
+$logout_url = wp_logout_url();
 
 ?>
 

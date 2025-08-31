@@ -295,6 +295,17 @@ function custom_logout_redirect() {
 }
 add_action('wp_logout', 'custom_logout_redirect');
 
+add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $user) {
+    if (is_admin()) {
+        return $redirect_to ?: admin_url();
+    }
+
+    if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], admin_url()) !== false) {
+        return $redirect_to ?: admin_url();
+    }
+
+    return home_url('/auth/login/?logged_out=1');
+}, 10, 3);
 
 /* Update Billing Information */
 add_action( 'wp_ajax_update_billing_address', 'update_billing_address' );
