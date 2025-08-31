@@ -269,13 +269,14 @@
 
 
 <script>
-
-console.log(
-    'Products data:',
-    <?php echo wp_json_encode( $products_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>
-  );
-
-
+  const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
+  console.log({ products });
+  document.querySelectorAll('.product-section input[type="radio"]').forEach( radio => {
+    radio.addEventListener('change', checkedRadio => {
+        console.log({checkedRadio})
+    })
+  })
 </script>
+
 
 
