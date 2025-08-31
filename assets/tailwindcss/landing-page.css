@@ -296,7 +296,7 @@ body {
 }
 
 .account-type {
-    @apply tw-bg-transparent  tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700;
+    @apply tw-cursor-pointer tw-bg-transparent tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700;
 }
 
 .account-type.account-active {

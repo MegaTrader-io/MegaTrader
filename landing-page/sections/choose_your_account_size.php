@@ -40,7 +40,7 @@ $variation_fields = bmc_get_custom_variation_fields();
 
     <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2 tw-mb-4">
         <?php foreach ($account_types as $index => $account_type) : ?>
-            <button data-value="<?= $account_type['slug'] ?>"
+            <div data-value="<?= $account_type['slug'] ?>"
                     data-default-platform="<?= $defaultPlatform ?>"
                     data-default-market-type="<?= $defaultMarketType ?>"
                     class="btn-account-type tw-group tw-relative tw-w-full tw-rounded-2xl tw-p-6 tw-text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
@@ -73,7 +73,7 @@ $variation_fields = bmc_get_custom_variation_fields();
                         </svg>
                     </div>
                 </div>
-            </button>
+            </div>
         <?php endforeach; ?>
     </div>
 
