@@ -198,6 +198,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 e.currentTarget.classList.add('account-active');
                 internalOptions.accountType = e.currentTarget.dataset.value;
+                internalOptions.defaultPlatform = e.currentTarget.dataset.defaultPlatform;
+                internalOptions.defaultMarketType = e.currentTarget.dataset.defaultMarketType;
+
                 fn(internalOptions);
             })
         })
@@ -530,15 +533,16 @@ document.addEventListener('DOMContentLoaded', function () {
     void loadChooseYourAccountSize(
         (params) => {
             console.info('params', params);
-            const defaultPlatform = 'megatraderx';
+            const {defaultPlatform, defaultMarketType} = params;
             const productionSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
+
             console.info(
                 'productionSelected', productionSelected
             )
             const productPlatformDetail = productionSelected[params.accountType];
 
             for (const priceSize in productPlatformDetail) {
-                const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform];
+                const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
                 const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
                 const price = '$' + parseInt(priceObject.replace('$', ''));
                 const pricePanel = document.querySelector(`.price-plan[data-price="${priceSize}"]`);

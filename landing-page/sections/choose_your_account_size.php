@@ -16,16 +16,16 @@ foreach ($attributes as $attr) {
     }
 }
 
-$addons = get_saved_challenge_addons();
-$defaultSlug = 'elite-plan';
 $defaultPlatform = 'megatraderx';
+$defaultMarketType = 'futures';
+$defaultSlug = 'elite-plan';
+$mostPopular = '150k';
 
 $product = array_find($products_data['products'], function ($product) use ($defaultSlug) {
     return $product['slug'] == $defaultSlug;
 });
 
 $variation_fields = bmc_get_custom_variation_fields();
-$mostPopular = '150k';
 ?>
 
 <section id="pricing" class="tw-px-4">
@@ -41,6 +41,8 @@ $mostPopular = '150k';
     <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2 tw-mb-4">
         <?php foreach ($account_types as $index => $account_type) : ?>
             <button data-value="<?= $account_type['slug'] ?>"
+                    data-default-platform="<?= $defaultPlatform ?>"
+                    data-default-market-type="<?= $defaultMarketType ?>"
                     class="btn-account-type tw-group tw-relative tw-w-full tw-rounded-2xl tw-p-6 tw-text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
                 <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4">
                     <div class="tw-mt-1 group-[.account-active]:tw-filter group-[.account-active]:tw-brightness-[5] group-[.account-active]:tw-invert">
@@ -78,7 +80,7 @@ $mostPopular = '150k';
     <div class="tw-space-y-2 md:tw-space-y-0 md:tw-grid md:tw-grid-cols-2 lg:tw-flex lg:tw-items-center tw-mb-4">
         <?php foreach ($account_sizes as $index => $size) : ?>
             <?php
-            $properties = $product[$defaultSlug][$size][$defaultSlug][$defaultPlatform];
+            $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
             $id = -1;
             $price = '0.00';
             $metaInfoList = [];
