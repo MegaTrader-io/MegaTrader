@@ -293,7 +293,7 @@ add_filter('woocommerce_login_redirect', function ($redirect, $user) {
             return $requested;
         }
     }
-    return wc_get_page_permalink('myaccount');
+    return wc_get_account_endpoint_url('orders');
 }, 10, 2);
 
 /**
@@ -308,7 +308,7 @@ add_filter('woocommerce_registration_redirect', function ($redirect) {
             return $requested;
         }
     }
-    return wc_get_page_permalink('myaccount');
+    return wc_get_account_endpoint_url('orders');
 }, 10);
 
 add_action('wp_head', function () {
