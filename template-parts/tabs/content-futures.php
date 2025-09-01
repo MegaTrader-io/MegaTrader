@@ -220,7 +220,8 @@
   
  ?>
 
-<article class="subscriptions d-flex flex-column gap-32">
+<form class="futures-form d-flex flex-column gap-32" id="futures-form">
+    <input type="hidden" name="pa_market-type" value="futures" />
     <section class="product-section" id="account-size">
         <h2 class="product-section__header mb-3">
             <i class="mt-icon mt-icon_wallet mt-icon-md mt-icon-primary" aria-hidden="true"></i>
@@ -265,17 +266,41 @@
     <?php endif; ?>
     <hr class="m-0">
     <button class="mega-btn-md mega-btn-primary-md"><?= Label::FUTURES['submit_btn_text'] ?></button>
-</article>
+</form>
 
 
 <script>
   const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
   console.log({ products });
+  
+  function updateSelectedProduct(){
+
+  }
+
   document.querySelectorAll('.product-section input[type="radio"]').forEach( radio => {
     radio.addEventListener('change', checkedRadio => {
-        console.log({checkedRadio})
+        // console.log({checkedRadio})
     })
   })
+
+const form = document.getElementById("futures-form");
+
+function getFormValues(formEl) {
+  const data = {};
+  const formData = new FormData(formEl);
+
+  for (const [key, value] of formData.entries()) {
+    data[key] = value;
+  }
+  return data;
+}
+
+// validate whenever something changes
+form.addEventListener("change", () => {
+  const values = getFormValues(form);
+  console.log("Form values:", values);
+
+});
 </script>
 
 
