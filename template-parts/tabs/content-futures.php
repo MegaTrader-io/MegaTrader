@@ -265,44 +265,45 @@
         </section>
     <?php endif; ?>
     <hr class="m-0">
-    <button class="mega-btn-md mega-btn-primary-md"><?= Label::FUTURES['submit_btn_text'] ?></button>
+    <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn" href="/checkout/"><?= Label::FUTURES['submit_btn_text'] ?></a>
 </form>
 
 
 <script>
-  const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
-  console.log({ products });
-  
-  function updateSelectedProduct(){
+    const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
 
-  }
+    function normalizeAttributes(data) {
+        if (!data || !Array.isArray(data)) return {};
 
-  document.querySelectorAll('.product-section input[type="radio"]').forEach( radio => {
-    radio.addEventListener('change', checkedRadio => {
-        // console.log({checkedRadio})
-    })
-  })
+        return data.reduce((acc, item) => {
+            return { ...acc, ...item };
+        }, {});
+    }
 
-const form = document.getElementById("futures-form");
+    function getFormValues(formEl) {
+        const data = {};
+        const formData = new FormData(formEl);
 
-function getFormValues(formEl) {
-  const data = {};
-  const formData = new FormData(formEl);
+        for (const [key, value] of formData.entries()) {
+            data[key] = value;
+        }
+        return data;
+    }
 
-  for (const [key, value] of formData.entries()) {
-    data[key] = value;
-  }
-  return data;
-}
+    function updateSelectedProduct(){
+        const values = getFormValues(form);
+        const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
+        const selectedProductId = selectedProduct.id ?? '';
+        const checkoutUrl = `/checkout/?add-to-cart=${selectedProductId}`;
+        const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
+        checkoutBtn.href = checkoutUrl;
+    }
 
-// validate whenever something changes
-form.addEventListener("change", () => {
-  const values = getFormValues(form);
-  console.log("Form values:", values);
+    const form = document.getElementById("futures-form");
 
-  console.log(products.find(product => product.slug === values['account-type'])?.[values['account-type']])?.(values['account-size']);
+    form.addEventListener("change", updateSelectedProduct);
+    updateSelectedProduct();
 
-});
 </script>
 
 
