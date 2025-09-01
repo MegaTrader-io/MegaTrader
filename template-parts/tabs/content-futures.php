@@ -221,7 +221,7 @@
  ?>
 
 <form class="futures-form d-flex flex-column gap-32" id="futures-form">
-    <input type="hidden" name="pa_market-type" value="futures" />
+    <input type="hidden" name="market-type" value="futures" />
     <section class="product-section" id="account-size">
         <h2 class="product-section__header mb-3">
             <i class="mt-icon mt-icon_wallet mt-icon-md mt-icon-primary" aria-hidden="true"></i>
@@ -299,6 +299,8 @@ function getFormValues(formEl) {
 form.addEventListener("change", () => {
   const values = getFormValues(form);
   console.log("Form values:", values);
+
+  console.log(products.find(product => product.slug === values['account-type'])?.[values['account-type']])?.(values['account-size']);
 
 });
 </script>
