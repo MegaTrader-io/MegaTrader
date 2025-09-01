@@ -64,13 +64,16 @@ $selected_id = get_query_var('selected_id');
 if ($selected_id === null && !empty($tabs)) {
     $selected_id = $tabs[0]['id'];
 }
+
+$first_key = array_key_first($tabs);
+$last_key  = array_key_last($tabs);
 ?>
 
 <div class="mt-tabs">
   <div class="mt-tabs__container">
 
     <!-- Tablist -->
-    <div class="mt-tabs__list" role="tablist">
+    <div class="mt-tabs__list d-none d-md-flex" role="tablist">
       <?php foreach ($tabs as $tab): ?>
         <a
           id="<?= esc_attr($tab['id']); ?>"
@@ -95,11 +98,71 @@ if ($selected_id === null && !empty($tabs)) {
       <?php endforeach; ?>
     </div>
 
+    <div class="mt-tabs__list mt-tabs_list_dropdown d-md-none" role="tablist">
+      <?php
+        $tabsModalId = 'subscriptionsTabsModalId';
+        foreach ($tabs as $key => $tab): 
+          $hideClass = $key === $first_key ? '' : 'd-none';
+        ?>
+        <a
+          id="<?= esc_attr($tab['id']); ?>"
+          class="mt-tabs__item <?= $hideClass ?>"
+          role="tab"
+          href="#"
+          data-bs-toggle="modal"
+          data-bs-target="<?= $tabsModalId ?>"
+          aria-controls="<?= esc_attr($tab['panel_id']); ?>"
+          aria-selected="<?= $tab['id'] === $selected_id ? 'true' : 'false'; ?>"
+          <?= $tab['id'] === $selected_id ? '' : 'tabindex="-1"'; ?>
+          <?= !empty($tab['disabled']) ? 'disabled' : ''; ?>
+        >
+          <?php if (!empty($tab['icon'])): ?>
+            <img class="mt-tabs__icon" src="<?= esc_url($tab['icon']); ?>" alt="" />
+          <?php endif; ?>
+
+          <span class="mt-tabs__title" ><?= esc_html($tab['title']); ?></span>
+
+          <?php if (!empty($tab['subtitle'])): ?>
+            <small class="mt-tabs__subtitle" ><?= esc_html($tab['subtitle']); ?></small>
+          <?php endif; ?>
+        </a>
+      <?php endforeach; ?>
+      
+      <?php ob_start(); ?>
+      <?php foreach ($tabs as $tab): ?>
+        <a
+          id="<?= esc_attr($tab['id']); ?>"
+          class="mt-tabs__item"
+          role="tab"
+          href="#"
+          aria-controls="<?= esc_attr($tab['panel_id']); ?>"
+          aria-selected="<?= $tab['id'] === $selected_id ? 'true' : 'false'; ?>"
+          <?= $tab['id'] === $selected_id ? '' : 'tabindex="-1"'; ?>
+          <?= !empty($tab['disabled']) ? 'disabled' : ''; ?>
+        >
+          <?php if (!empty($tab['icon'])): ?>
+            <img class="mt-tabs__icon" src="<?= esc_url($tab['icon']); ?>" alt="" />
+          <?php endif; ?>
+
+          <span class="mt-tabs__title" ><?= esc_html($tab['title']); ?></span>
+
+          <?php if (!empty($tab['subtitle'])): ?>
+            <small class="mt-tabs__subtitle" ><?= esc_html($tab['subtitle']); ?></small>
+          <?php endif; ?>
+        </a>
+      <?php endforeach; ?>
+      
+      <?php
+        $modal_content = ob_get_clean();
+        render_modal([
+          'modalId'     	=> $tabsModalId,
+          'modalTitle'  	=> 'Select Type',
+          'bodyContent' 	=> $modal_content,
+        ]);
+      ?>
+    </div>
+
     <!-- Tabpanels -->
-    <?php 
-      $first_key = array_key_first($tabs);
-      $last_key  = array_key_last($tabs);
-    ?>
 
     <?php foreach ($tabs as $key => $tab): ?>
         <?php if (!empty($tab['content'])): 
