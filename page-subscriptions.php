@@ -54,11 +54,11 @@ get_header();
 ?>
 
 <div class="container">
-    <div class="two-columns my-account flex-column flex-lg-row m-auto pt-32 pb-32">
-        <div class="two-columns__col">
+    <div class="mt-page">
+        <div class="mt-page__sidebar">
             <?php render_sidebar(); ?>
         </div>
-        <div class="two-columns__col">
+        <div class="mt-page__main">
             <div class="mt-ubscriptions">
 
                 <?php render_step_selector(false); ?>
