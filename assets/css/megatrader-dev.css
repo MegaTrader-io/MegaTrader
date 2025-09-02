@@ -3069,7 +3069,7 @@ a.pagination-number {
 
 @media (min-width: 992px) {
   .mega-navbar {
-    --nav-h: 80px;
+    --nav-h: 100px;
   }
 }
 
@@ -3105,10 +3105,7 @@ a.pagination-number {
   display: none;
 }
 
-@media (min-width: 992px) {
-  .mega-navbar .brand-tile {
-    display: none;
-  }
+@media (min-width: 1139.98px) {
 
   .mega-navbar .brand-wordmark {
     display: inline-flex;
@@ -3128,6 +3125,11 @@ a.pagination-number {
     display: block;
   }
 }
+@media (max-width: 1140px) {
+  .mega-navbar .brand-tile {
+    display: none;
+  }
+}
 
 .mega-navbar .nav-tabs {
   display: none;
@@ -3144,6 +3146,7 @@ a.pagination-number {
   .mega-navbar .nav-tabs {
     display: inline-flex;
   }
+ 
 }
 
 .mega-navbar .nav-tab {

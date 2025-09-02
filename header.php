@@ -52,17 +52,11 @@ global $product;
 
           <div class="nav-right">
             <button class="icon-btn" type="button" aria-label="Notifications">
-              <div class="mt-icon mt-icon-success mt-icon_notifications"></div>
+              <div class="mt-icon mt-icon-white mt-icon_notifications"></div>
             </button>
             <button class="icon-btn" type="button" aria-label="Profile">
               <div class="mt-icon mt-icon-white mt-icon_account"></div>
-            </button>
-            <a id="mega-logout"
-               href="<?php echo esc_url( wp_logout_url( home_url('/auth/login?logged_out=1') ) ); ?>"
-               class="icon-btn logout"
-               aria-label="Logout">
-              <div class="mt-icon mt-icon-white mt-icon_logout"></div>
-            </a>
+            </button>        
 
             <button id="mega-burger" class="icon-btn burger" type="button" aria-label="Open menu"
                     aria-controls="mega-mobile-menu" aria-expanded="false">
