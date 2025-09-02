@@ -73,7 +73,7 @@ $last_key  = array_key_last($tabs);
   <div class="mt-tabs__container">
 
     <!-- Tablist -->
-    <div class="mt-tabs__list d-none d-md-flex" role="tablist">
+    <div class="mt-tabs__list" role="tablist">
       <?php foreach ($tabs as $tab): ?>
         <a
           id="<?= esc_attr($tab['id']); ?>"
@@ -98,60 +98,31 @@ $last_key  = array_key_last($tabs);
       <?php endforeach; ?>
     </div>
 
-    <div class="mt-tabs__list mt-tabs_list_dropdown d-md-none" role="tablist">
-      <?php
-        $tabsModalId = 'subscriptionsTabsModalId';
-        foreach ($tabs as $key => $tab): 
-          $hideClass = $key === $first_key ? '' : 'd-none';
-        ?>
-        <a
-          id="<?= esc_attr($tab['id']); ?>"
-          class="mt-tabs__item <?= $hideClass ?>"
-          role="tab"
-          href="#"
-          data-bs-toggle="modal"
-          data-bs-target="#<?= $tabsModalId ?>"
-          aria-controls="<?= esc_attr($tab['panel_id']); ?>"
-          aria-selected="<?= $tab['id'] === $selected_id ? 'true' : 'false'; ?>"
-          <?= $tab['id'] === $selected_id ? '' : 'tabindex="-1"'; ?>
-          <?= !empty($tab['disabled']) ? 'disabled' : ''; ?>
-        >
-          <?php if (!empty($tab['icon'])): ?>
-            <img class="mt-tabs__icon" src="<?= esc_url($tab['icon']); ?>" alt="" />
-          <?php endif; ?>
-
-          <span class="mt-tabs__title" ><?= esc_html($tab['title']); ?></span>
-
-          <?php if (!empty($tab['subtitle'])): ?>
-            <small class="mt-tabs__subtitle" ><?= esc_html($tab['subtitle']); ?></small>
-          <?php endif; ?>
-        </a>
-      <?php endforeach; ?>
-      
       <?php ob_start(); ?>
-      <?php foreach ($tabs as $tab): ?>
-        <a
-          id="<?= esc_attr($tab['id']); ?>"
-          class="mt-tabs__item"
-          role="tab"
-          href="#"
-          aria-controls="<?= esc_attr($tab['panel_id']); ?>"
-          aria-selected="<?= $tab['id'] === $selected_id ? 'true' : 'false'; ?>"
-          <?= $tab['id'] === $selected_id ? '' : 'tabindex="-1"'; ?>
-          <?= !empty($tab['disabled']) ? 'disabled' : ''; ?>
-        >
-          <?php if (!empty($tab['icon'])): ?>
-            <img class="mt-tabs__icon" src="<?= esc_url($tab['icon']); ?>" alt="" />
-          <?php endif; ?>
+      <div class="mt-tabs__modal-content">
+        <?php foreach ($tabs as $tab): ?>
+          <a
+            id="<?= esc_attr($tab['id']); ?>"
+            class="mt-tabs__item"
+            role="tab"
+            href="#"
+            aria-controls="<?= esc_attr($tab['panel_id']); ?>"
+            aria-selected="<?= $tab['id'] === $selected_id ? 'true' : 'false'; ?>"
+            <?= $tab['id'] === $selected_id ? '' : 'tabindex="-1"'; ?>
+            <?= !empty($tab['disabled']) ? 'disabled' : ''; ?>
+          >
+            <?php if (!empty($tab['icon'])): ?>
+              <img class="mt-tabs__icon" src="<?= esc_url($tab['icon']); ?>" alt="" />
+            <?php endif; ?>
 
-          <span class="mt-tabs__title" ><?= esc_html($tab['title']); ?></span>
+            <span class="mt-tabs__title" ><?= esc_html($tab['title']); ?></span>
 
-          <?php if (!empty($tab['subtitle'])): ?>
-            <small class="mt-tabs__subtitle" ><?= esc_html($tab['subtitle']); ?></small>
-          <?php endif; ?>
-        </a>
-      <?php endforeach; ?>
-      
+            <?php if (!empty($tab['subtitle'])): ?>
+              <small class="mt-tabs__subtitle" ><?= esc_html($tab['subtitle']); ?></small>
+            <?php endif; ?>
+          </a>
+        <?php endforeach; ?>
+      </div>
       <?php
         $modal_content = ob_get_clean();
         render_modal([
@@ -160,7 +131,6 @@ $last_key  = array_key_last($tabs);
           'bodyContent' 	=> $modal_content,
         ]);
       ?>
-    </div>
 
     <!-- Tabpanels -->
 
