@@ -67,27 +67,27 @@
                      aria-label="Main navigation">
                     <a href="#hero-section"
                        data-menu="hero-section"
-                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 tw-transition-all tw-duration-200 tw-text-white tw-bg-mgt-dark tw-rounded-lg">
+                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50 tw-bg-mgt-dark tw-rounded-lg">
                         HOME
                     </a>
                     <a href="#how-it-works"
                        data-menu="how-it-works"
-                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 tw-transition-all tw-duration-200 tw-text-gray-400 hover:tw-text-white">
+                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50">
                         HOW IT WORKS
                     </a>
                     <a href="#pricing"
                        data-menu="pricing"
-                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 tw-transition-all tw-duration-200 tw-text-gray-400 hover:tw-text-white">
+                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50">
                         PRICING
                     </a>
                     <a href="#features"
                        data-menu="features"
-                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 tw-transition-all tw-duration-200 tw-text-gray-400 hover:tw-text-white">
+                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50">
                         FEATURES
                     </a>
                     <a href="#faq"
                        data-menu="faq"
-                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 tw-transition-all tw-duration-200 tw-text-gray-400 hover:tw-text-white">
+                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50">
                         FAQ
                     </a>
                 </nav>

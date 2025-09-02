@@ -486,14 +486,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     const activeSectionGroup = section.href.replace('#', '');
 
                     document.querySelectorAll(`.btn-nav-link`).forEach(btn => {
-                        btn.classList.remove('tw-text-white', 'tw-bg-mgt-dark', 'tw-rounded-lg');
-                        btn.classList.add('tw-text-gray-400', 'tw-hover:text-white');
+                        btn.classList.remove('text-neutral-50', 'tw-bg-mgt-dark', 'tw-rounded-lg');
+                        btn.classList.add('text-neutral-50');
                     })
 
                     const btnNav = document.querySelector(`[data-menu="${activeSectionGroup}"]`);
 
-                    btnNav.classList.remove('tw-text-gray-400', 'tw-hover:text-white');
-                    btnNav.classList.add('tw-text-white', 'tw-bg-mgt-dark', 'tw-rounded-lg');
+                    btnNav.classList.remove('text-neutral-50');
+                    btnNav.classList.add('text-neutral-50', 'tw-bg-mgt-dark', 'tw-rounded-lg');
                 }
             });
         }, options);
