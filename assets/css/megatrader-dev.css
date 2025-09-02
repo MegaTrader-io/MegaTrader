@@ -1922,7 +1922,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
   gap: 16px;
 }
 
-.my-account .avatar-initials {
+ .avatar-initials {
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -3096,21 +3096,26 @@ a.pagination-number {
   gap: 8px;
 }
 
-/* Mobile & tablet: SOLO el logo cuadrado */
+/* Logo cuadrado oculto por defecto */
 .mega-navbar .brand-tile {
-  display: inline-flex;
-}
-
-.mega-navbar .brand-wordmark {
   display: none;
 }
 
-@media (min-width: 1139.98px) {
+/* Logo wordmark visible por defecto */
+.mega-navbar .brand-wordmark {
+  display: inline-flex;
+}
 
-  .mega-navbar .brand-wordmark {
+/* Cuando la pantalla sea 1140px o menor */
+@media (max-width: 1140px) {
+  .mega-navbar .brand-tile {
     display: inline-flex;
   }
+  .mega-navbar .brand-wordmark {
+    display: none;
+  }
 }
+
 
 .mega-navbar .brand-tile img {
   width: 60px;
@@ -3123,11 +3128,6 @@ a.pagination-number {
     height: 60px;
     width: auto;
     display: block;
-  }
-}
-@media (max-width: 1140px) {
-  .mega-navbar .brand-tile {
-    display: none;
   }
 }
 

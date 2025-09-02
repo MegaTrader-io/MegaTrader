@@ -465,6 +465,7 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
 
 .mt-page {
     display: flex;
+    margin-block: 32px;
 }
 
 .mt-page__sidebar {
