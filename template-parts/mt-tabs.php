@@ -110,7 +110,7 @@ $last_key  = array_key_last($tabs);
           role="tab"
           href="#"
           data-bs-toggle="modal"
-          data-bs-target="<?= $tabsModalId ?>"
+          data-bs-target="#<?= $tabsModalId ?>"
           aria-controls="<?= esc_attr($tab['panel_id']); ?>"
           aria-selected="<?= $tab['id'] === $selected_id ? 'true' : 'false'; ?>"
           <?= $tab['id'] === $selected_id ? '' : 'tabindex="-1"'; ?>
