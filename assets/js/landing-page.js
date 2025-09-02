@@ -505,6 +505,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        function getCurrentHeaderHeight() {
+            const headerElement = document.querySelector('header > div');
+            return headerElement.offsetHeight + 24;
+        }
+
         document.querySelectorAll('.btn-nav-link')
             .forEach(btn => {
                 btn.addEventListener('click', (ev) => {
@@ -515,11 +520,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         return;
                     }
 
-                    const header = document.querySelector('header div');
-
-                    const headerOffset = /*isMenuOpen ? 96 : */header.offsetHeight;
                     const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                    const offsetPosition = elementPosition - headerOffset;
+                    const offsetPosition = elementPosition - getCurrentHeaderHeight();
 
                     window.scrollTo({
                         top: offsetPosition,
@@ -527,6 +529,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 })
             })
+
+        const headerElement = document.querySelector('header > div');
+        if (headerElement) {
+            const updateHeightVar = () => {
+                const fullHeight = getCurrentHeaderHeight();
+                document.body.style.setProperty('--header-height', `${fullHeight}px`);
+            };
+
+            const resizeObserver = new ResizeObserver(() => {
+                updateHeightVar();
+            });
+
+            resizeObserver.observe(headerElement);
+            updateHeightVar();
+        }
     }
 
     void loadMarkerCarousel();
