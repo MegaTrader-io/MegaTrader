@@ -293,6 +293,10 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
     width: fit-content;
 }
 
+.mt-card.mt-card_row {
+    flex-direction: row;
+}
+
 /* END CARD COMPONENT */
 
 /* ICONS */

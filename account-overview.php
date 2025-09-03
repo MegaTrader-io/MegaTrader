@@ -20,7 +20,7 @@ get_header('shop');
     </div>
     <div class="mt-page__main">
       <div class="no-order-wrapper d-flex flex-column gap-32">
-        <div class="align-items-center bg-1e1e1e d-flex gap-3 overflow-hidden p-3 rounded-16px">
+        <div class="mt-card mt-card_row">
           <div class="d-flex flex-column flex-grow-1 flex-shrink-1 justify-content-center">
             <div class="fw-medium text-size-20 text-uppercase text-white">
               <?php esc_html_e('No active membership', 'woocommerce'); ?>
@@ -41,7 +41,7 @@ get_header('shop');
           </div>
         </div>
 
-        <div class="align-items-center bg-1e1e1e d-flex flex-column gap-32 overflow-hidden p-3 rounded-16px">
+        <div class="mt-card">
           <div class="text-white text-size-20 fw-medium text-uppercase align-self-start">
             <?php esc_html_e('Get started in 3 steps', 'woocommerce'); ?>
           </div>
