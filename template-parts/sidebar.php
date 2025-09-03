@@ -125,7 +125,7 @@ $logout_url = wp_logout_url();
         </a>
 
     </div>
-    <div class="p-3 bg-1e1e1e rounded-16px d-flex gap-3 flex-column overflow-hidden w-100">
+    <div class="mt-card gap-3">
         <div class="text-white text-size-20 fw-medium text-uppercase">
             Explore the plans</div>
         <div class="text-16px fw-medium text-a8a29e text-wrap">

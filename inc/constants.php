@@ -34,15 +34,15 @@ class Label
         'plan_includes_list' => [
             [
                 'icon' => 'wallet',
-                'text' => 'Demo trading account with a starting balance of your choice (virtual money)',
+                'text' => 'Practice trading with chosen virtual funds',
             ],
             [
                 'icon' => 'desktop',
-                'text' => 'Access to the Trading Platform of your choice',
+                'text' => 'Access your preferred trading platform',
             ],
             [
                 'icon' => 'lightning',
-                'text' => 'Professional Trading Simulator utilizing real-time market data from liquidity providers',
+                'text' => 'Practice trading with chosen virtual funds',
 
             ],
             [

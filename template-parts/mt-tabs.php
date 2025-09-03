@@ -85,15 +85,21 @@ $last_key  = array_key_last($tabs);
           <?= $tab['id'] === $selected_id ? '' : 'tabindex="-1"'; ?>
           <?= !empty($tab['disabled']) ? 'disabled' : ''; ?>
         >
-          <?php if (!empty($tab['icon'])): ?>
-            <img class="mt-tabs__icon" src="<?= esc_url($tab['icon']); ?>" alt="" />
-          <?php endif; ?>
+          <div class="mt-tabs__item__content">
+            <span class="mt-tabs__title">
+              <?php if (!empty($tab['icon'])): ?>
+                <img class="mt-tabs__title__icon" src="<?= esc_url($tab['icon']); ?>" alt="" />
+              <?php endif; ?>
 
-          <span class="mt-tabs__title" ><?= esc_html($tab['title']); ?></span>
-
-          <?php if (!empty($tab['subtitle'])): ?>
-            <small class="mt-tabs__subtitle" ><?= esc_html($tab['subtitle']); ?></small>
-          <?php endif; ?>
+              <span class="mt-tabs__title__text" ><?= esc_html($tab['title']); ?></span>
+            </span>
+            <?php if (!empty($tab['subtitle'])): ?>
+              <small class="mt-tabs__subtitle" ><?= esc_html($tab['subtitle']); ?></small>
+            <?php endif; ?>
+          </div>
+          <div class="mt-tabs__item__cta">
+            <i class="mt-icon mt-icon_caret-down mt-icon-white"></i>
+          </div>
         </a>
       <?php endforeach; ?>
     </div>

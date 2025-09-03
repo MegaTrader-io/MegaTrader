@@ -248,11 +248,11 @@ if ($fflag): ?>
 <?php else: ?>
 
     <div class="container">
-        <div class="two-columns my-account flex-column flex-lg-row m-auto pt-32 pb-32">
-            <div class="two-columns__col">
+        <div class="mt-page">
+            <div class="mt-page__sidebar">
                 <?php render_sidebar() ?>
             </div>
-            <div class="two-columns__col">
+            <div class="mt-page__main">
                 <?php render_step_selector(true); ?>
                 <form id="checkout-form" name="checkout" method="post"
                     class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
@@ -540,7 +540,7 @@ if ($fflag): ?>
                                     </div>
                                     <span class="success-otp-text">Coupon code applied successfully.</span>
                                 </div>
-                            </div>
+                            </div> 
 
                             <?php
                             wc_get_template('checkout/review-order.php');

@@ -213,14 +213,14 @@
 }
 
 /* Laptop fluido hasta 1279px */
-@media (min-width: 768px) and (max-width: 1279.98px) {
+@media (min-width: 768px) and (max-width: 1199.98px) {
   .container {
-    max-width: 100% !important;
+    max-width: 800px !important;
   }
 }
 
-/* Desktop fijo (1280px en adelante) */
-@media (min-width: 1280px) {
+/* Desktop fijo (1200px en adelante) */
+@media (min-width: 1200px) {
   .container {
     max-width: 1280px !important;
   }
@@ -2649,7 +2649,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 
 @media (max-width: 991px) {
   .btn-challenge {
-    width: max-content;
+    /* width: max-content; */
   }
 
 }
@@ -3107,7 +3107,7 @@ a.pagination-number {
 }
 
 /* Cuando la pantalla sea 1140px o menor */
-@media (max-width: 1140px) {
+@media (max-width: 1199.98px) {
   .mega-navbar .brand-tile {
     display: inline-flex;
   }
@@ -3271,5 +3271,5 @@ a.pagination-number {
 /****** Sidebar Sticky*/
 .mt-sidebar {
   position: sticky;
-  top: 200px;
+  top: 220px;
 }
