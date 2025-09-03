@@ -398,6 +398,69 @@ document.addEventListener("DOMContentLoaded", function () {
 
   startErrorProtection();
 
+  // --- VALIDACIÓN SOLO DEL BLOQUE DE BILLING (para el botón "Save details")
+function validateBillingFormOnly() {
+  const container = document.getElementById("mt-billing-form") || document;
+
+  // helper local para leer valores por id
+  const val = (id) => document.getElementById(id)?.value?.trim() || "";
+
+  // limpia errores previos solo dentro del bloque de billing
+  clearErrors(container);
+
+  // construye valores que vamos a validar
+  const values = {
+    billing_first_name: val("billing_first_name"),
+    billing_last_name:  val("billing_last_name"),
+    billing_email:      val("billing_email"),
+    billing_phone:      val("billing_phone"),
+    billing_address_1:  val("billing_address_1"),
+    billing_city:       val("billing_city"),
+    billing_postcode:   val("billing_postcode"),
+    billing_country:    val("billing_country"),
+    billing_state:      val("billing_state"),
+  };
+
+  // usa tus mismas reglas, pero sin privacy_policy
+  const rules = { ...validationRules };
+  delete rules.privacy_policy;
+
+  const errors = validateFormFields(values, rules);
+
+  // Validación extra con intl-tel-input (si está activo)
+  try {
+    const telInput = document.getElementById("billing_phone");
+    const iti = window.iti;
+    if (telInput && iti && typeof iti.isValidNumber === "function") {
+      if (!iti.isValidNumber()) {
+        errors.billing_phone = "Please enter a valid phone number.";
+      } else {
+        // guarda en formato E.164 para el servidor
+        const full = iti.getNumber();
+        if (full) telInput.value = full;
+      }
+    }
+  } catch (_) {}
+
+  if (Object.keys(errors).length) {
+    showErrors(container, errors);
+
+    // focus/scroll al primer inválido
+    const firstInvalid =
+      container.querySelector("." + Selector.InvalidFieldClass) ||
+      container.querySelector("." + Selector.ErrorMessageClass)?.previousElementSibling;
+
+    if (firstInvalid && typeof firstInvalid.scrollIntoView === "function") {
+      firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => firstInvalid.focus && firstInvalid.focus(), 250);
+    }
+    return false;
+  }
+
+  return true;
+}
+
+
   function formActionHandler(e) {
     checkoutFormIsInvalid = false;
     document.activeElement?.blur();
@@ -445,6 +508,7 @@ document.addEventListener("DOMContentLoaded", function () {
       true
     );
   }
+
 
   // ========== AUTO SAVE NEW CREDIT CARD ==========
   // const saveCardCheckbox = document.querySelector('.woocommerce-SavedPaymentMethods-saveNew [type="checkbox"]');
@@ -767,6 +831,10 @@ document.addEventListener("DOMContentLoaded", function () {
       saveBtn.dataset.bound = "1";
       saveBtn.addEventListener("click", async (e) => {
         e.preventDefault();
+
+        if (!validateBillingFormOnly()) {
+           return;
+          }
 
         // 🔥 levantar preloader + overlay
         showSitePreloader();

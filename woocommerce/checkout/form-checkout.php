@@ -420,15 +420,15 @@ if ($fflag): ?>
 
                 
                     <div id="billing-container" class="d-flex flex-column gap-3">
-                      <div class="d-flex gap-3 justify-content-between align-items-start">
                       <div class="fw-medium leading-8 text-size-20 text-white">Billing Details </div>
-                      <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium" style="color:#FFD78A;">Change</a>
-                      </div>
                     <div class="billing-container mt-billing-card mt-card">
                         <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->                      
                         <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
                             <div class="d-flex flex-column gap-3 w-100">
-                              
+                              <div class="d-flex gap-3 justify-content-between align-items-start">
+                                    <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
+                                        style="color:#FFD78A;">Change</a>
+                                </div>
 
                                 <div class="d-flex justify-content-between gap-3">
                                     <div class="flex-fill d-flex flex-column gap-3">
