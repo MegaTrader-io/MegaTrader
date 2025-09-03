@@ -2,7 +2,7 @@
     <div class="tw-py-12 tw-space-y-12">
         <div class="tw-px-4 tw-space-y-12">
             <div class="tw-flex tw-justify-center">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/megatraderX.svg"
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/megatraderX-blue.svg"
                      width="250"
                      height="41" alt="logo megatrader x"/>
             </div>
