@@ -1691,20 +1691,3 @@ function mt_save_billing_profile_cb() {
         'state_name'   => $state_name,
     ]);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

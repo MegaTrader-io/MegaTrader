@@ -67,7 +67,7 @@ global $product;
           <div id="mega-mobile-menu" class="mega-mobile-menu">
             <div class="mm-inner">
               <ul class="mm-links" role="menu">
-                <li><a class="nav-tab is-active" href="/account-overview/">Account overview</a></li>
+                <li><a class="nav-tab is-active" href="my-account/overview/">Account overview</a></li>
                 <li><button class="nav-tab" type="button" title="Coming soon">Referrals</button></li>
                 <li><button class="nav-tab" type="button" title="Coming soon">Payouts</button></li>
                 <li><a class="nav-tab" href="https://help.megatrader.io/en/" target="_blank" rel="noopener">Help center</a></li>

@@ -73,6 +73,32 @@ function lockStateSelection(stateCode, ttlMs = 7000) {
 
 document.addEventListener("DOMContentLoaded", function () {
   // ========== DETECT COUNTRY ON FIRST LOAD (IP) ==========
+
+  // --- Helpers para controlar el dropdown de Google Places (deben ir antes de usarse) ---
+  const PAC_HIDE_CLASS = "pac-hidden";
+
+  function forceClosePlaces() {
+    document.body.classList.add(PAC_HIDE_CLASS);
+
+    const addr = document.getElementById("billing_address_1");
+    if (addr) addr.blur();
+
+    document.querySelectorAll(".pac-container").forEach((el) => {
+      el.style.display = "none";
+      el.setAttribute("aria-hidden", "true");
+    });
+  }
+
+  function allowPlaces() {
+    document.body.classList.remove(PAC_HIDE_CLASS);
+    document
+      .querySelectorAll('.pac-container[aria-hidden="true"]')
+      .forEach((el) => {
+        el.style.display = "";
+        el.removeAttribute("aria-hidden");
+      });
+  }
+
   const countrySelect = document.getElementById("billing_country");
   let hasBeenOverwrittenByAutocomplete = false;
 
@@ -109,6 +135,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const autocomplete = new google.maps.places.Autocomplete(addressInput, {
       types: ["address"],
       componentRestrictions: { country: ["us"] },
+    });
+
+    // Mantener cerrado de inicio (evita que se abra al re-entrar en "Change")
+    forceClosePlaces();
+
+    // Abrir SOLO cuando el usuario interactúa con el input
+    const enablePacOnUserInput = () => allowPlaces();
+    addressInput.addEventListener("focus", enablePacOnUserInput);
+    addressInput.addEventListener("keydown", enablePacOnUserInput);
+    addressInput.addEventListener("input", enablePacOnUserInput);
+
+    // Cerrar al salir del input (con pequeño delay para permitir click en la sugerencia)
+    addressInput.addEventListener("blur", () => {
+      setTimeout(forceClosePlaces, 150);
+    });
+
+    // Cerrar si el usuario hace click fuera del input y del dropdown
+    document.addEventListener("click", (e) => {
+      const pac = document.querySelector(".pac-container");
+      if (!pac) return;
+      if (e.target === addressInput || pac.contains(e.target)) return;
+      forceClosePlaces();
     });
 
     autocomplete.addListener("place_changed", function () {
@@ -174,6 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       setStateWhenReady(fields.billing_state);
       lockStateSelection(fields.billing_state, 7000);
+
+      // Cerrar el dropdown tras seleccionar
+      forceClosePlaces();
     });
   }
 
@@ -399,67 +450,67 @@ document.addEventListener("DOMContentLoaded", function () {
   startErrorProtection();
 
   // --- VALIDACIÓN SOLO DEL BLOQUE DE BILLING (para el botón "Save details")
-function validateBillingFormOnly() {
-  const container = document.getElementById("mt-billing-form") || document;
+  function validateBillingFormOnly() {
+    const container = document.getElementById("mt-billing-form") || document;
 
-  // helper local para leer valores por id
-  const val = (id) => document.getElementById(id)?.value?.trim() || "";
+    // helper local para leer valores por id
+    const val = (id) => document.getElementById(id)?.value?.trim() || "";
 
-  // limpia errores previos solo dentro del bloque de billing
-  clearErrors(container);
+    // limpia errores previos solo dentro del bloque de billing
+    clearErrors(container);
 
-  // construye valores que vamos a validar
-  const values = {
-    billing_first_name: val("billing_first_name"),
-    billing_last_name:  val("billing_last_name"),
-    billing_email:      val("billing_email"),
-    billing_phone:      val("billing_phone"),
-    billing_address_1:  val("billing_address_1"),
-    billing_city:       val("billing_city"),
-    billing_postcode:   val("billing_postcode"),
-    billing_country:    val("billing_country"),
-    billing_state:      val("billing_state"),
-  };
+    // construye valores que vamos a validar
+    const values = {
+      billing_first_name: val("billing_first_name"),
+      billing_last_name: val("billing_last_name"),
+      billing_email: val("billing_email"),
+      billing_phone: val("billing_phone"),
+      billing_address_1: val("billing_address_1"),
+      billing_city: val("billing_city"),
+      billing_postcode: val("billing_postcode"),
+      billing_country: val("billing_country"),
+      billing_state: val("billing_state"),
+    };
 
-  // usa tus mismas reglas, pero sin privacy_policy
-  const rules = { ...validationRules };
-  delete rules.privacy_policy;
+    // usa tus mismas reglas, pero sin privacy_policy
+    const rules = { ...validationRules };
+    delete rules.privacy_policy;
 
-  const errors = validateFormFields(values, rules);
+    const errors = validateFormFields(values, rules);
 
-  // Validación extra con intl-tel-input (si está activo)
-  try {
-    const telInput = document.getElementById("billing_phone");
-    const iti = window.iti;
-    if (telInput && iti && typeof iti.isValidNumber === "function") {
-      if (!iti.isValidNumber()) {
-        errors.billing_phone = "Please enter a valid phone number.";
-      } else {
-        // guarda en formato E.164 para el servidor
-        const full = iti.getNumber();
-        if (full) telInput.value = full;
+    // Validación extra con intl-tel-input (si está activo)
+    try {
+      const telInput = document.getElementById("billing_phone");
+      const iti = window.iti;
+      if (telInput && iti && typeof iti.isValidNumber === "function") {
+        if (!iti.isValidNumber()) {
+          errors.billing_phone = "Please enter a valid phone number.";
+        } else {
+          // guarda en formato E.164 para el servidor
+          const full = iti.getNumber();
+          if (full) telInput.value = full;
+        }
       }
+    } catch (_) {}
+
+    if (Object.keys(errors).length) {
+      showErrors(container, errors);
+
+      // focus/scroll al primer inválido
+      const firstInvalid =
+        container.querySelector("." + Selector.InvalidFieldClass) ||
+        container.querySelector("." + Selector.ErrorMessageClass)
+          ?.previousElementSibling;
+
+      if (firstInvalid && typeof firstInvalid.scrollIntoView === "function") {
+        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => firstInvalid.focus && firstInvalid.focus(), 250);
+      }
+      return false;
     }
-  } catch (_) {}
 
-  if (Object.keys(errors).length) {
-    showErrors(container, errors);
-
-    // focus/scroll al primer inválido
-    const firstInvalid =
-      container.querySelector("." + Selector.InvalidFieldClass) ||
-      container.querySelector("." + Selector.ErrorMessageClass)?.previousElementSibling;
-
-    if (firstInvalid && typeof firstInvalid.scrollIntoView === "function") {
-      firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => firstInvalid.focus && firstInvalid.focus(), 250);
-    }
-    return false;
+    return true;
   }
-
-  return true;
-}
-
 
   function formActionHandler(e) {
     checkoutFormIsInvalid = false;
@@ -509,7 +560,6 @@ function validateBillingFormOnly() {
     );
   }
 
-
   // ========== AUTO SAVE NEW CREDIT CARD ==========
   // const saveCardCheckbox = document.querySelector('.woocommerce-SavedPaymentMethods-saveNew [type="checkbox"]');
   // if (saveCardCheckbox) {
@@ -544,7 +594,7 @@ function validateBillingFormOnly() {
 
   // ========== PLACE ORDER BTN EVENT ==========
   function addPlaceOrderBtnListeners() {
-    placeOrderBtn = document.getElementById(Selector.PlaceOrderBtnId);
+    const placeOrderBtn = document.getElementById(Selector.PlaceOrderBtnId);
     if (placeOrderBtn) {
       placeOrderBtn.addEventListener("click", (e) => {
         clearErrors(checkoutForm);
@@ -557,7 +607,7 @@ function validateBillingFormOnly() {
   function slideCollapse(targetElement, isExpanded, useCustom) {
     jQuery(function ($) {
       const duration = 300;
-      $targetEl = $(targetElement);
+      const $targetEl = $(targetElement);
       if (isExpanded) {
         if (useCustom) {
           targetElement.style.display = "";
@@ -606,9 +656,12 @@ function validateBillingFormOnly() {
     );
     let useCustom;
 
+    // Si no hay elementos, salimos
+    if (!newMethodRadio || !paymentForm || !saveNewCardCheckbox) return;
+
     // Cannot Use Animations Ending on "display: none" like jQuery toggle
     // or NMI input fields iframes won't render properly
-    if (paymentForm.id.includes("nmi")) {
+    if (paymentForm && paymentForm.id && paymentForm.id.includes("nmi")) {
       useCustom = true;
       paymentForm.classList.add("collapsable");
       saveNewCardCheckbox.classList.add("collapsable");
@@ -630,7 +683,7 @@ function validateBillingFormOnly() {
 
   // ========== AUTO SELECT SAVED CREDIT CARD ==========
   function selectFirstSavedPaymentMethodRadio(node = document.body) {
-    node.querySelector(Selector.SavedPaymentMethodRadioSelector).click();
+    node.querySelector(Selector.SavedPaymentMethodRadioSelector)?.click();
   }
 
   // ========== MOVE GLOBAL ERRORS TO TARGET FORM FIELD ==========
@@ -682,7 +735,6 @@ function validateBillingFormOnly() {
   }
 
   // ========= MUTATION OBSERVER POOL - ADDITION ============
-
   mutationObserver([
     {
       matches: Selector.PaymentId,
@@ -692,11 +744,14 @@ function validateBillingFormOnly() {
       matches: ".woocommerce-NoticeGroup, .woocommerce-error",
       callbacks: [migrateGlobalFieldErrors],
     },
-
-    // { // Debug Added Nodes
-    //   matches: '*', callbacks: [ (node)=>{ console.info('Node Added:', node) } ]
-    // }
+    {
+      matches: `#${Selector.PlaceOrderBtnId}`,
+      callbacks: [addPlaceOrderBtnListeners],
+    },
   ]);
+
+  // Llamada inicial por si el botón ya está presente
+  addPlaceOrderBtnListeners();
 
   // ========== BLOCK ENTER TO SEND FORM ==========
   const checkoutFormEnterBlock = document.querySelector("form.checkout");
@@ -769,30 +824,6 @@ function validateBillingFormOnly() {
     el.innerHTML = html;
   }
 
-  const PAC_HIDE_CLASS = "pac-hidden";
-
-  function forceClosePlaces() {
-    document.body.classList.add(PAC_HIDE_CLASS);
-
-    const addr = document.getElementById("billing_address_1");
-    if (addr) addr.blur();
-
-    document.querySelectorAll(".pac-container").forEach((el) => {
-      el.style.display = "none";
-      el.setAttribute("aria-hidden", "true");
-    });
-  }
-
-  function allowPlaces() {
-    document.body.classList.remove(PAC_HIDE_CLASS);
-    document
-      .querySelectorAll('.pac-container[aria-hidden="true"]')
-      .forEach((el) => {
-        el.style.display = "";
-        el.removeAttribute("aria-hidden");
-      });
-  }
-
   function initBillingSummary() {
     const summary = document.getElementById("mt-billing-summary");
     const formBox = document.getElementById("mt-billing-form");
@@ -801,7 +832,6 @@ function validateBillingFormOnly() {
 
     function showForm() {
       if (!summary || !formBox) return;
-      allowPlaces();
       formBox.classList.remove("d-none");
       summary.classList.add("d-none");
       if (typeof jQuery !== "undefined" && jQuery.fn && jQuery.fn.slideDown) {
@@ -833,8 +863,8 @@ function validateBillingFormOnly() {
         e.preventDefault();
 
         if (!validateBillingFormOnly()) {
-           return;
-          }
+          return;
+        }
 
         // 🔥 levantar preloader + overlay
         showSitePreloader();
@@ -989,7 +1019,7 @@ function validateBillingFormOnly() {
 
   // ========== HIDE AUTOMATIC WOOCOMMERCE ERRORS ==========
   // TODO: remove block
-  /* 
+  /*
   const bodyObserver = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
       mutation.addedNodes.forEach(function (node) {
