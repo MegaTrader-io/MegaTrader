@@ -162,11 +162,12 @@ html {
 
 #wpadminbar {
     top: 0 !important;
+    position: fixed;
 }
 
 
 .admin-bar .ot-header {
-    top: 32px;
+    top: var(--admin-bar-height, 32px);
     /* Medium devices */
 }
 
@@ -190,7 +191,7 @@ body {
 }
 
 body.admin-bar {
-    padding-top: 32px;
+    padding-top: var(--admin-bar-height, 32px);
     /* Medium devices */
 }
 

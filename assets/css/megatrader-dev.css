@@ -3310,5 +3310,8 @@ a.pagination-number {
 /****** Sidebar Sticky*/
 .mt-sidebar {
   position: sticky;
-  top: 220px;
-}
+top: calc(
+  var(--promo-banner-height, 0px) +
+  var(--admin-bar-height, 0px) +
+  var(--nav-bar-height, 0px) + 32px
+);}

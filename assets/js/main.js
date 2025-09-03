@@ -91,7 +91,7 @@ const $ = jQuery; //TODO: remove, temp for dev mode
                             }
                         });
                     });
-                    observer.observe(document.querySelector('.login-height'), {attributes: true});
+                    observer.observe(document.querySelector('.login-height'), { attributes: true });
                 }
             }
 
@@ -298,15 +298,15 @@ const $ = jQuery; //TODO: remove, temp for dev mode
             const activePlatform = $("#platform .button.active").attr('data-value');
 
             const availableProductsMap = data.attributes.reduce((map, currentAttribute) =>
-                    currentAttribute.taxonomy === 'pa_account-types'
-                        ? {...map, [currentAttribute.slug]: currentAttribute}
-                        : map
+                currentAttribute.taxonomy === 'pa_account-types'
+                    ? { ...map, [currentAttribute.slug]: currentAttribute }
+                    : map
                 , {});
 
             const products = data.products.reduce((map, product) =>
-                    product.slug in availableProductsMap
-                        ? {...map, [product.slug]: product}
-                        : map
+                product.slug in availableProductsMap
+                    ? { ...map, [product.slug]: product }
+                    : map
                 , {});
 
             const activeProductSizes = products?.[activeType]?.[activeType];
@@ -343,5 +343,33 @@ const $ = jQuery; //TODO: remove, temp for dev mode
 
 // scrollCue
 // scrollCue.init();
+
+function trackElementHeight(element, css_variable) {
+
+    if (element) {
+        const updateHeightVar = () => {
+            const fullHeight = element.getBoundingClientRect().height;
+            document.body.style.setProperty(`${css_variable}`, `${fullHeight}px`);
+        };
+
+        updateHeightVar();
+
+        const resizeObserver = new ResizeObserver(() => {
+            updateHeightVar();
+        });
+
+        resizeObserver.observe(element);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const adminbar = document.getElementById('wpadminbar');
+    trackElementHeight(adminbar, '--admin-bar-height');
+
+    const menuNavBar = document.querySelector('.menu-area');
+    trackElementHeight(menuNavBar, '--nav-bar-height');
+
+
+})
 
 MT_Tabs.init();
