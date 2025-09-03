@@ -1,4 +1,4 @@
-<main class="tw-min-h-dvh tw-relative lg:tw-h-full tw-mt-[var(--header-height)] tw-w-full lg:tw-max-w-7xl tw-space-y-12 tw-mx-auto tw-mb-24">
+<main class="tw-min-h-dvh tw-relative lg:tw-h-full tw-mt-[var(--header-height)] tw-w-full lg:tw-max-w-7xl tw-space-y-12 lg:tw-mx-auto tw-mb-24">
     <?php require 'sections/hero.php'; ?>
     <?php require 'sections/market_overview.php'; ?>
     <?php require 'sections/sponsor_logos.php'; ?>

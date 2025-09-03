@@ -107,8 +107,11 @@ $features = [
                 $id = 'id_' . $platform['slug'];
                 $attribute_meta = $platform['attribute_meta'] ?? [];
                 $parsed = parse_attribute_meta($attribute_meta);
-                $badge_text = $parsed['config']['badge']['text'] ?? '';
-                $is_coming_soon = mt_is_coming_soon($badge_text);
+                $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
+//                $is_coming_soon = mt_is_coming_soon($badge_text);
+
+
+
                 ?>
 
                 <label
@@ -131,11 +134,12 @@ $features = [
                         <?= $platform['name'] ?>
                     </div>
 
-                    <?php if ($is_coming_soon) : ?>
-                        <div class='badge-secondary-sm tw-bg-white tw-tracking-tight tw-hidden tw-text-nowrap lg:tw-flex'>
-                            <?= $badge_text ?>
-                        </div>
-                    <?php endif ?>
+                    <?php if ($badge):
+                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                        $badge_text = $badge['text'] ?? '';
+                        ?>
+                        <div class="mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
+                    <?php endif; ?>
                 </label>
             <?php endforeach; ?>
         </div>
@@ -164,7 +168,7 @@ $features = [
         </div>
 
         <?php foreach ($platforms as $index => $platform): ?>
-            <div class="tw-px-4 tw-space-y-4 tw-mt-6 md:tw-mt-8 <?= ($index > 0 ? 'tw-hidden' : '') ?>"
+            <div class="tw-px-4 tw-space-y-4 tw-mt-6 md:tw-mt-12 <?= ($index > 0 ? 'tw-hidden' : '') ?>"
                  data-platform-description="<?= $platform['slug'] ?>">
                 <div class="tw-justify-start tw-text-white tw-text-xl tw-font-light tw-uppercase tw-leading-6">
                     <?= $platform['name'] ?>

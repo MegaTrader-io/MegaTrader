@@ -26,6 +26,9 @@ $product = array_find($products_data['products'], function ($product) use ($defa
 });
 
 $variation_fields = bmc_get_custom_variation_fields();
+
+$sign_in_url = home_url('auth/login');
+
 ?>
 
 <section id="pricing" class="tw-px-4">
@@ -41,9 +44,9 @@ $variation_fields = bmc_get_custom_variation_fields();
     <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2 tw-mb-4">
         <?php foreach ($account_types as $index => $account_type) : ?>
             <div data-value="<?= $account_type['slug'] ?>"
-                    data-default-platform="<?= $defaultPlatform ?>"
-                    data-default-market-type="<?= $defaultMarketType ?>"
-                    class="btn-account-type tw-group tw-relative tw-w-full tw-rounded-2xl tw-p-6 tw-text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
+                 data-default-platform="<?= $defaultPlatform ?>"
+                 data-default-market-type="<?= $defaultMarketType ?>"
+                 class="btn-account-type tw-group tw-relative tw-w-full tw-rounded-2xl tw-p-6 tw-text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
                 <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4">
                     <div class="tw-mt-1 group-[.account-active]:tw-filter group-[.account-active]:tw-brightness-[5] group-[.account-active]:tw-invert">
                         <img src="<?= $account_type['thumbnail_url'] ?>" class="tw-w-9 tw-h-9" alt="Icon">
@@ -151,7 +154,7 @@ $variation_fields = bmc_get_custom_variation_fields();
                 </div>
                 <div class="tw-px-6 tw-py-3 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
                     <a target="_blank" class="btn-dark-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3"
-                       href="https://subscriptions.megatrader.io/">
+                       href="<?= $sign_in_url ?>">
                         GET PLAN
                     </a>
                 </div>

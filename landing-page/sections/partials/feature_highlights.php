@@ -53,9 +53,9 @@ $items = [
 
 ?>
 
-<div class="tw-grid md:tw-justify-center md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-8">
+<div class="tw-grid tw-mx-4 lg:tw-mx-0 md:tw-justify-center md:tw-grid-cols-2 lg:tw-grid-cols-4 tw-gap-8">
     <?php foreach ($items as $item): ?>
-        <div class="tw-group tw-w-full tw-p-8 tw-rounded-xl tw-bg-mgt-dark">
+        <div class="tw-group tw-w-full tw-border-4 tw-border-mgt-dark tw-p-8 tw-rounded-xl tw-bg-mgt-dark">
             <div class="tw-flex tw-items-center tw-gap-2 tw-mb-2">
                 <?= $item['icon'] ?>
                 <div class="tw-text-teal-400 tw-text-xl tw-font-bold tw-leading-loose tw-group-[.active]:tw-text-[#131210]">

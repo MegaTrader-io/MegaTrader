@@ -7,7 +7,7 @@
     <div class="tw-fixed tw-top-0 tw-left-0 tw-w-full">
         <?php do_action('mega_sticky_promo_render_banner'); ?>
         <div class="navbar-links tw-z-50 tw-transition-all tw-duration-300 tw-h-[100px] tw-flex tw-bg-[#111]/80 tw-backdrop-blur-3xl tw-shadow-lg">
-            <div class="tw-w-full tw-max-w-7xl tw-mx-auto tw-px-4 tw-flex tw-items-center tw-justify-between lg:tw-h-[100px]">
+            <div class="tw-w-full tw-max-w-7xl tw-mx-auto tw-px-4 2xl:tw-px-0 tw-flex tw-items-center tw-justify-between lg:tw-h-[100px]">
                 <div class="tw-w-auto">
                     <a href="<?php echo esc_url(home_url()); ?>" class="tw-flex tw-gap-4 tw-items-center">
                         <div class="tw-w-[60px] tw-h-[60px]">
