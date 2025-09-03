@@ -419,7 +419,7 @@ if ($fflag): ?>
 
 
                 
-                    <div id="billing-container">
+                    <div id="billing-container" class="d-flex flex-column gap-3">
                       <div class="d-flex gap-3 justify-content-between align-items-start">
                       <div class="fw-medium leading-8 text-size-20 text-white">Billing Details </div>
                       <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium" style="color:#FFD78A;">Change</a>
@@ -474,7 +474,6 @@ if ($fflag): ?>
 
                         <!-- ====== VISTA FORM (WooCommerce) ====== -->
                         <div id="mt-billing-form" class="<?php echo $has_billing ? 'd-none' : ''; ?>">
-                            <div class="text-white fw-medium text-base">Billing Details</div>
                             <div class="billing-details pt-3">
 
                                 <?php
