@@ -425,7 +425,7 @@ if ($fflag): ?>
                         <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->                      
                         <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
                             <div class="d-flex flex-column gap-3 w-100">
-                              <div class="d-flex gap-3 justify-content-between align-items-start">
+                              <div class="d-flex gap-3 justify-content-end">
                                     <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
                                         style="color:#FFD78A;">Change</a>
                                 </div>
