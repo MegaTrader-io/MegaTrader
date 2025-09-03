@@ -418,17 +418,17 @@ if ($fflag): ?>
                     </div>
 
 
-
+                
+                    <div id="billing-container">
+                      <div class="d-flex gap-3 justify-content-between align-items-start">
+                      <div class="fw-medium leading-8 text-size-20 text-white">Billing Details </div>
+                      <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium" style="color:#FFD78A;">Change</a>
+                      </div>
                     <div class="billing-container mt-billing-card mt-card">
-
-                        <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
+                        <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->                      
                         <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
                             <div class="d-flex flex-column gap-3 w-100">
-                                <div class="d-flex gap-3 justify-content-between align-items-start">
-                                    <div class="text-white fw-medium text-base">Billing Details</div>
-                                    <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
-                                        style="color:#FFD78A;">Change</a>
-                                </div>
+                              
 
                                 <div class="d-flex justify-content-between gap-3">
                                     <div class="flex-fill d-flex flex-column gap-3">
@@ -500,6 +500,7 @@ if ($fflag): ?>
                             </div>
                         </div>
                     </div>
+                     </div>
 
 
 
@@ -512,35 +513,7 @@ if ($fflag): ?>
                             ?>
                         </div>
 
-
-                        <div class="mt-card mt-3">
-                            <div class="coupon-message-container w-100 mb-32 position-relative d-none">
-                                <div class="error-otp-message notifications notifications-error w-100">
-                                    <div
-                                        class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                            aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                            <path
-                                                d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z">
-                                            </path>
-                                        </svg>
-                                    </div>
-                                    <span class="error-otp-text">Coupon has been removed.</span>
-                                </div>
-
-                                <div class="success-otp-message notifications notifications-success w-100">
-                                    <div
-                                        class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                                            aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
-                                            <path fill-rule="evenodd"
-                                                d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <span class="success-otp-text">Coupon code applied successfully.</span>
-                                </div>
-                            </div> 
+                        <div class="mt-card mt-3">                            
 
                             <?php
                             wc_get_template('checkout/review-order.php');
