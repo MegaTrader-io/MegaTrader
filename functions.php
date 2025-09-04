@@ -1684,4 +1684,50 @@ function mt_save_billing_profile_cb() {
         'state_name'   => $state_name,
     ]);
 }
+// Remove Notices 
+add_action( 'template_redirect', function () {
+    if ( ! function_exists( 'wc_get_notices' ) || ! WC()->session ) {
+        return;
+    }
 
+    $notices = wc_get_notices();
+    if ( empty( $notices ) ) {
+        return;
+    }
+
+    $needles = array(
+        'subscription has been removed from your cart',
+        'products and subscriptions can not be purchased at the same time',
+    );
+
+    $changed = false;
+
+    foreach ( array( 'error', 'notice', 'success' ) as $type ) {
+        if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ] ) ) {
+            continue;
+        }
+        foreach ( $notices[ $type ] as $i => $entry ) {
+            // Cada notice puede venir como string o como array con la key 'notice'
+            $msg = is_array( $entry ) && isset( $entry['notice'] ) ? $entry['notice'] : $entry;
+            $msg_l = strtolower( wp_strip_all_tags( (string) $msg ) );
+
+            $hits = 0;
+            foreach ( $needles as $needle ) {
+                if ( $needle !== '' && strpos( $msg_l, $needle ) !== false ) {
+                    $hits++;
+                }
+            }
+            if ( $hits >= 2 || strpos( $msg_l, $needles[0] ) !== false ) {
+                unset( $notices[ $type ][ $i ] );
+                $changed = true;
+            }
+        }
+        if ( $changed ) {
+            $notices[ $type ] = array_values( $notices[ $type ] );
+        }
+    }
+
+    if ( $changed ) {
+        WC()->session->set( 'wc_notices', $notices );
+    }
+}, 0 ); 

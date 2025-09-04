@@ -21,11 +21,11 @@ if (!defined('ABSPATH')) {
 
 remove_action('woocommerce_before_checkout_form', 'wc_print_notices', 10);
 
-
-if (!is_user_logged_in()) {
-    wp_safe_redirect(wc_get_page_permalink('/auth/login/'));
+if ( ! is_user_logged_in() ) {
+    wp_safe_redirect( home_url( '/auth/login/' ) ); 
     exit;
 }
+
 
 
 

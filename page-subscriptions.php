@@ -9,6 +9,7 @@
  * @package megatrader
  */
 
+
 get_header();
 
     $products_data = get_products_with_attributes();
@@ -51,6 +52,14 @@ get_header();
         ];
     }, $market_type);
 
+?>
+
+<?php
+
+if ( ! is_user_logged_in() ) {
+    wp_safe_redirect( home_url( '/auth/login/' ) ); 
+    exit;
+}
 ?>
 
 <div class="container">

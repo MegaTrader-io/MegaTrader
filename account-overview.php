@@ -5,10 +5,12 @@ Template Post Type: page
 */
 defined('ABSPATH') || exit;
 
-if (!is_user_logged_in()) {
-  wp_safe_redirect(wc_get_page_permalink('myaccount'));
-  exit;
+if ( ! is_user_logged_in() ) {
+    wp_safe_redirect( home_url( '/auth/login/' ) ); 
+    exit;
 }
+
+
 
 get_header('shop'); 
 ?>
