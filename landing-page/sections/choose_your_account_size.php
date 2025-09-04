@@ -27,7 +27,7 @@ $product = array_find($products_data['products'], function ($product) use ($defa
 
 $variation_fields = bmc_get_custom_variation_fields();
 
-$sign_in_url = home_url('auth/login');
+$get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
 
 ?>
 
@@ -154,7 +154,7 @@ $sign_in_url = home_url('auth/login');
                 </div>
                 <div class="tw-px-6 tw-py-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
                     <a target="_blank" class="btn-dark-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3"
-                       href="<?= $sign_in_url ?>">
+                       href="<?= $get_plan_url ?>">
                         GET PLAN
                     </a>
                 </div>
