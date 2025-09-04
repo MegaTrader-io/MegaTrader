@@ -41,7 +41,7 @@
                     <div
                             class="tw-justify-start tw-text-white tw-text-base tw-font-medium tw-leading-6">
                         Angela
-                        Kim, United States
+                        Kim
                     </div>
                     <div
                             class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6">
@@ -118,7 +118,7 @@
             <div>
                 <div
                         class="tw-justify-start tw-text-white tw-text-base tw-font-medium tw-leading-6">
-                    Michael Carter, United States
+                    Michael Carter
                 </div>
                 <div
                         class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6">
