@@ -105,7 +105,7 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
             ?>
             <div class="<?= $mostPopular == $size
                     ? 'most-popular tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl'
-                    : 'tw-bg-mgt-dark tw-w-full tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
+                    : 'tw-bg-mgt-dark tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
             ?> tw-group tw-box-border tw-w-full <?= $mostPopular == $size ? 'last-element' : '' ?>">
                 <div class="tw-px-4  tw-bg-[#131210] <?= $mostPopular == $size ? 'tw-py-6 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit]' : 'tw-py-6 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit]' ?>">
                     <?php if ($mostPopular == $size): ?>
