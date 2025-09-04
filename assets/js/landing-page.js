@@ -530,19 +530,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
             })
 
-        const headerElement = document.querySelector('header > div');
-        if (headerElement) {
-            const updateHeightVar = () => {
-                const fullHeight = getCurrentHeaderHeight();
-                document.body.style.setProperty('--header-height', `${fullHeight}px`);
-            };
+        function trackElementHeight(element, css_variable) {
+            if (element) {
+                const updateHeightVar = () => {
+                    const fullHeight = element.getBoundingClientRect().height;
+                    document.body.style.setProperty(`${css_variable}`, `${fullHeight}px`);
+                };
 
-            const resizeObserver = new ResizeObserver(() => {
                 updateHeightVar();
-            });
 
-            resizeObserver.observe(headerElement);
-            updateHeightVar();
+                const resizeObserver = new ResizeObserver(() => {
+                    updateHeightVar();
+                });
+
+                resizeObserver.observe(element);
+            } else {
+                document.body.style.setProperty(`${css_variable}`, `0px`);
+            }
+        }
+
+
+        const adminbar = document.getElementById('wpadminbar');
+        trackElementHeight(adminbar, '--admin-bar-height');
+
+        const headerElement = document.querySelector('header > div');
+        trackElementHeight(headerElement, '--header-height');
+
+        const promoBanner = document.getElementById('mega-sticky-promo-banner');
+        if (promoBanner) {
+            promoBanner.style.marginTop = `var(--admin-bar-height)`;
+        } else {
+            const navbar = document.querySelector('.navbar-links');
+            if (navbar) {
+                navbar.style.marginTop = `var(--admin-bar-height)`;
+            }
         }
     }
 

@@ -371,8 +371,8 @@
   margin-top: 2rem;
 }
 
-.tw-mt-\[var\(--header-height\)\]{
-  margin-top: var(--header-height);
+.tw-mt-\[calc\(var\(--header-height\)-var\(--admin-bar-height\)\)\]{
+  margin-top: calc(var(--header-height) - var(--admin-bar-height));
 }
 
 .tw-block{
@@ -1067,11 +1067,6 @@
   padding-bottom: 0.75rem;
 }
 
-.tw-py-4{
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
 .tw-py-6{
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
@@ -1096,10 +1091,6 @@
 
 .tw-pb-12{
   padding-bottom: 3rem;
-}
-
-.tw-pb-2{
-  padding-bottom: 0.5rem;
 }
 
 .tw-pb-4{
@@ -1140,18 +1131,6 @@
 
 .tw-pt-4{
   padding-top: 1rem;
-}
-
-.tw-pt-\[6px\]{
-  padding-top: 6px;
-}
-
-.tw-pt-3{
-  padding-top: 0.75rem;
-}
-
-.tw-pb-3{
-  padding-bottom: 0.75rem;
 }
 
 .tw-text-left{
