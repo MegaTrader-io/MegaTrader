@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function getCurrentHeaderHeight() {
             const headerElement = document.querySelector('header > div');
-            return headerElement.offsetHeight + 24;
+            return headerElement.offsetHeight;
         }
 
         document.querySelectorAll('.btn-nav-link')

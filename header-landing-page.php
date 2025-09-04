@@ -2,7 +2,7 @@
 ob_start();
 do_action('mega_sticky_promo_render_banner');
 $sticky_promo_html = ob_get_clean();
-$header_height = empty($sticky_promo_html) ? 100 + 24 : 100 + 24 + 54;
+$header_height = empty($sticky_promo_html) ? 100 : 100 + 54;
 ?>
 
     <!DOCTYPE html>
