@@ -7183,7 +7183,7 @@ button#place_order.checkout-place-order:hover:before {
 .coupon-form input#coupon_code {
     background-color: var(--smoke-color);
     border: 1px solid var(--ot-border-color);
-    text-transform: uppercase;
+    text-transform: capitalize;
 }
 
 .coupon-form input#coupon_code:hover {

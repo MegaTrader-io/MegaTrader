@@ -23,8 +23,8 @@ remove_action('woocommerce_before_checkout_form', 'wc_print_notices', 10);
 
 
 if (!is_user_logged_in()) {
-  wp_safe_redirect(wc_get_page_permalink('/auth/login/'));
-  exit;
+    wp_safe_redirect(wc_get_page_permalink('/auth/login/'));
+    exit;
 }
 
 
@@ -359,7 +359,6 @@ if ($fflag): ?>
                                 $wc_product = wc_get_product($product_id);
                                 $product_type = $product->get_type();
 
-                                // echo 'Product Type: ' . $product_type . '<br>';
                                 if (
                                     $product_type === 'subscription' ||
                                     $product_type === 'variable-subscription' ||
@@ -418,88 +417,94 @@ if ($fflag): ?>
                     </div>
 
 
-                
+
                     <div id="billing-container" class="d-flex flex-column gap-3">
-                      <div class="fw-medium leading-8 text-size-20 text-white">Billing Details </div>
-                    <div class="billing-container mt-billing-card mt-card">
-                        <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->                      
-                        <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
-                            <div class="d-flex flex-column gap-3 w-100">
-                              <div class="d-flex gap-3 justify-content-end">
-                                    <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
-                                        style="color:#FFD78A;">Change</a>
-                                </div>
-
-                                <div class="d-flex justify-content-between gap-3">
-                                    <div class="flex-fill d-flex flex-column gap-3">
-                                        <div class="d-flex align-items-start gap-2">
-                                            <i class="mt-icon mt-icon_account"></i>
-                                            <div class="text-base fw-medium text-white" id="mt-sum-name">
-                                                <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-flex align-items-center gap-2">
-                                            <i class="mt-icon mt-icon_mail"></i>
-                                            <div class="text-base fw-medium text-white" id="mt-sum-email">
-                                                <?php echo esc_html($billing['email'] ?: '—'); ?>
-                                            </div>
-                                        </div>
+                        <div class="fw-medium leading-8 text-size-20 text-white">Billing Details </div>
+                        <div class="billing-container mt-billing-card mt-card">
+                            <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
+                            <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
+                                <div class="d-flex flex-column gap-3 w-100 position-relative">
+                                    <div class="d-flex gap-3 justify-content-end position-absolute end-0">
+                                        <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
+                                            style="color:#FFD78A;">Edit Billing</a>
                                     </div>
-                                    <div class="flex-fill d-flex flex-column gap-3">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <i class="mt-icon mt-icon_phone"></i>
-                                            <div class="text-base fw-medium text-white" id="mt-sum-phone">
-                                                <?php echo esc_html($billing['phone'] ?: '—'); ?>
+
+                                    <div class="d-flex justify-content-between gap-3">
+                                        <div class="flex-fill d-flex flex-column gap-3">
+                                            <div class="d-flex align-items-start gap-2">
+                                                <i class="mt-icon mt-icon_account"></i>
+                                                <div class="text-base fw-medium text-white" id="mt-sum-name">
+                                                    <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex align-items-center gap-2">
+                                                <i class="mt-icon mt-icon_mail"></i>
+                                                <div class="text-base fw-medium text-white" id="mt-sum-email">
+                                                    <?php echo esc_html($billing['email'] ?: '—'); ?>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="flex-fill d-flex flex-column gap-3">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <i class="mt-icon mt-icon_phone"></i>
+                                                <div class="text-base fw-medium text-white" id="mt-sum-phone">
+                                                    <?php echo esc_html($billing['phone'] ?: '—'); ?>
+                                                </div>
+                                            </div>
 
-                                        <div class="d-flex align-items-start gap-2">
-                                            <i class="mt-icon mt-icon_home"></i>
-                                            <?php
-                                            $line1 = trim(($billing['address_1'] ?? '') . (!empty($billing['address_2']) ? ', ' . $billing['address_2'] : ''));
-                                            $line2 = trim(implode(', ', array_filter([($billing['city'] ?? ''), $state_name, ($billing['postcode'] ?? '')])));
-                                            $line3 = trim($country_name ?: '');
+                                            <div class="d-flex align-items-start gap-2">
+                                                <i class="mt-icon mt-icon_home"></i>
+                                                <?php
+                                                $line1 = trim(($billing['address_1'] ?? '') . (!empty($billing['address_2']) ? ', ' . $billing['address_2'] : ''));
+                                                $line2 = trim(implode(', ', array_filter([($billing['city'] ?? ''), $state_name, ($billing['postcode'] ?? '')])));
+                                                $line3 = trim($country_name ?: '');
 
-                                            $addr_lines = array_filter([$line1, $line2, $line3], fn($v) => $v !== '');
-                                            ?>
-                                            <div id="mt-sum-address" class="text-base fw-medium text-white">
-                                                <?php echo implode('<br>', array_map('esc_html', $addr_lines)); ?>
+                                                $addr_lines = array_filter([$line1, $line2, $line3], fn($v) => $v !== '');
+                                                ?>
+                                                <div id="mt-sum-address" class="text-base fw-medium text-white">
+                                                    <?php echo implode('<br>', array_map('esc_html', $addr_lines)); ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- ====== VISTA FORM (WooCommerce) ====== -->
-                        <div id="mt-billing-form" class="<?php echo $has_billing ? 'd-none' : ''; ?>">
-                            <div class="billing-details pt-3">
+                            <!-- ====== VISTA FORM (WooCommerce) ====== -->
+                            <div id="mt-billing-form" class="<?php echo $has_billing ? 'd-none' : ''; ?>">
+                                <div class="billing-details pt-3">
+                                    <?php
+                                    $user_id = get_current_user_id();
+                                    $current_state = $user_id ? get_user_meta($user_id, 'billing_state', true) : '';
+                                    ?>
 
-                                <?php
-                                do_action('woocommerce_before_checkout_form');
-                                do_action('woocommerce_checkout_before_customer_details');
-                                ?>
-                                <div id="customer_details">
-                                    <?php do_action('woocommerce_checkout_billing'); ?>
-                                    <?php do_action('woocommerce_checkout_shipping'); ?>
+                                    <?php
+                                    do_action('woocommerce_before_checkout_form');
+                                    do_action('woocommerce_checkout_before_customer_details');
+                                    ?>
+                                    <div id="customer_details">
+                                        <input type="hidden" id="billing_state_current"
+                                            value="<?php echo esc_attr($current_state); ?>">
+                                        <?php do_action('woocommerce_checkout_billing'); ?>
+                                        <?php do_action('woocommerce_checkout_shipping'); ?>
+                                    </div>
+                                    <?php
+                                    do_action('woocommerce_checkout_after_customer_details');
+                                    do_action('woocommerce_after_checkout_form');
+                                    ?>
+
+                                    <!-- Botón para guardar en el perfil -->
+                                    <input type="hidden" id="mt_save_billing_nonce"
+                                        value="<?php echo esc_attr($mt_billing_nonce); ?>">
+                                    <button type="button" id="mt-save-billing"
+                                        class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
+                                        Save details
+                                    </button>
                                 </div>
-                                <?php
-                                do_action('woocommerce_checkout_after_customer_details');
-                                do_action('woocommerce_after_checkout_form');
-                                ?>
-
-                                <!-- Botón para guardar en el perfil -->
-                                <input type="hidden" id="mt_save_billing_nonce"
-                                    value="<?php echo esc_attr($mt_billing_nonce); ?>">
-                                <button type="button" id="mt-save-billing"
-                                    class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
-                                    Save details
-                                </button>
                             </div>
                         </div>
                     </div>
-                     </div>
 
 
 
@@ -512,7 +517,7 @@ if ($fflag): ?>
                             ?>
                         </div>
 
-                        <div class="mt-card mt-3">                            
+                        <div class="mt-card mt-3">
 
                             <?php
                             wc_get_template('checkout/review-order.php');

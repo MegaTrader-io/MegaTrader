@@ -2974,6 +2974,10 @@ a.pagination-number {
   .mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
     flex-direction: column;
   }
+
+  #mt-billing-change {
+    transform: translateY(-60px);
+  }
 }
 
 .mt-payment-cards .saved-cc-badge {

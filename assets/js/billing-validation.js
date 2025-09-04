@@ -72,6 +72,19 @@ function lockStateSelection(stateCode, ttlMs = 7000) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  // ↓↓↓ Recalcular checkout sin “spamear” (debounce)
+  const debouncedUpdate = (() => {
+    let t;
+    return () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        if (typeof jQuery !== "undefined") {
+          jQuery(document.body).trigger("update_checkout");
+        }
+      }, 300); // ajusta si quieres más/menos sensibilidad
+    };
+  })();
+
   // ========== DETECT COUNTRY ON FIRST LOAD (IP) ==========
 
   // --- Helpers para controlar el dropdown de Google Places (deben ir antes de usarse) ---
@@ -225,30 +238,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Cerrar el dropdown tras seleccionar
       forceClosePlaces();
+      debouncedUpdate();
     });
-  }
-
-  // ========== FORCE EMPTY STATE BY DEFAULT ==========
-  // (opcional, versión segura — no vacía si ya hay valor)
-  const stateWrapper = document.getElementById("billing_state_wrapper");
-  if (stateWrapper) {
-    const observer = new MutationObserver(() => {
-      const select = document.getElementById("billing_state");
-      if (!select) return;
-
-      const hasPrefilled =
-        !!select.value || !!select.querySelector("option:checked")?.value;
-      if (hasPrefilled) {
-        observer.disconnect();
-        return;
-      }
-
-      const defaultOpt =
-        select.querySelector('option[value=""]') || select.options[0];
-      if (defaultOpt) defaultOpt.selected = true;
-      observer.disconnect();
-    });
-    observer.observe(stateWrapper, { childList: true, subtree: true });
   }
 
   // ========== FORMAT AND VALIDATION FOR TELEPHONE ==========
@@ -830,10 +821,92 @@ document.addEventListener("DOMContentLoaded", function () {
     const changeLn = document.getElementById("mt-billing-change");
     const saveBtn = document.getElementById("mt-save-billing");
 
+    function getStoredState() {
+      try {
+        return localStorage.getItem("mt_billing_state") || "";
+      } catch (_) {
+        return "";
+      }
+    }
+
+    function restoreStateIfEmpty() {
+      const el = document.getElementById("billing_state");
+      if (!el) return;
+
+      // usa lo que haya guardado; si no hay, no toques nada
+      const saved = getStoredState();
+      if (!saved) return;
+
+      // Fuerza el valor guardado aunque el select ya tenga otro (Woo lo puede haber reescrito)
+      if (el.tagName === "SELECT") {
+        if (el.value !== saved) {
+          setStateWhenReady(saved);
+          // Mantén el lock un poco más (Woo puede refrescar fragmentos con retraso)
+          lockStateSelection(saved, 7000);
+        }
+      } else {
+        if (el.value !== saved) {
+          el.value = saved;
+          el.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+    }
+
+    const stEl = document.getElementById("billing_state");
+    if (stEl && !stEl.dataset.mtRemember) {
+      stEl.dataset.mtRemember = "1";
+      stEl.addEventListener("change", () => {
+        try {
+          localStorage.setItem("mt_billing_state", stEl.value || "");
+        } catch (_) {}
+        // Recalcula cuando cambie el estado
+        debouncedUpdate();
+      });
+    }
+
+    const stOrig = document.getElementById("billing_state_current");
+    if (stEl && stOrig && !stEl.value) {
+      setStateWhenReady(stOrig.value);
+      lockStateSelection(stOrig.value, 2000);
+    }
+
+    const countryEl = document.getElementById("billing_country");
+    if (countryEl && !countryEl.dataset.mtReset) {
+      countryEl.dataset.mtReset = "1";
+      countryEl.addEventListener("change", () => {
+        // Olvida el state guardado
+        try {
+          localStorage.removeItem("mt_billing_state");
+        } catch (_) {}
+
+        // Limpia el campo state para que Woo repueble según el país
+        const st = document.getElementById("billing_state");
+        if (st) {
+          st.value = "";
+          st.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        // Vuelve a calcular impuestos/totales
+        debouncedUpdate();
+      });
+    }
+
+    // Recalcular al editar manualmente ZIP, City y Address 1
+    ["billing_postcode", "billing_city", "billing_address_1"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el && !el.dataset.mtDebounced) {
+        el.dataset.mtDebounced = "1";
+        el.addEventListener("input", debouncedUpdate);
+        el.addEventListener("change", debouncedUpdate);
+      }
+    });
+
     function showForm() {
       if (!summary || !formBox) return;
       formBox.classList.remove("d-none");
       summary.classList.add("d-none");
+      restoreStateIfEmpty();
+
       if (typeof jQuery !== "undefined" && jQuery.fn && jQuery.fn.slideDown) {
         jQuery(formBox).stop(true, true).hide().slideDown(200);
       }
@@ -948,6 +1021,14 @@ document.addEventListener("DOMContentLoaded", function () {
           setWooVal("billing_postcode", payload.billing_postcode);
           setWooVal("billing_country", payload.billing_country);
 
+          // guarda el último estado válido
+          try {
+            localStorage.setItem(
+              "mt_billing_state",
+              payload.billing_state || ""
+            );
+          } catch (_) {}
+
           // recalcular checkout (impuestos/totales)
           if (typeof jQuery !== "undefined") {
             jQuery(document.body).trigger("update_checkout");
@@ -972,7 +1053,15 @@ document.addEventListener("DOMContentLoaded", function () {
   // Inicializa y reata tras fragment refresh
   initBillingSummary();
   if (typeof jQuery !== "undefined") {
-    jQuery(document.body).on("updated_checkout", initBillingSummary);
+    jQuery(document.body).on("updated_checkout", function () {
+      try {
+        const saved = localStorage.getItem("mt_billing_state") || "";
+        if (saved) {
+          setStateWhenReady(saved);
+          lockStateSelection(saved, 7000);
+        }
+      } catch (_) {}
+    });
   }
 
   (function ($) {
