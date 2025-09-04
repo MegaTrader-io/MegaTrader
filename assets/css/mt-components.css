@@ -296,6 +296,11 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
 .mt-card.mt-card_row {
     flex-direction: row;
 }
+@media (max-width: 767.98px) {
+  .mt-card.mt-card_row {
+    flex-direction: inherit;
+}
+}
 
 /* END CARD COMPONENT */
 

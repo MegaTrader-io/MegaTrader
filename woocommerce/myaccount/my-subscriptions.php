@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 ?>
-<div class="woocommerce_account_subscriptions cepillo">
+<div class="woocommerce_account_subscriptions">
 
 	<?php if ( ! empty( $subscriptions ) ) : ?>
 	<table class="my_account_subscriptions my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions shop_table shop_table_responsive woocommerce-orders-table--subscriptions">

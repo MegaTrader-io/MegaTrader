@@ -174,19 +174,23 @@ input#coupon_code.form-control.invalid_coupon:focus::placeholder {
 }
 
 /* Prefijos por compatibilidad */
-input#coupon_code.form-control.invalid_coupon::-webkit-input-placeholder { 
-  color: var(--error-color, #ef4444) !important; 
+input#coupon_code.form-control.invalid_coupon::-webkit-input-placeholder {
+  color: var(--error-color, #ef4444) !important;
 }
-input#coupon_code.form-control.invalid_coupon::-moz-placeholder { 
-  color: var(--error-color, #ef4444) !important; 
-  opacity: 1 !important; 
+
+input#coupon_code.form-control.invalid_coupon::-moz-placeholder {
+  color: var(--error-color, #ef4444) !important;
+  opacity: 1 !important;
 }
-input#coupon_code.form-control.invalid_coupon:-ms-input-placeholder { 
-  color: var(--error-color, #ef4444) !important; 
+
+input#coupon_code.form-control.invalid_coupon:-ms-input-placeholder {
+  color: var(--error-color, #ef4444) !important;
 }
-input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder { 
-  color: var(--error-color, #ef4444) !important; 
+
+input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
+  color: var(--error-color, #ef4444) !important;
 }
+
 .coupon_text {
   margin-top: 8px;
   font-family: var(--Type-Font-Family-Body, Roboto);
@@ -199,8 +203,13 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   text-align: left;
 }
 
-.coupon_text.invalid-text { color: var(--error-color, var(--Error-500, #F43F5E)); }
-.coupon_text.sucefull-text { color: var(--success-message); }
+.coupon_text.invalid-text {
+  color: var(--error-color, var(--Error-500, #F43F5E));
+}
+
+.coupon_text.sucefull-text {
+  color: var(--success-message);
+}
 
 /* Oculto por defecto: no reserva espacio */
 .coupon-message-container {
@@ -1032,7 +1041,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 }
 
 .border-bottom-separator {
-  border-bottom: 1px solid var(--colors-gray-700, #404040);
+  border-bottom: 1px solid #292524;
 }
 
 .border-bottom-separator-2 {
@@ -2206,7 +2215,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 .separator {
   height: 1px;
   width: 100%;
-  background: #404040;
+  background: #292524;
 }
 
 .subscription-auto-renew-toggle {
@@ -3310,8 +3319,5 @@ a.pagination-number {
 /****** Sidebar Sticky*/
 .mt-sidebar {
   position: sticky;
-top: calc(
-  var(--promo-banner-height, 0px) +
-  var(--admin-bar-height, 0px) +
-  var(--nav-bar-height, 0px) + 32px
-);}
+  top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + 32px);
+}

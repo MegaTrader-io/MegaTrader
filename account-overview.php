@@ -42,7 +42,7 @@ get_header('shop');
         </div>
 
         <div class="mt-card">
-          <div class="text-white text-size-20 fw-medium text-uppercase align-self-start">
+          <div class="text-white text-size-20 fw-medium text-uppercase align-self-start pb-32">
             <?php esc_html_e('Get started in 3 steps', 'woocommerce'); ?>
           </div>
           <div class="d-flex align-items-center flex-column w-100 mt-2">
@@ -98,78 +98,34 @@ get_header('shop');
         </div>
 
         <div class="d-flex flex-column flex-md-row gap-3 pb-35 align-items-start">
-          <div class="bg-1e1e1e d-flex flex-column gap-3 overflow-hidden p-3 rounded-16px w-100">
+          <div class="mt-card">
             <div class="text-white fw-medium text-size-20 text-uppercase">
               <?php esc_html_e('Why join us?', 'woocommerce'); ?>
             </div>
             <div class="d-flex flex-column">
               <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-                <div class="svg-check">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <mask id="mask0_12164_24055" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
-                      width="24" height="24">
-                      <rect width="24" height="24" fill="#D9D9D9" />
-                    </mask>
-                    <g mask="url(#mask0_12164_24055)">
-                      <path
-                        d="M9.54961 17.9996L3.84961 12.2996L5.27461 10.8746L9.54961 15.1496L18.7246 5.97461L20.1496 7.39961L9.54961 17.9996Z"
-                        fill="#A8A29E" />
-                    </g>
-                  </svg>
+                <div class="mt-icon mt-icon_checkmark">
                 </div>
                 <div class="text-a8a29e text-base fw-medium">
                   <?php esc_html_e('Professional trading environment', 'woocommerce'); ?>
                 </div>
               </div>
               <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-                <div class="svg-check">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <mask id="mask0_12164_24055" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
-                      width="24" height="24">
-                      <rect width="24" height="24" fill="#D9D9D9" />
-                    </mask>
-                    <g mask="url(#mask0_12164_24055)">
-                      <path
-                        d="M9.54961 17.9996L3.84961 12.2996L5.27461 10.8746L9.54961 15.1496L18.7246 5.97461L20.1496 7.39961L9.54961 17.9996Z"
-                        fill="#A8A29E" />
-                    </g>
-                  </svg>
+              <div class="mt-icon mt-icon_checkmark">
                 </div>
                 <div class="text-a8a29e text-base fw-medium">
                   <?php esc_html_e('Real-time performance tracking', 'woocommerce'); ?>
                 </div>
               </div>
               <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-                <div class="svg-check">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <mask id="mask0_12164_24055" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
-                      width="24" height="24">
-                      <rect width="24" height="24" fill="#D9D9D9" />
-                    </mask>
-                    <g mask="url(#mask0_12164_24055)">
-                      <path
-                        d="M9.54961 17.9996L3.84961 12.2996L5.27461 10.8746L9.54961 15.1496L18.7246 5.97461L20.1496 7.39961L9.54961 17.9996Z"
-                        fill="#A8A29E" />
-                    </g>
-                  </svg>
+               <div class="mt-icon mt-icon_checkmark">
                 </div>
                 <div class="text-a8a29e text-base fw-medium">
                   <?php esc_html_e('Expert support and guidance', 'woocommerce'); ?>
                 </div>
               </div>
               <div class="py-3 d-flex gap-2 align-items-center">
-                <div class="svg-check">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <mask id="mask0_12164_24055" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
-                      width="24" height="24">
-                      <rect width="24" height="24" fill="#D9D9D9" />
-                    </mask>
-                    <g mask="url(#mask0_12164_24055)">
-                      <path
-                        d="M9.54961 17.9996L3.84961 12.2996L5.27461 10.8746L9.54961 15.1496L18.7246 5.97461L20.1496 7.39961L9.54961 17.9996Z"
-                        fill="#A8A29E" />
-                    </g>
-                  </svg>
+               <div class="mt-icon mt-icon_checkmark">
                 </div>
                 <div class="text-a8a29e text-base fw-medium">
                   <?php esc_html_e('Flexible challenge options', 'woocommerce'); ?>
@@ -178,7 +134,7 @@ get_header('shop');
 
             </div>
           </div>
-          <div class="bg-1e1e1e d-flex flex-column gap-3 overflow-hidden p-3 rounded-16px w-100">
+          <div class="mt-card">
             <div class="text-white fw-medium text-size-20 text-uppercase">
               <?php esc_html_e('Frequently Asked Question', 'woocommerce'); ?>
             </div>

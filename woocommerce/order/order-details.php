@@ -202,7 +202,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 </button>
 
 <?php if ($product_id): ?>
-	<div class="account-box mb-32">
+	<div class="mb-32 mt-card">
 		<div
 			class="d-flex flex-column flex-lg-row flex-md-row gap-3 h-full justify-content-lg-between justify-content-md-between w-full">
 			<div class="d-flex flex-column flex-grow-1 flex-shrink-0 justify-content-center">
@@ -223,7 +223,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 <?php endif; ?>
 
 <!-- One-Time Purchase Info Block -->
-<div class="account-box mb-32">
+<div class="mb-32 mt-card">
 	<div class="d-flex flex-column gap-32 w-100">
 		<div class="d-flex flex-column flex-lg-row flex-md-row flex-sm-row gap-3 justify-content-between w-100">
 			<div class="d-flex gap-3 align-items-center flex-grow-1 flex-shrink-1">
@@ -309,7 +309,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 </div>
 
 <div class="d-flex gap-3 d-flex flex-column flex-lg-row flex-md-row gap-3 mb-32">
-	<div class="account-box w-100">
+	<div class="account-box w-100 border-mg-buttton-secondary">
 		<div class="text-white text-size-20 fw-medium text-uppercase">Objectives</div>
 		<div class="d-flex flex-column">
 			<?php foreach ($objectives_meta as $key => $value): ?>
@@ -325,7 +325,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 		</div>
 	</div>
 
-	<div class="account-box w-100">
+	<div class="account-box w-100 border-mg-buttton-secondary">
 		<div class="text-white text-size-20 fw-medium text-uppercase">Rules</div>
 		<div class="d-flex flex-column">
 			<?php foreach ($rules_meta as $key => $value): ?>
@@ -346,7 +346,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 
 <?php if ( ! empty( $orders_to_show ) ): ?>
     <div class="mb-32">
-        <div class="subscription-orders-accordion mb-4 overflow-hidden rounded-2xl">
+        <div class="border-mg-buttton-secondary mb-4 overflow-hidden rounded-2xl">
             <div class="fw-medium text-size-20 text-uppercase text-white p-3 bg-1e1e1e">
                 Related Orders
             </div>
