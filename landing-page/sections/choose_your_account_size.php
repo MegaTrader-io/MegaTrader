@@ -107,7 +107,7 @@ $sign_in_url = home_url('auth/login');
                     ? 'most-popular tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl'
                     : 'tw-bg-mgt-dark tw-w-full tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
             ?> tw-group  <?= $mostPopular == $size ? 'last-element' : '' ?>">
-                <div class="tw-px-4 tw-bg-[#131210] <?= $mostPopular == $size ? 'tw-py-4 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit]' : 'tw-py-4 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit]' ?>">
+                <div class="tw-px-4 tw-bg-[#131210] <?= $mostPopular == $size ? 'tw-py-6 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit]' : 'tw-py-6 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit]' ?>">
                     <?php if ($mostPopular == $size): ?>
                         <div class="tw-inline-flex">
                             <span class="tw-justify-start tw-text-black tw-inline-flex tw-rounded-xl tw-text-sm tw-font-bold tw-uppercase tw-leading-[normal] tw-py-1 tw-px-2 tw-bg-primary">
@@ -119,7 +119,7 @@ $sign_in_url = home_url('auth/login');
                         Account
                     </div>
                 </div>
-                <div class="tw-px-4 tw-py-3 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                <div class="tw-py-6 tw-px-4 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
                     <div class="tw-text-[#ffb34a] tw-font-medium">
                         <span class="tw-text-4xl tw-leading-[48px] price-plan"
                               data-price="<?= $size ?>">$<?= number_format($price) ?></span>
@@ -141,7 +141,7 @@ $sign_in_url = home_url('auth/login');
                         }
 
                         ?>
-                        <div class="tw-w-full tw-pb-2 tw-pt-[6px] tw-border-t tw-border-stone-800 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 <?= $field ?>">
+                        <div class="tw-w-full tw-py-3 tw-border-t tw-border-stone-800 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 <?= $field ?>">
                             <div class="tw-flex-1 tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium">
                                 <div class="tw-grid tw-grid-cols-[1fr_auto]">
                                     <div class="tw-col-span-1 tw-leading-6"
@@ -152,7 +152,7 @@ $sign_in_url = home_url('auth/login');
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <div class="tw-px-6 tw-py-3 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                <div class="tw-px-6 tw-py-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
                     <a target="_blank" class="btn-dark-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3"
                        href="<?= $sign_in_url ?>">
                         GET PLAN
