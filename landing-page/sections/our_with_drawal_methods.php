@@ -4,7 +4,7 @@
     </div>
 
     <div
-            class="tw-mx-auto  tw-max-w-[612px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium tw-text-stone-400 md:max-w-[860px]">
+            class="tw-mx-auto  tw-max-w-[612px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium tw-text-stone-400 md:tw-max-w-[860px]">
         Withdraw profits securely using RiseWorks, Bitcoin, or Ethereum, with a 90% split on all earnings and
         fast, reliable processing to support your trading success.
     </div>
