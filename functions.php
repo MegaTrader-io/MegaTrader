@@ -1731,3 +1731,4 @@ add_action( 'template_redirect', function () {
         WC()->session->set( 'wc_notices', $notices );
     }
 }, 0 ); 
+
