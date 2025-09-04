@@ -80,7 +80,7 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
         <?php endforeach; ?>
     </div>
 
-    <div class="tw-space-y-2 md:tw-space-y-0 md:tw-grid md:tw-grid-cols-2 lg:tw-flex lg:tw-items-center tw-mb-4">
+    <div class="tw-space-y-2 md:tw-space-y-0 md:tw-grid md:tw-grid-cols-2 lg:tw-grid-cols-[1fr_1fr_1fr_1fr] lg:tw-items-center tw-mb-4">
         <?php foreach ($account_sizes as $index => $size) : ?>
             <?php
             $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
@@ -106,8 +106,8 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
             <div class="<?= $mostPopular == $size
                     ? 'most-popular tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl'
                     : 'tw-bg-mgt-dark tw-w-full tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
-            ?> tw-group  <?= $mostPopular == $size ? 'last-element' : '' ?>">
-                <div class="tw-px-4 tw-bg-[#131210] <?= $mostPopular == $size ? 'tw-py-6 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit]' : 'tw-py-6 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit]' ?>">
+            ?> tw-group tw-box-border tw-w-full <?= $mostPopular == $size ? 'last-element' : '' ?>">
+                <div class="tw-px-4  tw-bg-[#131210] <?= $mostPopular == $size ? 'tw-py-6 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit]' : 'tw-py-6 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit]' ?>">
                     <?php if ($mostPopular == $size): ?>
                         <div class="tw-inline-flex">
                             <span class="tw-justify-start tw-text-black tw-inline-flex tw-rounded-xl tw-text-sm tw-font-bold tw-uppercase tw-leading-[normal] tw-py-1 tw-px-2 tw-bg-primary">
@@ -143,7 +143,7 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                         ?>
                         <div class="tw-w-full tw-py-3 tw-border-t tw-border-stone-800 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 <?= $field ?>">
                             <div class="tw-flex-1 tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium">
-                                <div class="tw-grid tw-grid-cols-[1fr_auto]">
+                                <div class="tw-grid tw-grid-cols-[1fr_auto] tw-gap-2">
                                     <div class="tw-col-span-1 tw-leading-6"
                                          title="<?= $field ?>"><?= $label; ?></div>
                                     <div class="tw-col-auto tw-no-wrap tw-content-center tw-text-right tw-leading-6 metaValue"><?= $value ?></div>
