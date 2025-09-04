@@ -1642,30 +1642,24 @@ function mt_redirect_my_account_dashboard() {
 
 // === Guardar billing via AJAX ===
 add_action('wp_ajax_mt_save_billing_profile', 'mt_save_billing_profile_cb');
-// Si quisieras permitir guest checkout, puedes enganchar también nopriv y devolver error claro:
-// add_action('wp_ajax_nopriv_mt_save_billing_profile', 'mt_save_billing_profile_cb');
 
 function mt_save_billing_profile_cb() {
-    // 1) Nonce
     if ( ! check_ajax_referer('mt_save_billing', 'nonce', false) ) {
         wp_send_json_error(['message' => __('Invalid security token.', 'your-txt')], 403);
     }
 
-    // 2) Usuario
     $user_id = get_current_user_id();
     if ( ! $user_id ) {
         wp_send_json_error(['message' => __('You must be logged in to save billing details.', 'your-txt')], 401);
     }
 
-    // 3) Saneado rápido por campo
-    $in = wp_unslash($_POST); // phpcs:ignore WordPress.Security.NonceVerification
+    $in = wp_unslash($_POST); 
     $val = function($key, $type = 'text') use ($in) {
         $v = isset($in[$key]) ? $in[$key] : '';
         if ($type === 'email') return sanitize_email($v);
         return sanitize_text_field($v);
     };
 
-    // 4) Guardar usando WC_Customer (actualiza los meta billing_*)
     $customer = new WC_Customer($user_id);
     $customer->set_billing_first_name( $val('billing_first_name') );
     $customer->set_billing_last_name ( $val('billing_last_name')  );
@@ -1679,7 +1673,6 @@ function mt_save_billing_profile_cb() {
     $customer->set_billing_country   ( strtoupper($val('billing_country')) );
     $customer->save();
 
-    // 5) Labels legibles para el front
     $country   = $customer->get_billing_country();
     $state     = $customer->get_billing_state();
     $countries = wc()->countries;
@@ -1691,3 +1684,4 @@ function mt_save_billing_profile_cb() {
         'state_name'   => $state_name,
     ]);
 }
+
