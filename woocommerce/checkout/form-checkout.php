@@ -20,6 +20,8 @@ if (!defined('ABSPATH')) {
 }
 
 remove_action('woocommerce_before_checkout_form', 'wc_print_notices', 10);
+remove_action('woocommerce_before_checkout_form', 'woocommerce_output_all_notices', 10);
+
 
 
 
@@ -216,7 +218,25 @@ if ($user_id) {
             $billing['email'] = $u->user_email;
     }
 }
-$has_billing = !empty($billing['first_name']) || !empty($billing['address_1']) || !empty($billing['phone']) || !empty($billing['email']);
+// Valida billing COMPLETO para decidir si se muestra el resumen o el formulario
+$required_billing_keys = [
+    'first_name',
+    'last_name',
+    'email',
+    'phone',
+    'address_1',
+    'country',
+    'city',
+    'state',
+    'postcode'
+];
+$has_complete_billing = true;
+foreach ($required_billing_keys as $k) {
+    if (empty($billing[$k])) {
+        $has_complete_billing = false;
+        break;
+    }
+}
 
 // Mapeo legible de país/estado (si existen)
 $country_name = $billing['country'];
@@ -415,7 +435,7 @@ if ($fflag): ?>
                         <div class="fw-medium leading-8 text-size-20 text-white">Billing Details </div>
                         <div class="billing-container mt-billing-card mt-card">
                             <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
-                            <div id="mt-billing-summary" class="<?php echo $has_billing ? '' : 'd-none'; ?>">
+                            <div id="mt-billing-summary" class="<?php echo $has_complete_billing ? '' : 'd-none'; ?>">
                                 <div class="d-flex flex-column gap-3 w-100 position-relative">
                                     <div class="d-flex gap-3 justify-content-end position-absolute end-0">
                                         <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
@@ -465,7 +485,7 @@ if ($fflag): ?>
                             </div>
 
                             <!-- ====== VISTA FORM (WooCommerce) ====== -->
-                            <div id="mt-billing-form" class="<?php echo $has_billing ? 'd-none' : ''; ?>">
+                            <div id="mt-billing-form" class="<?php echo $has_complete_billing ? 'd-none' : ''; ?>">
                                 <div class="billing-details pt-3">
                                     <?php
                                     $user_id = get_current_user_id();

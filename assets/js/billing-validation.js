@@ -368,6 +368,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function validateFormFields(values, rules) {
     const errors = {};
     for (const [field, ruleSet] of Object.entries(rules)) {
+      const inputEl = document.querySelector(`[name="${field}"]`);
+      if (!inputEl) continue;
+
       const value = values[field] || "";
       for (const rule of ruleSet) {
         const result = rule(value);
@@ -544,7 +547,14 @@ document.addEventListener("DOMContentLoaded", function () {
       "submit",
       (e) => {
         if (checkoutFormIsInvalid) {
-          // e.stopPropagation();
+          e.preventDefault();
+          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          return false;
+        }
+        // por si llega a submit sin pasar por el click
+        if (!ensurePaymentSelection(e)) {
+          e.preventDefault();
+          return false;
         }
       },
       true
@@ -583,13 +593,128 @@ document.addEventListener("DOMContentLoaded", function () {
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
+  // Exige que haya método de pago "activo", contemplando el 1er checkout sin radios
+  function ensurePaymentSelection(e) {
+    const savedChecked = document.querySelector(
+      Selector.SavedPaymentMethodRadioSelector + ":checked"
+    );
+    const newChecked = document.querySelector(
+      Selector.NewPaymentMethodRadioSelector + ":checked"
+    );
+    const savedRadios = document.querySelectorAll(
+      Selector.SavedPaymentMethodRadioSelector
+    );
+    const newRadios = document.querySelectorAll(
+      Selector.NewPaymentMethodRadioSelector
+    );
+    const hasRadioUI = savedRadios.length + newRadios.length > 0;
+
+    const paymentRoot = document.querySelector("#payment");
+    const ccForms = document.querySelectorAll(
+      ".wc-payment-form, .wc-credit-card-form"
+    );
+    const hasVisibleCC = Array.from(ccForms).some((el) => {
+      if (!el) return false;
+      const style = window.getComputedStyle(el);
+      const visible =
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        el.getClientRects().length > 0;
+      return visible;
+    });
+
+    // Si hay UI con radios (saved/new), exige que uno esté marcado
+    if (hasRadioUI) {
+      if (!savedChecked && !newChecked) {
+        const host = paymentRoot || document.body;
+        let msg = host.querySelector(".invalid-feedback.payment-required");
+        if (!msg) {
+          msg = document.createElement("div");
+          msg.className = "invalid-feedback payment-required";
+          msg.textContent =
+            "Please select a saved card or choose “Use a new payment method”.";
+          (
+            document.querySelector(".woocommerce-SavedPaymentMethods") ||
+            document.querySelector(".wc-payment-form") ||
+            host
+          ).appendChild(msg);
+        } else {
+          msg.style.display = "block";
+        }
+
+        // Desbloquea si ya hay overlay
+        try {
+          if (typeof jQuery !== "undefined") {
+            const $form = jQuery("form.checkout, #checkout-form");
+            $form.removeClass("processing");
+            if (typeof $form.unblock === "function") $form.unblock();
+          }
+        } catch (_) {}
+
+        (
+          document.querySelector(".woocommerce-SavedPaymentMethods") ||
+          document.querySelector(".wc-payment-form") ||
+          paymentRoot ||
+          document.body
+        ).scrollIntoView({ behavior: "smooth", block: "center" });
+
+        if (e && typeof e.preventDefault === "function") e.preventDefault();
+        return false;
+      }
+      return true;
+    }
+
+    // SIN radios: si hay un form de tarjeta visible, lo tomamos como método activo (primer checkout)
+    if (hasVisibleCC) {
+      const old = (paymentRoot || document.body).querySelector(
+        ".invalid-feedback.payment-required"
+      );
+      if (old) old.style.display = "none";
+      return true;
+    }
+
+    // Fallback: si hay un único input payment_method (oculto por el gateway/tema), acéptalo
+    const pmRadios = document.querySelectorAll('input[name="payment_method"]');
+    if (pmRadios.length === 1) return true;
+
+    // Si no podemos determinar método, bloqueamos y avisamos
+    const host = paymentRoot || document.body;
+    let msg = host.querySelector(".invalid-feedback.payment-required");
+    if (!msg) {
+      msg = document.createElement("div");
+      msg.className = "invalid-feedback payment-required";
+      msg.textContent = "Please select a payment method.";
+      (document.querySelector(".wc-payment-form") || host).appendChild(msg);
+    } else {
+      msg.style.display = "block";
+    }
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
+    return false;
+  }
+
   // ========== PLACE ORDER BTN EVENT ==========
   function addPlaceOrderBtnListeners() {
     const placeOrderBtn = document.getElementById(Selector.PlaceOrderBtnId);
     if (placeOrderBtn) {
       placeOrderBtn.addEventListener("click", (e) => {
+        // 1) Pre-unblock por si quedó overlay del intento anterior
+        if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+
         clearErrors(checkoutForm);
         formActionHandler(e);
+
+        // 2) Si falló la validación de billing/policy, frena y quita overlay
+        if (checkoutFormIsInvalid) {
+          e.preventDefault();
+          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          return false;
+        }
+
+        // 3) Método de pago (incluye caso 1er checkout sin radios)
+        if (!ensurePaymentSelection(e)) return false;
+
+        // 4) Watchdog por si el gateway marca error en tarjeta sin disparar checkout_error
+        processingWatchdog(1000);
       });
     }
   }
@@ -690,7 +815,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // CVC
     `Your card’s security code is incomplete.`,
     // Policy Checkbox
-    `Please accept our Terms of Service and Privacy Policy to continue`,
+    `Please accept our Terms of Service and Privacy Policy to continue.`,
   ]);
 
   function migrateGlobalFieldErrors(node) {
@@ -721,8 +846,29 @@ document.addEventListener("DOMContentLoaded", function () {
       // Delete Error Group If Empty
       if (!errorGroup.children.length) {
         errorGroup.remove();
+        stripEmptyNoticeGroups();
       }
     });
+  }
+
+  // Elimina grupos de notices vacíos (incluye <div role="alert"></div> sin mensajes)
+  function stripEmptyNoticeGroups() {
+    document
+      .querySelectorAll(".woocommerce-NoticeGroup-checkout")
+      .forEach((group) => {
+        group.querySelectorAll('[role="alert"]').forEach((alertEl) => {
+          const hasMsgs = alertEl.querySelector(
+            ".woocommerce-error, .woocommerce-info, .woocommerce-message"
+          );
+          if (!alertEl.textContent.trim() && !hasMsgs) {
+            alertEl.remove();
+          }
+        });
+        const stillHasMsgs = group.querySelector(
+          ".woocommerce-error, .woocommerce-info, .woocommerce-message"
+        );
+        if (!stillHasMsgs) group.remove();
+      });
   }
 
   // ========= MUTATION OBSERVER POOL - ADDITION ============
@@ -743,6 +889,74 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Llamada inicial por si el botón ya está presente
   addPlaceOrderBtnListeners();
+
+  // Limpieza de wrappers vacíos al cargar y en eventos de checkout
+  stripEmptyNoticeGroups();
+  if (typeof jQuery !== "undefined") {
+    jQuery(document.body).on(
+      "updated_checkout checkout_error payment_method_selected wc-credit-card-form-init",
+      function () {
+        processingWatchdog(600);
+      }
+    );
+  }
+
+  // Intercepta el submit antes del AJAX: si retornamos false, Woo quita el preloader automáticamente
+  if (typeof jQuery !== "undefined") {
+    jQuery(function ($) {
+      $(document.body).on("checkout_place_order", function () {
+        // Normaliza teléfono (E.164) si hay intl-tel-input
+        try {
+          const telInput = document.getElementById("billing_phone");
+          if (window.iti && telInput) {
+            const full = window.iti.getNumber();
+            if (full) telInput.value = full;
+          }
+        } catch (_) {}
+
+        // Permite no-radios con form de tarjeta visible (primer checkout)
+        if (!ensurePaymentSelection()) {
+          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          return false;
+        }
+
+        // Valida campos requeridos
+        const formData = new FormData(checkoutForm);
+        const values = Object.fromEntries(formData.entries());
+        const errors = validateFormFields(values, validationRules);
+
+        try {
+          if (window.iti && !window.iti.isValidNumber()) {
+            errors.billing_phone = "Please enter a valid phone number.";
+          }
+        } catch (_) {}
+
+        if (Object.keys(errors).length) {
+          clearErrors(checkoutForm);
+          showErrors(checkoutForm, errors);
+
+          const firstInvalid = checkoutForm.querySelector(".is-invalid");
+          if (firstInvalid) {
+            firstInvalid.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+            setTimeout(() => firstInvalid.focus && firstInvalid.focus(), 200);
+          }
+
+          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          return false;
+        }
+        processingWatchdog(1500);
+        return true; // OK
+      });
+
+      // Fallback por si algún gateway emite checkout_error
+      $(document.body).on("checkout_error", function () {
+        if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+      });
+    });
+  }
 
   // ========== BLOCK ENTER TO SEND FORM ==========
   const checkoutFormEnterBlock = document.querySelector("form.checkout");
@@ -778,6 +992,21 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       $form.removeClass("processing");
     }
+  }
+
+  // Watchdog: si el overlay queda puesto y no hay AJAX activo, lo quitamos
+  function processingWatchdog(delay = 900) {
+    if (typeof jQuery === "undefined") return;
+    setTimeout(() => {
+      try {
+        const $form = jQuery("form.checkout, #checkout-form");
+        const stillProcessing = $form.hasClass("processing");
+        const ajaxActive = typeof jQuery !== "undefined" && jQuery.active > 0;
+        if (stillProcessing && !ajaxActive) {
+          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+        }
+      } catch (_) {}
+    }, delay);
   }
 
   // --- helpers para TU preloader (.preloader) ---

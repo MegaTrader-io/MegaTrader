@@ -779,7 +779,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
                                 <div class="text-white text-base fw-medium">
                                     <?php echo esc_html(Label::THANKYOU_META['total_paid']); ?>
                                 </div>
-                                <div class="fw-bold text-primary text-base fw-medium">
+                                <div class="text-primary text-base fw-medium">
                                     <?php echo wp_kses_post($total_paid); ?>
                                 </div>
                             </div>
