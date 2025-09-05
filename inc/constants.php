@@ -90,5 +90,18 @@ class Label
         'phone' => 'mt-icon_phone',
         'home' => 'mt-icon_home',
     ];
+
+     public const THANKYOU_META = [
+        "success" => "success",
+        "order_successful" => "Order Successful!",
+        "trading_challenge_ready" => "Your trading challenge is ready.",
+        "order" => "Order",
+        "order_summary" => "Order Summary",
+        "addons" => "Add Ons",
+        "total_paid" => "Total Paid",
+        "payment_method" => "Payment Method",
+        "confirmation_email_sent" => "Confirmation email sent – Account activating now.",
+        "go_to_my_account" => "Go to My Account",     
+    ];
  
 }

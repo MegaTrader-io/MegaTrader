@@ -573,6 +573,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   max-width: 320px;
 }
 
+.w-max-600px {
+  max-width: 600px;
+}
+
 /* ----- CUSTOM HEIGHT ------ */
 
 .h-0 {
@@ -629,6 +633,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .h-0px {
   height: 0;
+}
+
+.h-1px {
+  height: 1px;
 }
 
 .h-2px {
@@ -1053,6 +1061,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .border-gray {
   border: 1px solid var(--colors-gray-700, #404040);
+}
+
+.border-top-gray {
+  border-top:1px solid var(--colors-gray-700, #404040);
 }
 
 .border-bottom-dark {
@@ -3335,4 +3347,10 @@ a.pagination-number {
 .mt-sidebar {
   position: sticky;
   top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + 32px);
+}
+
+/*--------- MOdal Thanksyou -------*/
+
+#order-copy-chip {
+    cursor: pointer;
 }
