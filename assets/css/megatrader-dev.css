@@ -1056,6 +1056,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   border-bottom: 1px solid var(--surface-dark, #292524);
 }
 
+.outline-dark {
+  outline: 1px solid #404040;
+}
+
 
 /* ----- CUSTOM BACKGROUND------ */
 

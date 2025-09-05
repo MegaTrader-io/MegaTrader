@@ -9,10 +9,6 @@
  * @package megatrader
  */
 
-if ( ! is_user_logged_in() ) {
-    wp_safe_redirect( home_url( '/auth/login/' ) ); 
-    exit;
-}
 
 get_header();
 

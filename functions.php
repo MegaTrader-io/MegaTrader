@@ -1732,3 +1732,33 @@ add_action( 'template_redirect', function () {
     }
 }, 0 ); 
 
+
+add_action('template_redirect', function () {
+
+  if ( is_user_logged_in() ) return;
+
+  if ( is_admin() && ! wp_doing_ajax() ) return;
+  if ( wp_doing_ajax() || wp_doing_cron() ) return;
+
+  $path = strtolower( trailingslashit( parse_url( $_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH ) ?: '/' ) );
+
+  // Allow REST API 
+  if ( strpos($path, '/wp-json/') === 0 ) return;
+
+  // ====== White List ======
+  $public_paths = [
+    '/',              // Home
+    '/auth/login/',   // login Page
+  ];
+
+  $public_paths = apply_filters('mt_public_paths', $public_paths, $path);
+
+  if ( ! in_array($path, $public_paths, true) ) {
+
+    $login_url = home_url('/auth/login/');
+    wp_safe_redirect( $login_url, 302 );
+    exit;
+  }
+}, 0);
+
+

@@ -448,6 +448,10 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
 .mt-icon_caret-down {
     mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_13642_51011" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_13642_51011)"><path d="M12 15L7 10H17L12 15Z" fill="white"/></g></svg>');
 }
+
+.mt-icon_content-copy {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none"><mask id="mask0_13273_27302" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="25"><rect x="0.5" y="0.75" width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_13273_27302)"><path d="M9.5 18.75C8.95 18.75 8.47917 18.5542 8.0875 18.1625C7.69583 17.7708 7.5 17.3 7.5 16.75V4.75C7.5 4.2 7.69583 3.72917 8.0875 3.3375C8.47917 2.94583 8.95 2.75 9.5 2.75H18.5C19.05 2.75 19.5208 2.94583 19.9125 3.3375C20.3042 3.72917 20.5 4.2 20.5 4.75V16.75C20.5 17.3 20.3042 17.7708 19.9125 18.1625C19.5208 18.5542 19.05 18.75 18.5 18.75H9.5ZM5.5 22.75C4.95 22.75 4.47917 22.5542 4.0875 22.1625C3.69583 21.7708 3.5 21.3 3.5 20.75V6.75H5.5V20.75H16.5V22.75H5.5Z" fill="white"/></g></svg>');
+}
 /* END ICONS */
 
 /* BADGE */
