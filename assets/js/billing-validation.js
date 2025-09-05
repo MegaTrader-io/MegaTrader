@@ -659,6 +659,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ).scrollIntoView({ behavior: "smooth", block: "center" });
 
         if (e && typeof e.preventDefault === "function") e.preventDefault();
+        processingWatchdog(600, 6, 700);
         return false;
       }
       return true;
@@ -707,6 +708,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (checkoutFormIsInvalid) {
           e.preventDefault();
           if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          processingWatchdog(800, 6, 700); // <- nuevo
           return false;
         }
 
@@ -994,18 +996,38 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Watchdog: si el overlay queda puesto y no hay AJAX activo, lo quitamos
-  function processingWatchdog(delay = 900) {
+  function forceUnblockCheckout() {
     if (typeof jQuery === "undefined") return;
-    setTimeout(() => {
+    try {
+      const $form = jQuery("form.checkout, #checkout-form");
+      $form.removeClass("processing");
+      if ($form.length && typeof $form.unblock === "function") {
+        $form.unblock();
+      }
+      // Por si quedaron overlays huérfanos
+      jQuery(".blockUI, .blockOverlay").remove();
+    } catch (_) {}
+  }
+
+  // Watchdog: si el overlay queda puesto y no hay AJAX activo, lo quitamos
+  // Watchdog: reintenta desbloquear si no hay AJAX activo
+  function processingWatchdog(delay = 900, repeats = 4, gap = 900) {
+    if (typeof jQuery === "undefined") return;
+
+    const checkOnce = () => {
       try {
         const $form = jQuery("form.checkout, #checkout-form");
         const stillProcessing = $form.hasClass("processing");
         const ajaxActive = typeof jQuery !== "undefined" && jQuery.active > 0;
         if (stillProcessing && !ajaxActive) {
-          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          forceUnblockCheckout();
         }
       } catch (_) {}
+    };
+
+    setTimeout(function run() {
+      checkOnce();
+      if (--repeats > 0) setTimeout(run, gap);
     }, delay);
   }
 
