@@ -119,12 +119,24 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                         Account
                     </div>
                 </div>
-                <div class="tw-py-6 tw-px-4 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
-                    <div class="tw-text-[#ffb34a] tw-font-medium">
+                <div class="tw-px-6 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                    <div class="tw-space-y-2 tw-my-3 tw-w-full">
+                        <div class="tw-flex tw-justify-between tw-gap-2">
+                            <div class="tw-justify-start tw-text-white tw-text-2xl tw-font-medium tw-line-through tw-uppercase tw-leading-7">$349</div>
+                            <div class="tw-px-2 tw-py-1 tw-rounded-lg tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
+                                <div class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">Daily Loss Limit</div>
+                                <svg width="1" height="24" viewBox="0 0 1 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
+                                </svg>
+                                <div class="tw-text-right tw-justify-start tw-text-white tw-text-base tw-font-medium tw-leading-normal">SEP</div>
+                            </div>
+                        </div>
+                        <div class="tw-text-white tw-font-medium">
                         <span class="tw-text-4xl tw-leading-[48px] price-plan"
                               data-price="<?= $size ?>">$<?= number_format($price) ?></span>
-                        <span class="tw-text-xl frequency-plan"
-                              data-price="<?= $size ?>">/ <?= $defaultSlug !== 'funded-plan' ? 'Month' : 'One-Time Fee' ?></span>
+                            <span class="tw-text-xl frequency-plan"
+                                  data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'Month' : 'One-Time Fee' ?></span>
+                        </div>
                     </div>
                 </div>
                 <div class="tw-px-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
@@ -141,21 +153,22 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                         }
 
                         ?>
-                        <div class="tw-w-full tw-py-3 tw-border-t tw-border-stone-800 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 <?= $field ?>">
-                            <div class="tw-flex-1 tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium">
+                        <div class="tw-w-full tw-py-3 first:tw-border-t first:tw-border-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 <?= $field ?>">
+                            <div class="tw-flex-1 tw-justify-start tw-text-base tw-font-medium">
                                 <div class="tw-grid tw-grid-cols-[1fr_auto] tw-gap-2">
-                                    <div class="tw-col-span-1 tw-leading-6"
-                                         title="<?= $field ?>"><?= $label; ?></div>
-                                    <div class="tw-col-auto tw-no-wrap tw-content-center tw-text-right tw-leading-6 metaValue"><?= $value ?></div>
+                                    <div class="tw-col-span-1 tw-leading-6 tw-text-stone-400"
+                                         title="<?= $field ?>">
+                                        <?= $label; ?>
+                                    </div>
+                                    <div class="tw-col-auto tw-no-wrap tw-content-center tw-text-right tw-text-white tw-leading-6 metaValue"><?= $value ?></div>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
                 <div class="tw-px-6 tw-py-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
-                    <a target="_blank" class="btn-dark-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3"
-                       href="<?= $get_plan_url ?>">
-                        GET PLAN
+                    <a href="<?= $get_plan_url ?>" target="_blank" class="<?= $mostPopular == $size ? 'btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3' : 'mega-btn-md mega-btn-default-md w-100 tw-no-underline'?>">
+                        GET FUNDED WITH $<?= $size ?>
                     </a>
                 </div>
             </div>

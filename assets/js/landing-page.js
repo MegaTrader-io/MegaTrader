@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (frequencyPanel) {
-                    frequencyPanel.innerText = `/ ${params.accountType !== 'funded-plan' ? 'Month' : 'One-Time Fee'}`;
+                    frequencyPanel.innerText = ` ${params.accountType !== 'funded-plan' ? 'Month' : 'One-Time Fee'}`;
                 }
 
                 const metaInfoObject = attributes.find(item => item['meta-info']);
