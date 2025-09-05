@@ -1386,7 +1386,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "/wp-admin/admin-ajax.php";
     const nonce = holder ? holder.getAttribute("data-nonce") : "";
 
-    // Limpia un modal previo, si existiera
+    // Limpia un modal previo
     const prev = document.getElementById("orderSuccessModal");
     if (prev) prev.remove();
 
@@ -1416,68 +1416,45 @@ document.addEventListener("DOMContentLoaded", function () {
         const modalEl = document.getElementById("orderSuccessModal");
         if (!modalEl) return;
 
-        // Congela fondo y desactiva beforeunload mientras el modal esté abierto
+        // Desactiva beforeunload y congela fondo (solo UX)
         try {
           window.onbeforeunload = null;
         } catch (_) {}
         try {
-          jQuery(window).off("beforeunload");
-          jQuery(window).off("beforeunload.checkout");
+          jQuery(window).off("beforeunload").off("beforeunload.checkout");
         } catch (_) {}
         document.body.classList.add("mt-checkout-frozen");
 
-        // Quita freeze al cerrar modal
-        try {
-          modalEl.addEventListener(
-            "hidden.bs.modal",
-            () => {
-              document.body.classList.remove("mt-checkout-frozen");
-            },
-            { once: true }
-          );
-        } catch (_) {}
-
-        // Enlaza CTA(s) que deban ir al order-received
-        if (redirectUrl) {
-          modalEl
-            .querySelectorAll("[data-mt-redirect], .js-goto-account")
-            .forEach((btn) => {
-              btn.addEventListener("click", () => {
-                try {
-                  window.onbeforeunload = null;
-                } catch (_) {}
-                try {
-                  jQuery(window).off("beforeunload");
-                  jQuery(window).off("beforeunload.checkout");
-                } catch (_) {}
-                window.location.href = redirectUrl;
-              });
-            });
+        // Inicializa el comportamiento DESDE el JS del modal
+        if (
+          window.MTSuccessModal &&
+          typeof window.MTSuccessModal.init === "function"
+        ) {
+          window.MTSuccessModal.init(modalEl, {
+            redirectUrlFromCheckout: redirectUrl,
+          });
         }
 
-        // Mostrar modal (Bootstrap o fallback)
+        // Mostrar modal (el modal se encarga de redirecciones)
         if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
           const bs = bootstrap.Modal.getOrCreateInstance(modalEl, {
-            backdrop: "static",
-            keyboard: false,
+            backdrop: true,
+            keyboard: true,
           });
           bs.show();
         } else {
           modalEl.style.display = "block";
           modalEl.classList.add("show");
           document.body.style.overflow = "hidden";
-
-          // Fallback: cerrar con botón que tenga data-bs-dismiss
-          const closeBtn = modalEl.querySelector("[data-bs-dismiss='modal']");
-          if (closeBtn) {
-            closeBtn.addEventListener("click", () => {
-              modalEl.classList.remove("show");
-              modalEl.style.display = "none";
-              document.body.style.overflow = "";
-              document.body.classList.remove("mt-checkout-frozen");
-            });
-          }
         }
+
+        // Quitar freeze al cerrar (no redirigimos aquí)
+        try {
+          modalEl.addEventListener("hidden.bs.modal", () => {
+            document.body.classList.remove("mt-checkout-frozen");
+            document.body.style.overflow = "";
+          });
+        } catch (_) {}
       })
       .catch((err) => {
         alert(
@@ -1487,6 +1464,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
+  // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
   // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
   if (typeof jQuery !== "undefined") {
     jQuery.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -1524,16 +1502,16 @@ document.addEventListener("DOMContentLoaded", function () {
               ).remove();
             } catch (_) {}
 
-            // Evita popup “Leave site?” y congela fondo inmediatamente
+            // Evita popup “Leave site?” y congela fondo
             try {
               window.onbeforeunload = null;
             } catch (_) {}
             try {
-              jQuery(window).off("beforeunload");
-              jQuery(window).off("beforeunload.checkout");
+              jQuery(window).off("beforeunload").off("beforeunload.checkout");
             } catch (_) {}
             document.body.classList.add("mt-checkout-frozen");
 
+            // Abrir modal (el JS del modal controla redirecciones)
             renderOrderSuccessModal(orderId, data.redirect, orderKey);
             return; // NO redirigir
           }

@@ -992,7 +992,18 @@ add_action('wp_enqueue_scripts', function () {
         }
     ');
 }, 100);
-
+function enqueue_thankyou_validation_script() {
+    if (is_checkout()) {
+        wp_enqueue_script(
+            'thankyou-modal"',
+            get_stylesheet_directory_uri() . '/assets/js/thankyou-modal.js"',
+            array(),
+            time(),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_thankyou_validation_script');
 
 function enqueue_billing_validation_script() {
     if (is_checkout()) {
