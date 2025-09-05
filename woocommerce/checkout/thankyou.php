@@ -687,7 +687,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
 
                 <!-- Header -->
                 <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-                    <h5 class="modal-title text-white heading-sm-medium" id="orderSuccessLabel">
+                    <h5 class="modal-title text-white heading-sm-medium text-uppercase" id="orderSuccessLabel">
                         <?php echo esc_html(Label::THANKYOU_META['success']); ?>
                     </h5>
                     <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
@@ -720,9 +720,10 @@ if (isset($order) && $order && !$order->has_status('failed')):
                     </div>
 
                     <!-- Chip de Order -->
-                    <div class="px-3 py-2 bg-dark rounded-2 d-inline-flex align-items-center gap-2 order-chip"
+                    <div id="order-copy-chip"
+                        class="px-3 py-2 bg-1e1e1e outline-dark rounded-2 d-inline-flex align-items-center gap-2 order-chip"
                         data-order="<?php echo esc_attr($order_number); ?>" role="button" tabindex="0"
-                        aria-label="Copy order number" style="outline:1px solid #404040;">
+                        aria-label="Copy order number">
                         <div class="text-white fw-bold order-chip-label">
                             <?php echo esc_html(Label::THANKYOU_META['order']); ?>:
                         </div>
@@ -744,8 +745,8 @@ if (isset($order) && $order && !$order->has_status('failed')):
                             <!-- Producto principal -->
                             <?php if ($main_item_name): ?>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <div class="fw-medium text-base text-white"><?php echo esc_html($main_item_name); ?></div>
-                                    <div class="fw-bold text-base text-primary fw-medium">
+                                    <div class="fw-light text-base text-white"><?php echo esc_html($main_item_name); ?></div>
+                                    <div class="fw-medium text-base text-primary">
                                         <?php echo wp_kses_post(wc_price($main_item_price)); ?>
                                     </div>
                                 </div>
@@ -759,14 +760,14 @@ if (isset($order) && $order && !$order->has_status('failed')):
                                     <div class="text-white text-base fw-bold">
                                         <?php echo esc_html(Label::THANKYOU_META['addons']); ?>
                                     </div>
-                                    <div class="fw-bold text-primary text-base fw-medium">
+                                    <div class="fw-medium text-primary text-base">
                                         <?php echo wp_kses_post(wc_price($addons_total)); ?>
                                     </div>
                                 </div>
 
                                 <?php foreach ($addons_names as $an): ?>
                                     <div class="d-flex align-items-center justify-content-between">
-                                        <div class="text-white text-base fw-medium"><?php echo esc_html($an); ?></div>
+                                        <div class="text-white text-base fw-light"><?php echo esc_html($an); ?></div>
                                     </div>
                                 <?php endforeach; ?>
 
@@ -775,7 +776,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
 
                             <!-- Total + método de pago -->
                             <div class="d-flex align-items-center justify-content-between">
-                                <div class="text-white text-base fw-bold">
+                                <div class="text-white text-base fw-medium">
                                     <?php echo esc_html(Label::THANKYOU_META['total_paid']); ?>
                                 </div>
                                 <div class="fw-bold text-primary text-base fw-medium">
@@ -804,7 +805,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
                                 </div>
                             </div>
 
-                            <div class="p-3 rounded-2 d-flex align-items-start gap-3 mt-2 bg-1e1e1e outline-dark">
+                            <div class="p-3 rounded-2 d-flex align-items-start gap-3 mt-2 bg-1e1e1e">
                                 <div class="flex-grow-1 text-2dd4bf">
                                     <?php echo esc_html(Label::THANKYOU_META['confirmation_email_sent']); ?>
                                 </div>
@@ -824,164 +825,204 @@ if (isset($order) && $order && !$order->has_status('failed')):
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const DEST = '/my-account/overview/';
-  const modalEl = document.getElementById('orderSuccessModal');
-  if (!modalEl) return;
+        document.addEventListener('DOMContentLoaded', function () {
+            const DEST = '/my-account/overview/';
+            const modalEl = document.getElementById('orderSuccessModal');
+            if (!modalEl) return;
 
-  const dialogEl  = modalEl.querySelector('.modal-dialog');
-  const contentEl = modalEl.querySelector('.modal-content');
-  const btnGo     = document.querySelector('.js-goto-account');
+            const dialogEl = modalEl.querySelector('.modal-dialog');
+            const contentEl = modalEl.querySelector('.modal-content');
+            const btnGo = document.querySelector('.js-goto-account');
 
-  let didRedirect = false;
-  let wasEverVisible = false;
-  let tick = null;
+            let didRedirect = false;
+            let wasEverVisible = false;
+            let tick = null;
 
-  const go = () => {
-    if (didRedirect) return;
-    didRedirect = true;
-    try { obsModal.disconnect(); } catch(e){}
-    try { obsBody.disconnect(); } catch(e){}
-    if (tick) { clearInterval(tick); tick = null; }
-    window.location.assign(DEST);
-  };
+            const go = () => {
+                if (didRedirect) return;
+                didRedirect = true;
+                try { obsModal.disconnect(); } catch (e) { }
+                try { obsBody.disconnect(); } catch (e) { }
+                if (tick) { clearInterval(tick); tick = null; }
+                window.location.assign(DEST);
+            };
 
-  // --- utilidades de visibilidad ---
-  const isHidden = (el) => {
-    if (!el) return true;
-    const cs = window.getComputedStyle(el);
-    if (cs.display === 'none' || cs.visibility === 'hidden' || Number(cs.opacity) === 0) return true;
-    const rect = el.getBoundingClientRect();
-    return (rect.width === 0 || rect.height === 0);
-  };
+            // ---------- utilidades de visibilidad/on-screen ----------
+            const cs = (el) => (el ? window.getComputedStyle(el) : null);
 
-  const isModalTrulyVisible = () => {
-    // visible si: raíz tiene .show y ni raíz/diálogo/contenido están ocultos
-    const rootShown = modalEl.classList.contains('show');
-    return rootShown && !isHidden(modalEl) && !isHidden(dialogEl) && !isHidden(contentEl);
-  };
+            const hasZeroScale = (el) => {
+                const st = cs(el);
+                if (!st) return false;
+                const t = st.transform;
+                if (!t || t === 'none') return false;
+                const m2d = t.match(/matrix\(([-0-9.,\s]+)\)/);
+                if (m2d) {
+                    const v = m2d[1].split(',').map(x => parseFloat(x.trim()));
+                    if (v.length >= 4 && (v[0] === 0 || v[3] === 0)) return true;
+                }
+                if (/scale\(\s*0/.test(t)) return true;
+                return false;
+            };
 
-  const maybeRedirect = () => {
-    if (!wasEverVisible || didRedirect) return;
-    // si deja de ser visible por cualquiera de las vías → redirige
-    if (!document.body.contains(modalEl)) return go();
-    if (!isModalTrulyVisible()) return go();
-  };
+            const isHiddenBasic = (el) => {
+                if (!el) return true;
+                const s = cs(el);
+                if (!s) return true;
+                if (s.display === 'none' || s.visibility === 'hidden' || Number(s.opacity) === 0) return true;
+                if (hasZeroScale(el)) return true;
+                const rect = el.getBoundingClientRect();
+                if (rect.width === 0 || rect.height === 0) return true;
+                const vw = window.innerWidth || document.documentElement.clientWidth;
+                const vh = window.innerHeight || document.documentElement.clientHeight;
+                if (rect.bottom < 0 || rect.top > vh || rect.right < 0 || rect.left > vw) return true;
+                return false;
+            };
 
-  // --- Inicializar y mostrar modal ---
-  try {
-    if (window.bootstrap && typeof bootstrap.Modal === 'function') {
-      const instance = bootstrap.Modal.getOrCreateInstance(modalEl, {
-        backdrop: 'static',  // evita que se cierre por click fuera
-        keyboard: false      // evita cierre por ESC
-      });
+            const isModalTrulyVisible = () => {
+                const rootShown = modalEl.classList.contains('show');
+                return rootShown && !isHiddenBasic(modalEl) && !isHiddenBasic(dialogEl) && !isHiddenBasic(contentEl);
+            };
 
-      modalEl.addEventListener('shown.bs.modal', function () {
-        wasEverVisible = true;
-      }, { once: true });
+            const maybeRedirect = () => {
+                if (!wasEverVisible || didRedirect) return;
+                if (!document.body.contains(modalEl)) return go();
+                if (!isModalTrulyVisible()) return go();
+            };
 
-      modalEl.addEventListener('hidden.bs.modal', function () {
-        if (wasEverVisible) go();
-      });
+            // ---------- Inicializar y mostrar modal ----------
+            try {
+                if (window.bootstrap && typeof bootstrap.Modal === 'function') {
+                    const instance = bootstrap.Modal.getOrCreateInstance(modalEl, {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
 
-      // si alguien hace click fuera con backdrop: 'static', Bootstrap dispara este evento
-      modalEl.addEventListener('hidePrevented.bs.modal', function () {
-        if (wasEverVisible) go();
-      });
+                    modalEl.addEventListener('shown.bs.modal', function () {
+                        wasEverVisible = true;
+                    }, { once: true });
 
-      instance.show();
-    } else {
-      // Fallback sin Bootstrap
-      setTimeout(function () {
-        modalEl.classList.add('show');
-        modalEl.style.display = 'block';
-        modalEl.removeAttribute('aria-hidden');
-        wasEverVisible = true;
-      }, 0);
-    }
-  } catch (e) {}
+                    modalEl.addEventListener('hidden.bs.modal', function () {
+                        if (wasEverVisible) go();
+                    });
 
-  // --- Botón "Go to my account" ---
-  if (btnGo) {
-    btnGo.addEventListener('click', function (ev) {
-      ev.preventDefault();
-      go();
-    });
-  }
+                    modalEl.addEventListener('hidePrevented.bs.modal', function () {
+                        if (wasEverVisible) go();
+                    });
 
-  // --- Click fuera (por si alguien quita backdrop: 'static' vía CSS/DevTools) ---
-  document.addEventListener('mousedown', function (ev) {
-    if (!wasEverVisible || didRedirect) return;
-    const path = ev.composedPath ? ev.composedPath() : null;
-    const clickedInsideDialog = dialogEl && (dialogEl.contains(ev.target) || (path && path.includes(dialogEl)));
-    const anyBackdrop = !!document.querySelector('.modal-backdrop');
-    if (!clickedInsideDialog && anyBackdrop) {
-      go();
-    }
-  }, true);
+                    instance.show();
+                } else {
+                    // Fallback sin Bootstrap
+                    setTimeout(function () {
+                        modalEl.classList.add('show');
+                        modalEl.style.display = 'block';
+                        modalEl.removeAttribute('aria-hidden');
+                        wasEverVisible = true;
+                    }, 0);
+                }
+            } catch (e) { }
 
-  // --- Observadores para cambios en clases/estilos/DOM ---
-  const obsModal = new MutationObserver(function () {
-    if (!wasEverVisible || didRedirect) return;
-    maybeRedirect();
-  });
-  obsModal.observe(modalEl, {
-    attributes: true,
-    attributeFilter: ['class','style','aria-hidden'],
-    subtree: true // también observa dialog/content
-  });
+            // ---------- Botón "Go to my account" ----------
+            if (btnGo) {
+                btnGo.addEventListener('click', function (ev) {
+                    ev.preventDefault();
+                    go();
+                });
+            }
 
-  const obsBody = new MutationObserver(function () {
-    if (!wasEverVisible || didRedirect) return;
-    if (!document.getElementById('orderSuccessModal')) go();
-  });
-  obsBody.observe(document.body, { childList: true, subtree: true });
+            // ---------- Click fuera (por si el backdrop se vuelve "libre") ----------
+            document.addEventListener('mousedown', function (ev) {
+                if (!wasEverVisible || didRedirect) return;
+                if (!dialogEl) return;
+                const path = ev.composedPath ? ev.composedPath() : [];
+                const inside = dialogEl.contains(ev.target) || path.includes(dialogEl);
+                const anyBackdrop = !!document.querySelector('.modal-backdrop');
+                if (!inside && anyBackdrop) go();
+            }, true);
 
-  // --- Reloj de seguridad (por si algo se escapa del observer) ---
-  tick = setInterval(maybeRedirect, 500);
+            // ---------- ESC (si alguien lo re-habilita) ----------
+            document.addEventListener('keydown', function (ev) {
+                if (!wasEverVisible || didRedirect) return;
+                if (ev.key === 'Escape' || ev.key === 'Esc') go();
+            }, true);
 
-  // --- Copiar número de orden (chip clickeable) ---
-  const chip = document.getElementById('order-copy-chip');
-  if (chip) {
-    const label = chip.querySelector('.order-chip-label');
+            // ---------- Observadores ----------
+            const obsModal = new MutationObserver(function () {
+                if (!wasEverVisible || didRedirect) return;
+                maybeRedirect();
+            });
+            obsModal.observe(modalEl, {
+                attributes: true,
+                attributeFilter: ['class', 'style', 'aria-hidden'],
+                subtree: true // << clave para detectar cambios en .modal-dialog/.modal-content
+            });
 
-    function copyOrder() {
-      const value = (chip.dataset.order || (chip.querySelector('.order-chip-value')?.textContent || '')).trim();
-      if (!value) return;
+            const obsBody = new MutationObserver(function () {
+                if (!wasEverVisible || didRedirect) return;
+                if (!document.getElementById('orderSuccessModal')) return go();
+                maybeRedirect();
+            });
+            obsBody.observe(document.body, { childList: true, subtree: true });
 
-      const afterCopy = () => {
-        if (!label) return;
-        const original = label.textContent;
-        label.textContent = 'Copied!';
-        chip.classList.add('copied');
-        setTimeout(() => {
-          label.textContent = original;
-          chip.classList.remove('copied');
-        }, 1500);
-      };
+            window.addEventListener('resize', maybeRedirect, { passive: true });
+            window.addEventListener('scroll', maybeRedirect, { passive: true });
+            tick = setInterval(maybeRedirect, 500); // red de seguridad
 
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(value).then(afterCopy, afterCopy);
-      } else {
-        const ta = document.createElement('textarea');
-        ta.value = value;
-        ta.style.position = 'fixed';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.focus(); ta.select();
-        try { document.execCommand('copy'); } catch (e) {}
-        document.body.removeChild(ta);
-        afterCopy();
-      }
-    }
+            // ---------- Copiar número de orden ----------
+            const chip = document.getElementById('order-copy-chip') || document.querySelector('.order-chip');
+            if (chip) {
+                const label = chip.querySelector('.order-chip-label');
 
-    chip.addEventListener('click', copyOrder);
-    chip.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyOrder(); }
-    });
-  }
-});
-</script>
+                const findValue = () => {
+                    if (chip.dataset.order) return chip.dataset.order.trim();
+                    const node = chip.querySelector('[data-order-value], .order-chip-value');
+                    if (node && node.textContent) return node.textContent.trim();
+                    // fallback: texto interno con alfanuméricos
+                    const walker = document.createTreeWalker(chip, NodeFilter.SHOW_TEXT, null);
+                    let txt, best = '';
+                    while ((txt = walker.nextNode())) {
+                        const t = txt.nodeValue.trim();
+                        if (t && !/^order:?$/i.test(t) && /[A-Za-z0-9]/.test(t)) { best = t; break; }
+                    }
+                    return best;
+                };
+
+                function copyOrder() {
+                    const value = findValue();
+                    if (!value) return;
+
+                    const afterCopy = () => {
+                        if (!label) return;
+                        const original = label.textContent;
+                        label.textContent = 'Copied!';
+                        chip.classList.add('copied');
+                        setTimeout(() => {
+                            label.textContent = original;
+                            chip.classList.remove('copied');
+                        }, 1500);
+                    };
+
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(value).then(afterCopy, afterCopy);
+                    } else {
+                        const ta = document.createElement('textarea');
+                        ta.value = value;
+                        ta.style.position = 'fixed';
+                        ta.style.left = '-9999px';
+                        document.body.appendChild(ta);
+                        ta.focus(); ta.select();
+                        try { document.execCommand('copy'); } catch (e) { }
+                        document.body.removeChild(ta);
+                        afterCopy();
+                    }
+                }
+
+                chip.addEventListener('click', copyOrder);
+                chip.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyOrder(); }
+                });
+            }
+        });
+    </script>
 
 
 

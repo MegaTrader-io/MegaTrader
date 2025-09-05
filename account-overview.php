@@ -30,7 +30,7 @@ get_header('shop');
           </div>
           <div class="get-started">
             <?php
-            $shop_url = home_url('/');
+            $shop_url = home_url('/subscriptions/');
             ?>
             <a id="get_started_btn" href="<?php echo esc_url($shop_url); ?>"
               class="btn w-100 mega-btn-md mega-btn-primary-md">

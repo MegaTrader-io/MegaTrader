@@ -1749,6 +1749,8 @@ add_action('template_redirect', function () {
   $public_paths = [
     '/',              // Home
     '/auth/login/',   // login Page
+    '/auth/register/',   // Register Page
+    '/auth/lost-password/',   // Lost Password Page
   ];
 
   $public_paths = apply_filters('mt_public_paths', $public_paths, $path);
