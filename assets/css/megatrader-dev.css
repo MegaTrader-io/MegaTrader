@@ -670,6 +670,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .h-32px {
   height: 32px;
 }
+
 .h-36px {
   height: 36px;
 }
@@ -1064,7 +1065,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 }
 
 .border-top-gray {
-  border-top:1px solid var(--colors-gray-700, #404040);
+  border-top: 1px solid var(--colors-gray-700, #404040);
 }
 
 .border-bottom-dark {
@@ -3352,5 +3353,28 @@ a.pagination-number {
 /*--------- MOdal Thanksyou -------*/
 
 #order-copy-chip {
-    cursor: pointer;
+  cursor: pointer;
+}
+
+body.mt-checkout-frozen {
+  overflow: hidden !important;
+}
+
+body.mt-checkout-frozen .woocommerce-checkout,
+body.mt-checkout-frozen form.checkout {
+  pointer-events: none;
+}
+
+body.mt-checkout-frozen .modal,
+body.mt-checkout-frozen .modal * {
+  pointer-events: auto;
+}
+
+/* el modal sí interactivo */
+.modal {
+  z-index: 200000 !important;
+}
+
+.modal-backdrop {
+  z-index: 199990 !important;
 }

@@ -487,7 +487,19 @@ if (!function_exists('mt_get_order_card_brand_last4')) {
                                                     <?php echo esc_html($size_attr_slug . ' Account'); ?>
                                                     <b>
                                                         <?php echo wp_kses_post(wc_price($product->get_price())); ?>
-                                                        <?php echo ($plan_attr == 'Funded Plan') ? '/ One Time' : '/ Month'; ?>
+                                                        <?php
+                                                        $__ty_billing_suffix = '/ One Time';
+                                                        if (function_exists('wcs_get_subscriptions_for_order')) {
+                                                            $__ty_subs = wcs_get_subscriptions_for_order($order->get_id(), ['order_type' => 'any']);
+                                                            if (!empty($__ty_subs)) {
+                                                                $__ty_sub = array_shift($__ty_subs);
+                                                                if ($__ty_sub && is_a($__ty_sub, 'WC_Subscription')) {
+                                                                    $__ty_billing_suffix = '/ ' . ucfirst($__ty_sub->get_billing_period());
+                                                                }
+                                                            }
+                                                        }
+                                                        echo $__ty_billing_suffix;
+                                                        ?>
                                                     </b>
                                                 </h4>
                                                 <p class="box-text"><?php echo esc_html($size_description); ?></p>
@@ -631,11 +643,39 @@ if (isset($order) && $order && !$order->has_status('failed')):
     // Producto principal (primer ítem no fee)
     $main_item_name = '';
     $main_item_price = 0;
+    $main_item_price_suffix = '/ One Time'; // fallback
     foreach ($order->get_items() as $it) {
-        $main_item_name = $it->get_name();
+        $prod = is_callable([$it, 'get_product']) ? $it->get_product() : null;
+
+        // Obtener size_slug del atributo pa_account-size
+        $size_slug = '';
+        if ($prod) {
+            $size_attr = $prod->get_attribute('pa_account-size');
+            if (!empty($size_attr)) {
+                $t = get_term_by('name', $size_attr, 'pa_account-size');
+                if ($t && isset($t->slug)) {
+                    $size_slug = $t->slug;
+                }
+            }
+        }
+
+        // Concatenar como: "<size_slug> <product_name>"
+        $main_item_name = trim(($size_slug ? $size_slug . ' ' : '') . $it->get_name());
         $main_item_price = (float) $it->get_total();
         break;
     }
+
+    // Sufijo de precio según suscripción relacionada
+    if (function_exists('wcs_get_subscriptions_for_order')) {
+        $subs = wcs_get_subscriptions_for_order($order->get_id(), ['order_type' => 'any']);
+        if (!empty($subs)) {
+            $sub = array_shift($subs);
+            if ($sub && is_a($sub, 'WC_Subscription')) {
+                $main_item_price_suffix = '/ ' . ucfirst($sub->get_billing_period()); // '/ Month', '/ Year', etc.
+            }
+        }
+    }
+
 
     // Add-ons (fees)
     $addons_names = array();
@@ -748,6 +788,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
                                     <div class="fw-light text-base text-white"><?php echo esc_html($main_item_name); ?></div>
                                     <div class="fw-medium text-base text-primary">
                                         <?php echo wp_kses_post(wc_price($main_item_price)); ?>
+                                        <?php echo esc_html($main_item_price_suffix); ?>
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -785,7 +826,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between">
-                                <div class="text-white fw-bold text-base">
+                                <div class="text-white fw-medium text-base">
                                     <?php echo esc_html(Label::THANKYOU_META['payment_method']); ?>
                                 </div>
                                 <div class="d-flex align-items-center gap-2"

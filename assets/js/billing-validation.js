@@ -1378,4 +1378,172 @@ document.addEventListener("DOMContentLoaded", function () {
     subtree: true,
   });
   */
+
+  function renderOrderSuccessModal(orderId, redirectUrl, orderKey) {
+    const holder = document.getElementById("mt-order-success-nonce");
+    const ajaxUrl =
+      (window.wc_checkout_params && window.wc_checkout_params.ajax_url) ||
+      "/wp-admin/admin-ajax.php";
+    const nonce = holder ? holder.getAttribute("data-nonce") : "";
+
+    // Limpia un modal previo, si existiera
+    const prev = document.getElementById("orderSuccessModal");
+    if (prev) prev.remove();
+
+    fetch(ajaxUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      body: new URLSearchParams({
+        action: "mt_render_order_success_modal",
+        order_id: String(orderId || ""),
+        order_key: String(orderKey || ""),
+        nonce,
+      }).toString(),
+    })
+      .then((r) => r.json())
+      .then((json) => {
+        if (!json || !json.success) {
+          throw new Error(
+            json?.data?.message || "Could not load confirmation."
+          );
+        }
+
+        // Inyecta HTML del modal
+        document.body.insertAdjacentHTML("beforeend", json.data.html);
+
+        const modalEl = document.getElementById("orderSuccessModal");
+        if (!modalEl) return;
+
+        // Congela fondo y desactiva beforeunload mientras el modal esté abierto
+        try {
+          window.onbeforeunload = null;
+        } catch (_) {}
+        try {
+          jQuery(window).off("beforeunload");
+          jQuery(window).off("beforeunload.checkout");
+        } catch (_) {}
+        document.body.classList.add("mt-checkout-frozen");
+
+        // Quita freeze al cerrar modal
+        try {
+          modalEl.addEventListener(
+            "hidden.bs.modal",
+            () => {
+              document.body.classList.remove("mt-checkout-frozen");
+            },
+            { once: true }
+          );
+        } catch (_) {}
+
+        // Enlaza CTA(s) que deban ir al order-received
+        if (redirectUrl) {
+          modalEl
+            .querySelectorAll("[data-mt-redirect], .js-goto-account")
+            .forEach((btn) => {
+              btn.addEventListener("click", () => {
+                try {
+                  window.onbeforeunload = null;
+                } catch (_) {}
+                try {
+                  jQuery(window).off("beforeunload");
+                  jQuery(window).off("beforeunload.checkout");
+                } catch (_) {}
+                window.location.href = redirectUrl;
+              });
+            });
+        }
+
+        // Mostrar modal (Bootstrap o fallback)
+        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+          const bs = bootstrap.Modal.getOrCreateInstance(modalEl, {
+            backdrop: "static",
+            keyboard: false,
+          });
+          bs.show();
+        } else {
+          modalEl.style.display = "block";
+          modalEl.classList.add("show");
+          document.body.style.overflow = "hidden";
+
+          // Fallback: cerrar con botón que tenga data-bs-dismiss
+          const closeBtn = modalEl.querySelector("[data-bs-dismiss='modal']");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", () => {
+              modalEl.classList.remove("show");
+              modalEl.style.display = "none";
+              document.body.style.overflow = "";
+              document.body.classList.remove("mt-checkout-frozen");
+            });
+          }
+        }
+      })
+      .catch((err) => {
+        alert(
+          err.message ||
+            "Order placed, but we could not show the receipt. Check your email."
+        );
+      });
+  }
+
+  // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
+  if (typeof jQuery !== "undefined") {
+    jQuery.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+      const url = String(options.url || "");
+      if (url.indexOf("wc-ajax=checkout") === -1) return;
+
+      const origSuccess = options.success;
+      options.success = function (data, textStatus, jqXHR2) {
+        try {
+          if (
+            data &&
+            data.result === "success" &&
+            typeof data.redirect === "string"
+          ) {
+            // order_id por path o query
+            const mPath = data.redirect.match(/order-received\/(\d+)/);
+            const mQuery = data.redirect.match(/[?&]order-received=(\d+)/);
+            const orderId =
+              data.order_id || (mPath ? mPath[1] : mQuery ? mQuery[1] : null);
+
+            // order_key (wc_order_…)
+            const k = data.redirect.match(/[?&]key=([^&]+)/);
+            const orderKey = k ? k[1] : null;
+
+            // Desbloquea checkout, quita preloader, limpia notices
+            try {
+              if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+            } catch (_) {}
+            try {
+              if (typeof hideSitePreloader === "function") hideSitePreloader();
+            } catch (_) {}
+            try {
+              jQuery(
+                ".woocommerce-NoticeGroup, .woocommerce-error, .woocommerce-message"
+              ).remove();
+            } catch (_) {}
+
+            // Evita popup “Leave site?” y congela fondo inmediatamente
+            try {
+              window.onbeforeunload = null;
+            } catch (_) {}
+            try {
+              jQuery(window).off("beforeunload");
+              jQuery(window).off("beforeunload.checkout");
+            } catch (_) {}
+            document.body.classList.add("mt-checkout-frozen");
+
+            renderOrderSuccessModal(orderId, data.redirect, orderKey);
+            return; // NO redirigir
+          }
+        } catch (e) {
+          console.error("[MT] intercept error", e);
+        }
+
+        if (typeof origSuccess === "function")
+          return origSuccess.apply(this, arguments);
+      };
+    });
+  }
 });

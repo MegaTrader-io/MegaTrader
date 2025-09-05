@@ -1763,3 +1763,56 @@ add_action('template_redirect', function () {
   }
 }, 0);
 
+// Render del HTML del modal de éxito
+// Render del HTML del modal de éxito (AJAX)
+add_action('wp_ajax_nopriv_mt_render_order_success_modal', 'mt_render_order_success_modal');
+add_action('wp_ajax_mt_render_order_success_modal', 'mt_render_order_success_modal');
+
+function mt_render_order_success_modal() {
+  // Validación de nonce
+  if ( ! isset($_POST['nonce']) || ! wp_verify_nonce( $_POST['nonce'], 'mt_render_order_success_modal' ) ) {
+    wp_send_json_error( array( 'message' => 'Invalid request (nonce).' ), 403 );
+  }
+
+  // Obtener order_id (con fallback por order_key)
+  $order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : 0;
+  if ( ! $order_id && ! empty($_POST['order_key']) ) {
+    $order_id = wc_get_order_id_by_order_key( sanitize_text_field( wp_unslash( $_POST['order_key'] ) ) );
+  }
+  if ( ! $order_id ) {
+    wp_send_json_error( array( 'message' => 'Missing order_id.' ) );
+  }
+
+  // Cargar la orden
+  $order = wc_get_order( $order_id );
+  if ( ! $order ) {
+    wp_send_json_error( array( 'message' => 'Order not found.' ) );
+  }
+
+  // Hacer accesible la orden dentro del template (dos formas)
+  $GLOBALS['mt_order'] = $order; // por si el template la usa como global
+  // y también como variable local $order disponible en el include
+
+  // Localizar template por ruta absoluta (child theme → parent theme)
+  $tpl = trailingslashit( get_stylesheet_directory() ) . 'template-parts/order-success-modal.php';
+  if ( ! file_exists( $tpl ) ) {
+    $tpl = trailingslashit( get_template_directory() ) . 'template-parts/order-success-modal.php';
+  }
+  if ( ! file_exists( $tpl ) ) {
+    wp_send_json_error( array( 'message' => 'Template not found', 'path' => $tpl ) );
+  }
+
+  // Render del template
+  ob_start();
+  include $tpl; // $order disponible aquí
+  $html = ob_get_clean();
+
+  if ( ! $html || ! trim( $html ) ) {
+    wp_send_json_error( array( 'message' => 'Empty modal HTML (check template)', 'path' => $tpl ) );
+  }
+
+  wp_send_json_success( array( 'html' => $html ) );
+}
+
+
+

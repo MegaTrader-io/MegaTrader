@@ -572,7 +572,13 @@ if ($fflag): ?>
 
                         </div>
                     </div>
+
                 </form>
+                <!-- L576: HOLDER PARA NONCE DEL MODAL -->
+                <div id="mt-order-success-nonce"
+                    data-nonce="<?php echo esc_attr(wp_create_nonce('mt_render_order_success_modal')); ?>">
+                </div>
+
 
             </div>
 
