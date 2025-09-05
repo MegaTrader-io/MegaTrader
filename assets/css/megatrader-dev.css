@@ -662,6 +662,9 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .h-32px {
   height: 32px;
 }
+.h-36px {
+  height: 36px;
+}
 
 .h-332px {
   height: 332px;
@@ -1359,6 +1362,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .text-zinc-950 {
   color: rgb(9 9 11 / var(--tw-text-opacity, 1));
+}
+
+.text-2dd4bf {
+  color: #2dd4bf;
 }
 
 /* -------- TEXT SIZE --------*/
