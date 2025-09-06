@@ -4,24 +4,106 @@ $step1 = get_query_var('step');
 
 <?php if (!$step1): ?>
 
-    <div class="w-100 d-flex justify-content-between align-items-center pb-32 m-auto w-max-320px">
-        <div class="flex-grow-1 flex-shrink-1 d-flex gap-2 align-items-center">
-            <div class="bg-mgt-primary border-mgt-primary h-32px overflow-hidden rounded-64px w-32px position-relative">
-                <div style="left: 11px;top: 4px;" class="fw-bold position-absolute text-131210 text-base text-center">1
-                </div>
+<style>
+.steppersteps {
+  	width: 100%;
+  	position: relative;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: space-between;
+  	padding: 0px 0px 32px;
+  	box-sizing: border-box;
+  	gap: 0px;
+  	max-width: 320px;
+  	text-align: center;
+  	font-size: 16px;
+  	color: #131210;
+  	font-family: Roboto;
+}
+.steps-parent {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: flex-start;
+  	gap: 8px;
+}
+.steps {
+  	width: 32px;
+  	position: relative;
+  	border-radius: 64px;
+  	background-color: #ffb34a;
+  	border: 2px solid #ffb34a;
+  	box-sizing: border-box;
+  	height: 32px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+}
+.title {
+  	position: absolute;
+  	top: calc(50% - 12px);
+  	left: calc(50% - 5px);
+  	line-height: 24px;
+}
+.steppersteps-title {
+  	position: relative;
+  	line-height: 24px;
+  	font-weight: 500;
+  	color: #fff;
+}
+.instance-child {
+  	flex: 1;
+  	position: relative;
+  	background-color: #404040;
+  	height: 2px;
+}
+.rectangle-parent {
+  	flex: 1;
+  	display: flex;
+  	flex-direction: row;
+  	align-items: center;
+  	justify-content: flex-start;
+  	gap: 8px;
+  	color: #a8a29e;
+}
+.steps2 {
+  	width: 32px;
+  	position: relative;
+  	border-radius: 64px;
+  	background-color: #131210;
+  	border: 2px solid #a8a29e;
+  	box-sizing: border-box;
+  	height: 32px;
+  	overflow: hidden;
+  	flex-shrink: 0;
+}
+.title3 {
+  	position: relative;
+  	line-height: 24px;
+  	font-weight: 500;
+}
+
+</style>
+
+    <div class="steppersteps">
+        <div class="steps-parent">
+            <div class="steps">
+                <b class="title">1</b>
             </div>
-            <div class="text-white text-base fw-medium">Set up</div>
-            <div class="bg-404040 flex-fill h-2px"></div>
+            <div class="steppersteps-title">Set up</div>
+            <div class="instance-child"></div>
         </div>
-        <div class="flex-grow-1 flex-shrink-1 d-flex gap-2 align-items-center">
-            <div class="bg-404040 flex-fill h-2px"></div>
-            <div class="bg-131210 border-gray h-32px overflow-hidden rounded-64px w-32px position-relative">
-                <div style="left: 11px;top: 4px;" class="fw-bold position-absolute text-131210 text-base text-center">2
-                </div>
+        <div class="rectangle-parent">
+            <div class="instance-child"></div>
+            <div class="steps2">
+                <b class="title">2</b>
             </div>
-            <div class="text-a8a29e text-base fw-medium">Review and Pay</div>
+            <div class="title3">Review and Pay</div>
         </div>
     </div>
+
+
 
 <?php else: ?>
 

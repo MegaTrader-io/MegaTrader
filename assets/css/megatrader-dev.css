@@ -3350,7 +3350,7 @@ a.pagination-number {
   top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + 32px);
 }
 
-/*--------- MOdal Thanksyou -------*/
+/*--------- Modal Thanksyou -------*/
 
 #order-copy-chip {
   cursor: pointer;
@@ -3377,4 +3377,10 @@ body.mt-checkout-frozen .modal * {
 
 .modal-backdrop {
   z-index: 199990 !important;
+}
+
+.mt-subscriptions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

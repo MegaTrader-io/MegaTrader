@@ -60,13 +60,9 @@ get_header();
             <?php render_sidebar(); ?>
         </div>
         <div class="mt-page__main">
-            <div class="mt-ubscriptions">
-
-                <?php render_step_selector(false); ?>
-
-
+            <div class="mt-subscriptions">
+                <?php render_step_selector(0); ?>
                 <?php render_tabs($tabs); ?>
-
             </div>
         </div>
     </div>
