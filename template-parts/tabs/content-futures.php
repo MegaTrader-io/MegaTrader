@@ -3,9 +3,6 @@
     $products_data = get_products_with_attributes();
     $attributes = $products_data['attributes'] ?? [];
 
-    //TODO: remove
-    $json = wp_json_encode( $products_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
-
     $account_sizes = [];
     $account_types = [];
     $platforms = [];
@@ -31,8 +28,6 @@
             $slug = esc_attr($item['slug']);
             $name = esc_html($item['name']);
             $description = esc_html($item['description']);
-            
-            $checked_attr = $index === 0 ? 'checked="true"' : '';
 
             $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
             $config = isset($parsed['config']) ? $parsed['config'] : [];
@@ -40,8 +35,14 @@
             $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
             $disabled_class = $is_disabled ? ' disabled-within' : '';
             $radio_id = esc_attr('account-size-' . $slug);
+
+            $checked_attr = '';
+            if( ! $is_disabled && ! $is_active_assigned){
+                $checked_attr = 'checked="true"';
+                $is_active_assigned = true;
+            }
             ?>
-            <input type="radio" name="account-size" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden <?= $checked_attr ?>">
+            <input type="radio" name="account-size" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>>
             <div class="radio__label__wrapper">
                 <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $disabled_class?>"
                     for="<?= $radio_id ?>" 
@@ -84,8 +85,6 @@
             $name = esc_html($item['name']);
             $description = esc_attr($item['description']);
             $thumbnail = esc_url($item['thumbnail_url']);
-            
-            $checked_attr = $index === 0 ? 'checked' : '';
 
             $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
             $config = isset($parsed['config']) ? $parsed['config'] : [];
@@ -94,8 +93,15 @@
             $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
             $disabled_class = $is_disabled ? ' disabled-within' : '';
             $radio_id = esc_attr('account-type-' . $slug);
+
+
+            $checked_attr = '';
+            if( ! $is_disabled && ! $is_active_assigned){
+                $checked_attr = 'checked="true"';
+                $is_active_assigned = true;
+            }
             ?>
-            <input type="radio" name="account-type" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden <?= $checked_attr ?>/>
+            <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
             <div class="radio__label__wrapper">
                 <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
                     for="<?= $radio_id ?>" 
@@ -163,11 +169,11 @@
 
             $checked_attr = '';
             if( ! $is_disabled && ! $is_active_assigned){
-                $checked_attr = 'checked';
+                $checked_attr = 'checked="true"';
                 $is_active_assigned = true;
             }
             ?>
-            <input type="radio" name="platform" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden <?= $checked_attr ?>/>
+            <input type="radio" name="platform" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
             <div class="radio__label__wrapper">
                 <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
                     for="<?= $radio_id ?>" 
