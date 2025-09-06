@@ -135,7 +135,8 @@
     
     function render_platforms($platforms) {
         if (empty($platforms)) return;
-
+        
+        $is_active_assigned = false;
         foreach ($platforms as $index => $item) {
             $slug = esc_attr($item['slug']);
             $name = esc_html($item['name']);
@@ -153,14 +154,18 @@
                 }
             }
 
-            $checked_attr = $index === 0 ? 'checked' : '';
-
             $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
             $config = isset($parsed['config']) ? $parsed['config'] : [];
             $badge = isset($config['badge']) ? $config['badge'] : [];
             $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
             $disabled_class = $is_disabled ? ' disabled-within' : '';
             $radio_id = esc_attr('platform-' . $slug);
+
+            $checked_attr = '';
+            if( ! $is_disabled && ! $is_active_assigned){
+                $checked_attr = 'checked';
+                $is_active_assigned = true;
+            }
             ?>
             <input type="radio" name="platform" value="<?= $slug ?>" id="<?= $radio_id ?>" hidden <?= $checked_attr ?>/>
             <div class="radio__label__wrapper">
@@ -180,7 +185,7 @@
                     </div>
                     <div class="mt-card__title disabled-target">
                         <?php if ($thumbnail): ?>
-                            <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
+                            <img class="mt-card__title__image" src="<?= $thumbnail; ?>" alt="Icon">
                         <?php endif; ?>   
                         <span class="mt-card__title__text"><?= $name; ?></span>
                     </div>
@@ -256,7 +261,7 @@
             <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
             <ul class="plan-includes__list row list-reboot">
             <?php foreach ($plan_includes_list as $item) : ?>
-                <li class="plan-includes-list__item col-6 py-1 d-flex align-items-center gap-2">
+                <li class="plan-includes-list__item col-6 py-2 d-flex align-items-center gap-2">
                     <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0" aria-hidden="true"></i>
                     <span><?= htmlspecialchars($item['text']); ?></span>
                 </li>
