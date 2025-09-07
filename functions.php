@@ -268,6 +268,7 @@ require get_template_directory() . '/inc/class-mt-payment-methods.php';
  * Utils Functions
  */
 require_once get_template_directory() . '/inc/attributes-meta-parser.php';
+require_once get_template_directory() . '/inc/validate_coupon_for_variation.php';
 
 
 /**

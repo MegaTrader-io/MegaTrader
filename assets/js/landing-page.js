@@ -579,18 +579,46 @@ document.addEventListener('DOMContentLoaded', function () {
             )
             const productPlatformDetail = productionSelected[params.accountType];
 
+            function formatNumber(value) {
+                return '$' + parseInt(value.toString().replace('$', ''));
+            }
+
             for (const priceSize in productPlatformDetail) {
                 const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
                 const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
-                const price = '$' + parseInt(priceObject.replace('$', ''));
+                const productId = attributes.find(item => item['id'])['id'];
+                const product = MG_GLOBAL?.products_with_best_coupons?.find(p => p.id === Number(productId));
+                const coupon = product?.coupon;
+                let price = formatNumber(priceObject);
+                const priceInformation = document.querySelector(`.price-information[data-price="${priceSize}"]`);
                 const pricePanel = document.querySelector(`.price-plan[data-price="${priceSize}"]`);
                 const frequencyPanel = document.querySelector(`.frequency-plan[data-price="${priceSize}"]`);
                 if (pricePanel) {
-                    pricePanel.innerText = price;
+                    const badgeCoupon = document.querySelector(`.badge-coupon[data-price="${priceSize}"]`);
+                    const couponBeforePrice = document.querySelector(`.coupon-before-price[data-price="${priceSize}"]`);
+
+                    if (coupon && coupon.valid) {
+                        badgeCoupon.style.display = 'block';
+                        couponBeforePrice.style.display = 'block';
+                        priceInformation.classList.add('has-coupon');
+
+                        couponBeforePrice.querySelector('span').innerText = price;
+                        pricePanel.innerText = formatNumber(coupon.final_total);
+                        badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
+                        badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon;
+                    } else {
+                        badgeCoupon.style.display = 'none';
+                        couponBeforePrice.style.display = 'none';
+                        priceInformation.classList.remove('has-coupon', 'tw-min-h-[140px]', 'tw-items-center');
+
+                        pricePanel.innerText = price;
+                    }
+
                 }
 
+
                 if (frequencyPanel) {
-                    frequencyPanel.innerText = ` ${params.accountType !== 'funded-plan' ? 'Month' : 'One-Time Fee'}`;
+                    frequencyPanel.innerText = ` ${params.accountType !== 'funded-plan' ? 'per month' : 'one time fee'}`;
                 }
 
                 const metaInfoObject = attributes.find(item => item['meta-info']);
@@ -607,6 +635,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             }
+
+            if (document.querySelector('.price-information.has-coupon')) {
+                document.querySelectorAll('.price-information:not(.has-coupon)').forEach(element => {
+                    element.classList.add('tw-min-h-[140px]', 'tw-items-center');
+                })
+            }
+
         }
     );
 

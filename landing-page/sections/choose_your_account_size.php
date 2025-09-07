@@ -102,8 +102,13 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                     }
                 }
             }
+
+            $coupon = mt_get_best_coupon_for_variation($id);
+            $has_coupon = $coupon['valid'];
+            $price_plan = $has_coupon ? $coupon['final_total'] : $price;
+
             ?>
-            <div class="<?= $mostPopular == $size
+            <div data-coupon="<?= json_encode($coupon) ?>" class="<?= $mostPopular == $size
                     ? 'most-popular tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl'
                     : 'tw-bg-mgt-dark tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
             ?> tw-group tw-box-border tw-w-full <?= $mostPopular == $size ? 'last-element' : '' ?>">
@@ -119,23 +124,38 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                         Account
                     </div>
                 </div>
-                <div class="tw-px-6 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                <div data-price="<?= $size ?>" class="price-information tw-px-6 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
                     <div class="tw-space-y-2 tw-my-3 tw-w-full">
-                        <div class="tw-flex tw-justify-between tw-gap-2">
-                            <div class="tw-justify-start tw-text-white tw-text-2xl tw-font-medium tw-line-through tw-uppercase tw-leading-7">$349</div>
-                            <div class="tw-px-2 tw-py-1 tw-rounded-lg tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
-                                <div class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">Daily Loss Limit</div>
-                                <svg width="1" height="24" viewBox="0 0 1 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <div style="display: <?= $has_coupon ? 'flex' : 'none' ?>"
+                             data-price="<?= $size ?>"
+                             class="badge-coupon tw-flex tw-items-center tw-justify-between tw-gap-2">
+                            <div class="tw-px-2 tw-w-full tw-py-1 tw-rounded-lg tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-teal-500 tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
+                                <div class="tw-text-stone-400 tw-w-full tw-text-base tw-font-medium tw-leading-normal">
+                                    Save <span
+                                            class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
+                                    with code
+                                </div>
+                                <svg width="1" height="24" viewBox="0 0 1 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
                                     <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
                                 </svg>
-                                <div class="tw-text-right tw-justify-start tw-text-white tw-text-base tw-font-medium tw-leading-normal">SEP</div>
+                                <div class="badge-coupon__code tw-uppercase tw-text-right tw-justify-start tw-text-white tw-font-medium tw-leading-normal">
+                                    <?= $has_coupon ? strtoupper($coupon['coupon']) : '' ?>
+                                </div>
                             </div>
                         </div>
                         <div class="tw-text-white tw-font-medium">
-                        <span class="tw-text-4xl tw-leading-[48px] price-plan"
-                              data-price="<?= $size ?>">$<?= number_format($price) ?></span>
+                            <span class="tw-text-4xl tw-leading-[48px] price-plan"
+                                  data-price="<?= $size ?>"><?= mt_price_plain($price_plan) ?>
+                            </span>
                             <span class="tw-text-xl frequency-plan"
-                                  data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'Month' : 'One-Time Fee' ?></span>
+                                  data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?>
+                            </span>
+                            <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
+                                 data-price="<?= $size ?>"
+                                 class="coupon-before-price tw-text-red-500 tw-text-base tw-font-medium tw-line-through tw-uppercase tw-leading-7">
+                                before <span><?= $has_coupon ? mt_price_plain($coupon['original_total']) : '0' ?></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,7 +187,8 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                     <?php endforeach; ?>
                 </div>
                 <div class="tw-px-6 tw-py-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
-                    <a href="<?= $get_plan_url ?>" target="_blank" class="<?= $mostPopular == $size ? 'btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3' : 'mega-btn-md mega-btn-default-md w-100 tw-no-underline'?>">
+                    <a href="<?= $get_plan_url ?>" target="_blank"
+                       class="<?= $mostPopular == $size ? 'btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3' : 'mega-btn-md mega-btn-default-md w-100 tw-no-underline' ?>">
                         GET FUNDED WITH $<?= $size ?>
                     </a>
                 </div>

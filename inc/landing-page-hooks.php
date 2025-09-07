@@ -28,12 +28,37 @@ if (!function_exists('megatrader_landing_page_scripts')) {
         wp_enqueue_script('clipboard', $js_uri . 'clipboard.min.js', [], $clipboard_js_version, true);
 
         $products_data = get_products_with_attributes();
+
+        $products_with_best_coupons = [];
+        foreach ($products_data['products'] as $current_product) {
+            if ($current_product['slug'] === 'reset-fee' || $current_product['slug'] === 'activation-fee') {
+                continue;
+            }
+
+            $model = wc_get_product($current_product['id']);
+            if ($model && $model->is_type('variable')) {
+                $variations = $model->get_children();
+
+                foreach ($variations as $variation_id) {
+                    $variation = wc_get_product($variation_id);
+                    $products_with_best_coupons[] = [
+                            'id' => $variation_id,
+                            'price' => $variation->get_price(),
+                            'slug' => $current_product['slug'],
+                            'coupon' => mt_get_best_coupon_for_variation($variation_id),
+                            'attributes' => $variation->get_attributes(),
+                    ];
+                }
+            }
+        }
+
         wp_localize_script('megatrader-main', 'MG_GLOBAL', [
                 'adminAjaxApi' => admin_url('admin-ajax.php'),
                 'baseApi' => esc_url_raw(rest_url('megatrader/v1')),
                 'nonce' => wp_create_nonce('wp_rest'),
                 'subscriptionNonce' => wp_create_nonce('subscription_action'),
                 'products' => $products_data['products'] ?? [],
+                'products_with_best_coupons' => $products_with_best_coupons ?? [],
         ]);
     }
 }
