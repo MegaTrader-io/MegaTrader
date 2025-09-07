@@ -187,7 +187,7 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                     <?php endforeach; ?>
                 </div>
                 <div class="tw-px-6 tw-py-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
-                    <a href="<?= $get_plan_url ?>" target="_blank"
+                    <a href="<?= $get_plan_url ?>"
                        class="<?= $mostPopular == $size ? 'btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3' : 'mega-btn-md mega-btn-default-md w-100 tw-no-underline' ?>">
                         GET FUNDED WITH $<?= $size ?>
                     </a>
