@@ -2,28 +2,23 @@
 $products_data = get_products_with_attributes();
 $attributes = $products_data['attributes'] ?? [];
 $platforms = [];
+$has_badge = false;
 
 foreach ($attributes as $attr) {
     switch ($attr['taxonomy']) {
         case 'pa_platform':
             $attribute_meta = $attr['attribute_meta'] ?? [];
-
             $parsed = parse_attribute_meta($attribute_meta);
-            $badge_text = $parsed['config']['badge']['text'] ?? '';
+            $badge = $parsed['config']['badge'] ?? [];
 
-            $platforms[] = [
-                    'name' => $attr['name'],
-                    'slug' => $attr['slug'],
-                    'order' => $parsed['config']['order']['value'] ?? 5,
-                    'is_coming_soon' => mt_is_coming_soon($badge_text)
-            ];
+            if (count($badge)) {
+                $has_badge = true;
+            }
 
+            $platforms[] = $attr;
             break;
     }
 }
-
-$platforms_chunk_list = mt_sort_list_by_order($platforms);
-
 ?>
 
 <section id="sponsor" class="tw-space-y-4 tw-px-8">
@@ -40,11 +35,14 @@ $platforms_chunk_list = mt_sort_list_by_order($platforms);
 
     <div
             class="tw-my-8 tw-flex tw-flex-col tw-items-center tw-gap-16 tw-py-12 md:tw-gap-12 lg:tw-my-auto lg:tw-flex lg:tw-flex-row lg:tw-gap-8 lg:tw-py-12 xl:tw-gap-16  <?= count($platforms) == 4 ? 'md:tw-grid md:tw-grid-cols-2 lg:tw-justify-between' : 'lg:tw-justify-center' ?>">
-        <?php foreach (mt_sort_list_by_order($platforms) as $index => $platform): ?>
+        <?php foreach ($platforms as $index => $platform): ?>
             <?php
-            $is_coming_prefix = $platform['is_coming_soon'] ? '-coming-soon' : '';
-            $image = $platform['slug'] ? "{$platform['slug']}$is_coming_prefix.svg" : '';
+            $image = "{$platform['slug']}.svg";
             $name = $platform['name'];
+
+            $attribute_meta = $platform['attribute_meta'] ?? [];
+            $parsed = parse_attribute_meta($attribute_meta);
+            $badge = $parsed['config']['badge'] ?? [];
 
             $classes = [
                     0 => 'tw-contents md:tw-flex md:tw-justify-self-end',
@@ -54,13 +52,22 @@ $platforms_chunk_list = mt_sort_list_by_order($platforms);
             ];
             ?>
 
-            <div class="<?= $classes[$index] ?>">
-                <?php if ($image) : ?>
+            <div class="<?= $classes[$index] ?> <?= count($badge) == 0 && $has_badge ? 'tw-mb-10' : '' ?>">
+                <div>
                     <img
                             src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/platforms/<?= $image ?>"
                             alt="<?= $name ?> Sponsor Logo"
                     />
-                <?php endif; ?>
+                    <?php if (count($badge)):
+                        $badge_style_class = isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                        $badge_text = $badge['text'] ?? '';
+                        ?>
+                        <div class="tw-flex tw-justify-center tw-mt-4">
+                            <div class="mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
             </div>
         <?php endforeach; ?>
     </div>

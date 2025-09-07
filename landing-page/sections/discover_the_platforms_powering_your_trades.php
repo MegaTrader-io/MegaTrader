@@ -7,9 +7,6 @@ $platforms = [];
 foreach ($attributes as $attr) {
     switch ($attr['taxonomy']) {
         case 'pa_platform':
-            $attribute_meta = $attr['attribute_meta'] ?? [];
-            $parsed = parse_attribute_meta($attribute_meta);
-            $attr['order'] = $parsed['config']['order']['value'] ?? 5;
             $platforms[] = $attr;
             break;
     }
@@ -108,10 +105,6 @@ $features = [
                 $attribute_meta = $platform['attribute_meta'] ?? [];
                 $parsed = parse_attribute_meta($attribute_meta);
                 $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
-//                $is_coming_soon = mt_is_coming_soon($badge_text);
-
-
-
                 ?>
 
                 <label
