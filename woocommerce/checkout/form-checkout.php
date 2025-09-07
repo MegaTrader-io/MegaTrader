@@ -522,7 +522,7 @@ if ($fflag): ?>
 
 
                     <div class="payment-container review-container">
-                        <div class="fw-medium leading-8 text-size-20 text-white">Payment Method</div>
+                        <div class="fw-medium leading-8 text-size-20 text-white pb-3">Payment Method</div>
 
                         <div class="mt-payment-cards" id="mt-payment">
                             <?php

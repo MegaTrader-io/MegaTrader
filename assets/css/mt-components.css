@@ -129,10 +129,10 @@
     .mt-tabs__item[aria-selected="true"]:after {
         content: '';
         position: absolute;
-        bottom: -1px;
+        bottom: -4px;
         left: 0;
         width: 100%;
-        border-bottom: 1px solid var(--Surface-Page, #1E1E1E); 
+        border-bottom: 6px solid var(--Surface-Page, #1E1E1E); 
     }
     .mt-tabs__item__content {
         align-items: center;

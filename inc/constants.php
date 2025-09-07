@@ -42,7 +42,7 @@ class Label
             ],
             [
                 'icon' => 'lightning',
-                'text' => 'Practice trading with chosen virtual funds',
+                'text' => 'Professional trading using real-time data',
 
             ],
             [
