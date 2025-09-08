@@ -155,9 +155,10 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
 }
 
 //$best_product = get_best_selling_product();
+//
 //if ($best_product) {
-////    $best_product_id = $best_product['variation_id'];
-////    $mostPopular = $best_product['attributes']['pa_account-size'];
+//    $best_product_id = $best_product['variation_id'];
+//    $mostPopular = $best_product['attributes']['pa_account-size'];
 //}
 
 ?>
@@ -246,7 +247,7 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
                              data-price="<?= $size ?>"
                              class="badge-coupon tw-w-full tw-flex tw-items-center tw-justify-between tw-gap-2">
                             <div class="mt-badge mt-badge-secondary">
-                                <div class="tw-w-full tw-text-base tw-font-medium tw-leading-normal">
+                                <div class="tw-w-full tw-text-base tw-font-medium">
                                     Save <span
                                             class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
                                     with code
@@ -255,7 +256,7 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
                                      xmlns="http://www.w3.org/2000/svg">
                                     <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
                                 </svg>
-                                <div class="badge-coupon__code tw-uppercase tw-text-right tw-justify-start tw-text-white tw-font-medium tw-leading-normal">
+                                <div class="badge-coupon__code tw-uppercase tw-text-right tw-justify-start tw-text-base tw-font-medium">
                                     <?= $has_coupon ? strtoupper($coupon['coupon']) : '' ?>
                                 </div>
                             </div>
