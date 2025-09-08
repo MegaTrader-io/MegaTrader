@@ -16,6 +16,7 @@ const Selector = {
   NewPaymentMethodRadioSelector:
     '.woocommerce-SavedPaymentMethods-new [type="radio"]',
   PlaceOrderBtnId: "place_order",
+  CheckoutForm: "#checkout-form",
 };
 
 function setStateWhenReady(stateCode) {
@@ -72,7 +73,46 @@ function lockStateSelection(stateCode, ttlMs = 7000) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  // ↓↓↓ Recalcular checkout sin “spamear” (debounce)
+  // --- DEBUG LOGGER ---
+  const MT_DBG = true;
+  function mtNow() {
+    return `[MT ${performance.now().toFixed(1)}ms]`;
+  }
+  function mtLog() {
+    if (!MT_DBG) return;
+    try {
+      console.log.apply(console, [mtNow(), ...arguments]);
+    } catch (e) {}
+  }
+  window.mtLog = mtLog;
+
+  // Log global de AJAX (solo lo que nos interesa)
+  if (typeof jQuery !== "undefined") {
+    jQuery(document).ajaxSend(function (_e, _xhr, o) {
+      const mark = (o.url || "") + " " + (o.data || "");
+      if (
+        mark.includes("wc-ajax=checkout") ||
+        mark.includes("mt_render_order_success_modal")
+      ) {
+        mtLog(
+          "ajaxSend →",
+          o.type || "POST",
+          o.url || "(admin-ajax)",
+          o.data || ""
+        );
+      }
+    });
+    jQuery(document).ajaxComplete(function (_e, xhr, o) {
+      const mark = (o.url || "") + " " + (o.data || "");
+      if (
+        mark.includes("wc-ajax=checkout") ||
+        mark.includes("mt_render_order_success_modal")
+      ) {
+        mtLog("ajaxComplete ✓", xhr.status, o.url || "(admin-ajax)");
+      }
+    });
+  }
+
   const debouncedUpdate = (() => {
     let t;
     return () => {
@@ -81,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (typeof jQuery !== "undefined") {
           jQuery(document.body).trigger("update_checkout");
         }
-      }, 300); // ajusta si quieres más/menos sensibilidad
+      }, 300);
     };
   })();
 
@@ -659,7 +699,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ).scrollIntoView({ behavior: "smooth", block: "center" });
 
         if (e && typeof e.preventDefault === "function") e.preventDefault();
-        processingWatchdog(600, 6, 700);
         return false;
       }
       return true;
@@ -696,12 +735,15 @@ document.addEventListener("DOMContentLoaded", function () {
   // ========== PLACE ORDER BTN EVENT ==========
   function addPlaceOrderBtnListeners() {
     const placeOrderBtn = document.getElementById(Selector.PlaceOrderBtnId);
-    if (!placeOrderBtn) return;
+    const checkoutForm = document.querySelector(Selector.CheckoutForm);
+    if (!placeOrderBtn || !checkoutForm) return;
 
     placeOrderBtn.addEventListener(
       "click",
       (e) => {
-        // Si ya está bloqueado, no dejes reintentos
+        mtLog("CLICK place_order");
+
+        // anti-doble click
         if (placeOrderBtn.dataset.mtLocked === "1") {
           e.preventDefault();
           e.stopImmediatePropagation();
@@ -709,37 +751,59 @@ document.addEventListener("DOMContentLoaded", function () {
           return false;
         }
 
-        // Limpia overlays “viejos” y errores, valida billing
+        // limpiar overlays/errores previos
         try {
           if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
         } catch (_) {}
-        clearErrors(checkoutForm);
-        formActionHandler(e);
+        if (typeof clearErrors === "function") clearErrors(checkoutForm);
+        if (typeof formActionHandler === "function") formActionHandler(e);
 
-        // Si validación falla → no continúes, sin preloader
-        if (checkoutFormIsInvalid) {
+        // valida formulario (usa tu flag/función real)
+        if (
+          typeof checkoutFormIsInvalid !== "undefined" &&
+          checkoutFormIsInvalid
+        ) {
           e.preventDefault();
+          mtLog("VALIDATION → INVALID (no preloader)");
           try {
             if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
           } catch (_) {}
-          hideSitePreloader();
-          unlockPlaceOrderBtn();
+          try {
+            if (typeof hideSitePreloader === "function") hideSitePreloader();
+          } catch (_) {}
+          // no bloqueamos ni mostramos preloader si es inválido
           return false;
         }
 
-        // Asegura método de pago
-        if (!ensurePaymentSelection(e)) {
-          hideSitePreloader(); // no seguimos
-          unlockPlaceOrderBtn();
+        // asegura método de pago (usa tu ensurePaymentSelection real)
+        if (
+          typeof ensurePaymentSelection === "function" &&
+          !ensurePaymentSelection(e)
+        ) {
+          mtLog("PAYMENT METHOD → MISSING (no preloader)");
+          try {
+            if (typeof hideSitePreloader === "function") hideSitePreloader();
+          } catch (_) {}
           return false;
         }
+        mtLog("PAYMENT METHOD → OK");
 
-        // ✅ Todo ok → bloquear botón + freeze + preloader + overlay de Woo
-        lockPlaceOrderBtn();
-        showSitePreloader();
-        wcBlockCheckout();
+        // ✅ bloqueo + freeze + preloader + overlay WC
+        try {
+          lockPlaceOrderBtn && lockPlaceOrderBtn();
+        } catch (_) {}
+        try {
+          showSitePreloader && showSitePreloader();
+        } catch (_) {}
+        try {
+          wcBlockCheckout && wcBlockCheckout();
+        } catch (_) {}
 
-        // (Woo seguirá con su submit/AJAX normalmente; no hacemos timeouts)
+        mtLog(
+          "VALIDATION OK → lock + preloader + block (esperando respuesta gateway)"
+        );
+        // Deja que Woo siga con su submit/AJAX normal
+        return true;
       },
       true
     );
@@ -921,9 +985,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (typeof jQuery !== "undefined") {
     jQuery(document.body).on(
       "updated_checkout checkout_error payment_method_selected wc-credit-card-form-init",
-      function () {
-        processingWatchdog(600);
-      }
+      function () {}
     );
   }
 
@@ -973,7 +1035,6 @@ document.addEventListener("DOMContentLoaded", function () {
           if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
           return false;
         }
-        processingWatchdog(1500);
         return true; // OK
       });
 
@@ -1098,6 +1159,34 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Exponer helpers para thankyou-modal.js
+  window.showSitePreloader = showSitePreloader;
+  window.hideSitePreloader = hideSitePreloader;
+  window.wcBlockCheckout = wcBlockCheckout;
+  window.wcUnblockCheckout = wcUnblockCheckout;
+
+  // Exponer helpers + envolver con logs
+  const __showPre = showSitePreloader;
+  const __hidePre = hideSitePreloader;
+  const __blkWC = wcBlockCheckout;
+  const __ubWC = wcUnblockCheckout;
+
+  showSitePreloader = function () {
+    mtLog("showSitePreloader()");
+    return __showPre.apply(this, arguments);
+  };
+  hideSitePreloader = function () {
+    mtLog("hideSitePreloader()");
+    return __hidePre.apply(this, arguments);
+  };
+  wcBlockCheckout = function () {
+    mtLog("wcBlockCheckout()");
+    return __blkWC.apply(this, arguments);
+  };
+  wcUnblockCheckout = function () {
+    mtLog("wcUnblockCheckout()");
+    return __ubWC.apply(this, arguments);
+  };
+
   window.showSitePreloader = showSitePreloader;
   window.hideSitePreloader = hideSitePreloader;
   window.wcBlockCheckout = wcBlockCheckout;
@@ -1450,6 +1539,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const prev = document.getElementById("orderSuccessModal");
     if (prev) prev.remove();
 
+    // LOG
+    mtLog("modal FETCH start", { orderId, orderKey, redirectUrl });
+
     fetch(ajaxUrl, {
       method: "POST",
       headers: {
@@ -1472,6 +1564,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Inyecta HTML del modal
         document.body.insertAdjacentHTML("beforeend", json.data.html);
+        mtLog("modal HTML injected");
 
         const modalEl = document.getElementById("orderSuccessModal");
         if (!modalEl) throw new Error("Modal element not found.");
@@ -1505,6 +1598,7 @@ document.addEventListener("DOMContentLoaded", function () {
           modalEl.addEventListener(
             "shown.bs.modal",
             () => {
+              mtLog("modal SHOWN → hide preloader + unblock");
               try {
                 if (typeof wcUnblockCheckout === "function")
                   wcUnblockCheckout();
@@ -1520,12 +1614,14 @@ document.addEventListener("DOMContentLoaded", function () {
           modalEl.addEventListener(
             "hidden.bs.modal",
             () => {
+              mtLog("modal HIDDEN → unfreeze");
               document.body.classList.remove("mt-checkout-frozen");
               document.body.style.overflow = "";
             },
             { once: true }
           );
 
+          mtLog("modal SHOW() (bootstrap)");
           bs.show();
         } else {
           // Fallback sin Bootstrap
@@ -1539,6 +1635,7 @@ document.addEventListener("DOMContentLoaded", function () {
           try {
             if (typeof hideSitePreloader === "function") hideSitePreloader();
           } catch (_) {}
+          mtLog("modal SHOW() (fallback)");
 
           const closeBtn = modalEl.querySelector("[data-bs-dismiss='modal']");
           if (closeBtn) {
@@ -1553,6 +1650,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       })
       .catch((err) => {
+        mtLog("modal FETCH ERROR", err && (err.message || err));
         try {
           if (typeof hideSitePreloader === "function") hideSitePreloader();
         } catch (_) {}
@@ -1570,7 +1668,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (typeof jQuery !== "undefined") {
     jQuery.ajaxPrefilter(function (options, originalOptions, jqXHR) {
       const url = String(options.url || "");
-      if (url.indexOf("wc-ajax=checkout") === -1) return;
+      if (url.indexOf("wc-ajax=checkout") !== -1) {
+        mtLog("prefilter HIT", url);
+      }
 
       const origSuccess = options.success;
       options.success = function (data, textStatus, jqXHR2) {
@@ -1590,7 +1690,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const k = data.redirect.match(/[?&]key=([^&]+)/);
             const orderKey = k ? k[1] : null;
 
-            // Desbloquea checkout, quita preloader, limpia notices
+            mtLog("prefilter SUCCESS → will render modal", {
+              orderId,
+              orderKey,
+              redirect: data.redirect,
+            });
+
+            // Desbloquea overlay nativo; NO apagamos preloader aquí
             try {
               if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
             } catch (_) {}
@@ -1614,7 +1720,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return; // NO redirigir
           }
         } catch (e) {
-          console.error("[MT] intercept error", e);
+          mtLog("prefilter ERROR", e && (e.message || e));
         }
 
         if (typeof origSuccess === "function")

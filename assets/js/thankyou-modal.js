@@ -4,7 +4,7 @@
       if (!modalEl || modalEl.__mtBound) return;
       modalEl.__mtBound = true;
 
-      // DESTINO por defecto (puedes setearlo en el HTML con data-overview-url)
+      // Destino por defecto (puedes setearlo en el HTML con data-overview-url)
       const DEST =
         modalEl.getAttribute("data-overview-url") ||
         (opts && opts.overviewUrl) ||
@@ -16,9 +16,10 @@
 
       let didRedirect = false;
       let wasEverVisible = false;
-      let tick = null;
 
-      // ---------------- utilidades visibilidad ----------------
+      console.log("[MT modal] init", { DEST });
+
+      // ---------- utilidades de visibilidad/on-screen ----------
       const cs = (el) => (el ? w.getComputedStyle(el) : null);
 
       const hasZeroScale = (el) => {
@@ -71,14 +72,15 @@
       };
 
       const maybeRedirect = () => {
+        console.log("[MT modal] maybeRedirect() check");
         if (!wasEverVisible || didRedirect) return;
         if (!d.body.contains(modalEl)) return go();
         if (!isModalTrulyVisible()) return go();
       };
 
-      // ---------------- cerrar SIEMPRE antes de redirigir ----------------
+      // ---------- helpers de ocultado/redirect ----------
       const hardHide = () => {
-        // Fallback para asegurar ocultado visual
+        // Asegura ocultado visual aunque no esté Bootstrap
         modalEl.classList.remove("show");
         modalEl.style.display = "none";
         modalEl.setAttribute("aria-hidden", "true");
@@ -86,20 +88,21 @@
       };
 
       const go = () => {
+        console.log("[MT modal] go() → preloader ON + closing", {
+          wasEverVisible,
+          isShown: modalEl.classList.contains("show"),
+        });
         if (didRedirect) return;
         didRedirect = true;
-        try {
-          obsModal.disconnect();
-        } catch (e) {}
-        try {
-          obsBody.disconnect();
-        } catch (e) {}
-        if (tick) {
-          clearInterval(tick);
-          tick = null;
-        }
 
-        // 🔥 Preloader ON + overlay nativo ON
+        try {
+          obsModal && obsModal.disconnect();
+        } catch (_) {}
+        try {
+          obsBody && obsBody.disconnect();
+        } catch (_) {}
+
+        // Preloader ON + overlay Woo ON antes de cerrar
         try {
           w.showSitePreloader && w.showSitePreloader();
         } catch (_) {}
@@ -110,32 +113,25 @@
         if (w.bootstrap && typeof w.bootstrap.Modal === "function") {
           const inst = w.bootstrap.Modal.getOrCreateInstance(modalEl);
           if (!modalEl.classList.contains("show")) {
-            // ya está oculto → no esperes animación
-            modalEl.classList.remove("show");
-            modalEl.style.display = "none";
-            modalEl.setAttribute("aria-hidden", "true");
-            if (dialogEl) dialogEl.style.display = "none";
+            hardHide();
             return w.location.assign(DEST);
           }
           modalEl.addEventListener(
             "hidden.bs.modal",
             () => {
+              console.log("[MT modal] HIDDEN event → redirect");
               w.location.assign(DEST);
             },
             { once: true }
           );
           inst.hide();
         } else {
-          // Fallback
-          modalEl.classList.remove("show");
-          modalEl.style.display = "none";
-          modalEl.setAttribute("aria-hidden", "true");
-          if (dialogEl) dialogEl.style.display = "none";
+          hardHide();
           w.location.assign(DEST);
         }
       };
 
-      // ---------------- Inicializar y mostrar modal ----------------
+      // ---------- Inicializar y mostrar modal ----------
       try {
         if (w.bootstrap && typeof w.bootstrap.Modal === "function") {
           const instance = w.bootstrap.Modal.getOrCreateInstance(modalEl, {
@@ -147,6 +143,7 @@
             "shown.bs.modal",
             () => {
               wasEverVisible = true;
+              console.log("[MT modal] SHOWN event");
             },
             { once: true }
           );
@@ -156,23 +153,24 @@
           });
 
           modalEl.addEventListener("hidePrevented.bs.modal", () => {
+            console.log("[MT modal] hidePrevented → go()");
             if (wasEverVisible) go();
           });
 
+          console.log("[MT modal] SHOW called");
           instance.show();
         } else {
-          // Fallback sin Bootstrap
-          setTimeout(() => {
-            modalEl.classList.add("show");
-            modalEl.style.display = "block";
-            modalEl.removeAttribute("aria-hidden");
-            if (dialogEl) dialogEl.style.display = ""; // visible
-            wasEverVisible = true;
-          }, 0);
+          // Fallback sin Bootstrap (sin setTimeout)
+          modalEl.classList.add("show");
+          modalEl.style.display = "block";
+          modalEl.removeAttribute("aria-hidden");
+          if (dialogEl) dialogEl.style.display = ""; // visible
+          wasEverVisible = true;
+          console.log("[MT modal] SHOW fallback (no Bootstrap)");
         }
-      } catch (e) {}
+      } catch (_) {}
 
-      // ---------------- Botón "Go to my account" ----------------
+      // ---------- Botón "Go to my account" ----------
       if (btnGo) {
         btnGo.addEventListener("click", (ev) => {
           ev.preventDefault();
@@ -180,7 +178,7 @@
         });
       }
 
-      // ---------------- Click fuera (si backdrop se libera) ----------------
+      // ---------- Click fuera (por si el backdrop se vuelve "libre") ----------
       d.addEventListener(
         "mousedown",
         (ev) => {
@@ -195,7 +193,7 @@
         true
       );
 
-      // ---------------- ESC (si alguien lo re-habilita) ----------------
+      // ---------- ESC (si alguien lo re-habilita) ----------
       d.addEventListener(
         "keydown",
         (ev) => {
@@ -205,29 +203,39 @@
         true
       );
 
-      // ---------------- Observadores ----------------
-      const obsModal = new MutationObserver(() => {
-        if (!wasEverVisible || didRedirect) return;
-        maybeRedirect();
-      });
-      obsModal.observe(modalEl, {
-        attributes: true,
-        attributeFilter: ["class", "style", "aria-hidden"],
-        subtree: true, // detectar cambios en .modal-dialog/.modal-content
-      });
+      // ---------- Observadores ----------
+      let obsModal;
+      try {
+        obsModal = new MutationObserver(() => {
+          if (!wasEverVisible || didRedirect) return;
+          maybeRedirect();
+        });
+        obsModal.observe(modalEl, {
+          attributes: true,
+          attributeFilter: ["class", "style", "aria-hidden"],
+          subtree: true, // detectar cambios en .modal-dialog/.modal-content
+        });
+      } catch (_) {}
 
-      const obsBody = new MutationObserver(() => {
-        if (!wasEverVisible || didRedirect) return;
-        if (!d.getElementById("orderSuccessModal")) return go();
-        maybeRedirect();
-      });
-      obsBody.observe(d.body, { childList: true, subtree: true });
+      let obsBody;
+      try {
+        obsBody = new MutationObserver(() => {
+          if (!wasEverVisible || didRedirect) return;
+          if (!d.getElementById("orderSuccessModal")) return go();
+          maybeRedirect();
+        });
+        obsBody.observe(d.body, { childList: true, subtree: true });
+      } catch (_) {}
 
-      w.addEventListener("resize", maybeRedirect, { passive: true });
-      w.addEventListener("scroll", maybeRedirect, { passive: true });
-      tick = w.setInterval(maybeRedirect, 500); // red de seguridad
+      // Sin intervalos ni timeouts; solo eventos reales:
+      try {
+        w.addEventListener("resize", maybeRedirect, { passive: true });
+      } catch (_) {}
+      try {
+        w.addEventListener("scroll", maybeRedirect, { passive: true });
+      } catch (_) {}
 
-      // ---------------- Copiar número de orden ----------------
+      // ---------- Copiar número de orden ----------
       (function setupCopyChip() {
         const chip =
           d.getElementById("order-copy-chip") ||
