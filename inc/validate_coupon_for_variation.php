@@ -58,7 +58,7 @@ if (!function_exists('mt_price_plain')) {
 
         $format = get_woocommerce_price_format();
 
-        return sprintf($format, $currency_symbol, $formatted);
+        return trim(sprintf($format, $currency_symbol, $formatted));
     }
 }
 

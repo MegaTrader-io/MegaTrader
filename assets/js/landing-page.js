@@ -570,25 +570,40 @@ document.addEventListener('DOMContentLoaded', function () {
     void loadMarkerCarousel();
     void loadChooseYourAccountSize(
         (params) => {
-            console.info('params', params);
             const {defaultPlatform, defaultMarketType} = params;
             const productionSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
-
-            console.info(
-                'productionSelected', productionSelected
-            )
             const productPlatformDetail = productionSelected[params.accountType];
 
             function formatNumber(value) {
                 return '$' + parseInt(value.toString().replace('$', ''));
             }
 
+            const defaultMetaInfo = {}
+            for (const priceSize in productPlatformDetail) {
+                const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
+                const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
+                for (const metaInfoKey in metaInfo) {
+                    if (metaInfo[metaInfoKey]) {
+                        defaultMetaInfo[metaInfoKey] = true;
+                    }
+                }
+            }
+
+            const validMetaInfo = Object.keys(defaultMetaInfo);
+            let metaInfoList = [];
+            Object.keys(MG_GLOBAL.productMetaLabel).forEach(key => {
+                if (validMetaInfo.includes(key)) {
+                    metaInfoList.push({key, label: MG_GLOBAL.productMetaLabel[key]})
+                }
+            })
+
             for (const priceSize in productPlatformDetail) {
                 const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
                 const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
                 const productId = attributes.find(item => item['id'])['id'];
-                const product = MG_GLOBAL?.products_with_best_coupons?.find(p => p.id === Number(productId));
+                const product = MG_GLOBAL?.productsWithBestCoupons?.find(p => p.id === Number(productId));
                 const coupon = product?.coupon;
+
                 let price = formatNumber(priceObject);
                 const priceInformation = document.querySelector(`.price-information[data-price="${priceSize}"]`);
                 const pricePanel = document.querySelector(`.price-plan[data-price="${priceSize}"]`);
@@ -613,9 +628,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         pricePanel.innerText = price;
                     }
-
                 }
-
 
                 if (frequencyPanel) {
                     frequencyPanel.innerText = ` ${params.accountType !== 'funded-plan' ? 'per month' : 'one time fee'}`;
@@ -623,16 +636,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const metaInfoObject = attributes.find(item => item['meta-info']);
                 if (metaInfoObject) {
-                    const metaInfoList = metaInfoObject['meta-info'];
+                    const metaInfoContext = metaInfoObject['meta-info'];
                     const metaInfoElement = document.querySelector(`.metaInfo[data-price="${priceSize}"]`);
+                    const template = document.querySelector(`.template-metaInfo`);
 
-                    for (const metainfo in metaInfoList) {
-                        const element = metaInfoElement.querySelector(`.${metainfo}`);
-                        const value = metaInfoList[metainfo];
-                        if (element && value) {
-                            element.querySelector('.metaValue').innerHTML = metaInfoList[metainfo] || 'None';
+                    metaInfoElement.innerHTML = '';
+
+                    metaInfoList.forEach(metaInfo => {
+                        const row = template.cloneNode(true);
+                        row.classList.remove('template-metaInfo', 'tw-hidden');
+                        let label = metaInfo.label;
+                        if (metaInfo.key === 'max_contracts') {
+                            label = label.replace(' ', '\n');
                         }
-                    }
+                        row.querySelector('.mega-info-row__label').dataset.key = metaInfo.key;
+                        row.querySelector('.mega-info-row__label').innerText = label;
+                        row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
+                        metaInfoElement.appendChild(row)
+                    })
                 }
             }
 

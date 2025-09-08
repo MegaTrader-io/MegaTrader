@@ -18,16 +18,74 @@ foreach ($attributes as $attr) {
 
 $defaultPlatform = 'megatraderx';
 $defaultMarketType = 'futures';
-$defaultSlug = 'elite-plan';
+$defaultSlug = $account_types[0]['slug'];
 $mostPopular = '150k';
+$get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
 
-$product = array_find($products_data['products'], function ($product) use ($defaultSlug) {
-    return $product['slug'] == $defaultSlug;
+$filtered = array_filter($products_data['products'], function ($product) use ($defaultSlug) {
+    return $product['slug'] === $defaultSlug;
 });
 
-$variation_fields = bmc_get_custom_variation_fields();
+$product = reset($filtered) ?: null;
 
-$get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
+$planList = [];
+$defaultMetaInfo = [];
+$has_coupon_global = null;
+foreach ($account_sizes as $size) {
+    $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
+    $id = -1;
+    $price = '0.00';
+    $metaInfoList = [];
+    foreach ($properties as $property) {
+        foreach ($property as $key => $arrayProperties) {
+            switch ($key) {
+                case 'id':
+                    $id = $arrayProperties;
+                    break;
+                case 'price-monthly':
+                    $price = intval(str_replace('$', '', $arrayProperties));
+                    break;
+                case 'meta-info':
+                    $metaInfoList = $arrayProperties;
+                    break;
+            }
+        }
+    }
+
+    foreach (Label::PRODUCT_META as $key => $value) {
+        if ($metaInfoList[$key]) {
+            $defaultMetaInfo[$key] = true;
+        }
+    }
+
+    $coupon = mt_get_best_coupon_for_variation($id);
+    if ($coupon['valid'] && !$has_coupon_global) {
+        $has_coupon_global = true;
+    }
+
+    $planList[] = [
+            'id' => $id,
+            'price' => $price,
+            'size' => $size,
+            'metaInfoList' => $metaInfoList
+    ];
+}
+
+function render_template_meta_info($value = '', $label = '', $classes = '')
+{
+    return <<<HTML
+<div class="mega-info-row tw-w-full tw-py-3 first:tw-border-t first:tw-border-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 {$classes}">
+    <div class="tw-flex-1 tw-justify-start tw-text-base tw-font-medium">
+        <div class="tw-grid tw-grid-cols-[1fr_auto] tw-gap-2">
+            <div class="mega-info-row__label tw-col-span-1 tw-leading-6 tw-text-stone-400">
+                {$label}
+            </div>
+            <div class="mega-info-row__value tw-col-auto tw-no-wrap tw-content-center tw-text-right tw-text-white tw-leading-6 tw-w-full">{$value}</div>
+        </div>
+    </div>
+</div>
+HTML;
+}
 
 ?>
 
@@ -81,34 +139,18 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
     </div>
 
     <div class="tw-space-y-2 md:tw-space-y-0 md:tw-grid md:tw-grid-cols-2 lg:tw-grid-cols-[1fr_1fr_1fr_1fr] lg:tw-items-center tw-mb-4">
-        <?php foreach ($account_sizes as $index => $size) : ?>
+        <?php foreach ($planList as $index => $plan) : ?>
             <?php
-            $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
-            $id = -1;
-            $price = '0.00';
-            $metaInfoList = [];
-            foreach ($properties as $property) {
-                foreach ($property as $key => $arrayProperties) {
-                    switch ($key) {
-                        case 'id':
-                            $id = $arrayProperties;
-                            break;
-                        case 'price-monthly':
-                            $price = intval(str_replace('$', '', $arrayProperties));
-                            break;
-                        case 'meta-info':
-                            $metaInfoList = $arrayProperties;
-                            break;
-                    }
-                }
-            }
+            $id = $plan['id'];
+            $size = $plan['size'];
+            $price = $plan['price'];
+            $metaInfoList = $plan['metaInfoList'];
 
             $coupon = mt_get_best_coupon_for_variation($id);
             $has_coupon = $coupon['valid'];
             $price_plan = $has_coupon ? $coupon['final_total'] : $price;
-
             ?>
-            <div data-coupon="<?= json_encode($coupon) ?>" class="<?= $mostPopular == $size
+            <div class="<?= $mostPopular == $size
                     ? 'most-popular tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl'
                     : 'tw-bg-mgt-dark tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
             ?> tw-group tw-box-border tw-w-full <?= $mostPopular == $size ? 'last-element' : '' ?>">
@@ -124,7 +166,8 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                         Account
                     </div>
                 </div>
-                <div data-price="<?= $size ?>" class="price-information tw-px-6 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                <div data-price="<?= $size ?>"
+                     class="price-information tw-px-6 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 <?= $has_coupon_global && !$has_coupon ? 'tw-min-h-[140px] tw-items-center' : '' ?>">
                     <div class="tw-space-y-2 tw-my-3 tw-w-full">
                         <div style="display: <?= $has_coupon ? 'flex' : 'none' ?>"
                              data-price="<?= $size ?>"
@@ -145,12 +188,9 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                             </div>
                         </div>
                         <div class="tw-text-white tw-font-medium">
-                            <span class="tw-text-4xl tw-leading-[48px] price-plan"
-                                  data-price="<?= $size ?>"><?= mt_price_plain($price_plan) ?>
-                            </span>
+                            <span class="tw-text-4xl tw-leading-[48px] price-plan" data-price="<?= $size ?>"><?= mt_price_plain($price_plan) ?></span>
                             <span class="tw-text-xl frequency-plan"
-                                  data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?>
-                            </span>
+                                  data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?></span>
                             <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
                                  data-price="<?= $size ?>"
                                  class="coupon-before-price tw-text-red-500 tw-text-base tw-font-medium tw-line-through tw-uppercase tw-leading-7">
@@ -159,31 +199,19 @@ $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url
                         </div>
                     </div>
                 </div>
+                <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
                 <div class="tw-px-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
                      data-price="<?= $size ?>">
-                    <?php foreach ($metaInfoList as $field => $value): ?>
+                    <?php foreach ($defaultMetaInfo as $field => $value): ?>
                         <?php
-                        if (!$value) {
-                            continue;
-                        }
+                        $label = Label::PRODUCT_META[$field];
+                        $value = $metaInfoList[$field];
 
-                        $label = $variation_fields[$field];
                         if ($label == 'Max Contracts') {
                             $label = 'Max<br>Contracts';
                         }
-
                         ?>
-                        <div class="tw-w-full tw-py-3 first:tw-border-t first:tw-border-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 <?= $field ?>">
-                            <div class="tw-flex-1 tw-justify-start tw-text-base tw-font-medium">
-                                <div class="tw-grid tw-grid-cols-[1fr_auto] tw-gap-2">
-                                    <div class="tw-col-span-1 tw-leading-6 tw-text-stone-400"
-                                         title="<?= $field ?>">
-                                        <?= $label; ?>
-                                    </div>
-                                    <div class="tw-col-auto tw-no-wrap tw-content-center tw-text-right tw-text-white tw-leading-6 metaValue"><?= $value ?></div>
-                                </div>
-                            </div>
-                        </div>
+                        <?= render_template_meta_info(value: $value, label: $label) ?>
                     <?php endforeach; ?>
                 </div>
                 <div class="tw-px-6 tw-py-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">

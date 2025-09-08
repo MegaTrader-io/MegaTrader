@@ -58,7 +58,8 @@ if (!function_exists('megatrader_landing_page_scripts')) {
                 'nonce' => wp_create_nonce('wp_rest'),
                 'subscriptionNonce' => wp_create_nonce('subscription_action'),
                 'products' => $products_data['products'] ?? [],
-                'products_with_best_coupons' => $products_with_best_coupons ?? [],
+                'productsWithBestCoupons' => $products_with_best_coupons ?? [],
+                'productMetaLabel' => Label::PRODUCT_META,
         ]);
     }
 }
