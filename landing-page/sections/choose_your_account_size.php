@@ -240,7 +240,7 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
                     </div>
                 </div>
                 <div data-price="<?= $size ?>"
-                     class="price-information tw-px-6 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 <?= $has_coupon_global && !$has_coupon ? 'tw-min-h-[140px] tw-items-center' : '' ?>">
+                     class="price-information tw-px-4 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 <?= $has_coupon_global && !$has_coupon ? 'tw-min-h-[140px] tw-items-center' : '' ?>">
                     <div class="tw-space-y-2 tw-my-3 tw-w-full">
                         <div style="display: <?= $has_coupon ? 'flex' : 'none' ?>"
                              data-price="<?= $size ?>"
@@ -274,7 +274,7 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
                     </div>
                 </div>
                 <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
-                <div class="tw-px-3 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
+                <div class="tw-px-4 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
                      data-price="<?= $size ?>">
                     <?php foreach ($defaultMetaInfo as $field => $value): ?>
                         <?php
