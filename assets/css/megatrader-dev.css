@@ -3370,7 +3370,6 @@ body.mt-checkout-frozen .modal * {
   pointer-events: auto;
 }
 
-/* el modal sí interactivo */
 .modal {
   z-index: 200000 !important;
 }
@@ -3384,3 +3383,10 @@ body.mt-checkout-frozen .modal * {
   flex-direction: column;
   align-items: center;
 }
+
+/* cuando estamos colocando la orden: sin clicks ni foco detrás */
+body.mt-placing form.checkout,
+body.mt-placing .woocommerce-checkout { pointer-events: none; }
+
+/* botón deshabilitado: feedback visual */
+#place_order[disabled] { cursor: not-allowed; opacity: .7; }
