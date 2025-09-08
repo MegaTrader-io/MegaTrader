@@ -74,7 +74,7 @@ foreach ($account_sizes as $size) {
 function render_template_meta_info($value = '', $label = '', $classes = '')
 {
     return <<<HTML
-<div class="mega-info-row tw-w-full tw-py-3 first:tw-border-t first:tw-border-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 {$classes}">
+<div class="mega-info-row tw-w-full tw-py-2.5 first:tw-border-t first:tw-border-neutral-700 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 {$classes}">
     <div class="tw-flex-1 tw-justify-start tw-text-base tw-font-medium">
         <div class="tw-grid tw-grid-cols-[1fr_auto] tw-gap-2">
             <div class="mega-info-row__label tw-col-span-1 tw-leading-6 tw-text-stone-400">
