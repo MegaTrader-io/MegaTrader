@@ -645,12 +645,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     metaInfoList.forEach(metaInfo => {
                         const row = template.cloneNode(true);
                         row.classList.remove('template-metaInfo', 'tw-hidden');
-                        let label = metaInfo.label;
-                        if (metaInfo.key === 'max_contracts') {
-                            label = label.replace(' ', '\n');
-                        }
-                        row.querySelector('.mega-info-row__label').dataset.key = metaInfo.key;
-                        row.querySelector('.mega-info-row__label').innerText = label;
+                        const labelHTML = row.querySelector('.mega-info-row__label');
+                        labelHTML.dataset.key = metaInfo.key;
+                        labelHTML.innerText = metaInfo.label;
                         row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
                         metaInfoElement.appendChild(row)
                     })

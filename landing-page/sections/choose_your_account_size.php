@@ -87,6 +87,79 @@ function render_template_meta_info($value = '', $label = '', $classes = '')
 HTML;
 }
 
+function get_best_selling_product(array $order_statuses = ['wc-completed'], int $limit = 500): ?array
+{
+    try {
+        $orders = wc_get_orders([
+                'status' => $order_statuses,
+                'limit' => $limit,
+                'return' => 'ids',
+        ]);
+
+        if (empty($orders)) {
+            return null;
+        }
+
+        $totals = [];
+
+        foreach ($orders as $order_id) {
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                continue;
+            }
+
+            foreach ($order->get_items() as $item) {
+                $product_id = $item->get_product_id();
+                $variation_id = $item->get_variation_id();
+                $quantity = (int)$item->get_quantity();
+
+                $key = $variation_id > 0 ? "var_$variation_id" : "prod_$product_id";
+
+
+                if (!isset($totals[$key])) {
+                    $totals[$key] = [
+                            'product_id' => $product_id,
+                            'variation_id' => $variation_id > 0 ? $variation_id : null,
+                            'name' => $item->get_name(),
+                            'quantity' => 0,
+                            'attributes' => [], // se llenará si es variación
+                    ];
+                }
+
+                $totals[$key]['quantity'] += $quantity;
+            }
+        }
+
+        if (empty($totals)) {
+            return null;
+        }
+
+        // Ordenar y tomar el más vendido
+        usort($totals, fn($a, $b) => $b['quantity'] <=> $a['quantity']);
+        $best = $totals[0];
+
+        // Si es variación, traer atributos (ej. size, color, etc.)
+        if ($best['variation_id']) {
+            $variation = wc_get_product($best['variation_id']);
+            if ($variation && $variation instanceof WC_Product_Variation) {
+                $best['attributes'] = $variation->get_attributes();
+            }
+        }
+
+        return $best;
+
+    } catch (Throwable $e) {
+        error_log("Error en get_best_selling_product_with_attributes: " . $e->getMessage());
+        return null;
+    }
+}
+
+//$best_product = get_best_selling_product();
+//if ($best_product) {
+////    $best_product_id = $best_product['variation_id'];
+////    $mostPopular = $best_product['attributes']['pa_account-size'];
+//}
+
 ?>
 
 <section id="pricing" class="tw-px-4">
@@ -188,7 +261,8 @@ HTML;
                             </div>
                         </div>
                         <div class="tw-text-white tw-font-medium">
-                            <span class="tw-text-4xl tw-leading-[48px] price-plan" data-price="<?= $size ?>"><?= mt_price_plain($price_plan) ?></span>
+                            <span class="tw-text-4xl tw-leading-[48px] price-plan"
+                                  data-price="<?= $size ?>"><?= mt_price_plain($price_plan) ?></span>
                             <span class="tw-text-xl frequency-plan"
                                   data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?></span>
                             <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
@@ -200,16 +274,12 @@ HTML;
                     </div>
                 </div>
                 <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
-                <div class="tw-px-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
+                <div class="tw-px-3 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
                      data-price="<?= $size ?>">
                     <?php foreach ($defaultMetaInfo as $field => $value): ?>
                         <?php
                         $label = Label::PRODUCT_META[$field];
                         $value = $metaInfoList[$field];
-
-                        if ($label == 'Max Contracts') {
-                            $label = 'Max<br>Contracts';
-                        }
                         ?>
                         <?= render_template_meta_info(value: $value, label: $label) ?>
                     <?php endforeach; ?>
