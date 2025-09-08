@@ -245,8 +245,9 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
                         <div style="display: <?= $has_coupon ? 'flex' : 'none' ?>"
                              data-price="<?= $size ?>"
                              class="badge-coupon tw-flex tw-items-center tw-justify-between tw-gap-2">
-                            <div class="tw-px-2 tw-w-full tw-py-1 tw-rounded-lg tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-teal-500 tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
-                                <div class="tw-text-stone-400 tw-w-full tw-text-base tw-font-medium tw-leading-normal">
+<!--                            tw-px-2 tw-w-full tw-py-1 tw-rounded-lg tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-teal-500 tw-inline-flex tw-justify-start tw-items-center tw-gap-2----->
+                            <div class="mt-badge mt-badge-secondary">
+                                <div class="tw-w-full tw-text-base tw-font-medium tw-leading-normal">
                                     Save <span
                                             class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
                                     with code
