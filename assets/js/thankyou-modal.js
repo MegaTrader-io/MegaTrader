@@ -10,9 +10,9 @@
         (opts && opts.overviewUrl) ||
         "/my-account/overview/";
 
-      const dialogEl  = modalEl.querySelector(".modal-dialog");
+      const dialogEl = modalEl.querySelector(".modal-dialog");
       const contentEl = modalEl.querySelector(".modal-content");
-      const btnGo     = modalEl.querySelector(".js-goto-account");
+      const btnGo = modalEl.querySelector(".js-goto-account");
 
       let didRedirect = false;
       let wasEverVisible = false;
@@ -28,7 +28,7 @@
         if (!t || t === "none") return false;
         const m2d = t.match(/matrix\(([-0-9.,\s]+)\)/);
         if (m2d) {
-          const v = m2d[1].split(",").map(x => parseFloat(x.trim()));
+          const v = m2d[1].split(",").map((x) => parseFloat(x.trim()));
           if (v.length >= 4 && (v[0] === 0 || v[3] === 0)) return true;
         }
         if (/scale\(\s*0/.test(t)) return true;
@@ -39,19 +39,35 @@
         if (!el) return true;
         const s = cs(el);
         if (!s) return true;
-        if (s.display === "none" || s.visibility === "hidden" || Number(s.opacity) === 0) return true;
+        if (
+          s.display === "none" ||
+          s.visibility === "hidden" ||
+          Number(s.opacity) === 0
+        )
+          return true;
         if (hasZeroScale(el)) return true;
         const rect = el.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) return true;
         const vw = w.innerWidth || d.documentElement.clientWidth;
         const vh = w.innerHeight || d.documentElement.clientHeight;
-        if (rect.bottom < 0 || rect.top > vh || rect.right < 0 || rect.left > vw) return true;
+        if (
+          rect.bottom < 0 ||
+          rect.top > vh ||
+          rect.right < 0 ||
+          rect.left > vw
+        )
+          return true;
         return false;
       };
 
       const isModalTrulyVisible = () => {
         const rootShown = modalEl.classList.contains("show");
-        return rootShown && !isHiddenBasic(modalEl) && !isHiddenBasic(dialogEl) && !isHiddenBasic(contentEl);
+        return (
+          rootShown &&
+          !isHiddenBasic(modalEl) &&
+          !isHiddenBasic(dialogEl) &&
+          !isHiddenBasic(contentEl)
+        );
       };
 
       const maybeRedirect = () => {
@@ -72,24 +88,49 @@
       const go = () => {
         if (didRedirect) return;
         didRedirect = true;
-        try { obsModal.disconnect(); } catch (e) {}
-        try { obsBody.disconnect(); } catch (e) {}
-        if (tick) { clearInterval(tick); tick = null; }
+        try {
+          obsModal.disconnect();
+        } catch (e) {}
+        try {
+          obsBody.disconnect();
+        } catch (e) {}
+        if (tick) {
+          clearInterval(tick);
+          tick = null;
+        }
 
-        // cerrar primero (Bootstrap o fallback)
+        // 🔥 Preloader ON + overlay nativo ON
+        try {
+          w.showSitePreloader && w.showSitePreloader();
+        } catch (_) {}
+        try {
+          w.wcBlockCheckout && w.wcBlockCheckout();
+        } catch (_) {}
+
         if (w.bootstrap && typeof w.bootstrap.Modal === "function") {
           const inst = w.bootstrap.Modal.getOrCreateInstance(modalEl);
-          // Si ya está oculto, no esperes animación
           if (!modalEl.classList.contains("show")) {
-            hardHide();
+            // ya está oculto → no esperes animación
+            modalEl.classList.remove("show");
+            modalEl.style.display = "none";
+            modalEl.setAttribute("aria-hidden", "true");
+            if (dialogEl) dialogEl.style.display = "none";
             return w.location.assign(DEST);
           }
-          modalEl.addEventListener("hidden.bs.modal", () => {
-            w.location.assign(DEST);
-          }, { once: true });
+          modalEl.addEventListener(
+            "hidden.bs.modal",
+            () => {
+              w.location.assign(DEST);
+            },
+            { once: true }
+          );
           inst.hide();
         } else {
-          hardHide();
+          // Fallback
+          modalEl.classList.remove("show");
+          modalEl.style.display = "none";
+          modalEl.setAttribute("aria-hidden", "true");
+          if (dialogEl) dialogEl.style.display = "none";
           w.location.assign(DEST);
         }
       };
@@ -99,12 +140,16 @@
         if (w.bootstrap && typeof w.bootstrap.Modal === "function") {
           const instance = w.bootstrap.Modal.getOrCreateInstance(modalEl, {
             backdrop: "static",
-            keyboard: false
+            keyboard: false,
           });
 
-          modalEl.addEventListener("shown.bs.modal", () => {
-            wasEverVisible = true;
-          }, { once: true });
+          modalEl.addEventListener(
+            "shown.bs.modal",
+            () => {
+              wasEverVisible = true;
+            },
+            { once: true }
+          );
 
           modalEl.addEventListener("hidden.bs.modal", () => {
             if (wasEverVisible) go();
@@ -136,20 +181,29 @@
       }
 
       // ---------------- Click fuera (si backdrop se libera) ----------------
-      d.addEventListener("mousedown", (ev) => {
-        if (!wasEverVisible || didRedirect) return;
-        if (!dialogEl) return;
-        const path = ev.composedPath ? ev.composedPath() : [];
-        const inside = dialogEl.contains(ev.target) || path.includes(dialogEl);
-        const anyBackdrop = !!d.querySelector(".modal-backdrop");
-        if (!inside && anyBackdrop) go();
-      }, true);
+      d.addEventListener(
+        "mousedown",
+        (ev) => {
+          if (!wasEverVisible || didRedirect) return;
+          if (!dialogEl) return;
+          const path = ev.composedPath ? ev.composedPath() : [];
+          const inside =
+            dialogEl.contains(ev.target) || path.includes(dialogEl);
+          const anyBackdrop = !!d.querySelector(".modal-backdrop");
+          if (!inside && anyBackdrop) go();
+        },
+        true
+      );
 
       // ---------------- ESC (si alguien lo re-habilita) ----------------
-      d.addEventListener("keydown", (ev) => {
-        if (!wasEverVisible || didRedirect) return;
-        if (ev.key === "Escape" || ev.key === "Esc") go();
-      }, true);
+      d.addEventListener(
+        "keydown",
+        (ev) => {
+          if (!wasEverVisible || didRedirect) return;
+          if (ev.key === "Escape" || ev.key === "Esc") go();
+        },
+        true
+      );
 
       // ---------------- Observadores ----------------
       const obsModal = new MutationObserver(() => {
@@ -159,7 +213,7 @@
       obsModal.observe(modalEl, {
         attributes: true,
         attributeFilter: ["class", "style", "aria-hidden"],
-        subtree: true // detectar cambios en .modal-dialog/.modal-content
+        subtree: true, // detectar cambios en .modal-dialog/.modal-content
       });
 
       const obsBody = new MutationObserver(() => {
@@ -169,26 +223,34 @@
       });
       obsBody.observe(d.body, { childList: true, subtree: true });
 
-      w.addEventListener("resize",  maybeRedirect, { passive: true });
-      w.addEventListener("scroll",  maybeRedirect, { passive: true });
+      w.addEventListener("resize", maybeRedirect, { passive: true });
+      w.addEventListener("scroll", maybeRedirect, { passive: true });
       tick = w.setInterval(maybeRedirect, 500); // red de seguridad
 
       // ---------------- Copiar número de orden ----------------
-      (function setupCopyChip(){
-        const chip = d.getElementById("order-copy-chip") || modalEl.querySelector(".order-chip");
+      (function setupCopyChip() {
+        const chip =
+          d.getElementById("order-copy-chip") ||
+          modalEl.querySelector(".order-chip");
         if (!chip) return;
         const label = chip.querySelector(".order-chip-label");
 
         const findValue = () => {
           if (chip.dataset.order) return chip.dataset.order.trim();
-          const node = chip.querySelector("[data-order-value], .order-chip-value");
+          const node = chip.querySelector(
+            "[data-order-value], .order-chip-value"
+          );
           if (node && node.textContent) return node.textContent.trim();
           // fallback: primer texto alfanumérico dentro del chip
           const walker = d.createTreeWalker(chip, NodeFilter.SHOW_TEXT, null);
-          let txt, best = "";
+          let txt,
+            best = "";
           while ((txt = walker.nextNode())) {
             const t = (txt.nodeValue || "").trim();
-            if (t && !/^order:?$/i.test(t) && /[A-Za-z0-9]/.test(t)) { best = t; break; }
+            if (t && !/^order:?$/i.test(t) && /[A-Za-z0-9]/.test(t)) {
+              best = t;
+              break;
+            }
           }
           return best;
         };
@@ -215,8 +277,11 @@
             ta.style.position = "fixed";
             ta.style.left = "-9999px";
             d.body.appendChild(ta);
-            ta.focus(); ta.select();
-            try { d.execCommand("copy"); } catch {}
+            ta.focus();
+            ta.select();
+            try {
+              d.execCommand("copy");
+            } catch {}
             d.body.removeChild(ta);
             afterCopy();
           }
@@ -224,10 +289,13 @@
 
         chip.addEventListener("click", copyOrder);
         chip.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); copyOrder(); }
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            copyOrder();
+          }
         });
       })();
-    }
+    },
   };
 
   w.MTSuccessModal = MTSuccessModal;

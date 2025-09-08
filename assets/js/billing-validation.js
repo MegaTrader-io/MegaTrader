@@ -696,29 +696,53 @@ document.addEventListener("DOMContentLoaded", function () {
   // ========== PLACE ORDER BTN EVENT ==========
   function addPlaceOrderBtnListeners() {
     const placeOrderBtn = document.getElementById(Selector.PlaceOrderBtnId);
-    if (placeOrderBtn) {
-      placeOrderBtn.addEventListener("click", (e) => {
-        // 1) Pre-unblock por si quedó overlay del intento anterior
-        if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+    if (!placeOrderBtn) return;
 
-        clearErrors(checkoutForm);
-        formActionHandler(e);
-
-        // 2) Si falló la validación de billing/policy, frena y quita overlay
-        if (checkoutFormIsInvalid) {
+    placeOrderBtn.addEventListener(
+      "click",
+      (e) => {
+        // Si ya está bloqueado, no dejes reintentos
+        if (placeOrderBtn.dataset.mtLocked === "1") {
           e.preventDefault();
-          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
-          processingWatchdog(800, 6, 700); // <- nuevo
+          e.stopImmediatePropagation();
+          e.stopPropagation();
           return false;
         }
 
-        // 3) Método de pago (incluye caso 1er checkout sin radios)
-        if (!ensurePaymentSelection(e)) return false;
+        // Limpia overlays “viejos” y errores, valida billing
+        try {
+          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+        } catch (_) {}
+        clearErrors(checkoutForm);
+        formActionHandler(e);
 
-        // 4) Watchdog por si el gateway marca error en tarjeta sin disparar checkout_error
-        processingWatchdog(1000);
-      });
-    }
+        // Si validación falla → no continúes, sin preloader
+        if (checkoutFormIsInvalid) {
+          e.preventDefault();
+          try {
+            if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          } catch (_) {}
+          hideSitePreloader();
+          unlockPlaceOrderBtn();
+          return false;
+        }
+
+        // Asegura método de pago
+        if (!ensurePaymentSelection(e)) {
+          hideSitePreloader(); // no seguimos
+          unlockPlaceOrderBtn();
+          return false;
+        }
+
+        // ✅ Todo ok → bloquear botón + freeze + preloader + overlay de Woo
+        lockPlaceOrderBtn();
+        showSitePreloader();
+        wcBlockCheckout();
+
+        // (Woo seguirá con su submit/AJAX normalmente; no hacemos timeouts)
+      },
+      true
+    );
   }
 
   // ========== JQUERY SLIDE ANIMATION ==========
@@ -955,7 +979,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Fallback por si algún gateway emite checkout_error
       $(document.body).on("checkout_error", function () {
-        if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+        try {
+          if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+        } catch (_) {}
+        try {
+          if (typeof hideSitePreloader === "function") hideSitePreloader();
+        } catch (_) {}
+        // Desbloquear botón aunque no exista helper global
+        try {
+          if (typeof unlockPlaceOrderBtn === "function") {
+            unlockPlaceOrderBtn();
+          } else {
+            var btn = document.getElementById("place_order");
+            if (btn) btn.disabled = false;
+            document.body.classList.remove("mt-placing");
+          }
+        } catch (_) {}
       });
     });
   }
@@ -1009,6 +1048,21 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (_) {}
   }
 
+  function lockPlaceOrderBtn() {
+    const btn = document.getElementById("place_order");
+    if (!btn) return;
+    btn.disabled = true;
+    btn.dataset.mtLocked = "1";
+    document.body.classList.add("mt-placing");
+  }
+  function unlockPlaceOrderBtn() {
+    const btn = document.getElementById("place_order");
+    if (!btn) return;
+    btn.disabled = false;
+    delete btn.dataset.mtLocked;
+    document.body.classList.remove("mt-placing");
+  }
+
   // Watchdog: si el overlay queda puesto y no hay AJAX activo, lo quitamos
   // Watchdog: reintenta desbloquear si no hay AJAX activo
   function processingWatchdog(delay = 900, repeats = 4, gap = 900) {
@@ -1042,6 +1096,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const $pre = jQuery(".preloader");
     if ($pre.length) $pre.stop(true, true).fadeOut(150);
   }
+
+  // Exponer helpers para thankyou-modal.js
+  window.showSitePreloader = showSitePreloader;
+  window.hideSitePreloader = hideSitePreloader;
+  window.wcBlockCheckout = wcBlockCheckout;
+  window.wcUnblockCheckout = wcUnblockCheckout;
 
   // --- asegura que Woo “vea” los cambios en los inputs ---
   function setWooVal(id, val) {
@@ -1404,7 +1464,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then((r) => r.json())
       .then((json) => {
-        if (!json || !json.success) {
+        if (!json || !json.success || !json.data || !json.data.html) {
           throw new Error(
             json?.data?.message || "Could not load confirmation."
           );
@@ -1414,9 +1474,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.insertAdjacentHTML("beforeend", json.data.html);
 
         const modalEl = document.getElementById("orderSuccessModal");
-        if (!modalEl) return;
+        if (!modalEl) throw new Error("Modal element not found.");
 
-        // Desactiva beforeunload y congela fondo (solo UX)
+        // UX: desactivar beforeunload y congelar fondo (no navegamos desde billing)
         try {
           window.onbeforeunload = null;
         } catch (_) {}
@@ -1425,7 +1485,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (_) {}
         document.body.classList.add("mt-checkout-frozen");
 
-        // Inicializa el comportamiento DESDE el JS del modal
+        // Inicializa lógica del modal externo (redirecciones propias del modal)
         if (
           window.MTSuccessModal &&
           typeof window.MTSuccessModal.init === "function"
@@ -1435,28 +1495,70 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         }
 
-        // Mostrar modal (el modal se encarga de redirecciones)
+        // Mostrar modal: apagamos preloader SOLO cuando el modal está visible
         if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
           const bs = bootstrap.Modal.getOrCreateInstance(modalEl, {
             backdrop: true,
             keyboard: true,
           });
+
+          modalEl.addEventListener(
+            "shown.bs.modal",
+            () => {
+              try {
+                if (typeof wcUnblockCheckout === "function")
+                  wcUnblockCheckout();
+              } catch (_) {}
+              try {
+                if (typeof hideSitePreloader === "function")
+                  hideSitePreloader();
+              } catch (_) {}
+            },
+            { once: true }
+          );
+
+          modalEl.addEventListener(
+            "hidden.bs.modal",
+            () => {
+              document.body.classList.remove("mt-checkout-frozen");
+              document.body.style.overflow = "";
+            },
+            { once: true }
+          );
+
           bs.show();
         } else {
+          // Fallback sin Bootstrap
           modalEl.style.display = "block";
           modalEl.classList.add("show");
           document.body.style.overflow = "hidden";
-        }
 
-        // Quitar freeze al cerrar (no redirigimos aquí)
-        try {
-          modalEl.addEventListener("hidden.bs.modal", () => {
-            document.body.classList.remove("mt-checkout-frozen");
-            document.body.style.overflow = "";
-          });
-        } catch (_) {}
+          try {
+            if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+          } catch (_) {}
+          try {
+            if (typeof hideSitePreloader === "function") hideSitePreloader();
+          } catch (_) {}
+
+          const closeBtn = modalEl.querySelector("[data-bs-dismiss='modal']");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              modalEl.classList.remove("show");
+              modalEl.style.display = "none";
+              document.body.classList.remove("mt-checkout-frozen");
+              document.body.style.overflow = "";
+            });
+          }
+        }
       })
       .catch((err) => {
+        try {
+          if (typeof hideSitePreloader === "function") hideSitePreloader();
+        } catch (_) {}
+        try {
+          if (typeof unlockPlaceOrderBtn === "function") unlockPlaceOrderBtn();
+        } catch (_) {}
         alert(
           err.message ||
             "Order placed, but we could not show the receipt. Check your email."
@@ -1464,7 +1566,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
   // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
   if (typeof jQuery !== "undefined") {
     jQuery.ajaxPrefilter(function (options, originalOptions, jqXHR) {
@@ -1492,9 +1593,6 @@ document.addEventListener("DOMContentLoaded", function () {
             // Desbloquea checkout, quita preloader, limpia notices
             try {
               if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
-            } catch (_) {}
-            try {
-              if (typeof hideSitePreloader === "function") hideSitePreloader();
             } catch (_) {}
             try {
               jQuery(

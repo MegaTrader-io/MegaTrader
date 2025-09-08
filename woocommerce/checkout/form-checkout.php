@@ -391,7 +391,8 @@ if ($fflag): ?>
                             ?>
                             <?php if ($has_subscription && !empty($addon_options)): ?>
                                 <div class="addons-block d-flex flex-column gap-3">
-                                    <div class="fw-medium leading-8 text-size-20 text-white">Customize Your Plan (Optional)
+                                    <div class="fw-medium leading-8 text-size-20 text-white">
+                                        <?php echo esc_html(Label::CHECKOUT_META['plan_option_title']); ?>
                                     </div>
                                     <div class="checkout-addons">
                                         <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
@@ -432,14 +433,18 @@ if ($fflag): ?>
 
 
                     <div id="billing-container" class="d-flex flex-column gap-3">
-                        <div class="fw-medium leading-8 text-size-20 text-white">Billing Details </div>
+                        <div class="fw-medium leading-8 text-size-20 text-white">
+                            <?php echo esc_html(Label::CHECKOUT_META['billing_title']); ?>
+                        </div>
                         <div class="billing-container mt-billing-card mt-card">
                             <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
                             <div id="mt-billing-summary" class="<?php echo $has_complete_billing ? '' : 'd-none'; ?>">
                                 <div class="d-flex flex-column gap-3 w-100 position-relative">
                                     <div class="d-flex gap-3 justify-content-end position-absolute end-0">
                                         <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
-                                            style="color:#FFD78A;">Edit Billing</a>
+                                            style="color:#FFD78A;">
+                                            <?php echo esc_html(Label::CHECKOUT_META['edit_billing']); ?>
+                                        </a>
                                     </div>
 
                                     <div class="d-flex justify-content-between gap-3">
@@ -522,7 +527,9 @@ if ($fflag): ?>
 
 
                     <div class="payment-container review-container">
-                        <div class="fw-medium leading-8 text-size-20 text-white pb-3">Payment Method</div>
+                        <div class="fw-medium leading-8 text-size-20 text-white pb-3">
+                            <?php echo esc_html(Label::CHECKOUT_META['payment_title']); ?>
+                        </div>
 
                         <div class="mt-payment-cards" id="mt-payment">
                             <?php
@@ -561,8 +568,9 @@ if ($fflag): ?>
 
                                 <div class="d-flex gap-1 align-items-center pt-3">
                                     <i class="mt-icon mt-icon_lock"></i>
-                                    <span class="text-base fw-light text-a8a29e">All payments are secured and
-                                        encrypted.</span>
+                                    <span class="text-base fw-light text-a8a29e">
+                                        <?php echo esc_html(Label::CHECKOUT_META['payment_disclaimer']); ?>
+                                    </span>
                                 </div>
 
                                 <?php do_action('woocommerce_review_order_after_submit'); ?>

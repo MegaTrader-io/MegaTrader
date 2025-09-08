@@ -103,5 +103,13 @@ class Label
         "confirmation_email_sent" => "Confirmation email sent – Account activating now.",
         "go_to_my_account" => "Go to My Account",     
     ];
+
+       public const CHECKOUT_META = [
+        "plan_option_title" => "Customize Your Plan (Optional)",
+        "billing_title" => "Billing Details",  
+        "edit_billing" => "Edit Billing",   
+        "payment_title" => "Payment Method",  
+        "payment_disclaimer" => "All payments are secured and encrypted.",   
+    ];
  
 }
