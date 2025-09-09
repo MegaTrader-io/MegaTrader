@@ -105,3 +105,88 @@ if (!function_exists('mt_get_best_coupon_for_variation')) {
         return $best_result;
     }
 }
+
+
+/**
+ * Get best selling variation of the current month
+ *
+ * @param int $product_id Optional. If set, filters by parent product_id
+ * @return array|null      Returns array with variation_id and qty, or null if none found
+ */
+if (!function_exists('mt_get_best_selling_variation_this_month')) {
+    function mt_get_best_selling_variation_this_month(?int $product_id = null): ?array
+    {
+        global $wpdb;
+
+        try {
+            $start_date = date('Y-m-01 00:00:00');
+            $end_date = current_time('mysql'); // fecha actual según WP timezone
+
+            $where_product = '';
+            $params = [$start_date, $end_date, 'wc-completed'];
+
+            if ($product_id !== null) {
+                $where_product = "AND wpl.product_id = %d";
+                $params[] = $product_id;
+            }
+
+            $sql = "
+            SELECT
+                wpl.variation_id,
+                SUM(wpl.product_qty) AS qty
+            FROM
+                {$wpdb->prefix}wc_order_product_lookup wpl
+                INNER JOIN {$wpdb->prefix}wc_orders wo ON wo.id = wpl.order_id
+            WHERE
+                wpl.date_created >= %s
+                AND wpl.date_created <= %s
+                AND wo.status = %s
+                {$where_product}
+            GROUP BY
+                wpl.variation_id
+            ORDER BY
+                qty DESC
+            LIMIT 1
+        ";
+
+            $query = $wpdb->prepare($sql, $params);
+
+            $result = $wpdb->get_row($query, ARRAY_A);
+
+            if (!$result) {
+                return null;
+            }
+
+            return [
+                'variation_id' => (int)$result['variation_id'],
+                'qty' => (int)$result['qty'],
+            ];
+        } catch (Exception $e) {
+            error_log("Error in get_best_selling_variation_this_month: " . $e->getMessage());
+            return null;
+        }
+    }
+}
+
+if (!function_exists('mt_most_popular_products')) {
+    function mt_most_popular_products(): array
+    {
+        $products_data = get_products_with_attributes();
+        $product_ids = [];
+        foreach ($products_data['products'] as $product) {
+            if ($product['slug'] === 'reset-fee' || $product['slug'] === 'activation-fee') {
+                continue;
+            }
+
+            $product_ids [] = $product['id'];
+        }
+
+        $best_products = [];
+        foreach ($product_ids as $product_id) {
+            $best_variation = mt_get_best_selling_variation_this_month($product_id);
+            $best_products[$product_id] = $best_variation;
+        }
+
+        return $best_products;
+    }
+}

@@ -400,3 +400,35 @@ body[data-scroll-locked] {
 body[data-scroll-locked] {
     --removed-body-scroll-bar-size: 0px;
 }
+
+.price-table {
+    @apply tw-space-y-2 md:tw-space-y-0 md:tw-grid md:tw-grid-cols-2 lg:tw-grid-cols-[1fr_1fr_1fr_1fr] lg:tw-items-center tw-mb-4;
+}
+
+.price-table__plan {
+    @apply tw-box-border tw-w-full;
+}
+
+.price-table__plan--most-popular {
+    @apply tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl;
+}
+
+.price-table__plan--regular-plan {
+    @apply tw-bg-mgt-dark tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2;
+}
+
+.price-table__size {
+    @apply tw-px-4  tw-bg-[#131210];
+}
+
+.price-table__plan--most-popular .price-table__size {
+    @apply tw-py-6 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit];
+}
+
+.price-table__plan--regular-plan .price-table__size {
+    @apply tw-py-6 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit];
+
+    .price-table__most-popular-badge {
+        @apply tw-hidden;
+    }
+}

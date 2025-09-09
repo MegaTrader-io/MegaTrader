@@ -19,7 +19,7 @@ foreach ($attributes as $attr) {
 $defaultPlatform = 'megatraderx';
 $defaultMarketType = 'futures';
 $defaultSlug = $account_types[0]['slug'];
-$mostPopular = '150k';
+
 $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
 
 $filtered = array_filter($products_data['products'], function ($product) use ($defaultSlug) {
@@ -32,6 +32,7 @@ $planList = [];
 $defaultMetaInfo = [];
 $has_coupon_global = null;
 foreach ($account_sizes as $size) {
+    $parent_id = $product['id'];
     $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
     $id = -1;
     $price = '0.00';
@@ -65,6 +66,7 @@ foreach ($account_sizes as $size) {
 
     $planList[] = [
             'id' => $id,
+            'parent_id' => $parent_id,
             'price' => $price,
             'size' => $size,
             'metaInfoList' => $metaInfoList
@@ -87,80 +89,7 @@ function render_template_meta_info($value = '', $label = '', $classes = '')
 HTML;
 }
 
-function get_best_selling_product(array $order_statuses = ['wc-completed'], int $limit = 500): ?array
-{
-    try {
-        $orders = wc_get_orders([
-                'status' => $order_statuses,
-                'limit' => $limit,
-                'return' => 'ids',
-        ]);
-
-        if (empty($orders)) {
-            return null;
-        }
-
-        $totals = [];
-
-        foreach ($orders as $order_id) {
-            $order = wc_get_order($order_id);
-            if (!$order) {
-                continue;
-            }
-
-            foreach ($order->get_items() as $item) {
-                $product_id = $item->get_product_id();
-                $variation_id = $item->get_variation_id();
-                $quantity = (int)$item->get_quantity();
-
-                $key = $variation_id > 0 ? "var_$variation_id" : "prod_$product_id";
-
-
-                if (!isset($totals[$key])) {
-                    $totals[$key] = [
-                            'product_id' => $product_id,
-                            'variation_id' => $variation_id > 0 ? $variation_id : null,
-                            'name' => $item->get_name(),
-                            'quantity' => 0,
-                            'attributes' => [], // se llenará si es variación
-                    ];
-                }
-
-                $totals[$key]['quantity'] += $quantity;
-            }
-        }
-
-        if (empty($totals)) {
-            return null;
-        }
-
-        // Ordenar y tomar el más vendido
-        usort($totals, fn($a, $b) => $b['quantity'] <=> $a['quantity']);
-        $best = $totals[0];
-
-        // Si es variación, traer atributos (ej. size, color, etc.)
-        if ($best['variation_id']) {
-            $variation = wc_get_product($best['variation_id']);
-            if ($variation && $variation instanceof WC_Product_Variation) {
-                $best['attributes'] = $variation->get_attributes();
-            }
-        }
-
-        return $best;
-
-    } catch (Throwable $e) {
-        error_log("Error en get_best_selling_product_with_attributes: " . $e->getMessage());
-        return null;
-    }
-}
-
-//$best_product = get_best_selling_product();
-//
-//if ($best_product) {
-//    $best_product_id = $best_product['variation_id'];
-//    $mostPopular = $best_product['attributes']['pa_account-size'];
-//}
-
+$best_products = mt_most_popular_products();
 ?>
 
 <section id="pricing" class="tw-px-4">
@@ -212,36 +141,38 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
         <?php endforeach; ?>
     </div>
 
-    <div class="tw-space-y-2 md:tw-space-y-0 md:tw-grid md:tw-grid-cols-2 lg:tw-grid-cols-[1fr_1fr_1fr_1fr] lg:tw-items-center tw-mb-4">
+    <div class="price-table">
         <?php foreach ($planList as $index => $plan) : ?>
             <?php
             $id = $plan['id'];
             $size = $plan['size'];
+            $parent_id = $plan['parent_id'];
             $price = $plan['price'];
             $metaInfoList = $plan['metaInfoList'];
 
             $coupon = mt_get_best_coupon_for_variation($id);
             $has_coupon = $coupon['valid'];
             $price_plan = $has_coupon ? $coupon['final_total'] : $price;
+
+            $scan_product = $best_products[$parent_id];
+            $is_most_popular = $scan_product && $scan_product['variation_id'] == $id;
             ?>
-            <div class="<?= $mostPopular == $size
-                    ? 'most-popular tw-bg-[#131210] tw-pb-8 tw-flex tw-flex-col tw-border-2 tw-border-primary tw-rounded-2xl'
-                    : 'tw-bg-mgt-dark tw-border-t-2 tw-border-b-2 tw-border-stone-800 tw-px-0 first:tw-rounded-tl-2xl first:tw-rounded-bl-2xl first:tw-border-l-2 last:tw-rounded-tr-2xl last:tw-rounded-br-2xl last:tw-border-r-2'
-            ?> tw-group tw-box-border tw-w-full <?= $mostPopular == $size ? 'last-element' : '' ?>">
-                <div class="tw-px-4  tw-bg-[#131210] <?= $mostPopular == $size ? 'tw-py-6 tw-flex tw-flex-col tw-space-y-2 tw-rounded-[inherit]' : 'tw-py-6 tw-uppercase tw-text-white tw-font-medium first:tw-rounded-tl-[inherit] tw-rounded-tr-[inherit]' ?>">
-                    <?php if ($mostPopular == $size): ?>
-                        <div class="tw-inline-flex">
-                            <span class="tw-justify-start tw-text-black tw-inline-flex tw-rounded-xl tw-text-sm tw-font-bold tw-uppercase tw-leading-[normal] tw-py-1 tw-px-2 tw-bg-primary">
+            <div class="price-table__plan <?= $is_most_popular
+                    ? 'price-table__plan--most-popular'
+                    : 'price-table__plan--regular-plan'
+            ?> tw-group" data-price="<?= $size ?>">
+                <div class="price-table__size">
+                    <div class="price-table__most-popular-badge">
+                        <span class="tw-justify-start tw-text-black tw-inline-flex tw-rounded-xl tw-text-sm tw-font-bold tw-uppercase tw-leading-[normal] tw-py-1 tw-px-2 tw-bg-primary">
                             Most popular
                         </span>
-                        </div>
-                    <?php endif; ?>
+                    </div>
                     <div class="tw-justify-start tw-text-white tw-text-2xl tw-font-medium tw-uppercase tw-leading-7"><?= $size ?>
                         Account
                     </div>
                 </div>
                 <div data-price="<?= $size ?>"
-                     class="price-information tw-px-4 tw-flex tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 <?= $has_coupon_global && !$has_coupon ? 'tw-min-h-[140px] tw-items-center' : '' ?>">
+                     class="price-information tw-px-4 tw-flex <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800 <?= $has_coupon_global && !$has_coupon ? 'tw-min-h-[140px] tw-items-center' : '' ?>">
                     <div class="tw-space-y-2 tw-my-3 tw-w-full">
                         <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
                              data-price="<?= $size ?>"
@@ -275,7 +206,7 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
                     </div>
                 </div>
                 <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
-                <div class="tw-px-4 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800 metaInfo"
+                <div class="tw-px-4 <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800 metaInfo"
                      data-price="<?= $size ?>">
                     <?php foreach ($defaultMetaInfo as $field => $value): ?>
                         <?php
@@ -285,17 +216,13 @@ function get_best_selling_product(array $order_statuses = ['wc-completed'], int 
                         <?= render_template_meta_info(value: $value, label: $label) ?>
                     <?php endforeach; ?>
                 </div>
-                <div class="tw-px-6 tw-py-6 tw-border-r-2 group-[.last-element]:tw-border-r-0 tw-border-stone-800">
+                <div class="tw-px-6 tw-py-6 <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800">
                     <a href="<?= $get_plan_url ?>"
-                       class="<?= $mostPopular == $size ? 'btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3' : 'mega-btn-md mega-btn-default-md w-100 tw-no-underline' ?>">
+                       class="mega-btn-md <?= $is_most_popular ? 'mega-btn-primary-md' : 'mega-btn-default-md' ?> w-100 tw-no-underline">
                         GET FUNDED WITH $<?= $size ?>
                     </a>
                 </div>
             </div>
-
-            <?php if (($index + 1) % 2 == 0): ?>
-                <div class="tw-h-2 tw-hidden sm:tw-block tw-col-span-2 lg:tw-contents"></div>
-            <?php endif ?>
         <?php endforeach ?>
     </div>
 </section>

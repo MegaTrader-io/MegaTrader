@@ -60,6 +60,7 @@ if (!function_exists('megatrader_landing_page_scripts')) {
                 'products' => $products_data['products'] ?? [],
                 'productsWithBestCoupons' => $products_with_best_coupons ?? [],
                 'productMetaLabel' => Label::PRODUCT_META,
+                'bestProducts' => mt_most_popular_products()
         ]);
     }
 }

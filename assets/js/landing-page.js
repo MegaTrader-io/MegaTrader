@@ -597,12 +597,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
 
+            const mostPopularElement = document.querySelector('.price-table__plan.price-table__plan--most-popular');
+
+            if (mostPopularElement) {
+                mostPopularElement.classList.remove('price-table__plan--most-popular');
+                mostPopularElement.classList.add('price-table__plan--regular-plan');
+
+                const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
+                if (btnGetPlan) {
+                    btnGetPlan.classList.remove('mega-btn-primary-md');
+                    btnGetPlan.classList.add('mega-btn-default-md');
+                }
+            }
+
             for (const priceSize in productPlatformDetail) {
                 const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
                 const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
                 const productId = attributes.find(item => item['id'])['id'];
                 const product = MG_GLOBAL?.productsWithBestCoupons?.find(p => p.id === Number(productId));
                 const coupon = product?.coupon;
+                const is_most_popular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
+
+                if (is_most_popular) {
+                    const mostPopularElement = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
+                    if (mostPopularElement) {
+                        mostPopularElement.classList.add('price-table__plan--most-popular');
+                        mostPopularElement.classList.remove('price-table__plan--regular-plan');
+
+                        const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
+                        if (btnGetPlan) {
+                            btnGetPlan.classList.add('mega-btn-primary-md');
+                            btnGetPlan.classList.remove('mega-btn-default-md');
+                        }
+                    }
+                }
 
                 let price = formatNumber(priceObject);
                 const priceInformation = document.querySelector(`.price-information[data-price="${priceSize}"]`);
