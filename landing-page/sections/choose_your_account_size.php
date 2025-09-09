@@ -102,7 +102,7 @@ $best_products = mt_most_popular_products();
         or ready to trade real capital with confidence
     </div>
 
-    <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2 tw-mb-4">
+    <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2 tw-mb-8">
         <?php foreach ($account_types as $index => $account_type) : ?>
             <div data-value="<?= $account_type['slug'] ?>"
                  data-default-platform="<?= $defaultPlatform ?>"
