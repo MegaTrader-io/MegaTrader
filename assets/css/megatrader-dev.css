@@ -2012,6 +2012,15 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
   overflow: hidden;
 }
 
+a.avatar-initials {
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out;
+}
+
+a.avatar-initials:hover {
+    opacity: 1;
+}
+
 /* ------- Addons ------- */
 
 .available-info .addons-item:hover {
