@@ -172,6 +172,6 @@ get_header('shop');
 </div>
 
  <div class="mt-account-test">
-                <?php render_account-data() ?>
-            </div>
+ <?php get_template_part('template-parts/account-data'); ?>
+ </div>
 <?php get_footer('shop'); 
