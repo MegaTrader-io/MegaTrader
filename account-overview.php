@@ -170,4 +170,8 @@ get_header('shop');
     </div>
   </div>
 </div>
+
+ <div class="mt-account-test">
+                <?php render_account-data() ?>
+            </div>
 <?php get_footer('shop'); 
