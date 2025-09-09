@@ -2,7 +2,9 @@
 
 defined('ABSPATH') || exit;
 
-$avatarSize  = $args['avatarSize'] ?? 64;
+$avatar_size = $args['avatar_size'] ?? 64;
+$go_to_dashboard = $args['go_to_dashboard'] ?? false;
+$hidden_email = $args['hidden_email'] ?? false;
 
 $current_user = wp_get_current_user();
 // Retrieve first and last name from user meta
@@ -20,8 +22,8 @@ if ($first_name || $last_name) {
 $billing_country_code = get_user_meta($current_user->ID, 'billing_country', true);
 $countries = WC()->countries->countries;
 $billing_country = isset($countries[$billing_country_code])
-    ? $countries[$billing_country_code]
-    : '';
+        ? $countries[$billing_country_code]
+        : '';
 
 // User email address
 $user_email = $current_user->user_email;
@@ -38,13 +40,13 @@ $initials = mb_strtoupper($initials);
 
 /// Genera la URL de Gravatar con default=404
 $avatar_url = get_avatar_url($current_user->ID, [
-    'size' => $avatarSize,
-    'default' => '404',
+        'size' => $avatar_size,
+        'default' => '404',
 ]);
 
 // Intenta hacer una petición HEAD para validar existencia real
 $response = wp_safe_remote_head($avatar_url, [
-    'timeout' => 2,
+        'timeout' => 2,
 ]);
 
 $has_real_avatar = false;
@@ -58,20 +60,44 @@ if (!is_wp_error($response)) {
 }
 
 $logout_url = wp_logout_url();
+
+function wrapper_avatar_initials($fragment, $avatar_size, $go_to_dashboard)
+{
+    if ($go_to_dashboard) {
+        $url = home_url('/my-account/');
+        return <<<HTML
+<a href="{$url}" class="avatar-initials" style="--avatar-size: {$avatar_size}px;">
+ {$fragment}
+</a>
+HTML;
+    }
+
+    return <<<HTML
+<div class="avatar-initials" style="--avatar-size: {$avatar_size}px;">
+ {$fragment}
+</div>
+HTML;
+}
+
+$esc_url_avatar_url = esc_url($avatar_url);
+$esc_attr_display_name = esc_attr($display_name);
+$esc_html_initials = esc_html($initials);
 ?>
 
 <div class="d-flex gap-3 align-items-center justify-content-start">
     <div class="align-items-center d-flex flex-fill gap-3">
         <?php if ($has_real_avatar): ?>
-            <div class="avatar-initials" style="--avatar-size: <?php echo esc_attr($avatarSize); ?>px;">
-                <img src="<?php echo esc_url($avatar_url); ?>"
-                     alt="<?php echo esc_attr($display_name); ?>"/>
-            </div>
+            <?= wrapper_avatar_initials(
+                    fragment: "<img src='{$esc_url_avatar_url}' alt='{$esc_attr_display_name}'/>",
+                    avatar_size: $avatar_size,
+                    go_to_dashboard: $go_to_dashboard
+            ); ?>
         <?php else: ?>
-
-            <div class="avatar-initials">
-                <?php echo esc_html($initials); ?>
-            </div>
+            <?= wrapper_avatar_initials(
+                    fragment: $esc_html_initials,
+                    avatar_size: $avatar_size,
+                    go_to_dashboard: $go_to_dashboard
+            ); ?>
         <?php endif; ?>
         <div class="flex-fill d-flex flex-column">
             <div class="text-white text-16px fw-medium">

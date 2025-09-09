@@ -122,6 +122,10 @@ body {
     }
 }
 
+.avatar-initials {
+    @apply tw-no-underline;
+}
+
 .btn-base {
     @apply tw-uppercase tw-no-underline tw-flex tw-items-center tw-justify-center tw-transition-colors focus:tw-outline-none focus:tw-ring-1 focus:tw-ring-offset-1;
 }

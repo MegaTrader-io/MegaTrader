@@ -96,7 +96,9 @@
                     <?php if (is_user_logged_in()): ?>
                         <?php get_template_part('template-parts/my-profile', null,
                                 [
-                                        'avatarSize' => 48
+                                        'avatar_size' => 48,
+                                        'go_to_dashboard' => true,
+                                        'hidden_email' => true,
                                 ]); ?>
                     <?php else: ?>
                         <div class="tw-flex tw-items-center tw-gap-3.5">
