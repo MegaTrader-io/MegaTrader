@@ -181,7 +181,7 @@ $best_products = mt_most_popular_products();
                                 Save <span
                                         class="badge-coupon__discount_total tw-contents"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
                                 with code
-                                <svg width="1" height="16" viewBox="0 0 1 24" fill="none"
+                                <svg width="1" height="14" viewBox="0 0 1 24" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
                                 </svg>
