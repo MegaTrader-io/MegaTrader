@@ -1,15 +1,66 @@
 <?php
-/*
-Template Name: Account Overview
-Template Post Type: page
-*/
+/**
+ * Template: Account Overview
+ * - Calcula $mt_has_active_account y $mt_user_email
+ * - Mantén tu HTML; solo cambiamos la llamada al partial para pasar el email
+ */
 defined('ABSPATH') || exit;
 
+/* === Helpers mínimos === */
+if (!function_exists('mt_decode_sc_json')) {
+  function mt_decode_sc_json($shortcode)
+  {
+    $raw = do_shortcode($shortcode);
+    $data = json_decode($raw, true);
+    if (!is_array($data))
+      return ['error' => 'Malformed JSON'];
+    if (isset($data['error']))
+      return $data;
+    if (isset($data['items']) && is_array($data['items']))
+      return $data['items'];
+    if (isset($data['data']) && is_array($data['data']))
+      return $data['data'];
+    return $data;
+  }
+}
 
+/* === Variables expuestas === */
+$mt_has_active_account = false;
+$mt_user_email = '';
 
+if (is_user_logged_in()) {
+  $u = wp_get_current_user();
+  if ($u && $u->exists()) {
+    $mt_user_email = $u->user_email;
 
+    // Consulta a la API (vía shortcode) para saber si hay cuentas y si hay alguna activa
+    $sc = sprintf(
+      '[mega_accounts_data email="%s" page="%d" perpage="%d" output="json"]',
+      esc_attr($mt_user_email),
+      1,
+      50
+    );
+    $res = mt_decode_sc_json($sc);
+    if (!isset($res['error']) && is_array($res)) {
+      foreach ($res as $acc) {
+        $st = strtolower(trim($acc['status'] ?? ''));
+        if (in_array($st, ['active', 'approved', 'open', 'enabled', 'running', 'live', 'activated'], true)) {
+          $mt_has_active_account = true;
+          break;
+        }
+      }
+    }
+  }
+}
 
-get_header('shop'); 
+// Disponibles por si los necesitas en otros partials
+$GLOBALS['mt_has_active_account'] = $mt_has_active_account;
+$GLOBALS['mt_user_email'] = $mt_user_email;
+set_query_var('mt_has_active_account', $mt_has_active_account);
+set_query_var('mt_account_email', $mt_user_email);
+
+// Opcional: cabecera del tema
+get_header();
 ?>
 
 <div class="container">
@@ -110,21 +161,21 @@ get_header('shop');
                 </div>
               </div>
               <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-              <div class="mt-icon mt-icon_checkmark">
+                <div class="mt-icon mt-icon_checkmark">
                 </div>
                 <div class="text-a8a29e text-base fw-medium">
                   <?php esc_html_e('Real-time performance tracking', 'woocommerce'); ?>
                 </div>
               </div>
               <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-               <div class="mt-icon mt-icon_checkmark">
+                <div class="mt-icon mt-icon_checkmark">
                 </div>
                 <div class="text-a8a29e text-base fw-medium">
                   <?php esc_html_e('Expert support and guidance', 'woocommerce'); ?>
                 </div>
               </div>
               <div class="py-3 d-flex gap-2 align-items-center">
-               <div class="mt-icon mt-icon_checkmark">
+                <div class="mt-icon mt-icon_checkmark">
                 </div>
                 <div class="text-a8a29e text-base fw-medium">
                   <?php esc_html_e('Flexible challenge options', 'woocommerce'); ?>
@@ -171,7 +222,18 @@ get_header('shop');
   </div>
 </div>
 
- <div class="mt-account-test">
- <?php get_template_part('template-parts/account-data'); ?>
- </div>
-<?php get_footer('shop'); 
+
+<div class="mt-account-test">
+  <?php
+  get_template_part('template-parts/account-data', null, [
+    'email' => $mt_user_email,
+    'page' => 1,
+    'perPage' => 50,
+  ]);
+  ?>
+</div>
+
+
+
+<?php
+get_footer();

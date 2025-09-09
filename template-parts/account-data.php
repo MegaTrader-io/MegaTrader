@@ -3,6 +3,9 @@
  * Partial: template-parts/account-data.php
  * UI: Button + Modal (Bootstrap) to pick active account.
  * Data source: [mega_accounts_data email="..." output="json"]
+ *
+ * EXPECTED USAGE:
+ *   get_template_part('template-parts/account-data', null, ['email' => $email, 'page'=>1, 'perPage'=>50]);
  */
 defined('ABSPATH') || exit;
 
@@ -83,27 +86,29 @@ if (!function_exists('mt_norm')) {
   function mt_norm($s) { return preg_replace('/[^a-z0-9]+/','', strtolower((string)$s)); }
 }
 
-/* ===================== Inputs ===================== */
-$mt_args = (isset($args) && is_array($args)) ? $args : get_query_var('mt_account_args', []);
-$current_user = wp_get_current_user();
+/* ===================== Inputs (email viene del parent) ===================== */
+$mt_args = (isset($args) && is_array($args)) ? $args : [];
+$email   = isset($mt_args['email'])   ? sanitize_email($mt_args['email'])   : '';
+$page    = isset($mt_args['page'])    ? max(1, (int)$mt_args['page'])       : 1;
+$perPage = isset($mt_args['perPage']) ? max(1, (int)$mt_args['perPage'])    : 50;
 
-$email = '';
-if (!empty($mt_args['email']))        $email = sanitize_email($mt_args['email']);
-elseif (isset($_GET['email']))        $email = sanitize_email($_GET['email']);
-elseif ($current_user && $current_user->exists()) $email = $current_user->user_email;
-
-$page    = isset($mt_args['page'])    ? max(1, (int)$mt_args['page'])    : (isset($_GET['page'])    ? max(1, (int)$_GET['page'])    : 1);
-$perPage = isset($mt_args['perPage']) ? max(1, (int)$mt_args['perPage']) : (isset($_GET['perPage']) ? max(1, (int)$_GET['perPage']) : 50);
+/* ===================== Early exit if no email ===================== */
+if (!$email) {
+  echo '<p><em>Account data: no email provided by parent template.</em></p>';
+  return;
+}
 
 /* ===================== Fetch accounts ===================== */
 $accounts = [];
 $err = '';
 
-if ($email) {
-  $sc = sprintf('[mega_accounts_data email="%s" page="%d" perpage="%d" output="json"]', esc_attr($email), $page, $perPage);
-  $accs = mt_decode_sc_json($sc);
-  if (isset($accs['error'])) $err = $accs['error'];
-  else $accounts = is_array($accs) ? $accs : [];
+$sc   = sprintf('[mega_accounts_data email="%s" page="%d" perpage="%d" output="json"]',
+                esc_attr($email), $page, $perPage);
+$accs = mt_decode_sc_json($sc);
+if (isset($accs['error'])) {
+  $err = $accs['error'];
+} else {
+  $accounts = is_array($accs) ? $accs : [];
 }
 
 /* ===================== Split & pick current ===================== */
@@ -170,8 +175,7 @@ foreach ($active as $a) {
 }
 $currentId = $current ? (string)mt_safe_get($current,'id','') : '';
 
-/* ===================== Early exits ===================== */
-if (!$email) { echo '<p><em>Login or add <code>?email=</code> to select an account.</em></p>'; return; }
+/* ===================== Error / empty handling ===================== */
 if ($err)    { echo '<p><strong>Error:</strong> '.esc_html($err).'</p>'; return; }
 if (!$current){ echo '<p><em>No accounts found.</em></p>'; return; }
 ?>
@@ -224,9 +228,9 @@ if (!$current){ echo '<p><em>No accounts found.</em></p>'; return; }
             <?php else: ?>
               <?php foreach ($jsAccounts as $a): ?>
                 <?php
-                  $is_current = ($a['id'] === $currentId); // marca inicial
+                  $is_current = ($a['id'] === $currentId);
                   $card_classes = 'subscription-card position-relative d-flex flex-column gap-2';
-                  if ($is_current) $card_classes .= ' active'; // <— clase solicitada
+                  if ($is_current) $card_classes .= ' active'; // clase para seleccionado
                 ?>
                 <div class="<?php echo esc_attr($card_classes); ?>"
                      role="button"
@@ -287,7 +291,7 @@ wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_p
 $payload = [
   'currentId'      => $currentId,
   'accounts'       => $jsAccounts,
-  'selectionClass' => 'active', // <— para que el JS use 'active'
+  'selectionClass' => 'active',
   'selectors' => [
     'grid'   => '#mt-accounts-grid',
     'select' => '#select-subscription-btn',
