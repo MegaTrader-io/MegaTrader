@@ -154,6 +154,13 @@ function megatrader_scripts() {
 	}
 }
 
+add_action('after_setup_theme', function () {
+    $inc = trailingslashit( get_stylesheet_directory() ) . 'inc';
+    if ( file_exists( $inc . '/init.php' ) ) {
+        require_once $inc . '/init.php';
+    }
+}, 0); 
+
 add_action('wp', function () {
     if (!is_page_template('landing-page.php')) {
         add_action('wp_enqueue_scripts', 'megatrader_scripts' );
