@@ -2,6 +2,8 @@
 
 defined('ABSPATH') || exit;
 
+$avatarSize  = $args['avatarSize'] ?? 64;
+
 $current_user = wp_get_current_user();
 // Retrieve first and last name from user meta
 $first_name = get_user_meta($current_user->ID, 'first_name', true);
@@ -36,7 +38,7 @@ $initials = mb_strtoupper($initials);
 
 /// Genera la URL de Gravatar con default=404
 $avatar_url = get_avatar_url($current_user->ID, [
-    'size' => 64,
+    'size' => $avatarSize,
     'default' => '404',
 ]);
 
@@ -61,7 +63,7 @@ $logout_url = wp_logout_url();
 <div class="d-flex gap-3 align-items-center justify-content-start">
     <div class="align-items-center d-flex flex-fill gap-3">
         <?php if ($has_real_avatar): ?>
-            <div class="avatar-initials">
+            <div class="avatar-initials" style="--avatar-size: <?php echo esc_attr($avatarSize); ?>px;">
                 <img src="<?php echo esc_url($avatar_url); ?>"
                      alt="<?php echo esc_attr($display_name); ?>"/>
             </div>

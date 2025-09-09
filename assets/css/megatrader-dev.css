@@ -1996,8 +1996,8 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 }
 
 .avatar-initials {
-  width: 64px;
-  height: 64px;
+  width: var(--avatar-size, 64px);
+  height: var(--avatar-size, 64px);
   border-radius: 50%;
   display: flex;
   align-items: center;
