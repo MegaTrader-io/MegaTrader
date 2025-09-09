@@ -122,3 +122,108 @@ class MT_Accounts {
     return ['current'=>$current, 'accounts'=>$modal];
   }
 }
+
+
+// ===============================
+//  ACCOUNT PERFORMANCE HELPERS
+// ===============================
+
+if ( ! function_exists('mt_accounts_find_active_account') ) {
+  /**
+   * Devuelve el primer account con status "active".
+   * Acepta estructuras tipo ['data' => [...]] o array plano.
+   */
+  function mt_accounts_find_active_account( $accounts ) {
+    if (empty($accounts)) return null;
+
+    // Normaliza a lista
+    if (is_array($accounts) && isset($accounts['data']) && is_array($accounts['data'])) {
+      $list = $accounts['data'];
+    } else {
+      $list = is_array($accounts) ? $accounts : [];
+    }
+
+    foreach ($list as $acc) {
+      $status = $acc['status'] ?? $acc['accountStatus'] ?? null;
+      if (is_string($status) && strtolower($status) === 'active') {
+        return $acc;
+      }
+    }
+    return null;
+  }
+}
+
+if ( ! function_exists('mt__get') ) {
+  /**
+   * Acceso seguro a niveles anidados.
+   * mt__get($arr, ['metrics','currentBalance'], 0)
+   */
+  function mt__get($arr, array $path, $default = null) {
+    $ref = $arr;
+    foreach ($path as $key) {
+      if (is_array($ref) && array_key_exists($key, $ref)) {
+        $ref = $ref[$key];
+      } else {
+        return $default;
+      }
+    }
+    return $ref;
+  }
+}
+
+if ( ! function_exists('mt_accounts_build_performance') ) {
+  /**
+   * Construye el payload que espera el template "account-performance"
+   * a partir de un objeto de cuenta (con 'metrics' y/o 'program'/'programs').
+   */
+  function mt_accounts_build_performance( array $account ) {
+    // Metrics (acepta 'metrics' o 'metric')
+    $metrics = $account['metrics'] ?? $account['metric'] ?? [];
+
+    // Programa: acepta 'program' (objeto) o 'programs' (lista).
+    $program = $account['program'] ?? null;
+    if (!$program && !empty($account['programs']) && is_array($account['programs'])) {
+      // intenta el activo; si no, el primero.
+      $program = null;
+      foreach ($account['programs'] as $p) {
+        $pStatus = $p['status'] ?? $p['state'] ?? null;
+        if (is_string($pStatus) && strtolower($pStatus) === 'active') { $program = $p; break; }
+      }
+      if (!$program) $program = $account['programs'][0] ?? null;
+    }
+
+    // Campos requeridos
+    $payload = [
+      'currentBalance'            => $metrics['currentBalance']        ?? mt__get($metrics, ['balance']),
+      'currentEquity'             => $metrics['currentEquity']         ?? null,
+      'currentProfit'             => $metrics['currentProfit']         ?? $metrics['profit'] ?? null,
+      'currentProfitPercent'      => $metrics['currentProfitPercent']  ?? $metrics['profitPercent'] ?? null,
+      'activeTradingDays'         => $metrics['activeTradingDays']     ?? $metrics['tradingDays'] ?? null,
+      'dailyTotalPnL'             => $metrics['dailyTotalPnL']         ?? $metrics['dailyPnL'] ?? null,
+      'minTradingDays'            => $metrics['minTradingDays']        ?? null,
+      'maxLossLimitEquityLevel'   => $metrics['maxLossLimitEquityLevel'] ?? $metrics['maxLossLimit'] ?? null,
+      // de program(s)
+      'target'                    => $program['target'] ?? $program['profitTarget'] ?? mt__get($metrics, ['target']),
+    ];
+
+    // Limpieza básica: castea numéricos si vienen como strings
+    foreach ($payload as $k => $v) {
+      if (is_string($v) && is_numeric($v)) $payload[$k] = $v + 0;
+    }
+
+    return $payload;
+  }
+}
+
+if ( ! function_exists('mt_accounts_prepare_performance_from_accounts') ) {
+  /**
+   * Atajo: recibe la respuesta completa de "accounts",
+   * encuentra el activo y construye el performance.
+   */
+  function mt_accounts_prepare_performance_from_accounts( $accounts ) {
+    $active = mt_accounts_find_active_account($accounts);
+    if (!$active) return [];
+    return mt_accounts_build_performance($active);
+  }
+}
+
