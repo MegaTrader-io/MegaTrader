@@ -93,11 +93,15 @@
                 </nav>
 
                 <div>
-                    <div class="tw-flex tw-items-center tw-gap-3.5">
-                        <a href="/auth/login" class="btn-dark-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
-                            LOGIN
-                        </a>
-                    </div>
+                    <?php if (is_user_logged_in()): ?>
+                        <?php get_template_part('template-parts/my-profile'); ?>
+                    <?php else: ?>
+                        <div class="tw-flex tw-items-center tw-gap-3.5">
+                            <a href="/auth/login" class="btn-dark-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
+                                LOGIN
+                            </a>
+                        </div>
+                    <?php endif ?>
                 </div>
             </div>
         </div>
