@@ -163,7 +163,7 @@ $best_products = mt_most_popular_products();
             ?> tw-group" data-price="<?= $size ?>">
                 <div class="price-table__size">
                     <div class="price-table__most-popular-badge">
-                        <span class="tw-justify-start tw-text-black tw-inline-flex tw-rounded-xl tw-text-sm tw-font-bold tw-uppercase tw-leading-[normal] tw-py-1 tw-px-2 tw-bg-primary">
+                        <span class="mt-badge mt-badge-sm mt-badge-primary  !tw-inline-flex !tw-justify-start">
                             Most popular
                         </span>
                     </div>
@@ -177,17 +177,15 @@ $best_products = mt_most_popular_products();
                         <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
                              data-price="<?= $size ?>"
                              class="badge-coupon">
-                            <div class="mt-badge mt-badge-secondary !tw-inline-flex !tw-justify-start">
-                                <div class="tw-text-base tw-font-medium">
-                                    Save <span
-                                            class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
-                                    with code
-                                </div>
-                                <svg width="1" height="24" viewBox="0 0 1 24" fill="none"
+                            <div class="mt-badge mt-badge-sm mt-badge-secondary !tw-inline-flex !tw-justify-start">
+                                Save <span
+                                        class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
+                                with code
+                                <svg width="1" height="16" viewBox="0 0 1 24" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
                                 </svg>
-                                <div class="badge-coupon__code tw-uppercase tw-justify-start tw-text-base tw-font-medium">
+                                <div class="badge-coupon__code tw-uppercase tw-justify-start">
                                     <?= $has_coupon ? strtoupper($coupon['coupon']) : '' ?>
                                 </div>
                             </div>

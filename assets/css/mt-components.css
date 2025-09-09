@@ -489,6 +489,13 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
     line-height: 24px;
 }
 
+
+.mt-badge.mt-badge-sm {
+    padding: 4px 8px;
+    border-radius: 12px;
+    line-height: 16px;
+}
+
 .mt-badge.mt-badge-pill {
     border-radius: 16px;
 }
