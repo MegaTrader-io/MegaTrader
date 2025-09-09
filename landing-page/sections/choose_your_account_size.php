@@ -163,7 +163,7 @@ $best_products = mt_most_popular_products();
             ?> tw-group" data-price="<?= $size ?>">
                 <div class="price-table__size">
                     <div class="price-table__most-popular-badge">
-                        <span class="mt-badge mt-badge-sm mt-badge-primary  !tw-inline-flex !tw-justify-start">
+                        <span class="mt-badge mt-badge-sm mt-badge-primary !tw-inline-flex !tw-justify-start">
                             Most popular
                         </span>
                     </div>
@@ -179,7 +179,7 @@ $best_products = mt_most_popular_products();
                              class="badge-coupon">
                             <div class="mt-badge mt-badge-sm mt-badge-secondary !tw-inline-flex !tw-justify-start">
                                 Save <span
-                                        class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
+                                        class="badge-coupon__discount_total tw-contents"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
                                 with code
                                 <svg width="1" height="16" viewBox="0 0 1 24" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
