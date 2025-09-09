@@ -1,239 +1,66 @@
 <?php
 /**
  * Template: Account Overview
- * - Calcula $mt_has_active_account y $mt_user_email
- * - Mantén tu HTML; solo cambiamos la llamada al partial para pasar el email
+ * - Usa helpers en /inc
+ * - Hace 1 llamada a la API, prepara payload y lo pasa al partial de UI
  */
 defined('ABSPATH') || exit;
 
-/* === Helpers mínimos === */
-if (!function_exists('mt_decode_sc_json')) {
-  function mt_decode_sc_json($shortcode)
-  {
-    $raw = do_shortcode($shortcode);
-    $data = json_decode($raw, true);
-    if (!is_array($data))
-      return ['error' => 'Malformed JSON'];
-    if (isset($data['error']))
-      return $data;
-    if (isset($data['items']) && is_array($data['items']))
-      return $data['items'];
-    if (isset($data['data']) && is_array($data['data']))
-      return $data['data'];
-    return $data;
-  }
-}
+// Carga helpers (o inclúyelo en functions.php y quita esta línea)
+require_once get_stylesheet_directory() . '/inc/init.php';
 
-/* === Variables expuestas === */
 $mt_has_active_account = false;
 $mt_user_email = '';
+$mt_account_ui = ['current' => null, 'accounts' => []];
 
 if (is_user_logged_in()) {
   $u = wp_get_current_user();
   if ($u && $u->exists()) {
     $mt_user_email = $u->user_email;
 
-    // Consulta a la API (vía shortcode) para saber si hay cuentas y si hay alguna activa
-    $sc = sprintf(
-      '[mega_accounts_data email="%s" page="%d" perpage="%d" output="json"]',
-      esc_attr($mt_user_email),
-      1,
-      50
-    );
-    $res = mt_decode_sc_json($sc);
-    if (!isset($res['error']) && is_array($res)) {
-      foreach ($res as $acc) {
-        $st = strtolower(trim($acc['status'] ?? ''));
-        if (in_array($st, ['active', 'approved', 'open', 'enabled', 'running', 'live', 'activated'], true)) {
-          $mt_has_active_account = true;
-          break;
-        }
+    // 1 llamada al backend
+    $accounts = MT_Api::fetch_accounts_by_email($mt_user_email, 1, 50);
+
+    // ¿hay activas?
+    foreach ($accounts as $acc) {
+      if (MT_Accounts::is_active_status($acc['status'] ?? '')) {
+        $mt_has_active_account = true;
+        break;
       }
+    }
+
+    if ($mt_has_active_account) {
+      $mt_account_ui = MT_Accounts::prepare_ui($accounts);
     }
   }
 }
 
-// Disponibles por si los necesitas en otros partials
+// Exponer si lo necesitas
 $GLOBALS['mt_has_active_account'] = $mt_has_active_account;
 $GLOBALS['mt_user_email'] = $mt_user_email;
-set_query_var('mt_has_active_account', $mt_has_active_account);
-set_query_var('mt_account_email', $mt_user_email);
+$GLOBALS['mt_account_ui'] = $mt_account_ui;
 
-// Opcional: cabecera del tema
-get_header();
 ?>
-
 <div class="container">
   <div class="mt-page">
     <div class="mt-page__sidebar">
       <?php render_sidebar() ?>
     </div>
     <div class="mt-page__main">
-      <div class="no-order-wrapper d-flex flex-column gap-32">
-        <div class="mt-card mt-card_row">
-          <div class="d-flex flex-column flex-grow-1 flex-shrink-1 justify-content-center">
-            <div class="fw-medium text-size-20 text-uppercase text-white">
-              <?php esc_html_e('No active membership', 'woocommerce'); ?>
-            </div>
-            <div class="fw-medium text-14px text-a8a29e">
-              <?php esc_html_e('You don’t have any active plans or memberships at the moment.', 'woocommerce'); ?>
-            </div>
-          </div>
-          <div class="get-started">
-            <?php
-            $shop_url = home_url('/subscriptions/');
-            ?>
-            <a id="get_started_btn" href="<?php echo esc_url($shop_url); ?>"
-              class="btn w-100 mega-btn-md mega-btn-primary-md">
-              <?php esc_html_e('Get Started', 'woocommerce'); ?>
-            </a>
-
-          </div>
-        </div>
-
-        <div class="mt-card">
-          <div class="text-white text-size-20 fw-medium text-uppercase align-self-start pb-32">
-            <?php esc_html_e('Get started in 3 steps', 'woocommerce'); ?>
-          </div>
-          <div class="d-flex align-items-center flex-column w-100 mt-2">
-            <div class="no-order stepper position-relative w-100">
-              <div class="stepper-line"></div>
-              <div class="stepper-numbers-wrapper">
-                <div class="stepper-numbers-circle">
-                  <div class="stepper-numbers-text">
-                    <?php esc_html_e('1', 'woocommerce'); ?>
-                  </div>
-                </div>
-                <div class="stepper-numbers-circle">
-                  <div class="stepper-numbers-text">
-                    <?php esc_html_e('2', 'woocommerce'); ?>
-                  </div>
-
-                </div>
-                <div class="stepper-numbers-circle">
-                  <div class="stepper-numbers-text">
-                    <?php esc_html_e('3', 'woocommerce'); ?>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-            <div class="d-flex gap-32 justify-content-between w-100">
-              <div class="d-flex flex-column gap-1 flex-grow-1 flex-shrink-1 w-max-224px">
-                <div class="text-primary text-center text-base fw-medium">
-                  <?php esc_html_e('Choose your plan', 'woocommerce'); ?>
-                </div>
-                <div class="text-center fw-medium text-14px text-a8a29e">
-                  <?php esc_html_e('Select from our range of trading challenges', 'woocommerce'); ?>
-                </div>
-              </div>
-              <div class="d-flex flex-column gap-1 flex-grow-1 flex-shrink-1 w-max-224px">
-                <div class="text-primary text-center text-base fw-medium">
-                  <?php esc_html_e('Complete purchase', 'woocommerce'); ?>
-                </div>
-                <div class="text-center fw-medium text-14px text-a8a29e">
-                  <?php esc_html_e('Secure payment and instant activation', 'woocommerce'); ?>
-                </div>
-              </div>
-              <div class="d-flex flex-column gap-1 flex-grow-1 flex-shrink-1 w-max-224px">
-                <div class="text-primary text-center text-base fw-medium">
-                  <?php esc_html_e('Start trading', 'woocommerce'); ?>
-                </div>
-                <div class="text-center fw-medium text-14px text-a8a29e">
-                  <?php esc_html_e('Access your platform and begin your challenge', 'woocommerce'); ?>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="d-flex flex-column flex-md-row gap-3 pb-35 align-items-start">
-          <div class="mt-card">
-            <div class="text-white fw-medium text-size-20 text-uppercase">
-              <?php esc_html_e('Why join us?', 'woocommerce'); ?>
-            </div>
-            <div class="d-flex flex-column">
-              <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-                <div class="mt-icon mt-icon_checkmark">
-                </div>
-                <div class="text-a8a29e text-base fw-medium">
-                  <?php esc_html_e('Professional trading environment', 'woocommerce'); ?>
-                </div>
-              </div>
-              <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-                <div class="mt-icon mt-icon_checkmark">
-                </div>
-                <div class="text-a8a29e text-base fw-medium">
-                  <?php esc_html_e('Real-time performance tracking', 'woocommerce'); ?>
-                </div>
-              </div>
-              <div class="py-3 d-flex gap-2 align-items-center border-bottom-dark">
-                <div class="mt-icon mt-icon_checkmark">
-                </div>
-                <div class="text-a8a29e text-base fw-medium">
-                  <?php esc_html_e('Expert support and guidance', 'woocommerce'); ?>
-                </div>
-              </div>
-              <div class="py-3 d-flex gap-2 align-items-center">
-                <div class="mt-icon mt-icon_checkmark">
-                </div>
-                <div class="text-a8a29e text-base fw-medium">
-                  <?php esc_html_e('Flexible challenge options', 'woocommerce'); ?>
-                </div>
-              </div>
-
-            </div>
-          </div>
-          <div class="mt-card">
-            <div class="text-white fw-medium text-size-20 text-uppercase">
-              <?php esc_html_e('Frequently Asked Question', 'woocommerce'); ?>
-            </div>
-            <div class="d-flex flex-column">
-              <div class="py-3 border-bottom-dark d-flex flex-column gap-1">
-                <div class="text-white text-base fw-medium">
-                  <?php esc_html_e('How do I get started?', 'woocommerce'); ?>
-                </div>
-                <div class="text-14px text-a8a29e fw-medium">
-                  <?php esc_html_e('Simply choose a plan that fits your trading experience and goals, complete the purchase, and
-                                you’ll get instant access to your trading challenge.', 'woocommerce'); ?>
-                </div>
-              </div>
-              <div class="py-3 border-bottom-dark d-flex flex-column gap-1">
-                <div class="text-white text-base fw-medium">
-                  <?php esc_html_e('What’s included in each plan?', 'woocommerce'); ?>
-                </div>
-                <div class="text-14px text-a8a29e fw-medium">
-                  <?php esc_html_e('Each plan includes access to our trading platform, real-time performance tracking, support resources and specific challenge objectives based on your chosen tier.', 'woocommerce'); ?>
-                </div>
-              </div>
-              <div class="py-3 d-flex flex-column gap-1">
-                <div class="text-white text-base fw-medium">
-                  <?php esc_html_e('Can I upgrade my plan later?', 'woocommerce'); ?>
-                </div>
-                <div class="text-14px text-a8a29e fw-medium">
-                  <?php esc_html_e('Yes, you can upgrade to a higher tier plan at any time. Contact our support team for assistance with plan changes.', 'woocommerce'); ?>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <?php get_template_part('template-parts/account/no-order') ?>
     </div>
   </div>
 </div>
 
 
+
 <div class="mt-account-test">
   <?php
-  get_template_part('template-parts/account-data', null, [
-    'email' => $mt_user_email,
-    'page' => 1,
-    'perPage' => 50,
-  ]);
+  // Partial solo renderiza el UI (sin tocar API)
+  get_template_part(
+    'template-parts/account/account-selection',
+    null,
+    ['prepared' => $mt_account_ui]
+  );
   ?>
 </div>
-
-
-
-<?php
-get_footer();
