@@ -19,7 +19,7 @@
             </div>
 
             <div class="tw-space-y-4 md:tw-space-y-0 md:tw-flex md:tw-justify-center md:tw-gap-4">
-                <a href="https://subscriptions.megatrader.io/"
+                <a href="<?= home_url('/auth/register') ?>"
                    class="btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
                     Start trading
                 </a>
