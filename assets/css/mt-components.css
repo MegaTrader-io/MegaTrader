@@ -302,11 +302,11 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
     width: fit-content;
 }
 
-.mt-card.mt-card_row {
+.mt-card.mt-card__row {
     flex-direction: row;
 }
 @media (max-width: 767.98px) {
-  .mt-card.mt-card_row {
+  .mt-card.mt-card__row {
     flex-direction: inherit;
 }
 }

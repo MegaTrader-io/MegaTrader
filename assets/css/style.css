@@ -6497,11 +6497,11 @@ div#wc_checkout_add_ons {
 }
 
 .gap-32 {
-    gap: 32px;
+    gap: 32px !important;
 }
 
 .gap-64 {
-    gap: 64px;
+    gap: 64px !important;
 }
 
 .wc-block-components-notice-banner.is-error {
