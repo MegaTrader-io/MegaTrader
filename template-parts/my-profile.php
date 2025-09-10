@@ -3,7 +3,7 @@
 defined('ABSPATH') || exit;
 
 $avatar_size = $args['avatar_size'] ?? 64;
-$go_to_dashboard = $args['go_to_dashboard'] ?? false;
+$go_to_dashboard = $args['go_to_dashboard'] ?? false;;
 $hidden_email = $args['hidden_email'] ?? false;
 
 $current_user = wp_get_current_user();
@@ -61,59 +61,37 @@ if (!is_wp_error($response)) {
 
 $logout_url = wp_logout_url();
 
-function wrapper_avatar_initials($fragment, $avatar_size, $go_to_dashboard)
-{
-    if ($go_to_dashboard) {
-        $url = home_url('/my-account/');
-        return <<<HTML
-<a href="{$url}" class="avatar-initials" style="--avatar-size: {$avatar_size}px;">
- {$fragment}
-</a>
-HTML;
-    }
-
-    return <<<HTML
-<div class="avatar-initials" style="--avatar-size: {$avatar_size}px;">
- {$fragment}
-</div>
-HTML;
-}
-
-$esc_url_avatar_url = esc_url($avatar_url);
-$esc_attr_display_name = esc_attr($display_name);
-$esc_html_initials = esc_html($initials);
 ?>
 
 <div class="d-flex gap-3 align-items-center justify-content-start">
-    <div class="align-items-center d-flex flex-fill gap-3">
-        <?php if ($has_real_avatar): ?>
-            <?= wrapper_avatar_initials(
-                    fragment: "<img src='{$esc_url_avatar_url}' alt='{$esc_attr_display_name}'/>",
-                    avatar_size: $avatar_size,
-                    go_to_dashboard: $go_to_dashboard
-            ); ?>
-        <?php else: ?>
-            <?= wrapper_avatar_initials(
-                    fragment: $esc_html_initials,
-                    avatar_size: $avatar_size,
-                    go_to_dashboard: $go_to_dashboard
-            ); ?>
-        <?php endif; ?>
-        <div class="flex-fill d-flex flex-column">
-            <div class="text-white text-16px fw-medium">
-                <?php echo esc_html($display_name); ?>
-            </div>
-
-            <?php if ($billing_country): ?>
-                <div class="user-country text-a8a29e text-16px fw-medium">
-                    <?php echo esc_html($billing_country); ?>
-                </div>
-            <?php endif; ?>
-            <div class="text-a8a29e text-14px-line-20px fw-medium">
-                <?php echo esc_html($user_email); ?>
-            </div>
+    <?php if ($go_to_dashboard) : ?>
+        <a href="<?= home_url('/my-account/') ?>" class="avatar-area align-items-center d-flex flex-fill gap-3">
+            <?php get_template_part('template-parts/avatar', null, [
+                    'avatar_url' => $avatar_url,
+                    'avatar_size' => $avatar_size,
+                    'has_real_avatar' => $has_real_avatar,
+                    'initials' => $initials,
+                    'display_name' => $display_name,
+                    'user_email' => $user_email,
+                    'billing_country' => $billing_country,
+                    'hidden_email' => $hidden_email
+            ]); ?>
+        </a>
+    <?php else: ?>
+        <div class="align-items-center d-flex flex-fill gap-3">
+            <?php get_template_part('template-parts/avatar', null, [
+                    'avatar_url' => $avatar_url,
+                    'avatar_size' => $avatar_size,
+                    'has_real_avatar' => $has_real_avatar,
+                    'initials' => $initials,
+                    'display_name' => $display_name,
+                    'user_email' => $user_email,
+                    'billing_country' => $billing_country,
+                    'hidden_email' => $hidden_email
+            ]); ?>
         </div>
-    </div>
+    <?php endif; ?>
+
     <div class="my-acount-logout">
         <a href="<?php echo esc_url($logout_url); ?>" class="logout-link" aria-label="Logout">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
