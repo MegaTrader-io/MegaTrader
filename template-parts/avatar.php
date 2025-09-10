@@ -8,6 +8,7 @@ $avatar_url = $args['avatar_url'] ?? '';
 $display_name = $args['display_name'] ?? '';
 $billing_country = $args['billing_country'] ?? '';
 $user_email = $args['user_email'] ?? '';
+$hidden_email = $args['hidden_email'] ?? false;
 $initials = $args['initials'] ?? '';
 
 ?>
@@ -33,7 +34,9 @@ $initials = $args['initials'] ?? '';
             <?php echo esc_html($billing_country); ?>
         </div>
     <?php endif; ?>
-    <div class="text-a8a29e text-14px-line-20px fw-medium">
-        <?php echo esc_html($user_email); ?>
-    </div>
+    <?php if (!$hidden_email): ?>
+        <div class="text-a8a29e text-14px-line-20px fw-medium">
+            <?php echo esc_html($user_email); ?>
+        </div>
+    <?php endif; ?>
 </div>

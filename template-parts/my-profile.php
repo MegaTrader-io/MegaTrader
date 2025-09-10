@@ -86,8 +86,7 @@ $logout_url = wp_logout_url();
                     'initials' => $initials,
                     'display_name' => $display_name,
                     'user_email' => $user_email,
-                    'billing_country' => $billing_country,
-                    'hidden_email' => $hidden_email
+                    'billing_country' => $billing_country
             ]); ?>
         </div>
     <?php endif; ?>
