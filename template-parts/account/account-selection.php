@@ -1,37 +1,22 @@
 <?php
-/**
- * Partial: template-parts/account-data.php
- * - Recibe $args['prepared'] con:
- *   [
- *     'current'  => ['id','status','badgeClass','size','name'],
- *     'accounts' => [
- *        ['id','status','dotClass','size','name','platform','logo','createdAt'], ...
- *     ]
- *   ]
- * - NO consulta la API. Solo pinta UI y encola JS.
- */
+// File: public_html/wp-content/themes/megatrader-addons/template-parts/account/account-selection.php
 defined('ABSPATH') || exit;
 
-/* ===== Inputs ===== */
 $prepared = isset($args['prepared']) && is_array($args['prepared']) ? $args['prepared'] : null;
 $current  = $prepared['current']  ?? null;
 $accounts = $prepared['accounts'] ?? [];
 
-/* ===== Guardas ===== */
 if (!$prepared || !$current || empty($accounts)) {
   echo '<p class="text-a8a29e"><em>No active accounts available.</em></p>';
   return;
 }
 
-/* ===== Vars de botón ===== */
 $currentId   = (string)($current['id'] ?? '');
 $badgeClass  = (string)($current['badgeClass'] ?? 'badge-mega-default');
 $currentStat = (string)($current['status'] ?? 'unknown');
 $sizeSlug    = (string)($current['size'] ?? '');
 $productName = (string)($current['name'] ?? 'Account');
-
 ?>
-<!-- =============== BUTTON (usa datos de $current) =============== -->
 <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
   data-bs-target="#changeSubcriptionModal">
   <div class="border-gray d-flex flex-wrap align-items-center gap-2 mb-3 p-3 rounded-2xl">
@@ -56,7 +41,6 @@ $productName = (string)($current['name'] ?? 'Account');
   </div>
 </button>
 
-<!-- =============== MODAL (usa $accounts tal cual) =============== -->
 <div class="modal modal-subcription fade" id="changeSubcriptionModal" tabindex="-1"
   aria-labelledby="changeSubcriptionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
@@ -83,7 +67,10 @@ $productName = (string)($current['name'] ?? 'Account');
               ?>
               <div class="<?php echo esc_attr($card_classes); ?>"
                    role="button"
-                   data-account-id="<?php echo esc_attr($aid); ?>">
+                   data-account-id="<?php echo esc_attr($aid); ?>"
+                   data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
+                   data-size="<?php echo esc_attr($a['size'] ?? ''); ?>"
+                   data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>">
                 <div class="checkmark-icon position-absolute" style="top: 10px; right: 10px; <?php echo $isCur ? '' : 'display:none;'; ?>">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" fill="#FFB34A"/>
@@ -134,7 +121,6 @@ $productName = (string)($current['name'] ?? 'Account');
 </div>
 
 <?php
-/* ============== Enqueue JS + payload (usa lo ya preparado) ============== */
 $handle  = 'mt-account-picker';
 $js_path = get_stylesheet_directory() . '/assets/js/mt-account-picker.js';
 $js_url  = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
@@ -142,19 +128,113 @@ wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_p
 
 $payload = [
   'currentId'      => $currentId,
-  'accounts'       => $accounts,     // ← ya vienen con logo/dotClass/etc.
   'selectionClass' => 'active',
   'selectors' => [
-    'grid'   => '#mt-accounts-grid',
-    'select' => '#select-subscription-btn',
-    'badge'  => '#mt-badge',
-    'size'   => '#mt-size',
-    'name'   => '#mt-name',
-    'modal'  => '#changeSubcriptionModal',
-    'card'   => '.subscription-card',
-    'check'  => '.checkmark-icon',
+    'grid'        => '#mt-accounts-grid',
+    'select'      => '#select-subscription-btn',
+    'card'        => '.subscription-card',
+    'check'       => '.checkmark-icon',
+    'modal'       => '#changeSubcriptionModal',
+    'performance' => '#mt-performance-container',
+    'badge'       => '#mt-badge',
+    'size'        => '#mt-size',
+    'name'        => '#mt-name',
+  ],
+  'ajax' => [
+    'url'    => admin_url('admin-ajax.php'),
+    'action' => 'mt_accounts_performance',
+    'nonce'  => wp_create_nonce('mt-acc-nonce'),
   ],
   'debug' => false,
 ];
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
-?>
+
+wp_add_inline_script($handle, <<<JS
+(function(){
+  var CFG = window.MT_DATA || {};
+  var grid = document.querySelector(CFG.selectors.grid);
+  var btn  = document.querySelector(CFG.selectors.select);
+  var perf = document.querySelector(CFG.selectors.performance) || document.querySelector('.mt-account-performance');
+  if (!grid || !btn || !perf) return;
+
+  var selectedId = CFG.currentId || null;
+
+  function setBtnEnabled(on){
+    btn.disabled = !on;
+    btn.classList.toggle('disabled', !on);
+  }
+
+  function selectCard(card){
+    grid.querySelectorAll(CFG.selectors.card+'.'+CFG.selectionClass).forEach(function(el){
+      el.classList.remove(CFG.selectionClass);
+      var c = el.querySelector(CFG.selectors.check);
+      if (c) c.style.display = 'none';
+    });
+    card.classList.add(CFG.selectionClass);
+    var ch = card.querySelector(CFG.selectors.check);
+    if (ch) ch.style.display = '';
+    selectedId = card.getAttribute('data-account-id');
+    setBtnEnabled(true);
+  }
+
+  grid.addEventListener('click', function(e){
+    var card = e.target.closest(CFG.selectors.card);
+    if (!card) return;
+    selectCard(card);
+  });
+
+  if (selectedId){
+    var cur = grid.querySelector(CFG.selectors.card + '[data-account-id="'+CSS.escape(selectedId)+'"]');
+    if (cur) selectCard(cur);
+  } else {
+    setBtnEnabled(false);
+  }
+
+  btn.addEventListener('click', function(){
+    if (!selectedId) return;
+
+    var fd = new FormData();
+    fd.append('action', CFG.ajax.action);
+    fd.append('nonce',  CFG.ajax.nonce);
+    fd.append('accountId', selectedId);
+
+    setBtnEnabled(false);
+
+    fetch(CFG.ajax.url, { method:'POST', body: fd, credentials: 'same-origin' })
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        if (!res || !res.success) throw new Error(res && res.data && res.data.message || 'AJAX failed');
+
+        perf.innerHTML = res.data.html || '';
+
+        var modalEl = document.querySelector(CFG.selectors.modal);
+        if (modalEl && window.bootstrap) {
+          var inst = window.bootstrap.Modal.getInstance(modalEl) || new window.bootstrap.Modal(modalEl);
+          inst.hide();
+        }
+
+        var active = grid.querySelector(CFG.selectors.card+'.'+CFG.selectionClass);
+        if (active) {
+          var sizeVal = active.getAttribute('data-size') || '';
+          var nameVal = active.getAttribute('data-name') || 'Account';
+          var badgeEl = document.querySelector(CFG.selectors.badge);
+          var sizeEl  = document.querySelector(CFG.selectors.size);
+          var nameEl  = document.querySelector(CFG.selectors.name);
+          if (sizeEl) sizeEl.textContent = sizeVal;
+          if (nameEl) nameEl.textContent = nameVal;
+          if (badgeEl) {
+            var status = (active.getAttribute('data-status') || '').toLowerCase();
+            badgeEl.textContent = status ? (status.replace(/-/g,' ').replace(/\\b\\w/g, function(m){ return m.toUpperCase(); })) : 'Active';
+          }
+        }
+      })
+      .catch(function(err){
+        console.error('[MT] AJAX error:', err);
+        alert('Could not load account performance.');
+      })
+      .finally(function(){
+        setBtnEnabled(true);
+      });
+  });
+})();
+JS);

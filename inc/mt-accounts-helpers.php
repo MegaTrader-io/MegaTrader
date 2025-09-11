@@ -1,8 +1,8 @@
 <?php
+// File: public_html/wp-content/themes/megatrader-addons/inc/mt-accounts-helpers.php
 defined('ABSPATH') || exit;
 
 class MT_Accounts {
-  // Mapea estados
   public static function is_active_status($status): bool {
     $s = strtolower(trim((string)$status));
     return in_array($s, ['active','approved','open','enabled','running','live','activated'], true);
@@ -24,17 +24,13 @@ class MT_Accounts {
   private static function norm($s): string {
     return preg_replace('/[^a-z0-9]+/','', strtolower((string)$s));
   }
-
-  // "50k Elite Plan | DXXT | Evaluation" -> ["50K", "Elite Plan"]
   public static function parse_program_label(string $label, $startingBalance = null): array {
     $head = $label;
     $pos = strpos($label, '|');
     if ($pos !== false) $head = substr($label, 0, $pos);
     $head = trim($head);
-
     $size = '';
     $name = $head;
-
     if (preg_match('/^\s*([0-9]+k)\b/i', $head, $m)) {
       $size = strtoupper($m[1]);
       $name = trim(substr($head, strlen($m[1])));
@@ -42,12 +38,9 @@ class MT_Accounts {
       $k = round(((int)$startingBalance)/1000);
       if ($k > 0) $size = strtoupper($k.'k');
     }
-
     if ($name === '') $name = 'Account';
     return [$size, $name];
   }
-
-  // Prefer program.platform; fallback: 2º segmento del label
   public static function extract_platform(array $acc): string {
     $p = trim((string)($acc['program']['platform'] ?? ''));
     if ($p !== '') return $p;
@@ -55,13 +48,7 @@ class MT_Accounts {
     $parts = array_map('trim', explode('|', $label));
     return $parts[1] ?? '';
   }
-
-  /**
-   * Transforma respuesta cruda -> payload UI para account-selection.
-   * return ['current'=>[...], 'accounts'=>[...]]
-   */
   public static function prepare_ui(array $accounts): array {
-    // logos
     $DEFAULT_LOGO = 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
     $PLATFORM_LOGOS = [
       self::norm('MegaTrader')  => $DEFAULT_LOGO,
@@ -69,18 +56,13 @@ class MT_Accounts {
       self::norm('Tradovate')   => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/02/icon_tradovate.svg',
       self::norm('Quantower')   => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/02/icon_quantower.svg',
     ];
-
-    // activas ordenadas por createdAt desc
     $active = array_values(array_filter($accounts, fn($a) => self::is_active_status($a['status'] ?? '')));
     usort($active, function($a,$b){
       $ta = strtotime((string)($a['createdAt'] ?? '')) ?: 0;
       $tb = strtotime((string)($b['createdAt'] ?? '')) ?: 0;
       return $tb <=> $ta;
     });
-
     if (empty($active)) return ['current'=>null,'accounts'=>[]];
-
-    // current
     $cur = $active[0];
     $pl  = (string)($cur['program']['label'] ?? ($cur['program']['description'] ?? ''));
     $sb  = $cur['program']['startingBalance'] ?? null;
@@ -92,21 +74,17 @@ class MT_Accounts {
       'size'       => $size,
       'name'       => $name,
     ];
-
-    // modal
     $modal = [];
     foreach ($active as $a) {
       $pl2 = (string)($a['program']['label'] ?? ($a['program']['description'] ?? 'Account'));
       $sb2 = $a['program']['startingBalance'] ?? null;
       [$sz, $nm] = self::parse_program_label($pl2, $sb2);
-
       $platform = self::extract_platform($a);
       $logo = $DEFAULT_LOGO;
       if ($platform !== '') {
         $key = self::norm($platform);
         if (isset($PLATFORM_LOGOS[$key])) $logo = $PLATFORM_LOGOS[$key];
       }
-
       $modal[] = [
         'id'        => (string)($a['id'] ?? ''),
         'status'    => (string)($a['status'] ?? ''),
@@ -118,31 +96,18 @@ class MT_Accounts {
         'createdAt' => (string)($a['createdAt'] ?? ''),
       ];
     }
-
     return ['current'=>$current, 'accounts'=>$modal];
   }
 }
 
-
-// ===============================
-//  ACCOUNT PERFORMANCE HELPERS
-// ===============================
-
 if ( ! function_exists('mt_accounts_find_active_account') ) {
-  /**
-   * Devuelve el primer account con status "active".
-   * Acepta estructuras tipo ['data' => [...]] o array plano.
-   */
   function mt_accounts_find_active_account( $accounts ) {
     if (empty($accounts)) return null;
-
-    // Normaliza a lista
     if (is_array($accounts) && isset($accounts['data']) && is_array($accounts['data'])) {
       $list = $accounts['data'];
     } else {
       $list = is_array($accounts) ? $accounts : [];
     }
-
     foreach ($list as $acc) {
       $status = $acc['status'] ?? $acc['accountStatus'] ?? null;
       if (is_string($status) && strtolower($status) === 'active') {
@@ -154,10 +119,6 @@ if ( ! function_exists('mt_accounts_find_active_account') ) {
 }
 
 if ( ! function_exists('mt__get') ) {
-  /**
-   * Acceso seguro a niveles anidados.
-   * mt__get($arr, ['metrics','currentBalance'], 0)
-   */
   function mt__get($arr, array $path, $default = null) {
     $ref = $arr;
     foreach ($path as $key) {
@@ -172,18 +133,10 @@ if ( ! function_exists('mt__get') ) {
 }
 
 if ( ! function_exists('mt_accounts_build_performance') ) {
-  /**
-   * Construye el payload que espera el template "account-performance"
-   * a partir de un objeto de cuenta (con 'metrics' y/o 'program'/'programs').
-   */
   function mt_accounts_build_performance( array $account ) {
-    // Metrics (acepta 'metrics' o 'metric')
     $metrics = $account['metrics'] ?? $account['metric'] ?? [];
-
-    // Programa: acepta 'program' (objeto) o 'programs' (lista).
     $program = $account['program'] ?? null;
     if (!$program && !empty($account['programs']) && is_array($account['programs'])) {
-      // intenta el activo; si no, el primero.
       $program = null;
       foreach ($account['programs'] as $p) {
         $pStatus = $p['status'] ?? $p['state'] ?? null;
@@ -191,8 +144,6 @@ if ( ! function_exists('mt_accounts_build_performance') ) {
       }
       if (!$program) $program = $account['programs'][0] ?? null;
     }
-
-    // Campos requeridos
     $payload = [
       'currentBalance'            => $metrics['currentBalance']        ?? mt__get($metrics, ['balance']),
       'currentEquity'             => $metrics['currentEquity']         ?? null,
@@ -202,24 +153,16 @@ if ( ! function_exists('mt_accounts_build_performance') ) {
       'dailyTotalPnL'             => $metrics['dailyTotalPnL']         ?? $metrics['dailyPnL'] ?? null,
       'minTradingDays'            => $metrics['minTradingDays']        ?? null,
       'maxLossLimitEquityLevel'   => $metrics['maxLossLimitEquityLevel'] ?? $metrics['maxLossLimit'] ?? null,
-      // de program(s)
       'target'                    => $program['target'] ?? $program['profitTarget'] ?? mt__get($metrics, ['target']),
     ];
-
-    // Limpieza básica: castea numéricos si vienen como strings
     foreach ($payload as $k => $v) {
       if (is_string($v) && is_numeric($v)) $payload[$k] = $v + 0;
     }
-
     return $payload;
   }
 }
 
 if ( ! function_exists('mt_accounts_prepare_performance_from_accounts') ) {
-  /**
-   * Atajo: recibe la respuesta completa de "accounts",
-   * encuentra el activo y construye el performance.
-   */
   function mt_accounts_prepare_performance_from_accounts( $accounts ) {
     $active = mt_accounts_find_active_account($accounts);
     if (!$active) return [];
@@ -227,3 +170,133 @@ if ( ! function_exists('mt_accounts_prepare_performance_from_accounts') ) {
   }
 }
 
+if ( ! function_exists('mt_accounts_fetch_account_json_by_shortcode') ) {
+  function mt_accounts_fetch_account_json_by_shortcode( $accountId, $page = 1, $perPage = 10 ) {
+    $accountId = trim((string)$accountId);
+    if ($accountId === '') return null;
+    $shortcode = sprintf(
+      '[mega_account_data id="%s" page="%d" perpage="%d" output="json"]',
+      esc_attr($accountId),
+      (int)$page,
+      (int)$perPage
+    );
+    $raw = do_shortcode($shortcode);
+    if (!is_string($raw) || $raw === '') return null;
+    $raw = trim(wp_strip_all_tags($raw));
+    $data = json_decode($raw, true);
+    return is_array($data) ? $data : null;
+  }
+}
+
+if ( ! function_exists('mt_accounts_pick_account_from_json') ) {
+  function mt_accounts_pick_account_from_json( $json, $accountId ) {
+    if (empty($json)) return null;
+    $accountId = (string)$accountId;
+    if (isset($json['data']) && is_array($json['data'])) {
+      foreach ($json['data'] as $row) {
+        if ((string)($row['id'] ?? '') === $accountId) return $row;
+      }
+      if (count($json['data']) === 1) return $json['data'][0];
+    }
+    if (isset($json[0]) && is_array($json[0])) {
+      foreach ($json as $row) {
+        if ((string)($row['id'] ?? '') === $accountId) return $row;
+      }
+      if (count($json) === 1) return $json[0];
+    }
+    if (isset($json['id']) && (string)$json['id'] === $accountId) {
+      return $json;
+    }
+    return $json['data'][0] ?? ($json[0] ?? null);
+  }
+}
+
+if ( ! function_exists('mt_accounts_ajax_performance') ) {
+  add_action('wp_ajax_mt_accounts_performance', 'mt_accounts_ajax_performance');
+  add_action('wp_ajax_nopriv_mt_accounts_performance', 'mt_accounts_ajax_performance');
+  function mt_accounts_ajax_performance() {
+    check_ajax_referer('mt-acc-nonce', 'nonce');
+    $accountId = isset($_POST['accountId']) ? sanitize_text_field((string)$_POST['accountId']) : '';
+    if ($accountId === '') {
+      wp_send_json_error(['message' => 'Missing accountId']);
+    }
+    if ( ! function_exists('mt_accounts_fetch_account_json_by_shortcode') ||
+         ! function_exists('mt_accounts_pick_account_from_json') ||
+         ! function_exists('mt_accounts_build_performance') ) {
+      wp_send_json_error(['message' => 'Helpers not available']);
+    }
+    $json    = mt_accounts_fetch_account_json_by_shortcode($accountId, 1, 10);
+    $account = mt_accounts_pick_account_from_json($json, $accountId);
+    if (!$account) {
+      wp_send_json_error(['message' => 'Account not found']);
+    }
+    $perf = mt_accounts_build_performance($account);
+    ob_start();
+    get_template_part('template-parts/account/account-performance', null, [
+      'performance' => $perf,
+      'meta'        => ['accountId' => $accountId],
+    ]);
+    $html = ob_get_clean();
+    wp_send_json_success([
+      'html'        => $html,
+      'performance' => $perf,
+      'accountId'   => $accountId,
+    ]);
+  }
+}
+
+// ===== MONEY / PERCENT HELPERS =====
+if (!function_exists('mt_money_symbol')) {
+    /**
+     * Permite sobreescribir el símbolo vía filtro WP si algún día lo necesitas.
+     * apply_filters('mt_money_currency_symbol', '$', $context)
+     */
+    function mt_money_symbol($fallback = '$', $context = null) {
+        return apply_filters('mt_money_currency_symbol', $fallback, $context);
+    }
+}
+
+if (!function_exists('mt_format_money')) {
+    /**
+     * $47,850.30   ó   -$1,234.56
+     */
+    function mt_format_money($value, $currency = null, $context = null) {
+        if ($value === null || $value === '' || !is_numeric($value)) return '—';
+        if ($currency === null) $currency = mt_money_symbol('$', $context);
+        $num = (float) $value;
+        $neg = $num < 0;
+        $abs = abs($num);
+        $formatted = number_format($abs, 2, '.', ',');
+        return ($neg ? '-' : '') . $currency . $formatted;
+    }
+}
+
+if (!function_exists('mt_format_signed_money')) {
+    /**
+     * +$47,850.30   ó   -$1,234.56 (útil para “Net P&L”, chips, etc.)
+     */
+    function mt_format_signed_money($value, $currency = null, $context = null) {
+        if ($value === null || $value === '' || !is_numeric($value)) return '—';
+        if ($currency === null) $currency = mt_money_symbol('$', $context);
+        $num = (float) $value;
+        $abs = abs($num);
+        $formatted = number_format($abs, 2, '.', ',');
+        $sign = $num >= 0 ? '+' : '-';
+        return $sign . $currency . $formatted;
+    }
+}
+
+if (!function_exists('mt_format_percent')) {
+    /**
+     * 4.30%  ó  +4.30% / -4.30% si $signed = true
+     */
+    function mt_format_percent($value, $signed = false) {
+        if ($value === null || $value === '' || !is_numeric($value)) return '—';
+        $num = (float) $value;
+        $abs = abs($num);
+        $formatted = number_format($abs, 2, '.', ',') . '%';
+        if (!$signed) return $formatted;
+        $sign = $num >= 0 ? '+' : '-';
+        return $sign . $formatted;
+    }
+}
