@@ -1,6 +1,6 @@
 <div id="hero-section" class="tw-px-4">
     <div class="tw-py-12 tw-space-y-12">
-        <div class="tw-px-4 tw-space-y-12">
+        <div class="tw-px-4 tw-space-y-12 tw-relative">
             <div class="tw-flex tw-justify-center">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/megatraderX-blue.svg"
                      width="250"
@@ -62,11 +62,32 @@
                 </a>
             </div>
 
+
             <div class="tw-mx-auto tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-outline tw-outline-2 md:tw-outline-[10px]  tw-outline-[#3b3739] tw-border-[#3C383A] tw-w-fit tw-bg-[#3C383A]">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/metrics2.jpeg"
-                     alt="window tablet" class="tw-max-w-full lg:tw-w-[1203px] h-auto rounded lg:tw-rounded-lg"/>
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/metrics22.jpg"
+                     alt="window tablet" class="tw-max-w-full lg:tw-w-[1043px] tw-h-auto tw-rounded lg:tw-rounded-lg"/>
             </div>
+
+            <div class="lg:tw-absolute lg:tw-left-0 lg:tw-bottom-0 tw-mx-auto tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-outline tw-outline-2 md:tw-outline-[10px]  tw-outline-[#3b3739] tw-border-[#3C383A] tw-w-fit tw-bg-[#3C383A]">
+                <div class="tw-group tw-w-full tw-p-6 tw-space-y-4 tw-bg-mgt-dark">
+                    <div class="tw-space-y-2">
+                        <div class="self-stretch text-center justify-start text-white text-xl font-bold leading-loose">Platform Life Demo</div>
+                        <div class="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">ID: support@futuresfortraders.com</div>
+                        <div class="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">Password: FUTURESFT25</div>
+                    </div>
+                    <button type="button" class="btn-dark-link tw-rounded-xl tw-w-full tw-h-12 tw-px-4 tw-py-3">
+                        Open Platform
+                    </button>
+                </div>
+            </div>
+
+            <div class="lg:tw-absolute lg:tw-right-0 lg:tw-bottom-0 tw-mx-auto tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-outline tw-outline-2 md:tw-outline-[10px]  tw-outline-[#3b3739] tw-border-[#3C383A] tw-w-fit tw-bg-[#3C383A]">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/for-tarders-mobile1.jpg"
+                     alt="window tablet" class="tw-max-w-full lg:tw-w-[194px] tw-h-auto tw-rounded lg:tw-rounded-lg"/>
+            </div>
+
         </div>
+
 
         <?php require 'partials/feature_highlights.php'; ?>
     </div>
