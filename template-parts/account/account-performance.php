@@ -160,10 +160,24 @@ $profitText = mt_format_signed_money($profit);
                         <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($equity)); ?></div>
                     </div>
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text">Daily Net P&L</div>
-                        <div class="mt-card__item-value"><span class="<?php echo esc_attr($dailyColorClass); ?>">
+                        <div class="mt-card__item-text d-flex gap-1 align-items-center">Daily Net P&L
+                            <span class="mt-tooltip">
+                                <i class="mt-icon mt-icon-gray mt-icon_info-solid" tabindex="0"
+                                    aria-label="Daily Loss Limit information"></i>
+                                <span class="mt-tooltip__panel" role="tooltip">
+                                    <div class="mt-tooltip__title">Daily P&L</div>
+                                    <div class="mt-tooltip__body">
+                                        Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday
+                                        3:10 PM CT)
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="mt-card__item-value">
+                            <span class="<?php echo esc_attr($dailyColorClass); ?>">
                                 <?php echo esc_html($dailyText); ?>
-                            </span></div>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,7 +186,15 @@ $profitText = mt_format_signed_money($profit);
             <div class="d-flex flex-column gap-3">
                 <div class="mt-card__title__text fw-medium text-uppercase">Your Challenge Objective</div>
                 <div class="d-flex flex-column">
+                       <div class="mt-card__item">
+                            <div class="mt-card__item-text"><span class="mt-icon"></span>Profit Target</div>
+                            <div class="mt-card__item-value text-white">
+                                <?php echo esc_html(mt_format_money($profit)); ?> /
+                                <?php echo esc_html(mt_format_money($profitTarget)); ?>
+                            </div>
+                        </div>
                     <div class="mt-card__item">
+                     
                         <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 8px; display: flex">
                             <div style="width: 24px; height: 24px; position: relative">
                                 <div
