@@ -13,7 +13,7 @@
   --light-color: #57534e;
   --gray-color: #dee8ff;
   --yellow-color: #ffb539;
-  --success-color: #92f185;
+  --success-color: #2DD4BF;
   --error-color: #f43f5e;
   --ot-border-color: #404040;
   --colors-gray-700: #404040;
@@ -3400,3 +3400,73 @@ body.mt-placing .woocommerce-checkout { pointer-events: none; }
 
 /* botón deshabilitado: feedback visual */
 #place_order[disabled] { cursor: not-allowed; opacity: .7; }
+
+
+
+/* Tooltip base */
+.mt-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Panel oculto por defecto */
+.mt-tooltip__panel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  text-align: left;
+  right: 0;
+  z-index: 50;
+  width: 320px;
+  max-width: 80vw;
+
+  background: var(--Black, #000);
+  border-radius: 8px;
+  outline: 1px solid var(--Colors-Gray-700, #404040);
+  outline-offset: -1px;
+  padding: 12px;
+
+  color: var(--Text-Body, #A8A29E);
+  font-size: 14px;
+  line-height: 20px;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
+
+  pointer-events: none; /* evita capturar hover cuando está oculto */
+}
+
+/* Flechita */
+.mt-tooltip__panel::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 12px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--Black, #000) transparent transparent transparent;
+}
+
+/* Mostrar al hover/focus (teclado/touch con focus) */
+.mt-tooltip:hover .mt-tooltip__panel,
+.mt-tooltip:focus-within .mt-tooltip__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity .16s ease, transform .16s ease;
+  pointer-events: auto;
+}
+
+/* Tipografía interna */
+.mt-tooltip__title {
+  color: var(--Text-Headings, #fff);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.mt-tooltip__body {
+  color: var(--Text-Body, #A8A29E);
+  font-weight: 500;
+}
+

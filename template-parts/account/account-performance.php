@@ -81,7 +81,55 @@ $profitRemaining = (is_numeric($profitTarget) && is_numeric($profit))
 $has_data = array_filter($performance, function ($v) {
     return $v !== null && $v !== '';
 }) ? true : false;
+
+/* ===== Cálculo de clases y textos para % y el ícono ===== */
+$profitNum = (is_numeric($profit) ? (float) $profit : null);
+$profitColorClass = 'text-white';
+if ($profitNum !== null) {
+    if ($profitNum > 0) {
+        $profitColorClass = 'text-success';
+    } elseif ($profitNum < 0) {
+        $profitColorClass = 'text-error';
+    }
+}
+
+$profitPctNum = (is_numeric($profitPct) ? (float) $profitPct : null);
+
+/* Badge class según reglas */
+if ($profitPctNum === null) {
+    $badgeClass = 'mt-badge-light';
+} elseif ($profitPctNum > 0) {
+    $badgeClass = 'mt-badge-secondary';
+} elseif ($profitPctNum < 0) {
+    $badgeClass = 'mt-badge-error';
+} else { // == 0
+    $badgeClass = 'mt-badge-light';
+}
+
+/* Texto del porcentaje (con signo) */
+if ($profitPctNum === null) {
+    $pctText = '—';
+} elseif ($profitPctNum > 0) {
+    $pctText = mt_format_percent($profitPctNum, true);  // +4.30%
+} elseif ($profitPctNum < 0) {
+    $pctText = mt_format_percent($profitPctNum, true);  // -4.30%
+} else {
+    $pctText = mt_format_percent(0, false);             // 0.00%
+}
+
+/* Clases del ícono (no se pinta si es 0 o null) */
+$iconClass = '';
+if ($profitPctNum !== null && $profitPctNum > 0) {
+    $iconClass = 'mt-icon_arrow-up mt-icon-success';
+} elseif ($profitPctNum !== null && $profitPctNum < 0) {
+    $iconClass = 'mt-icon_arrow-down mt-icon-error';
+}
+
+/* Texto de “Total Profit” formateado con signo */
+$profitText = mt_format_signed_money($profit);
 ?>
+
+
 
 <?php if ($has_data): ?>
     <div class="mt-card mt-card__row gap-32" data-component="account-performance">
@@ -97,12 +145,16 @@ $has_data = array_filter($performance, function ($v) {
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Total Profit</div>
-                        <div class="mt-card__item-value d-flex gap-2"><?php echo esc_html($profit); ?>
+                        <div class="mt-card__item-value d-flex align-items-center gap-2"> <span
+                                class="<?php echo esc_attr($profitColorClass); ?>">
+                                <?php echo esc_html($profitText); ?>
+                            </span>
                             <div class="d-flex align-items-center">
-                                <span class="mt-icon mt-icon_arrow-down mt-icon-error"></span>
-                                <span
-                                    class="mt-badge mt-badge-<?php echo ($profitPct < 0 ? 'error' : 'success'); ?> mt-badge-sm">
-                                    <?php echo esc_html(mt_format_percent($profitPct, true)); ?>
+                                <?php if (!empty($iconClass)): ?>
+                                    <span class="mt-icon <?php echo esc_attr($iconClass); ?>"></span>
+                                <?php endif; ?>
+                                <span class="mt-badge <?php echo esc_attr($badgeClass); ?> mt-badge-sm">
+                                    <?php echo esc_html($pctText); ?>
                                 </span>
 
                             </div>
@@ -110,7 +162,21 @@ $has_data = array_filter($performance, function ($v) {
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Days Loss Limit</div>
-                        <div class="mt-card__item-value">$2,000</div>
+                        <div class="mt-card__item-value text-white d-flex gap-1 align-items-center">
+                            <?php echo esc_html(mt_format_money(2000)); ?>
+                            <span class="mt-tooltip">
+                                <i class="mt-icon mt-icon-gray mt-icon_info-solid" tabindex="0"
+                                    aria-label="Daily Loss Limit information"></i>
+                                <span class="mt-tooltip__panel" role="tooltip">
+                                    <div class="mt-tooltip__title">Daily Loss Limit (DLL)</div>
+                                    <div class="mt-tooltip__body">
+                                        Reaching the DLL pauses trading for the day. It’s removed once a profit milestone is
+                                        met.
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Current Equity</div>

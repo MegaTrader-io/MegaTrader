@@ -273,18 +273,29 @@ if (!function_exists('mt_format_money')) {
 
 if (!function_exists('mt_format_signed_money')) {
     /**
-     * +$47,850.30   ó   -$1,234.56 (útil para “Net P&L”, chips, etc.)
+     * +$47,850.30 si > 0
+     * -$1,234.56 si < 0
+     * $0.00      si == 0 (sin signo)
      */
     function mt_format_signed_money($value, $currency = null, $context = null) {
         if ($value === null || $value === '' || !is_numeric($value)) return '—';
         if ($currency === null) $currency = mt_money_symbol('$', $context);
+
         $num = (float) $value;
         $abs = abs($num);
+
+        // Si quieres tratar -0.00 como 0:
+        if (abs($num) < 1e-9) $num = 0.0;
+
         $formatted = number_format($abs, 2, '.', ',');
-        $sign = $num >= 0 ? '+' : '-';
+
+        // Signo: + si >0, - si <0, vacío si ==0
+        $sign = ($num > 0) ? '+' : (($num < 0) ? '-' : '');
+
         return $sign . $currency . $formatted;
     }
 }
+
 
 if (!function_exists('mt_format_percent')) {
     /**

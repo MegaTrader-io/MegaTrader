@@ -344,6 +344,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     font-weight: 500;
     line-height: 24px;
     word-wrap: break-word;
+    position: relative;
 
 }
 
@@ -570,7 +571,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-badge.mt-badge-sm {
     padding: 4px 8px;
     border-radius: 12px;
-    line-height: 16px;
+    line-height: 1.1;
 }
 
 .mt-badge.mt-badge-pill {
