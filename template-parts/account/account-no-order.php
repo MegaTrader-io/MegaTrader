@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Partial: template-parts/account/no-order.php
+ * Partial: template-parts/account/account-no-order.php
  */
 
 defined('ABSPATH') || exit;
@@ -9,7 +9,7 @@ defined('ABSPATH') || exit;
 ?>
 
 <div class="no-order-wrapper d-flex flex-column gap-32">
-  <div class="mt-card mt-card_row">
+  <div class="mt-card mt-card__row">
     <div class="d-flex flex-column flex-grow-1 flex-shrink-1 justify-content-center">
       <div class="fw-medium text-size-20 text-uppercase text-white">
         <?php esc_html_e('No active membership', 'woocommerce'); ?>

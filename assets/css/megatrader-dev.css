@@ -2013,13 +2013,13 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 }
 
 a.avatar-area {
-    text-decoration: none;
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
 }
 
 a.avatar-area:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 /* ------- Addons ------- */
@@ -3396,10 +3396,15 @@ body.mt-checkout-frozen .modal * {
 
 /* cuando estamos colocando la orden: sin clicks ni foco detrás */
 body.mt-placing form.checkout,
-body.mt-placing .woocommerce-checkout { pointer-events: none; }
+body.mt-placing .woocommerce-checkout {
+  pointer-events: none;
+}
 
 /* botón deshabilitado: feedback visual */
-#place_order[disabled] { cursor: not-allowed; opacity: .7; }
+#place_order[disabled] {
+  cursor: not-allowed;
+  opacity: .7;
+}
 
 
 
@@ -3415,7 +3420,8 @@ body.mt-placing .woocommerce-checkout { pointer-events: none; }
   position: absolute;
   bottom: calc(100% + 8px);
   text-align: left;
-  right: 0;
+  left: 50%;                        
+  transform: translate(-50%, 4px);
   z-index: 50;
   width: 320px;
   max-width: 80vw;
@@ -3432,19 +3438,31 @@ body.mt-placing .woocommerce-checkout { pointer-events: none; }
 
   opacity: 0;
   visibility: hidden;
-  transform: translateY(4px);
+
   transition: opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
 
-  pointer-events: none; /* evita capturar hover cuando está oculto */
+  pointer-events: none;
+
 }
 
 /* Flechita */
-.mt-tooltip__panel::after {
+.mt-tooltip__panel::before {
   content: "";
   position: absolute;
   top: 100%;
-  right: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-style: solid;
   border-width: 6px;
+  border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
+}
+
+.mt-tooltip__panel::after{
+  content:"";
+  position:absolute;
+  top: 100%;
+   left: 50%;
+  transform: translateX(-50%);
   border-style: solid;
   border-color: var(--Black, #000) transparent transparent transparent;
 }
@@ -3454,7 +3472,7 @@ body.mt-placing .woocommerce-checkout { pointer-events: none; }
 .mt-tooltip:focus-within .mt-tooltip__panel {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   transition: opacity .16s ease, transform .16s ease;
   pointer-events: auto;
 }
@@ -3465,8 +3483,8 @@ body.mt-placing .woocommerce-checkout { pointer-events: none; }
   font-weight: 700;
   margin-bottom: 4px;
 }
+
 .mt-tooltip__body {
   color: var(--Text-Body, #A8A29E);
   font-weight: 500;
 }
-

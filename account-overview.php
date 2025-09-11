@@ -103,7 +103,7 @@ $GLOBALS['mt_selected_id']        = $mt_selected_id;
     </div>
 
     <div class="mt-page__main">
-      <?php get_template_part('template-parts/account/no-order'); ?>
+      <?php get_template_part('template-parts/account/account-no-order'); ?>
 
       <div class="mt-account-test">
         <?php

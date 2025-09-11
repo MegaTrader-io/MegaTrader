@@ -311,3 +311,60 @@ if (!function_exists('mt_format_percent')) {
         return $sign . $formatted;
     }
 }
+
+// Color para cualquier valor numérico: neg -> text-error, pos -> text-success, cero/NaN -> text-white
+if (!function_exists('mt_value_color_class')) {
+    function mt_value_color_class($value, $zero = 'text-white', $pos = 'text-success', $neg = 'text-error') {
+        if ($value === null || $value === '' || !is_numeric($value)) return $zero;
+        $n = (float) $value;
+        return ($n > 0) ? $pos : (($n < 0) ? $neg : $zero);
+    }
+}
+
+// ========= Percent UI helpers =========
+if (!function_exists('mt_percent_badge_class')) {
+    function mt_percent_badge_class($value) {
+        if ($value === null || $value === '' || !is_numeric($value)) return 'mt-badge-light';
+        $n = (float)$value;
+        return $n > 0 ? 'mt-badge-secondary' : ($n < 0 ? 'mt-badge-error' : 'mt-badge-light');
+    }
+}
+
+if (!function_exists('mt_percent_icon_class')) {
+    function mt_percent_icon_class($value) {
+        if ($value === null || $value === '' || !is_numeric($value)) return '';
+        $n = (float)$value;
+        return $n > 0 ? 'mt-icon_arrow-up mt-icon-success'
+             : ($n < 0 ? 'mt-icon_arrow-down mt-icon-error' : '');
+    }
+}
+
+if (!function_exists('mt_percent_text')) {
+    // Devuelve "—" si no hay dato; con signo +/– cuando procede
+    function mt_percent_text($value) {
+        if ($value === null || $value === '' || !is_numeric($value)) return '—';
+        $n = (float)$value;
+        // 0 sin signo
+        return $n == 0.0 ? mt_format_percent(0, false) : mt_format_percent($n, true);
+    }
+}
+
+if (!function_exists('mt_profit_ui_from_percent')) {
+    /**
+     * Paquete para pintar % de profit en UI.
+     * Return: ['badgeClass' => ..., 'iconClass' => ..., 'text' => ...]
+     */
+    function mt_profit_ui_from_percent($value) {
+        return [
+            'badgeClass' => mt_percent_badge_class($value),
+            'iconClass'  => mt_percent_icon_class($value),
+            'text'       => mt_percent_text($value),
+        ];
+    }
+}
+
+
+
+
+
+

@@ -64,6 +64,7 @@ $minDays = (int) $performance['minTradingDays'];
 $maxLossEq = $performance['maxLossLimitEquityLevel'];
 $profitTarget = $performance['target'];
 
+
 /* ========= Derivados (para barras / chips) ========= */
 $profitProgressPct = (is_numeric($profitTarget) && $profitTarget > 0)
     ? max(0, min(100, ($profit / $profitTarget) * 100))
@@ -82,51 +83,21 @@ $has_data = array_filter($performance, function ($v) {
     return $v !== null && $v !== '';
 }) ? true : false;
 
-/* ===== Cálculo de clases y textos para % y el ícono ===== */
-$profitNum = (is_numeric($profit) ? (float) $profit : null);
-$profitColorClass = 'text-white';
-if ($profitNum !== null) {
-    if ($profitNum > 0) {
-        $profitColorClass = 'text-success';
-    } elseif ($profitNum < 0) {
-        $profitColorClass = 'text-error';
-    }
-}
 
-$profitPctNum = (is_numeric($profitPct) ? (float) $profitPct : null);
 
-/* Badge class según reglas */
-if ($profitPctNum === null) {
-    $badgeClass = 'mt-badge-light';
-} elseif ($profitPctNum > 0) {
-    $badgeClass = 'mt-badge-secondary';
-} elseif ($profitPctNum < 0) {
-    $badgeClass = 'mt-badge-error';
-} else { // == 0
-    $badgeClass = 'mt-badge-light';
-}
+/* Formatted variables */
+$ui = mt_profit_ui_from_percent($profitPct);
+$profitPctNum = $ui['pctNum'];
+$badgeClass = $ui['badgeClass'];
+$pctText = $ui['text'];
+$iconClass = $ui['iconClass'];
 
-/* Texto del porcentaje (con signo) */
-if ($profitPctNum === null) {
-    $pctText = '—';
-} elseif ($profitPctNum > 0) {
-    $pctText = mt_format_percent($profitPctNum, true);  // +4.30%
-} elseif ($profitPctNum < 0) {
-    $pctText = mt_format_percent($profitPctNum, true);  // -4.30%
-} else {
-    $pctText = mt_format_percent(0, false);             // 0.00%
-}
+$dailyColorClass = mt_value_color_class($dailyPnL);
+$dailyText = mt_format_signed_money($dailyPnL);
 
-/* Clases del ícono (no se pinta si es 0 o null) */
-$iconClass = '';
-if ($profitPctNum !== null && $profitPctNum > 0) {
-    $iconClass = 'mt-icon_arrow-up mt-icon-success';
-} elseif ($profitPctNum !== null && $profitPctNum < 0) {
-    $iconClass = 'mt-icon_arrow-down mt-icon-error';
-}
-
-/* Texto de “Total Profit” formateado con signo */
+$profitColorClass = mt_value_color_class($profit);
 $profitText = mt_format_signed_money($profit);
+
 ?>
 
 
@@ -140,8 +111,7 @@ $profitText = mt_format_signed_money($profit);
                 <div class="d-flex flex-column">
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Account Balance</div>
-                        <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($balance)); ?>
-                        </div>
+                        <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($balance)); ?></div>
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Total Profit</div>
@@ -161,6 +131,12 @@ $profitText = mt_format_signed_money($profit);
                         </div>
                     </div>
                     <div class="mt-card__item">
+                        <div class="mt-card__item-text">Trading Days</div>
+                        <div class="mt-card__item-value text-white">
+                            <?php echo esc_html($daysTraded); ?>
+                        </div>
+                    </div>
+                    <div class=" mt-card__item">
                         <div class="mt-card__item-text">Days Loss Limit</div>
                         <div class="mt-card__item-value text-white d-flex gap-1 align-items-center">
                             <?php echo esc_html(mt_format_money(2000)); ?>
@@ -170,7 +146,8 @@ $profitText = mt_format_signed_money($profit);
                                 <span class="mt-tooltip__panel" role="tooltip">
                                     <div class="mt-tooltip__title">Daily Loss Limit (DLL)</div>
                                     <div class="mt-tooltip__body">
-                                        Reaching the DLL pauses trading for the day. It’s removed once a profit milestone is
+                                        Reaching the DLL pauses trading for the day. It’s removed once a profit
+                                        milestone is
                                         met.
                                     </div>
                                 </span>
@@ -180,11 +157,13 @@ $profitText = mt_format_signed_money($profit);
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Current Equity</div>
-                        <div class="mt-card__item-value">$47,850.30</div>
+                        <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($equity)); ?></div>
                     </div>
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text">Weekly Net P&L</div>
-                        <div class="mt-card__item-value">-$1,560.40</div>
+                        <div class="mt-card__item-text">Daily Net P&L</div>
+                        <div class="mt-card__item-value"><span class="<?php echo esc_attr($dailyColorClass); ?>">
+                                <?php echo esc_html($dailyText); ?>
+                            </span></div>
                     </div>
                 </div>
             </div>
@@ -320,7 +299,8 @@ $json_pretty = wp_json_encode($debug_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED
         <div class="mt-debug__body" style="display:block;">
             <div style="display:grid; grid-template-columns: 260px 1fr; gap:16px;">
                 <div style="background:#0b0b0c; border:1px solid #27272a; border-radius:10px; padding:12px;">
-                    <div style="font-size:12px; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px;">Meta</div>
+                    <div style="font-size:12px; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px;">Meta
+                    </div>
                     <div style="display:flex; flex-direction:column; gap:6px; font-size:14px;">
                         <div><span style="color:#a1a1aa;">Source:</span>
                             <strong><?php echo esc_html($source); ?></strong>
@@ -364,7 +344,8 @@ $json_pretty = wp_json_encode($debug_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED
                     <textarea readonly rows="16"
                         style="width:100%; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size:12px; line-height:1.4; color:#e4e4e7; background:#0b0b0c; border:1px solid #27272a; border-radius:8px; padding:10px;"><?php echo esc_textarea($json_pretty); ?></textarea>
                     <div style="margin-top:8px; font-size:12px; color:#a1a1aa;">
-                        Usa este JSON para comparar con Postman. Si <strong>accountId</strong> no coincide con la cuenta
+                        Usa este JSON para comparar con Postman. Si <strong>accountId</strong> no coincide con la
+                        cuenta
                         seleccionada, revisa el flujo del selector.
                     </div>
                 </div>
