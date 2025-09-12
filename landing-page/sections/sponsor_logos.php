@@ -55,7 +55,7 @@ foreach ($attributes as $attr) {
             <div class="<?= $classes[$index] ?> <?= count($badge) == 0 && $has_badge ? 'tw-mb-10' : '' ?>">
                 <div>
                     <img
-                            src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/platforms/<?= $image ?>"
+                            src="<?= assets_landing_page(resource: "platforms/{$image}") ?>"
                             alt="<?= $name ?> Sponsor Logo"
                     />
                     <?php if (count($badge)):
