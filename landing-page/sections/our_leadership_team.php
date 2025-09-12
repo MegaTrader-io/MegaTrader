@@ -1,11 +1,11 @@
 <?php
 
 $people = [
-        ['image' => 'user-1.png', 'name' => 'John Doe', 'role' => 'Founder and CEO',],
-        ['image' => 'user-2.png', 'name' => 'John Doe', 'role' => 'CTO',],
-        ['image' => 'user-3.png', 'name' => 'John Doe', 'role' => 'CMO',],
-        ['image' => 'user-4.png', 'name' => 'John Doe', 'role' => 'CFO',],
-        ['image' => 'user-5.png', 'name' => 'John Doe', 'role' => 'PR Lead']
+        ['image' => 'user-1.png', 'name' => 'Hansel Hernandez', 'role' => 'Founder & CEO'],
+        ['image' => 'user-2.png', 'name' => 'Harlel Hernandez', 'role' => 'Head of Operations'],
+        ['image' => 'user-3.png', 'name' => 'Jordan Gonzalez', 'role' => 'Support Specialist',],
+        ['image' => 'user-4.png', 'name' => 'Raysmel Perez', 'role' => 'Support Specialist',],
+        ['image' => 'user-5.png', 'name' => 'Luis Viera', 'role' => 'Lead Programmer']
 ]
 
 ?>
