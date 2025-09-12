@@ -24,6 +24,7 @@ $initials = $args['initials'] ?? '';
         <?php echo esc_html($initials); ?>
     </div>
 <?php endif; ?>
+<?php if (!$hidden_email): ?>
 <div class="avatar-area__user-information flex-fill d-flex flex-column">
     <div class="text-white text-16px fw-medium">
         <?php echo esc_html($display_name); ?>
@@ -34,9 +35,8 @@ $initials = $args['initials'] ?? '';
             <?php echo esc_html($billing_country); ?>
         </div>
     <?php endif; ?>
-    <?php if (!$hidden_email): ?>
-        <div class="text-a8a29e text-14px-line-20px fw-medium">
-            <?php echo esc_html($user_email); ?>
-        </div>
-    <?php endif; ?>
+    <div class="text-a8a29e text-14px-line-20px fw-medium">
+        <?php echo esc_html($user_email); ?>
+    </div>
 </div>
+<?php endif; ?>
