@@ -362,6 +362,51 @@ if (!function_exists('mt_profit_ui_from_percent')) {
         ];
     }
 }
+// Icono por signo de valor: pos -> success, neg -> error, cero/NaN -> sin icono
+if (!function_exists('mt_value_icon_classes')) {
+    function mt_value_icon_classes($value, $opts = []) {
+        // permite personalizar clases
+        $pos = $opts['pos'] ?? 'mt-icon-success mt-icon_checkmark-solid';
+        $neg = $opts['neg'] ?? 'mt-icon-error mt-icon_cancel';
+        $zero = $opts['zero'] ?? '';      // cero = no mostrar
+        $neutral = $opts['neutral'] ?? 'mt-icon-gray mt-icon_checkmark-solid'; // no numérico = no mostrar
+
+        if ($value === null || $value === '' || !is_numeric($value)) return $neutral;
+        $n = (float)$value;
+        if (abs($n) < 1e-9) return $zero;
+        return $n > 0 ? $pos : $neg;
+    }
+}
+// Icono por comparación (value vs target) – SIEMPRE devuelve un icono:
+// - value < 0                 => error (cancel)
+// - value == 0                => neutral (check gris)
+// - value > 0 && target <= 0  => success (tratamos meta no válida como cumplida)
+// - value > 0 && value > tgt  => success (check verde)
+// - value > 0 && value <= tgt => neutral (check gris)
+// - value no numérico         => neutral
+if (!function_exists('mt_value_compare_icon_classes')) {
+    function mt_value_compare_icon_classes($value, $target, $opts = []) {
+        $cls_pos     = $opts['pos']     ?? 'mt-icon-success mt-icon_checkmark-solid';
+        $cls_neg     = $opts['neg']     ?? 'mt-icon-error mt-icon_cancel';
+        $cls_neutral = $opts['neutral'] ?? 'mt-icon-gray mt-icon_checkmark-solid';
+
+        if ($value === null || $value === '' || !is_numeric($value)) {
+            return $cls_neutral;
+        }
+        $v = (float)$value;
+
+        if ($v < 0)  return $cls_neg;
+        if (abs($v) < 1e-9) return $cls_neutral; // 0 => neutral
+
+        // positivo:
+        if ($target === null || $target === '' || !is_numeric($target)) return $cls_neutral;
+        $t = (float)$target;
+
+        if ($t <= 0) return $cls_pos;           // meta no válida => consideramos cumplida
+        return ($v > $t) ? $cls_pos : $cls_neutral;
+    }
+}
+
 
 
 

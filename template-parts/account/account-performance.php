@@ -78,10 +78,26 @@ $profitRemaining = (is_numeric($profitTarget) && is_numeric($profit))
     ? max(0, $profitTarget - max(0, $profit))
     : null;
 
+
 /* ========= Flag para saber si hay data real ========= */
 $has_data = array_filter($performance, function ($v) {
     return $v !== null && $v !== '';
 }) ? true : false;
+
+
+// === Progress bars (UI) ===
+$profitNum = is_numeric($profit) ? (float) $profit : null;
+$targetNum = (is_numeric($profitTarget) && $profitTarget > 0) ? (float) $profitTarget : null;
+
+$profitFillPct = 0; // 0..100, nunca null
+if ($profitNum !== null && $targetNum !== null) {
+    // si profit es negativo o 0, se queda en 0%
+    $profitFillPct = max(0, min(100, (max(0, $profitNum) / $targetNum) * 100));
+}
+
+$daysFillPct = ($minDays > 0)
+    ? max(0, min(100, ($daysTraded / $minDays) * 100))
+    : 0;
 
 
 
@@ -98,9 +114,16 @@ $dailyText = mt_format_signed_money($dailyPnL);
 $profitColorClass = mt_value_color_class($profit);
 $profitText = mt_format_signed_money($profit);
 
+$profitIconClass = mt_value_compare_icon_classes($profit, $profitTarget);
+
+$daysFillPct = ($minDays > 0) ? max(0, min(100, ($daysTraded / $minDays) * 100)) : 0;
+$daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays); // usa el helper nuevo
+$daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
+
+
+
+
 ?>
-
-
 
 <?php if ($has_data): ?>
     <div class="mt-card mt-card__row gap-32" data-component="account-performance">
@@ -115,7 +138,7 @@ $profitText = mt_format_signed_money($profit);
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Total Profit</div>
-                        <div class="mt-card__item-value d-flex align-items-center gap-2"> <span
+                        <div class="mt-card__item-value d-flex align-items-center gap-2 justify-content-end"> <span
                                 class="<?php echo esc_attr($profitColorClass); ?>">
                                 <?php echo esc_html($profitText); ?>
                             </span>
@@ -138,10 +161,10 @@ $profitText = mt_format_signed_money($profit);
                     </div>
                     <div class=" mt-card__item">
                         <div class="mt-card__item-text">Days Loss Limit</div>
-                        <div class="mt-card__item-value text-white d-flex gap-1 align-items-center">
+                        <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
                             <?php echo esc_html(mt_format_money(2000)); ?>
                             <span class="mt-tooltip">
-                                <i class="mt-icon mt-icon-gray mt-icon_info-solid" tabindex="0"
+                                <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
                                     aria-label="Daily Loss Limit information"></i>
                                 <span class="mt-tooltip__panel" role="tooltip">
                                     <div class="mt-tooltip__title">Daily Loss Limit (DLL)</div>
@@ -162,7 +185,7 @@ $profitText = mt_format_signed_money($profit);
                     <div class="mt-card__item">
                         <div class="mt-card__item-text d-flex gap-1 align-items-center">Daily Net P&L
                             <span class="mt-tooltip">
-                                <i class="mt-icon mt-icon-gray mt-icon_info-solid" tabindex="0"
+                                <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
                                     aria-label="Daily Loss Limit information"></i>
                                 <span class="mt-tooltip__panel" role="tooltip">
                                     <div class="mt-tooltip__title">Daily P&L</div>
@@ -186,103 +209,73 @@ $profitText = mt_format_signed_money($profit);
             <div class="d-flex flex-column gap-3">
                 <div class="mt-card__title__text fw-medium text-uppercase">Your Challenge Objective</div>
                 <div class="d-flex flex-column">
-                       <div class="mt-card__item">
-                            <div class="mt-card__item-text"><span class="mt-icon"></span>Profit Target</div>
-                            <div class="mt-card__item-value text-white">
-                                <?php echo esc_html(mt_format_money($profit)); ?> /
-                                <?php echo esc_html(mt_format_money($profitTarget)); ?>
-                            </div>
-                        </div>
                     <div class="mt-card__item">
-                     
-                        <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 8px; display: flex">
-                            <div style="width: 24px; height: 24px; position: relative">
-                                <div
-                                    style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9">
-                                </div>
-                                <div
-                                    style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: var(--Icon-Error, #F43F5E)">
-                                </div>
-                            </div>
-                            <div
-                                style="flex: 1 1 0; color: var(--White, white); font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
-                                Profit Target</div>
+                        <div class="mt-card__item-text d-flex gap-1 align-items-center">
+                            <span class="mt-icon <?php echo esc_attr($profitIconClass); ?>"></span>
+                            Profit Target
                         </div>
-                        <div
-                            style="flex: 1 1 0; flex-direction: column; justify-content: center; align-items: flex-end; gap: 4px; display: inline-flex">
-                            <div
-                                style="align-self: stretch; justify-content: flex-end; align-items: center; gap: 4px; display: inline-flex">
-                                <div
-                                    style="color: var(--Error-500, #F43F5E); font-size: 16px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                                    -$2,149.70</div>
-                                <div
-                                    style="color: var(--Basic-White, white); font-size: 16px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                                    / $3,000.00</div>
-                            </div>
-                            <div
-                                style="align-self: stretch; height: 8px; position: relative; background: var(--Colors-Gray-700, #404040); border-radius: 4px">
+                        <div class="mt-card__item-value text-white">
+                            <span class="<?php echo esc_attr($profitColorClass); ?>">
+                                <?php echo esc_html($profitText); ?>
+                            </span>
+                            /
+                            <?php echo esc_html(mt_format_money($profitTarget)); ?>
+
+                            <!-- barra de progreso que ya tienes, si aplica -->
+                            <div class="mt-progress-bar mt-progress-bar--md mt-progress-bar--success" role="progressbar"
+                                aria-valuemin="0" aria-valuemax="100"
+                                aria-valuenow="<?php echo (int) round($profitFillPct); ?>"
+                                style="--mt-progress-value: <?php echo esc_attr($profitFillPct); ?>%;">
+                                <span class="mt-progress-bar__fill"></span>
                             </div>
                         </div>
                     </div>
+
                     <div class="mt-card__item">
-                        <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 8px; display: flex">
-                            <div style="width: 24px; height: 24px; position: relative">
-                                <div
-                                    style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9">
-                                </div>
-                                <div
-                                    style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: var(--Icon-Success, #2DD4BF)">
-                                </div>
-                            </div>
-                            <div
-                                style="flex: 1 1 0; color: var(--White, white); font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
-                                Days Traded</div>
+                        <div class="mt-card__item-text d-flex gap-1 align-items-center">
+                            <span class="mt-icon <?php echo esc_attr($daysIconClass); ?>"></span>
+                            Days Traded
                         </div>
-                        <div
-                            style="flex: 1 1 0; flex-direction: column; justify-content: center; align-items: flex-end; gap: 4px; display: inline-flex">
-                            <div
-                                style="align-self: stretch; justify-content: flex-end; align-items: center; gap: 4px; display: inline-flex">
-                                <div
-                                    style="color: var(--Text-Success, #2DD4BF); font-size: 16px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                                    4</div>
-                                <div
-                                    style="color: var(--Basic-White, white); font-size: 16px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                                    / 1</div>
-                            </div>
-                            <div
-                                style="align-self: stretch; height: 8px; position: relative; background: var(--Colors-Gray-700, #404040); overflow: hidden; border-radius: 4px">
-                                <div
-                                    style="width: 172px; height: 8px; left: 172px; top: 8px; position: absolute; transform: rotate(180deg); transform-origin: top left; background: var(--Success-400, #2DD4BF)">
-                                </div>
+
+                        <div class="mt-card__item-value text-white">
+                            <span class="<?php echo esc_attr($daysColorClass); ?>">
+                                <?php echo esc_html($daysTraded); ?>
+                            </span>
+                            /
+                            <?php echo esc_html($minDays); ?>
+
+                            <div class="mt-progress-bar mt-progress-bar--md mt-progress-bar--success" role="progressbar"
+                                aria-valuemin="0" aria-valuemax="100"
+                                aria-valuenow="<?php echo (int) round($daysFillPct); ?>"
+                                style="--mt-progress-value: <?php echo esc_attr($daysFillPct); ?>%;">
+                                <span class="mt-progress-bar__fill"></span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div
-                style="align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 16px; display: flex">
-                <div
-                    style="align-self: stretch; color: white; font-size: 20px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                    Rules</div>
-                <div
-                    style="align-self: stretch; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                    <div style="width: 24px; height: 24px; position: relative">
-                        <div
-                            style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9">
-                        </div>
-                        <div
-                            style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: var(--Icon-Error, #F43F5E)">
-                        </div>
+            <div class="d-flex flex-column gap-3">
+                <div class="mt-card__title__text fw-medium text-uppercase">Rules</div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="mt-icon <?php
+                    echo (is_numeric($balance) && is_numeric($maxLossEq))
+                        ? (((float) $balance < (float) $maxLossEq)
+                            ? 'mt-icon-error mt-icon_cancel'
+                            : 'mt-icon-success mt-icon_checkmark-solid'
+                        )
+                        : 'mt-icon-error mt-icon_cancel';
+                    ?>"></span>
+                    <div class="text-white text-base fw-medium">
+                        <span class="text-white text-base fw-medium">Keep your Account Balance above
+                            <?php echo esc_html(mt_format_money($maxLossEq)); ?></span>
+                        <a class="text-primary text-14px-line-20px fw-medium text-decoration-underline">Maximum Loss
+                            Limmit</a>
                     </div>
-                    <div style="flex: 1 1 0; align-self: stretch"><span
-                            style="color: var(--White, white); font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Keep
-                            your Account Balance above $48,000 </span><span
-                            style="color: var(--Text-Link, #FFD78A); font-size: 14px; font-family: Roboto; font-weight: 500; text-decoration: underline; line-height: 20px; word-wrap: break-word">Maximum
-                            Loss Limmit</span></div>
                 </div>
             </div>
         </div>
     </div>
+
 <?php else: ?>
     <div class="mt-card mt-card__row gap-16" data-component="account-performance-empty">
         <div class="text-a8a29e">

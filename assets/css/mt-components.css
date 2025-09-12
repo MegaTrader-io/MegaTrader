@@ -191,6 +191,13 @@
     padding: var(--Scale-400, 16px);
 }
 
+
+@media (min-width: 768px) {
+    .mt-card.mt-card__row {
+        flex-direction: row;
+    }
+}
+
 .mt-card.mt-card-dark {
     border-color: transparent;
     background: var(--Surface-Body, #131210);
@@ -321,8 +328,9 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     align-items: center;
     display: inline-flex;
 }
+
 .mt-card .mt-card__item:not(:last-child) {
-  border-bottom: 1px var(--Colors-Gray-700, #404040) solid;
+    border-bottom: 1px var(--Colors-Gray-700, #404040) solid;
 }
 
 
@@ -338,6 +346,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 .mt-card .mt-card__item .mt-card__item-value {
+    flex: 1 1 0;
     text-align: right;
     font-size: 16px;
     font-family: var(--Type-Font-Family-Body, Roboto);
@@ -357,15 +366,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     color: var(--Text-Success, #2DD4BF);
 }
 
-.mt-card.mt-card__row {
-    flex-direction: row;
-}
 
-@media (max-width: 767.98px) {
-    .mt-card.mt-card__row {
-        flex-direction: inherit;
-    }
-}
 
 /* END CARD COMPONENT */
 
@@ -381,11 +382,18 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     background-size: cover;
     mask-repeat: no-repeat;
     mask-size: contain;
+    flex: 0 0 24px;
+    min-height: 24px;
+    min-width: 24px;
+    line-height: 0;
 }
 
 .mt-icon.mt-icon-md {
     width: 30px;
     height: 30px;
+    flex: 0 0 30px;
+    min-width: 30px;
+    min-height: 30px;
 }
 
 .mt-icon.mt-icon-white {
@@ -403,8 +411,13 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-icon.mt-icon-error {
     background-color: #F43F5E;
 }
-.mt-icon.mt-icon-gray {
+
+.mt-icon.mt-icon-base {
     background-color: #A8A29E;
+}
+
+.mt-icon.mt-icon.mt-icon-gray {
+    background-color: #404040;
 }
 
 
@@ -642,4 +655,135 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 
+
 /* END PAGE LAYOUT - SIDEBAR */
+
+
+/* Tooltip base */
+.mt-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Panel oculto por defecto */
+.mt-tooltip__panel {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    text-align: left;
+    left: 50%;
+    transform: translate(-50%, 4px);
+    z-index: 50;
+    width: 320px;
+    max-width: 80vw;
+
+    background: var(--Black, #000);
+    border-radius: 8px;
+    outline: 1px solid var(--Colors-Gray-700, #404040);
+    outline-offset: -1px;
+    padding: 12px;
+
+    color: var(--Text-Body, #A8A29E);
+    font-size: 14px;
+    line-height: 20px;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
+
+    pointer-events: none;
+
+}
+
+/* Flechita */
+.mt-tooltip__panel::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-style: solid;
+    border-width: 6px;
+    border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
+}
+
+.mt-tooltip__panel::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-style: solid;
+    border-color: var(--Black, #000) transparent transparent transparent;
+}
+
+/* Mostrar al hover/focus (teclado/touch con focus) */
+.mt-tooltip:hover .mt-tooltip__panel,
+.mt-tooltip:focus-within .mt-tooltip__panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition: opacity .16s ease, transform .16s ease;
+    pointer-events: auto;
+}
+
+/* Tipografía interna */
+.mt-tooltip__title {
+    color: var(--Text-Headings, #fff);
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.mt-tooltip__body {
+    color: var(--Text-Body, #A8A29E);
+    font-weight: 500;
+}
+
+/*   PROGRESS BAR */
+
+/* ===== Progress Bar ===== */
+.mt-progress-bar {
+    position: relative;
+    display: block;
+    height: 8px;
+    background: var(--Colors-Gray-700, #404040);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.mt-progress-bar--sm {
+    height: 6px;
+}
+
+.mt-progress-bar--md {
+    height: 8px;
+}
+
+.mt-progress-bar--lg {
+    height: 12px;
+}
+
+.mt-progress-bar__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    /* top:0; left:0; bottom:0 */
+    width: var(--mt-progress-value, 0%);
+    background: var(--Success-400, #2DD4BF);
+    border-radius: inherit;
+    transition: width .25s ease;
+}
+
+/* variantes opcionales por estado (si las quieres usar) */
+.mt-progress-bar--success .mt-progress-bar__fill {
+    background: var(--Success-400, #2DD4BF);
+}
+
+.mt-progress-bar--error .mt-progress-bar__fill {
+    background: var(--Colors-Gray-600, #525252);
+}
+
+/* gris si no quieres mostrar verde */
+.mt-progress-bar--primary .mt-progress-bar__fill {
+    background: var(--Primary-400, #14b8a6);
+}
