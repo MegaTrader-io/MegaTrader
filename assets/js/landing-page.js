@@ -469,6 +469,7 @@ document.addEventListener('DOMContentLoaded', function () {
             {href: '#features', label: '', sectionId: 'feature-discover-the-platforms', visible: false},
             {href: '#features', label: '', sectionId: 'feature-our-with-drawal-methods', visible: false},
             {href: '#features', label: '', sectionId: 'feature-trusted-by-leadres', visible: false},
+            {href: '#our-team', label: 'OUR TEAM', sectionId: 'our-team', visible: true},
             {href: '#faq', label: 'FAQ', sectionId: 'faq', visible: true},
         ];
 

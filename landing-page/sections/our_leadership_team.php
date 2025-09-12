@@ -10,7 +10,7 @@ $people = [
 
 ?>
 
-<section id="our_team" class="tw-space-y-4 tw-px-8 tw-pb-12">
+<section id="our-team" class="tw-space-y-4 tw-px-8 tw-pb-12">
     <div class="tw-self-stretch tw-text-center tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
         Our Leadership & Team
     </div>
@@ -39,6 +39,4 @@ $people = [
             <?php endforeach; ?>
         </div>
     </div>
-
-
 </section>

@@ -85,6 +85,11 @@
                        class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50">
                         FEATURES
                     </a>
+                    <a href="#our-team"
+                       data-menu="our-team"
+                       class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50">
+                        OUR TEAM
+                    </a>
                     <a href="#faq"
                        data-menu="faq"
                        class="btn-nav-link tw-text-base tw-no-underline tw-text-nowrap tw-uppercase tw-leading-6 tw-px-4 tw-py-3 font-medium tw-transition-all tw-duration-200 text-neutral-50">
