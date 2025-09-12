@@ -11,5 +11,6 @@
     <?php require 'sections/discover_the_platforms_powering_your_trades.php'; ?>
     <?php require 'sections/our_with_drawal_methods.php'; ?>
     <?php require 'sections/trusted_by_leaders.php'; ?>
+    <?php require 'sections/our_leadership_team.php'; ?>
     <?php require 'sections/get_the_answers_you_need.php'; ?>
 </main>

@@ -480,6 +480,10 @@
   height: 680px;
 }
 
+.tw-h-auto{
+  height: auto;
+}
+
 .tw-h-dvh{
   height: 100dvh;
 }
@@ -488,8 +492,8 @@
   height: 100%;
 }
 
-.tw-h-auto{
-  height: auto;
+.tw-h-\[360px\]{
+  height: 360px;
 }
 
 .tw-max-h-dvh{
@@ -575,6 +579,14 @@
 
 .tw-w-screen{
   width: 100vw;
+}
+
+.tw-w-\[\]{
+  width: ;
+}
+
+.tw-w-\[236px\]{
+  width: 236px;
 }
 
 .tw-max-w-7xl{
@@ -706,6 +718,10 @@
   flex-direction: column;
 }
 
+.tw-flex-col-reverse{
+  flex-direction: column-reverse;
+}
+
 .tw-content-center{
   align-content: center;
 }
@@ -822,6 +838,10 @@
   text-wrap: nowrap;
 }
 
+.tw-rounded{
+  border-radius: 0.25rem;
+}
+
 .tw-rounded-2xl{
   border-radius: 1rem;
 }
@@ -852,10 +872,6 @@
 
 .tw-rounded-xl{
   border-radius: 0.75rem;
-}
-
-.tw-rounded{
-  border-radius: 0.25rem;
 }
 
 .tw-border{
@@ -989,6 +1005,11 @@
   background-color: transparent;
 }
 
+.tw-bg-stone-800{
+  --tw-bg-opacity: 1;
+  background-color: rgb(41 37 36 / var(--tw-bg-opacity, 1));
+}
+
 .\!tw-p-8{
   padding: 2rem !important;
 }
@@ -1015,6 +1036,10 @@
 
 .tw-p-8{
   padding: 2rem;
+}
+
+.tw-p-2{
+  padding: 0.5rem;
 }
 
 .tw-px-0{
@@ -1369,6 +1394,11 @@
 
 .tw-outline-neutral-700{
   outline-color: #404040;
+}
+
+.tw-invert{
+  --tw-invert: invert(100%);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 .tw-backdrop-blur-3xl{
@@ -2794,16 +2824,16 @@ body[data-scroll-locked] {
     position: absolute;
   }
 
+  .lg\:tw-bottom-0{
+    bottom: 0px;
+  }
+
   .lg\:tw-left-0{
     left: 0px;
   }
 
   .lg\:tw-right-0{
     right: 0px;
-  }
-
-  .lg\:tw-bottom-0{
-    bottom: 0px;
   }
 
   .lg\:tw-order-none{
@@ -2882,8 +2912,12 @@ body[data-scroll-locked] {
     max-height: 100%;
   }
 
-  .lg\:tw-w-\[1203px\]{
-    width: 1203px;
+  .lg\:tw-w-\[1043px\]{
+    width: 1043px;
+  }
+
+  .lg\:tw-w-\[194px\]{
+    width: 194px;
   }
 
   .lg\:tw-w-\[250px\]{
@@ -2900,14 +2934,6 @@ body[data-scroll-locked] {
 
   .lg\:tw-w-full{
     width: 100%;
-  }
-
-  .lg\:tw-w-\[1043px\]{
-    width: 1043px;
-  }
-
-  .lg\:tw-w-\[194px\]{
-    width: 194px;
   }
 
   .lg\:tw-max-w-7xl{
@@ -2928,6 +2954,10 @@ body[data-scroll-locked] {
 
   .lg\:tw-max-w-\[760px\]{
     max-width: 760px;
+  }
+
+  .lg\:tw-max-w-\[860px\]{
+    max-width: 860px;
   }
 
   .lg\:tw-flex-1{
