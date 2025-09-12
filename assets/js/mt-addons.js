@@ -173,12 +173,13 @@
      ========================================================= */
   const DRAW_BUFFER_DELTA = 500; // +500
 
+  // Busca SOLO el meta real (ignora inyectados)
   function findTrailingMaxDrawdownItem(root = document) {
     let el = root.querySelector(
-      '.mt-meta-item[data-meta-key="trailing_max_drawdown"]'
+      '.mt-meta-item[data-meta-key="trailing_max_drawdown"]:not([data-injected])'
     );
     if (el) return el;
-    for (const item of $$(".mt-meta-item", root)) {
+    for (const item of $$(".mt-meta-item:not([data-injected])", root)) {
       const labelTxt =
         $(".mt-meta-label", item)?.textContent?.trim().toLowerCase() || "";
       if (labelTxt && /trailing\s*max\s*drawdown/.test(labelTxt)) return item;
@@ -190,7 +191,18 @@
   }
   function updateTrailingMaxDrawdownUI(root = document) {
     const item = findTrailingMaxDrawdownItem(root);
-    if (!item) return;
+
+    // Si NO existe el meta real y el addon está activo → inyectar texto fijo
+    if (!item) {
+      if (isDrawdownBufferActive(root)) {
+        ensureDrawdownInjected();   // "Extra +500" SIN cálculos
+      } else {
+        removeDrawdownInjected();
+      }
+      return; // importante: no continuar, así no sumamos sobre el inyectado
+    }
+
+    // Si SÍ existe el meta real, sumar +500 cuando el addon esté activo
     const valueEl = $(".mt-meta-value", item);
     if (!valueEl) return;
 
@@ -208,9 +220,11 @@
         `<span class="text-decoration-line-through me-2">${baseText}</span>` +
         `<span class="text-primary">${newText}</span>`;
       item.classList.add("addon-applied");
+      removeDrawdownInjected(); // limpiar posibles inyectados
     } else {
       valueEl.textContent = baseText;
       item.classList.remove("addon-applied");
+      removeDrawdownInjected();
     }
   }
 
@@ -254,6 +268,33 @@
     grid.appendChild(injected);
     return injected;
   }
+
+  // ===== Drawdown Buffer: inyección si no existe el meta (texto fijo) =====
+  function ensureDrawdownInjected() {
+    const grid = document.querySelector(".mt-meta-grid");
+    if (!grid) return;
+    if (grid.querySelector('.mt-meta-item[data-injected="drawdown-buffer"]'))
+      return;
+
+    const el = document.createElement("div");
+    el.className = "mt-meta-item";
+    el.setAttribute("data-meta-key", "trailing_max_drawdown");
+    el.setAttribute("data-injected", "drawdown-buffer");
+    el.innerHTML = `
+      <i class="mt-icon mt-icon-white mt-icon_max-drawdown"></i>
+      <div class="mt-meta-text">
+        <span class="mt-meta-label text-primary">Trailing Max Drawdown</span>
+        <span class="mt-meta-value">Extra +500</span>
+      </div>
+    `;
+    grid.appendChild(el);
+  }
+  function removeDrawdownInjected() {
+    document
+      .querySelectorAll('.mt-meta-item[data-injected="drawdown-buffer"]')
+      .forEach((n) => n.remove());
+  }
+
   function applyAnytimeToExisting(item) {
     const iconEl = $(".mt-icon", item);
     const labelEl = $(".mt-meta-label", item);
