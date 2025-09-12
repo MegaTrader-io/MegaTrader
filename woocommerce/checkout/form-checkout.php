@@ -247,170 +247,268 @@ if (function_exists('WC') && WC()->countries) {
 }
 $mt_billing_nonce = wp_create_nonce('mt_save_billing');
 
+$cart_data_name = null;
+if (function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) {
+    $cart = WC()->cart->get_cart();
+    $first = $cart ? reset($cart) : null;
+    if ($first && isset($first['data']) && $first['data'] instanceof WC_Product) {
+        $cart_data_name = $first['data']->get_name();
+    }
+}
 
-$fflag = isset($_GET['v2']);
 
-if ($fflag): ?>
+// ==== Prep: línea secundaria y badge ====
+$cart_first = (function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) ? reset(WC()->cart->get_cart()) : null;
+$cart_name = ($cart_first['data'] ?? null) instanceof WC_Product ? $cart_first['data']->get_name() : null;
+$prod_name = ($product instanceof WC_Product) ? $product->get_name() : null;
 
-    <div class="main-container pt-32 pb-32">
-        <div class="container">
-            <?php include get_stylesheet_directory() . '/woocommerce/checkout/step_2.php'; ?>
+// Nombre preferido (carrito -> producto), saneado
+$name = trim((string) ($cart_name ?: $prod_name));
+
+// ¿Producto especial? (Reset/Activation), comparación exacta e insensible a mayúsculas
+$is_special = (bool) preg_match('/^(reset fee|activation fee)$/i', $name);
+
+// Texto de la línea secundaria
+$secondary_line = $plan_size_slug . ' - ' . ($is_special ? $plan_type : Label::PRICE['price_sufix']);
+
+// Texto del badge default (si lo necesitás)
+$secondary_badge = $is_special ? $name : $plan_type;
+
+
+// ==== Prep: Metas del producto ====
+
+
+// Helper para leer constantes de clase Label de forma segura
+if (!function_exists('mt_get_label_const')) {
+    function mt_get_label_const(string $name)
+    {
+        if (!class_exists('Label'))
+            return null;
+        $ref = new ReflectionClass('Label');
+        return $ref->hasConstant($name) ? $ref->getConstant($name) : null;
+    }
+}
+
+// Detección estricta del tipo por nombre/categoría (evita falsos positivos)
+if (!function_exists('mt_detect_product_kind_strict')) {
+    function mt_detect_product_kind_strict(?WC_Product $product): ?string
+    {
+        if (!($product instanceof WC_Product))
+            return null;
+        $pid = $product->get_id();
+        $name = strtolower(trim((string) $product->get_name()));
+
+        // Match exacto por nombre
+        if ($name === 'reset fee')
+            return 'reset';
+        if ($name === 'activation fee')
+            return 'activation';
+
+        // Por taxonomías si existen
+        $in_reset = function_exists('has_term') ? (has_term(['reset-fee', 'reset'], 'product_cat', $pid) || has_term(['reset-fee', 'reset'], 'product_tag', $pid)) : false;
+        $in_activation = function_exists('has_term') ? (has_term(['activation-fee', 'activation'], 'product_cat', $pid) || has_term(['activation-fee', 'activation'], 'product_tag', $pid)) : false;
+
+        if ($in_reset)
+            return 'reset';
+        if ($in_activation)
+            return 'activation';
+        return null;
+    }
+}
+
+// Orden e íconos
+$meta_order = (class_exists('Label') && defined('Label::META_ORDER'))
+    ? Label::META_ORDER
+    : (class_exists('Label') ? array_keys(Label::PRODUCT_META) : []);
+
+$icon_map = (class_exists('Label') && defined('Label::PRODUCT_META_ICONS'))
+    ? Label::PRODUCT_META_ICONS
+    : [];
+
+// Construcción de ítems desde metas reales
+$items = [];
+$used_highlights = false;           // <- solo si pintamos META_RESET / META_ACTIVATION
+$pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
+$kind = mt_detect_product_kind_strict($product);
+
+if ($pid && !empty($meta_order)) {
+    foreach ($meta_order as $key) {
+        if (!isset(Label::PRODUCT_META[$key]))
+            continue;
+        $val = $rich['meta'][$key] ?? get_post_meta($pid, $key, true);
+        if ($val === '' || $val === null)
+            continue;
+
+        $items[] = [
+            'key' => $key,
+            'label' => Label::PRODUCT_META[$key],
+            'value' => $val,
+            'icon_class' => $icon_map[$key] ?? 'mt-icon',
+        ];
+    }
+}
+
+// Fallback: si no hay metas y el producto es reset/activation, usar highlights definidos en Label
+if (empty($items) && $kind === 'reset') {
+    $cfg = mt_get_label_const('META_RESET');
+    if (is_array($cfg) && !empty($cfg)) {
+        $items = array_map(fn($s) => [
+            'key' => $s['key'],
+            'label' => $s['label'],
+            'value' => '',
+            'icon_class' => $s['icon'],
+        ], $cfg);
+        $used_highlights = true;
+    }
+} elseif (empty($items) && $kind === 'activation') {
+    $cfg = mt_get_label_const('META_ACTIVATION');
+    if (is_array($cfg) && !empty($cfg)) {
+        $items = array_map(fn($s) => [
+            'key' => $s['key'],
+            'label' => $s['label'],
+            'value' => '',
+            'icon_class' => $s['icon'],
+        ], $cfg);
+        $used_highlights = true;
+    }
+}
+
+// Clase extra SOLO cuando pintamos highlights
+$grid_extra_class = $used_highlights ? ' mt-meta-grid--x4' : '';
+
+
+// ===== Prep: ocultar y anular Add-ons si el producto es "Activation Fee"
+
+// (reusa helper si ya existe; si no, es safe)
+if (!function_exists('mt_detect_product_kind_strict')) {
+    function mt_detect_product_kind_strict(?WC_Product $product): ?string
+    {
+        if (!($product instanceof WC_Product))
+            return null;
+        $pid = $product->get_id();
+        $name = strtolower(trim((string) $product->get_name()));
+        if ($name === 'reset fee')
+            return 'reset';
+        if ($name === 'activation fee')
+            return 'activation';
+        $in_reset = function_exists('has_term') ? (has_term(['reset-fee', 'reset'], 'product_cat', $pid) || has_term(['reset-fee', 'reset'], 'product_tag', $pid)) : false;
+        $in_activation = function_exists('has_term') ? (has_term(['activation-fee', 'activation'], 'product_cat', $pid) || has_term(['activation-fee', 'activation'], 'product_tag', $pid)) : false;
+        if ($in_reset)
+            return 'reset';
+        if ($in_activation)
+            return 'activation';
+        return null;
+    }
+}
+
+// Detectar por nombre del carrito (preferente) o por helper
+$cart_first = (function_exists('WC') && WC()->cart && !WC()->cart->is_empty()) ? reset(WC()->cart->get_cart()) : null;
+$cart_name = ($cart_first['data'] ?? null) instanceof WC_Product ? $cart_first['data']->get_name() : null;
+$prod_name = ($product instanceof WC_Product) ? $product->get_name() : null;
+$name_final = trim((string) ($cart_name ?: $prod_name));
+
+$mt_is_activation = (strcasecmp($name_final, 'Activation Fee') === 0);
+if (!$mt_is_activation) {
+    $mt_is_activation = (mt_detect_product_kind_strict($product) === 'activation');
+}
+
+// Garantizar que NO se envíen add-ons si es Activation Fee
+if ($mt_is_activation) {
+    add_filter('woocommerce_checkout_posted_data', function ($data) {
+        if (isset($data['add_ons']) && is_array($data['add_ons'])) {
+            foreach ($data['add_ons'] as $k => $v) {
+                $data['add_ons'][$k] = ''; // forzar vacío
+            }
+        }
+        return $data;
+    }, 9999);
+}
+
+
+
+?>
+
+<div class="container">
+    <div class="mt-page">
+        <div class="mt-page__sidebar">
+            <?php render_sidebar() ?>
         </div>
-    </div>
-
-<?php else: ?>
-
-    <div class="container">
-        <div class="mt-page">
-            <div class="mt-page__sidebar">
-                <?php render_sidebar() ?>
-            </div>
-            <div class="mt-page__main">
-                <?php render_step_selector(true); ?>
-                <form id="checkout-form" name="checkout" method="post"
-                    class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
-                    action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
-                    <div class="product-container">
-                        <div class="mt-card">
-                            <div class="mt-card-wrapper d-flex flex-column gap-4">
-                                <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
-                                    <div class="mt-card-plan d-flex flex-column flex-grow-1">
-                                        <div
-                                            class="mt-card-plan-size text-white text-40px fw-medium text-uppercase leading-48px">
-                                            <?php echo esc_html($plan_size); ?>
-                                        </div>
-                                        <div class="mt-card-plan-info d-flex gap-3 align-items-center flex-wrap">
-                                            <div class="text-white fw-bold text-size-20 leading-36px">
-                                                <?php echo esc_html($plan_size_slug . ' - ' . Label::PRICE['price_sufix']); ?>
-                                            </div>
-                                            <div class="d-flex gap-3">
-                                                <div class="badge-mega badge-mega-sm badge-mega-default">
-                                                    <?php echo esc_html($plan_type); ?>
-                                                </div>
-                                                <div class="badge-mega badge-mega-sm badge-mega-primary">
-                                                    <?php echo esc_html($market_type); ?>
-                                                </div>
-                                            </div>
-                                        </div>
+        <div class="mt-page__main">
+            <?php render_step_selector(true); ?>
+            <form id="checkout-form" name="checkout" method="post"
+                class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
+                action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
+                <div class="product-container">
+                    <div class="mt-card">
+                        <div class="mt-card-wrapper d-flex flex-column gap-4">
+                            <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
+                                <div class="mt-card-plan d-flex flex-column flex-grow-1">
+                                    <div
+                                        class="mt-card-plan-size text-white text-40px fw-medium text-uppercase leading-48px">
+                                        <?php echo esc_html($plan_size); ?>
                                     </div>
-
-                                    <div class="mt-card-plataform d-flex align-items-center bg-131210 gap-3 p-3 rounded-3">
-                                        <div class="mt-card-plataform-logo">
-                                            <?php if ($platform_logo_url): ?>
-                                                <img src="<?php echo esc_url($platform_logo_url); ?>"
-                                                    alt="<?php echo esc_attr($platform_label); ?>" width="57" height="57" />
-                                            <?php endif; ?>
+                                    <div class="mt-card-plan-info d-flex gap-3 align-items-center flex-wrap">
+                                        <div class="text-white fw-bold text-size-20 leading-36px">
+                                            <?php echo esc_html($secondary_line); ?>
                                         </div>
-                                        <div class="mt-card-plataform-info d-flex flex-column">
-                                            <div class="mt-platform-title text-white fw-medium text-base">
-                                                <?php echo esc_html(Label::PLATFORM['title']); ?>
+                                        <div class="d-flex gap-3">
+                                            <div class="badge-mega badge-mega-sm badge-mega-default">
+                                                <?php echo esc_html($secondary_badge); ?>
                                             </div>
-                                            <?php if ($platform_label): ?>
-                                                <div class="mt-platform-name fw-medium text-a8a29e text-base">
-                                                    <?php echo esc_html($platform_label); ?>
-                                                </div>
-                                            <?php endif; ?>
+                                            <div class="badge-mega badge-mega-sm badge-mega-primary">
+                                                <?php echo esc_html($market_type); ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <hr class="border-gray m-0" />
-
-                                <!-- metas -->
-                                <div class="mt-card-body">
-                                    <?php
-                                    if (!function_exists('mt_detect_product_kind')) {
-                                        function mt_detect_product_kind(WC_Product $product): ?string
-                                        {
-                                            $pid = $product->get_id();
-                                            $name = strtolower((string) $product->get_name());
-                                            $sku = strtolower((string) $product->get_sku());
-
-                                            $has_reset_meta = (bool) get_post_meta($pid, 'reset_fee', true);
-                                            $has_activation_meta = (bool) get_post_meta($pid, 'activation_fee', true);
-                                            $in_reset_cat = function_exists('has_term') ? has_term(['reset-fee', 'reset'], 'product_cat', $pid) : false;
-                                            $in_activation_cat = function_exists('has_term') ? has_term(['activation-fee', 'activation'], 'product_cat', $pid) : false;
-                                            $looks_reset = (stripos($sku, 'reset') !== false) || (stripos($name, 'reset') !== false);
-                                            $looks_activation = (stripos($sku, 'activation') !== false) || (stripos($name, 'activation') !== false);
-
-                                            if ($has_reset_meta || $in_reset_cat || $looks_reset)
-                                                return 'reset';
-                                            if ($has_activation_meta || $in_activation_cat || $looks_activation)
-                                                return 'activation';
-                                            return null;
-                                        }
-                                    }
-
-                                    $meta_order = (defined('Label::META_ORDER') ? Label::META_ORDER : array_keys(Label::PRODUCT_META));
-                                    $icon_map = (defined('Label::PRODUCT_META_ICONS') ? Label::PRODUCT_META_ICONS : []);
-
-                                    $items = [];
-                                    $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
-
-                                    // Detectar tipo (pero NO usarlo para la clase)
-                                    $kind = ($product instanceof WC_Product) ? mt_detect_product_kind($product) : null;
-
-                                    // La clase extra por defecto VACÍA. Solo se setea si usamos fallback.
-                                    $grid_extra_class = '';
-
-                                    if ($pid) {
-                                        foreach ($meta_order as $key) {
-                                            if (!isset(Label::PRODUCT_META[$key]))
-                                                continue;
-                                            $val = $rich['meta'][$key] ?? get_post_meta($pid, $key, true);
-                                            if ($val === '' || $val === null)
-                                                continue;
-
-                                            $items[] = [
-                                                'key' => $key,
-                                                'label' => Label::PRODUCT_META[$key],
-                                                'value' => $val,
-                                                'icon_class' => $icon_map[$key] ?? 'mt-icon',
-                                            ];
-                                        }
-                                    }
-
-                                    // Fallback para Reset/Activation SOLO si no hay metas reales
-                                    if (empty($items) && $kind === 'reset' && defined('Label::META_RESET')) {
-                                        $items = array_map(fn($s) => [
-                                            'key' => $s['key'],
-                                            'label' => $s['label'],
-                                            'value' => '',
-                                            'icon_class' => $s['icon'],
-                                        ], Label::META_RESET);
-                                        $grid_extra_class = ' mt-meta-grid--x4'; // <-- SOLO aquí
-                                    } elseif (empty($items) && $kind === 'activation' && defined('Label::META_ACTIVATION')) {
-                                        $items = array_map(fn($s) => [
-                                            'key' => $s['key'],
-                                            'label' => $s['label'],
-                                            'value' => '',
-                                            'icon_class' => $s['icon'],
-                                        ], Label::META_ACTIVATION);
-                                        $grid_extra_class = ' mt-meta-grid--x4'; // <-- SOLO aquí
-                                    }
-                                    ?>
-
-                                    <?php if (!empty($items)): ?>
-                                        <div class="mt-meta-grid<?php echo $grid_extra_class; ?>">
-                                            <?php foreach ($items as $it): ?>
-                                                <div class="mt-meta-item" data-meta-key="<?php echo esc_attr($it['key']); ?>">
-                                                    <i class="mt-icon mt-icon-white <?php echo esc_attr($it['icon_class']); ?>"></i>
-                                                    <div class="mt-meta-text">
-                                                        <span class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
-                                                        <span class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
-                                                    </div>
-                                                </div>
-                                            <?php endforeach; ?>
+                                <div class="mt-card-plataform d-flex align-items-center bg-131210 gap-3 p-3 rounded-3">
+                                    <div class="mt-card-plataform-logo">
+                                        <?php if ($platform_logo_url): ?>
+                                            <img src="<?php echo esc_url($platform_logo_url); ?>"
+                                                alt="<?php echo esc_attr($platform_label); ?>" width="57" height="57" />
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="mt-card-plataform-info d-flex flex-column">
+                                        <div class="mt-platform-title text-white fw-medium text-base">
+                                            <?php echo esc_html(Label::PLATFORM['title']); ?>
                                         </div>
-                                    <?php endif; ?>
+                                        <?php if ($platform_label): ?>
+                                            <div class="mt-platform-name fw-medium text-a8a29e text-base">
+                                                <?php echo esc_html($platform_label); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-
-
-
-
                             </div>
+
+                            <hr class="border-gray m-0" />
+
+                            <!-- metas -->
+                            <div class="mt-card-body">
+                                <?php if (!empty($items)): ?>
+                                    <div class="mt-meta-grid<?php echo $grid_extra_class; ?>">
+                                        <?php foreach ($items as $it): ?>
+                                            <div class="mt-meta-item" data-meta-key="<?php echo esc_attr($it['key']); ?>">
+                                                <i class="mt-icon mt-icon-white <?php echo esc_attr($it['icon_class']); ?>"></i>
+                                                <div class="mt-meta-text">
+                                                    <span class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
+                                                    <span class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+
+
+
+
                         </div>
                     </div>
+                </div>
+                <?php if (!$mt_is_activation): ?>
 
                     <div class="addons-container">
                         <?php
@@ -481,170 +579,269 @@ if ($fflag): ?>
                         <?php endif; ?>
                     </div>
 
+                <?php endif; ?>
 
-
-                    <div id="billing-container" class="d-flex flex-column gap-3">
-                        <div class="fw-medium leading-8 text-size-20 text-white">
-                            <?php echo esc_html(Label::CHECKOUT_META['billing_title']); ?>
-                        </div>
-                        <div class="billing-container mt-billing-card mt-card">
-                            <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
-                            <div id="mt-billing-summary" class="<?php echo $has_complete_billing ? '' : 'd-none'; ?>">
-                                <div class="d-flex flex-column gap-3 w-100 position-relative">
-                                    <div class="d-flex gap-3 justify-content-end position-absolute end-0">
-                                        <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
-                                            style="color:#FFD78A;">
-                                            <?php echo esc_html(Label::CHECKOUT_META['edit_billing']); ?>
-                                        </a>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between gap-3">
-                                        <div class="flex-fill d-flex flex-column gap-3">
-                                            <div class="d-flex align-items-start gap-2">
-                                                <i class="mt-icon mt-icon_account"></i>
-                                                <div class="text-base fw-medium text-white" id="mt-sum-name">
-                                                    <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
-                                                </div>
-                                            </div>
-
-                                            <div class="d-flex align-items-center gap-2">
-                                                <i class="mt-icon mt-icon_mail"></i>
-                                                <div class="text-base fw-medium text-white" id="mt-sum-email">
-                                                    <?php echo esc_html($billing['email'] ?: '—'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-fill d-flex flex-column gap-3">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <i class="mt-icon mt-icon_phone"></i>
-                                                <div class="text-base fw-medium text-white" id="mt-sum-phone">
-                                                    <?php echo esc_html($billing['phone'] ?: '—'); ?>
-                                                </div>
-                                            </div>
-
-                                            <div class="d-flex align-items-start gap-2">
-                                                <i class="mt-icon mt-icon_home"></i>
-                                                <?php
-                                                $line1 = trim(($billing['address_1'] ?? '') . (!empty($billing['address_2']) ? ', ' . $billing['address_2'] : ''));
-                                                $line2 = trim(implode(', ', array_filter([($billing['city'] ?? ''), $state_name, ($billing['postcode'] ?? '')])));
-                                                $line3 = trim($country_name ?: '');
-
-                                                $addr_lines = array_filter([$line1, $line2, $line3], fn($v) => $v !== '');
-                                                ?>
-                                                <div id="mt-sum-address" class="text-base fw-medium text-white">
-                                                    <?php echo implode('<br>', array_map('esc_html', $addr_lines)); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- ====== VISTA FORM (WooCommerce) ====== -->
-                            <div id="mt-billing-form" class="<?php echo $has_complete_billing ? 'd-none' : ''; ?>">
-                                <div class="billing-details pt-3">
-                                    <?php
-                                    $user_id = get_current_user_id();
-                                    $current_state = $user_id ? get_user_meta($user_id, 'billing_state', true) : '';
-                                    ?>
-
-                                    <?php
-                                    do_action('woocommerce_before_checkout_form');
-                                    do_action('woocommerce_checkout_before_customer_details');
-                                    ?>
-                                    <div id="customer_details">
-                                        <input type="hidden" id="billing_state_current"
-                                            value="<?php echo esc_attr($current_state); ?>">
-                                        <?php do_action('woocommerce_checkout_billing'); ?>
-                                        <?php do_action('woocommerce_checkout_shipping'); ?>
-                                    </div>
-                                    <?php
-                                    do_action('woocommerce_checkout_after_customer_details');
-                                    do_action('woocommerce_after_checkout_form');
-                                    ?>
-
-                                    <!-- Botón para guardar en el perfil -->
-                                    <input type="hidden" id="mt_save_billing_nonce"
-                                        value="<?php echo esc_attr($mt_billing_nonce); ?>">
-                                    <button type="button" id="mt-save-billing"
-                                        class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
-                                        Save details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                <div id="billing-container" class="d-flex flex-column gap-3">
+                    <div class="fw-medium leading-8 text-size-20 text-white">
+                        <?php echo esc_html(Label::CHECKOUT_META['billing_title']); ?>
                     </div>
+                    <div class="billing-container mt-billing-card mt-card">
+                        <!-- ====== VISTA RESUMEN (visible si hay datos) ====== -->
+                        <div id="mt-billing-summary" class="<?php echo $has_complete_billing ? '' : 'd-none'; ?>">
+                            <div class="d-flex flex-column gap-3 w-100 position-relative">
+                                <div class="d-flex gap-3 justify-content-end position-absolute end-0">
+                                    <a href="#" id="mt-billing-change" class="text-decoration-underline fw-medium"
+                                        style="color:#FFD78A;">
+                                        <?php echo esc_html(Label::CHECKOUT_META['edit_billing']); ?>
+                                    </a>
+                                </div>
 
+                                <div class="d-flex justify-content-between gap-3">
+                                    <div class="flex-fill d-flex flex-column gap-3">
+                                        <div class="d-flex align-items-start gap-2">
+                                            <i class="mt-icon mt-icon_account"></i>
+                                            <div class="text-base fw-medium text-white" id="mt-sum-name">
+                                                <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
+                                            </div>
+                                        </div>
 
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="mt-icon mt-icon_mail"></i>
+                                            <div class="text-base fw-medium text-white" id="mt-sum-email">
+                                                <?php echo esc_html($billing['email'] ?: '—'); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-fill d-flex flex-column gap-3">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="mt-icon mt-icon_phone"></i>
+                                            <div class="text-base fw-medium text-white" id="mt-sum-phone">
+                                                <?php echo esc_html($billing['phone'] ?: '—'); ?>
+                                            </div>
+                                        </div>
 
-                    <div class="payment-container review-container">
-                        <div class="fw-medium leading-8 text-size-20 text-white pb-3">
-                            <?php echo esc_html(Label::CHECKOUT_META['payment_title']); ?>
+                                        <div class="d-flex align-items-start gap-2">
+                                            <i class="mt-icon mt-icon_home"></i>
+                                            <?php
+                                            $line1 = trim(($billing['address_1'] ?? '') . (!empty($billing['address_2']) ? ', ' . $billing['address_2'] : ''));
+                                            $line2 = trim(implode(', ', array_filter([($billing['city'] ?? ''), $state_name, ($billing['postcode'] ?? '')])));
+                                            $line3 = trim($country_name ?: '');
+
+                                            $addr_lines = array_filter([$line1, $line2, $line3], fn($v) => $v !== '');
+                                            ?>
+                                            <div id="mt-sum-address" class="text-base fw-medium text-white">
+                                                <?php echo implode('<br>', array_map('esc_html', $addr_lines)); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="mt-payment-cards" id="mt-payment">
-                            <?php
-                            wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
-                            ?>
-                        </div>
-
-                        <div class="mt-card mt-3">
-
-                            <?php
-                            wc_get_template('checkout/review-order.php');
-                            ?>
-                            <hr class="border-gray m-0">
-                            <div class="form-row place-order">
-                                <noscript>
-                                    <?php
-                                    /* translators: $1 and $2 opening and closing emphasis tags respectively */
-                                    printf(esc_html__('Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce'), '<em>', '</em>');
-                                    ?>
-                                    <br /><button type="submit" class="button alt" name="woocommerce_checkout_update_totals"
-                                        value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
-                                </noscript>
-
-
-                                <?php do_action('woocommerce_review_order_before_submit'); ?>
+                        <!-- ====== VISTA FORM (WooCommerce) ====== -->
+                        <div id="mt-billing-form" class="<?php echo $has_complete_billing ? 'd-none' : ''; ?>">
+                            <div class="billing-details pt-3">
+                                <?php
+                                $user_id = get_current_user_id();
+                                $current_state = $user_id ? get_user_meta($user_id, 'billing_state', true) : '';
+                                ?>
 
                                 <?php
-                                if (!isset($order_button_text)) {
-                                    $order_button_text = apply_filters(
-                                        'woocommerce_order_button_text',
-                                        __('Place order', 'woocommerce')
-                                    );
-                                }
+                                do_action('woocommerce_before_checkout_form');
+                                do_action('woocommerce_checkout_before_customer_details');
                                 ?>
-                                <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
-
-                                <div class="d-flex gap-1 align-items-center pt-3">
-                                    <i class="mt-icon mt-icon_lock"></i>
-                                    <span class="text-base fw-light text-a8a29e">
-                                        <?php echo esc_html(Label::CHECKOUT_META['payment_disclaimer']); ?>
-                                    </span>
+                                <div id="customer_details">
+                                    <input type="hidden" id="billing_state_current"
+                                        value="<?php echo esc_attr($current_state); ?>">
+                                    <?php do_action('woocommerce_checkout_billing'); ?>
+                                    <?php do_action('woocommerce_checkout_shipping'); ?>
                                 </div>
+                                <?php
+                                do_action('woocommerce_checkout_after_customer_details');
+                                do_action('woocommerce_after_checkout_form');
+                                ?>
 
-                                <?php do_action('woocommerce_review_order_after_submit'); ?>
-
-                                <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
+                                <!-- Botón para guardar en el perfil -->
+                                <input type="hidden" id="mt_save_billing_nonce"
+                                    value="<?php echo esc_attr($mt_billing_nonce); ?>">
+                                <button type="button" id="mt-save-billing"
+                                    class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
+                                    Save details
+                                </button>
                             </div>
-
                         </div>
                     </div>
-
-                </form>
-                <!-- L576: HOLDER PARA NONCE DEL MODAL -->
-                <div id="mt-order-success-nonce"
-                    data-nonce="<?php echo esc_attr(wp_create_nonce('mt_render_order_success_modal')); ?>">
                 </div>
 
 
+
+                <div class="payment-container review-container">
+                    <div class="fw-medium leading-8 text-size-20 text-white pb-3">
+                        <?php echo esc_html(Label::CHECKOUT_META['payment_title']); ?>
+                    </div>
+
+                    <div class="mt-payment-cards" id="mt-payment">
+                        <?php
+                        wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout()));
+                        ?>
+                    </div>
+
+                    <div class="mt-card mt-3">
+
+                        <?php
+                        wc_get_template('checkout/review-order.php');
+                        ?>
+                        <hr class="border-gray m-0">
+                        <div class="form-row place-order">
+                            <noscript>
+                                <?php
+                                /* translators: $1 and $2 opening and closing emphasis tags respectively */
+                                printf(esc_html__('Since your browser does not support JavaScript, or it is disabled, please ensure you click the %1$sUpdate Totals%2$s button before placing your order. You may be charged more than the amount stated above if you fail to do so.', 'woocommerce'), '<em>', '</em>');
+                                ?>
+                                <br /><button type="submit" class="button alt" name="woocommerce_checkout_update_totals"
+                                    value="<?php esc_attr_e('Update totals', 'woocommerce'); ?>"><?php esc_html_e('Update totals', 'woocommerce'); ?></button>
+                            </noscript>
+
+
+                            <?php do_action('woocommerce_review_order_before_submit'); ?>
+
+                            <?php
+                            if (!isset($order_button_text)) {
+                                $order_button_text = apply_filters(
+                                    'woocommerce_order_button_text',
+                                    __('Place order', 'woocommerce')
+                                );
+                            }
+                            ?>
+                            <?php echo apply_filters('woocommerce_order_button_html', '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'); // @codingStandardsIgnoreLine ?>
+
+                            <div class="d-flex gap-1 align-items-center pt-3">
+                                <i class="mt-icon mt-icon_lock"></i>
+                                <span class="text-base fw-light text-a8a29e">
+                                    <?php echo esc_html(Label::CHECKOUT_META['payment_disclaimer']); ?>
+                                </span>
+                            </div>
+
+                            <?php do_action('woocommerce_review_order_after_submit'); ?>
+
+                            <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
+                        </div>
+
+                    </div>
+                </div>
+
+            </form>
+            <!-- L576: HOLDER PARA NONCE DEL MODAL -->
+            <div id="mt-order-success-nonce"
+                data-nonce="<?php echo esc_attr(wp_create_nonce('mt_render_order_success_modal')); ?>">
             </div>
 
-            <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
+
         </div>
+
+        <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
     </div>
+</div>
 
 
-    </div>
-<?php endif; ?>
+</div>
+
+<?php
+// ===== DEBUG VISUAL DEL PRODUCTO (solo con ?mtdebug=1 o WP_DEBUG) =====
+if ((isset($_GET['mtdebug']) && $_GET['mtdebug'] !== '') || (defined('WP_DEBUG') && WP_DEBUG)) {
+
+    // Helpers ya definidos en el archivo:
+    // - mt_get_selected_product()
+    // - mt_build_rich_debug_payload($product)
+    // - mt_detect_product_kind(...) (definido arriba en el bloque de metas)
+
+    $p = mt_get_selected_product();
+    $pid = ($p instanceof WC_Product) ? $p->get_id() : 0;
+    $kind = ($p instanceof WC_Product && function_exists('mt_detect_product_kind')) ? mt_detect_product_kind($p) : null;
+
+    $rich = mt_build_rich_debug_payload($p);
+
+    // Meta order / icon map seguros
+    $meta_order = (class_exists('Label') && defined('Label::META_ORDER'))
+        ? Label::META_ORDER
+        : (class_exists('Label') ? array_keys(Label::PRODUCT_META) : []);
+    $icon_map = (class_exists('Label') && defined('Label::PRODUCT_META_ICONS')) ? Label::PRODUCT_META_ICONS : [];
+
+    // Taxonomías, meta crudo y carrito
+    $cats = $pid ? wp_get_post_terms($pid, 'product_cat', ['fields' => 'names']) : [];
+    $tags = $pid ? wp_get_post_terms($pid, 'product_tag', ['fields' => 'names']) : [];
+    $raw_meta = $pid ? get_post_meta($pid) : [];
+    $cart_snapshot = (function_exists('WC') && WC()->cart) ? WC()->cart->get_cart() : null;
+
+    // Datos básicos del producto
+    $product_basic = ($p instanceof WC_Product) ? [
+        'id' => $pid,
+        'type' => $p->get_type(),
+        'name' => $p->get_name(),
+        'sku' => $p->get_sku(),
+        'price' => $p->get_price(),
+        'regular_price' => $p->get_regular_price(),
+        'sale_price' => $p->get_sale_price(),
+        'stock_status' => $p->get_stock_status(),
+        'manage_stock' => $p->get_manage_stock(),
+        'stock_quantity' => $p->get_stock_quantity(),
+        'variation_attrs' => $p->is_type('variation') ? $p->get_variation_attributes() : [],
+    ] : null;
+
+    echo '<div class="mt-debug-log" style="margin-top:24px;padding:16px;background:#111;border:1px solid #333;border-radius:8px;color:#FFD78A;">';
+    echo '<div style="margin-bottom:8px;font-weight:600;">DEBUG: Producto recibido por URL</div>';
+
+    // Resumen
+    echo '<details open><summary style="cursor:pointer;color:#fff;">Resumen</summary><pre style="white-space:pre-wrap;color:#A8A29E;">';
+    print_r([
+        'query_params' => $_GET,
+        'product_kind' => $kind,
+        'product_basic' => $product_basic,
+        'cats' => $cats,
+        'tags' => $tags,
+    ]);
+    echo '</pre></details>';
+
+    // Payload enriquecido (atributos + metas ya “hidratadas”)
+    echo '<details><summary style="cursor:pointer;color:#fff;">Rich payload (mt_build_rich_debug_payload)</summary><pre style="white-space:pre-wrap;color:#A8A29E;">';
+    print_r($rich);
+    echo '</pre></details>';
+
+    // Atributos del producto (objeto WC)
+    echo '<details><summary style="cursor:pointer;color:#fff;">Atributos (WC_Product->get_attributes())</summary><pre style="white-space:pre-wrap;color:#A8A29E;">';
+    print_r(($p instanceof WC_Product) ? $p->get_attributes() : null);
+    echo '</pre></details>';
+
+    // Orden de metas e íconos configurados
+    echo '<details><summary style="cursor:pointer;color:#fff;">Config (META_ORDER & PRODUCT_META_ICONS)</summary><pre style="white-space:pre-wrap;color:#A8A29E;">';
+    print_r(['meta_order' => $meta_order, 'icon_map_keys' => array_keys($icon_map)]);
+    echo '</pre></details>';
+
+    // Meta crudo del post
+    echo '<details><summary style="cursor:pointer;color:#fff;">Post Meta (raw)</summary><pre style="white-space:pre-wrap;color:#A8A29E;max-height:360px;overflow:auto;">';
+    print_r($raw_meta);
+    echo '</pre></details>';
+
+    // Estado del carrito
+    echo '<details><summary style="cursor:pointer;color:#fff;">Carrito (snapshot)</summary><pre style="white-space:pre-wrap;color:#A8A29E;">';
+    if (is_array($cart_snapshot)) {
+        $simple = [];
+        foreach ($cart_snapshot as $key => $ci) {
+            $simple[$key] = [
+                'product_id' => $ci['product_id'] ?? null,
+                'variation_id' => $ci['variation_id'] ?? null,
+                'quantity' => $ci['quantity'] ?? null,
+                'variation' => $ci['variation'] ?? null,
+                'data_name' => ($ci['data'] instanceof WC_Product) ? $ci['data']->get_name() : null,
+                'data_type' => ($ci['data'] instanceof WC_Product) ? $ci['data']->get_type() : null,
+            ];
+        }
+        print_r($simple);
+    } else {
+        print_r($cart_snapshot);
+    }
+    echo '</pre></details>';
+
+    echo '</div>';
+}
+?>
