@@ -128,26 +128,30 @@ wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_p
 
 $payload = [
   'currentId'      => $currentId,
+  'accounts'       => $accounts,
   'selectionClass' => 'active',
   'selectors' => [
     'grid'        => '#mt-accounts-grid',
     'select'      => '#select-subscription-btn',
-    'card'        => '.subscription-card',
-    'check'       => '.checkmark-icon',
-    'modal'       => '#changeSubcriptionModal',
-    'performance' => '#mt-performance-container',
     'badge'       => '#mt-badge',
     'size'        => '#mt-size',
     'name'        => '#mt-name',
+    'modal'       => '#changeSubcriptionModal',
+    'card'        => '.subscription-card',
+    'check'       => '.checkmark-icon',
+    // 👇 contenedor que se reemplaza con el HTML devuelto por AJAX
+    'performance' => '.mt-account-performance'
   ],
+  // 👇 datos para la llamada AJAX
   'ajax' => [
-    'url'    => admin_url('admin-ajax.php'),
-    'action' => 'mt_accounts_performance',
-    'nonce'  => wp_create_nonce('mt-acc-nonce'),
+    'url'   => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('mt-acc-nonce'),
+    'action'=> 'mt_accounts_performance',
   ],
   'debug' => false,
 ];
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
+
 
 wp_add_inline_script($handle, <<<JS
 (function(){
