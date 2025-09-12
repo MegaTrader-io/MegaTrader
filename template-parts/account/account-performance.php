@@ -266,7 +266,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                         : 'mt-icon-error mt-icon_cancel';
                     ?>"></span>
                     <div class="text-white text-base fw-medium">
-                        <span class="text-white text-base fw-medium">Keep your Account Balance above
+                        <span class="text-white text-base fw-medium d-flex flex-column">Keep your Account Balance above
                             <?php echo esc_html(mt_format_money($maxLossEq)); ?></span>
                         <a class="text-primary text-14px-line-20px fw-medium text-decoration-underline">Maximum Loss
                             Limmit</a>
