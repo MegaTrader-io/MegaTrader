@@ -8,7 +8,7 @@ $avatar_url = $args['avatar_url'] ?? '';
 $display_name = $args['display_name'] ?? '';
 $billing_country = $args['billing_country'] ?? '';
 $user_email = $args['user_email'] ?? '';
-$hidden_email = $args['hidden_email'] ?? false;
+$hide_user_information = $args['hide_user_information'] ?? false;
 $initials = $args['initials'] ?? '';
 
 ?>
@@ -24,7 +24,7 @@ $initials = $args['initials'] ?? '';
         <?php echo esc_html($initials); ?>
     </div>
 <?php endif; ?>
-<?php if (!$hidden_email): ?>
+<?php if (!$hide_user_information): ?>
 <div class="avatar-area__user-information flex-fill d-flex flex-column">
     <div class="text-white text-16px fw-medium">
         <?php echo esc_html($display_name); ?>

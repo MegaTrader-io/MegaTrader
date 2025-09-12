@@ -4,7 +4,7 @@ defined('ABSPATH') || exit;
 
 $avatar_size = $args['avatar_size'] ?? 64;
 $go_to_dashboard = $args['go_to_dashboard'] ?? false;;
-$hidden_email = $args['hidden_email'] ?? false;
+$hide_user_information = $args['hide_user_information'] ?? false;
 
 $current_user = wp_get_current_user();
 // Retrieve first and last name from user meta
@@ -74,7 +74,7 @@ $logout_url = wp_logout_url();
                     'display_name' => $display_name,
                     'user_email' => $user_email,
                     'billing_country' => $billing_country,
-                    'hidden_email' => $hidden_email
+                    'hide_user_information' => $hide_user_information
             ]); ?>
         </a>
     <?php else: ?>

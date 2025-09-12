@@ -103,7 +103,7 @@
                                 [
                                         'avatar_size' => 48,
                                         'go_to_dashboard' => true,
-                                        'hidden_email' => true,
+                                        'hide_user_information' => true,
                                 ]); ?>
                     <?php else: ?>
                         <div class="tw-flex tw-items-center tw-gap-3.5">
