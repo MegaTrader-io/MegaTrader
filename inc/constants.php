@@ -19,11 +19,11 @@ class Label
     ];
 
     public const PLATFORM = [
-        "title" => "Platform"        
+        "title" => "Platform"
     ];
 
     public const PRICE = [
-        "price_sufix" => "Buying Power",      
+        "price_sufix" => "Buying Power",
     ];
 
     public const FUTURES = [
@@ -55,7 +55,7 @@ class Label
             ],
         ],
         'submit_btn_text' => 'Procede to checkout',
-    ];   
+    ];
 
     public const PLANS_FEATURES = [
         'profit_target',
@@ -91,7 +91,7 @@ class Label
         'home' => 'mt-icon_home',
     ];
 
-     public const THANKYOU_META = [
+    public const THANKYOU_META = [
         "success" => "success",
         "order_successful" => "Order Successful!",
         "trading_challenge_ready" => "Your trading challenge is ready.",
@@ -101,15 +101,29 @@ class Label
         "total_paid" => "Total Paid",
         "payment_method" => "Payment Method",
         "confirmation_email_sent" => "Confirmation email sent – Account activating now.",
-        "go_to_my_account" => "Go to My Account",     
+        "go_to_my_account" => "Go to My Account",
     ];
 
-       public const CHECKOUT_META = [
+    public const CHECKOUT_META = [
         "plan_option_title" => "Customize Your Plan (Optional)",
-        "billing_title" => "Billing Details",  
-        "edit_billing" => "Edit Billing",   
-        "payment_title" => "Payment Method",  
-        "payment_disclaimer" => "All payments are secured and encrypted.",   
+        "billing_title" => "Billing Details",
+        "edit_billing" => "Edit Billing",
+        "payment_title" => "Payment Method",
+        "payment_disclaimer" => "All payments are secured and encrypted.",
     ];
- 
+
+    public const META_RESET = [
+        ['key' => 'restart_evaluation', 'label' => 'Restart Evaluation', 'icon' => 'mt-icon_autorenew'],
+        ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'icon' => 'mt-icon_paid'],
+        ['key' => 'keep_trading', 'label' => 'Keep Trading', 'icon' => 'mt-icon_play-arrow'],
+        ['key' => 'ongoing_support', 'label' => 'Ongoing Support', 'icon' => 'mt-icon_call'],
+    ];
+
+    public const META_ACTIVATION = [
+        ['key' => 'active_account', 'label' => 'Active Account', 'icon' => 'mt-icon_lightning'],
+        ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'icon' => 'mt-icon_paid'],
+        ['key' => 'start_trading', 'label' => 'Start Trading', 'icon' => 'mt-icon_play-arrow'],
+        ['key' => 'priority_support', 'label' => 'Priority Support', 'icon' => 'mt-icon_call'],
+    ];
+
 }

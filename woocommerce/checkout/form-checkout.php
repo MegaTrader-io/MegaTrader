@@ -319,11 +319,40 @@ if ($fflag): ?>
                                 <!-- metas -->
                                 <div class="mt-card-body">
                                     <?php
+                                    if (!function_exists('mt_detect_product_kind')) {
+                                        function mt_detect_product_kind(WC_Product $product): ?string
+                                        {
+                                            $pid = $product->get_id();
+                                            $name = strtolower((string) $product->get_name());
+                                            $sku = strtolower((string) $product->get_sku());
+
+                                            $has_reset_meta = (bool) get_post_meta($pid, 'reset_fee', true);
+                                            $has_activation_meta = (bool) get_post_meta($pid, 'activation_fee', true);
+                                            $in_reset_cat = function_exists('has_term') ? has_term(['reset-fee', 'reset'], 'product_cat', $pid) : false;
+                                            $in_activation_cat = function_exists('has_term') ? has_term(['activation-fee', 'activation'], 'product_cat', $pid) : false;
+                                            $looks_reset = (stripos($sku, 'reset') !== false) || (stripos($name, 'reset') !== false);
+                                            $looks_activation = (stripos($sku, 'activation') !== false) || (stripos($name, 'activation') !== false);
+
+                                            if ($has_reset_meta || $in_reset_cat || $looks_reset)
+                                                return 'reset';
+                                            if ($has_activation_meta || $in_activation_cat || $looks_activation)
+                                                return 'activation';
+                                            return null;
+                                        }
+                                    }
+
                                     $meta_order = (defined('Label::META_ORDER') ? Label::META_ORDER : array_keys(Label::PRODUCT_META));
                                     $icon_map = (defined('Label::PRODUCT_META_ICONS') ? Label::PRODUCT_META_ICONS : []);
 
                                     $items = [];
                                     $pid = ($product instanceof WC_Product) ? $product->get_id() : 0;
+
+                                    // Detectar tipo (pero NO usarlo para la clase)
+                                    $kind = ($product instanceof WC_Product) ? mt_detect_product_kind($product) : null;
+
+                                    // La clase extra por defecto VACÍA. Solo se setea si usamos fallback.
+                                    $grid_extra_class = '';
+
                                     if ($pid) {
                                         foreach ($meta_order as $key) {
                                             if (!isset(Label::PRODUCT_META[$key]))
@@ -340,10 +369,29 @@ if ($fflag): ?>
                                             ];
                                         }
                                     }
+
+                                    // Fallback para Reset/Activation SOLO si no hay metas reales
+                                    if (empty($items) && $kind === 'reset' && defined('Label::META_RESET')) {
+                                        $items = array_map(fn($s) => [
+                                            'key' => $s['key'],
+                                            'label' => $s['label'],
+                                            'value' => '',
+                                            'icon_class' => $s['icon'],
+                                        ], Label::META_RESET);
+                                        $grid_extra_class = ' mt-meta-grid--x4'; // <-- SOLO aquí
+                                    } elseif (empty($items) && $kind === 'activation' && defined('Label::META_ACTIVATION')) {
+                                        $items = array_map(fn($s) => [
+                                            'key' => $s['key'],
+                                            'label' => $s['label'],
+                                            'value' => '',
+                                            'icon_class' => $s['icon'],
+                                        ], Label::META_ACTIVATION);
+                                        $grid_extra_class = ' mt-meta-grid--x4'; // <-- SOLO aquí
+                                    }
                                     ?>
 
                                     <?php if (!empty($items)): ?>
-                                        <div class="mt-meta-grid">
+                                        <div class="mt-meta-grid<?php echo $grid_extra_class; ?>">
                                             <?php foreach ($items as $it): ?>
                                                 <div class="mt-meta-item" data-meta-key="<?php echo esc_attr($it['key']); ?>">
                                                     <i class="mt-icon mt-icon-white <?php echo esc_attr($it['icon_class']); ?>"></i>
@@ -356,6 +404,9 @@ if ($fflag): ?>
                                         </div>
                                     <?php endif; ?>
                                 </div>
+
+
+
 
                             </div>
                         </div>

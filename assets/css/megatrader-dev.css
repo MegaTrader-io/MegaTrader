@@ -2914,6 +2914,9 @@ a.pagination-number {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px 16px;
 }
+.mt-meta-grid--x4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 
 @media (max-width: 767.98px) {
   .mt-meta-grid {
