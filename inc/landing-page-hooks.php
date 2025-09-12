@@ -663,5 +663,14 @@ HTML;
     }
 }
 
+if (!function_exists('assets_landing_page')) {
+    function assets_landing_page(string $resource): string
+    {
+        return get_template_directory_uri() . "/assets/img/landing-page/{$resource}";
+    }
+}
+
+
+
 
 

@@ -1,11 +1,11 @@
 <?php
 
 $people = [
-        ['image' => 'user-1.png', 'name' => 'Hansel Hernandez', 'role' => 'Founder & CEO'],
-        ['image' => 'user-2.png', 'name' => 'Harlel Hernandez', 'role' => 'Head of Operations'],
-        ['image' => 'user-3.png', 'name' => 'Jordan Gonzalez', 'role' => 'Support Specialist',],
-        ['image' => 'user-4.png', 'name' => 'Raysmel Perez', 'role' => 'Support Specialist',],
-        ['image' => 'user-5.png', 'name' => 'Luis Viera', 'role' => 'Lead Programmer']
+        ['image' => 'team/user-1.png', 'name' => 'Hansel Hernandez', 'role' => 'Founder & CEO'],
+        ['image' => 'team/user-2.png', 'name' => 'Harlel Hernandez', 'role' => 'Head of Operations'],
+        ['image' => 'team/user-3.png', 'name' => 'Jordan Gonzalez', 'role' => 'Support Specialist',],
+        ['image' => 'team/user-4.png', 'name' => 'Raysmel Perez', 'role' => 'Support Specialist',],
+        ['image' => 'team/user-5.png', 'name' => 'Luis Viera', 'role' => 'Lead Programmer']
 ]
 
 ?>
@@ -24,11 +24,10 @@ $people = [
 
         <div class="tw-grid tw-grid-cols-1 tw-mx-auto sm:tw-grid-cols-2 md:tw-grid-cols-3 xl:tw-flex xl:tw-justify-center tw-gap-4">
             <?php foreach ($people as $index => $person) : ?>
-                <?php
-                $url = get_template_directory_uri() . "/assets/img/landing-page/team/{$person['image']}";
-                ?>
                 <div class="tw-mx-auto md:mx-0 md:tw-flex <?= $index % 2 == 0 ? 'tw-flex-col' : 'tw-flex-col-reverse' ?>">
-                    <img src="<?= $url ?>" alt="<?= $person['name'] ?>" class="tw-w-[236px] tw-h-[360px]">
+                    <img src="<?= assets_landing_page(resource: $person['image']) ?>"
+                         alt="<?= $person['name'] ?>"
+                         class="tw-w-[236px] tw-h-[360px]">
                     <div class="tw-p-2">
                         <div class="tw-justify-start tw-text-teal-400 tw-text-base tw-font-medium tw-leading-normal"><?= $person['name'] ?></div>
                         <div class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">
