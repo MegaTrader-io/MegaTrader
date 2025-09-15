@@ -104,7 +104,7 @@ function mtch_prepare_meta_items(?WC_Product $product, array $rich): array {
         $cfg = mtch_get_label_const('META_RESET');
         if (is_array($cfg) && !empty($cfg)) {
             $items = array_map(fn($s) => [
-                'key' => $s['key'], 'label' => $s['label'], 'value' => '', 'icon_class' => $s['icon'],
+                'key' => $s['key'], 'label' => $s['label'], 'value' => $s['value'], 'icon_class' => $s['icon'],
             ], $cfg);
             $used_highlights = true;
         }
@@ -112,7 +112,7 @@ function mtch_prepare_meta_items(?WC_Product $product, array $rich): array {
         $cfg = mtch_get_label_const('META_ACTIVATION');
         if (is_array($cfg) && !empty($cfg)) {
             $items = array_map(fn($s) => [
-                'key' => $s['key'], 'label' => $s['label'], 'value' => '', 'icon_class' => $s['icon'],
+                'key' => $s['key'], 'label' => $s['label'], 'value' => $s['value'], 'icon_class' => $s['icon'],
             ], $cfg);
             $used_highlights = true;
         }

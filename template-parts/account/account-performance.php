@@ -300,6 +300,7 @@ $debug_payload = [
 ];
 $json_pretty = wp_json_encode($debug_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 ?>
+<!--
 <div class="mt-debug" style="margin-top:16px;">
     <div style="border:1px dashed #525252; background:#18181b; color:#e4e4e7; border-radius:12px; padding:16px;">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
@@ -367,4 +368,5 @@ $json_pretty = wp_json_encode($debug_payload, JSON_PRETTY_PRINT | JSON_UNESCAPED
             </div>
         </div>
     </div>
-</div>
+</div> 
+-->

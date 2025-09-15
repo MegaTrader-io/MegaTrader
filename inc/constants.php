@@ -123,14 +123,14 @@ class Label
         ['key' => 'restart_evaluation', 'label' => 'Restart Evaluation', 'value' => 'Restart anytime challenge', 'icon' => 'mt-icon_autorenew'],
         ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'value' => 'Single payment only', 'icon' => 'mt-icon_paid'],
         ['key' => 'keep_trading', 'label' => 'Keep Trading', 'value' => 'Trade without pause', 'icon' => 'mt-icon_play-arrow'],
-        ['key' => 'ongoing_support', 'label' => 'Ongoing Support', 'value' => 'Always-on help', 'icon' => 'mt-icon_call'],
+        ['key' => 'ongoing_support', 'label' => 'Ongoing Support', 'value' => 'Always-on help', 'icon' => 'mt-icon_call'],
     ];
 
     public const META_ACTIVATION = [
-        ['key' => 'active_account', 'label' => 'Active Account', 'icon' => 'mt-icon_lightning'],
-        ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'icon' => 'mt-icon_paid'],
-        ['key' => 'start_trading', 'label' => 'Start Trading', 'icon' => 'mt-icon_play-arrow'],
-        ['key' => 'priority_support', 'label' => 'Priority Support', 'icon' => 'mt-icon_call'],
+        ['key' => 'active_account', 'label' => 'Active Account', 'value' => 'Instantly trade ready', 'icon' => 'mt-icon_lightning'],
+        ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'value' => 'One single cost', 'icon' => 'mt-icon_paid'],
+        ['key' => 'start_trading', 'label' => 'Start Trading', 'value' => 'Begin live trades', 'icon' => 'mt-icon_play-arrow'],
+        ['key' => 'priority_support', 'label' => 'Priority Support', 'value' => 'Fast expert help', 'icon' => 'mt-icon_call'],
     ];
 
 }

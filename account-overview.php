@@ -121,7 +121,6 @@ $GLOBALS['mt_selected_id']        = $mt_selected_id;
 
       <div class="mt-account-performance" id="mt-performance-container">
         <?php
-        // Performance de la cuenta seleccionada (sin AJAX, ya armado en PHP)
         if ( ! empty($mt_has_active_account) && ! empty($mt_performance) ) {
           get_template_part(
             'template-parts/account/account-performance',
@@ -133,6 +132,9 @@ $GLOBALS['mt_selected_id']        = $mt_selected_id;
           );
         }
         ?>
+      </div>
+      <div class="mt-account-feature-content">
+      <?php get_template_part('template-parts/account/account-feature-content'); ?>
       </div>
     </div>
   </div>
