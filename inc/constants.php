@@ -112,11 +112,18 @@ class Label
         "payment_disclaimer" => "All payments are secured and encrypted.",
     ];
 
+    public const SIDEBAR_META = [
+        "launch_button" => "Launch MegatraderX",
+        "plan_title" => "Explore the plans",
+        "plan_description" => "Find the perfect plan to enhance your experience.",
+        "plan_button" => "Buy a new chanllenge", 
+    ];
+
     public const META_RESET = [
-        ['key' => 'restart_evaluation', 'label' => 'Restart Evaluation', 'icon' => 'mt-icon_autorenew'],
-        ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'icon' => 'mt-icon_paid'],
-        ['key' => 'keep_trading', 'label' => 'Keep Trading', 'icon' => 'mt-icon_play-arrow'],
-        ['key' => 'ongoing_support', 'label' => 'Ongoing Support', 'icon' => 'mt-icon_call'],
+        ['key' => 'restart_evaluation', 'label' => 'Restart Evaluation', 'value' => 'Restart anytime challenge', 'icon' => 'mt-icon_autorenew'],
+        ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'value' => 'Single payment only', 'icon' => 'mt-icon_paid'],
+        ['key' => 'keep_trading', 'label' => 'Keep Trading', 'value' => 'Trade without pause', 'icon' => 'mt-icon_play-arrow'],
+        ['key' => 'ongoing_support', 'label' => 'Ongoing Support', 'value' => 'Always-on help', 'icon' => 'mt-icon_call'],
     ];
 
     public const META_ACTIVATION = [
