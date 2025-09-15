@@ -19,7 +19,7 @@ $productName = (string)($current['name'] ?? 'Account');
 ?>
 <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
   data-bs-target="#changeSubcriptionModal">
-  <div class="border-gray d-flex flex-wrap align-items-center gap-2 mb-3 p-3 rounded-2xl">
+  <div class="border-gray d-flex flex-wrap align-items-center gap-2 p-3 rounded-2xl">
     <div class="d-flex gap-3 flex-grow-1 flex-shirk-0 align-items-center">
       <div class="badge-mega badge-mega-sm <?php echo esc_attr($badgeClass); ?>" id="mt-badge">
         <?php

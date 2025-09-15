@@ -577,6 +577,11 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     mask-image: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none"><mask id="mask0_12909_529" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9" /></mask><g mask="url(%23mask0_12909_529)"><path d="M12.6 12L8 7.4L9.4 6L15.4 12L9.4 18L8 16.6L12.6 12Z" fill="black" /></g></svg>');
 }
 
+.mt-icon_chevron-left {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_14893_11147" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_14893_11147)"><path d="M14 18L8 12L14 6L15.4 7.4L10.8 12L15.4 16.6L14 18Z" fill="white"/></g></svg>');
+}
+
+
 /* END ICONS */
 
 /* BADGE */
@@ -802,4 +807,113 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 /* gris si no quieres mostrar verde */
 .mt-progress-bar--primary .mt-progress-bar__fill {
     background: var(--Primary-400, #14b8a6);
+}
+
+/* ===== Button ===== */
+.mt-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+/* estados disabled genéricos */
+.mt-btn[disabled],
+.mt-btn.disabled,
+.mt-btn.is-disabled,
+.mt-btn[aria-disabled="true"] {
+  pointer-events: none;
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ===== TAMAÑOS ===== */
+.mt-btn--md { font-size: 16px; padding: 12px 16px; min-height: 48px; }
+.mt-btn--sm { font-size: 16px; padding: 12px 12px; } 
+
+/* ===== VARIANTES ===== */
+/* Primary */
+.mt-btn--primary {
+  color: var(--Text-Action-Primary-Solid, #131210);
+  background: var(--theme-color, #F1A035);
+  border-color: var(--theme-color, #F1A035);
+}
+.mt-btn--primary:hover,
+.mt-btn--primary.active {
+  color: var(--black-color, #000);
+  background: var(--Surface-Primary-Hover, #ffb861);
+  border-color: var(--Surface-Primary-Hover, #ffb861);
+}
+.mt-btn--primary:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--theme-color, #F1A035) 35%, transparent);
+}
+
+/* Secondary (oscuro) */
+.mt-btn--secondary {
+  color: var(--Text-Action-Dark-Solid, #A8A29E);
+  background: var(--surface-dark, #292524);
+  border-color: var(--colors-gray-700, #404040);
+}
+.mt-btn--secondary:hover,
+.mt-btn--secondary.active {
+  background: var(--Surface-Dark-Hover, #32302f);
+}
+.mt-btn--secondary:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--colors-gray-700, #404040) 40%, transparent);
+}
+
+/* Default (claro) */
+.mt-btn--default {
+  color: var(--surface-dark, #292524);
+  background: var(--white-color, #fff);
+  border-color: var(--white-color, #fff);
+}
+.mt-btn--default:hover,
+.mt-btn--default.active {
+  background: #D4D4D4;
+  border-color: #D4D4D4;
+  color: var(--surface-dark, #292524);
+}
+.mt-btn--default:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--Secondary-300, #93C5FD) 35%, transparent);
+}
+
+/* Outline (para fondos oscuros) */
+.mt-btn--outline {
+  color: var(--Text-Action-Light-Text, #fff);
+  background: transparent;
+  border-color: transparent;
+}
+.mt-btn--outline:hover,
+.mt-btn--outline.active { background: rgba(255,255,255,.10); }
+.mt-btn--outline:active { background: rgba(255,255,255,.16); }
+.mt-btn--outline:focus-visible {
+  outline: 0;
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.30);
+}
+
+/* ===== Icono “Add” (hereda el color del texto) ===== */
+.mt-btn--add-icon { position: relative; gap: 8px; }
+.mt-btn--add-icon::before {
+  content: "";
+  width: 24px; height: 24px; display: inline-block; vertical-align: middle;
+  background-color: currentColor;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23000" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>') no-repeat 50% 50% / contain;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23000" d="M11 5h2v6h6v2h-2 6v6h-2v-6H5v-2h6z"/></svg>') no-repeat 50% 50% / contain;
 }

@@ -102,10 +102,10 @@ $GLOBALS['mt_selected_id']        = $mt_selected_id;
       <?php render_sidebar(); ?>
     </div>
 
-    <div class="mt-page__main">
+    <div class="mt-page__main d-flex flex-column gap-32">
       <?php get_template_part('template-parts/account/account-no-order'); ?>
 
-      <div class="mt-account-test">
+      <div class="mt-account-selection">
         <?php
         // Selector (pasa UI + el seleccionado actual para marcarlo)
         get_template_part(
