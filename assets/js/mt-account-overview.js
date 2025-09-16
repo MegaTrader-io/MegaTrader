@@ -1,11 +1,11 @@
 /* mt-account-overview.js */
-
 (function () {
+  // ===== Utilidades DOM =====
   const $  = (sel, root=document) => root.querySelector(sel);
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const clamp = (n, min, max) => Math.max(min, Math.min(max, parseInt(n, 10) || 0));
 
-  /* ========= Donuts ========= */
+  // ===== Donuts (si los usas en performance) =====
   function initDonuts(root=document){
     $$(".mt-donut", root).forEach(d=>{
       const v = clamp(d.dataset.donutValue, 0, 100);
@@ -16,38 +16,27 @@
     });
   }
 
-  /* ========= Dual bar (Reward/Risk con separador 4px) ========= */
-  function initDualBars(root=document){
-    $$(".mt-dualbar", root).forEach(bar=>{
-      const reward = clamp(bar.dataset.reward, 0, 100);
-      const risk   = clamp(bar.dataset.risk,   0, 100);
-      const hasAny = (reward > 0 || risk > 0);
+  // ===== Barras divididas Reward/Risk (si las usas) =====
+  function initSplitBars(root=document){
+    $$(".mt-dualbar", root).forEach(el=>{
+      const reward = clamp(el.dataset.reward, 0, 100);
+      const risk   = clamp(el.dataset.risk,   0, 100);
+      const hasAny = (reward + risk) > 0;
 
-      bar.classList.toggle("is-empty", !hasAny);
-      bar.classList.toggle("has-data", hasAny);
+      el.style.setProperty("--split", reward + "%");
+      el.classList.toggle("is-empty", !hasAny);
 
-      // Solo seteamos --split si hay data; si no, dejamos que el CSS ponga el estado "vacío"
-      if (hasAny) {
-        bar.style.setProperty("--split", reward + "%");
-      } else {
-        bar.style.removeProperty("--split");
-      }
-
-      const left  = $(".mt-dualbar__seg--reward", bar);
-      const right = $(".mt-dualbar__seg--risk", bar);
-
-      if (left) {
-        left.style.width = hasAny ? (reward + "%") : "0%";
-        left.classList.toggle("is-full", reward === 100);
-      }
-      if (right) {
+      const left  = el.querySelector(".mt-dualbar__left");
+      const right = el.querySelector(".mt-dualbar__right");
+      if (left && right) {
+        left.style.width  = hasAny ? (reward + "%") : "0%";
         right.style.width = hasAny ? (risk   + "%") : "0%";
         right.classList.toggle("is-full", risk === 100);
       }
     });
   }
 
-  /* ========= Progress genérico (si lo usas en otras partes) ========= */
+  // ===== Progress genérico =====
   function initProgressBars(root=document){
     $$(".mt-progress-bar", root).forEach(el=>{
       const v = clamp(el.dataset.progress, 0, 100);
@@ -55,116 +44,148 @@
     });
   }
 
-  /* ========= Tabs + carrusel + gradientes ========= */
-  function setupTabsCarousel(root){
-    const viewport = $(".mt-tabs-viewport", root);
-    const group    = $(".mt-toggle-group", root);
-    const gradL    = $(".mt-tabs-gradient--left", root);
-    const gradR    = $(".mt-tabs-gradient--right", root);
-    const btnPrev  = $(".js-tabs-prev", root);
-    const btnNext  = $(".js-tabs-next", root);
+  // ===== Interacciones account-data (copiar / ver ocultar) =====
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-copy]');
+    if (!btn) return;
+    const val = btn.getAttribute('data-copy') || '';
+    if (!val) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(val).catch(()=>{});
+    }
+  });
 
-    if (!viewport || !group) return;
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('.js-pwd-toggle');
+    if (!t) return;
+    const wrap = t.closest('.d-flex') || t.parentElement;
+    const mask = wrap && wrap.querySelector('.js-pwd-mask');
+    const real = t.getAttribute('data-pwd') || '';
+    if (!mask) return;
+    const hidden = mask.textContent.trim().startsWith('•') || mask.textContent.trim() === '--';
+    mask.textContent = hidden ? real : '••••••••••••';
+    t.setAttribute('aria-expanded', String(hidden));
+    t.textContent = hidden ? 'Hide' : 'Show';
+  });
 
-    const SCROLL_STEP = () => Math.max(120, group.clientWidth * 0.7);
+  // ===== Bus central de refrescos (maneja el preloader) =====
+  window.mtRefresh = (function () {
+    const handlers = {};
+    let inflight = 0;
 
-    function updateGradients(){
-      const max = group.scrollWidth - group.clientWidth;
+    const show = () => document.querySelector('.preloader')?.classList.add('is-active');
+    const hide = () => document.querySelector('.preloader')?.classList.remove('is-active');
 
-      if (max <= 1) {
-        // No hay overflow: ocultar ambos y deshabilitar flechas
-        if (gradL) gradL.style.opacity = "0";
-        if (gradR) gradR.style.opacity = "0";
-        if (btnPrev) btnPrev.disabled = true;
-        if (btnNext) btnNext.disabled = true;
-        return;
+    function track(maybePromise) {
+      inflight++; show();
+      const done = () => { if (--inflight <= 0) hide(); };
+      if (maybePromise && typeof maybePromise.finally === 'function') {
+        return maybePromise.finally(done);
       }
-
-      const x = group.scrollLeft;
-
-      if (gradL) gradL.style.opacity = (x > 1) ? "1" : "0";
-      if (gradR) gradR.style.opacity = (x < max - 1) ? "1" : "0";
-
-      if (btnPrev) btnPrev.disabled = (x <= 1);
-      if (btnNext) btnNext.disabled = (x >= max - 1);
+      setTimeout(done, 200);
     }
 
-    group.addEventListener("scroll", updateGradients);
-    window.addEventListener("resize", updateGradients);
+    return {
+      register(name, fn) { handlers[name] = fn; },
+      refreshAll(id) { Object.values(handlers).forEach(fn => fn && track(fn(id))); },
+    };
+  })();
 
-    btnPrev && btnPrev.addEventListener("click", () => {
-      group.scrollBy({ left: -SCROLL_STEP(), behavior: "smooth" });
-    });
-    btnNext && btnNext.addEventListener("click", () => {
-      group.scrollBy({ left: SCROLL_STEP(), behavior: "smooth" });
-    });
-
-    // Asegurar que el tab activo esté a la vista al cargar
-    const activeChip = $('[data-fc-tab].active', root) || $('[data-fc-tab][aria-selected="true"]', root);
-    if (activeChip) {
-      activeChip.scrollIntoView({ inline: "center", block: "nearest" });
-    }
-
-    // Primer cálculo
-    updateGradients();
-
-    // Devuelve un actualizador por si necesitas llamarlo tras interacciones
-    return updateGradients;
+  // ===== AJAX helpers =====
+  function getAjaxUrl() {
+    return (window.mtAccounts && mtAccounts.ajaxUrl) || '/wp-admin/admin-ajax.php';
+  }
+  function getNonce() {
+    return (window.mtAccounts && mtAccounts.nonce) || '';
   }
 
-  function initFeatureTabs(){
-    $$('.mt-feature-tabs').forEach(tabsRoot => {
-      const tablist = $('[data-fc-tabs]', tabsRoot);
-      const panels  = $$('.mt-feature-panel', tabsRoot);
-      const refreshGradients = setupTabsCarousel(tabsRoot);
+  // ===== Account Data: refresco por AJAX (PROMISE) =====
+  window.mtRefreshAccountData = function (accountId) {
+    const container =
+      document.getElementById('mt-account-data-container') ||
+      document.getElementById('mt-performance-data'); // fallback por naming antiguo
+    if (!container) return Promise.resolve();
 
-      tablist?.addEventListener('click', (ev)=>{
-        const chip = ev.target.closest('[data-fc-tab]');
-        if (!chip) return;
+    const body = new URLSearchParams();
+    body.set('action', 'mt_accounts_data');
+    body.set('nonce', getNonce());
+    body.set('account_id', String(accountId || 0));
 
-        const id = chip.getAttribute('data-id');
+    return fetch(getAjaxUrl(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    })
+    .then(r => {
+      const ct = r.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return r.json();
+      return r.text().then(html => ({ success: true, data: { html } }));
+    })
+    .then(resp => {
+      const html = resp?.data?.html || resp?.html || '';
+      if (html) {
+        container.innerHTML = html;
+      }
+      // reinit visuales por si el template trae componentes
+      initDonuts(container);
+      initSplitBars(container);
+      initProgressBars(container);
+    });
+  };
 
-        // chips
-        $$('.mt-toggle-button', tablist).forEach(c=>{
-          const active = (c === chip);
-          c.classList.toggle('active', active);
-          c.setAttribute('aria-selected', active ? 'true' : 'false');
-          c.tabIndex = active ? 0 : -1;
-        });
+  // ===== Performance: si YA existe, NO lo tocamos; si no, definimos wrapper (PROMISE) =====
+  if (typeof window.mtRefreshAccountPerformance !== 'function') {
+    window.mtRefreshAccountPerformance = function (accountId) {
+      const container = document.getElementById('mt-performance-container');
+      if (!container) return Promise.resolve();
 
-        // Llevar el chip al centro visual
-        chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      const body = new URLSearchParams();
+      body.set('action', 'mt_accounts_performance'); // coincide con tu AJAX actual
+      body.set('nonce', getNonce());
+      body.set('account_id', String(accountId || 0));
 
-        // panel correspondiente
-        panels.forEach(p=>{
-          const match = p.getAttribute('data-panel-for') === id;
-          if (match) {
-            p.removeAttribute('hidden');
-            // Re-init medidores dentro del panel activo
-            initDonuts(p);
-            initDualBars(p);
-            initProgressBars(p);
-          } else {
-            p.setAttribute('hidden', '');
-          }
-        });
-
-        // Recalcular gradientes tras el cambio
-        if (typeof refreshGradients === 'function') refreshGradients();
+      return fetch(getAjaxUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      })
+      .then(r => {
+        const ct = r.headers.get('content-type') || '';
+        if (ct.includes('application/json')) return r.json();
+        return r.text().then(html => ({ success: true, data: { html } }));
+      })
+      .then(resp => {
+        const html = resp?.data?.html || resp?.html || '';
+        if (html) {
+          container.innerHTML = html;
+          // reinit visuales en performance
+          initDonuts(container);
+          initSplitBars(container);
+          initProgressBars(container);
+        }
       });
-    });
+    };
   }
 
-  function init(){
-    initFeatureTabs();
-    initDonuts();
-    initDualBars();
-    initProgressBars();
+  // ===== Registro en el bus (no rompe nada si alguno no existe) =====
+  if (window.mtRefresh && window.mtRefresh.register) {
+    if (typeof window.mtRefreshAccountPerformance === 'function') {
+      window.mtRefresh.register('performance', window.mtRefreshAccountPerformance);
+    }
+    window.mtRefresh.register('accountData', window.mtRefreshAccountData);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  // ===== Disparo global al cambiar cuenta =====
+  document.addEventListener('mt:accountSelected', (e) => {
+    const id = e && e.detail && e.detail.accountId;
+    if (!id) return;
+    window.mtRefresh.refreshAll(id);
+  });
+
+  // ===== Init visual al cargar (por si hay contenido server-side ya pintado) =====
+  document.addEventListener('DOMContentLoaded', () => {
+    initDonuts(document);
+    initSplitBars(document);
+    initProgressBars(document);
+  });
 })();

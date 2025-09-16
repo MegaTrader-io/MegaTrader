@@ -407,6 +407,201 @@ if (!function_exists('mt_value_compare_icon_classes')) {
     }
 }
 
+// Mapea links por plataforma
+function mt_accounts_default_platform_links($code) {
+  $code = strtolower((string)$code);
+  $map = [
+    'ctrader' => [
+      'web'       => 'https://app.spotware.com',
+      'appstore'  => 'https://apps.apple.com/app/ctrader/id767428811',
+      'playstore' => 'https://play.google.com/store/apps/details?id=com.spotware.ct',
+      'icon_class'=> 'mt-icon-ctrader',
+      'name'      => 'cTrader',
+    ],
+    'mt4' => [
+      'web'       => '',
+      'appstore'  => 'https://apps.apple.com/app/metatrader-4/id496212596',
+      'playstore' => 'https://play.google.com/store/apps/details?id=net.metaquotes.metatrader4',
+      'icon_class'=> 'mt-icon-mt4',
+      'name'      => 'MetaTrader 4',
+    ],
+    'mt5' => [
+      'web'       => '',
+      'appstore'  => 'https://apps.apple.com/app/metatrader-5/id413251709',
+      'playstore' => 'https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5',
+      'icon_class'=> 'mt-icon-mt5',
+      'name'      => 'MetaTrader 5',
+    ],
+  ];
+  $base = ['web'=>'','appstore'=>'','playstore'=>'','icon_class'=>'','name'=>'Trading Platform'];
+  return $map[$code] ?? $base;
+}
+
+// Construye credenciales desde un objeto/array "cuenta" (JSON/API)
+function mt_accounts_build_credentials_from_account($account) {
+  $a = is_object($account) ? json_decode(json_encode($account), true) : (array)$account;
+
+  $login   = $a['login'] ?? ($a['credentials']['login'] ?? ($a['accountNumber'] ?? ($a['tradingLogin'] ?? '')));
+  $server  = $a['server'] ?? ($a['credentials']['server'] ?? '');
+  $pwd     = $a['password'] ?? ($a['credentials']['password'] ?? '');
+
+  $platform_code = strtolower($a['platform']['code'] ?? ($a['platform_code'] ?? ''));
+  $platform_name = $a['platform']['name'] ?? ($a['platform_name'] ?? '');
+  $links = [
+    'web'       => $a['links']['web'] ?? '',
+    'appstore'  => $a['links']['appstore'] ?? '',
+    'playstore' => $a['links']['playstore'] ?? '',
+  ];
+
+  // Defaults por plataforma
+  if (!$links['web'] && !$links['appstore'] && !$links['playstore']) {
+    $links = array_intersect_key(mt_accounts_default_platform_links($platform_code), $links + ['x'=>1]);
+  }
+
+  $platform_defaults = mt_accounts_default_platform_links($platform_code);
+  return [
+    'login'    => (string)$login,
+    'password' => (string)$pwd,
+    'server'   => (string)$server,
+    'links'    => $links,
+    'platform' => [
+      'code'       => $platform_code,
+      'name'       => $platform_name ?: $platform_defaults['name'],
+      'icon_class' => $platform_defaults['icon_class'],
+    ],
+  ];
+}
+
+// Fallback a post_meta si no vino nada por JSON/API
+function mt_accounts_build_credentials_from_meta($account_id) {
+  return [
+    'login'    => get_post_meta($account_id, 'mt_login', true),
+    'password' => get_post_meta($account_id, 'mt_password', true),
+    'server'   => get_post_meta($account_id, 'mt_server', true),
+    'links'    => [
+      'web'       => get_post_meta($account_id, 'mt_link_web', true),
+      'appstore'  => get_post_meta($account_id, 'mt_link_appstore', true),
+      'playstore' => get_post_meta($account_id, 'mt_link_playstore', true),
+    ],
+    'platform' => [
+      'code'       => strtolower(get_post_meta($account_id, 'mt_platform_code', true)),
+      'name'       => get_post_meta($account_id, 'mt_platform_name', true),
+      'icon_class' => '',
+    ],
+  ];
+}
+
+// PUBLIC: obtiene credenciales por ID unificando fuentes
+// === Credenciales por accountId (usa el mismo fetch del shortcode que performance) ===
+function mt_accounts_get_credentials($account_id) {
+  // 1) Sanitizar como STRING (Mongo ObjectId de 24 hex)
+  $account_id = sanitize_text_field($account_id ?? '');
+  if (!preg_match('/^[a-f0-9]{24}$/i', $account_id)) {
+    // Retorno seguro si el id no es válido
+    return [
+      'login'    => '',
+      'password' => '',
+      'server'   => '',
+      'links'    => ['web' => '', 'appstore' => '', 'playstore' => ''],
+      'platform' => ['code' => '', 'name' => 'Trading Platform', 'icon_class' => ''],
+    ];
+  }
+
+  // 2) Consultar la API usando TU helper del shortcode (mismo flujo que performance)
+  //    IMPORTANT: pasar los "atts" como array, NO el id suelto.
+  $atts = [
+    'id'       => $account_id,
+    'page'     => 1,
+    'perpage'  => 10,
+    'output'   => 'json',
+  ];
+  // Asegúrate que la firma de esta función acepte $atts = []
+  $json = mt_accounts_fetch_account_json_by_shortcode($atts);
+
+  // 3) Elegir la cuenta pedida y construir credenciales
+  $acc = function_exists('mt_accounts_pick_account_from_json')
+    ? mt_accounts_pick_account_from_json($json, $account_id)
+    : null;
+
+  $creds = mt_accounts_build_credentials_from_account($acc);
+
+  // 4) Defaults + retorno con shape estable
+  $defaults = [
+    'login'    => '',
+    'password' => '',
+    'server'   => '',
+    'links'    => ['web' => '', 'appstore' => '', 'playstore' => ''],
+    'platform' => ['code' => '', 'name' => 'Trading Platform', 'icon_class' => ''],
+  ];
+  return array_replace_recursive($defaults, is_array($creds) ? $creds : []);
+}
+
+
+// AJAX: devuelve el HTML del template account-data
+// === AJAX: devuelve el HTML de template-parts/account/account-data por accountId ===
+function mt_accounts_ajax_account_data() {
+  check_ajax_referer('mt-acc-nonce', 'nonce');
+
+  $account_id = isset($_POST['account_id']) ? sanitize_text_field($_POST['account_id']) : '';
+
+  ob_start();
+  get_template_part('template-parts/account/account-data', null, [
+    'meta' => ['accountId' => $account_id],
+  ]);
+  $html = ob_get_clean();
+
+  wp_send_json_success(['html' => $html]);
+}
+
+// === Construye credenciales desde el JSON de una cuenta ===
+if (!function_exists('mt_accounts_build_credentials_from_account')) {
+  function mt_accounts_build_credentials_from_account($account) {
+    if (empty($account)) {
+      return [
+        'login'    => '',
+        'password' => '',
+        'server'   => '',
+        'links'    => ['web'=>'','appstore'=>'','playstore'=>''],
+        'platform' => ['code'=>'','name'=>'Trading Platform','icon_class'=>''],
+      ];
+    }
+    $a = is_object($account) ? json_decode(json_encode($account), true) : (array)$account;
+
+    $login    = $a['login'] ?? ($a['credentials']['login'] ?? ($a['accountNumber'] ?? ($a['tradingLogin'] ?? '')));
+    $password = $a['password'] ?? ($a['credentials']['password'] ?? '');
+    $server   = $a['server'] ?? ($a['credentials']['server'] ?? '');
+
+    $platform_code = strtolower($a['platform']['code'] ?? ($a['platform_code'] ?? ''));
+    $platform_name = $a['platform']['name'] ?? ($a['platform_name'] ?? 'Trading Platform');
+
+    $links = [
+      'web'       => $a['links']['web']       ?? '',
+      'appstore'  => $a['links']['appstore']  ?? '',
+      'playstore' => $a['links']['playstore'] ?? '',
+    ];
+
+    return [
+      'login'    => (string)$login,
+      'password' => (string)$password,
+      'server'   => (string)$server,
+      'links'    => $links,
+      'platform' => [
+        'code'       => $platform_code,
+        'name'       => $platform_name,
+        'icon_class' => '',
+      ],
+    ];
+  }
+}
+
+
+add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
+add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
+
+
+
+
+
 
 
 

@@ -1087,37 +1087,34 @@ add_action( 'wp_enqueue_scripts', 'mt_enqueue_myaccount_script' );
 /**
  * Enqueue mt-account-overview.js on WooCommerce My Account Overview
  */
-// Encola SOLO en /my-account/overview/, sin mezclar con account.js
 function mt_enqueue_overview_script_path_only() {
-  // Detecta por path, sin depender de WooCommerce
-  $req_path = rtrim( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
-  if ( $req_path !== '/my-account/overview' ) return;
+  $req_path = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
+  if ($req_path !== '/my-account/overview') return;
 
-  // Busca primero en child, luego en parent
   $candidates = [
-    [ get_stylesheet_directory(),     get_stylesheet_directory_uri() ],
-    [ get_template_directory(),       get_template_directory_uri()   ],
+    [ get_stylesheet_directory(), get_stylesheet_directory_uri() ],
+    [ get_template_directory(),   get_template_directory_uri()   ],
   ];
 
-  foreach ( $candidates as [$dir, $uri] ) {
+  foreach ($candidates as [$dir, $uri]) {
     $file = $dir . '/assets/js/mt-account-overview.js';
-    if ( file_exists( $file ) ) {
+    if (file_exists($file)) {
       wp_enqueue_script(
         'mt-account-overview',
         $uri . '/assets/js/mt-account-overview.js',
-        ['jquery'],                                  // quita 'jquery' si no lo usas
-        filemtime( $file ),
+        ['jquery'],
+        filemtime($file),
         true
       );
+      wp_localize_script('mt-account-overview', 'mtAccounts', [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('mt-acc-nonce'),
+      ]);
       return;
     }
   }
 }
 add_action('wp_enqueue_scripts', 'mt_enqueue_overview_script_path_only', 101);
-
-
-
-
 
 require_once get_template_directory() . '/inc/auth-hooks.php';
 require_once get_template_directory() . '/inc/register-hooks.php';

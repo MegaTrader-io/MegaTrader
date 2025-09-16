@@ -161,6 +161,7 @@
         // Mostrar preloader y cerrar modal
         showPreloader();
         closeModal();
+        
 
         // Lanza un evento por si otro script hace el AJAX del performance
         var ev = new CustomEvent('mt:accountSelected', { detail: { accountId: selectedId } });
