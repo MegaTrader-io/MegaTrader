@@ -3609,8 +3609,7 @@ body.mt-placing .woocommerce-checkout {
 
 .mt-summary__divider {
   flex: 1 1 0;
-  height: 0;
-  transform: rotate(90deg);
+  height: 219px;
   transform-origin: top left;
   border-top: 1px solid var(--Colors-Gray-700, #404040);
   opacity: .9
@@ -3671,34 +3670,77 @@ body.mt-placing .woocommerce-checkout {
   text-transform: uppercase
 }
 
-.mt-summary__bars {
-  align-self: stretch;
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 4px;
-  max-width: 250px
+/* ====== Cabezal + Dual bar (Reward/Risk) ====== */
+/* ====== Cabezal + Dual bar (Reward/Risk) ====== */
+.mt-rr{
+  width:100%;
+  max-width:250px;           /* controla el ancho total del bloque centro */
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;                   /* espacio entre los títulos Reward | Risk */
 }
 
-.mt-summary__bar {
-  flex: 1 1 0;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 4px
+.mt-rr__head{
+  grid-column:1 / -1;
+  display:flex; align-items:center; justify-content:space-between;
 }
 
-.mt-summary__bar-label {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 24px
+.mt-rr-title{ font:700 16px/24px Roboto,system-ui,sans-serif }
+.mt-rr-title.success{ color:var(--Text-Success,#2DD4BF) }
+.mt-rr-title.error{   color:var(--Error-500,#F43F5E) }
+
+/* ====== Dual bar ====== */
+.mt-dualbar{
+  grid-column:1 / -1;
+  position:relative;
+  height:8px;
+  background:var(--Colors-Gray-700,#404040);   /* track gris por defecto (sin data) */
+  border-radius:4px;
+  overflow:hidden;
+  --split: 50%;                                 /* lo setea JS: reward% */
 }
 
-.mt-summary__bar-label--success {
-  color: var(--Text-Success, #2DD4BF)
+/* cuando hay data ocultamos el track gris para que no quede “pedazo gris” */
+.mt-dualbar.has-data{ background:transparent }
+
+/* divisor SIEMPRE visible de 4px, centrado en el split */
+.mt-dualbar::after{
+  content:"";
+  position:absolute; top:0; bottom:0;
+  width:4px;
+  left:var(--split);
+  transform:translateX(-50%);
+  background:var(--Surface-Page,#1E1E1E);      /* mismo fondo del panel */
+  pointer-events:none;
 }
 
-.mt-summary__bar-label--error {
-  color: var(--Error-500, #F43F5E)
+.mt-dualbar__seg{
+  position:absolute; top:0; bottom:0;
+  width:0%;                                    /* el JS la setea */
 }
+
+/* izquierda (Reward) */
+.mt-dualbar__seg--reward{
+  left:0;
+  background:var(--Success-400,#2DD4BF);
+  border-top-left-radius:4px; border-bottom-left-radius:4px;
+}
+
+/* derecha (Risk) */
+.mt-dualbar__seg--risk{
+  right:0;
+  background:var(--Error-500,#F43F5E);
+  border-top-right-radius:4px; border-bottom-right-radius:4px;
+}
+
+/* si una parte ocupa 100%, redondeo ambas esquinas */
+.mt-dualbar__seg.is-full{ border-radius:4px }
+
+/* cuando NO hay data (reward=0 y risk=0), que no se pinte ningún segmento */
+.mt-dualbar.is-empty .mt-dualbar__seg{ width:0% }
+
+
+
 
 /* NOTA: la barra usa el componente global .mt-progress-bar / __fill */
 

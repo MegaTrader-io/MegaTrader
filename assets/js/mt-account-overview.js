@@ -1,102 +1,170 @@
+/* mt-account-overview.js */
+
 (function () {
-  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+  const $  = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, parseInt(n, 10) || 0));
 
-  document.querySelectorAll('.mt-feature-tabs').forEach(root => {
-    const viewport = root.querySelector('.mt-tabs-viewport');
-    const scroller = root.querySelector('.mt-toggle-group');
-    const prevBtn  = root.querySelector('.js-tabs-prev');
-    const nextBtn  = root.querySelector('.js-tabs-next');
-    const gradL    = root.querySelector('.mt-tabs-gradient--left');
-    const gradR    = root.querySelector('.mt-tabs-gradient--right');
-    const tabs     = Array.from(root.querySelectorAll('[data-fc-tab]'));
-    const panels   = Array.from(root.querySelectorAll('[data-fc-panel]'));
-
-    /* ---------- helpers ---------- */
-    const updateGradients = () => {
-      const max = scroller.scrollWidth - scroller.clientWidth;
-      const x   = Math.round(scroller.scrollLeft);
-      const atStart = x <= 0;
-      const atEnd   = x >= max - 1;
-
-      if (gradL) gradL.style.opacity = atStart ? 0 : 1;
-      if (gradR) gradR.style.opacity = atEnd ? 0 : 1;
-
-      if (prevBtn) prevBtn.disabled = atStart;
-      if (nextBtn) nextBtn.disabled = atEnd;
-    };
-
-    const ensureVisible = (chip) => {
-      const v = viewport.getBoundingClientRect();
-      const r = chip.getBoundingClientRect();
-      const pad = 8;
-      if (r.left < v.left + pad) {
-        scroller.scrollBy({ left: r.left - v.left - pad, behavior: 'smooth' });
-      } else if (r.right > v.right - pad) {
-        scroller.scrollBy({ left: r.right - v.right + pad, behavior: 'smooth' });
-      }
-    };
-
-    const step = (dir) => {
-      const v = viewport.getBoundingClientRect();
-      if (dir > 0) { // right
-        const target = tabs.find(t => t.getBoundingClientRect().right > v.right - 1);
-        if (target) {
-          scroller.scrollBy({ left: (target.getBoundingClientRect().right - v.right) + 8, behavior: 'smooth' });
-        }
-      } else { // left
-        const target = [...tabs].reverse().find(t => t.getBoundingClientRect().left < v.left + 1);
-        if (target) {
-          scroller.scrollBy({ left: (target.getBoundingClientRect().left - v.left) - 8, behavior: 'smooth' });
-        }
-      }
-    };
-
-    const activate = (id) => {
-      tabs.forEach(t => {
-        const on = t.dataset.id === id;
-        t.classList.toggle('active', on);
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-        t.tabIndex = on ? 0 : -1;
-      });
-      panels.forEach(p => {
-        const show = p.getAttribute('data-panel-for') === id;
-        if (show) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
-      });
-    };
-
-    /* ---------- events ---------- */
-    tabs.forEach(t => {
-      t.addEventListener('click', () => {
-        const id = t.dataset.id;
-        if (!id) return;
-        activate(id);
-        ensureVisible(t);
-      });
+  /* ========= Donuts ========= */
+  function initDonuts(root=document){
+    $$(".mt-donut", root).forEach(d=>{
+      const v = clamp(d.dataset.donutValue, 0, 100);
+      d.style.setProperty("--mt-donut-value", v);
+      d.classList.toggle("is-empty", v === 0);
+      const t = $(".mt-donut__percent", d);
+      if (t) t.textContent = v ? (v + "%") : "--";
     });
-    if (prevBtn) prevBtn.addEventListener('click', () => step(-1));
-    if (nextBtn) nextBtn.addEventListener('click', () => step(1));
-    scroller.addEventListener('scroll', updateGradients);
-    window.addEventListener('resize', updateGradients);
+  }
 
-    /* ---------- init (active tab + gradients) ---------- */
-    const initial = tabs.find(t => t.classList.contains('active') || t.getAttribute('aria-selected') === 'true') || tabs[0];
-    if (initial) {
-      activate(initial.dataset.id);
-      ensureVisible(initial);
+  /* ========= Dual bar (Reward/Risk con separador 4px) ========= */
+  function initDualBars(root=document){
+    $$(".mt-dualbar", root).forEach(bar=>{
+      const reward = clamp(bar.dataset.reward, 0, 100);
+      const risk   = clamp(bar.dataset.risk,   0, 100);
+      const hasAny = (reward > 0 || risk > 0);
+
+      bar.classList.toggle("is-empty", !hasAny);
+      bar.classList.toggle("has-data", hasAny);
+
+      // Solo seteamos --split si hay data; si no, dejamos que el CSS ponga el estado "vacío"
+      if (hasAny) {
+        bar.style.setProperty("--split", reward + "%");
+      } else {
+        bar.style.removeProperty("--split");
+      }
+
+      const left  = $(".mt-dualbar__seg--reward", bar);
+      const right = $(".mt-dualbar__seg--risk", bar);
+
+      if (left) {
+        left.style.width = hasAny ? (reward + "%") : "0%";
+        left.classList.toggle("is-full", reward === 100);
+      }
+      if (right) {
+        right.style.width = hasAny ? (risk   + "%") : "0%";
+        right.classList.toggle("is-full", risk === 100);
+      }
+    });
+  }
+
+  /* ========= Progress genérico (si lo usas en otras partes) ========= */
+  function initProgressBars(root=document){
+    $$(".mt-progress-bar", root).forEach(el=>{
+      const v = clamp(el.dataset.progress, 0, 100);
+      el.style.setProperty("--mt-progress-value", v + "%");
+    });
+  }
+
+  /* ========= Tabs + carrusel + gradientes ========= */
+  function setupTabsCarousel(root){
+    const viewport = $(".mt-tabs-viewport", root);
+    const group    = $(".mt-toggle-group", root);
+    const gradL    = $(".mt-tabs-gradient--left", root);
+    const gradR    = $(".mt-tabs-gradient--right", root);
+    const btnPrev  = $(".js-tabs-prev", root);
+    const btnNext  = $(".js-tabs-next", root);
+
+    if (!viewport || !group) return;
+
+    const SCROLL_STEP = () => Math.max(120, group.clientWidth * 0.7);
+
+    function updateGradients(){
+      const max = group.scrollWidth - group.clientWidth;
+
+      if (max <= 1) {
+        // No hay overflow: ocultar ambos y deshabilitar flechas
+        if (gradL) gradL.style.opacity = "0";
+        if (gradR) gradR.style.opacity = "0";
+        if (btnPrev) btnPrev.disabled = true;
+        if (btnNext) btnNext.disabled = true;
+        return;
+      }
+
+      const x = group.scrollLeft;
+
+      if (gradL) gradL.style.opacity = (x > 1) ? "1" : "0";
+      if (gradR) gradR.style.opacity = (x < max - 1) ? "1" : "0";
+
+      if (btnPrev) btnPrev.disabled = (x <= 1);
+      if (btnNext) btnNext.disabled = (x >= max - 1);
     }
+
+    group.addEventListener("scroll", updateGradients);
+    window.addEventListener("resize", updateGradients);
+
+    btnPrev && btnPrev.addEventListener("click", () => {
+      group.scrollBy({ left: -SCROLL_STEP(), behavior: "smooth" });
+    });
+    btnNext && btnNext.addEventListener("click", () => {
+      group.scrollBy({ left: SCROLL_STEP(), behavior: "smooth" });
+    });
+
+    // Asegurar que el tab activo esté a la vista al cargar
+    const activeChip = $('[data-fc-tab].active', root) || $('[data-fc-tab][aria-selected="true"]', root);
+    if (activeChip) {
+      activeChip.scrollIntoView({ inline: "center", block: "nearest" });
+    }
+
+    // Primer cálculo
     updateGradients();
 
-    /* ---------- donuts ---------- */
-    root.querySelectorAll('.mt-donut').forEach(el => {
-      const v = clamp(parseFloat(el.getAttribute('data-donut-value') || '0'), 0, 100);
-      el.style.setProperty('--mt-donut-value', String(v));
-    });
+    // Devuelve un actualizador por si necesitas llamarlo tras interacciones
+    return updateGradients;
+  }
 
-    /* ---------- progress bars ---------- */
-    root.querySelectorAll('.mt-summary__bar[data-progress]').forEach(bar => {
-      const pct = clamp(parseFloat(bar.getAttribute('data-progress') || '0'), 0, 100);
-      const track = bar.querySelector('.mt-progress-bar');
-      if (track) track.style.setProperty('--mt-progress-value', pct + '%');
+  function initFeatureTabs(){
+    $$('.mt-feature-tabs').forEach(tabsRoot => {
+      const tablist = $('[data-fc-tabs]', tabsRoot);
+      const panels  = $$('.mt-feature-panel', tabsRoot);
+      const refreshGradients = setupTabsCarousel(tabsRoot);
+
+      tablist?.addEventListener('click', (ev)=>{
+        const chip = ev.target.closest('[data-fc-tab]');
+        if (!chip) return;
+
+        const id = chip.getAttribute('data-id');
+
+        // chips
+        $$('.mt-toggle-button', tablist).forEach(c=>{
+          const active = (c === chip);
+          c.classList.toggle('active', active);
+          c.setAttribute('aria-selected', active ? 'true' : 'false');
+          c.tabIndex = active ? 0 : -1;
+        });
+
+        // Llevar el chip al centro visual
+        chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+        // panel correspondiente
+        panels.forEach(p=>{
+          const match = p.getAttribute('data-panel-for') === id;
+          if (match) {
+            p.removeAttribute('hidden');
+            // Re-init medidores dentro del panel activo
+            initDonuts(p);
+            initDualBars(p);
+            initProgressBars(p);
+          } else {
+            p.setAttribute('hidden', '');
+          }
+        });
+
+        // Recalcular gradientes tras el cambio
+        if (typeof refreshGradients === 'function') refreshGradients();
+      });
     });
-  });
+  }
+
+  function init(){
+    initFeatureTabs();
+    initDonuts();
+    initDualBars();
+    initProgressBars();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

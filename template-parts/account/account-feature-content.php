@@ -145,15 +145,17 @@ $apiData = [
                             <span class="mt-tooltip__panel" role="tooltip">
                                 <div class="mt-tooltip__title">Reward-to-risk ratio</div>
                                 <div class="mt-tooltip__body">
-                                    <p>Measures the potential reward (profit) you achieve per trade VS the risk (losses) you take</p>
-                                    <span class="text-white">Tip:</span> One of the most important metrics to successful trading! Less risk
+                                    <p>Measures the potential reward (profit) you achieve per trade VS the risk (losses) you
+                                        take</p>
+                                    <span class="text-white">Tip:</span> One of the most important metrics to successful
+                                    trading! Less risk
                                     and more reward increases your probability of continued profitability.
                                 </div>
                             </span>
                         </span>
                     </div>
 
-                    <?php if ($reward > 0 && $risk > 0): ?>
+                    <?php if ($hasData && $ratioText): ?>
                         <div class="mt-summary__ratio">
                             <div class="mt-summary__ratio-value"><?php echo esc_html($ratioText); ?></div>
                         </div>
@@ -161,18 +163,20 @@ $apiData = [
                         <div class="mt-summary__nodata">NO DATA AVAILABLE</div>
                     <?php endif; ?>
 
-                    <div class="mt-summary__bars">
-                        <div class="mt-summary__bar" data-bar="reward" data-progress="<?php echo $rewardPct; ?>">
-                            <div class="mt-summary__bar-label mt-summary__bar-label--success">Reward</div>
-                            <div class="<?php echo $rewardBarClass; ?>">
-                                <div class="mt-progress-bar__fill"></div>
-                            </div>
+                    <!-- Nueva barra combinada -->
+                    <div class="mt-rr">
+                        <div class="mt-rr__head">
+                            <span class="mt-rr-title success">Reward</span>
+                            <span class="mt-rr-title error">Risk</span>
                         </div>
-                        <div class="mt-summary__bar" data-bar="risk" data-progress="<?php echo $riskPct; ?>">
-                            <div class="mt-summary__bar-label mt-summary__bar-label--error">Risk</div>
-                            <div class="<?php echo $riskBarClass; ?>">
-                                <div class="mt-progress-bar__fill"></div>
-                            </div>
+
+                        <?php
+                        $isEmptyBars = ($rewardPct === 0 && $riskPct === 0);
+                        ?>
+                        <div class="mt-dualbar <?php echo $isEmptyBars ? 'is-empty' : ''; ?>"
+                            data-reward="<?php echo $rewardPct; ?>" data-risk="<?php echo $riskPct; ?>">
+                            <span class="mt-dualbar__seg mt-dualbar__seg--reward"></span>
+                            <span class="mt-dualbar__seg mt-dualbar__seg--risk"></span>
                         </div>
                     </div>
                 </div>
