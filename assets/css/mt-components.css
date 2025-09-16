@@ -761,53 +761,31 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     font-weight: 500;
 }
 
-/*   PROGRESS BAR */
+/* ===== Progress Bar (global) ===== */
+.mt-progress-bar{
+  position:relative;
+  display:block;
+  height:8px;
+  background:var(--Colors-Gray-700,#404040);
+  border-radius:4px;
+  overflow:hidden;
+}
+.mt-progress-bar--sm{height:6px}
+.mt-progress-bar--md{height:8px}
+.mt-progress-bar--lg{height:12px}
 
-/* ===== Progress Bar ===== */
-.mt-progress-bar {
-    position: relative;
-    display: block;
-    height: 8px;
-    background: var(--Colors-Gray-700, #404040);
-    border-radius: 4px;
-    overflow: hidden;
+.mt-progress-bar__fill{
+  position:absolute; inset:0 auto 0 0; /* top:0;left:0;bottom:0 */
+  width:var(--mt-progress-value,0%);
+  background:var(--Success-400,#2DD4BF);
+  border-radius:inherit;
+  transition:width .25s ease;
 }
 
-.mt-progress-bar--sm {
-    height: 6px;
-}
+.mt-progress-bar--success .mt-progress-bar__fill{ background:var(--Success-400,#2DD4BF); }
+.mt-progress-bar--error   .mt-progress-bar__fill{ background:var(--Error-500,#F43F5E); }
+.mt-progress-bar--primary .mt-progress-bar__fill{ background:var(--Primary-400,#FFB34A); }
 
-.mt-progress-bar--md {
-    height: 8px;
-}
-
-.mt-progress-bar--lg {
-    height: 12px;
-}
-
-.mt-progress-bar__fill {
-    position: absolute;
-    inset: 0 auto 0 0;
-    /* top:0; left:0; bottom:0 */
-    width: var(--mt-progress-value, 0%);
-    background: var(--Success-400, #2DD4BF);
-    border-radius: inherit;
-    transition: width .25s ease;
-}
-
-/* variantes opcionales por estado (si las quieres usar) */
-.mt-progress-bar--success .mt-progress-bar__fill {
-    background: var(--Success-400, #2DD4BF);
-}
-
-.mt-progress-bar--error .mt-progress-bar__fill {
-    background: var(--Colors-Gray-600, #525252);
-}
-
-/* gris si no quieres mostrar verde */
-.mt-progress-bar--primary .mt-progress-bar__fill {
-    background: var(--Primary-400, #14b8a6);
-}
 
 /* ===== Button ===== */
 .mt-btn {

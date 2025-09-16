@@ -1,136 +1,102 @@
-/* Account Overview – Tabs + Panel + Donuts + Barras */
-
 (function () {
   const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
-  // ===== Init donuts
-  document.querySelectorAll('.mt-donut').forEach(el => {
-    const v = parseFloat(el.getAttribute('data-donut-value') || '0');
-    el.style.setProperty('--mt-donut-value', String(clamp(v, 0, 100)));
-  });
+  document.querySelectorAll('.mt-feature-tabs').forEach(root => {
+    const viewport = root.querySelector('.mt-tabs-viewport');
+    const scroller = root.querySelector('.mt-toggle-group');
+    const prevBtn  = root.querySelector('.js-tabs-prev');
+    const nextBtn  = root.querySelector('.js-tabs-next');
+    const gradL    = root.querySelector('.mt-tabs-gradient--left');
+    const gradR    = root.querySelector('.mt-tabs-gradient--right');
+    const tabs     = Array.from(root.querySelectorAll('[data-fc-tab]'));
+    const panels   = Array.from(root.querySelectorAll('[data-fc-panel]'));
 
-  // ===== Init barras Reward/Risk
-  document.querySelectorAll('.mt-summary__bar[data-progress]').forEach(bar => {
-    const pct = clamp(parseFloat(bar.getAttribute('data-progress') || '0'), 0, 100);
-    const fill = bar.querySelector('.mt-progress-bar__fill');
-    if (fill && fill.parentElement) {
-      fill.parentElement.style.setProperty('--mt-progress-value', pct + '%');
-    }
-  });
+    /* ---------- helpers ---------- */
+    const updateGradients = () => {
+      const max = scroller.scrollWidth - scroller.clientWidth;
+      const x   = Math.round(scroller.scrollLeft);
+      const atStart = x <= 0;
+      const atEnd   = x >= max - 1;
 
-  // ===== Tabs -> mostrar panel correspondiente
-  const rootTabs = document.querySelector('.mt-feature-tabs');
-  if (!rootTabs) return;
+      if (gradL) gradL.style.opacity = atStart ? 0 : 1;
+      if (gradR) gradR.style.opacity = atEnd ? 0 : 1;
 
-  const tablist  = rootTabs.querySelector('[data-fc-tabs]');
-  const viewport = rootTabs.querySelector('.mt-tabs-viewport');
-  const group    = rootTabs.querySelector('.mt-toggle-group');
-  const prevBtn  = rootTabs.querySelector('[data-fc-prev]');
-  const nextBtn  = rootTabs.querySelector('[data-fc-next]');
-  const gradL    = rootTabs.querySelector('.mt-tabs-gradient--left');
-  const gradR    = rootTabs.querySelector('.mt-tabs-gradient--right');
-  const tabs     = Array.from(rootTabs.querySelectorAll('[data-fc-tab]'));
-  const panels   = Array.from(rootTabs.querySelectorAll('[data-fc-panel]'));
+      if (prevBtn) prevBtn.disabled = atStart;
+      if (nextBtn) nextBtn.disabled = atEnd;
+    };
 
-  const activate = (id) => {
-    // tabs
+    const ensureVisible = (chip) => {
+      const v = viewport.getBoundingClientRect();
+      const r = chip.getBoundingClientRect();
+      const pad = 8;
+      if (r.left < v.left + pad) {
+        scroller.scrollBy({ left: r.left - v.left - pad, behavior: 'smooth' });
+      } else if (r.right > v.right - pad) {
+        scroller.scrollBy({ left: r.right - v.right + pad, behavior: 'smooth' });
+      }
+    };
+
+    const step = (dir) => {
+      const v = viewport.getBoundingClientRect();
+      if (dir > 0) { // right
+        const target = tabs.find(t => t.getBoundingClientRect().right > v.right - 1);
+        if (target) {
+          scroller.scrollBy({ left: (target.getBoundingClientRect().right - v.right) + 8, behavior: 'smooth' });
+        }
+      } else { // left
+        const target = [...tabs].reverse().find(t => t.getBoundingClientRect().left < v.left + 1);
+        if (target) {
+          scroller.scrollBy({ left: (target.getBoundingClientRect().left - v.left) - 8, behavior: 'smooth' });
+        }
+      }
+    };
+
+    const activate = (id) => {
+      tabs.forEach(t => {
+        const on = t.dataset.id === id;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(p => {
+        const show = p.getAttribute('data-panel-for') === id;
+        if (show) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
+      });
+    };
+
+    /* ---------- events ---------- */
     tabs.forEach(t => {
-      const active = t.getAttribute('data-id') === id;
-      t.classList.toggle('active', active);
-      t.setAttribute('aria-selected', active ? 'true' : 'false');
-      t.tabIndex = active ? 0 : -1;
+      t.addEventListener('click', () => {
+        const id = t.dataset.id;
+        if (!id) return;
+        activate(id);
+        ensureVisible(t);
+      });
     });
-    // panels
-    panels.forEach(p => {
-      const show = p.getAttribute('data-panel-for') === id;
-      if (show) p.removeAttribute('hidden');
-      else p.setAttribute('hidden', '');
-    });
-  };
+    if (prevBtn) prevBtn.addEventListener('click', () => step(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => step(1));
+    scroller.addEventListener('scroll', updateGradients);
+    window.addEventListener('resize', updateGradients);
 
-  tabs.forEach(t => {
-    t.addEventListener('click', () => {
-      const id = t.getAttribute('data-id');
-      if (!id) return;
-      activate(id);
+    /* ---------- init (active tab + gradients) ---------- */
+    const initial = tabs.find(t => t.classList.contains('active') || t.getAttribute('aria-selected') === 'true') || tabs[0];
+    if (initial) {
+      activate(initial.dataset.id);
+      ensureVisible(initial);
+    }
+    updateGradients();
+
+    /* ---------- donuts ---------- */
+    root.querySelectorAll('.mt-donut').forEach(el => {
+      const v = clamp(parseFloat(el.getAttribute('data-donut-value') || '0'), 0, 100);
+      el.style.setProperty('--mt-donut-value', String(v));
+    });
+
+    /* ---------- progress bars ---------- */
+    root.querySelectorAll('.mt-summary__bar[data-progress]').forEach(bar => {
+      const pct = clamp(parseFloat(bar.getAttribute('data-progress') || '0'), 0, 100);
+      const track = bar.querySelector('.mt-progress-bar');
+      if (track) track.style.setProperty('--mt-progress-value', pct + '%');
     });
   });
-
-  // ===== Carrusel paso-a-paso (sin swiper)
-  const updateOverflowUI = () => {
-    const canScroll = group.scrollWidth > viewport.clientWidth + 1;
-    const atStart = group.scrollLeft <= 2;
-    const atEnd   = group.scrollLeft >= (group.scrollWidth - viewport.clientWidth - 2);
-
-    prevBtn.disabled = !canScroll || atStart;
-    nextBtn.disabled = !canScroll || atEnd;
-
-    gradL.style.opacity = (!canScroll || atStart) ? '0' : '1';
-    gradR.style.opacity = (!canScroll || atEnd)   ? '0' : '1';
-  };
-
-  const rectOf = el => el.getBoundingClientRect();
-  const firstNotFullyVisibleOnLeft = () => {
-    const vw = rectOf(viewport);
-    for (let i = 0; i < tabs.length; i++) {
-      const r = rectOf(tabs[i]);
-      if (r.left < vw.left - 1) return i; // hay algo cortado a la izquierda
-    }
-    return -1;
-  };
-  const firstNotFullyVisibleOnRight = () => {
-    const vw = rectOf(viewport);
-    for (let i = tabs.length - 1; i >= 0; i--) {
-      const r = rectOf(tabs[i]);
-      if (r.right > vw.right + 1) return i; // hay algo cortado a la derecha
-    }
-    return -1;
-  };
-
-  const scrollToIndex = (idx, align = 'start') => {
-    if (idx < 0 || idx >= tabs.length) return;
-    tabs[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: align });
-  };
-
-  const stepPrev = () => {
-    // Busca el primer item que está “cortado” a la izquierda; si no, toma el anterior al primero visible
-    const idxCut = firstNotFullyVisibleOnLeft();
-    if (idxCut >= 0) { scrollToIndex(idxCut, 'start'); return; }
-
-    const vw = rectOf(viewport);
-    const firstVisibleIdx = tabs.findIndex(el => {
-      const r = rectOf(el);
-      return r.left >= vw.left - 1 && r.right <= vw.right + 1;
-    });
-    if (firstVisibleIdx > 0) scrollToIndex(firstVisibleIdx - 1, 'start');
-  };
-
-  const stepNext = () => {
-    // Busca el primer item “cortado” a la derecha; si no, el siguiente al último visible
-    const idxCut = firstNotFullyVisibleOnRight();
-    if (idxCut >= 0) { scrollToIndex(idxCut, 'end'); return; }
-
-    const vw = rectOf(viewport);
-    let lastVisibleIdx = -1;
-    tabs.forEach((el, i) => {
-      const r = rectOf(el);
-      const fully = r.left >= vw.left - 1 && r.right <= vw.right + 1;
-      if (fully) lastVisibleIdx = i;
-    });
-    if (lastVisibleIdx >= 0 && lastVisibleIdx < tabs.length - 1) {
-      scrollToIndex(lastVisibleIdx + 1, 'end');
-    }
-  };
-
-  prevBtn.addEventListener('click', stepPrev);
-  nextBtn.addEventListener('click', stepNext);
-  group.addEventListener('scroll', () => requestAnimationFrame(updateOverflowUI));
-  window.addEventListener('resize', () => requestAnimationFrame(updateOverflowUI));
-
-  // Asegura que el tab activo inicial esté a la vista
-  const initialActive = tabs.find(t => t.classList.contains('active')) || tabs[0];
-  if (initialActive) {
-    initialActive.scrollIntoView({ block: 'nearest', inline: 'center' });
-  }
-  updateOverflowUI();
 })();
