@@ -3611,7 +3611,7 @@ body.mt-placing .woocommerce-checkout {
   flex: 1 1 0;
   height: 219px;
   transform-origin: top left;
-  border-top: 1px solid var(--Colors-Gray-700, #404040);
+  border-left: 1px solid var(--Colors-Gray-700, #404040);
   opacity: .9
 }
 
@@ -3815,3 +3815,45 @@ body.mt-placing .woocommerce-checkout {
 .mt-donut.is-empty .mt-donut__percent {
   color: var(--Text-Body, #A8A29E)
 }
+/* ===== MOBILE: stack + center ===== */
+@media (max-width: 767.98px){
+  /* Contenedor principal del panel */
+  .mt-summary{
+    display: flex;                 /* deja de ser inline-flex */
+    flex-direction: column;        /* apila en columna */
+    align-items: center;           /* todo centrado */
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 0 12px;
+  }
+
+  /* Cada columna centrada y con ancho completo */
+  .mt-summary__col{
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  /* El separador pasa a ser una línea horizontal entre secciones */
+  .mt-summary__divider{
+    display: block !important;     /* sobreescribe el "display:none" anterior */
+    width: 100%;
+    height: 0;
+    border-top: 1px solid var(--Colors-Gray-700, #404040);
+    opacity: .6;
+    transform: none;               /* sin rotación */
+    margin: 8px 0;
+  }
+
+  /* Ratio + barra doble a lo ancho del contenedor, centrado */
+  .mt-rr{
+    width: 100%;
+    max-width: 420px;              /* opcional: límite visual */
+    margin: 0 auto;
+  }
+  .mt-dualbar{ width: 100%; }
+
+  /* .mt-donut{ --size: 168px; } */
+}
+
