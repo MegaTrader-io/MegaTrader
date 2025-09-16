@@ -811,22 +811,22 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 /* ===== Button ===== */
 .mt-btn {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  text-transform: uppercase;
-  font-weight: 500;
-  line-height: 1;
-  white-space: nowrap;
-  text-align: center;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  box-sizing: border-box;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
 }
 
 /* estados disabled genéricos */
@@ -834,86 +834,236 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-btn.disabled,
 .mt-btn.is-disabled,
 .mt-btn[aria-disabled="true"] {
-  pointer-events: none;
-  opacity: .6;
-  cursor: not-allowed;
+    pointer-events: none;
+    opacity: .6;
+    cursor: not-allowed;
 }
 
 /* ===== TAMAÑOS ===== */
-.mt-btn--md { font-size: 16px; padding: 12px 16px; min-height: 48px; }
-.mt-btn--sm { font-size: 16px; padding: 12px 12px; } 
+.mt-btn--md {
+    font-size: 16px;
+    padding: 12px 16px;
+    min-height: 48px;
+}
+
+.mt-btn--sm {
+    font-size: 16px;
+    padding: 12px 12px;
+}
 
 /* ===== VARIANTES ===== */
 /* Primary */
 .mt-btn--primary {
-  color: var(--Text-Action-Primary-Solid, #131210);
-  background: var(--theme-color, #F1A035);
-  border-color: var(--theme-color, #F1A035);
+    color: var(--Text-Action-Primary-Solid, #131210);
+    background: var(--theme-color, #F1A035);
+    border-color: var(--theme-color, #F1A035);
 }
+
 .mt-btn--primary:hover,
 .mt-btn--primary.active {
-  color: var(--black-color, #000);
-  background: var(--Surface-Primary-Hover, #ffb861);
-  border-color: var(--Surface-Primary-Hover, #ffb861);
+    color: var(--black-color, #000);
+    background: var(--Surface-Primary-Hover, #ffb861);
+    border-color: var(--Surface-Primary-Hover, #ffb861);
 }
+
 .mt-btn--primary:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--theme-color, #F1A035) 35%, transparent);
+    outline: 0;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--theme-color, #F1A035) 35%, transparent);
 }
 
 /* Secondary (oscuro) */
 .mt-btn--secondary {
-  color: var(--Text-Action-Dark-Solid, #A8A29E);
-  background: var(--surface-dark, #292524);
-  border-color: var(--colors-gray-700, #404040);
+    color: var(--Text-Action-Dark-Solid, #A8A29E);
+    background: var(--surface-dark, #292524);
+    border-color: var(--colors-gray-700, #404040);
 }
+
 .mt-btn--secondary:hover,
 .mt-btn--secondary.active {
-  background: var(--Surface-Dark-Hover, #32302f);
+    background: var(--Surface-Dark-Hover, #32302f);
 }
+
 .mt-btn--secondary:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--colors-gray-700, #404040) 40%, transparent);
+    outline: 0;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--colors-gray-700, #404040) 40%, transparent);
 }
 
 /* Default (claro) */
 .mt-btn--default {
-  color: var(--surface-dark, #292524);
-  background: var(--white-color, #fff);
-  border-color: var(--white-color, #fff);
+    color: var(--surface-dark, #292524);
+    background: var(--white-color, #fff);
+    border-color: var(--white-color, #fff);
 }
+
 .mt-btn--default:hover,
 .mt-btn--default.active {
-  background: #D4D4D4;
-  border-color: #D4D4D4;
-  color: var(--surface-dark, #292524);
+    background: #D4D4D4;
+    border-color: #D4D4D4;
+    color: var(--surface-dark, #292524);
 }
+
 .mt-btn--default:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--Secondary-300, #93C5FD) 35%, transparent);
+    outline: 0;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--Secondary-300, #93C5FD) 35%, transparent);
 }
 
 /* Outline (para fondos oscuros) */
 .mt-btn--outline {
-  color: var(--Text-Action-Light-Text, #fff);
-  background: transparent;
-  border-color: transparent;
+    color: var(--Text-Action-Light-Text, #fff);
+    background: transparent;
+    border-color: transparent;
 }
+
 .mt-btn--outline:hover,
-.mt-btn--outline.active { background: rgba(255,255,255,.10); }
-.mt-btn--outline:active { background: rgba(255,255,255,.16); }
+.mt-btn--outline.active {
+    background: rgba(255, 255, 255, .10);
+}
+
+.mt-btn--outline:active {
+    background: rgba(255, 255, 255, .16);
+}
+
 .mt-btn--outline:focus-visible {
-  outline: 0;
-  background: rgba(255,255,255,.10);
-  border-color: rgba(255,255,255,.30);
+    outline: 0;
+    background: rgba(255, 255, 255, .10);
+    border-color: rgba(255, 255, 255, .30);
 }
 
 /* ===== Icono “Add” (hereda el color del texto) ===== */
-.mt-btn--add-icon { position: relative; gap: 8px; }
+.mt-btn--add-icon {
+    position: relative;
+    gap: 8px;
+}
+
 .mt-btn--add-icon::before {
-  content: "";
-  width: 24px; height: 24px; display: inline-block; vertical-align: middle;
-  background-color: currentColor;
-  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23000" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>') no-repeat 50% 50% / contain;
-  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23000" d="M11 5h2v6h6v2h-2 6v6h-2v-6H5v-2h6z"/></svg>') no-repeat 50% 50% / contain;
+    content: "";
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: currentColor;
+    mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23000" d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>') no-repeat 50% 50% / contain;
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23000" d="M11 5h2v6h6v2h-2 6v6h-2v-6H5v-2h6z"/></svg>') no-repeat 50% 50% / contain;
+}
+
+
+/* ===== Toggle Button ===== */
+
+.mt-toggle-button {
+    display: inline-flex;
+    padding: var(--Spacing-sm, 12px) var(--Spacing-md, 16px);
+    justify-content: center;
+    align-items: center;
+    gap: var(--Scale-200, 8px);
+
+    border-radius: var(--Border-Radius-lg, 12px);
+    border: var(--Border-Width-sm, 1px) solid var(--Colors-Gray-700, #404040);
+    background: var(--Surface-Dark, #292524);
+
+    /* tipografía base */
+    font: 500 16px/24px Roboto, system-ui, sans-serif;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+
+    /* color de texto por defecto (ajústalo si tu token difiere) */
+    color: var(--Colors-Gray-400, #A8A29E);
+
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+/* Hover */
+.mt-toggle-button:hover {
+    border-color: var(--Primary-400, #FFB34A);
+    background: var(--Primary-400, #FFB34A);
+    color: var(--Surface-Body, #131210);
+}
+
+/* Active (y seleccionado) */
+.mt-toggle-button.active,
+.mt-toggle-button[aria-selected="true"] {
+    border-color: var(--Primary-500, #F1A035);
+    background: var(--Primary-500, #F1A035);
+    color: var(--Surface-Body, #131210);
+}
+
+/* Focus (visible) */
+.mt-toggle-button:focus-visible {
+    outline: 0;
+    border-color: var(--White, #FFF);
+    background: var(--Surface-Primary, #FFB34A);
+    color: var(--Surface-Body, #131210);
+    /* opcional: realce adicional
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--Primary-500,#F1A035) 35%, transparent);
+  */
+}
+
+/* Disabled (todos los sabores) */
+.mt-toggle-button[disabled],
+.mt-toggle-button.disabled,
+.mt-toggle-button.is-disabled,
+.mt-toggle-button[aria-disabled="true"] {
+    pointer-events: none;
+    cursor: not-allowed;
+    border-color: var(--Surface-Disabled, #57534E);
+    background: var(--Surface-Disabled, #57534E);
+    color: var(--surface-dark, #292524);
+}
+
+/* (Opcional) icono dentro del toggle */
+.mt-toggle-button__icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    flex: 0 0 auto;
+    color: currentColor;
+}
+
+/* Viewport del strip (reutilizable) */
+.mt-tabs-viewport{
+  flex:1 1 0%;
+  min-width:0;
+  width:0; /* evita desbordar al padre */
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  box-sizing:border-box;
+}
+
+/* Scroller / tablist (reutilizable) */
+.mt-toggle-group{
+  flex:1 1 0%;
+  min-width:0;
+  max-width:100%;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  scrollbar-width:none;          /* Firefox */
+  -ms-overflow-style:none;       /* IE legacy */
+  scroll-behavior:smooth;
+  scroll-snap-type:x proximity;
+  box-sizing:border-box;
+}
+.mt-toggle-group::-webkit-scrollbar{ display:none; }
+.mt-toggle-group > .mt-toggle-button{ scroll-snap-align:start; }
+
+/* Gradientes de borde (reutilizable) */
+.mt-tabs-gradient{
+  position:absolute;
+  top:0; bottom:0;
+  width:48px;
+  z-index:1;
+  pointer-events:none;
+  opacity:0; /* JS la ajusta según overflow */
+}
+.mt-tabs-gradient--left{
+  left:0;
+  background:linear-gradient(270deg, rgba(19,18,16,0) 0%, var(--Surface-Body,#131210) 100%);
+}
+.mt-tabs-gradient--right{
+  right:0;
+  background:linear-gradient(90deg, rgba(19,18,16,0) 0%, var(--Surface-Body,#131210) 100%);
 }
