@@ -10,7 +10,7 @@
  */
 ?>
 
-<?php require 'landing-page/footer.php' ?>
+<?php require 'template-parts/landing-page/footer.php' ?>
 
 <?php wp_footer(); ?>
 </body>

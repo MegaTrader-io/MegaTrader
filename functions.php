@@ -128,7 +128,7 @@ function megatrader_scripts() {
     wp_enqueue_style( 'megatrader-style',       get_stylesheet_uri(), array(), _MEGATRADER_VERSION );
 	wp_enqueue_style( 'megatrader-dev',         MEGATRADER_CSS .'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION);
     wp_enqueue_style( 'mt-components',          MEGATRADER_CSS .'mt-components.css', array(), REALTIME_VERSION);
-
+    wp_enqueue_style( 'mt-navbar-style',         MEGATRADER_CSS . 'mt-navbar.css', array(), REALTIME_VERSION);
 
 
 
@@ -141,6 +141,7 @@ function megatrader_scripts() {
     wp_enqueue_script( 'mt-addons',	        MEGATRADER_JS .'mt-addons.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-payment',	        MEGATRADER_JS .'payment-methods.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-account-picker',	        MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
 
 
     wp_enqueue_script( 'megatrader-main',	MEGATRADER_JS .'main.js', array('jquery', 'mt-tabs'), REALTIME_VERSION, true);
@@ -166,6 +167,7 @@ add_action('wp', function () {
     }
 });
 
+require_once get_template_directory() . '/inc/mt-navbar.php';
 require_once get_template_directory() . '/inc/landing-page-hooks.php';
 
 add_action('wp_enqueue_scripts', function () {

@@ -11,6 +11,6 @@
 
 get_header('landing-page');
 
-require 'landing-page/main.php';
+require 'template-parts/landing-page/main.php';
 
 get_footer('landing-page');

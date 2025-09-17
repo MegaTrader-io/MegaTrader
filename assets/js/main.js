@@ -345,32 +345,32 @@ const $ = jQuery; //TODO: remove, temp for dev mode
 // scrollCue
 // scrollCue.init();
 
-function trackElementHeight(element, css_variable) {
+// function trackElementHeight(element, css_variable) {
+//
+//     if (element) {
+//         const updateHeightVar = () => {
+//             const fullHeight = element.getBoundingClientRect().height;
+//             document.body.style.setProperty(`${css_variable}`, `${fullHeight}px`);
+//         };
+//
+//         updateHeightVar();
+//
+//         const resizeObserver = new ResizeObserver(() => {
+//             updateHeightVar();
+//         });
+//
+//         resizeObserver.observe(element);
+//     }
+// }
 
-    if (element) {
-        const updateHeightVar = () => {
-            const fullHeight = element.getBoundingClientRect().height;
-            document.body.style.setProperty(`${css_variable}`, `${fullHeight}px`);
-        };
-
-        updateHeightVar();
-
-        const resizeObserver = new ResizeObserver(() => {
-            updateHeightVar();
-        });
-
-        resizeObserver.observe(element);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    const adminbar = document.getElementById('wpadminbar');
-    trackElementHeight(adminbar, '--admin-bar-height');
-
-    const menuNavBar = document.querySelector('.menu-area');
-    trackElementHeight(menuNavBar, '--nav-bar-height');
-
-
-})
+// document.addEventListener('DOMContentLoaded', function () {
+//     const adminbar = document.getElementById('wpadminbar');
+//     trackElementHeight(adminbar, '--admin-bar-height');
+//
+//     const menuNavBar = document.querySelector('.menu-area');
+//     trackElementHeight(menuNavBar, '--nav-bar-height');
+//
+//
+// })
 
 MT_Tabs.init();

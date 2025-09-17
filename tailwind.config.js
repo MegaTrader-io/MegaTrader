@@ -6,9 +6,9 @@ module.exports = {
     },
     content: [
         './header-landing-page.php',
-        './landing-page.php',
-        './landing-page/**/*.php',
-        './landing-page/**/**/*.php',
+        // './template-parts/mt-navbar.php',
+        './template-parts/landing-page/**/*.php',
+        './template-parts/landing-page/**/**/*.php',
         './assets/js/landing-page.js',
         './inc/landing-page-hooks.php'
     ],

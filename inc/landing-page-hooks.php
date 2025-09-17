@@ -19,6 +19,7 @@ if (!function_exists('megatrader_landing_page_scripts')) {
         wp_enqueue_style('megatrader-main', $css_uri . 'style-landing-page.css', [], $style_landing_version);
         wp_enqueue_style('megatrader-dev', MEGATRADER_CSS . 'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION);
         wp_enqueue_style('mt-components', MEGATRADER_CSS . 'mt-components.css', array(), REALTIME_VERSION);
+        wp_enqueue_style('mt-navbar', MEGATRADER_CSS . 'mt-navbar.css', array(), REALTIME_VERSION);
 
 
         wp_enqueue_style('nouislider', $css_uri . 'nouislider.min.css', [], $nouislider_css_version);

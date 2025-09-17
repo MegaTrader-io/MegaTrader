@@ -36,100 +36,10 @@ function mt_active_class($current, $prefix)
     </div>
   </div>
 
-  <div class="ot-header header-layout1">
-    <div class="sticky-wrapper">
-      <?php do_action('mega_sticky_promo_render_banner'); ?>
-      <div class="menu-area">
-        <div class="container">
-          <nav class="mega-navbar" role="navigation" aria-label="Primary">
-            <div class="nav-left">
-              <a class="brand-tile" href="https://megatrader.io/">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
-                  alt="MegaTrader" width="60" height="60" loading="eager" />
-              </a>
-              <a class="brand-wordmark" href="https://megatrader.io/">
-                <img class="logo" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-original.svg"
-                  alt="MegaTrader" height="28" loading="eager" />
-              </a>
-            </div>
-
-            <?php
-            $mt_current = strtolower(trailingslashit(strtok($_SERVER['REQUEST_URI'] ?? '/', '?#')));
-            ?>
-
-
-            <ul class="nav-tabs">
-              <li><a class="nav-tab<?= mt_active_class($mt_current, '/my-account/overview/'); ?>"
-                  href="<?= esc_url(home_url('/my-account/overview/')); ?>">
-                  Account overview
-                </a></li>
-              <li>
-                <a class="nav-tab<?= mt_active_class($mt_current, '/my-account/referrals/'); ?>"
-                  href="<?= esc_url(home_url('/my-account/referrals/')); ?>">
-                  Referrals
-                </a>
-              </li>
-              <li>
-                <a class="nav-tab<?= mt_active_class($mt_current, '/my-account/payouts/'); ?>"
-                  href="<?= esc_url(home_url('/my-account/payouts/')); ?>">
-                  Payouts
-                </a>
-              </li>
-              <li><a class="nav-tab" href="https://help.megatrader.io/en/" target="_blank" rel="noopener">Help
-                  Center</a></li>
-            </ul>
-
-            <div class="nav-right">
-              <button class="icon-btn" type="button" aria-label="Notifications">
-                <div class="mt-icon mt-icon-white mt-icon_notifications"></div>
-              </button>
-              <button class="icon-btn" type="button" aria-label="Profile">
-                <div class="mt-icon mt-icon-white mt-icon_account"></div>
-              </button>
-
-              <button id="mega-burger" class="icon-btn burger" type="button" aria-label="Open menu"
-                aria-controls="mega-mobile-menu" aria-expanded="false">
-                <div class="mt-icon mt-icon-white mt-icon_menu"></div>
-              </button>
-            </div>
-
-            <div id="mega-mobile-menu" class="mega-mobile-menu">
-              <div class="mm-inner">
-                <ul class="mm-links" role="menu">
-                  <li>
-                    <a class="nav-tab<?= mt_active_class($mt_current, '/my-account/overview/'); ?>"
-                      href="<?= esc_url(home_url('/my-account/overview/')); ?>">
-                      Account overview
-                    </a>
-                  </li>
-
-                  <li>
-                    <a class="nav-tab<?= mt_active_class($mt_current, '/my-account/referrals/'); ?>"
-                      href="<?= esc_url(home_url('/my-account/referrals/')); ?>">
-                      Referrals
-                    </a>
-                  </li>
-
-                  <li>
-                    <a class="nav-tab<?= mt_active_class($mt_current, '/my-account/payouts/'); ?>"
-                      href="<?= esc_url(home_url('/my-account/payouts/')); ?>">
-                      Payouts
-                    </a>
-                  </li>
-
-                  <li>
-                    <a class="nav-tab" href="https://help.megatrader.io/en/" target="_blank" rel="noopener">
-                      Help center
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </div>
-    </div>
-  </div>
+  <?php Mt_Navbar::render_navbar(
+          section: 'account',
+          classes_navbar: 'mt-navbar--my-account'
+  ); ?>
 
   <script>
     (function () {

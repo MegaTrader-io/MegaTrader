@@ -1,0 +1,13 @@
+<div class="mt-navbar__user">
+    <?php if (is_user_logged_in()): ?>
+        <?php get_template_part('template-parts/my-profile', null, [
+                'avatar_size' => 48,
+                'go_to_dashboard' => true,
+                'hide_user_information' => true,
+        ]); ?>
+    <?php else: ?>
+        <div class="mt-navbar__auth">
+            <a href="/auth/login" class="mt-navbar__auth-link mega-btn-md mega-btn-secondary-md w-100">LOGIN</a>
+        </div>
+    <?php endif ?>
+</div>

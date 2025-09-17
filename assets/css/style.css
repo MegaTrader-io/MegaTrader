@@ -160,48 +160,6 @@ html {
     margin: 0 !important;
 }
 
-#wpadminbar {
-    top: 0 !important;
-    position: fixed;
-}
-
-
-.admin-bar .ot-header {
-    top: var(--admin-bar-height, 32px);
-    /* Medium devices */
-}
-
-/*
-@media (max-width: 991px) {
-    .admin-bar .ot-header {
-        padding-top: 46px;
-    }
-}
-*/
-/*
-body {
-    padding-top: 100px;
-
-}*/
-
-@media (max-width: 991px) {
-    body {
-        padding-top: 88px;
-    }
-}
-
-body.admin-bar {
-    padding-top: var(--admin-bar-height, 32px);
-    /* Medium devices */
-}
-
-/*
-@media (max-width: 991px) {
-    body.admin-bar {
-        padding-top: 134px;
-    }
-}*/
-
 body {
     font-family: var(--body-font);
     font-size: 16px;
@@ -573,7 +531,7 @@ h6 {
   .row:not([class*=gx-]) {
     --bs-gutter-x: 30px;
   }
-  
+
   @media only screen and (max-width: 1600px) {
     .container-fluid.px-0 {
       padding-left: 15px !important;
@@ -594,17 +552,17 @@ h6 {
       padding-right: 12px;
     }
   }
-  
+
   .small-container {
     max-width: 778px;
     margin-left: auto;
     margin-right: auto;
   }
-  
-  @media (min-width: 768px) and (max-width: 1199.98px) { 
-    .container { 
+
+  @media (min-width: 768px) and (max-width: 1199.98px) {
+    .container {
       max-width: 100%;
-      }  
+      }
   } */
 
 /*------------------- Grid -------------------*/
@@ -3729,7 +3687,7 @@ a.text-theme:hover,
     /* Medium devices */
 }
 
-/* 
+/*
   @media (max-width: 991px) {
     .header-layout1 .header-logo {
       max-width: 197px;
