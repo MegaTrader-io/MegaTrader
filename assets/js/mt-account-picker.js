@@ -152,7 +152,7 @@
 
         // Actualizar cabecera
         if (elBadge) {
-          elBadge.className = 'badge-mega badge-mega-sm ' + (obj.badgeClass || 'badge-mega-default');
+          elBadge.className = 'badge-mega badge-mega-sm ' + (obj.badgeClass || 'badge-mega-active');
           elBadge.textContent = titleCase(obj.status || 'Active');
         }
         if (elSize) elSize.textContent = obj.size || '';

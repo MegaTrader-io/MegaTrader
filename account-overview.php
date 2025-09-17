@@ -150,6 +150,9 @@ $GLOBALS['mt_selected_id'] = $mt_selected_id;
       <div class="mt-account-feature-content">
         <?php get_template_part('template-parts/account/account-feature-content'); ?>
       </div>
+      <div class="mt-account-graph-content">
+        <?php get_template_part('template-parts/account/account-graph'); ?>
+      </div>
     </div>
   </div>
 </div>

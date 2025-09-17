@@ -159,7 +159,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                             <?php echo esc_html($daysTraded); ?>
                         </div>
                     </div>
-                    <div class=" mt-card__item">
+                    <div class="mt-card__item">
                         <div class="mt-card__item-text">Days Loss Limit</div>
                         <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
                             <?php echo esc_html(mt_format_money(2000)); ?>

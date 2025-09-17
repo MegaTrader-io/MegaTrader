@@ -169,21 +169,79 @@
   }
 })();
 
+/* ======= Bloque de interacciones de cuenta (copy + toggle pwd + AJAX) ======= */
 (function () {
-  // Copiar
+  /* --- Toast “Copiado” anclado sobre el click --- */
+  const COPY_FEEDBACK_MS = 10000; // 10s
+  function ensureCopyToastStyle(){
+    if (window.__mtCopyToastStyle) return;
+    const css = `
+      #mt-copy-toast{
+        position:fixed;
+        left:0; top:0; /* se calcula dinámicamente */
+        transform:translate(-50%,-100%);
+        background:#1f2937;color:#fff;padding:8px 12px;border-radius:8px;
+        font-size:12px;line-height:1;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);
+        opacity:0;transition:opacity .18s ease;pointer-events:none;
+        white-space:nowrap;
+      }
+      #mt-copy-toast.is-visible{opacity:1}
+    `;
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+    window.__mtCopyToastStyle = true;
+  }
+  function showCopyToast(text, anchorEl){
+    ensureCopyToastStyle();
+    let toast = document.getElementById('mt-copy-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'mt-copy-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = text || 'Copied';
+
+    const rect = (anchorEl && anchorEl.getBoundingClientRect)
+      ? anchorEl.getBoundingClientRect()
+      : { left: window.innerWidth/2, top: window.innerHeight-24, width: 0 };
+
+    const clampNum = (n, min, max) => Math.max(min, Math.min(max, n));
+    const centerX = clampNum(rect.left + rect.width/2, 16, window.innerWidth - 16);
+    const aboveY  = clampNum(rect.top - 8, 16, window.innerHeight - 16);
+
+    toast.style.left = `${Math.round(centerX)}px`;
+    toast.style.top  = `${Math.round(aboveY)}px`;
+
+    toast.classList.add('is-visible');
+    clearTimeout(window.__mtCopyToastTimer);
+    window.__mtCopyToastTimer = setTimeout(()=>{
+      toast.classList.remove('is-visible');
+    }, COPY_FEEDBACK_MS);
+  }
+
+  // Copiar (con toast anclado)
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-copy]');
     if (!t) return;
     const v = t.getAttribute('data-copy') || '';
     if (!v) return;
+
+    const onDone = () => {
+      t.classList.add('is-copied');
+      showCopyToast('Copied to clipboard', t); // anclado al icono
+      setTimeout(()=> t.classList.remove('is-copied'), 1200);
+    };
+
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(v).catch(()=>{});
+      navigator.clipboard.writeText(v).then(onDone).catch(onDone);
     } else {
       // Fallback legacy
       const ta = document.createElement('textarea');
       ta.value = v; document.body.appendChild(ta); ta.select();
       try { document.execCommand('copy'); } catch (err) {}
       document.body.removeChild(ta);
+      onDone();
     }
   });
 
@@ -231,6 +289,96 @@
       .finally(() => document.querySelector('.preloader')?.classList.remove('is-active'));
   };
 })();
+
+/* ===== Floating tooltips (portal to <body>) ===== */
+(function () {
+  // No duplicar
+  if (window.__mtTooltipsBound) return;
+  window.__mtTooltipsBound = true;
+
+  // Capa/portal única
+  const portal = document.createElement('div');
+  portal.id = 'mt-tooltips-portal';
+  portal.style.position = 'fixed';
+  portal.style.inset = '0';
+  portal.style.pointerEvents = 'none';
+  portal.style.zIndex = '9999';
+  document.body.appendChild(portal);
+  document.documentElement.classList.add('has-portal-tooltips');
+
+  // Burbuja reutilizable
+  const bubble = document.createElement('div');
+  bubble.className = 'mt-tooltip__panel is-portal';
+  portal.appendChild(bubble);
+
+  let anchor = null, hideTimer = 0;
+
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+  function positionBubble(a) {
+    anchor = a;
+    bubble.style.visibility = 'hidden';
+    bubble.style.display = 'block';
+
+    const r = a.getBoundingClientRect();
+    const bw = bubble.offsetWidth;
+    const bh = bubble.offsetHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const pad = 8;
+
+    // Por defecto, arriba
+    let top = r.top - bh - pad;
+    let placement = 'top';
+    if (top < pad) { // si no cabe arriba, abajo
+      top = r.bottom + pad;
+      placement = 'bottom';
+    }
+
+    // Centrar respecto al trigger, pero sin salir del viewport
+    let left = r.left + (r.width / 2) - (bw / 2);
+    left = clamp(left, pad, vw - bw - pad);
+
+    bubble.style.left = Math.round(left) + 'px';
+    bubble.style.top  = Math.round(top)  + 'px';
+    bubble.setAttribute('data-placement', placement);
+
+    // Posición de la flecha dentro de la burbuja
+    const arrowLeft = clamp(r.left + r.width/2 - left, 10, bw - 10);
+    bubble.style.setProperty('--arrow-left', arrowLeft + 'px');
+
+    bubble.style.visibility = 'visible';
+  }
+
+  function showFor(el) {
+    const tip = el.closest('.mt-tooltip');
+    if (!tip) return;
+    const panel = tip.querySelector('.mt-tooltip__panel');
+    if (!panel) return;
+    clearTimeout(hideTimer);
+    bubble.innerHTML = panel.innerHTML; // usamos tu mismo HTML (:contentReference[oaicite:1]{index=1})
+    positionBubble(tip);
+  }
+
+  function hideSoon() {
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      bubble.style.display = 'none';
+      anchor = null;
+    }, 120);
+  }
+
+  // Reposicionar si hay scroll/resize
+  window.addEventListener('scroll', () => { if (anchor) positionBubble(anchor); }, true);
+  window.addEventListener('resize', () => { if (anchor) positionBubble(anchor); });
+
+  // Abrir con mouse/teclado y cerrar al salir
+  document.addEventListener('mouseenter', e => showFor(e.target), true);
+  document.addEventListener('focusin',   e => showFor(e.target));
+  document.addEventListener('mouseleave', e => { if (e.target.closest('.mt-tooltip')) hideSoon(); }, true);
+  document.addEventListener('focusout', hideSoon);
+})();
+
 
 // ===== Refresh Bus (centraliza todos los componentes) =====
 window.mtRefresh = (function () {
