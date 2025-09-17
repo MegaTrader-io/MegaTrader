@@ -405,57 +405,52 @@ document.addEventListener('mt:accountSelected', (e) => {
   window.mtRefresh.refreshAll(id);
 });
 
-/* ===== Daily Journal (GRID + AJAX + paginación 7/pg) ===== */
+/* ===== Daily Journal (GRID + AJAX + paginación dinámica) ===== */
 (function(){
   const qs  = (s, r=document)=> r.querySelector(s);
   const qsa = (s, r=document)=> Array.from(r.querySelectorAll(s));
 
   function getRoot(){ return document.getElementById('mt-daily-journal'); }
-
   function stateFrom(root){
     const per = parseInt(root.getAttribute('data-per-page'), 10) || 7;
     return { perPage: per, totalPages: 1, totalRows: 0, currentPage: 1 };
   }
-
-  function findRows(root){
-    // Filas en grid: .dj-row (cada una es un grid independiente)
-    return qsa('.dj-row', root);
-  }
+  function findRows(root){ return qsa('.dj-row', root); }
 
   function rebuildNumericPager(root, st){
     const pager = qs('.dj-pager', root);
     if (!pager) return;
 
-    const prev = qs('.mt-dj-prev', pager);
-    const next = qs('.mt-dj-next', pager);
+    const prev  = qs('.mt-dj-prev', pager);
+    const next  = qs('.mt-dj-next', pager);
+    let holder  = qs('.dj-pages', pager);
+    if (!holder){
+      holder = document.createElement('span');
+      holder.className = 'dj-pages';
+      next ? pager.insertBefore(holder, next) : pager.appendChild(holder);
+    }
+    holder.innerHTML = ''; // limpia números
 
-    // Remover números actuales
-    qsa('.dj-btn', pager)
-      .filter(b => b !== prev && b !== next)
-      .forEach(b => b.remove());
-
-    // Insertar números 1..N antes de "next"
     for (let i=1; i<=st.totalPages; i++){
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'dj-btn';
+      b.className = 'dj-btn dj-num';
       b.textContent = String(i);
       b.addEventListener('click', () => { goTo(root, st, i); });
-      next ? pager.insertBefore(b, next) : pager.appendChild(b);
+      holder.appendChild(b);
     }
   }
 
   function updatePagerUI(root, st){
     const pager = qs('.dj-pager', root);
     if (!pager) return;
-
     const prev = qs('.mt-dj-prev', pager);
     const next = qs('.mt-dj-next', pager);
+
     prev && (prev.disabled = st.currentPage <= 1);
     next && (next.disabled = st.currentPage >= st.totalPages);
 
-    // Marcar activo
-    const nums = qsa('.dj-btn', pager).filter(b => !b.classList.contains('mt-dj-prev') && !b.classList.contains('mt-dj-next'));
+    const nums = qsa('.dj-pages .dj-btn', pager);
     nums.forEach((b, i) => b.classList.toggle('active', (i+1) === st.currentPage));
   }
 
@@ -463,8 +458,13 @@ document.addEventListener('mt:accountSelected', (e) => {
     const rows = findRows(root);
     rows.forEach((row, idx) => {
       const p = Math.floor(idx / st.perPage) + 1;
-      row.style.display = (p === st.currentPage) ? 'grid' : 'none';
+      const visible = (p === st.currentPage);
+      row.style.display = visible ? 'grid' : 'none';
+      row.classList.toggle('is-visible', visible);
+      row.classList.remove('is-last');
     });
+    const visibles = rows.filter(r => r.classList.contains('is-visible'));
+    if (visibles.length) visibles[visibles.length - 1].classList.add('is-last'); // sin borde
   }
 
   function goTo(root, st, page){
@@ -478,7 +478,6 @@ document.addEventListener('mt:accountSelected', (e) => {
     st.totalRows  = rows.length;
     st.totalPages = Math.max(1, Math.ceil(st.totalRows / st.perPage));
     st.currentPage = Math.min(st.currentPage, st.totalPages) || 1;
-
     rebuildNumericPager(root, st);
     applyPageVisibility(root, st);
     updatePagerUI(root, st);
@@ -487,8 +486,7 @@ document.addEventListener('mt:accountSelected', (e) => {
   function fetchDailyJournal(root, accountId){
     const url   = (window.mtAccounts && mtAccounts.ajaxUrl) || '/wp-admin/admin-ajax.php';
     const nonce = (window.mtAccounts && mtAccounts.nonce)   || '';
-
-    const body = new URLSearchParams();
+    const body  = new URLSearchParams();
     body.set('action', 'mt_account_daily_journal');
     body.set('nonce',  nonce);
     body.set('account_id', String(accountId || ''));
@@ -503,21 +501,16 @@ document.addEventListener('mt:accountSelected', (e) => {
     .then(r=>r.json())
     .then(j=>{
       if (!j?.success || !j?.data) return;
+      const { rowsHtml, per_page } = j.data;
 
-      const { rowsHtml, per_page, total_pages } = j.data;
-
-      // Reemplazar filas bajo el header (dejamos dj-headrow tal cual)
       if (scroll && rowsHtml != null) {
-        // Eliminar filas actuales
+        // limpiar filas actuales (mantener header .dj-headrow)
         qsa('.dj-row', scroll).forEach(n => n.remove());
-        // Inyectar nuevas filas
         const tmp = document.createElement('div');
         tmp.innerHTML = rowsHtml;
         qsa('.dj-row', tmp).forEach(n => scroll.appendChild(n));
       }
-
       if (per_page) root.setAttribute('data-per-page', String(per_page));
-      if (total_pages) root.setAttribute('data-total-pages', String(total_pages));
 
       const st = root.__djState || stateFrom(root);
       recalcAndRender(root, st);
@@ -529,20 +522,18 @@ document.addEventListener('mt:accountSelected', (e) => {
     if (!root || root.__djBound) return;
     root.__djBound = true;
 
-    const st = root.__djState || stateFrom(root);
-    const pager = qs('.dj-pager', root);
+    const st   = root.__djState || stateFrom(root);
+    const pager= qs('.dj-pager', root);
     const prev = qs('.mt-dj-prev', pager);
     const next = qs('.mt-dj-next', pager);
 
     prev && prev.addEventListener('click', ()=> goTo(root, st, st.currentPage - 1));
     next && next.addEventListener('click', ()=> goTo(root, st, st.currentPage + 1));
 
-    // Setup inicial con lo que esté renderizado (mock o server)
     recalcAndRender(root, st);
     root.__djState = st;
   }
 
-  // Bind al cargar
   function initDJ(){
     const root = getRoot();
     if (!root) return;
@@ -555,7 +546,7 @@ document.addEventListener('mt:accountSelected', (e) => {
     initDJ();
   }
 
-  // Registrar en el bus global
+  // Bus global para AJAX futuro
   if (window.mtRefresh && typeof window.mtRefresh.register === 'function') {
     window.mtRefresh.register('dailyJournal', function(accountId){
       const root = getRoot();
@@ -563,17 +554,6 @@ document.addEventListener('mt:accountSelected', (e) => {
       bindDailyJournal(root);
       return fetchDailyJournal(root, accountId);
     });
-  } else {
-    // si el bus aún no existe, registra cuando esté listo
-    document.addEventListener('DOMContentLoaded', () => {
-      if (window.mtRefresh && typeof window.mtRefresh.register === 'function') {
-        window.mtRefresh.register('dailyJournal', function(accountId){
-          const root = getRoot();
-          if (!root) return;
-          bindDailyJournal(root);
-          return fetchDailyJournal(root, accountId);
-        });
-      }
-    });
   }
 })();
+

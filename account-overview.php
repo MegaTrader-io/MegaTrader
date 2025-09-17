@@ -152,9 +152,16 @@ $GLOBALS['mt_selected_id'] = $mt_selected_id;
       <div class="mt-account-feature-content">
         <?php get_template_part('template-parts/account/account-feature-content'); ?>
       </div>
-      <div class="mt-account-graph-content">
-        <?php get_template_part('template-parts/account/account-graph'); ?>
-      </div>
+      <div class="mt-account-chart-content empty-d-none"><?php
+
+        //$chart_title = isset(mt_account_ui) && isset(mt_account_ui['current']) && isset(mt_account_ui['current']['name']) ? isset(mt_account_ui['current']['name'] : '';
+
+        get_template_part('template-parts/account/account-performance-chart',
+        null,
+        [
+            'title' => 'Test' // $chart_title
+        ]); 
+      ?></div>
       <div class="mt-account-account-daily-journal">
         <?php get_template_part('template-parts/account/account-daily-journal'); ?>
       </div>

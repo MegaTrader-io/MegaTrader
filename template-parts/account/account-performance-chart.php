@@ -26,8 +26,8 @@ $periods = [
 ?>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<div class="account-graph mt-card">
-    <div class="account-graph__header">
+<div class="account-performance-chart mt-card">
+    <div class="account-performance-chart__header">
         <div class="d-flex flex-column flex-md-row align-items-center gap-3">
             <div class="d-flex align-items-center gap-2 w-100">
                 <div style="color: white; font-size: 20px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word"><?= $chart_title ?></div>
@@ -58,8 +58,8 @@ $periods = [
             </select>
         </div>
     </div>
-    <div class="account-graph__header">
-        <div id="account-graph"></div>
+    <div class="account-performance-chart__header">
+        <div id="account-performance-chart"></div>
     </div>
 </div>
 
@@ -182,7 +182,6 @@ const periods = {
 
 const days = Object.values(periods)[0].value;
 
-console.log(days)
 
 const dataChart = {
     id: (new Date()).getTime(), //TODO: is ID needed?
@@ -221,7 +220,7 @@ function filterLastDaysHandler({event}){
 
 const lastDaysSelect = document.getElementById("lastDaysSelect")
 lastDaysSelect.addEventListener('change', filterLastDaysHandler)
-var chart = new ApexCharts(document.getElementById("account-graph"), options);
+var chart = new ApexCharts(document.getElementById("account-performance-chart"), options);
 
 chart.render();
 </script>

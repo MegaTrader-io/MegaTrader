@@ -57,6 +57,10 @@
   --mt-header-height: 0px;
 }
 
+.empty-d-none:empty {
+  display: none;
+}
+
 /*
 * MODAL
 */
@@ -3669,79 +3673,89 @@ body.mt-placing .woocommerce-checkout {
   text-transform: uppercase
 }
 
-/* ====== Cabezal + Dual bar (Reward/Risk) ====== */
-/* ====== Cabezal + Dual bar (Reward/Risk) ====== */
-.mt-rr{
-  width:100%;
-  max-width:250px;           /* controla el ancho total del bloque centro */
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:4px;                   /* espacio entre los títulos Reward | Risk */
+.mt-rr {
+  width: 100%;
+  max-width: 250px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
 }
 
-.mt-rr__head{
-  grid-column:1 / -1;
-  display:flex; align-items:center; justify-content:space-between;
+.mt-rr__head {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.mt-rr-title{ font:700 16px/24px Roboto,system-ui,sans-serif }
-.mt-rr-title.success{ color:var(--Text-Success,#2DD4BF) }
-.mt-rr-title.error{   color:var(--Error-500,#F43F5E) }
+.mt-rr-title {
+  font: 700 16px/24px Roboto, system-ui, sans-serif
+}
+
+.mt-rr-title.success {
+  color: var(--Text-Success, #2DD4BF)
+}
+
+.mt-rr-title.error {
+  color: var(--Error-500, #F43F5E)
+}
 
 /* ====== Dual bar ====== */
-.mt-dualbar{
-  grid-column:1 / -1;
-  position:relative;
-  height:8px;
-  background:var(--Colors-Gray-700,#404040);   /* track gris por defecto (sin data) */
-  border-radius:4px;
-  overflow:hidden;
-  --split: 50%;                                 /* lo setea JS: reward% */
+.mt-dualbar {
+  grid-column: 1 / -1;
+  position: relative;
+  height: 8px;
+  background: var(--Colors-Gray-700, #404040);
+  border-radius: 4px;
+  overflow: hidden;
+  --split: 50%;
 }
 
-/* cuando hay data ocultamos el track gris para que no quede “pedazo gris” */
-.mt-dualbar.has-data{ background:transparent }
-
-/* divisor SIEMPRE visible de 4px, centrado en el split */
-.mt-dualbar::after{
-  content:"";
-  position:absolute; top:0; bottom:0;
-  width:4px;
-  left:var(--split);
-  transform:translateX(-50%);
-  background:var(--Surface-Page,#1E1E1E);      /* mismo fondo del panel */
-  pointer-events:none;
+.mt-dualbar.has-data {
+  background: transparent
 }
 
-.mt-dualbar__seg{
-  position:absolute; top:0; bottom:0;
-  width:0%;                                    /* el JS la setea */
+.mt-dualbar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  left: var(--split);
+  transform: translateX(-50%);
+  background: var(--Surface-Page, #1E1E1E);
+  pointer-events: none;
 }
 
-/* izquierda (Reward) */
-.mt-dualbar__seg--reward{
-  left:0;
-  background:var(--Success-400,#2DD4BF);
-  border-top-left-radius:4px; border-bottom-left-radius:4px;
+.mt-dualbar__seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0%;
 }
 
-/* derecha (Risk) */
-.mt-dualbar__seg--risk{
-  right:0;
-  background:var(--Error-500,#F43F5E);
-  border-top-right-radius:4px; border-bottom-right-radius:4px;
+.mt-dualbar__seg--reward {
+  left: 0;
+  background: var(--Success-400, #2DD4BF);
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
 }
 
-/* si una parte ocupa 100%, redondeo ambas esquinas */
-.mt-dualbar__seg.is-full{ border-radius:4px }
+.mt-dualbar__seg--risk {
+  right: 0;
+  background: var(--Error-500, #F43F5E);
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
 
-/* cuando NO hay data (reward=0 y risk=0), que no se pinte ningún segmento */
-.mt-dualbar.is-empty .mt-dualbar__seg{ width:0% }
+.mt-dualbar__seg.is-full {
+  border-radius: 4px
+}
 
+.mt-dualbar.is-empty .mt-dualbar__seg {
+  width: 0%
+}
 
-
-
-/* NOTA: la barra usa el componente global .mt-progress-bar / __fill */
 
 /* ===== DONUT SVG ===== */
 .mt-donut {
@@ -3814,45 +3828,189 @@ body.mt-placing .woocommerce-checkout {
 .mt-donut.is-empty .mt-donut__percent {
   color: var(--Text-Body, #A8A29E)
 }
+
 /* ===== MOBILE: stack + center ===== */
-@media (max-width: 767.98px){
-  /* Contenedor principal del panel */
-  .mt-summary{
-    display: flex;                 /* deja de ser inline-flex */
-    flex-direction: column;        /* apila en columna */
-    align-items: center;           /* todo centrado */
+@media (max-width: 767.98px) {
+  .mt-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: flex-start;
     gap: 24px;
     padding: 0 12px;
   }
 
-  /* Cada columna centrada y con ancho completo */
-  .mt-summary__col{
+  .mt-summary__col {
     width: 100%;
     align-items: center;
     text-align: center;
     gap: 16px;
   }
 
-  /* El separador pasa a ser una línea horizontal entre secciones */
-  .mt-summary__divider{
-    display: block !important;     /* sobreescribe el "display:none" anterior */
+  .mt-summary__divider {
+    display: block !important;
     width: 100%;
     height: 0;
     border-top: 1px solid var(--Colors-Gray-700, #404040);
     opacity: .6;
-    transform: none;               /* sin rotación */
+    transform: none;
     margin: 8px 0;
   }
 
-  /* Ratio + barra doble a lo ancho del contenedor, centrado */
-  .mt-rr{
+  .mt-rr {
     width: 100%;
-    max-width: 420px;              /* opcional: límite visual */
+    max-width: 420px;
     margin: 0 auto;
   }
-  .mt-dualbar{ width: 100%; }
 
-  /* .mt-donut{ --size: 168px; } */
+  .mt-dualbar {
+    width: 100%;
+  }
 }
 
+/****** Account Overview ---- Dayly Journal */
+
+/* ===== Daily Journal (GRID) ===== */
+#mt-daily-journal {
+  --dj-bg: var(--Surface-Page, #1E1E1E);
+  --cols: 13;
+  --cols-other: 12;
+  --col-w: 115px;
+  --dj-viewport: 784px;
+  box-sizing: border-box;
+  overflow: hidden;
+  /* clip, el scroll vive en .dj-scroll */
+}
+
+/* Viewport: fija el ancho visible para forzar scroll-x si no cabe */
+#mt-daily-journal .dj-viewport {
+  inline-size: var(--dj-viewport);
+  max-inline-size: 100%;
+}
+
+#mt-daily-journal .dj-clip {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--dj-bg);
+  isolation: isolate;
+}
+
+#mt-daily-journal .dj-scroll {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  /* scroll horizontal */
+  overflow-y: hidden;
+  background: var(--dj-bg);
+  border-radius: inherit;
+  scrollbar-color: rgba(255, 255, 255, .15) transparent;
+  scrollbar-width: thin;
+}
+
+/* WebKit */
+#mt-daily-journal .dj-scroll::-webkit-scrollbar {
+  height: 8px
+}
+
+#mt-daily-journal .dj-scroll::-webkit-scrollbar-track {
+  background: transparent
+}
+
+#mt-daily-journal .dj-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .15);
+  border-radius: 8px;
+}
+
+/* Grid suma de anchos -> obliga scroll-x */
+#mt-daily-journal .dj-grid {
+  display: grid;
+  grid-template-columns: 60px repeat(var(--cols-other), var(--col-w));
+  inline-size: max-content;
+  min-inline-size: max-content;
+  background: var(--dj-bg);
+}
+
+/* Tipografías */
+#mt-daily-journal .dj-head {
+  color: var(--Text-Headings, #FFF);
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  background: var(--dj-bg);
+  padding: .75rem .9rem;
+}
+
+#mt-daily-journal .dj-cell {
+  color: var(--Text-Body, #A8A29E);
+  font-size: .75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  background: var(--dj-bg);
+  padding: .75rem .9rem;
+  min-width: 0;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Bordes solo por fila */
+#mt-daily-journal .dj-headrow {
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+#mt-daily-journal .dj-row{
+  border-bottom: var(--Type-letter-spacing-sm, 1px) solid var(--Colors-Gray-800, #292524);
+}
+#mt-daily-journal .dj-row.is-last{
+  border-bottom: 0; /* quitar borde al último visible de la página */
+}
+
+/* Alineaciones */
+#mt-daily-journal .is-left {
+  text-align: left;
+}
+
+#mt-daily-journal .is-right {
+  text-align: right;
+}
+
+/* Icono (clickable) */
+#mt-daily-journal .mt-dj-visibility {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Paginado */
+#mt-daily-journal .dj-pager {
+  display: flex;
+  gap: .5rem;
+  justify-content: flex-end;
+  padding: .5rem 0 0;
+}
+
+#mt-daily-journal .dj-btn {
+  background: #0f0f10;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: .5rem;
+  padding: .25rem .75rem;
+  font-size: .8rem;
+}
+.dj-btn.mt-dj-prev, .dj-btn.mt-dj-next {
+  padding: .25rem;
+}
+
+#mt-daily-journal .dj-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+#mt-daily-journal .dj-btn.active {
+  background: #1f1f20;
+}
