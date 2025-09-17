@@ -7,7 +7,7 @@ $pager_id = 'mt-daily-journal-pager';
 
 function _money_fmt($n){ $s=$n<0?'-':''; return $s.'$'.number_format(abs($n),2); }
 ?>
-<div id="<?php echo esc_attr($root_id); ?>" data-per-page="7">
+<div id="<?php echo esc_attr($root_id); ?>" data-per-page="7" class="mt-card">
   <div class="dj-viewport">
     <div class="dj-clip">
       <div class="dj-scroll">
@@ -54,7 +54,7 @@ function _money_fmt($n){ $s=$n<0?'-':''; return $s.'$'.number_format(abs($n),2);
             </span>
           </div>
           <div class="dj-cell is-right"><?php echo esc_html($r['date']); ?></div>
-          <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html(_money_fmt($r['net'])); ?></div>
+          <div class="dj-cell is-right"><?php echo esc_html(_money_fmt($r['net'])); ?></div>
           <div class="dj-cell is-right"><?php echo esc_html(_money_fmt($r['hi'])); ?></div>
           <div class="dj-cell is-right"><?php echo esc_html(_money_fmt($r['lo'])); ?></div>
           <div class="dj-cell is-right"><?php echo esc_html(number_format($r['ct'])); ?></div>
@@ -73,9 +73,9 @@ function _money_fmt($n){ $s=$n<0?'-':''; return $s.'$'.number_format(abs($n),2);
 
   <!-- Paginado (dinámico) -->
   <nav id="<?php echo esc_attr($pager_id); ?>" class="dj-pager" aria-label="Daily Journal pagination">
-    <button class="dj-btn mt-dj-prev" type="button" disabled><span class="mt-icon mt-icon-sm mt-icon-white mt-icon_chevron-left"></span></button>
-    <span class="dj-pages"></span>
-    <button class="dj-btn mt-dj-next" type="button"><span class="mt-icon mt-icon-sm mt-icon-white mt-icon_chevron-right"></span></button>
+    <button class="dj-btn mt-dj-prev" type="button" disabled><span class="mt-icon mt-icon-white mt-icon_chevron-left"></span></button>
+    <span class="dj-pages d-flex gap-1"></span>
+    <button class="dj-btn mt-dj-next" type="button"><span class="mt-icon mt-icon-white mt-icon_chevron-right"></span></button>
   </nav>
 </div>
 

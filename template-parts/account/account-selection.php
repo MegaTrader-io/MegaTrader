@@ -19,8 +19,8 @@ $productName = (string)($current['name'] ?? 'Account');
 ?>
 <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
   data-bs-target="#changeSubcriptionModal">
-  <div class="border-gray d-flex flex-wrap align-items-center gap-2 p-3 rounded-2xl">
-    <div class="d-flex gap-3 flex-grow-1 flex-shirk-0 align-items-center">
+  <div class="border-gray d-flex align-items-center gap-2 p-3 rounded-2xl">
+    <div class="d-flex flex-wrap gap-3 flex-grow-1 flex-shirk-0 align-items-center">
       <div class="badge-mega badge-mega-sm <?php echo esc_attr($badgeClass); ?>" id="mt-badge">
         <?php
           $st = strtolower($currentStat);
@@ -98,7 +98,7 @@ $productName = (string)($current['name'] ?? 'Account');
                   <div class="subscription-card__name fw-medium text-16px text-white">
                     <?php echo esc_html(($a['size'] ?? '').' '.($a['name'] ?? 'Account')); ?>
                   </div>
-                  <div class="subscription-card__id text-14px text-a8a29e text-uppercase">
+                  <div class="subscription-card__id text-14px text-a8a29e text-uppercase text-truncate">
                     #<?php echo esc_html($aid); ?>
                   </div>
                 </div>

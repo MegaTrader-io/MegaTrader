@@ -49,9 +49,9 @@ $periods = [
                 <?  endif; ?>
 
             </div>
-            <select id="lastDaysSelect" class="d-block form-select" name="last-days-select">
+            <select id="lastDaysSelect" class="d-block form-select w-fit" name="last-days-select">
                 <?php foreach ($periods as $period): ?>
-                    <option value="last_<?php echo $period['value']; ?>_days">
+                    <option value="<?= $period['value']; ?>">
                         <?php echo htmlspecialchars($period['text']); ?>
                     </option>
                 <?php endforeach; ?>
@@ -59,11 +59,14 @@ $periods = [
         </div>
     </div>
     <div class="account-performance-chart__header">
-        <div id="account-performance-chart"></div>
+        <div id="account-performance-chart" style="margin-left: -20px;"></div>
     </div>
 </div>
 
 <script>
+
+let chart;
+const defaultDays = 7;
 
 const toMoney = (value) => {
     return `\$ ${value}`
@@ -72,91 +75,75 @@ const toMoney = (value) => {
 const chartConfig = {
     type: "line",
     height: '100%',
-    series: [
-        {
-            name: "Pro Plan Revenue",
-            data: [23000, 23250, 23250, 23500, 23500, 23950, 24000, 24300, 24300, 24550, 24600, 24850],
+    chart: {
+        toolbar: {
+            show: false,
         },
-        {
-            name: "Upper Bound",
-            data: [24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250, 24250],
+    },
+    title: {
+        show: false,
+    },
+    dataLabels: {
+        enabled: false,
+    },
+    colors: ["#FFE7B8", "#24b8a6", "#FF4D4D"],
+    stroke: {
+        lineCap: "round",
+        curve: "smooth",
+        width: [2, 2, 2],
+    },
+    markers: {
+        size: [0, 5, 5],
+        colors: ["#FF4D4D", "#24b8a6"],
+        strokeColors: 'transparent',
+        strokeWidth: 0
+    },
+    legend: {
+        show: false
+    },
+    xaxis: {
+        axisTicks: {
+            show: false,
         },
-        {
-            name: "Lower Bound",
-            data: [23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250, 23250],
+        axisBorder: {
+            show: false,
         },
-    ],
-    options: {
-        chart: {
-            toolbar: {
-                show: false,
+        labels: {
+            style: {
+                colors: "#A8A29E",
+                fontSize: "12px",
+                fontFamily: "inherit",
+                fontWeight: 400,
             },
         },
-        title: {
+        // categories: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18],
+    },
+    yaxis: {
+        labels: {
+            formatter: toMoney,
+            style: {
+                colors: "#A8A29E",
+                fontSize: "12px",
+                fontFamily: "inherit",
+                fontWeight: 400,
+            },
+        },
+    },
+    grid: {
+        show: true,
+        borderColor: "#374151",
+        strokeDashArray: 5,
+    },
+    fill: {
+        opacity: 0.8,
+    },
+    tooltip: {
+        theme: "dark",
+        x: {
             show: true,
         },
-        dataLabels: {
-            enabled: false,
-        },
-        colors: ["#FFE7B8", "#24b8a6", "#FF4D4D"],
-        stroke: {
-            lineCap: "round",
-            curve: "smooth",
-            width: [2, 2, 2],
-        },
-        markers: {
-            size: [0, 5, 5],
-            colors: ["#FF4D4D", "#24b8a6"],
-            strokeColors: 'transparent',
-            strokeWidth: 0
-        },
-        legend: {
-            show: false
-        },
-        xaxis: {
-            axisTicks: {
-                show: false,
-            },
-            axisBorder: {
-                show: false,
-            },
-            labels: {
-                style: {
-                    colors: "#A8A29E",
-                    fontSize: "12px",
-                    fontFamily: "inherit",
-                    fontWeight: 400,
-                },
-            },
-            categories: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18],
-        },
-        yaxis: {
-            labels: {
-                formatter: toMoney,
-                style: {
-                    colors: "#A8A29E",
-                    fontSize: "12px",
-                    fontFamily: "inherit",
-                    fontWeight: 400,
-                },
-            },
-        },
-        grid: {
-            show: true,
-            borderColor: "#374151",
-            strokeDashArray: 5,
-        },
-        fill: {
-            opacity: 0.8,
-        },
-        tooltip: {
-            theme: "dark",
-            x: {
-                show: true,
-            },
-            y: {
-                formatter: (value) => toMoney(value.toFixed(2)),
-            },
+        y: {
+            formatter: (value) => toMoney(value.toFixed(2)),
         },
     }
 };
@@ -165,62 +152,39 @@ const formatDaysSelectText = (value) => {
     return `LAST ${value} DAYS`
 }
 
-const periods = {
-    'last_7_days': {
-        value: 7,
-        text: 'LAST 7 DAYS'
+const getChartSeries = (days) => [
+    {
+        name: "Pro Plan Revenue",
+        data: Array(days).fill('').map(() => Math.floor(Math.random() * 35000 + 1)),
     },
-    'last_14_days': {
-        value: 14,
-        text: 'LAST 14 DAYS'
+    {
+        name: "Upper Bound",
+        data: Array(days).fill('').map(() => 20000),
     },
-    'last_30_days': {
-        value: 30,
-        text: 'LAST 30 DAYS'
-    }
+    {
+        name: "Lower Bound",
+        data: Array(days).fill('').map(() => 10000),
+    },
+]
+
+const getChartOptions = (_days = defaultDays) => {
+    const days = parseInt(_days);
+    return {
+        ...chartConfig,
+        series: getChartSeries(days),
+    };
 }
 
-const days = Object.values(periods)[0].value;
 
-
-const dataChart = {
-    id: (new Date()).getTime(), //TODO: is ID needed?
-    series: [
-        {
-            name: "Pro Plan Revenue",
-            data: Array(days).fill('').map(() => Math.floor(Math.random() * 35000 + 1)),
-        },
-        {
-            name: "Upper Bound",
-            data: Array(days).fill('').map(() => 20000),
-        },
-        {
-            name: "Lower Bound",
-            data: Array(days).fill('').map(() => 10000),
-        },
-    ],
-    options: {
-        ...chartConfig.options,
-        xaxis: {
-            ...chartConfig.options.xaxis,
-            categories: Array(days).fill('').map((_, index) => (index + 1)),
-        },
-    }
-};
-
-
-var options = {
-  series: dataChart.series,
-  ...dataChart.options
-}
-
-function filterLastDaysHandler({event}){
+function filterLastDaysHandler(event){
     console.log(event.target.value);
+    chart.updateOptions(getChartOptions(event.target.value))
 }
 
 const lastDaysSelect = document.getElementById("lastDaysSelect")
 lastDaysSelect.addEventListener('change', filterLastDaysHandler)
-var chart = new ApexCharts(document.getElementById("account-performance-chart"), options);
+
+chart = new ApexCharts(document.getElementById("account-performance-chart"), getChartOptions(lastDaysSelect.value));
 
 chart.render();
 </script>

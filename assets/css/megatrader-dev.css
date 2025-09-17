@@ -3989,7 +3989,7 @@ body.mt-placing .woocommerce-checkout {
 /* Paginado */
 #mt-daily-journal .dj-pager {
   display: flex;
-  gap: .5rem;
+  gap: 4px;
   justify-content: flex-end;
   padding: .5rem 0 0;
 }
@@ -4003,7 +4003,7 @@ body.mt-placing .woocommerce-checkout {
   font-size: .8rem;
 }
 .dj-btn.mt-dj-prev, .dj-btn.mt-dj-next {
-  padding: .25rem;
+  padding: 4px !important;
 }
 
 #mt-daily-journal .dj-btn:disabled {

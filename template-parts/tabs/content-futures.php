@@ -275,8 +275,10 @@
             </ul>
         </section>
     <?php endif; ?>
-    <hr class="m-0">
-    <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn" href="/checkout/"><?= Label::FUTURES['submit_btn_text'] ?></a>
+    <section class="futures-form__footer d-flex flex-column gap-32 sticky-bottom pb-4 mb-n4 bg-1e1e1e">
+        <hr class="m-0">
+        <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn" href="/checkout/"><?= Label::FUTURES['submit_btn_text'] ?></a>
+    </section>
 </form>
 
 
