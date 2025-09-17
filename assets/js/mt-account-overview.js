@@ -405,43 +405,65 @@ document.addEventListener('mt:accountSelected', (e) => {
   window.mtRefresh.refreshAll(id);
 });
 
-/* ===== Daily Journal (AJAX + pagination) ===== */
+/* ===== Daily Journal (GRID + AJAX + paginación 7/pg) ===== */
 (function(){
   const qs  = (s, r=document)=> r.querySelector(s);
   const qsa = (s, r=document)=> Array.from(r.querySelectorAll(s));
 
+  function getRoot(){ return document.getElementById('mt-daily-journal'); }
+
   function stateFrom(root){
     const per = parseInt(root.getAttribute('data-per-page'), 10) || 7;
-    const tot = parseInt(root.getAttribute('data-total-pages'), 10) || 1;
-    return { perPage: per, totalPages: tot, totalRows: 0, currentPage: 1 };
+    return { perPage: per, totalPages: 1, totalRows: 0, currentPage: 1 };
+  }
+
+  function findRows(root){
+    // Filas en grid: .dj-row (cada una es un grid independiente)
+    return qsa('.dj-row', root);
+  }
+
+  function rebuildNumericPager(root, st){
+    const pager = qs('.dj-pager', root);
+    if (!pager) return;
+
+    const prev = qs('.mt-dj-prev', pager);
+    const next = qs('.mt-dj-next', pager);
+
+    // Remover números actuales
+    qsa('.dj-btn', pager)
+      .filter(b => b !== prev && b !== next)
+      .forEach(b => b.remove());
+
+    // Insertar números 1..N antes de "next"
+    for (let i=1; i<=st.totalPages; i++){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'dj-btn';
+      b.textContent = String(i);
+      b.addEventListener('click', () => { goTo(root, st, i); });
+      next ? pager.insertBefore(b, next) : pager.appendChild(b);
+    }
   }
 
   function updatePagerUI(root, st){
-    const curEl   = qs('.mt-dj-current', root);
-    const totEl   = qs('.mt-dj-total', root);
-    const btnPrev = qs('.mt-dj-prev', root);
-    const btnNext = qs('.mt-dj-next', root);
-    const countEl = qs('#mt-dj-count', root);
+    const pager = qs('.dj-pager', root);
+    if (!pager) return;
 
-    curEl && (curEl.textContent = String(st.currentPage));
-    totEl && (totEl.textContent = String(st.totalPages));
+    const prev = qs('.mt-dj-prev', pager);
+    const next = qs('.mt-dj-next', pager);
+    prev && (prev.disabled = st.currentPage <= 1);
+    next && (next.disabled = st.currentPage >= st.totalPages);
 
-    btnPrev && (btnPrev.disabled = st.currentPage <= 1);
-    btnNext && (btnNext.disabled = st.currentPage >= st.totalPages);
-
-    const start = (st.currentPage - 1) * st.perPage + 1;
-    const end   = Math.min(start + st.perPage - 1, st.totalRows);
-    const a = st.totalRows ? start : 0;
-    const b = st.totalRows ? end   : 0;
-    countEl && (countEl.innerHTML = `Showing <strong>${a}–${b}</strong> of <strong>${st.totalRows}</strong>`);
+    // Marcar activo
+    const nums = qsa('.dj-btn', pager).filter(b => !b.classList.contains('mt-dj-prev') && !b.classList.contains('mt-dj-next'));
+    nums.forEach((b, i) => b.classList.toggle('active', (i+1) === st.currentPage));
   }
 
   function applyPageVisibility(root, st){
-    const tbody = qs('#mt-daily-journal-table tbody', root);
-    if (!tbody) return;
-    qsa('tr[data-page]', tbody).forEach(tr => {
-      const p = parseInt(tr.getAttribute('data-page'), 10) || 1;
-      tr.style.display = (p === st.currentPage) ? '' : 'none';
+    const rows = findRows(root);
+    rows.forEach((row, idx) => {
+      const p = Math.floor(idx / st.perPage) + 1;
+      row.style.display = (p === st.currentPage) ? 'grid' : 'none';
     });
   }
 
@@ -451,10 +473,18 @@ document.addEventListener('mt:accountSelected', (e) => {
     updatePagerUI(root, st);
   }
 
-  function fetchDailyJournal(root, accountId){
-    const acctEl = qs('#mt-daily-journal-account', root);
-    acctEl && (acctEl.textContent = accountId || '—');
+  function recalcAndRender(root, st){
+    const rows = findRows(root);
+    st.totalRows  = rows.length;
+    st.totalPages = Math.max(1, Math.ceil(st.totalRows / st.perPage));
+    st.currentPage = Math.min(st.currentPage, st.totalPages) || 1;
 
+    rebuildNumericPager(root, st);
+    applyPageVisibility(root, st);
+    updatePagerUI(root, st);
+  }
+
+  function fetchDailyJournal(root, accountId){
     const url   = (window.mtAccounts && mtAccounts.ajaxUrl) || '/wp-admin/admin-ajax.php';
     const nonce = (window.mtAccounts && mtAccounts.nonce)   || '';
 
@@ -463,7 +493,8 @@ document.addEventListener('mt:accountSelected', (e) => {
     body.set('nonce',  nonce);
     body.set('account_id', String(accountId || ''));
 
-    const tbody = qs('#mt-daily-journal-table tbody', root);
+    const scroll = qs('.dj-scroll', root);
+
     return fetch(url, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
@@ -472,21 +503,24 @@ document.addEventListener('mt:accountSelected', (e) => {
     .then(r=>r.json())
     .then(j=>{
       if (!j?.success || !j?.data) return;
-      const { rowsHtml, total, per_page, total_pages } = j.data;
-      if (tbody) tbody.innerHTML = rowsHtml || '';
 
-      root.setAttribute('data-per-page', String(per_page || 7));
-      root.setAttribute('data-total-pages', String(total_pages || 1));
+      const { rowsHtml, per_page, total_pages } = j.data;
 
-      const st = stateFrom(root);
-      st.totalRows  = parseInt(total, 10) || 0;
-      st.totalPages = parseInt(total_pages, 10) || 1;
-      st.currentPage= 1;
+      // Reemplazar filas bajo el header (dejamos dj-headrow tal cual)
+      if (scroll && rowsHtml != null) {
+        // Eliminar filas actuales
+        qsa('.dj-row', scroll).forEach(n => n.remove());
+        // Inyectar nuevas filas
+        const tmp = document.createElement('div');
+        tmp.innerHTML = rowsHtml;
+        qsa('.dj-row', tmp).forEach(n => scroll.appendChild(n));
+      }
 
-      applyPageVisibility(root, st);
-      updatePagerUI(root, st);
+      if (per_page) root.setAttribute('data-per-page', String(per_page));
+      if (total_pages) root.setAttribute('data-total-pages', String(total_pages));
 
-      // guardar en dataset para navegares subsiguientes si hace falta
+      const st = root.__djState || stateFrom(root);
+      recalcAndRender(root, st);
       root.__djState = st;
     });
   }
@@ -496,25 +530,29 @@ document.addEventListener('mt:accountSelected', (e) => {
     root.__djBound = true;
 
     const st = root.__djState || stateFrom(root);
-    const btnPrev = qs('.mt-dj-prev', root);
-    const btnNext = qs('.mt-dj-next', root);
+    const pager = qs('.dj-pager', root);
+    const prev = qs('.mt-dj-prev', pager);
+    const next = qs('.mt-dj-next', pager);
 
-    btnPrev && btnPrev.addEventListener('click', ()=> goTo(root, st, st.currentPage - 1));
-    btnNext && btnNext.addEventListener('click', ()=> goTo(root, st, st.currentPage + 1));
+    prev && prev.addEventListener('click', ()=> goTo(root, st, st.currentPage - 1));
+    next && next.addEventListener('click', ()=> goTo(root, st, st.currentPage + 1));
 
-    // primera UI (vacía)
-    updatePagerUI(root, st);
-  }
-
-  function getRoot(){
-    return document.getElementById('mt-daily-journal');
+    // Setup inicial con lo que esté renderizado (mock o server)
+    recalcAndRender(root, st);
+    root.__djState = st;
   }
 
   // Bind al cargar
+  function initDJ(){
+    const root = getRoot();
+    if (!root) return;
+    bindDailyJournal(root);
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => bindDailyJournal(getRoot()));
+    document.addEventListener('DOMContentLoaded', initDJ);
   } else {
-    bindDailyJournal(getRoot());
+    initDJ();
   }
 
   // Registrar en el bus global

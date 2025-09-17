@@ -2,6 +2,27 @@
 
 if (!defined('ABSPATH')) exit;
 
+if (! isset($args) || ! is_array($args) || empty($args)) { return; }
+
+$chart_title = isset($args['title']) ? $args['title'] : 'Performance Chart';
+$chart_title_tooltip = isset($args['title_tooltip']) && is_array($args['title_tooltip'])? $args['title_tooltip'] : [];
+
+$periods = [
+    [
+        'value' => 7,
+        'text'  => 'LAST 7 DAYS'
+    ],
+    [
+        'value' => 14,
+        'text'  => 'LAST 14 DAYS'
+    ],
+    [
+        'value' => 30,
+        'text'  => 'LAST 30 DAYS'
+    ]
+];
+
+
 ?>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
@@ -9,24 +30,31 @@ if (!defined('ABSPATH')) exit;
     <div class="account-graph__header">
         <div class="d-flex flex-column flex-md-row align-items-center gap-3">
             <div class="d-flex align-items-center gap-2 w-100">
-                <div style="color: white; font-size: 20px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">100K Growth Plan</div>
-                <span class="mt-tooltip">
-                    <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
-                        aria-label="Daily Loss Limit information"></i>
-                    <span class="mt-tooltip__panel" role="tooltip">
-                        <div class="mt-tooltip__title">Daily Loss Limit (DLL)</div>
-                        <div class="mt-tooltip__body">
-                            Reaching the DLL pauses trading for the day. It’s removed once a profit
-                            milestone is
-                            met.
-                        </div>
+                <div style="color: white; font-size: 20px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word"><?= $chart_title ?></div>
+                <?php if(isset($chart_title_tooltip) && !empty($chart_title_tooltip)): ?>
+                    <span class="mt-tooltip">
+                        <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
+                            aria-label="Daily Loss Limit information"></i>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <?php if(isset($chart_title_tooltip['title'])): ?>
+                                <div class="mt-tooltip__title"><?= $chart_title_tooltip['title'] ?></div>
+                            <?  endif; ?>
+                            <?php if(isset($chart_title_tooltip['description'])): ?>
+                                <div class="mt-tooltip__body">
+                                    <?= $chart_title_tooltip['description'] ?>
+                                </div>
+                            <?  endif; ?>
+                        </span>
                     </span>
-                </span>
+                <?  endif; ?>
+
             </div>
-            <select id="mega-navigation-select" class="mega-navigation-select d-block form-select" name="last-days-select" id="lastDaysSelect">
-                <option value="last_7_days">LAST 7 DAYS</option>
-                <option value="last_14_days">LAST 14 DAYS</option>
-                <option value="last_30_days">LAST 30 DAYS</option>
+            <select id="lastDaysSelect" class="d-block form-select" name="last-days-select">
+                <?php foreach ($periods as $period): ?>
+                    <option value="last_<?php echo $period['value']; ?>_days">
+                        <?php echo htmlspecialchars($period['text']); ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
         </div>
     </div>
@@ -36,6 +64,10 @@ if (!defined('ABSPATH')) exit;
 </div>
 
 <script>
+
+const toMoney = (value) => {
+    return `\$ ${value}`
+}
 
 const chartConfig = {
     type: "line",
@@ -100,7 +132,7 @@ const chartConfig = {
         },
         yaxis: {
             labels: {
-                formatter: (value) => value,
+                formatter: toMoney,
                 style: {
                     colors: "#A8A29E",
                     fontSize: "12px",
@@ -118,24 +150,39 @@ const chartConfig = {
             opacity: 0.8,
         },
         tooltip: {
-            theme: "dark"
+            theme: "dark",
+            x: {
+                show: true,
+            },
+            y: {
+                formatter: (value) => toMoney(value.toFixed(2)),
+            },
         },
     }
 };
 
-const periods = [
-    {id: 'last_7_days', text: 'LAST 7 DAYS'},
-    {id: 'last_14_days', text: 'LAST 14 DAYS'},
-    {id: 'last_30_days', text: 'LAST 30 DAYS'},
-]
+const formatDaysSelectText = (value) => {
+    return `LAST ${value} DAYS`
+}
 
-const selectPeriod = periods[0];
+const periods = {
+    'last_7_days': {
+        value: 7,
+        text: 'LAST 7 DAYS'
+    },
+    'last_14_days': {
+        value: 14,
+        text: 'LAST 14 DAYS'
+    },
+    'last_30_days': {
+        value: 30,
+        text: 'LAST 30 DAYS'
+    }
+}
 
-const days = {
-    'last_30_days': 30,
-    'last_14_days': 14,
-    'last_7_days': 7,
-}[selectPeriod.id];
+const days = Object.values(periods)[0].value;
+
+console.log(days)
 
 const dataChart = {
     id: (new Date()).getTime(), //TODO: is ID needed?
@@ -168,11 +215,12 @@ var options = {
   ...dataChart.options
 }
 
-function filterDaysRangeHandler(event){
-    console.log(event.value);
+function filterLastDaysHandler({event}){
+    console.log(event.target.value);
 }
 
 const lastDaysSelect = document.getElementById("lastDaysSelect")
+lastDaysSelect.addEventListener('change', filterLastDaysHandler)
 var chart = new ApexCharts(document.getElementById("account-graph"), options);
 
 chart.render();

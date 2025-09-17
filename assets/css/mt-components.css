@@ -837,9 +837,6 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
   margin-bottom:-1px; /* solape con borde */
 }
 
-
-
-
 /* ===== Progress Bar (global) ===== */
 .mt-progress-bar {
     position: relative;
