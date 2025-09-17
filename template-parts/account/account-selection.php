@@ -6,6 +6,8 @@ $prepared = isset($args['prepared']) && is_array($args['prepared']) ? $args['pre
 $current = $prepared['current'] ?? null;
 $accounts = $prepared['accounts'] ?? [];
 
+
+
 if (!$prepared || empty($accounts)) {
   echo '<p class="text-a8a29e"><em>No accounts found for this user.</em></p>';
   return;
@@ -15,11 +17,13 @@ if (!$current && !empty($accounts)) {
   $current = $accounts[0];
 }
 
+
 $currentId = (string) ($current['id'] ?? '');
 $badgeClass = (string) ($current['badgeClass'] ?? 'badge-mega-default');
 $currentStat = (string) ($current['status'] ?? 'unknown');
 $sizeSlug = (string) ($current['size'] ?? '');
 $productName = (string) ($current['name'] ?? 'Account');
+
 
 ?>
 <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
@@ -71,6 +75,12 @@ $productName = (string) ($current['name'] ?? 'Account');
               $card_classes = 'subscription-card position-relative d-flex flex-column gap-2';
               if ($isCur)
                 $card_classes .= ' active';
+              $status_raw = (string) ($a['status'] ?? '');
+              $status_key = strtolower(trim($status_raw));
+              $status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
+              $dot_class = 'dot-status-' . $status_key;
+
+
               ?>
               <div class="<?php echo esc_attr($card_classes); ?>" role="button"
                 data-account-id="<?php echo esc_attr($aid); ?>" data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
@@ -89,7 +99,7 @@ $productName = (string) ($current['name'] ?? 'Account');
                   <div class="logo-container position-relative d-inline-block">
                     <img src="<?php echo esc_url($a['logo'] ?? ''); ?>"
                       alt="<?php echo esc_attr(($a['platform'] ?? '') ?: 'platform'); ?> logo" style="max-height:40px;">
-                    <div class="dot-indicator <?php echo esc_attr($a['dotClass'] ?? 'dot-status-default'); ?>"
+                    <div class="dot-indicator <?php echo esc_attr($dot_class); ?>"
                       title="<?php echo esc_attr($a['status'] ?? ''); ?>"
                       style="position:absolute; right:-2px; bottom:-2px;">
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -248,3 +258,5 @@ wp_add_inline_script($handle, <<<JS
   });
 })();
 JS);
+
+
