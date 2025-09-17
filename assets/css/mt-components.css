@@ -388,6 +388,14 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     line-height: 0;
 }
 
+.mt-icon.mt-icon-sm {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
 .mt-icon.mt-icon-md {
     width: 30px;
     height: 30px;
@@ -582,6 +590,9 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 .mt-icon_visibility {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_2344_3369" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_2344_3369)"><path d="M12 16C13.25 16 14.3125 15.5625 15.1875 14.6875C16.0625 13.8125 16.5 12.75 16.5 11.5C16.5 10.25 16.0625 9.1875 15.1875 8.3125C14.3125 7.4375 13.25 7 12 7C10.75 7 9.6875 7.4375 8.8125 8.3125C7.9375 9.1875 7.5 10.25 7.5 11.5C7.5 12.75 7.9375 13.8125 8.8125 14.6875C9.6875 15.5625 10.75 16 12 16ZM12 14.2C11.25 14.2 10.6125 13.9375 10.0875 13.4125C9.5625 12.8875 9.3 12.25 9.3 11.5C9.3 10.75 9.5625 10.1125 10.0875 9.5875C10.6125 9.0625 11.25 8.8 12 8.8C12.75 8.8 13.3875 9.0625 13.9125 9.5875C14.4375 10.1125 14.7 10.75 14.7 11.5C14.7 12.25 14.4375 12.8875 13.9125 13.4125C13.3875 13.9375 12.75 14.2 12 14.2ZM12 19C9.56667 19 7.35 18.3208 5.35 16.9625C3.35 15.6042 1.9 13.7833 1 11.5C1.9 9.21667 3.35 7.39583 5.35 6.0375C7.35 4.67917 9.56667 4 12 4C14.4333 4 16.65 4.67917 18.65 6.0375C20.65 7.39583 22.1 9.21667 23 11.5C22.1 13.7833 20.65 15.6042 18.65 16.9625C16.65 18.3208 14.4333 19 12 19Z" fill="black"/></g></svg>');
+}
+.mt-icon_visibility-off {
     mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_13563_18004" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_13563_18004)"><path d="M19.8 22.6008L15.6 18.4508C15.0167 18.6341 14.4292 18.7716 13.8375 18.8633C13.2458 18.955 12.6333 19.0008 12 19.0008C9.48333 19.0008 7.24167 18.3049 5.275 16.9133C3.30833 15.5216 1.88333 13.7174 1 11.5008C1.35 10.6174 1.79167 9.79662 2.325 9.03828C2.85833 8.27995 3.46667 7.60078 4.15 7.00078L1.4 4.20078L2.8 2.80078L21.2 21.2008L19.8 22.6008ZM12 16.0008C12.1833 16.0008 12.3542 15.9924 12.5125 15.9758C12.6708 15.9591 12.8417 15.9258 13.025 15.8758L7.625 10.4758C7.575 10.6591 7.54167 10.8299 7.525 10.9883C7.50833 11.1466 7.5 11.3174 7.5 11.5008C7.5 12.7508 7.9375 13.8133 8.8125 14.6883C9.6875 15.5633 10.75 16.0008 12 16.0008ZM19.3 16.4508L16.125 13.3008C16.2417 13.0174 16.3333 12.7299 16.4 12.4383C16.4667 12.1466 16.5 11.8341 16.5 11.5008C16.5 10.2508 16.0625 9.18828 15.1875 8.31328C14.3125 7.43828 13.25 7.00078 12 7.00078C11.6667 7.00078 11.3542 7.03411 11.0625 7.10078C10.7708 7.16745 10.4833 7.26745 10.2 7.40078L7.65 4.85078C8.33333 4.56745 9.03333 4.35495 9.75 4.21328C10.4667 4.07161 11.2167 4.00078 12 4.00078C14.5167 4.00078 16.7583 4.69661 18.725 6.08828C20.6917 7.47995 22.1167 9.28412 23 11.5008C22.6167 12.4841 22.1125 13.3966 21.4875 14.2383C20.8625 15.0799 20.1333 15.8174 19.3 16.4508ZM14.675 11.8508L11.675 8.85078C12.1417 8.76745 12.5708 8.80495 12.9625 8.96328C13.3542 9.12161 13.6917 9.35078 13.975 9.65078C14.2583 9.95078 14.4625 10.2966 14.5875 10.6883C14.7125 11.0799 14.7417 11.4674 14.675 11.8508Z" fill="white"/></g></svg>');
 }
 
@@ -641,6 +652,14 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-badge.mt-badge-dark {
     color: var(--Text-Body, #A8A29E);
     background: var(--Surface-Page, #1E1E1E);
+}
+
+.mt-badge.mt-badge-apps {
+    border-radius: var(--Border-Radius-sm, 4px);
+    border: var(--Border-Width-sm, 1px) solid var(--Colors-Gray-700, #404040);
+    background: var(--Surface-Dark, #292524);
+    color: var(--Text-Action-Dark-Solid, #FAFAFA);
+    padding: var(--Spacing-2xs, 4px) var(--Spacing-sm, 12px) var(--Spacing-2xs, 4px) var(--Spacing-xs, 8px);
 }
 
 /* END BADGE */
@@ -766,29 +785,48 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 /* ===== Progress Bar (global) ===== */
-.mt-progress-bar{
-  position:relative;
-  display:block;
-  height:8px;
-  background:var(--Colors-Gray-700,#404040);
-  border-radius:4px;
-  overflow:hidden;
-}
-.mt-progress-bar--sm{height:6px}
-.mt-progress-bar--md{height:8px}
-.mt-progress-bar--lg{height:12px}
-
-.mt-progress-bar__fill{
-  position:absolute; inset:0 auto 0 0; /* top:0;left:0;bottom:0 */
-  width:var(--mt-progress-value,0%);
-  background:var(--Success-400,#2DD4BF);
-  border-radius:inherit;
-  transition:width .25s ease;
+.mt-progress-bar {
+    position: relative;
+    display: block;
+    height: 8px;
+    background: var(--Colors-Gray-700, #404040);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-.mt-progress-bar--success .mt-progress-bar__fill{ background:var(--Success-400,#2DD4BF); }
-.mt-progress-bar--error   .mt-progress-bar__fill{ background:var(--Error-500,#F43F5E); }
-.mt-progress-bar--primary .mt-progress-bar__fill{ background:var(--Primary-400,#FFB34A); }
+.mt-progress-bar--sm {
+    height: 6px
+}
+
+.mt-progress-bar--md {
+    height: 8px
+}
+
+.mt-progress-bar--lg {
+    height: 12px
+}
+
+.mt-progress-bar__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    /* top:0;left:0;bottom:0 */
+    width: var(--mt-progress-value, 0%);
+    background: var(--Success-400, #2DD4BF);
+    border-radius: inherit;
+    transition: width .25s ease;
+}
+
+.mt-progress-bar--success .mt-progress-bar__fill {
+    background: var(--Success-400, #2DD4BF);
+}
+
+.mt-progress-bar--error .mt-progress-bar__fill {
+    background: var(--Error-500, #F43F5E);
+}
+
+.mt-progress-bar--primary .mt-progress-bar__fill {
+    background: var(--Primary-400, #FFB34A);
+}
 
 
 /* ===== Button ===== */
@@ -1002,50 +1040,63 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 /* Viewport del strip (reutilizable) */
-.mt-tabs-viewport{
-  flex:1 1 0%;
-  min-width:0;
-  width:0; /* evita desbordar al padre */
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  box-sizing:border-box;
+.mt-tabs-viewport {
+    flex: 1 1 0%;
+    min-width: 0;
+    width: 0;
+    /* evita desbordar al padre */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 /* Scroller / tablist (reutilizable) */
-.mt-toggle-group{
-  flex:1 1 0%;
-  min-width:0;
-  max-width:100%;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:nowrap;
-  overflow-x:auto;
-  scrollbar-width:none;          /* Firefox */
-  -ms-overflow-style:none;       /* IE legacy */
-  scroll-behavior:smooth;
-  scroll-snap-type:x proximity;
-  box-sizing:border-box;
+.mt-toggle-group {
+    flex: 1 1 0%;
+    min-width: 0;
+    max-width: 100%;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE legacy */
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    box-sizing: border-box;
 }
-.mt-toggle-group::-webkit-scrollbar{ display:none; }
-.mt-toggle-group > .mt-toggle-button{ scroll-snap-align:start; }
+
+.mt-toggle-group::-webkit-scrollbar {
+    display: none;
+}
+
+.mt-toggle-group>.mt-toggle-button {
+    scroll-snap-align: start;
+}
 
 /* Gradientes de borde (reutilizable) */
-.mt-tabs-gradient{
-  position:absolute;
-  top:0; bottom:0;
-  width:48px;
-  z-index:1;
-  pointer-events:none;
-  opacity:0; /* JS la ajusta según overflow */
+.mt-tabs-gradient {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    /* JS la ajusta según overflow */
 }
-.mt-tabs-gradient--left{
-  left:0;
-  background:linear-gradient(270deg, rgba(19,18,16,0) 0%, var(--Surface-Body,#131210) 100%);
+
+.mt-tabs-gradient--left {
+    left: 0;
+    background: linear-gradient(270deg, rgba(19, 18, 16, 0) 0%, var(--Surface-Body, #131210) 100%);
 }
-.mt-tabs-gradient--right{
-  right:0;
-  background:linear-gradient(90deg, rgba(19,18,16,0) 0%, var(--Surface-Body,#131210) 100%);
+
+.mt-tabs-gradient--right {
+    right: 0;
+    background: linear-gradient(90deg, rgba(19, 18, 16, 0) 0%, var(--Surface-Body, #131210) 100%);
 }
