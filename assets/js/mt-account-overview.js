@@ -404,3 +404,138 @@ document.addEventListener('mt:accountSelected', (e) => {
   const id = e?.detail?.accountId; if (!id) return;
   window.mtRefresh.refreshAll(id);
 });
+
+/* ===== Daily Journal (AJAX + pagination) ===== */
+(function(){
+  const qs  = (s, r=document)=> r.querySelector(s);
+  const qsa = (s, r=document)=> Array.from(r.querySelectorAll(s));
+
+  function stateFrom(root){
+    const per = parseInt(root.getAttribute('data-per-page'), 10) || 7;
+    const tot = parseInt(root.getAttribute('data-total-pages'), 10) || 1;
+    return { perPage: per, totalPages: tot, totalRows: 0, currentPage: 1 };
+  }
+
+  function updatePagerUI(root, st){
+    const curEl   = qs('.mt-dj-current', root);
+    const totEl   = qs('.mt-dj-total', root);
+    const btnPrev = qs('.mt-dj-prev', root);
+    const btnNext = qs('.mt-dj-next', root);
+    const countEl = qs('#mt-dj-count', root);
+
+    curEl && (curEl.textContent = String(st.currentPage));
+    totEl && (totEl.textContent = String(st.totalPages));
+
+    btnPrev && (btnPrev.disabled = st.currentPage <= 1);
+    btnNext && (btnNext.disabled = st.currentPage >= st.totalPages);
+
+    const start = (st.currentPage - 1) * st.perPage + 1;
+    const end   = Math.min(start + st.perPage - 1, st.totalRows);
+    const a = st.totalRows ? start : 0;
+    const b = st.totalRows ? end   : 0;
+    countEl && (countEl.innerHTML = `Showing <strong>${a}–${b}</strong> of <strong>${st.totalRows}</strong>`);
+  }
+
+  function applyPageVisibility(root, st){
+    const tbody = qs('#mt-daily-journal-table tbody', root);
+    if (!tbody) return;
+    qsa('tr[data-page]', tbody).forEach(tr => {
+      const p = parseInt(tr.getAttribute('data-page'), 10) || 1;
+      tr.style.display = (p === st.currentPage) ? '' : 'none';
+    });
+  }
+
+  function goTo(root, st, page){
+    st.currentPage = Math.max(1, Math.min(st.totalPages, page));
+    applyPageVisibility(root, st);
+    updatePagerUI(root, st);
+  }
+
+  function fetchDailyJournal(root, accountId){
+    const acctEl = qs('#mt-daily-journal-account', root);
+    acctEl && (acctEl.textContent = accountId || '—');
+
+    const url   = (window.mtAccounts && mtAccounts.ajaxUrl) || '/wp-admin/admin-ajax.php';
+    const nonce = (window.mtAccounts && mtAccounts.nonce)   || '';
+
+    const body = new URLSearchParams();
+    body.set('action', 'mt_account_daily_journal');
+    body.set('nonce',  nonce);
+    body.set('account_id', String(accountId || ''));
+
+    const tbody = qs('#mt-daily-journal-table tbody', root);
+    return fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body
+    })
+    .then(r=>r.json())
+    .then(j=>{
+      if (!j?.success || !j?.data) return;
+      const { rowsHtml, total, per_page, total_pages } = j.data;
+      if (tbody) tbody.innerHTML = rowsHtml || '';
+
+      root.setAttribute('data-per-page', String(per_page || 7));
+      root.setAttribute('data-total-pages', String(total_pages || 1));
+
+      const st = stateFrom(root);
+      st.totalRows  = parseInt(total, 10) || 0;
+      st.totalPages = parseInt(total_pages, 10) || 1;
+      st.currentPage= 1;
+
+      applyPageVisibility(root, st);
+      updatePagerUI(root, st);
+
+      // guardar en dataset para navegares subsiguientes si hace falta
+      root.__djState = st;
+    });
+  }
+
+  function bindDailyJournal(root){
+    if (!root || root.__djBound) return;
+    root.__djBound = true;
+
+    const st = root.__djState || stateFrom(root);
+    const btnPrev = qs('.mt-dj-prev', root);
+    const btnNext = qs('.mt-dj-next', root);
+
+    btnPrev && btnPrev.addEventListener('click', ()=> goTo(root, st, st.currentPage - 1));
+    btnNext && btnNext.addEventListener('click', ()=> goTo(root, st, st.currentPage + 1));
+
+    // primera UI (vacía)
+    updatePagerUI(root, st);
+  }
+
+  function getRoot(){
+    return document.getElementById('mt-daily-journal');
+  }
+
+  // Bind al cargar
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => bindDailyJournal(getRoot()));
+  } else {
+    bindDailyJournal(getRoot());
+  }
+
+  // Registrar en el bus global
+  if (window.mtRefresh && typeof window.mtRefresh.register === 'function') {
+    window.mtRefresh.register('dailyJournal', function(accountId){
+      const root = getRoot();
+      if (!root) return;
+      bindDailyJournal(root);
+      return fetchDailyJournal(root, accountId);
+    });
+  } else {
+    // si el bus aún no existe, registra cuando esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.mtRefresh && typeof window.mtRefresh.register === 'function') {
+        window.mtRefresh.register('dailyJournal', function(accountId){
+          const root = getRoot();
+          if (!root) return;
+          bindDailyJournal(root);
+          return fetchDailyJournal(root, accountId);
+        });
+      }
+    });
+  }
+})();

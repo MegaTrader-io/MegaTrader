@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) exit;
                     </span>
                 </span>
             </div>
-            <select id="mega-navigation-select" class="mega-navigation-select d-block form-select">
+            <select id="mega-navigation-select" class="mega-navigation-select d-block form-select" name="last-days-select" id="lastDaysSelect">
                 <option value="last_7_days">LAST 7 DAYS</option>
                 <option value="last_14_days">LAST 14 DAYS</option>
                 <option value="last_30_days">LAST 30 DAYS</option>
@@ -61,7 +61,7 @@ const chartConfig = {
             },
         },
         title: {
-            show: false,
+            show: true,
         },
         dataLabels: {
             enabled: false,
@@ -100,7 +100,7 @@ const chartConfig = {
         },
         yaxis: {
             labels: {
-                formatter: (value) => `$ ${value}`,
+                formatter: (value) => value,
                 style: {
                     colors: "#A8A29E",
                     fontSize: "12px",
@@ -118,13 +118,7 @@ const chartConfig = {
             opacity: 0.8,
         },
         tooltip: {
-            theme: "dark",
-            x: {
-                show: true,
-            },
-            y: {
-                formatter: (value) => `$ ${value.toFixed(2)}`,
-            },
+            theme: "dark"
         },
     }
 };
@@ -144,7 +138,7 @@ const days = {
 }[selectPeriod.id];
 
 const dataChart = {
-    id: (new Date()).getTime(),
+    id: (new Date()).getTime(), //TODO: is ID needed?
     series: [
         {
             name: "Pro Plan Revenue",
@@ -174,7 +168,11 @@ var options = {
   ...dataChart.options
 }
 
+function filterDaysRangeHandler(event){
+    console.log(event.value);
+}
 
+const lastDaysSelect = document.getElementById("lastDaysSelect")
 var chart = new ApexCharts(document.getElementById("account-graph"), options);
 
 chart.render();
