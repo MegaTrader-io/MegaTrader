@@ -3583,7 +3583,6 @@ body.mt-placing .woocommerce-checkout {
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  flex-wrap: wrap;
   align-content: center
 }
 

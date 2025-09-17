@@ -7,23 +7,27 @@ if (!defined('ABSPATH')) exit;
 
 <div class="account-graph mt-card">
     <div class="account-graph__header">
-        <div style="width: 100%; height: 100%; justify-content: space-between; align-items: center; display: inline-flex">
-            <div style="flex: 1 1 0; justify-content: flex-start; align-items: center; gap: 8px; display: flex">
+        <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2 w-100">
                 <div style="color: white; font-size: 20px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">100K Growth Plan</div>
-                <div style="width: 24px; height: 24px; position: relative">
-                    <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                    <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: var(--Basic-White, white)"></div>
-                </div>
+                <span class="mt-tooltip">
+                    <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
+                        aria-label="Daily Loss Limit information"></i>
+                    <span class="mt-tooltip__panel" role="tooltip">
+                        <div class="mt-tooltip__title">Daily Loss Limit (DLL)</div>
+                        <div class="mt-tooltip__body">
+                            Reaching the DLL pauses trading for the day. It’s removed once a profit
+                            milestone is
+                            met.
+                        </div>
+                    </span>
+                </span>
             </div>
-            <div data-show-helpertext="false" data-showicon="false" data-status="filled" style="flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-                <div style="width: 250px; padding-left: 16px; padding-right: 16px; padding-top: 12px; padding-bottom: 12px; background: rgba(30, 30, 30, 0.70); border-radius: 12px; outline: 1px var(--Colors-Gray-700, #404040) solid; outline-offset: -1px; justify-content: flex-start; align-items: flex-start; gap: 8px; display: inline-flex">
-                    <div style="flex: 1 1 0; color: var(--Text-Body, #A8A29E); font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">LAST 10 DAYS</div>
-                    <div style="width: 24px; height: 24px; position: relative">
-                        <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                        <div style="width: 10px; height: 5px; left: 7px; top: 10px; position: absolute; background: var(--White, white)"></div>
-                    </div>
-                </div>
-            </div>
+            <select id="mega-navigation-select" class="mega-navigation-select d-block form-select">
+                <option value="last_7_days">LAST 7 DAYS</option>
+                <option value="last_14_days">LAST 14 DAYS</option>
+                <option value="last_30_days">LAST 30 DAYS</option>
+            </select>
         </div>
     </div>
     <div class="account-graph__header">

@@ -105,7 +105,9 @@ $GLOBALS['mt_selected_id'] = $mt_selected_id;
 
     <div class="mt-page__main d-flex flex-column gap-32">
       <?php get_template_part('template-parts/account/account-no-order'); ?>
-
+      <div class="mt-account-navigation mega-navigation">
+        <?php get_template_part('template-parts/account/account-navigation'); ?>
+      </div>
       <div class="mt-account-selection">
         <?php
         // Selector (pasa UI + el seleccionado actual para marcarlo)

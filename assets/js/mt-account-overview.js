@@ -26,7 +26,6 @@
       bar.classList.toggle("is-empty", !hasAny);
       bar.classList.toggle("has-data", hasAny);
 
-      // Solo seteamos --split si hay data; si no, dejamos que el CSS ponga el estado "vacío"
       if (hasAny) {
         bar.style.setProperty("--split", reward + "%");
       } else {
@@ -47,7 +46,7 @@
     });
   }
 
-  /* ========= Progress genérico (si lo usas en otras partes) ========= */
+  /* ========= Progress genérico ========= */
   function initProgressBars(root=document){
     $$(".mt-progress-bar", root).forEach(el=>{
       const v = clamp(el.dataset.progress, 0, 100);
@@ -72,7 +71,6 @@
       const max = group.scrollWidth - group.clientWidth;
 
       if (max <= 1) {
-        // No hay overflow: ocultar ambos y deshabilitar flechas
         if (gradL) gradL.style.opacity = "0";
         if (gradR) gradR.style.opacity = "0";
         if (btnPrev) btnPrev.disabled = true;
@@ -99,16 +97,12 @@
       group.scrollBy({ left: SCROLL_STEP(), behavior: "smooth" });
     });
 
-    // Asegurar que el tab activo esté a la vista al cargar
     const activeChip = $('[data-fc-tab].active', root) || $('[data-fc-tab][aria-selected="true"]', root);
     if (activeChip) {
       activeChip.scrollIntoView({ inline: "center", block: "nearest" });
     }
 
-    // Primer cálculo
     updateGradients();
-
-    // Devuelve un actualizador por si necesitas llamarlo tras interacciones
     return updateGradients;
   }
 
@@ -124,7 +118,6 @@
 
         const id = chip.getAttribute('data-id');
 
-        // chips
         $$('.mt-toggle-button', tablist).forEach(c=>{
           const active = (c === chip);
           c.classList.toggle('active', active);
@@ -132,15 +125,12 @@
           c.tabIndex = active ? 0 : -1;
         });
 
-        // Llevar el chip al centro visual
         chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
-        // panel correspondiente
         panels.forEach(p=>{
           const match = p.getAttribute('data-panel-for') === id;
           if (match) {
             p.removeAttribute('hidden');
-            // Re-init medidores dentro del panel activo
             initDonuts(p);
             initDualBars(p);
             initProgressBars(p);
@@ -149,7 +139,6 @@
           }
         });
 
-        // Recalcular gradientes tras el cambio
         if (typeof refreshGradients === 'function') refreshGradients();
       });
     });
@@ -169,16 +158,16 @@
   }
 })();
 
-/* ======= Bloque de interacciones de cuenta (copy + toggle pwd + AJAX) ======= */
+/* ======= Interacciones de cuenta (copy + toggle pwd + AJAX) ======= */
 (function () {
-  /* --- Toast “Copiado” anclado sobre el click --- */
+  /* --- Toast “Copied to clipboard” anclado sobre el click --- */
   const COPY_FEEDBACK_MS = 10000; // 10s
   function ensureCopyToastStyle(){
     if (window.__mtCopyToastStyle) return;
     const css = `
       #mt-copy-toast{
         position:fixed;
-        left:0; top:0; /* se calcula dinámicamente */
+        left:0; top:0; /* dinámico */
         transform:translate(-50%,-100%);
         background:#1f2937;color:#fff;padding:8px 12px;border-radius:8px;
         font-size:12px;line-height:1;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);
@@ -200,7 +189,7 @@
       toast.id = 'mt-copy-toast';
       document.body.appendChild(toast);
     }
-    toast.textContent = text || 'Copied';
+    toast.textContent = text || 'Copied to clipboard';
 
     const rect = (anchorEl && anchorEl.getBoundingClientRect)
       ? anchorEl.getBoundingClientRect()
@@ -229,14 +218,13 @@
 
     const onDone = () => {
       t.classList.add('is-copied');
-      showCopyToast('Copied to clipboard', t); // anclado al icono
+      showCopyToast('Copied to clipboard', t);
       setTimeout(()=> t.classList.remove('is-copied'), 1200);
     };
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(v).then(onDone).catch(onDone);
     } else {
-      // Fallback legacy
       const ta = document.createElement('textarea');
       ta.value = v; document.body.appendChild(ta); ta.select();
       try { document.execCommand('copy'); } catch (err) {}
@@ -245,12 +233,11 @@
     }
   });
 
-  // Toggle password (fix: buscar correctamente la máscara)
+  // Toggle password
   document.addEventListener('click', (e) => {
     const t = e.target.closest('.js-pwd-toggle');
     if (!t) return;
 
-    // intenta con un contenedor marcado, luego el bloque de card
     const row  = t.closest('[data-pwd-row]') || t.closest('.mt-account-data') || document;
     const mask = row.querySelector('.js-pwd-mask');
     if (!mask) return;
@@ -261,7 +248,6 @@
     mask.textContent = hidden ? real : '••••••••••••';
     t.setAttribute('aria-expanded', String(hidden));
 
-    // si hay icono, alterna variante (opcional)
     const ic = t.querySelector('.mt-icon');
     if (ic) {
       ic.classList.toggle('mt-icon_visibility');
@@ -292,71 +278,64 @@
 
 /* ===== Floating tooltips (portal to <body>) ===== */
 (function () {
-  // No duplicar
   if (window.__mtTooltipsBound) return;
   window.__mtTooltipsBound = true;
 
-  // Capa/portal única
+  // Portal y burbuja reutilizable
   const portal = document.createElement('div');
   portal.id = 'mt-tooltips-portal';
-  portal.style.position = 'fixed';
-  portal.style.inset = '0';
-  portal.style.pointerEvents = 'none';
-  portal.style.zIndex = '9999';
+  Object.assign(portal.style, { position:'fixed', inset:'0', pointerEvents:'none', zIndex:'9999' });
   document.body.appendChild(portal);
   document.documentElement.classList.add('has-portal-tooltips');
 
-  // Burbuja reutilizable
   const bubble = document.createElement('div');
   bubble.className = 'mt-tooltip__panel is-portal';
   portal.appendChild(bubble);
 
   let anchor = null, hideTimer = 0;
 
-  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+  const clampNum = (n, min, max) => Math.max(min, Math.min(max, n));
 
-  function positionBubble(a) {
-    anchor = a;
+  function positionBubble(el) {
+    anchor = el;
     bubble.style.visibility = 'hidden';
     bubble.style.display = 'block';
 
-    const r = a.getBoundingClientRect();
+    const r  = el.getBoundingClientRect();
     const bw = bubble.offsetWidth;
     const bh = bubble.offsetHeight;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const pad = 8;
 
-    // Por defecto, arriba
+    // Arriba por defecto, flip abajo si no cabe
     let top = r.top - bh - pad;
     let placement = 'top';
-    if (top < pad) { // si no cabe arriba, abajo
-      top = r.bottom + pad;
-      placement = 'bottom';
-    }
+    if (top < pad) { top = r.bottom + pad; placement = 'bottom'; }
 
-    // Centrar respecto al trigger, pero sin salir del viewport
-    let left = r.left + (r.width / 2) - (bw / 2);
-    left = clamp(left, pad, vw - bw - pad);
+    let left = r.left + (r.width/2) - (bw/2);
+    left = clampNum(left, pad, vw - bw - pad);
 
     bubble.style.left = Math.round(left) + 'px';
     bubble.style.top  = Math.round(top)  + 'px';
     bubble.setAttribute('data-placement', placement);
 
-    // Posición de la flecha dentro de la burbuja
-    const arrowLeft = clamp(r.left + r.width/2 - left, 10, bw - 10);
+    const arrowLeft = clampNum(r.left + r.width/2 - left, 10, bw - 10);
     bubble.style.setProperty('--arrow-left', arrowLeft + 'px');
 
     bubble.style.visibility = 'visible';
   }
 
-  function showFor(el) {
-    const tip = el.closest('.mt-tooltip');
+  function showFor(target) {
+    const tip = target.closest('.mt-tooltip');
     if (!tip) return;
     const panel = tip.querySelector('.mt-tooltip__panel');
     if (!panel) return;
+
     clearTimeout(hideTimer);
-    bubble.innerHTML = panel.innerHTML; // usamos tu mismo HTML (:contentReference[oaicite:1]{index=1})
+    if (anchor === tip && bubble.style.display === 'block') return;
+
+    bubble.innerHTML = panel.innerHTML; // reutiliza tu HTML
     positionBubble(tip);
   }
 
@@ -368,17 +347,34 @@
     }, 120);
   }
 
-  // Reposicionar si hay scroll/resize
-  window.addEventListener('scroll', () => { if (anchor) positionBubble(anchor); }, true);
-  window.addEventListener('resize', () => { if (anchor) positionBubble(anchor); });
+  // Mantener visible si pasas el mouse a la burbuja
+  bubble.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+  bubble.addEventListener('mouseleave', hideSoon);
 
-  // Abrir con mouse/teclado y cerrar al salir
-  document.addEventListener('mouseenter', e => showFor(e.target), true);
-  document.addEventListener('focusin',   e => showFor(e.target));
-  document.addEventListener('mouseleave', e => { if (e.target.closest('.mt-tooltip')) hideSoon(); }, true);
+  // Delegación: mouseover/mouseout
+  document.addEventListener('mouseover', (e) => {
+    const tip = e.target.closest('.mt-tooltip');
+    if (!tip) return;
+    showFor(e.target);
+  }, true);
+
+  document.addEventListener('mouseout', (e) => {
+    const from = e.target.closest('.mt-tooltip');
+    if (!from) return;
+    const to = e.relatedTarget;
+    if (to && (to.closest?.('.mt-tooltip') || to === bubble || bubble.contains(to))) return;
+    hideSoon();
+  }, true);
+
+  // Teclado: focus/blur (icons con tabindex/role)
+  document.addEventListener('focusin',  (e)=> showFor(e.target));
   document.addEventListener('focusout', hideSoon);
-})();
+  document.addEventListener('keydown',  (e)=> { if (e.key === 'Escape') hideSoon(); });
 
+  // Reposicionar en scroll/resize
+  window.addEventListener('scroll', ()=> { if (anchor) positionBubble(anchor); }, true);
+  window.addEventListener('resize', ()=> { if (anchor) positionBubble(anchor); });
+})();
 
 // ===== Refresh Bus (centraliza todos los componentes) =====
 window.mtRefresh = (function () {
@@ -394,7 +390,6 @@ window.mtRefresh = (function () {
     if (maybePromise && typeof maybePromise.finally === 'function') {
       return maybePromise.finally(done);
     }
-    // Si el handler no devuelve Promise, cerramos luego de un tick corto
     setTimeout(done, 200);
   }
 
