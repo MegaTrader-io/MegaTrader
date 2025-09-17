@@ -2448,6 +2448,9 @@ a.avatar-area:hover {
 .dot-status-cancelled {
   color: var(--error-color);
 }
+.dot-status-dreached {
+  color: var(--error-color);
+}
 
 .dot-status-default {
   color: var(--Colors-Gray-200);

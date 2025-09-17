@@ -1,143 +1,151 @@
 <?php
 /**
  * Template: Account Overview (parent)
- * - Usa helpers en /inc (MT_Api, MT_Accounts)
- * - Hace UNA llamada a la API para listar cuentas
- * - La cuenta seleccionada llega por ?acc=ID (o se usa la más reciente)
- * - Para performance: se llama al shortcode con el ID seleccionado
- *
- * Pasa data a:
- *   - template-parts/account/account-selection.php   (selector de cuentas)
- *   - template-parts/account/account-performance.php (métricas de la cuenta seleccionada)
  */
 defined('ABSPATH') || exit;
 
+/* === Helpers === */
+if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
+  require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
+}
+
 get_header();
 
-// Estado
-$mt_has_active_account = false;
+/* === Estado base === */
 $mt_user_email = '';
+$mt_user_email_api = '';
 $mt_account_ui = ['current' => null, 'accounts' => []];
+$mt_selected_id = ''; // ID de cuenta seleccionada (query o por defecto)
 $mt_performance = [];
-$mt_selected_id = ''; // ID de la cuenta seleccionada (query o default)
+$mt_fetch_variant = ''; // plain|encoded según el que gane
+$mt_cnt_plain = 0;
+$mt_cnt_encoded = 0;
 
-// Helper: actualizar "current" del UI con un ID concreto
-$set_current_by_id = function (array $ui, string $id) {
-  if (empty($id) || empty($ui['accounts']))
-    return $ui;
-  foreach ($ui['accounts'] as $a) {
-    if ((string) ($a['id'] ?? '') === $id) {
-      // mapear modal -> current
-      $ui['current'] = [
-        'id' => (string) ($a['id'] ?? ''),
-        'status' => (string) ($a['status'] ?? ''),
-        'badgeClass' => MT_Accounts::badge_class((string) ($a['status'] ?? '')),
-        'size' => (string) ($a['size'] ?? ''),
-        'name' => (string) ($a['name'] ?? 'Account'),
-      ];
-      break;
-    }
-  }
-  return $ui;
-};
-
-// 1) Usuario logueado
+/* === Usuario + email saneado === */
 if (is_user_logged_in()) {
   $u = wp_get_current_user();
   if ($u && $u->exists()) {
-    $mt_user_email = $u->user_email;
+    $raw_email = (string) ($u->user_email ?? '');
 
-    if (class_exists('MT_Api') && class_exists('MT_Accounts')) {
-      // 2) UNA llamada a la API para listar cuentas del usuario
-      $accounts = MT_Api::fetch_accounts_by_email($mt_user_email, 1, 50);
+    // Saneado (lowercase, trim, validación, urlencode para API)
+    $san = function_exists('mt_sanitize_email')
+      ? mt_sanitize_email($raw_email)
+      : [
+        'ok' => true,
+        'email' => strtolower(trim($raw_email)),
+        'api' => rawurlencode(strtolower(trim($raw_email))),
+        'error' => '',
+      ];
 
-      // 3) ¿Hay alguna activa?
-      foreach ((array) $accounts as $acc) {
-        if (MT_Accounts::is_active_status($acc['status'] ?? '')) {
-          $mt_has_active_account = true;
-          break;
-        }
+    if (!empty($san['ok'])) {
+      $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
+      $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
+
+      /* === 1) Traer cuentas del usuario (probar plain y encoded para evitar doble encoding) === */
+      $accounts_plain = [];
+      $accounts_enc = [];
+
+      try {
+        // PRIMERO: email normalizado en minúsculas, SIN encoding
+        $accounts_plain = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($mt_user_email, 1, 50) : [];
+      } catch (Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[MT][accounts_plain][EX] ' . $e->getMessage());
       }
 
-      // 4) UI para el selector (si hay activas)
-      if ($mt_has_active_account) {
+      try {
+        // SEGUNDO (fallback): email URL-encoded (por si la API espera encoding aquí)
+        $accounts_enc = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($mt_user_email_api, 1, 50) : [];
+      } catch (Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[MT][accounts_enc][EX] ' . $e->getMessage());
+      }
+
+      $mt_cnt_plain = is_array($accounts_plain) ? count($accounts_plain) : 0;
+      $mt_cnt_encoded = is_array($accounts_enc) ? count($accounts_enc) : 0;
+
+      // Elegir variante con más resultados
+      if ($mt_cnt_plain >= $mt_cnt_encoded) {
+        $accounts = $accounts_plain;
+        $mt_fetch_variant = 'plain';
+      } else {
+        $accounts = $accounts_enc;
+        $mt_fetch_variant = 'encoded';
+      }
+
+      if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('[MT][email] plain=' . $mt_user_email . ' | encoded=' . $mt_user_email_api . ' | cnt_plain=' . $mt_cnt_plain . ' | cnt_enc=' . $mt_cnt_encoded . ' | variant=' . $mt_fetch_variant);
+      }
+
+      /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
+      if (class_exists('MT_Accounts')) {
         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
+      }
 
-        // 5) Resolver ID seleccionado: ?acc=... o el "current" por defecto (más reciente)
-        $mt_selected_id = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
-        if ($mt_selected_id === '') {
-          $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
-        }
+      /* === 3) Resolver cuenta seleccionada === */
+      $mt_selected_id = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
+      if ($mt_selected_id === '') {
+        $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
+      }
 
-        // 6) Si el ID de query difiere del "current" por defecto, reubicar current
-        if ($mt_selected_id && $mt_selected_id !== (string) ($mt_account_ui['current']['id'] ?? '')) {
-          $mt_account_ui = $set_current_by_id($mt_account_ui, $mt_selected_id);
-        }
+      /* === 4) (Opcional) Performance de la seleccionada (si tus helpers lo permiten por status) === */
+      if ($mt_selected_id && function_exists('mt_accounts_fetch_account_json_by_shortcode')) {
+        $json = mt_accounts_fetch_account_json_by_shortcode($mt_selected_id, 1, 10);
+        $account = function_exists('mt_accounts_pick_account_from_json')
+          ? mt_accounts_pick_account_from_json($json, $mt_selected_id)
+          : null;
 
-        // 7) Performance: consumir shortcode con el ID seleccionado y armar payload
-        if ($mt_selected_id && function_exists('mt_accounts_fetch_account_json_by_shortcode')) {
-          $json = mt_accounts_fetch_account_json_by_shortcode($mt_selected_id, 1, 10);
-          $account = function_exists('mt_accounts_pick_account_from_json')
-            ? mt_accounts_pick_account_from_json($json, $mt_selected_id)
-            : null;
-
-          if ($account && function_exists('mt_accounts_build_performance')) {
-            $mt_performance = mt_accounts_build_performance($account);
-          }
+        if ($account && function_exists('mt_accounts_build_performance')) {
+          $mt_performance = mt_accounts_build_performance($account);
         }
       }
+    } else {
+      echo '<div class="mt-alert mt-alert--error">Email inválido. Actualiza tu perfil.</div>';
     }
   }
 }
 
-// Exponer (opcional)
-$GLOBALS['mt_has_active_account'] = $mt_has_active_account;
+/* === Exponer opcionalmente en $GLOBALS === */
 $GLOBALS['mt_user_email'] = $mt_user_email;
 $GLOBALS['mt_account_ui'] = $mt_account_ui;
 $GLOBALS['mt_selected_id'] = $mt_selected_id;
+$GLOBALS['mt_performance'] = $mt_performance;
 ?>
 
-<div class="container">
+<div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
+  data-email-api="<?php echo esc_attr($mt_user_email_api); ?>">
+
   <div class="mt-page">
     <div class="mt-page__sidebar">
-      <?php render_sidebar(); ?>
+      <?php if (function_exists('render_sidebar')) {
+        render_sidebar();
+      } ?>
     </div>
 
     <div class="mt-page__main d-flex flex-column gap-32">
       <?php get_template_part('template-parts/account/account-no-order'); ?>
+
       <div class="mt-account-navigation mega-navigation">
         <?php get_template_part('template-parts/account/account-navigation'); ?>
       </div>
+
       <div class="mt-account-selection">
         <?php
-        // Selector (pasa UI + el seleccionado actual para marcarlo)
         get_template_part(
           'template-parts/account/account-selection',
           null,
           [
             'prepared' => $mt_account_ui,
-            'selectedId' => $mt_selected_id, // ← clave para el marcado activo y para el redirect
+            'selectedId' => $mt_selected_id,
           ]
-        );
-        ?>
-      </div>
-
-      <div class="mt-account-data" id="mt-account-data-container">
-        <?php
-        // Antes usabas absint($mt_selected_id) => 0
-        $init_id = isset($mt_selected_id) ? sanitize_text_field($mt_selected_id) : '';
-
-        get_template_part(
-          'template-parts/account/account-data',
-          null,
-          ['meta' => ['accountId' => $init_id]]
         );
         ?>
       </div>
 
       <div class="mt-account-performance" id="mt-performance-container">
         <?php
-        if (!empty($mt_has_active_account) && !empty($mt_performance)) {
+        // Renderiza performance si hay payload construido (tu helper decide si aplica por status)
+        if (!empty($mt_performance)) {
           get_template_part(
             'template-parts/account/account-performance',
             null,
@@ -149,19 +157,15 @@ $GLOBALS['mt_selected_id'] = $mt_selected_id;
         }
         ?>
       </div>
+
       <div class="mt-account-feature-content">
         <?php get_template_part('template-parts/account/account-feature-content'); ?>
       </div>
-      <div class="mt-account-chart-content empty-d-none"><?php
 
-        $chart_title = ($mt_account_ui['current']['size'] ?? '' ) . ' ' . ($mt_account_ui['current']['name'] ?? '');
+      <div class="mt-account-graph-content">
+        <?php get_template_part('template-parts/account/account-graph'); ?>
+      </div>
 
-        get_template_part('template-parts/account/account-performance-chart',
-        null,
-        [
-            'title' => $chart_title
-        ]); 
-      ?></div>
       <div class="mt-account-account-daily-journal">
         <?php get_template_part('template-parts/account/account-daily-journal'); ?>
       </div>
