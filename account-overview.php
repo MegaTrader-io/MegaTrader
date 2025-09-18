@@ -21,6 +21,7 @@ $mt_fetch_variant = ''; // plain|encoded según el que gane
 $mt_cnt_plain = 0;
 $mt_cnt_encoded = 0;
 $mt_feature_content = []; // payload para account-feature-content
+$mt_account_data = []; // payload para account-data
 
 
 /* === Usuario + email saneado === */
@@ -112,6 +113,16 @@ if (is_user_logged_in()) {
           $mt_chart = mt_accounts_build_performance_chart($resolved);
         }
 
+        if (
+          !empty($mt_selected_id)
+          && function_exists('mt_accounts_resolve_account_by_id')
+          && function_exists('mt_accounts_build_account_data')
+        ) {
+          $acc3 = mt_accounts_resolve_account_by_id($mt_selected_id);
+          if ($acc3)
+            $mt_account_data = mt_accounts_build_account_data($acc3);
+        }
+
       }
 
     } else {
@@ -126,6 +137,8 @@ $GLOBALS['mt_account_ui'] = $mt_account_ui;
 $GLOBALS['mt_selected_id'] = $mt_selected_id;
 $GLOBALS['mt_performance'] = $mt_performance;
 $GLOBALS['mt_feature_content'] = $mt_feature_content;
+$GLOBALS['mt_account_data'] = $mt_account_data;
+$GLOBALS['mt_chart'] = $mt_chart ?? [];
 ?>
 
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
@@ -157,6 +170,22 @@ $GLOBALS['mt_feature_content'] = $mt_feature_content;
         );
         ?>
       </div>
+      
+      <div class="mt-account-data" id="mt-account-data">
+        <?php
+        if (!empty($mt_selected_id) && !empty($mt_account_data)) {
+          get_template_part(
+            'template-parts/account/account-data',
+            null,
+            [
+              'meta' => ['accountId' => $mt_selected_id],
+              'data' => $mt_account_data,
+            ]
+          );
+        }
+        ?>
+      </div>
+
 
       <div class="mt-account-performance" id="mt-performance-container">
         <?php

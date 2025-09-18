@@ -25,6 +25,17 @@ $auth_paths = [
         <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
               rel="stylesheet">
         <?php wp_head(); ?>
+        <style>
+        :root {
+            --font-roboto: 'Roboto', sans-serif;
+            --mgt-dark: #1e1e1e;
+            --mgt-color-primary: #FFB34A;
+            --mgt-color-teal: #14B8A6;
+            --mgt-color-error: #FB7185;
+            --mgt-color-link: #FFD78A;
+            --mgt-color-link-hover: var(--mgt-color-primary);
+        }
+        </style>
     </head>
 
 <body <?php body_class(); ?>>

@@ -1942,5 +1942,37 @@ function mt_ajax_account_performance_chart() {
   wp_send_json_success(['html' => $html]);
 }
 
+// === AJAX: Account Data  ===
+add_action('wp_ajax_mt_account_data', 'mt_account_data_ajax');
+add_action('wp_ajax_nopriv_mt_account_data', 'mt_account_data_ajax');
+
+function mt_account_data_ajax() {
+  try {
+    if (!check_ajax_referer('mt-acc-nonce', 'nonce', false)) {
+      wp_send_json_error(['message' => 'Invalid nonce'], 403);
+    }
+    $accountId = isset($_POST['accountId']) ? sanitize_text_field(wp_unslash($_POST['accountId'])) : '';
+    if ($accountId === '') wp_send_json_error(['message' => 'Missing accountId'], 400);
+
+    if (!function_exists('mt_accounts_resolve_account_by_id')) wp_send_json_error(['message' => 'Resolver missing'], 500);
+    $acc = mt_accounts_resolve_account_by_id($accountId);
+    if (!$acc) wp_send_json_error(['message' => 'Account not found'], 404);
+
+    $payload = function_exists('mt_accounts_build_account_data') ? mt_accounts_build_account_data($acc) : [];
+
+    ob_start();
+    get_template_part('template-parts/account/account-data', null, [
+      'meta' => ['accountId' => $accountId],
+      'data' => $payload,
+    ]);
+    $html = ob_get_clean();
+
+    wp_send_json_success(['html' => $html]);
+  } catch (Throwable $e) {
+    if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][account_data_ajax] '.$e->getMessage());
+    wp_send_json_error(['message' => 'Server error'], 500);
+  }
+}
+
 
 

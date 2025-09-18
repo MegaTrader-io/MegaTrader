@@ -115,7 +115,7 @@ jQuery(document).ready(function ($) {
   function isErrorMessage(text) {
     const t = (text || "").toLowerCase();
     return (
-      t.includes("removed") ||
+      // t.includes("removed") ||
       t.includes("does not exist") ||
       t.includes("is not valid") ||
       t.includes("has expired") ||
@@ -145,7 +145,7 @@ jQuery(document).ready(function ($) {
             if (isCouponRelated(low)) {
               // Si venimos de "remove", forzamos estilo error y reemplazamos al instante
               const isErr = currentAction === "remove" ? true : isErrorMessage(low);
-              //showCouponMessage(raw, isErr ? "error" : "success");
+              showCouponMessage(raw, isErr ? "error" : "success");
               $(node).hide();
               currentAction = null;
             }
@@ -190,7 +190,7 @@ jQuery(document).ready(function ($) {
 
     // Reemplaza de inmediato cualquier mensaje previo y muestra fallback de removido (error)
     const fallback = code ? `Coupon "${code}" has been removed.` : `Coupon has been removed.`;
-    showCouponMessage(fallback, "error");
+    showCouponMessage(fallback, "success");
 
     // Poll para capturar el notice real si Woo lo pinta
     let attempts = 0;
@@ -203,7 +203,7 @@ jQuery(document).ready(function ($) {
       if ($msg.length && isCouponRelated(low)) {
         clearInterval(iv);
         // Forzamos error cuando es remove, y reemplazamos el fallback por el texto real
-        showCouponMessage(raw, "error");
+        showCouponMessage(raw, "success");
         $msg.hide();
         currentAction = null;
       }
@@ -225,7 +225,7 @@ jQuery(document).ready(function ($) {
     $(document.body).on(evt, function (_e, maybeCode) {
       // Si Woo anuncia removed y tenemos código, refuerza el mensaje como error
       if (evt === "removed_coupon_in_checkout" && maybeCode) {
-        showCouponMessage(`Coupon "${maybeCode}" has been removed.`, "error");
+        showCouponMessage(`Coupon "${maybeCode}" has been removed.`, "success");
       } else {
         renderWithRemaining();
       }

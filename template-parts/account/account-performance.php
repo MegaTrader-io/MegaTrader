@@ -122,6 +122,8 @@ $daysFillPct = ($minDays > 0) ? max(0, min(100, ($daysTraded / $minDays) * 100))
 $daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays); // usa el helper nuevo
 $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
 
+$maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyLoss) : 0;
+
 
 
 
@@ -132,14 +134,17 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
         <div class="w-100 d-flex flex-column gap-32">
             <div class="d-flex flex-column gap-3">
                 <div class="mt-card__title__text fw-medium text-uppercase">
-                    Overall performance</div>
+                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_title_left']); ?>
+                </div>
                 <div class="d-flex flex-column">
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text">Account Balance</div>
+                        <div class="mt-card__item-text">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_account_balance']); ?></div>
                         <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($balance)); ?></div>
                     </div>
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text">Total Profit</div>
+                        <div class="mt-card__item-text">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_total_profit']); ?></div>
                         <div class="mt-card__item-value d-flex align-items-center gap-2 justify-content-end"> <span
                                 class="<?php echo esc_attr($profitColorClass); ?>">
                                 <?php echo esc_html($profitText); ?>
@@ -156,43 +161,47 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                         </div>
                     </div>
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text">Trading Days</div>
+                        <div class="mt-card__item-text">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_trading_days']); ?></div>
                         <div class="mt-card__item-value text-white">
                             <?php echo esc_html($daysTraded); ?>
                         </div>
                     </div>
-                    <div class="mt-card__item">
-                        <div class="mt-card__item-text">Days Loss Limit (Pending API)</div>
-                        <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
-<?php echo esc_html(mt_format_money_no_cents($maxDailyLoss)); ?>                            <span class="mt-tooltip">
-                                <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
-                                    aria-label="Daily Loss Limit information"></i>
-                                <span class="mt-tooltip__panel" role="tooltip">
-                                    <div class="mt-tooltip__title">Daily Loss Limit (DLL)</div>
-                                    <div class="mt-tooltip__body">
-                                        Reaching the DLL pauses trading for the day. It’s removed once a profit
-                                        milestone is
-                                        met.
-                                    </div>
-                                </span>
-                            </span>
-                        </div>
+                    <?php
 
-                    </div>
+                    if ($maxDailyLossFormat > 0): ?>
+                        <div class="mt-card__item">
+                            <div class="mt-card__item-text">
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_loss_limit']); ?></div>
+                            <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
+                                <?php echo esc_html(mt_format_money_no_cents($maxDailyLossFormat)); ?>
+                                <span class="mt-tooltip">
+                                    <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
+                                        aria-label="Daily Loss Limit information"></i>
+                                    <span class="mt-tooltip__panel" role="tooltip">
+                                        <div class="mt-tooltip__title"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dll_tooltip_title']); ?></div>
+                                        <div class="mt-tooltip__body">
+                                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dll_tooltip_description']); ?>
+                                        </div>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text">Current Equity</div>
+                        <div class="mt-card__item-text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_current_equity']); ?></div>
                         <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($equity)); ?></div>
                     </div>
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text d-flex gap-1 align-items-center">Daily Net P&L
+                        <div class="mt-card__item-text d-flex gap-1 align-items-center"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_net_pl']); ?>
                             <span class="mt-tooltip">
                                 <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
                                     aria-label="Daily Loss Limit information"></i>
                                 <span class="mt-tooltip__panel" role="tooltip">
-                                    <div class="mt-tooltip__title">Daily P&L</div>
+                                    <div class="mt-tooltip__title"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dpl_tooltip_title']); ?></div>
                                     <div class="mt-tooltip__body">
-                                        Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday
-                                        3:10 PM CT)
+                                        <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dpl_tooltip_description']); ?>
                                     </div>
                                 </span>
                             </span>
@@ -208,12 +217,12 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
         </div>
         <div class="w-100 d-flex flex-column gap-32">
             <div class="d-flex flex-column gap-3">
-                <div class="mt-card__title__text fw-medium text-uppercase">Your Challenge Objective</div>
+                <div class="mt-card__title__text fw-medium text-uppercase"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_title_right']); ?></div>
                 <div class="d-flex flex-column">
                     <div class="mt-card__item">
                         <div class="mt-card__item-text d-flex gap-1 align-items-center">
                             <span class="mt-icon <?php echo esc_attr($profitIconClass); ?>"></span>
-                            Profit Target
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_profit_target']); ?>
                         </div>
                         <div class="mt-card__item-value text-white">
                             <span class="<?php echo esc_attr($profitColorClass); ?>">
@@ -235,7 +244,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                     <div class="mt-card__item">
                         <div class="mt-card__item-text d-flex gap-1 align-items-center">
                             <span class="mt-icon <?php echo esc_attr($daysIconClass); ?>"></span>
-                            Days Traded
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_days_traded']); ?>
                         </div>
 
                         <div class="mt-card__item-value text-white">
@@ -256,7 +265,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                 </div>
             </div>
             <div class="d-flex flex-column gap-3">
-                <div class="mt-card__title__text fw-medium text-uppercase">Rules</div>
+                <div class="mt-card__title__text fw-medium text-uppercase"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules']); ?></div>
                 <div class="d-flex align-items-center gap-2">
                     <span class="mt-icon <?php
                     echo (is_numeric($balance) && is_numeric($maxLossEq))
@@ -267,10 +276,9 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                         : 'mt-icon-error mt-icon_cancel';
                     ?>"></span>
                     <div class="text-white text-base fw-medium">
-                        <span class="text-white text-base fw-medium d-flex flex-column">Keep your Account Balance above
+                        <span class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description']); ?>
                             <?php echo esc_html(mt_format_money_no_cents($maxLossEq)); ?></span>
-                        <a class="text-primary text-14px-line-20px fw-medium text-decoration-underline">Maximum Loss
-                            Limmit</a>
+                        <a class="text-primary text-14px-line-20px fw-medium text-decoration-underline"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?></a>
                     </div>
                 </div>
             </div>
@@ -280,7 +288,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
 <?php else: ?>
     <div class="mt-card mt-card__row gap-16" data-component="account-performance-empty">
         <div class="text-a8a29e">
-            <em>No performance data to render. See debug below.</em>
+            <em><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_no_data']); ?></em>
         </div>
     </div>
 <?php endif; ?>

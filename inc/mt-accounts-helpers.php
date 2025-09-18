@@ -903,9 +903,7 @@ add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
 add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
 
 // === Performance Chart Payload ===
-//  - Serie amarilla: currentBalance por día
-//  - Línea verde: equityPassLevel (constante)
-//  - Línea roja : maxLossLimitEquityLevel (constante)
+
 if (!function_exists('mt_accounts_build_performance_chart')) {
   function mt_accounts_build_performance_chart(array $account): array
   {
@@ -966,6 +964,35 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
   }
 }
 
+// === Account Data (payload) ===
+if (!function_exists('mt_accounts_build_account_data')) {
+  function mt_accounts_build_account_data(array $account): array
+  {
+    // La API puede venir como objeto "platform" con campos internos.
+    $plat = $account['platform'] ?? [];
+    if (!is_array($plat))
+      $plat = [];
+
+    $platformName = (string) ($plat['platform'] ?? $account['platformName'] ?? $account['platform_label'] ?? '');
+    $server = (string) ($plat['server'] ?? $account['server'] ?? '');
+    $login = (string) ($plat['login'] ?? $account['login'] ?? '');
+    $password = (string) ($plat['password'] ?? $account['password'] ?? '');
+
+    // Fallback de login al email del usuario por si la API no lo trae
+    if ($login === '' && is_user_logged_in()) {
+      $u = wp_get_current_user();
+      if ($u && $u->exists())
+        $login = strtolower(trim((string) $u->user_email));
+    }
+
+    return [
+      'platform' => $platformName,
+      'server' => $server,
+      'login' => $login,
+      'password' => $password,
+    ];
+  }
+}
 
 
 

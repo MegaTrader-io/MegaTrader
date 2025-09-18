@@ -116,7 +116,7 @@ class Label
         "launch_button" => "Launch MegatraderX",
         "plan_title" => "Explore the plans",
         "plan_description" => "Find the perfect plan to enhance your experience.",
-        "plan_button" => "Buy a new chanllenge", 
+        "plan_button" => "Buy a new chanllenge",
     ];
 
     public const META_RESET = [
@@ -131,6 +131,32 @@ class Label
         ['key' => 'one_time_fee', 'label' => 'One-Time Fee', 'value' => 'One single cost', 'icon' => 'mt-icon_paid'],
         ['key' => 'start_trading', 'label' => 'Start Trading', 'value' => 'Begin live trades', 'icon' => 'mt-icon_play-arrow'],
         ['key' => 'priority_support', 'label' => 'Priority Support', 'value' => 'Fast expert help', 'icon' => 'mt-icon_call'],
+    ];
+
+    public const META_ACCOUNT_OVERVIEW = [
+        "web_app" => "Web App",
+        "app_store" => "App Store",
+        "play_store" => "Google Play",
+        "performance_title_left" => "Overall performance",
+        "performance_title_right" => "Your Challenge Objective",
+        "performance_account_balance" => "Account Balance",
+        "performance_total_profit" => "Total Profit",
+        "performance_trading_days" => "Trading Days",
+        "performance_current_equity" => "Current Equity",
+        "performance_daily_loss_limit" => "Daily Loss Limit",
+        "performance_daily_net_pl" => "Daily Net P&L",
+        "performance_profit_target" => "Profit Target",
+        "performance_days_traded" => "Days Traded",
+        "performance_rules" => "Rules",
+        "performance_rules_description" => "Keep your Account Balance above",
+        "performance_max_loss_limit" => "Maximum Loss Limit",
+        "performance_dll_tooltip_title" => "Daily Loss Limit (DLL)",
+        "performance_dll_tooltip_description" => "Reaching the DLL pauses trading for the day. It’s removed once a profit milestone is met.",
+        "performance_dpl_tooltip_title" => "Daily P&L (DPL)",
+        "performance_dpl_tooltip_description" => "Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday 3:10 PM CT)",
+        "performance_no_data" => "No performance data to render.",
+
+
     ];
 
 }

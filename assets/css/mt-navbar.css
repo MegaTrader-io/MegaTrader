@@ -13,6 +13,7 @@ html {
     /* position: sticky; */
     top: 0px;
     left: 0px;
+    margin-bottom: 14px;
 }
 
 body.admin-bar {
@@ -25,10 +26,6 @@ body.admin-bar {
 
 .mt-navbar__wrapper {
     width: 100%
-}
-
-.mt-navbar-scrolled {
-    background: rgba(18, 18, 18, 0.90);
 }
 
 .mt-navbar__promo {
@@ -142,7 +139,7 @@ body.admin-bar {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 200ms;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid transparent;
 }
 

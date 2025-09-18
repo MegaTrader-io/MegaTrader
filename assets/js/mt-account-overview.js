@@ -726,25 +726,28 @@ document.addEventListener("mt:accountSelected", (e) => {
 })();
 // ===== Performance Chart (AJAX refresh) =====
 (function () {
-  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function") return;
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
+    return;
 
   // Ejecuta <script> inline dentro del contenedor, envueltos en IIFE para evitar colisiones globales
-  function runInlineScripts(container){
-    container.querySelectorAll('script:not([src])').forEach(function(old){
-      var s = document.createElement('script');
+  function runInlineScripts(container) {
+    container.querySelectorAll("script:not([src])").forEach(function (old) {
+      var s = document.createElement("script");
       if (old.type) s.type = old.type;
-      s.text = '(function(){\n' + (old.textContent || '') + '\n})();';
+      s.text = "(function(){\n" + (old.textContent || "") + "\n})();";
       document.body.appendChild(s);
       document.body.removeChild(s);
     });
   }
 
   // Asegura ApexCharts antes de ejecutar los inline
-  function ensureApexThen(container, cb){
+  function ensureApexThen(container, cb) {
     if (window.ApexCharts) return cb();
-    var url = container.querySelector('script[src*="apexcharts"]')?.getAttribute('src')
-          || 'https://cdn.jsdelivr.net/npm/apexcharts';
-    var tag = document.createElement('script');
+    var url =
+      container
+        .querySelector('script[src*="apexcharts"]')
+        ?.getAttribute("src") || "https://cdn.jsdelivr.net/npm/apexcharts";
+    var tag = document.createElement("script");
     tag.src = url;
     tag.onload = cb;
     tag.onerror = cb; // en caso de estar ya cargado por otro lado
@@ -755,11 +758,12 @@ document.addEventListener("mt:accountSelected", (e) => {
     var wrap = document.querySelector(".mt-account-performance-chart-content");
     if (!wrap) return;
 
-    var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-    var nonce = (window.mtAccounts && mtAccounts.nonce)   || "";
-    var body  = new URLSearchParams();
+    var url =
+      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+    var body = new URLSearchParams();
     body.set("action", "mt_account_performance_chart");
-    body.set("nonce",  nonce);
+    body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
 
     return fetch(url, {
@@ -767,17 +771,54 @@ document.addEventListener("mt:accountSelected", (e) => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body,
     })
-    .then(function(r){ return r.json(); })
-    .then(function(j){
-      if (!j || !j.success || !j.data || j.data.html == null) return;
-      wrap.innerHTML = j.data.html;                 // reemplaza TODO el componente
-      ensureApexThen(wrap, function(){              // espera ApexCharts si hace falta
-        runInlineScripts(wrap);                     // ejecuta el script inline del chart
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (j) {
+        if (!j || !j.success || !j.data || j.data.html == null) return;
+        wrap.innerHTML = j.data.html; // reemplaza TODO el componente
+        ensureApexThen(wrap, function () {
+          // espera ApexCharts si hace falta
+          runInlineScripts(wrap); // ejecuta el script inline del chart
+        });
+      })
+      .catch(function (err) {
+        console.error("[MT] chart AJAX error:", err);
       });
-    })
-    .catch(function (err) {
-      console.error("[MT] chart AJAX error:", err);
-    });
   });
 })();
 
+// ===== Account Data (AJAX refresh) =====
+(function () {
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
+    return;
+
+  window.mtRefresh.register("accountData", function (accountId) {
+    var wrap = document.querySelector(".mt-account-data");
+    if (!wrap) return;
+
+    var url =
+      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+    var body = new URLSearchParams();
+    body.set("action", "mt_account_data");
+    body.set("nonce", nonce);
+    body.set("accountId", String(accountId || ""));
+
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body,
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (j) {
+        if (!j || !j.success || !j.data || j.data.html == null) return;
+        wrap.innerHTML = j.data.html;
+      })
+      .catch(function (err) {
+        console.error("[MT] account-data AJAX error:", err);
+      });
+  });
+})();

@@ -58,7 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return headerElement.offsetHeight;
         }
 
-        document.querySelectorAll('.mt-navbar__nav-link')
+        // handler clicks for landing page
+        document.querySelectorAll('.mt-navbar---landing-page .mt-navbar__nav-link')
             .forEach(btn => {
                 btn.addEventListener('click', (ev) => {
                     ev.preventDefault();
