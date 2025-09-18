@@ -222,7 +222,7 @@ function change_payment_modal_should_show() {
 ?>
 
 
-
+<!--
 <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
 	data-bs-target="#changeSubcriptionModal">
 	<div class="border-gray d-flex flex-wrap align-items-center gap-2 mb-3 p-3 rounded-2xl">
@@ -268,6 +268,7 @@ function change_payment_modal_should_show() {
 		</span>
 	</div>
 </button>
+-->
 
 
 
