@@ -301,6 +301,31 @@ if (!function_exists('mt_accounts_ajax_performance')) {
   }
 }
 
+if (!function_exists('mt_accounts_resolve_account_by_id')) {
+  function mt_accounts_resolve_account_by_id(string $accountId) {
+    $acc = null;
+
+    // 1) API directa
+    if (class_exists('MT_Api') && method_exists('MT_Api','fetch_account_by_id')) {
+      try { $acc = MT_Api::fetch_account_by_id($accountId); }
+      catch (Throwable $e) { if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][by_id] '.$e->getMessage()); }
+    }
+
+    // 2) Fallback: shortcode + pick
+    if (!$acc && function_exists('mt_accounts_fetch_account_json_by_shortcode')) {
+      try {
+        $json = mt_accounts_fetch_account_json_by_shortcode($accountId, 1, 1);
+        if (function_exists('mt_accounts_pick_account_from_json')) {
+          $acc = mt_accounts_pick_account_from_json($json, $accountId);
+        }
+      } catch (Throwable $e) { if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][shortcode] '.$e->getMessage()); }
+    }
+
+    return (is_array($acc) && !empty($acc)) ? $acc : null;
+  }
+}
+
+
 // ===== MONEY / PERCENT HELPERS =====
 if (!function_exists('mt_money_symbol')) {
   /**
@@ -330,6 +355,29 @@ if (!function_exists('mt_format_money')) {
     return ($neg ? '-' : '') . $currency . $formatted;
   }
 }
+
+if (!function_exists('mt_format_money_no_cents')) {
+  /**
+   * $47,850   ó   -$1,235
+   * Redondea al entero más cercano y no muestra centavos.
+   */
+  function mt_format_money_no_cents($value, $currency = null, $context = null)
+  {
+    if ($value === null || $value === '' || !is_numeric($value)) return '—';
+    if ($currency === null) $currency = mt_money_symbol('$', $context);
+
+    $num = (float) $value;
+    $neg = $num < 0;
+    $abs = abs($num);
+
+    // Redondeo al entero más cercano
+    $rounded = round($abs, 0);
+    $formatted = number_format($rounded, 0, '.', ',');
+
+    return ($neg ? '-' : '') . $currency . $formatted;
+  }
+}
+
 
 if (!function_exists('mt_format_signed_money')) {
   /**
@@ -712,41 +760,43 @@ if (!function_exists('mt_validate_email')) {
 }
 
 if (!function_exists('mt_email_for_api')) {
-    /**
-     * Prepara el email para enviarlo en consultas GET de la API.
-     * - Mantiene el dominio intacto (no codifica '@' ni nada después).
-     * - Solo codifica en el local-part los caracteres: ? / # & = + ( ) , : y espacio.
-     * - No hace doble encoding.
-     */
-    function mt_email_for_api(string $email): string {
-        $parts = explode('@', $email, 2);
-        if (count($parts) !== 2) return '';
+  /**
+   * Prepara el email para enviarlo en consultas GET de la API.
+   * - Mantiene el dominio intacto (no codifica '@' ni nada después).
+   * - Solo codifica en el local-part los caracteres: ? / # & = + ( ) , : y espacio.
+   * - No hace doble encoding.
+   */
+  function mt_email_for_api(string $email): string
+  {
+    $parts = explode('@', $email, 2);
+    if (count($parts) !== 2)
+      return '';
 
-        [$local, $domain] = $parts;
+    [$local, $domain] = $parts;
 
-        // Mapa de reemplazo SOLO para el local-part
-        $replacements = [
-            ' ' => '%20',
-            '?' => '%3F',
-            '/' => '%2F',
-            '#' => '%23',
-            '&' => '%26',
-            '=' => '%3D',
-            '+' => '%2B',
-            '(' => '%28',
-            ')' => '%29',
-            ',' => '%2C',
-            ':' => '%3A',
-        ];
+    // Mapa de reemplazo SOLO para el local-part
+    $replacements = [
+      ' ' => '%20',
+      '?' => '%3F',
+      '/' => '%2F',
+      '#' => '%23',
+      '&' => '%26',
+      '=' => '%3D',
+      '+' => '%2B',
+      '(' => '%28',
+      ')' => '%29',
+      ',' => '%2C',
+      ':' => '%3A',
+    ];
 
-        // Reemplaza solo si existen esos símbolos (evita doble encode)
-        $needsEncoding = strpbrk($local, " ?/#&=+(),:") !== false;
-        if ($needsEncoding) {
-            $local = strtr($local, $replacements);
-        }
-
-        return $local . '@' . $domain;
+    // Reemplaza solo si existen esos símbolos (evita doble encode)
+    $needsEncoding = strpbrk($local, " ?/#&=+(),:") !== false;
+    if ($needsEncoding) {
+      $local = strtr($local, $replacements);
     }
+
+    return $local . '@' . $domain;
+  }
 }
 
 
@@ -780,3 +830,14 @@ if (!function_exists('mt_sanitize_email')) {
 
 add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
 add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
+
+
+
+
+
+
+
+
+
+
+

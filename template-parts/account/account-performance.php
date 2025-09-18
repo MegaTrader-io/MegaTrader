@@ -160,7 +160,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                         </div>
                     </div>
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text">Days Loss Limit</div>
+                        <div class="mt-card__item-text">Days Loss Limit (Pending API)</div>
                         <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
                             <?php echo esc_html(mt_format_money(2000)); ?>
                             <span class="mt-tooltip">
@@ -267,7 +267,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                     ?>"></span>
                     <div class="text-white text-base fw-medium">
                         <span class="text-white text-base fw-medium d-flex flex-column">Keep your Account Balance above
-                            <?php echo esc_html(mt_format_money($maxLossEq)); ?></span>
+                            <?php echo esc_html(mt_format_money_no_cents($maxLossEq)); ?></span>
                         <a class="text-primary text-14px-line-20px fw-medium text-decoration-underline">Maximum Loss
                             Limmit</a>
                     </div>

@@ -1547,6 +1547,11 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   background-color: #F43F5E;
 }
 
+.badge-mega-breached {
+  background-color: #F43F5E;
+}
+
+
 .badge-mega-default {
   background-color: var(--Colors-Gray-200);
 }
@@ -3431,16 +3436,6 @@ body.mt-placing .woocommerce-checkout {
   gap: 8px;
 }
 
-.mt-feature-panel {
-  margin-top: 12px;
-  padding: 16px;
-  background: var(--Surface-Page, #1E1E1E);
-  border-radius: 16px;
-  border: 1px var(--Colors-Gray-700, #404040) solid;
-  min-height: 96px;
-  color: #e5e5e5;
-  box-sizing: border-box;
-}
 
 /*** Account Overview – FeatureContent (interior) ***/
 /* ===== TABS / CARRUSEL ===== */
@@ -3568,7 +3563,6 @@ body.mt-placing .woocommerce-checkout {
 
 /* ===== PANEL ===== */
 .mt-feature-panel {
-  margin-top: 12px;
   padding: 16px;
   background: var(--Surface-Page, #1E1E1E);
   border-radius: 16px;

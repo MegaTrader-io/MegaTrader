@@ -19,10 +19,12 @@ if (!$current && !empty($accounts)) {
 
 
 $currentId = (string) ($current['id'] ?? '');
-$badgeClass = (string) ($current['badgeClass'] ?? 'badge-mega-default');
 $currentStat = (string) ($current['status'] ?? 'unknown');
 $sizeSlug = (string) ($current['size'] ?? '');
 $productName = (string) ($current['name'] ?? 'Account');
+$status_key = strtolower(trim($currentStat));
+$status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key); 
+$badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
 
 
 ?>

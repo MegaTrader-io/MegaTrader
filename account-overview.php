@@ -20,6 +20,8 @@ $mt_performance = [];
 $mt_fetch_variant = ''; // plain|encoded según el que gane
 $mt_cnt_plain = 0;
 $mt_cnt_encoded = 0;
+$mt_feature_content = []; // payload para account-feature-content
+
 
 /* === Usuario + email saneado === */
 if (is_user_logged_in()) {
@@ -88,17 +90,30 @@ if (is_user_logged_in()) {
         $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
       }
 
-      /* === 4) (Opcional) Performance de la seleccionada (si tus helpers lo permiten por status) === */
-      if ($mt_selected_id && function_exists('mt_accounts_fetch_account_json_by_shortcode')) {
-        $json = mt_accounts_fetch_account_json_by_shortcode($mt_selected_id, 1, 10);
-        $account = function_exists('mt_accounts_pick_account_from_json')
-          ? mt_accounts_pick_account_from_json($json, $mt_selected_id)
-          : null;
 
-        if ($account && function_exists('mt_accounts_build_performance')) {
-          $mt_performance = mt_accounts_build_performance($account);
+      /* === 3) Resolver cuenta una única vez === */
+      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
+        ? mt_accounts_resolve_account_by_id($mt_selected_id)
+        : null;
+
+      if ($resolved) {
+        // Para Feature Content
+        $mt_feature_content['account'] = $resolved;
+
+        // Para Performance
+        if (function_exists('mt_accounts_build_performance')) {
+          $mt_performance = mt_accounts_build_performance($resolved);
         }
+
+        // Para otros componentes (ejemplos futuros)
+        // $mt_feature_content['journal']   = build_journal($resolved);
+        // $mt_feature_content['positions'] = build_positions($resolved);
+        // $mt_feature_content['risk']      = build_risk($resolved);
       }
+
+
+
+
     } else {
       echo '<div class="mt-alert mt-alert--error">Email inválido. Actualiza tu perfil.</div>';
     }
@@ -110,6 +125,7 @@ $GLOBALS['mt_user_email'] = $mt_user_email;
 $GLOBALS['mt_account_ui'] = $mt_account_ui;
 $GLOBALS['mt_selected_id'] = $mt_selected_id;
 $GLOBALS['mt_performance'] = $mt_performance;
+$GLOBALS['mt_feature_content'] = $mt_feature_content;
 ?>
 
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
@@ -159,12 +175,28 @@ $GLOBALS['mt_performance'] = $mt_performance;
       </div>
 
       <div class="mt-account-feature-content">
-        <?php get_template_part('template-parts/account/account-feature-content'); ?>
+        <?php
+        // Render solo si hay una cuenta seleccionada; pasar accountId al template.
+        if (!empty($mt_selected_id)) {
+          get_template_part(
+            'template-parts/account/account-feature-content',
+            null,
+            [
+              'meta' => ['accountId' => $mt_selected_id],
+              'feature' => $mt_feature_content,
+            ]
+          );
+        }
+        ?>
       </div>
 
-      <div class="mt-account-graph-content">
-        <?php get_template_part('template-parts/account/account-graph'); ?>
-      </div>
+      <div class="mt-account-performance-chart-content empty-d-none"><?php
+      $chart_title = ($mt_account_ui['current']['size'] ?? '') . ' ' . ($mt_account_ui['current']['name'] ?? '');
+
+      get_template_part('template-parts/account/account-performance-chart', null, [
+        'title' => $chart_title
+      ]);
+      ?></div>
 
       <div class="mt-account-account-daily-journal">
         <?php get_template_part('template-parts/account/account-daily-journal'); ?>

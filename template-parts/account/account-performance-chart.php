@@ -64,7 +64,9 @@ $periods = [
 </div>
 
 <script>
-
+/* Using ApexCharts 
+ * docs: https://apexcharts.com/docs
+ */
 let chart;
 const defaultDays = 7;
 
@@ -73,7 +75,6 @@ const toMoney = (value) => {
 }
 
 const chartConfig = {
-    type: "line",
     height: '100%',
     chart: {
         toolbar: {
@@ -116,7 +117,6 @@ const chartConfig = {
                 fontWeight: 400,
             },
         },
-        // categories: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18],
     },
     yaxis: {
         labels: {
@@ -141,6 +141,7 @@ const chartConfig = {
         theme: "dark",
         x: {
             show: true,
+            formatter: (value) => `Day ${value}`
         },
         y: {
             formatter: (value) => toMoney(value.toFixed(2)),

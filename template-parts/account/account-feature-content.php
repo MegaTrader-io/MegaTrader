@@ -7,6 +7,22 @@
  * - Panel: .mt-feature-panel (solo visible el del tab activo)
  */
 
+defined('ABSPATH') || exit;
+
+$accountId = isset($args['meta']['accountId']) ? sanitize_text_field((string)$args['meta']['accountId']) : '';
+$feature   = isset($args['feature']) && is_array($args['feature']) ? $args['feature'] : [];
+$account   = $feature['account'] ?? null; 
+
+$winRate  = isset($account['winRate']) ? (float)$account['winRate'] : 0.0;      // 0..1
+$averageWin = isset($account['averageWin']) ? (float)$account['averageWin'] : 0.0;
+
+$winRate = max(0.0, min(1.0, $winRate));        // clamp
+$winPct  = (int) round($winRate * 100);         // 0..100
+
+// textos formateados
+$avgWinText = mt_format_money($averageWin);
+
+
 /* ------- EJEMPLO DE TABS ------- */
 $tabs = [
     ['id' => 'overview', 'label' => 'Overview', 'active' => true],
@@ -30,7 +46,7 @@ $apiData = [
 ?>
 
 <section class="mt-feature-tabs">
-    <div class="mt-tabs-row">
+    <div class="mt-tabs-row d-none">
         <!-- Flecha izquierda -->
         <button type="button" class="mt-btn mt-btn--sm mt-btn--secondary js-tabs-prev" aria-label="Previous">
             <span class="mt-icon mt-icon_chevron-left"></span>
@@ -115,20 +131,20 @@ $apiData = [
                     <div class="mt-summary__title">Winning Trade</div>
 
                     <div class="mt-donut <?php echo $winPct ? 'is-success' : 'is-empty'; ?>"
-                        data-donut-value="<?php echo $winPct; ?>">
+                        data-donut-value="<?php echo (int)$winPct; ?>">
                         <svg class="mt-donut__svg" viewBox="0 0 100 100" aria-hidden="true">
                             <circle class="mt-donut__track" cx="50" cy="50" r="45" pathLength="100"></circle>
                             <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="100"></circle>
                         </svg>
                         <div class="mt-donut__center">
-                            <span class="mt-donut__percent"><?php echo $winPct ? $winPct . '%' : '--'; ?></span>
+                            <span class="mt-donut__percent"><?php echo (int)$winPct; ?></span>
                         </div>
                     </div>
 
                     <div class="mt-summary__avg">
                         <div class="mt-summary__avg-label">Avg. Win</div>
                         <div class="mt-summary__avg-value mt-summary__avg-value--success">
-                            <?php echo $avgWin ? '$' . number_format($avgWin, 2) : '--'; ?>
+                            <?php echo $avgWinText; ?>
                         </div>
                     </div>
                 </div>
