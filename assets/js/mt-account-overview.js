@@ -724,3 +724,40 @@ document.addEventListener("mt:accountSelected", (e) => {
       });
   });
 })();
+// ===== Performance Chart (AJAX refresh) =====
+(function () {
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
+    return;
+
+  window.mtRefresh.register("performanceChart", function (accountId) {
+    var wrap = document.querySelector(".mt-account-performance-chart-content");
+    if (!wrap) return;
+
+    var url =
+      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+    var body = new URLSearchParams();
+    body.set("action", "mt_account_performance_chart");
+    body.set("nonce", nonce);
+    body.set("accountId", String(accountId || ""));
+
+    return fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (j) {
+        if (!j || !j.success || !j.data || j.data.html == null) return;
+        wrap.innerHTML = j.data.html; // reemplaza TODO el componente
+
+        // (opcional) si tu chart necesita re-init JS, hazlo aquí.
+        // ej: window.MT && MT.initPerfChart && MT.initPerfChart(wrap);
+      })
+      .catch(function (err) {
+        console.error("[MT] chart AJAX error:", err);
+      });
+  });
+})();

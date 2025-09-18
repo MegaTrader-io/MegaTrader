@@ -217,39 +217,43 @@ if (!function_exists('mt_accounts_prepare_performance_from_accounts')) {
 
 // Build desde UNA cuenta (metrics|metric) → payload para feature-content
 if (!function_exists('mt_accounts_build_feature_content')) {
-  function mt_accounts_build_feature_content(array $account): array {
+  function mt_accounts_build_feature_content(array $account): array
+  {
     $m = $account['metrics'] ?? $account['metric'] ?? [];
 
     // Crudos (API: win/loss en 0..100)
-    $avgWin   = $m['averageWin']  ?? 0;
-    $avgLoss  = $m['averageLoss'] ?? 0;
-    $winRate  = $m['winRate']     ?? 0; // 66.67
-    $lossRate = $m['lossRate']    ?? 0; // 33.33
+    $avgWin = $m['averageWin'] ?? 0;
+    $avgLoss = $m['averageLoss'] ?? 0;
+    $winRate = $m['winRate'] ?? 0; // 66.67
+    $lossRate = $m['lossRate'] ?? 0; // 33.33
 
     // Cast numérico
-    $avgWin   = is_numeric($avgWin)   ? (float)$avgWin   : 0.0;
-    $avgLoss  = is_numeric($avgLoss)  ? (float)$avgLoss  : 0.0;
-    $winRate  = is_numeric($winRate)  ? (float)$winRate  : 0.0;
-    $lossRate = is_numeric($lossRate) ? (float)$lossRate : 0.0;
+    $avgWin = is_numeric($avgWin) ? (float) $avgWin : 0.0;
+    $avgLoss = is_numeric($avgLoss) ? (float) $avgLoss : 0.0;
+    $winRate = is_numeric($winRate) ? (float) $winRate : 0.0;
+    $lossRate = is_numeric($lossRate) ? (float) $lossRate : 0.0;
 
     // Normalizar a fracción 0..1 (para la UI)
-    if ($winRate  > 1) $winRate  /= 100;
-    if ($lossRate > 1) $lossRate /= 100;
-    $winRate  = max(0.0, min(1.0, $winRate));
+    if ($winRate > 1)
+      $winRate /= 100;
+    if ($lossRate > 1)
+      $lossRate /= 100;
+    $winRate = max(0.0, min(1.0, $winRate));
     $lossRate = max(0.0, min(1.0, $lossRate));
 
     $payload = [
       'overview' => [
-        'averageWin'  => $avgWin,
+        'averageWin' => $avgWin,
         'averageLoss' => $avgLoss,
-        'winRate'     => $winRate,   // 0..1
-        'lossRate'    => $lossRate,  // 0..1
+        'winRate' => $winRate,   // 0..1
+        'lossRate' => $lossRate,  // 0..1
       ],
     ];
 
     // Cast finales por si algo vino string
     foreach ($payload['overview'] as $k => $v) {
-      if (is_string($v) && is_numeric($v)) $payload['overview'][$k] = $v + 0;
+      if (is_string($v) && is_numeric($v))
+        $payload['overview'][$k] = $v + 0;
     }
     return $payload;
   }
@@ -257,11 +261,13 @@ if (!function_exists('mt_accounts_build_feature_content')) {
 
 // Build desde LISTA de cuentas → elige la activa y arma payload (igual que performance)
 if (!function_exists('mt_accounts_prepare_feature_from_accounts')) {
-  function mt_accounts_prepare_feature_from_accounts($accounts): array {
+  function mt_accounts_prepare_feature_from_accounts($accounts): array
+  {
     $active = function_exists('mt_accounts_find_active_account')
       ? mt_accounts_find_active_account($accounts)
       : null;
-    if (!$active) return [];
+    if (!$active)
+      return [];
     return mt_accounts_build_feature_content($active);
   }
 }
@@ -355,13 +361,18 @@ if (!function_exists('mt_accounts_ajax_performance')) {
 }
 
 if (!function_exists('mt_accounts_resolve_account_by_id')) {
-  function mt_accounts_resolve_account_by_id(string $accountId) {
+  function mt_accounts_resolve_account_by_id(string $accountId)
+  {
     $acc = null;
 
     // 1) API directa
-    if (class_exists('MT_Api') && method_exists('MT_Api','fetch_account_by_id')) {
-      try { $acc = MT_Api::fetch_account_by_id($accountId); }
-      catch (Throwable $e) { if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][by_id] '.$e->getMessage()); }
+    if (class_exists('MT_Api') && method_exists('MT_Api', 'fetch_account_by_id')) {
+      try {
+        $acc = MT_Api::fetch_account_by_id($accountId);
+      } catch (Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[MT][acc_resolve][by_id] ' . $e->getMessage());
+      }
     }
 
     // 2) Fallback: shortcode + pick
@@ -371,7 +382,10 @@ if (!function_exists('mt_accounts_resolve_account_by_id')) {
         if (function_exists('mt_accounts_pick_account_from_json')) {
           $acc = mt_accounts_pick_account_from_json($json, $accountId);
         }
-      } catch (Throwable $e) { if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][shortcode] '.$e->getMessage()); }
+      } catch (Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[MT][acc_resolve][shortcode] ' . $e->getMessage());
+      }
     }
 
     return (is_array($acc) && !empty($acc)) ? $acc : null;
@@ -416,8 +430,10 @@ if (!function_exists('mt_format_money_no_cents')) {
    */
   function mt_format_money_no_cents($value, $currency = null, $context = null)
   {
-    if ($value === null || $value === '' || !is_numeric($value)) return '—';
-    if ($currency === null) $currency = mt_money_symbol('$', $context);
+    if ($value === null || $value === '' || !is_numeric($value))
+      return '—';
+    if ($currency === null)
+      $currency = mt_money_symbol('$', $context);
 
     $num = (float) $value;
     $neg = $num < 0;
@@ -883,6 +899,74 @@ if (!function_exists('mt_sanitize_email')) {
 
 add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
 add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
+
+// === Performance Chart Payload ===
+//  - Serie amarilla: currentBalance por día
+//  - Línea verde: equityPassLevel (constante)
+//  - Línea roja : maxLossLimitEquityLevel (constante)
+if (!function_exists('mt_accounts_build_performance_chart')) {
+  function mt_accounts_build_performance_chart(array $account): array
+  {
+    $m = $account['metrics'] ?? $account['metric'] ?? [];
+
+    $green = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
+    $red = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
+
+    // === Serie diaria de currentBalance (línea amarilla) ===
+    $candidates = [
+      $m['dailyBalances'] ?? null, // [{date, currentBalance}]
+      $m['balanceDaily'] ?? null,
+      $m['balanceSeries'] ?? null,
+      $account['balances'] ?? null,
+      $account['history']['dailyBalance'] ?? null,
+    ];
+    $series = [];
+    foreach ($candidates as $cand) {
+      if (!is_array($cand) || empty($cand))
+        continue;
+      foreach ($cand as $row) {
+        $date = (string) ($row['date'] ?? $row['day'] ?? $row['d'] ?? '');
+        $balRaw = $row['currentBalance'] ?? $row['balance'] ?? $row['y'] ?? null;
+        if (!$date || !is_numeric($balRaw))
+          continue;
+        $series[] = ['date' => substr($date, 0, 10), 'value' => (float) $balRaw];
+      }
+      if (!empty($series))
+        break;
+    }
+    if (empty($series)) {
+      $cb = is_numeric($m['currentBalance'] ?? null) ? (float) $m['currentBalance'] : null;
+      if ($cb !== null)
+        $series[] = ['date' => gmdate('Y-m-d'), 'value' => $cb];
+    }
+
+    // Título "<size> <name>"
+    $program = $account['program'] ?? null;
+    $plabel = (string) ($program['label'] ?? $program['description'] ?? 'Account');
+    $sb = $program['startingBalance'] ?? null;
+    $size = '';
+    $name = $plabel ?: 'Account';
+    if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'parse_program_label')) {
+      [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
+    } elseif (is_numeric($sb) && $sb > 0) {
+      $k = (int) round($sb / 1000);
+      $size = $k > 0 ? ($k . 'k') : (string) $sb;
+    }
+    $title = trim(($size ? $size . ' ' : '') . $name);
+
+    return [
+      'title' => $title,
+      'yellow' => $series,  // ← línea amarilla: currentBalance por día
+      'series' => $series,  // (compat)
+      'green' => $green,   // equityPassLevel (línea constante)
+      'red' => $red,     // maxLossLimitEquityLevel (línea constante)
+    ];
+  }
+}
+
+
+
+
 
 
 

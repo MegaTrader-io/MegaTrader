@@ -91,11 +91,6 @@ if (is_user_logged_in()) {
       }
 
 
-      /* === 3) Resolver cuenta una única vez === */
-      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
-        ? mt_accounts_resolve_account_by_id($mt_selected_id)
-        : null;
-
       // === Resolver la cuenta una sola vez y construir payloads ===
       $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
         ? mt_accounts_resolve_account_by_id($mt_selected_id)
@@ -112,6 +107,11 @@ if (is_user_logged_in()) {
         if (function_exists('mt_accounts_build_feature_content')) {
           $mt_feature_content['apiData'] = mt_accounts_build_feature_content($resolved);
         }
+
+        if (!empty($resolved) && function_exists('mt_accounts_build_performance_chart')) {
+          $mt_chart = mt_accounts_build_performance_chart($resolved);
+        }
+
       }
 
     } else {
@@ -190,17 +190,20 @@ $GLOBALS['mt_feature_content'] = $mt_feature_content;
         ?>
       </div>
 
-      <div class="mt-account-performance-chart-content empty-d-none"><?php
-        $chart_title = ($mt_account_ui['current']['size'] ?? '') . ' ' . ($mt_account_ui['current']['name'] ?? '');
 
-        get_template_part('template-parts/account/account-performance-chart', null, [
-          'title' => $chart_title,
-          'tooltip' => [
-            'title' => 'Parameters',
-            'Description' => 'This is where data related with the Plan would show'
+
+      <div class="mt-account-performance-chart-content">
+        <?php
+        get_template_part(
+          'template-parts/account/account-performance-chart',
+          null,
+          [
+            'meta' => ['accountId' => $mt_selected_id],
+            'chart' => $mt_chart ?? [],
           ]
-        ]);
-      ?></div>
+        );
+        ?>
+      </div>
 
       <div class="mt-account-account-daily-journal">
         <?php get_template_part('template-parts/account/account-daily-journal'); ?>

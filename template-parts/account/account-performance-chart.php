@@ -4,8 +4,19 @@ if (!defined('ABSPATH')) exit;
 
 if (! isset($args) || ! is_array($args) || empty($args)) { return; }
 
-$chart_title = isset($args['title']) ? $args['title'] : 'Performance Chart';
-$chart_title_tooltip = isset($args['title_tooltip']) && is_array($args['title_tooltip'])? $args['title_tooltip'] : [];
+
+$chart  = isset($args['chart']) && is_array($args['chart']) ? $args['chart'] : [];
+$chart_title  = $chart['title'] ?? (($args['title'] ?? '') ?: 'Account');
+$yellow = $chart['yellow'] ?? ($chart['series'] ?? []); // currentBalance diario
+$green  = $chart['green']  ?? null; // equityPassLevel
+$red    = $chart['red']    ?? null; // maxLossLimitEquityLevel
+
+
+$chart_title_tooltip = [
+    'title' => 'Tooltip Title',
+    'description' => 'Description to be updated with real data.'
+];
+
 
 $periods = [
     [
@@ -49,7 +60,7 @@ $periods = [
                 <?  endif; ?>
 
             </div>
-            <select id="lastDaysSelect" class="d-block form-select w-fit" name="last-days-select">
+            <select id="lastDaysSelect" class="form-select w-fit w-sm-100" name="last-days-select">
                 <?php foreach ($periods as $period): ?>
                     <option value="<?= $period['value']; ?>">
                         <?php echo htmlspecialchars($period['text']); ?>
@@ -74,7 +85,7 @@ const toMoney = (value) => {
     return `\$ ${value}`
 }
 
-const chartConfig = {
+const getChartConfig = (days) => ({
     height: '100%',
     chart: {
         toolbar: {
@@ -138,20 +149,17 @@ const chartConfig = {
         opacity: 0.8,
     },
     tooltip: {
+        followCursor: true,
         theme: "dark",
         x: {
             show: true,
-            formatter: (value) => `Day ${value}`
+            formatter: (value) => `Day ${value}`,
         },
         y: {
             formatter: (value) => toMoney(value.toFixed(2)),
         },
     }
-};
-
-const formatDaysSelectText = (value) => {
-    return `LAST ${value} DAYS`
-}
+});
 
 const getChartSeries = (days) => [
     {
@@ -171,7 +179,7 @@ const getChartSeries = (days) => [
 const getChartOptions = (_days = defaultDays) => {
     const days = parseInt(_days);
     return {
-        ...chartConfig,
+        ...getChartConfig(days),
         series: getChartSeries(days),
     };
 }

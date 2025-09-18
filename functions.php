@@ -1909,4 +1909,38 @@ function mt_ajax_account_feature_content() {
   wp_send_json_success(['html' => $html]);
 }
 
+// === Performance Chart AJAX ===
+add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
+add_action('wp_ajax_nopriv_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
+function mt_ajax_account_performance_chart() {
+  $nonce = $_POST['nonce'] ?? '';
+  if (!wp_verify_nonce($nonce, 'mt-acc-nonce')) {
+    wp_send_json_error(['message' => 'Invalid nonce'], 403);
+  }
+  $accountId = sanitize_text_field((string)($_POST['accountId'] ?? ''));
+  if ($accountId === '') {
+    wp_send_json_error(['message' => 'Missing accountId'], 400);
+  }
+
+  $acc = function_exists('mt_accounts_resolve_account_by_id') ? mt_accounts_resolve_account_by_id($accountId) : null;
+  $chart = [];
+  if ($acc && function_exists('mt_accounts_build_performance_chart')) {
+    $chart = mt_accounts_build_performance_chart($acc);
+  }
+
+  ob_start();
+  get_template_part(
+    'template-parts/account/account-performance-chart',
+    null,
+    [
+      'meta'  => ['accountId' => $accountId],
+      'chart' => $chart,   // <— payload con series/green/red
+    ]
+  );
+  $html = ob_get_clean();
+
+  wp_send_json_success(['html' => $html]);
+}
+
+
 
