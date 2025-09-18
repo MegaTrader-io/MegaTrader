@@ -104,6 +104,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const menuNavBar = document.querySelector('.mt-navbar__links');
         trackElementHeight(menuNavBar, '--nav-bar-height');
+
+        if (menuNavBar) {
+            const toggleScrolled = () => {
+                if (window.scrollY > 14) {
+                    menuNavBar.classList.add('mt-navbar__links--scrolled');
+                } else {
+                    menuNavBar.classList.remove('mt-navbar__links--scrolled');
+                }
+            };
+
+            toggleScrolled();
+
+            window.addEventListener('scroll', toggleScrolled, { passive: true });
+        }
     }
 
     headerScroll();
