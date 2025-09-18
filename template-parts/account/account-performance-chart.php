@@ -15,11 +15,6 @@ $upper_bound = $chart['upper_bound'] ?? null; // equityPassLevel
 $lower_bound = $chart['lower_bound'] ?? null; // maxLossLimitEquityLevel
 
 
-$chart_title_tooltip = [
-    'title' => 'Tooltip Title',
-    'description' => 'Description to be updated with real data.'
-];
-
 
 $periods = [
     [
@@ -44,9 +39,9 @@ $periods = [
     <div class="account-performance-chart__header">
         <div class="d-flex flex-column flex-md-row align-items-center gap-3">
             <div class="d-flex align-items-center gap-2 w-100">
-                <div
-                    style="color: white; font-size: 20px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                    <?= $chart_title ?></div>
+                <div class="mt-card__title__text fw-medium text-uppercase">
+                    <?= $chart_title ?>
+                </div>
                 <?php if (isset($chart_title_tooltip) && !empty($chart_title_tooltip)): ?>
                     <span class="mt-tooltip">
                         <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
