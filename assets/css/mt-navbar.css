@@ -37,9 +37,9 @@ body.admin-bar {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
-    background: transparent;
-    /*box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);*/
-    /*backdrop-filter: blur(12.50px);*/
+    background: black;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12.50px);
 }
 
 .mt-navbar__container {
@@ -127,10 +127,7 @@ body.admin-bar {
 
 .mt-navbar__nav-link {
     text-wrap: nowrap;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
     font-size: 1rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -140,11 +137,20 @@ body.admin-bar {
     text-decoration-line: none;
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms
+    transition-duration: 200ms;
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.mt-navbar__nav-link:hover {
+    background-color: var(--mgt-dark)
+}
+
+.mt-navbar__nav-link:focus {
+    border-color: white;
 }
 
 .mt-navbar__nav-link--active {
-    border-radius: 0.5rem;
     background-color: var(--mgt-dark)
 }
 
