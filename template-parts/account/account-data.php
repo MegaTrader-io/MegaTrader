@@ -36,8 +36,8 @@ $link_playstore = '#';
 <div class="mt-card">
   <div class="d-flex align-items-center gap-3 w-100 justify-content-between flex-column flex-lg-row flex-md-row">
     <div class="d-flex flex-column gap-1 flex-wrap flex-shrink-0">
-      <div class="text-white fw-500 text-2xl text-uppercase"><?php esc_html_e('Trading Account', 'megatrader'); ?></div>
-      <div class="text-16 fw-500"><?php esc_html_e('Access the platform', 'megatrader'); ?></div>
+      <div class="text-white fw-500 text-2xl text-uppercase"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_data_title']); ?></div>
+      <div class="text-16 fw-500"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_platform_description']); ?></div>
 
       <div class="d-flex gap-2 pt-3 flex-wrap">
         <a href="<?php echo esc_url($link_web); ?>" target="_self" class="text-decoration-none" rel="noopener">
@@ -74,7 +74,7 @@ $link_playstore = '#';
 
       <div class="d-flex flex-column gap-2 flex-grow-1 min-w-0">
         <div class="d-flex align-items-center flex-nowrap gap-2 min-w-0">
-          <div class="text-white flex-shrink-0"><?php esc_html_e('Login', 'megatrader'); ?></div>
+          <div class="text-white flex-shrink-0"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_login']); ?></div>
 
           <div class="flex-grow-1 text-truncate pe-2 min-w-0">
             <span class=" text-base text-a8a29e fw-medium" title="<?php echo esc_attr($login); ?>">
@@ -93,7 +93,7 @@ $link_playstore = '#';
         </div>
 
         <div class="d-flex align-items-center flex-nowrap min-w-0 gap-3" data-pwd-row>
-          <div class="text-white flex-shrink-0"><?php esc_html_e('Password', 'megatrader'); ?></div>
+          <div class="text-white flex-shrink-0"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_password']); ?></div>
 
           <div class="flex-grow-1 text-truncate pe-2 min-w-0">
             <span class="text-base text-a8a29e fw-medium js-pwd-mask"
@@ -120,7 +120,7 @@ $link_playstore = '#';
         </div>
 
         <div class="d-flex align-items-center flex-nowrap min-w-0 gap-3">
-          <div class="text-white flex-shrink-0"><?php esc_html_e('Server', 'megatrader'); ?></div>
+          <div class="text-white flex-shrink-0"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_server']); ?></div>
           <div class="text-base text-a8a29e fw-medium text-truncate min-w-0">
             <?php echo esc_html($server); ?>
           </div>

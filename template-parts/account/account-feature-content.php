@@ -149,7 +149,8 @@ $tabs = [
             <div class="mt-summary">
                 <!-- Col izquierda -->
                 <div class="mt-summary__col">
-                    <div class="mt-summary__title">Winning Trade</div>
+                    <div class="mt-summary__title">
+                        <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_winning_trades']); ?></div>
 
                     <div class="mt-donut <?php echo $winPct ? 'is-success' : 'is-empty'; ?>"
                         data-donut-value="<?php echo $winPct; ?>">
@@ -163,7 +164,8 @@ $tabs = [
                     </div>
 
                     <div class="mt-summary__avg">
-                        <div class="mt-summary__avg-label">Avg. Win</div>
+                        <div class="mt-summary__avg-label">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_avg_winning_trade']); ?></div>
                         <div class="mt-summary__avg-value mt-summary__avg-value--success">
                             <?php echo $avgWin ? '$' . number_format($avgWin, 2) : '$0.00'; ?>
                         </div>
@@ -175,19 +177,18 @@ $tabs = [
                 <!-- Col centro -->
                 <div class="mt-summary__col">
                     <div class="mt-summary__title mt-summary__title--center">
-                        Reward-to-Risk Ratio
+                        <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_risk_reward_ratio']); ?>
                         <span class="mt-tooltip">
                             <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
                                 aria-label="Reward-to-risk ratio"></i>
                             <span class="mt-tooltip__panel" role="tooltip">
-                                <div class="mt-tooltip__title">Reward-to-risk ratio</div>
-                                <div class="mt-tooltip__body">
-                                    <p>Measures the potential reward (profit) you achieve per trade VS the risk (losses) you
-                                        take</p>
-                                    <span class="text-white">Tip:</span> One of the most important metrics to successful
-                                    trading! Less risk
-                                    and more reward increases your probability of continued profitability.
+                                <div class="mt-tooltip__title">
+                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_risk_reward_ratio_tooltip_title']); ?>
                                 </div>
+                                <div class="mt-tooltip__body">
+                                    <?php echo wp_kses_post(Label::META_ACCOUNT_OVERVIEW['feature_content_risk_reward_ratio_tooltip_description']); ?>
+                                </div>
+
                             </span>
                         </span>
                     </div>
@@ -197,14 +198,17 @@ $tabs = [
                             <div class="mt-summary__ratio-value"><?php echo esc_html($ratioText); ?></div>
                         </div>
                     <?php else: ?>
-                        <div class="mt-summary__nodata">NO DATA AVAILABLE</div>
+                        <div class="mt-summary__nodata">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_no_data']); ?></div>
                     <?php endif; ?>
 
                     <!-- Nueva barra combinada -->
                     <div class="mt-rr">
                         <div class="mt-rr__head">
-                            <span class="mt-rr-title success">Reward</span>
-                            <span class="mt-rr-title error">Risk</span>
+                            <span
+                                class="mt-rr-title success"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_reward']); ?></span>
+                            <span
+                                class="mt-rr-title error"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_risk']); ?></span>
                         </div>
 
                         <?php
@@ -222,7 +226,8 @@ $tabs = [
 
                 <!-- Col derecha -->
                 <div class="mt-summary__col">
-                    <div class="mt-summary__title">Lossing Trade</div>
+                    <div class="mt-summary__title">
+                        <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_losing_trades']); ?></div>
 
                     <div class="mt-donut <?php echo $lossPct ? 'is-error' : 'is-empty'; ?>"
                         data-donut-value="<?php echo $lossPct; ?>">
@@ -236,7 +241,8 @@ $tabs = [
                     </div>
 
                     <div class="mt-summary__avg">
-                        <div class="mt-summary__avg-label">Avg. Loss</div>
+                        <div class="mt-summary__avg-label">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_avg_losing_trade']); ?></div>
                         <div class="mt-summary__avg-value mt-summary__avg-value--error">
                             <?php
                             if ($avgLoss) {
@@ -253,4 +259,3 @@ $tabs = [
         </div>
     <?php endforeach; ?>
 </section>
-

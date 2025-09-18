@@ -137,6 +137,11 @@ class Label
         "web_app" => "Web App",
         "app_store" => "App Store",
         "play_store" => "Google Play",
+        "account_data_title" => "Account Data",
+        "account_platform_description" => "Access the platform",
+        "account_login" => "Login",
+        "account_password" => "Password",
+        "account_server" => "Server",
         "performance_title_left" => "Overall performance",
         "performance_title_right" => "Your Challenge Objective",
         "performance_account_balance" => "Account Balance",
@@ -155,6 +160,20 @@ class Label
         "performance_dpl_tooltip_title" => "Daily P&L (DPL)",
         "performance_dpl_tooltip_description" => "Realised P&L amount at any time during the trading week (Sunday 5:00 PM - Friday 3:10 PM CT)",
         "performance_no_data" => "No performance data to render.",
+        "feature_content_winning_trades" => "Winning Trades",
+        "feature_content_losing_trades" => "Losing Trades",
+        "feature_content_avg_winning_trade" => "Avg. Win",
+        "feature_content_avg_losing_trade" => "Avg. Loss",
+        "feature_content_risk_reward_ratio" => "Reward-to-Risk Ratio",
+        "feature_content_risk_reward_ratio_tooltip_title" => "Reward-to-risk ratio",
+        'feature_content_risk_reward_ratio_tooltip_description' =>
+            '<p>Measures the potential reward (profit) you achieve per trade VS the risk (losses) you take</p>
+     <span class="text-white">Tip:</span> One of the most important metrics to successful trading! Less risk
+     and more reward increases your probability of continued profitability.',
+        "feature_content_no_data" => "NO DATA AVAILABLE",
+        "feature_content_reward" => "Reward",
+        "feature_content_risk" => "Risk",
+
 
 
     ];
