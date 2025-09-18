@@ -37,7 +37,7 @@ body.admin-bar {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
-    background: rgba(19, 18, 16, 0.80);
+    background: #0D0C0A;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(12.50px);
 }
