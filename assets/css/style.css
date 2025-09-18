@@ -170,7 +170,7 @@ body {
     background-color: var(--body-bg);
     position: relative;
     z-index: 2;
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAiSURBVHgB7cNBDQAACMSwC07wL3IED/xYkwbonSMVSdJTA27fBj9svgvKAAAAAElFTkSuQmCC) 0% 0%/5px 5px repeat, #131210;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAiSURBVHgB7cNBDQAACMSwC07wL3IED/xYkwbonSMVSdJTA27fBj9svgvKAAAAAElFTkSuQmCC) 0% 0%/5px 5px repeat, #0D0C0A;
 }
 
 iframe {
