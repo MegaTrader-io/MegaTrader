@@ -50,6 +50,7 @@ $defaults = [
     'minTradingDays' => null,
     'maxLossLimitEquityLevel' => null,
     'target' => null,
+    'maxDailyLossLimitPnLLevel' => null,
 ];
 $performance = array_merge($defaults, (array) $performance);
 
@@ -63,6 +64,7 @@ $dailyPnL = $performance['dailyTotalPnL'];
 $minDays = (int) $performance['minTradingDays'];
 $maxLossEq = $performance['maxLossLimitEquityLevel'];
 $profitTarget = $performance['target'];
+$maxDailyLoss = $performance['maxDailyLossLimitPnLLevel'];
 
 
 /* ========= Derivados (para barras / chips) ========= */
@@ -162,8 +164,7 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">Days Loss Limit (Pending API)</div>
                         <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
-                            <?php echo esc_html(mt_format_money(2000)); ?>
-                            <span class="mt-tooltip">
+<?php echo esc_html(mt_format_money_no_cents($maxDailyLoss)); ?>                            <span class="mt-tooltip">
                                 <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
                                     aria-label="Daily Loss Limit information"></i>
                                 <span class="mt-tooltip__panel" role="tooltip">

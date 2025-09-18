@@ -10,7 +10,7 @@ html {
 .mt-navbar {
     z-index: 50;
     width: 100%;
-    position: sticky;
+    /* position: sticky; */
     top: 0px;
     left: 0px;
 }
@@ -25,6 +25,10 @@ body.admin-bar {
 
 .mt-navbar__wrapper {
     width: 100%
+}
+
+.mt-navbar-scrolled {
+    background: rgba(18, 18, 18, 0.90);
 }
 
 .mt-navbar__promo {
@@ -146,12 +150,13 @@ body.admin-bar {
     background-color: var(--mgt-dark)
 }
 
-.mt-navbar__nav-link:focus {
-    border-color: white;
-}
+/*.mt-navbar__nav-link:focus {*/
+/*    border-color: white;*/
+/*}*/
 
 .mt-navbar__nav-link--active {
-    background-color: var(--mgt-dark)
+    background-color: var(--mgt-dark);
+    border-color: white;
 }
 
 .mt-navbar__user {

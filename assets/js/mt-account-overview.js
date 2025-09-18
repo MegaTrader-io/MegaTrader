@@ -726,38 +726,58 @@ document.addEventListener("mt:accountSelected", (e) => {
 })();
 // ===== Performance Chart (AJAX refresh) =====
 (function () {
-  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
-    return;
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function") return;
+
+  // Ejecuta <script> inline dentro del contenedor, envueltos en IIFE para evitar colisiones globales
+  function runInlineScripts(container){
+    container.querySelectorAll('script:not([src])').forEach(function(old){
+      var s = document.createElement('script');
+      if (old.type) s.type = old.type;
+      s.text = '(function(){\n' + (old.textContent || '') + '\n})();';
+      document.body.appendChild(s);
+      document.body.removeChild(s);
+    });
+  }
+
+  // Asegura ApexCharts antes de ejecutar los inline
+  function ensureApexThen(container, cb){
+    if (window.ApexCharts) return cb();
+    var url = container.querySelector('script[src*="apexcharts"]')?.getAttribute('src')
+          || 'https://cdn.jsdelivr.net/npm/apexcharts';
+    var tag = document.createElement('script');
+    tag.src = url;
+    tag.onload = cb;
+    tag.onerror = cb; // en caso de estar ya cargado por otro lado
+    document.head.appendChild(tag);
+  }
 
   window.mtRefresh.register("performanceChart", function (accountId) {
     var wrap = document.querySelector(".mt-account-performance-chart-content");
     if (!wrap) return;
 
-    var url =
-      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
-    var body = new URLSearchParams();
+    var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce)   || "";
+    var body  = new URLSearchParams();
     body.set("action", "mt_account_performance_chart");
-    body.set("nonce", nonce);
+    body.set("nonce",  nonce);
     body.set("accountId", String(accountId || ""));
 
     return fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body,
+      body: body,
     })
-      .then(function (r) {
-        return r.json();
-      })
-      .then(function (j) {
-        if (!j || !j.success || !j.data || j.data.html == null) return;
-        wrap.innerHTML = j.data.html; // reemplaza TODO el componente
-
-        // (opcional) si tu chart necesita re-init JS, hazlo aquí.
-        // ej: window.MT && MT.initPerfChart && MT.initPerfChart(wrap);
-      })
-      .catch(function (err) {
-        console.error("[MT] chart AJAX error:", err);
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if (!j || !j.success || !j.data || j.data.html == null) return;
+      wrap.innerHTML = j.data.html;                 // reemplaza TODO el componente
+      ensureApexThen(wrap, function(){              // espera ApexCharts si hace falta
+        runInlineScripts(wrap);                     // ejecuta el script inline del chart
       });
+    })
+    .catch(function (err) {
+      console.error("[MT] chart AJAX error:", err);
+    });
   });
 })();
+

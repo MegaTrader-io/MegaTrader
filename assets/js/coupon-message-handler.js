@@ -145,7 +145,7 @@ jQuery(document).ready(function ($) {
             if (isCouponRelated(low)) {
               // Si venimos de "remove", forzamos estilo error y reemplazamos al instante
               const isErr = currentAction === "remove" ? true : isErrorMessage(low);
-              showCouponMessage(raw, isErr ? "error" : "success");
+              //showCouponMessage(raw, isErr ? "error" : "success");
               $(node).hide();
               currentAction = null;
             }

@@ -195,6 +195,8 @@ if (!function_exists('mt_accounts_build_performance')) {
       'minTradingDays' => $metrics['minTradingDays'] ?? null,
       'maxLossLimitEquityLevel' => $metrics['maxLossLimitEquityLevel'] ?? $metrics['maxLossLimit'] ?? null,
       'target' => $program['target'] ?? $program['profitTarget'] ?? mt__get($metrics, ['target']),
+      'maxDailyLossLimitPnLLevel' => $metrics['maxDailyLossLimitPnLLevel'] ?? null,
+
     ];
     foreach ($payload as $k => $v) {
       if (is_string($v) && is_numeric($v))
@@ -909,8 +911,8 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
   {
     $m = $account['metrics'] ?? $account['metric'] ?? [];
 
-    $green = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
-    $red = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
+    $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
+    $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
 
     // === Serie diaria de currentBalance (línea amarilla) ===
     $candidates = [
@@ -956,10 +958,10 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
 
     return [
       'title' => $title,
-      'yellow' => $series,  // ← línea amarilla: currentBalance por día
+      'plan_revenue' => $series,  // ← línea amarilla: currentBalance por día
       'series' => $series,  // (compat)
-      'green' => $green,   // equityPassLevel (línea constante)
-      'red' => $red,     // maxLossLimitEquityLevel (línea constante)
+      'upper_bound' => $upper_bound,   // equityPassLevel (línea constante)
+      'lower_bound' => $lower_bound,     // maxLossLimitEquityLevel (línea constante)
     ];
   }
 }
