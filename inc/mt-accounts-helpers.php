@@ -214,6 +214,59 @@ if (!function_exists('mt_accounts_prepare_performance_from_accounts')) {
   }
 }
 
+
+// Build desde UNA cuenta (metrics|metric) → payload para feature-content
+if (!function_exists('mt_accounts_build_feature_content')) {
+  function mt_accounts_build_feature_content(array $account): array {
+    $m = $account['metrics'] ?? $account['metric'] ?? [];
+
+    // Crudos (API: win/loss en 0..100)
+    $avgWin   = $m['averageWin']  ?? 0;
+    $avgLoss  = $m['averageLoss'] ?? 0;
+    $winRate  = $m['winRate']     ?? 0; // 66.67
+    $lossRate = $m['lossRate']    ?? 0; // 33.33
+
+    // Cast numérico
+    $avgWin   = is_numeric($avgWin)   ? (float)$avgWin   : 0.0;
+    $avgLoss  = is_numeric($avgLoss)  ? (float)$avgLoss  : 0.0;
+    $winRate  = is_numeric($winRate)  ? (float)$winRate  : 0.0;
+    $lossRate = is_numeric($lossRate) ? (float)$lossRate : 0.0;
+
+    // Normalizar a fracción 0..1 (para la UI)
+    if ($winRate  > 1) $winRate  /= 100;
+    if ($lossRate > 1) $lossRate /= 100;
+    $winRate  = max(0.0, min(1.0, $winRate));
+    $lossRate = max(0.0, min(1.0, $lossRate));
+
+    $payload = [
+      'overview' => [
+        'averageWin'  => $avgWin,
+        'averageLoss' => $avgLoss,
+        'winRate'     => $winRate,   // 0..1
+        'lossRate'    => $lossRate,  // 0..1
+      ],
+    ];
+
+    // Cast finales por si algo vino string
+    foreach ($payload['overview'] as $k => $v) {
+      if (is_string($v) && is_numeric($v)) $payload['overview'][$k] = $v + 0;
+    }
+    return $payload;
+  }
+}
+
+// Build desde LISTA de cuentas → elige la activa y arma payload (igual que performance)
+if (!function_exists('mt_accounts_prepare_feature_from_accounts')) {
+  function mt_accounts_prepare_feature_from_accounts($accounts): array {
+    $active = function_exists('mt_accounts_find_active_account')
+      ? mt_accounts_find_active_account($accounts)
+      : null;
+    if (!$active) return [];
+    return mt_accounts_build_feature_content($active);
+  }
+}
+
+
 if (!function_exists('mt_accounts_fetch_account_json_by_shortcode')) {
   function mt_accounts_fetch_account_json_by_shortcode($accountId, $page = 1, $perPage = 10)
   {

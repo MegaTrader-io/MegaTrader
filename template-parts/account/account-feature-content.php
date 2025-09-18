@@ -9,40 +9,49 @@
 
 defined('ABSPATH') || exit;
 
-$accountId = isset($args['meta']['accountId']) ? sanitize_text_field((string)$args['meta']['accountId']) : '';
-$feature   = isset($args['feature']) && is_array($args['feature']) ? $args['feature'] : [];
-$account   = $feature['account'] ?? null; 
+$accountId = isset($args['meta']['accountId']) ? sanitize_text_field((string) $args['meta']['accountId']) : '';
+$feature = isset($args['feature']) && is_array($args['feature']) ? $args['feature'] : [];
+$account = $feature['account'] ?? null;
 
-$winRate  = isset($account['winRate']) ? (float)$account['winRate'] : 0.0;      // 0..1
-$averageWin = isset($account['averageWin']) ? (float)$account['averageWin'] : 0.0;
 
-$winRate = max(0.0, min(1.0, $winRate));        // clamp
-$winPct  = (int) round($winRate * 100);         // 0..100
+$apiData = isset($feature['apiData']) && is_array($feature['apiData']) ? $feature['apiData'] : null;
 
-// textos formateados
-$avgWinText = mt_format_money($averageWin);
+
+/** 2) Fallback: construir apiData aquí si no vino desde el overview */
+if (!$apiData) {
+    // Leer desde metrics|metric en la cuenta (API trae win/loss en 0..100)
+    $m = is_array($account) ? ($account['metrics'] ?? $account['metric'] ?? []) : [];
+    $avgWin = is_numeric($m['averageWin'] ?? null) ? (float) $m['averageWin'] : 0.0;
+    $avgLoss = is_numeric($m['averageLoss'] ?? null) ? (float) $m['averageLoss'] : 0.0;
+    $winRate = is_numeric($m['winRate'] ?? null) ? (float) $m['winRate'] : 0.0; // 0..100
+    $lossRate = is_numeric($m['lossRate'] ?? null) ? (float) $m['lossRate'] : 0.0; // 0..100
+
+    // Normalizar a 0..1 (lo que espera la UI)
+    if ($winRate > 1)
+        $winRate /= 100;
+    if ($lossRate > 1)
+        $lossRate /= 100;
+    $winRate = max(0.0, min(1.0, $winRate));
+    $lossRate = max(0.0, min(1.0, $lossRate));
+
+    $apiData = [
+        'overview' => [
+            'averageWin' => $avgWin,
+            'averageLoss' => $avgLoss,
+            'winRate' => $winRate,   // 0..1
+            'lossRate' => $lossRate,  // 0..1
+        ],
+    ];
+}
 
 
 /* ------- EJEMPLO DE TABS ------- */
 $tabs = [
     ['id' => 'overview', 'label' => 'Overview', 'active' => true],
-    ['id' => 'es', 'label' => 'E-mini S&P 500', 'active' => false],
-    ['id' => 'nq', 'label' => 'E-mini NASDAQ 100', 'active' => false],
-    ['id' => 'rt', 'label' => 'E-mini Russell 2000', 'active' => false],
-    ['id' => 'ng', 'label' => 'E-mini Natural Gas', 'active' => false],
-    ['id' => 'nkd', 'label' => 'Nikkei NKD', 'active' => false],
 ];
 
-/* ------- DEMO DATA POR TAB (simula API) ------- */
-/* Desde API llegarán: averageWin, averageLoss, winRate, lossRate */
-$apiData = [
-    'overview' => ['averageWin' => 0, 'averageLoss' => 0, 'winRate' => 0.00, 'lossRate' => 0.00],
-    'es' => ['averageWin' => 137.37, 'averageLoss' => -209.26, 'winRate' => 0.30, 'lossRate' => 0.70],
-    'nq' => ['averageWin' => 90.15, 'averageLoss' => -150.00, 'winRate' => 0.45, 'lossRate' => 0.55],
-    'rt' => ['averageWin' => 55.00, 'averageLoss' => -80.00, 'winRate' => 0.25, 'lossRate' => 0.75],
-    'ng' => ['averageWin' => 110.00, 'averageLoss' => -120.00, 'winRate' => 0.60, 'lossRate' => 0.40],
-    'nkd' => ['averageWin' => 0, 'averageLoss' => 0, 'winRate' => 0.00, 'lossRate' => 0.00],
-];
+
+
 ?>
 
 <section class="mt-feature-tabs">
@@ -119,9 +128,21 @@ $apiData = [
         $riskBarClass = 'mt-progress-bar' . ($riskPct > 0 ? ' mt-progress-bar--error' : '');
 
         // Texto ratio solo si ambas partes > 0
-        $ratioText = ($hasData && $reward > 0 && $risk > 0)
-            ? ('1:' . number_format($risk / $reward, 2))
+        $tradesCount = isset($account['metrics']['tradesCount'])
+            ? (int) $account['metrics']['tradesCount']
             : null;
+
+        // No trades → "—"
+        if ($tradesCount !== null && $tradesCount <= 0) {
+            $ratioText = null; // el template ya muestra "—" cuando es null
+        } elseif ((float) $avgLoss === 0.0) {
+            // No losses → "1:∞" (o usa null si prefieres "—")
+            $ratioText = '1:∞';
+        } else {
+            // Normal: 1 : (avgWin / |avgLoss|)
+            $ratio = (float) $avgWin / max(0.000001, abs((float) $avgLoss));
+            $ratioText = '1:' . number_format($ratio, 2);
+        }
         ?>
 
         <div class="mt-feature-panel" data-fc-panel data-panel-for="<?php echo esc_attr($id); ?>" <?php echo $active ? '' : 'hidden'; ?>>
@@ -131,20 +152,20 @@ $apiData = [
                     <div class="mt-summary__title">Winning Trade</div>
 
                     <div class="mt-donut <?php echo $winPct ? 'is-success' : 'is-empty'; ?>"
-                        data-donut-value="<?php echo (int)$winPct; ?>">
+                        data-donut-value="<?php echo $winPct; ?>">
                         <svg class="mt-donut__svg" viewBox="0 0 100 100" aria-hidden="true">
                             <circle class="mt-donut__track" cx="50" cy="50" r="45" pathLength="100"></circle>
                             <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="100"></circle>
                         </svg>
                         <div class="mt-donut__center">
-                            <span class="mt-donut__percent"><?php echo (int)$winPct; ?></span>
+                            <span class="mt-donut__percent"><?php echo $winPct ? $winPct . '%' : '0%'; ?></span>
                         </div>
                     </div>
 
                     <div class="mt-summary__avg">
                         <div class="mt-summary__avg-label">Avg. Win</div>
                         <div class="mt-summary__avg-value mt-summary__avg-value--success">
-                            <?php echo $avgWinText; ?>
+                            <?php echo $avgWin ? '$' . number_format($avgWin, 2) : '$0.00'; ?>
                         </div>
                     </div>
                 </div>
@@ -210,7 +231,7 @@ $apiData = [
                             <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="100"></circle>
                         </svg>
                         <div class="mt-donut__center">
-                            <span class="mt-donut__percent"><?php echo $lossPct ? $lossPct . '%' : '--'; ?></span>
+                            <span class="mt-donut__percent"><?php echo $lossPct ? $lossPct . '%' : '0%' ?></span>
                         </div>
                     </div>
 
@@ -222,7 +243,7 @@ $apiData = [
                                 $sign = $avgLoss < 0 ? '-' : '';
                                 echo $sign . '$' . number_format(abs($avgLoss), 2);
                             } else {
-                                echo '--';
+                                echo '$0.00';
                             }
                             ?>
                         </div>
@@ -232,3 +253,4 @@ $apiData = [
         </div>
     <?php endforeach; ?>
 </section>
+

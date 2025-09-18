@@ -1817,7 +1817,6 @@ add_action('template_redirect', function () {
 }, 0);
 
 // Render del HTML del modal de éxito
-// Render del HTML del modal de éxito (AJAX)
 add_action('wp_ajax_nopriv_mt_render_order_success_modal', 'mt_render_order_success_modal');
 add_action('wp_ajax_mt_render_order_success_modal', 'mt_render_order_success_modal');
 
@@ -1867,5 +1866,47 @@ function mt_render_order_success_modal() {
   wp_send_json_success( array( 'html' => $html ) );
 }
 
+// === Feature Content AJAX ===
+add_action('wp_ajax_mt_account_feature_content', 'mt_ajax_account_feature_content');
+add_action('wp_ajax_nopriv_mt_account_feature_content', 'mt_ajax_account_feature_content');
+
+function mt_ajax_account_feature_content() {
+  $nonce = $_POST['nonce'] ?? '';
+  if ( ! wp_verify_nonce($nonce, 'mt-acc-nonce') ) {
+    wp_send_json_error(['message' => 'Invalid nonce'], 403);
+  }
+
+  $accountId = sanitize_text_field((string)($_POST['accountId'] ?? ''));
+  if ($accountId === '') {
+    wp_send_json_error(['message' => 'Missing accountId'], 400);
+  }
+
+  // Resolver cuenta
+  $acc = function_exists('mt_accounts_resolve_account_by_id')
+    ? mt_accounts_resolve_account_by_id($accountId)
+    : null;
+
+  // Payload para el template
+  $feature = [];
+  if ($acc) {
+    $feature['account'] = $acc;
+    if (function_exists('mt_accounts_build_feature_content')) {
+      $feature['apiData'] = mt_accounts_build_feature_content($acc);
+    }
+  }
+
+  ob_start();
+  get_template_part(
+    'template-parts/account/account-feature-content',
+    null,
+    [
+      'meta'    => ['accountId' => $accountId],
+      'feature' => $feature,
+    ]
+  );
+  $html = ob_get_clean();
+
+  wp_send_json_success(['html' => $html]);
+}
 
 

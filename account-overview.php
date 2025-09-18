@@ -96,23 +96,23 @@ if (is_user_logged_in()) {
         ? mt_accounts_resolve_account_by_id($mt_selected_id)
         : null;
 
-      if ($resolved) {
-        // Para Feature Content
-        $mt_feature_content['account'] = $resolved;
+      // === Resolver la cuenta una sola vez y construir payloads ===
+      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
+        ? mt_accounts_resolve_account_by_id($mt_selected_id)
+        : null;
 
-        // Para Performance
+      if ($resolved) {
+        // Performance
         if (function_exists('mt_accounts_build_performance')) {
           $mt_performance = mt_accounts_build_performance($resolved);
         }
 
-        // Para otros componentes (ejemplos futuros)
-        // $mt_feature_content['journal']   = build_journal($resolved);
-        // $mt_feature_content['positions'] = build_positions($resolved);
-        // $mt_feature_content['risk']      = build_risk($resolved);
+        // Feature Content (account + apiData listo para el foreach del template)
+        $mt_feature_content['account'] = $resolved;
+        if (function_exists('mt_accounts_build_feature_content')) {
+          $mt_feature_content['apiData'] = mt_accounts_build_feature_content($resolved);
+        }
       }
-
-
-
 
     } else {
       echo '<div class="mt-alert mt-alert--error">Email inválido. Actualiza tu perfil.</div>';
@@ -191,11 +191,15 @@ $GLOBALS['mt_feature_content'] = $mt_feature_content;
       </div>
 
       <div class="mt-account-performance-chart-content empty-d-none"><?php
-      $chart_title = ($mt_account_ui['current']['size'] ?? '') . ' ' . ($mt_account_ui['current']['name'] ?? '');
+        $chart_title = ($mt_account_ui['current']['size'] ?? '') . ' ' . ($mt_account_ui['current']['name'] ?? '');
 
-      get_template_part('template-parts/account/account-performance-chart', null, [
-        'title' => $chart_title
-      ]);
+        get_template_part('template-parts/account/account-performance-chart', null, [
+          'title' => $chart_title,
+          'tooltip' => [
+            'title' => 'Parameters',
+            'Description' => 'This is where data related with the Plan would show'
+          ]
+        ]);
       ?></div>
 
       <div class="mt-account-account-daily-journal">
