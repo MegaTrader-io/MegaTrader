@@ -180,11 +180,22 @@ document.addEventListener('DOMContentLoaded', function () {
         carousel.addEventListener('scroll', handleScroll);
     }
 
-    async function loadChooseYourAccountSize(fn) {
+    async function loadChooseYourAccountSize(fn = function () {
+    }) {
         const defaultAccountType = document.querySelector('.btn-account-type.account-active').dataset.value;
+        const softSlider = document.getElementById("slider-mgt");
+        const arbitraryValuesForSlider = softSlider.dataset.sizes ? softSlider.dataset.sizes.split(',') : [1, 2, 3, 4];
+        const defaultSelection = arbitraryValuesForSlider.at(2);
+        let addons = {}
+
+        document.querySelectorAll('.addons-item input[type=checkbox]').forEach(element => {
+            addons[element.name] = element.checked;
+        })
 
         let internalOptions = {
             accountType: defaultAccountType,
+            accountSize: defaultSelection,
+            addons: addons
         };
 
         /** Handler Account Type **/
@@ -198,9 +209,96 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 e.currentTarget.classList.add('account-active');
                 internalOptions.accountType = e.currentTarget.dataset.value;
-                internalOptions.defaultPlatform = e.currentTarget.dataset.defaultPlatform;
-                internalOptions.defaultMarketType = e.currentTarget.dataset.defaultMarketType;
+                fn(internalOptions);
+            })
+        })
 
+        /** Handle Account Size **/
+        const format = {
+            to: function (value) {
+                return arbitraryValuesForSlider[Math.round(value)];
+            },
+            from: function (value) {
+                return arbitraryValuesForSlider.indexOf(value);
+            }
+        };
+
+        noUiSlider.create(softSlider, {
+            start: [defaultSelection],
+            range: {min: 0, max: arbitraryValuesForSlider.length - 1},
+            step: 1,
+            connect: [true, false],
+            tooltips: false,
+            format,
+            pips: {
+                mode: 'steps',
+                format,
+                density: 64,
+            },
+        });
+
+        softSlider.querySelectorAll('.noUi-value').forEach((el) => {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', () => {
+                const val = el.getAttribute('data-value');
+                softSlider.noUiSlider.set(arbitraryValuesForSlider[val]);
+            });
+        });
+
+        const pipElements = softSlider.querySelectorAll('.noUi-value');
+        if (pipElements) {
+            pipElements[0].style.left = '2%';
+            pipElements[pipElements.length - 1].style.left = '98%';
+        }
+
+        const base = softSlider.querySelector('.noUi-base');
+
+        if (base) {
+            const customElementParent = document.createElement('div');
+            customElementParent.classList.add(
+                "tw-w-full",
+                "tw-h-1",
+                "tw-py-2",
+                "-tw-top-[6px]",
+                "tw-absolute",
+                "tw-z-[2]",
+                "tw-inline-flex",
+                "tw-justify-between",
+                "tw-items-center"
+            );
+
+            pipElements.forEach(() => {
+                const customElement = document.createElement('div');
+                customElement.classList.add('tw-w-1', 'tw-h-1', 'tw-opacity-30', 'tw-bg-white', 'tw-rounded-full', 'tw-z-[5px]')
+                customElementParent.appendChild(customElement)
+            })
+
+            base.appendChild(customElementParent);
+        }
+
+        softSlider.noUiSlider.on("update", function (valuesIndex, handle) {
+            document.querySelectorAll('.noUi-value').forEach((element) => {
+                element.classList.remove('active-pip');
+            });
+
+            const value = valuesIndex.at(0)
+            const index = arbitraryValuesForSlider.indexOf(value)
+
+            if (!isNaN(index) && index !== undefined) {
+                const element = document.querySelector('.noUi-value[data-value="' + index + '"]');
+                if (element) {
+                    element.classList.add('active-pip');
+
+                    internalOptions.accountSize = arbitraryValuesForSlider[index];
+                    fn(internalOptions);
+                }
+            }
+        });
+
+        /** Handle Addons **/
+        document.querySelectorAll('.addon-option').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                internalOptions.addons[e.currentTarget.name] = e.currentTarget.checked;
                 fn(internalOptions);
             })
         })
