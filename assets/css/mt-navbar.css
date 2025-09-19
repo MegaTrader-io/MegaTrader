@@ -205,6 +205,11 @@ body.admin-bar {
 }
 
 /* My Account Variant */
+@media (max-width: 1199.98px) {
+    .mt-navbar.mt-navbar--my-account .mt-navbar__auth-link {
+        display: block !important;
+    }
+}
 @media (min-width: 1200px) {
     .mt-navbar.mt-navbar--my-account .mt-navbar__links {
         display: none;
