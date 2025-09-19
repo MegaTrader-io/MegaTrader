@@ -841,8 +841,10 @@ document.addEventListener("mt:accountSelected", (e) => {
   const btnEdit = $(".mtfb-edit", panel);
   const btnClose = $(".mt-modal__close", panel);
 
-  if (panel && !panel.hasAttribute("tabindex"))
-    panel.setAttribute("tabindex", "-1");
+  // --- Límite de nota ---
+  const NOTE_MAX = 58;
+
+  if (panel && !panel.hasAttribute("tabindex")) panel.setAttribute("tabindex", "-1");
 
   let current = { accountId: 0, tradeDate: "", anchor: null, rowSel: "" };
   let isOpen = false;
@@ -871,10 +873,8 @@ document.addEventListener("mt:accountSelected", (e) => {
     pop.style.visibility = "hidden";
 
     const rect = anchorEl.getBoundingClientRect();
-    const pw = panel.offsetWidth,
-      ph = panel.offsetHeight;
-    const gap = 12,
-      margin = 8;
+    const pw = panel.offsetWidth, ph = panel.offsetHeight;
+    const gap = 12, margin = 8;
 
     let top = rect.bottom + gap;
     let side = "top";
@@ -900,9 +900,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   function applyNotePlaceholderPolicy(preset) {
     const noteEl = $("#mtfb-note", panel);
     if (!noteEl) return;
-    if (!noteEl.dataset.ph)
-      noteEl.dataset.ph = noteEl.getAttribute("placeholder") || "";
-    // Si estamos viendo un feedback y la nota guardada está vacía → NO mostrar placeholder
+    if (!noteEl.dataset.ph) noteEl.dataset.ph = noteEl.getAttribute("placeholder") || "";
     if (preset && (preset.note == null || preset.note === "")) {
       noteEl.setAttribute("placeholder", "");
     } else {
@@ -913,8 +911,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   function resetMoodUI(preset) {
     $$(".mtfb-mood [data-mood]", panel).forEach((btn) => {
       btn.classList.remove("is-active", "mt-icon-primary");
-      if (!btn.classList.contains("mt-icon-base"))
-        btn.classList.add("mt-icon-base");
+      if (!btn.classList.contains("mt-icon-base")) btn.classList.add("mt-icon-base");
     });
     $$('input[name="mtfb-plan"]', panel).forEach((r) => {
       r.checked = false;
@@ -944,25 +941,9 @@ document.addEventListener("mt:accountSelected", (e) => {
   }
 
   function openPopover(anchorEl, { accountId, tradeDate, preset } = {}) {
-    current = {
-      accountId,
-      tradeDate,
-      anchor: anchorEl,
-      rowSel: `#dj-row-${tradeDate}`,
-    };
-
-    // LOG de apertura
-    try {
-      console.group("[MTFB] OPEN");
-      console.log("accountId:", accountId, "tradeDate:", tradeDate);
-      console.log("preset:", preset);
-      const rowEl = document.querySelector(current.rowSel);
-      console.log("row dataset:", rowEl ? { ...rowEl.dataset } : null);
-      console.groupEnd();
-    } catch (_) {}
-
+    current = { accountId, tradeDate, anchor: anchorEl, rowSel: `#dj-row-${tradeDate}` };
     resetMoodUI(preset);
-    const isViewing = !!preset; // si hay datos, abre en modo “ver”
+    const isViewing = !!preset;
     setReadOnly(isViewing);
     updateSaveEnabled();
     positionTo(anchorEl, "bottom");
@@ -1004,9 +985,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   // Cerrar por click fuera
   document.addEventListener("click", (e) => {
     if (!isOpen) return;
-    const inside =
-      e.target.closest(".mt-modal__panel") ||
-      e.target.closest(".mt-dj-visibility");
+    const inside = e.target.closest(".mt-modal__panel") || e.target.closest(".mt-dj-visibility");
     if (!inside) closePopover();
   });
   btnClose?.addEventListener("click", (e) => {
@@ -1024,13 +1003,9 @@ document.addEventListener("mt:accountSelected", (e) => {
 
   // Reposicionar en scroll/resize
   ["scroll", "resize"].forEach((ev) => {
-    window.addEventListener(
-      ev,
-      () => {
-        if (isOpen && current.anchor) positionTo(current.anchor);
-      },
-      { passive: true }
-    );
+    window.addEventListener(ev, () => {
+      if (isOpen && current.anchor) positionTo(current.anchor);
+    }, { passive: true });
   });
 
   // Escape
@@ -1042,15 +1017,10 @@ document.addEventListener("mt:accountSelected", (e) => {
   panel.addEventListener("click", (e) => {
     const b = e.target.closest(".mtfb-mood [data-mood]");
     if (b) {
-      if (b.disabled) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return;
-      }
+      if (b.disabled) { e.preventDefault(); e.stopImmediatePropagation(); return; }
       $$(".mtfb-mood [data-mood]", panel).forEach((x) => {
         x.classList.remove("is-active", "mt-icon-primary");
-        if (!x.classList.contains("mt-icon-base"))
-          x.classList.add("mt-icon-base");
+        if (!x.classList.contains("mt-icon-base")) x.classList.add("mt-icon-base");
       });
       b.classList.add("is-active", "mt-icon-primary");
       b.classList.remove("mt-icon-base");
@@ -1064,21 +1034,26 @@ document.addEventListener("mt:accountSelected", (e) => {
     if (e.target && e.target.name === "mtfb-plan") updateSaveEnabled();
   });
 
-  // Guardar AJAX (botón Save) — con logs y sin cerrar el popover
-  $(".mtfb-save", panel)?.addEventListener("click", async () => {
-    const url =
-      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-
-    const rootNonce =
-      document.querySelector("#mt-daily-journal")?.dataset?.nonce;
-    const nonce = (window.mtAccounts && mtAccounts.nonce) || rootNonce || "";
-    if (!nonce) {
-      alert("Missing nonce. Reload the page.");
-      return;
+  // --- Enforce maxlength en textarea (incluye pegar) ---
+  const noteField = $("#mtfb-note", panel);
+  if (noteField) noteField.setAttribute("maxlength", String(NOTE_MAX));
+  panel.addEventListener("input", (e) => {
+    if (e.target && e.target.id === "mtfb-note") {
+      const t = e.target;
+      if (t.value.length > NOTE_MAX) t.value = t.value.slice(0, NOTE_MAX);
     }
+  });
+
+  // Guardar AJAX (botón Save) — sin cerrar el popover
+  $(".mtfb-save", panel)?.addEventListener("click", async () => {
+    const url = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+
+    const rootNonce = document.querySelector("#mt-daily-journal")?.dataset?.nonce;
+    const nonce = (window.mtAccounts && mtAccounts.nonce) || rootNonce || "";
+    if (!nonce) { alert("Missing nonce. Reload the page."); return; }
 
     const moodBtn = $(".mtfb-mood [data-mood].is-active", panel);
-    const planEl = $('input[name="mtfb-plan"]:checked', panel);
+    const planEl  = $('input[name="mtfb-plan"]:checked', panel);
 
     const hasMood = !!moodBtn;
     const hasPlan = !!planEl;
@@ -1087,18 +1062,14 @@ document.addEventListener("mt:accountSelected", (e) => {
       return;
     }
 
-    // === Nota: NO guardar placeholder ===
+    // NO guardar placeholder
     const noteEl = $("#mtfb-note", panel);
     const rawVal = noteEl ? noteEl.value : "";
-    const phVal = noteEl ? noteEl.getAttribute("placeholder") || "" : "";
-    const normalize = (s) =>
-      (s || "")
-        .replace(/\u00A0/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
+    const phVal  = noteEl ? noteEl.getAttribute("placeholder") || "" : "";
+    const normalize = (s) => (s || "").replace(/\u00A0/g, " ").replace(/\s+/g, " ").trim();
     const normRaw = normalize(rawVal);
-    const normPh = normalize(noteEl?.dataset?.ph || phVal);
-    const note = normRaw && normRaw !== normPh ? normRaw : "";
+    const normPh  = normalize(noteEl?.dataset?.ph || phVal);
+    const note    = normRaw && normRaw !== normPh ? normRaw : "";
 
     const mood = parseInt(moodBtn.getAttribute("data-mood"), 10);
     const plan = planEl.value === "1" ? "1" : "0";
@@ -1111,29 +1082,10 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("action", "mt_save_daily_feedback");
     body.set("nonce", nonce);
     body.set("account_id", String(current.accountId));
-    body.set("trade_date", current.tradeDate); // YYYY-MM-DD
+    body.set("trade_date", current.tradeDate);
     body.set("mood", String(mood));
     body.set("followed_plan", plan);
     body.set("note", note);
-
-    // ===== LOGS para trazar =====
-    try {
-      console.group("[MTFB] SAVE click");
-      console.log("meta:", {
-        accountId: current.accountId,
-        tradeDate: current.tradeDate,
-        rowSel: current.rowSel,
-      });
-      console.log("mood:", mood, "plan:", plan);
-      console.log("note raw:", rawVal);
-      console.log("placeholder(ref):", normPh);
-      console.log("normRaw:", normRaw, "note(final):", note);
-      console.log("POST (qs):", body.toString());
-      try {
-        console.log("POST (obj):", Object.fromEntries(body));
-      } catch (_) {}
-      console.groupEnd();
-    } catch (_) {}
 
     try {
       const res = await fetch(url, {
@@ -1141,59 +1093,35 @@ document.addEventListener("mt:accountSelected", (e) => {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
       });
-
-      let j = null;
-      try {
-        j = await res.json();
-      } catch (_) {}
-
-      // ===== LOG respuesta =====
-      console.group("[MTFB] SAVE response");
-      console.log("http status:", res.status);
-      console.log("json:", j);
-      console.groupEnd();
-
+      const j = await res.json().catch(() => null);
       if (!res.ok || !j?.success) {
         const msg = j?.data?.msg || `HTTP ${res.status}`;
         throw new Error(msg);
       }
 
-      // éxito → icono ✏️ → 👁️
-      const ic = document.querySelector(
-        `${current.rowSel} .mt-dj-visibility .mt-icon`
-      );
-      if (ic) {
-        ic.classList.remove("mt-icon_pencil");
-        ic.classList.add("mt-icon_visibility");
-      }
+      const ic = document.querySelector(`${current.rowSel} .mt-dj-visibility .mt-icon`);
+      if (ic) { ic.classList.remove("mt-icon_pencil"); ic.classList.add("mt-icon_visibility"); }
 
-      // sync dataset (nota vacía si solo era placeholder)
       const rowEl = document.querySelector(current.rowSel);
       if (rowEl) {
-        rowEl.dataset.hasFb = "1";
-        rowEl.dataset.mood = String(mood);
-        rowEl.dataset.followed = plan; // '1' o '0'
-        rowEl.dataset.note = note; // '' si no escribió nada real
+        rowEl.dataset.hasFb    = "1";
+        rowEl.dataset.mood     = String(mood);
+        rowEl.dataset.followed = plan;
+        rowEl.dataset.note     = note;
       }
 
-      // NO cerrar: pasar a modo "ver"
       setReadOnly(true);
 
-      // 👇 NUEVO: si la nota quedó vacía, no mostrar placeholder mientras queda abierto
+      // si la nota quedó vacía, no mostrar placeholder mientras queda abierto
       if (typeof applyNotePlaceholderPolicy === "function") {
         applyNotePlaceholderPolicy({ note });
-      } else {
-        // fallback por si no existe el helper
-        if (noteEl) {
-          if (note === "") noteEl.setAttribute("placeholder", "");
-          else if (noteEl.dataset.ph)
-            noteEl.setAttribute("placeholder", noteEl.dataset.ph);
-        }
+      } else if (noteEl) {
+        if (note === "") noteEl.setAttribute("placeholder", "");
+        else if (noteEl.dataset.ph) noteEl.setAttribute("placeholder", noteEl.dataset.ph);
       }
 
       positionTo(current.anchor, "bottom");
     } catch (err) {
-      console.error("[MTFB] feedback save error:", err);
       alert(err.message || "Could not save feedback.");
     } finally {
       document.querySelector(".preloader")?.classList.remove("is-active");
@@ -1201,3 +1129,4 @@ document.addEventListener("mt:accountSelected", (e) => {
     }
   });
 })();
+

@@ -49,7 +49,7 @@ final class Mt_Navbar
     {
         return [
             ['href' => esc_url(home_url('/my-account/overview/')), 'value' => 'ACCOUNT OVERVIEW', 'class' => 'navbar__nav-link--active'],
-            ['href' => esc_url(home_url('/my-account/referrals/')), 'value' => 'REFERRALS'],
+            ['href' => esc_url(home_url('/my-account/referrals/123')), 'value' => 'REFERRALS'],
             ['href' => esc_url(home_url('/my-account/payouts/')), 'value' => 'PAYOUTS'],
             ['href' => 'https://help.megatrader.io/en/', 'value' => 'HELP CENTER', 'wrapper_attributes' => ["target" => "_blank", "rel" => "noopener"]],
         ];

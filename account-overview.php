@@ -283,7 +283,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
           value="0"><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_no']; ?></label>
     </div>
 
-    <textarea id="mtfb-note" class="mtfb-note" rows="2" maxlength="320"
+    <textarea id="mtfb-note" class="mtfb-note" rows="2" maxlength="58"
       placeholder="<?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_placeholder']; ?>"
       aria-label="Daily note"></textarea>
 
