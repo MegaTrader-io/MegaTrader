@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 "tw-w-full",
                 "tw-h-1",
                 "tw-py-2",
-                "-tw-top-[6px]",
+                "-tw-top-[5px]",
                 "tw-absolute",
                 "tw-z-[2]",
                 "tw-inline-flex",
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             pipElements.forEach(() => {
                 const customElement = document.createElement('div');
-                customElement.classList.add('tw-w-1', 'tw-h-1', 'tw-opacity-30', 'tw-bg-white', 'tw-rounded-full', 'tw-z-[5px]')
+                customElement.classList.add('tw-w-1.5', 'tw-h-1.5', 'tw-opacity-30', 'tw-bg-white', 'tw-rounded-full', 'tw-z-[5px]')
                 customElementParent.appendChild(customElement)
             })
 
