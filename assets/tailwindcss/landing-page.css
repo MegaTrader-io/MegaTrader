@@ -213,7 +213,7 @@ body {
 }
 
 #slider-mgt .noUi-pips > .noUi-value {
-    @apply tw-text-base tw-text-stone-400 tw-leading-none tw-font-medium tw-uppercase;
+    @apply tw-text-lg tw-text-stone-400 tw-leading-none tw-font-medium tw-uppercase;
 }
 
 #slider-mgt .noUi-pips > .noUi-value.active-pip {
