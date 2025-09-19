@@ -3375,6 +3375,18 @@ a.pagination-number {
   top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + 32px);
 }
 
+@media (max-width: 1199.98px) {
+    .mt-my-profile__notification {
+        display: none;
+    }
+}
+
+@media (min-width: 1200px) {
+    .my-acount-logout {
+        display: none;
+    }
+}
+
 /*--------- Modal Thanksyou -------*/
 
 #order-copy-chip {
