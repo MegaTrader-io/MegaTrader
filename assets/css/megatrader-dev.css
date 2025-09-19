@@ -46,7 +46,6 @@
   --Primary-300: #FFC666;
 
   --Secondary-300: #5EEAD4;
-  --Secondary-400: #2DD4BF;
 
   --Surface-Primary: #FFB34A;
   --Surface-Primary-Hover: #F1A035;
@@ -3609,7 +3608,6 @@ body.mt-placing .woocommerce-checkout {
 }
 
 .mt-summary__divider {
-  flex: 1 1 0;
   height: 219px;
   transform-origin: top left;
   border-left: 1px solid var(--Colors-Gray-700, #404040);
@@ -3748,6 +3746,10 @@ body.mt-placing .woocommerce-checkout {
 
 .mt-dualbar__seg.is-full {
   border-radius: 4px
+}
+
+.is-empty.mt-dualbar {
+    --split: 50% !important;
 }
 
 .mt-dualbar.is-empty .mt-dualbar__seg {

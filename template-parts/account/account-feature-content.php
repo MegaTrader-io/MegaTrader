@@ -146,7 +146,7 @@ $tabs = [
         ?>
 
         <div class="mt-feature-panel" data-fc-panel data-panel-for="<?php echo esc_attr($id); ?>" <?php echo $active ? '' : 'hidden'; ?>>
-            <div class="mt-summary">
+            <div class="mt-summary w-100">
                 <!-- Col izquierda -->
                 <div class="mt-summary__col">
                     <div class="mt-summary__title">
@@ -155,11 +155,11 @@ $tabs = [
                     <div class="mt-donut <?php echo $winPct ? 'is-success' : 'is-empty'; ?>"
                         data-donut-value="<?php echo $winPct; ?>">
                         <svg class="mt-donut__svg" viewBox="0 0 100 100" aria-hidden="true">
-                            <circle class="mt-donut__track" cx="50" cy="50" r="45" pathLength="100"></circle>
-                            <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="100"></circle>
+                            <circle class="mt-donut__track" cx="50" cy="50" r="45" pathLength="99"></circle>
+                            <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="99"></circle>
                         </svg>
                         <div class="mt-donut__center">
-                            <span class="mt-donut__percent"><?php echo $winPct ? $winPct . '%' : '0%'; ?></span>
+                            <span class="mt-donut__percent"><?php echo $winPct ? $winPct . '%' : '--'; ?></span>
                         </div>
                     </div>
 
@@ -232,11 +232,11 @@ $tabs = [
                     <div class="mt-donut <?php echo $lossPct ? 'is-error' : 'is-empty'; ?>"
                         data-donut-value="<?php echo $lossPct; ?>">
                         <svg class="mt-donut__svg" viewBox="0 0 100 100" aria-hidden="true">
-                            <circle class="mt-donut__track" cx="50" cy="50" r="45" pathLength="100"></circle>
-                            <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="100"></circle>
+                            <circle class="mt-donut__track" cx="50" cy="50" r="45" pathLength="99"></circle>
+                            <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="99"></circle>
                         </svg>
                         <div class="mt-donut__center">
-                            <span class="mt-donut__percent"><?php echo $lossPct ? $lossPct . '%' : '0%' ?></span>
+                            <span class="mt-donut__percent"><?php echo $lossPct ? $lossPct . '%' : '--' ?></span>
                         </div>
                     </div>
 

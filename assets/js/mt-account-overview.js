@@ -170,7 +170,7 @@
 /* ======= Interacciones de cuenta (copy + toggle pwd + AJAX) ======= */
 (function () {
   /* --- Toast “Copied to clipboard” anclado sobre el click --- */
-  const COPY_FEEDBACK_MS = 10000; // 10s
+  const COPY_FEEDBACK_MS = 5000; // 5
   function ensureCopyToastStyle() {
     if (window.__mtCopyToastStyle) return;
     const css = `
@@ -178,7 +178,7 @@
         position:fixed;
         left:0; top:0; /* dinámico */
         transform:translate(-50%,-100%);
-        background:#1f2937;color:#fff;padding:8px 12px;border-radius:8px;
+        background:#000;color:#A8A29E;padding:8px 12px;border-radius:8px;
         font-size:12px;line-height:1;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);
         opacity:0;transition:opacity .18s ease;pointer-events:none;
         white-space:nowrap;

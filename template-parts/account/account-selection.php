@@ -41,13 +41,14 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
         ?>
       </div>
       <div class="d-flex gap-2 align-items-center">
-        <div class="mt-icon mt-icon-md mt-icon-primary mt-icon_diamond"></div>
+        <div class="mt-icon mt-icon-primary mt-icon_diamond"></div>
         <div class="fw-medium plan-name text-size-24 text-uppercase text-white">
           <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
           <span id="mt-name"><?php echo esc_html($productName); ?></span>
         </div>
       </div>
     </div>
+    <span class="text-decoration-underline text-primary fw-medium">Reset Challenge</span>
     <span class="svg-button mt-icon mt-icon_caret-down mt-icon-white"></span>
   </div>
 </button>

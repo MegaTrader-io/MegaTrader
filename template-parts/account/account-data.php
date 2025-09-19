@@ -66,7 +66,7 @@ $link_playstore = '#';
     <div class="vr d-none d-md-block"></div>
     <div class="d-block d-md-none w-100 h-1px bg-404040"></div>
 
-    <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0 w-max-320px">
+    <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0 w-max-320px">
       <div class="mt-platform-avatar flex-shrink-0">
         <img src="<?php echo esc_url($platform_img); ?>" alt="DXXT logo" width="64" height="64"
           style="width:64px;height:64px;border-radius:9999px;object-fit:cover;" />

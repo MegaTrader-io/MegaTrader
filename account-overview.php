@@ -151,7 +151,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
       } ?>
     </div>
 
-    <div class="mt-page__main d-flex flex-column gap-32">
+    <div class="mt-page__main d-flex flex-column gap-3">
 
       <?php if (empty($mt_account_ui['accounts'])): ?>
 
@@ -177,69 +177,70 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
           );
           ?>
         </div>
+        <div class="d-flex flex-column gap-32">
+          <div class="mt-account-data" id="mt-account-data">
+            <?php
+            if (!empty($mt_selected_id) && !empty($mt_account_data)) {
+              get_template_part(
+                'template-parts/account/account-data',
+                null,
+                [
+                  'meta' => ['accountId' => $mt_selected_id],
+                  'data' => $mt_account_data,
+                ]
+              );
+            }
+            ?>
+          </div>
 
-        <div class="mt-account-data" id="mt-account-data">
-          <?php
-          if (!empty($mt_selected_id) && !empty($mt_account_data)) {
+          <div class="mt-account-performance" id="mt-performance-container">
+            <?php
+            // Renderiza performance si hay payload construido (tu helper decide si aplica por status)
+            if (!empty($mt_performance)) {
+              get_template_part(
+                'template-parts/account/account-performance',
+                null,
+                [
+                  'performance' => $mt_performance,
+                  'meta' => ['accountId' => $mt_selected_id],
+                ]
+              );
+            }
+            ?>
+          </div>
+
+          <div class="mt-account-feature-content">
+            <?php
+            // Render solo si hay una cuenta seleccionada; pasar accountId al template.
+            if (!empty($mt_selected_id)) {
+              get_template_part(
+                'template-parts/account/account-feature-content',
+                null,
+                [
+                  'meta' => ['accountId' => $mt_selected_id],
+                  'feature' => $mt_feature_content,
+                ]
+              );
+            }
+            ?>
+          </div>
+
+          <div class="mt-account-performance-chart-content">
+            <?php
             get_template_part(
-              'template-parts/account/account-data',
+              'template-parts/account/account-performance-chart',
               null,
               [
                 'meta' => ['accountId' => $mt_selected_id],
-                'data' => $mt_account_data,
+                'chart' => $mt_chart ?? [],
               ]
             );
-          }
-          ?>
-        </div>
+            ?>
+          </div>
 
-        <div class="mt-account-performance" id="mt-performance-container">
-          <?php
-          // Renderiza performance si hay payload construido (tu helper decide si aplica por status)
-          if (!empty($mt_performance)) {
-            get_template_part(
-              'template-parts/account/account-performance',
-              null,
-              [
-                'performance' => $mt_performance,
-                'meta' => ['accountId' => $mt_selected_id],
-              ]
-            );
-          }
-          ?>
-        </div>
-
-        <div class="mt-account-feature-content">
-          <?php
-          // Render solo si hay una cuenta seleccionada; pasar accountId al template.
-          if (!empty($mt_selected_id)) {
-            get_template_part(
-              'template-parts/account/account-feature-content',
-              null,
-              [
-                'meta' => ['accountId' => $mt_selected_id],
-                'feature' => $mt_feature_content,
-              ]
-            );
-          }
-          ?>
-        </div>
-
-        <div class="mt-account-performance-chart-content">
-          <?php
-          get_template_part(
-            'template-parts/account/account-performance-chart',
-            null,
-            [
-              'meta' => ['accountId' => $mt_selected_id],
-              'chart' => $mt_chart ?? [],
-            ]
-          );
-          ?>
-        </div>
-
-        <div class="mt-account-account-daily-journal">
-          <?php get_template_part('template-parts/account/account-daily-journal'); ?>
+          <div class="mt-account-account-daily-journal">
+            <?php get_template_part('template-parts/account/account-daily-journal'); ?>
+          </div>
         </div>
         
       </div>

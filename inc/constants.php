@@ -136,7 +136,7 @@ class Label
     public const META_ACCOUNT_OVERVIEW = [
         "web_app" => "Web App",
         "app_store" => "App Store",
-        "play_store" => "Google Play",
+        "play_store" => "Play Store",
         "account_data_title" => "Account Data",
         "account_platform_description" => "Access the platform",
         "account_login" => "Login",

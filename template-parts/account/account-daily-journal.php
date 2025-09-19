@@ -1,5 +1,10 @@
 <?php
-/** Account Daily Journal (GRID, sin estilos inline) */
+/**
+ * Template Part: Account Daily Journal
+ * Ruta: template-parts/account/account-daily-journal.php
+ *
+ * 
+ */
 if (!defined('ABSPATH')) exit;
 
 $root_id  = 'mt-daily-journal';
@@ -11,7 +16,6 @@ function _money_fmt($n){ $s=$n<0?'-':''; return $s.'$'.number_format(abs($n),2);
   <div class="dj-viewport">
     <div class="dj-clip">
       <div class="dj-scroll">
-        <!-- Header (13 columnas) -->
         <div class="dj-grid dj-headrow">
           <div class="dj-head is-left">Daily<br>Journal</div>
           <div class="dj-head is-right">Date</div>
@@ -29,7 +33,6 @@ function _money_fmt($n){ $s=$n<0?'-':''; return $s.'$'.number_format(abs($n),2);
         </div>
 
         <?php
-          // Mock: 10 filas (7 visibles pág.1)
           $rows = [
             ['date'=>'Sep 30','net'=> -73.40,'hi'=> -1.00,'lo'=> -73.40,'ct'=>70,'fees'=> 25.90,'trades'=>4,'awin'=>  2.60,'aloss'=>39.90,'win'=> 50.00,'max'=>'2/1','dur'=>'00:05:05 00:01:17'],
             ['date'=>'Sep 29','net'=>  45.10,'hi'=> 88.20,'lo'=> -5.25 ,'ct'=>22,'fees'=> 12.20,'trades'=>9,'awin'=> 18.00,'aloss'=> 9.50,'win'=> 62.50,'max'=>'3/1','dur'=>'00:08:10 00:03:25'],
@@ -71,7 +74,6 @@ function _money_fmt($n){ $s=$n<0?'-':''; return $s.'$'.number_format(abs($n),2);
     </div>
   </div>
 
-  <!-- Paginado (dinámico) -->
   <nav id="<?php echo esc_attr($pager_id); ?>" class="dj-pager" aria-label="Daily Journal pagination">
     <button class="dj-btn mt-dj-prev" type="button" disabled><span class="mt-icon mt-icon-white mt-icon_chevron-left"></span></button>
     <span class="dj-pages d-flex gap-1"></span>
