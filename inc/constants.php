@@ -140,7 +140,7 @@ class Label
         "account_feedback_no" => "No",
         "account_feedback_save" => "Save",
         "account_feedback_edit" => "Edit",
-        "account_feedback_placeholder" => "I was able to increase my profit by a great margin.",
+        "account_feedback_placeholder" => "Summarize today’s trading",
         "web_app" => "Web App",
         "app_store" => "App Store",
         "play_store" => "Play Store",
@@ -180,8 +180,6 @@ class Label
         "feature_content_no_data" => "NO DATA AVAILABLE",
         "feature_content_reward" => "Reward",
         "feature_content_risk" => "Risk",
-
-
 
     ];
 

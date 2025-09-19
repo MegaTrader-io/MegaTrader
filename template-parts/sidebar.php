@@ -41,4 +41,67 @@ defined('ABSPATH') || exit;
             </a>
         </div>
     </div>
+    <style>
+    .menucontainer {
+  	width: 100%;
+  	position: relative;
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-start;
+  	gap: 8px;
+  	text-align: left;
+  	font-size: 16px;
+  	color: #fff;
+  	font-family: Roboto;
+}
+.dashboard {
+  	align-self: stretch;
+  	position: relative;
+  	line-height: 24px;
+  	text-transform: uppercase;
+  	font-weight: 500;
+  	color: #a8a29e;
+}
+.menuitem {
+  	align-self: stretch;
+  	border-radius: 12px;
+  	height: 48px;
+  	display: flex;
+  	align-items: center;
+  	padding: 12px 0px;
+  	box-sizing: border-box;
+  	gap: 8px;
+}
+.componentsatomsiconsuser {
+  	width: 24px;
+  	position: relative;
+  	height: 24px;
+}
+.sidebar__menu__link {
+  	padding: 12px 0;
+}
+
+
+    </style>
+    <div class="sidebar__menu">
+        <div class="dashboard">Dashboard</div>
+        <div class="sidebar__menu__links d-flex flex-column gap-2 align-items-start">
+            <a class="sidebar__menu__link mt-btn mt-btn--outline" href="https://subscriptions.megatrader.io/my-account/overview/">
+                <i class="mt-icon mt-icon-sm mt-icon_account"></i>
+                <span>ACCOUNT OVERVIEW<span>
+            </a>
+            <a class="sidebar__menu__link mt-btn mt-btn--outline" href="https://subscriptions.megatrader.io/my-account/overview/">
+                <i class="mt-icon mt-icon-sm mt-icon_checkmark-solid"></i>
+                <span>REFERRALS<span>
+            </a>
+            <a class="sidebar__menu__link mt-btn mt-btn--outline" href="https://subscriptions.megatrader.io/my-account/overview/">
+                <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
+                <span>PAYOUTS<span>
+            </a>
+            <a class="sidebar__menu__link mt-btn mt-btn--outline" href="https://subscriptions.megatrader.io/my-account/overview/">
+                <i class="mt-icon mt-icon-sm mt-icon_account"></i>
+                <span>HELP CENTER<span>
+            </a>
+        </div>
+    </div>
 </aside>

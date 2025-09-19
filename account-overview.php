@@ -260,13 +260,13 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
   <div class="mt-modal__panel" tabindex="-1">
     <div class="mt-feedback-header align-items-center d-flex gap-2">
       
-      <div id="mtfb-title" class="mtfb-title text-white text-base fw-medium pb-2">
+      <div id="mtfb-title" class="mtfb-title text-white text-base fw-medium flex-grow-1">
         <?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_title']; ?>
       </div>
       <button type="button" class="mt-modal__close mt-icon mt-icon_close mt-icon-white" aria-label="Close"></button>
     </div>
 
-    <div class="mtfb-mood p-2 d-flex justify-content-between gap-2" role="group" aria-label="Mood 1 to 5">
+    <div class="mtfb-mood px-2 pt-3 pb-2 d-flex justify-content-between gap-2" role="group" aria-label="Mood 1 to 5">
       <button type="button" data-mood="1" class="mt-icon mt-icon_very-happy mt-icon-base mt-icon-md"></button>
       <button type="button" data-mood="2" class="mt-icon mt-icon_happy mt-icon-base mt-icon-md"></button>
       <button type="button" data-mood="3" class="mt-icon mt-icon_neutral mt-icon-base mt-icon-md"></button>
@@ -283,7 +283,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
           value="0"><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_no']; ?></label>
     </div>
 
-    <textarea id="mtfb-note" class="mtfb-note" rows="4" maxlength="1000"
+    <textarea id="mtfb-note" class="mtfb-note" rows="2" maxlength="320"
       placeholder="<?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_placeholder']; ?>"
       aria-label="Daily note"></textarea>
 
@@ -294,7 +294,6 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
         hidden><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_edit']; ?></button>
     </div>
 
-    <!-- flecha -->
     <span class="mtfb-arrow" aria-hidden="true"></span>
   </div>
 </div>

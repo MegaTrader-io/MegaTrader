@@ -833,11 +833,10 @@ document.addEventListener("mt:accountSelected", (e) => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
-  const pop = $("#mt-feedback-modal"); // <div id="mt-feedback-modal" class="mt-popover">
+  const pop = $("#mt-feedback-modal");
   if (!pop) return;
   const panel = $(".mt-modal__panel", pop);
   const arrow = $(".mtfb-arrow", panel) || $(".mtfb-arrow", pop);
-
   const btnSave = $(".mtfb-save", panel);
   const btnEdit = $(".mtfb-edit", panel);
   const btnClose = $(".mt-modal__close", panel);
@@ -848,21 +847,22 @@ document.addEventListener("mt:accountSelected", (e) => {
   let current = { accountId: 0, tradeDate: "", anchor: null, rowSel: "" };
   let isOpen = false;
 
+  function updateSaveEnabled() {
+    const hasMood = !!$(".mtfb-mood [data-mood].is-active", panel);
+    const hasPlan = !!$('input[name="mtfb-plan"]:checked', panel);
+    if (btnSave) btnSave.disabled = !(hasMood && hasPlan);
+  }
+
   function setReadOnly(ro) {
-    // Mood
-    $$(".mtfb-mood [data-mood]", panel).forEach((b) => {
-      b.disabled = !!ro;
-    });
-    // Plan radios
-    $$('input[name="mtfb-plan"]', panel).forEach((r) => {
-      r.disabled = !!ro;
-    });
-    // Note
+    $$(".mtfb-mood [data-mood]", panel).forEach((b) => (b.disabled = !!ro));
+    $$('input[name="mtfb-plan"]', panel).forEach((r) => (r.disabled = !!ro));
     const noteEl = $("#mtfb-note", panel);
     if (noteEl) noteEl.disabled = !!ro;
-    // Buttons
+
     if (btnSave) btnSave.hidden = !!ro;
     if (btnEdit) btnEdit.hidden = !ro;
+
+    if (!ro) updateSaveEnabled();
   }
 
   function positionTo(anchorEl, prefer = "bottom") {
@@ -876,11 +876,10 @@ document.addEventListener("mt:accountSelected", (e) => {
     const gap = 12,
       margin = 8;
 
-    // por defecto, debajo
     let top = rect.bottom + gap;
-    let side = "top"; // flecha arriba del panel
+    let side = "top";
     if (top + ph + margin > window.innerHeight) {
-      top = rect.top - ph - gap; // si no cabe, arriba
+      top = rect.top - ph - gap;
       side = "bottom";
     }
     let left = rect.left + rect.width / 2 - pw / 2;
@@ -891,26 +890,36 @@ document.addEventListener("mt:accountSelected", (e) => {
 
     if (arrow) {
       arrow.dataset.side = side;
-      const ax = rect.left + rect.width / 2 - left - 8; // 8 = half arrow(16px)
+      const ax = rect.left + rect.width / 2 - left - 8;
       arrow.style.left = `${Math.round(Math.max(12, Math.min(ax, pw - 28)))}px`;
     }
-
     pop.style.visibility = "visible";
   }
 
+  // Helper: manejar placeholder visible/oculto según nota
+  function applyNotePlaceholderPolicy(preset) {
+    const noteEl = $("#mtfb-note", panel);
+    if (!noteEl) return;
+    if (!noteEl.dataset.ph)
+      noteEl.dataset.ph = noteEl.getAttribute("placeholder") || "";
+    // Si estamos viendo un feedback y la nota guardada está vacía → NO mostrar placeholder
+    if (preset && (preset.note == null || preset.note === "")) {
+      noteEl.setAttribute("placeholder", "");
+    } else {
+      noteEl.setAttribute("placeholder", noteEl.dataset.ph);
+    }
+  }
+
   function resetMoodUI(preset) {
-    // mood
     $$(".mtfb-mood [data-mood]", panel).forEach((btn) => {
       btn.classList.remove("is-active", "mt-icon-primary");
       if (!btn.classList.contains("mt-icon-base"))
         btn.classList.add("mt-icon-base");
     });
-    // plan
     $$('input[name="mtfb-plan"]', panel).forEach((r) => {
       r.checked = false;
       r.removeAttribute("checked");
     });
-    // note
     $("#mtfb-note", panel).value = "";
 
     if (preset) {
@@ -930,6 +939,8 @@ document.addEventListener("mt:accountSelected", (e) => {
       }
       if (preset.note) $("#mtfb-note", panel).value = preset.note;
     }
+    applyNotePlaceholderPolicy(preset);
+    updateSaveEnabled();
   }
 
   function openPopover(anchorEl, { accountId, tradeDate, preset } = {}) {
@@ -939,9 +950,21 @@ document.addEventListener("mt:accountSelected", (e) => {
       anchor: anchorEl,
       rowSel: `#dj-row-${tradeDate}`,
     };
+
+    // LOG de apertura
+    try {
+      console.group("[MTFB] OPEN");
+      console.log("accountId:", accountId, "tradeDate:", tradeDate);
+      console.log("preset:", preset);
+      const rowEl = document.querySelector(current.rowSel);
+      console.log("row dataset:", rowEl ? { ...rowEl.dataset } : null);
+      console.groupEnd();
+    } catch (_) {}
+
     resetMoodUI(preset);
-    const isViewing = !!preset; // si hay datos, abre en modo "ver"
+    const isViewing = !!preset; // si hay datos, abre en modo “ver”
     setReadOnly(isViewing);
+    updateSaveEnabled();
     positionTo(anchorEl, "bottom");
     pop.setAttribute("aria-hidden", "false");
     isOpen = true;
@@ -949,7 +972,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   }
 
   function closePopover() {
-    setReadOnly(false); // limpiar; la próxima apertura decide modo
+    setReadOnly(false);
     pop.hidden = true;
     pop.setAttribute("aria-hidden", "true");
     isOpen = false;
@@ -967,7 +990,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     const accountId = parseInt(root?.dataset.accountId || "0", 10);
     if (!accountId || !tradeDate) return;
 
-    // preset si ya hay feedback
     let preset;
     if (row?.dataset.hasFb === "1") {
       preset = {
@@ -993,8 +1015,10 @@ document.addEventListener("mt:accountSelected", (e) => {
     closePopover();
   });
 
-  // Editar (habilitar campos)
+  // Editar (habilitar campos) → restaurar placeholder original para escribir
   btnEdit?.addEventListener("click", () => {
+    const noteEl = $("#mtfb-note", panel);
+    if (noteEl) noteEl.setAttribute("placeholder", noteEl.dataset.ph || "");
     setReadOnly(false);
   });
 
@@ -1014,7 +1038,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     if (e.key === "Escape" && isOpen) closePopover();
   });
 
-  // Caritas: activar (respeta disabled)
+  // Caritas: activar (respeta disabled) y revalidar Save
   panel.addEventListener("click", (e) => {
     const b = e.target.closest(".mtfb-mood [data-mood]");
     if (b) {
@@ -1030,16 +1054,21 @@ document.addEventListener("mt:accountSelected", (e) => {
       });
       b.classList.add("is-active", "mt-icon-primary");
       b.classList.remove("mt-icon-base");
+      updateSaveEnabled();
       return;
     }
   });
 
-  // Guardar AJAX (botón Save)
+  // Radios: revalidar Save al cambiar Sí/No
+  panel.addEventListener("change", (e) => {
+    if (e.target && e.target.name === "mtfb-plan") updateSaveEnabled();
+  });
+
+  // Guardar AJAX (botón Save) — con logs y sin cerrar el popover
   $(".mtfb-save", panel)?.addEventListener("click", async () => {
     const url =
       (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
 
-    // Usa el nonce existente (mt-acc-nonce). Fallback al data-attr.
     const rootNonce =
       document.querySelector("#mt-daily-journal")?.dataset?.nonce;
     const nonce = (window.mtAccounts && mtAccounts.nonce) || rootNonce || "";
@@ -1049,28 +1078,62 @@ document.addEventListener("mt:accountSelected", (e) => {
     }
 
     const moodBtn = $(".mtfb-mood [data-mood].is-active", panel);
-    const mood = moodBtn ? parseInt(moodBtn.getAttribute("data-mood"), 10) : 0;
-    const plan =
-      $('input[name="mtfb-plan"]:checked', panel)?.value === "1" ? "1" : "0";
-    const note = $("#mtfb-note", panel)?.value || "";
-    if (!mood) {
-      alert("Select a mood (1–5).");
+    const planEl = $('input[name="mtfb-plan"]:checked', panel);
+
+    const hasMood = !!moodBtn;
+    const hasPlan = !!planEl;
+    if (!hasMood || !hasPlan) {
+      alert("Select a mood (1–5) AND choose Yes/No.");
       return;
     }
 
-    // UX: bloquear botón y mostrar preloader
+    // === Nota: NO guardar placeholder ===
+    const noteEl = $("#mtfb-note", panel);
+    const rawVal = noteEl ? noteEl.value : "";
+    const phVal = noteEl ? noteEl.getAttribute("placeholder") || "" : "";
+    const normalize = (s) =>
+      (s || "")
+        .replace(/\u00A0/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    const normRaw = normalize(rawVal);
+    const normPh = normalize(noteEl?.dataset?.ph || phVal);
+    const note = normRaw && normRaw !== normPh ? normRaw : "";
+
+    const mood = parseInt(moodBtn.getAttribute("data-mood"), 10);
+    const plan = planEl.value === "1" ? "1" : "0";
+
     const saveBtn = $(".mtfb-save", panel);
     if (saveBtn) saveBtn.disabled = true;
     document.querySelector(".preloader")?.classList.add("is-active");
 
     const body = new URLSearchParams();
     body.set("action", "mt_save_daily_feedback");
-    body.set("nonce", nonce); // ← mt-acc-nonce
+    body.set("nonce", nonce);
     body.set("account_id", String(current.accountId));
     body.set("trade_date", current.tradeDate); // YYYY-MM-DD
     body.set("mood", String(mood));
     body.set("followed_plan", plan);
     body.set("note", note);
+
+    // ===== LOGS para trazar =====
+    try {
+      console.group("[MTFB] SAVE click");
+      console.log("meta:", {
+        accountId: current.accountId,
+        tradeDate: current.tradeDate,
+        rowSel: current.rowSel,
+      });
+      console.log("mood:", mood, "plan:", plan);
+      console.log("note raw:", rawVal);
+      console.log("placeholder(ref):", normPh);
+      console.log("normRaw:", normRaw, "note(final):", note);
+      console.log("POST (qs):", body.toString());
+      try {
+        console.log("POST (obj):", Object.fromEntries(body));
+      } catch (_) {}
+      console.groupEnd();
+    } catch (_) {}
 
     try {
       const res = await fetch(url, {
@@ -1078,13 +1141,24 @@ document.addEventListener("mt:accountSelected", (e) => {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
       });
-      const j = await res.json().catch(() => null);
+
+      let j = null;
+      try {
+        j = await res.json();
+      } catch (_) {}
+
+      // ===== LOG respuesta =====
+      console.group("[MTFB] SAVE response");
+      console.log("http status:", res.status);
+      console.log("json:", j);
+      console.groupEnd();
+
       if (!res.ok || !j?.success) {
         const msg = j?.data?.msg || `HTTP ${res.status}`;
         throw new Error(msg);
       }
 
-      // éxito → cambiar ✏️ → 👁️
+      // éxito → icono ✏️ → 👁️
       const ic = document.querySelector(
         `${current.rowSel} .mt-dj-visibility .mt-icon`
       );
@@ -1093,28 +1167,33 @@ document.addEventListener("mt:accountSelected", (e) => {
         ic.classList.add("mt-icon_visibility");
       }
 
-      // sincroniza dataset para futuras aperturas
+      // sync dataset (nota vacía si solo era placeholder)
       const rowEl = document.querySelector(current.rowSel);
       if (rowEl) {
         rowEl.dataset.hasFb = "1";
         rowEl.dataset.mood = String(mood);
         rowEl.dataset.followed = plan; // '1' o '0'
-        rowEl.dataset.note = note;
+        rowEl.dataset.note = note; // '' si no escribió nada real
       }
 
-      // NO cerrar el popover: pasar a modo "ver" y reposicionar
+      // NO cerrar: pasar a modo "ver"
       setReadOnly(true);
-      positionTo(current.anchor, "bottom");
 
-      // Toast de éxito (opcional)
-      panel.querySelector(".mtfb-toast")?.remove();
-      const toast = document.createElement("div");
-      toast.className = "mtfb-toast";
-      toast.textContent = "Saved ✓";
-      panel.appendChild(toast);
-      setTimeout(() => toast.remove(), 1200);
+      // 👇 NUEVO: si la nota quedó vacía, no mostrar placeholder mientras queda abierto
+      if (typeof applyNotePlaceholderPolicy === "function") {
+        applyNotePlaceholderPolicy({ note });
+      } else {
+        // fallback por si no existe el helper
+        if (noteEl) {
+          if (note === "") noteEl.setAttribute("placeholder", "");
+          else if (noteEl.dataset.ph)
+            noteEl.setAttribute("placeholder", noteEl.dataset.ph);
+        }
+      }
+
+      positionTo(current.anchor, "bottom");
     } catch (err) {
-      console.error("[MT] feedback save error:", err);
+      console.error("[MTFB] feedback save error:", err);
       alert(err.message || "Could not save feedback.");
     } finally {
       document.querySelector(".preloader")?.classList.remove("is-active");

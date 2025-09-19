@@ -4038,7 +4038,7 @@ body.mt-placing .woocommerce-checkout {
 .mt-popover .mt-modal__panel {
   position: absolute;
   pointer-events: auto;
-  width: min(285px, calc(100% - 32px));
+  width: min(310px, calc(100% - 32px));
   padding: 16px;
   background: var(--Surface-Body, #131210);
   border-radius: 16px;
@@ -4048,28 +4048,33 @@ body.mt-placing .woocommerce-checkout {
   color: var(--Text-Headings, #fff);
 }
 
-.mt-modal__close {  
+.mt-modal__close {
   cursor: pointer
 }
 
 /* Flecha (apunta al icono) */
+/* Base: sin posición ni rotación fija */
 .mtfb-arrow {
   position: absolute;
   width: 16px;
   height: 16px;
-  transform: rotate(225deg);
   background: var(--Surface-Body, #131210);
   border-left: 1px solid var(--Colors-Gray-700, #404040);
   border-top: 1px solid var(--Colors-Gray-700, #404040);
-  top: -8px;
-  /* por defecto: panel debajo del icono */
 }
 
+/* Panel ABajo del icono → flecha en el borde SUPERIOR del panel, apuntando hacia arriba */
+.mtfb-arrow[data-side="top"] {
+  top: -8px;
+  transform: rotate(45deg);
+}
+
+/* Panel AArriba del icono → flecha en el borde INFERIOR del panel, apuntando hacia abajo */
 .mtfb-arrow[data-side="bottom"] {
   bottom: -8px;
-  top: auto;
-  transform: rotate(225deg)
+  transform: rotate(225deg);
 }
+
 
 
 /* Caritas con tus clases de icono */
@@ -4103,7 +4108,8 @@ body.mt-placing .woocommerce-checkout {
   background: #292524;
   outline: 1px solid #404040;
   color: #A8A29E;
-  font: 500 16px/24px Roboto, system-ui, sans-serif
+  margin-bottom: 8px;
+
 }
 
 .mtfb-plan input {
@@ -4126,21 +4132,19 @@ body.mt-placing .woocommerce-checkout {
   font: 500 16px/24px Roboto, system-ui, sans-serif
 }
 
-.mtfb-note {
-  height: 76px;
-  max-height: 76px;
+textarea.mtfb-note {
+  height: 100% !important;
+  max-height: 76px !important;
   resize: none;
-  overflow: auto;
   box-sizing: border-box;
+  min-height: 76px;
+  overflow: hidden;
 }
 
 .mtfb-note::placeholder {
   color: #404040
 }
 
-.mtfb-actions {
-  margin-top: 8px
-}
 
 .mtfb-save {
   width: 100%;
@@ -4191,16 +4195,5 @@ body.mt-placing .woocommerce-checkout {
   border-radius: var(--Border-Radius-lg, 12px) !important;
   border: var(--Border-Width-sm, 1px) solid var(--Colors-Gray-700, #404040) !important;
   background: rgba(30, 30, 30, 0.70) !important;
-}
-
-.mtfb-toast {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  padding: 6px 10px;
-  border: 1px solid #3b3b3b;
-  border-radius: 8px;
-  background: #1f1f1f;
-  color: #fff;
-  font: 500 12px/1 Roboto, system-ui, sans-serif;
-}
+ }
+.mtfb-save[disabled]{opacity:.6;cursor:not-allowed}
