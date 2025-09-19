@@ -96,6 +96,9 @@ $meta_info_list = [
                                         <?= $account_type['name'] ?>
                                     </div>
                                 </div>
+                                <div class="tw-justify-start group-[.account-active]:tw-opacity-60 group-[.account-active]:tw-text-black tw-text-stone-400 tw-text-base tw-font-bold tw-leading-normal group-[.plan-selected]:tw-opacity-60 group-[.plan-selected]:tw-text-black">
+                                    <?= $account_type['description'] ?>
+                                </div>
                             </div>
                             <div class="tw-w-[30px] tw-h-[30px] tw-right-[8px] tw-top-[8px] tw-absolute group-[.account-active]:tw-block">
                                 <svg width="31" height="30" viewBox="0 0 31 30" fill="none"
