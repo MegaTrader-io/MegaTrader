@@ -2453,6 +2453,7 @@ a.avatar-area:hover {
 .dot-status-cancelled {
   color: var(--error-color);
 }
+
 .dot-status-breached {
   color: var(--error-color);
 }
@@ -3749,7 +3750,7 @@ body.mt-placing .woocommerce-checkout {
 }
 
 .is-empty.mt-dualbar {
-    --split: 50% !important;
+  --split: 50% !important;
 }
 
 .mt-dualbar.is-empty .mt-dualbar__seg {
@@ -3959,11 +3960,13 @@ body.mt-placing .woocommerce-checkout {
   border-bottom: 1px solid rgba(255, 255, 255, .12);
 }
 
-#mt-daily-journal .dj-row{
+#mt-daily-journal .dj-row {
   border-bottom: var(--Type-letter-spacing-sm, 1px) solid var(--Colors-Gray-800, #292524);
 }
-#mt-daily-journal .dj-row.is-last{
-  border-bottom: 0; /* quitar borde al último visible de la página */
+
+#mt-daily-journal .dj-row.is-last {
+  border-bottom: 0;
+  /* quitar borde al último visible de la página */
 }
 
 /* Alineaciones */
@@ -4002,7 +4005,9 @@ body.mt-placing .woocommerce-checkout {
   padding: .25rem .75rem;
   font-size: .8rem;
 }
-.dj-btn.mt-dj-prev, .dj-btn.mt-dj-next {
+
+.dj-btn.mt-dj-prev,
+.dj-btn.mt-dj-next {
   padding: 4px !important;
 }
 
@@ -4013,4 +4018,178 @@ body.mt-placing .woocommerce-checkout {
 
 #mt-daily-journal .dj-btn.active {
   background: #1f1f20;
+}
+
+
+/* Feedback form */
+
+/* Popover (tooltip) sin overlay */
+.mt-popover {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none
+}
+
+.mt-popover[hidden] {
+  display: none
+}
+
+.mt-popover .mt-modal__panel {
+  position: absolute;
+  pointer-events: auto;
+  width: min(420px, calc(100% - 32px));
+  padding: 16px;
+  background: var(--Surface-Body, #131210);
+  border-radius: 16px;
+  outline: 1px solid var(--Colors-Gray-700, #404040);
+  outline-offset: -1px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  color: var(--Text-Headings, #fff);
+}
+
+.mt-modal__close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 18px;
+  opacity: .7;
+  cursor: pointer
+}
+
+/* Flecha (apunta al icono) */
+.mtfb-arrow {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  transform: rotate(225deg);
+  background: var(--Surface-Body, #131210);
+  border-left: 1px solid var(--Colors-Gray-700, #404040);
+  border-top: 1px solid var(--Colors-Gray-700, #404040);
+  top: -8px;
+  /* por defecto: panel debajo del icono */
+}
+
+.mtfb-arrow[data-side="bottom"] {
+  bottom: -8px;
+  top: auto;
+  transform: rotate(225deg)
+}
+
+/* Título */
+.mtfb-title {
+  margin: 0 24px 8px 0;
+  font: 500 16px/24px Roboto, system-ui, sans-serif
+}
+
+/* Caritas con tus clases de icono */
+.mtfb-mood {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 8px 0
+}
+
+.mtfb-mood [data-mood] {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1f1f1f;
+  border: 1px solid #404040;
+  cursor: pointer;
+}
+
+.mtfb-mood [data-mood].is-active {
+  outline: 2px solid var(--Surface-Primary, #FFB34A);
+}
+
+.mtfb-mood [data-mood]:focus-visible {
+  outline: 2px solid #fff
+}
+
+/* Sí/No */
+.mtfb-q {
+  margin: 8px 0 6px 0;
+  font: 500 16px/24px Roboto, system-ui, sans-serif
+}
+
+.mtfb-plan {
+  display: flex;
+  gap: 8px
+}
+
+.mtfb-plan label {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #292524;
+  outline: 1px solid #404040;
+  color: #A8A29E;
+  font: 500 16px/24px Roboto, system-ui, sans-serif
+}
+
+.mtfb-plan input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none
+}
+
+.mtfb-plan label:has(input:checked) {
+  background: rgba(255, 179, 74, .15);
+  outline-color: #FFB34A;
+  color: #fff
+}
+
+/* Nota + botón */
+.mtfb-note-label {
+  display: block;
+  margin: 10px 0 6px 0;
+  font: 500 16px/24px Roboto, system-ui, sans-serif
+}
+
+.mtfb-note {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(30, 30, 30, .70);
+  outline: 1px solid #404040;
+  color: #fff;
+  font: 500 16px/24px Roboto, system-ui, sans-serif
+}
+
+.mtfb-note::placeholder {
+  color: #404040
+}
+
+.mtfb-actions {
+  margin-top: 8px
+}
+
+.mtfb-save {
+  width: 100%;
+  height: 28px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--Surface-Primary, #FFB34A);
+  background: var(--Surface-Primary, #FFB34A);
+  color: var(--Text-Action-Primary-Solid, #020617);
+  font: 500 14px/20px Roboto, system-ui, sans-serif;
+  text-transform: uppercase;
+  cursor: pointer
+}
+
+.mtfb-save:active {
+  transform: translateY(1px)
 }

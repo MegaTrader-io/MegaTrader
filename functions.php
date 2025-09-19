@@ -2011,7 +2011,7 @@ add_action('wp_ajax_mt_save_daily_feedback', function () {
     if (!is_user_logged_in()) wp_send_json_error(['msg' => 'Auth required'], 401);
 
     // Usa el mismo nonce que ya localizas (mtAccounts.nonce)
-    if (empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mt_accounts_nonce')) {
+    if (empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mt-acc-nonce')) {
         wp_send_json_error(['msg' => 'Bad nonce'], 403);
     }
 

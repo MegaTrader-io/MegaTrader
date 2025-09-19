@@ -263,11 +263,11 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
     <h3 id="mtfb-title" class="mtfb-title">How did it feel today?</h3>
 
     <div class="mtfb-mood" role="group" aria-label="Mood 1 to 5">
-      <button type="button" data-mood="1" class="mt-icon mt-icon-primary mt-icon_very-happy"></button>
-      <button type="button" data-mood="2" class="mt-icon mt-icon-primary mt-icon_happy"></button>
-      <button type="button" data-mood="3" class="mt-icon mt-icon-primary mt-icon_neutral"></button>
-      <button type="button" data-mood="4" class="mt-icon mt-icon-primary mt-icon_sad"></button>
-      <button type="button" data-mood="5" class="mt-icon mt-icon-primary mt-icon_very-sad"></button>
+      <button type="button" data-mood="1" class="mt-icon mt-icon_very-happy mt-icon-base"></button>
+      <button type="button" data-mood="2" class="mt-icon mt-icon_happy mt-icon-base"></button>
+      <button type="button" data-mood="3" class="mt-icon mt-icon_neutral mt-icon-base"></button>
+      <button type="button" data-mood="4" class="mt-icon mt-icon_sad mt-icon-base"></button>
+      <button type="button" data-mood="5" class="mt-icon mt-icon_very-sad mt-icon-base"></button>
     </div>
 
     <p class="mtfb-q">Did I follow my trading plan today?</p>
