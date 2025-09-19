@@ -203,3 +203,16 @@ body.admin-bar {
     padding-left: 12px;
     padding-right: 12px;
 }
+
+/* My Account Variant */
+@media (min-width: 1200px) {
+    .mt-navbar.mt-navbar--my-account .mt-navbar__links {
+        display: none;
+    }
+}
+
+.mt-navbar.mt-navbar--my-account  .mt-navbar__nav {
+    display: none;
+}
+
+
