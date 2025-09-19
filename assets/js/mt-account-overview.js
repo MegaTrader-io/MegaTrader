@@ -828,8 +828,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   });
 })();
 
-//======= Feedback Modal  ======
-
+//======= Feedback Tooltip (popover) =======
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -838,32 +837,53 @@ document.addEventListener("mt:accountSelected", (e) => {
   if (!pop) return;
   const panel = $(".mt-modal__panel", pop);
   const arrow = $(".mtfb-arrow", panel) || $(".mtfb-arrow", pop);
+
+  const btnSave = $(".mtfb-save", panel);
+  const btnEdit = $(".mtfb-edit", panel);
+  const btnClose = $(".mt-modal__close", panel);
+
   if (panel && !panel.hasAttribute("tabindex"))
     panel.setAttribute("tabindex", "-1");
 
   let current = { accountId: 0, tradeDate: "", anchor: null, rowSel: "" };
   let isOpen = false;
 
+  function setReadOnly(ro) {
+    // Mood
+    $$(".mtfb-mood [data-mood]", panel).forEach((b) => {
+      b.disabled = !!ro;
+    });
+    // Plan radios
+    $$('input[name="mtfb-plan"]', panel).forEach((r) => {
+      r.disabled = !!ro;
+    });
+    // Note
+    const noteEl = $("#mtfb-note", panel);
+    if (noteEl) noteEl.disabled = !!ro;
+    // Buttons
+    if (btnSave) btnSave.hidden = !!ro;
+    if (btnEdit) btnEdit.hidden = !ro;
+  }
+
   function positionTo(anchorEl, prefer = "bottom") {
     if (!anchorEl) return;
     pop.hidden = false;
     pop.style.visibility = "hidden";
 
-    const r = anchorEl.getBoundingClientRect();
+    const rect = anchorEl.getBoundingClientRect();
     const pw = panel.offsetWidth,
       ph = panel.offsetHeight;
     const gap = 12,
       margin = 8;
 
-    // Por defecto, debajo del icono
-    let top = r.bottom + gap;
+    // por defecto, debajo
+    let top = rect.bottom + gap;
     let side = "top"; // flecha arriba del panel
     if (top + ph + margin > window.innerHeight) {
-      // si no cabe, arriba
-      top = r.top - ph - gap;
+      top = rect.top - ph - gap; // si no cabe, arriba
       side = "bottom";
     }
-    let left = r.left + r.width / 2 - pw / 2;
+    let left = rect.left + rect.width / 2 - pw / 2;
     left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
 
     panel.style.top = `${Math.round(top)}px`;
@@ -871,7 +891,7 @@ document.addEventListener("mt:accountSelected", (e) => {
 
     if (arrow) {
       arrow.dataset.side = side;
-      const ax = r.left + r.width / 2 - left - 8; // 8 = half arrow (16px)
+      const ax = rect.left + rect.width / 2 - left - 8; // 8 = half arrow(16px)
       arrow.style.left = `${Math.round(Math.max(12, Math.min(ax, pw - 28)))}px`;
     }
 
@@ -879,13 +899,18 @@ document.addEventListener("mt:accountSelected", (e) => {
   }
 
   function resetMoodUI(preset) {
-    const moods = $$(".mtfb-mood [data-mood]", panel);
-    moods.forEach((btn) => {
+    // mood
+    $$(".mtfb-mood [data-mood]", panel).forEach((btn) => {
       btn.classList.remove("is-active", "mt-icon-primary");
       if (!btn.classList.contains("mt-icon-base"))
         btn.classList.add("mt-icon-base");
     });
-    $$('input[name="mtfb-plan"]', panel).forEach((r) => (r.checked = false));
+    // plan
+    $$('input[name="mtfb-plan"]', panel).forEach((r) => {
+      r.checked = false;
+      r.removeAttribute("checked");
+    });
+    // note
     $("#mtfb-note", panel).value = "";
 
     if (preset) {
@@ -898,9 +923,11 @@ document.addEventListener("mt:accountSelected", (e) => {
         }
       }
       const rp = preset.followed_plan ? "1" : "0";
-      panel
-        .querySelector(`input[name="mtfb-plan"][value="${rp}"]`)
-        ?.setAttribute("checked", "checked");
+      const r = panel.querySelector(`input[name="mtfb-plan"][value="${rp}"]`);
+      if (r) {
+        r.checked = true;
+        r.dispatchEvent(new Event("change", { bubbles: true }));
+      }
       if (preset.note) $("#mtfb-note", panel).value = preset.note;
     }
   }
@@ -913,6 +940,8 @@ document.addEventListener("mt:accountSelected", (e) => {
       rowSel: `#dj-row-${tradeDate}`,
     };
     resetMoodUI(preset);
+    const isViewing = !!preset; // si hay datos, abre en modo "ver"
+    setReadOnly(isViewing);
     positionTo(anchorEl, "bottom");
     pop.setAttribute("aria-hidden", "false");
     isOpen = true;
@@ -920,6 +949,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   }
 
   function closePopover() {
+    setReadOnly(false); // limpiar; la próxima apertura decide modo
     pop.hidden = true;
     pop.setAttribute("aria-hidden", "true");
     isOpen = false;
@@ -937,7 +967,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     const accountId = parseInt(root?.dataset.accountId || "0", 10);
     if (!accountId || !tradeDate) return;
 
-    // Si la fila ya tiene feedback, armamos el preset
+    // preset si ya hay feedback
     let preset;
     if (row?.dataset.hasFb === "1") {
       preset = {
@@ -946,7 +976,6 @@ document.addEventListener("mt:accountSelected", (e) => {
         note: row.dataset.note || "",
       };
     }
-
     openPopover(btn, { accountId, tradeDate, preset });
   });
 
@@ -957,6 +986,16 @@ document.addEventListener("mt:accountSelected", (e) => {
       e.target.closest(".mt-modal__panel") ||
       e.target.closest(".mt-dj-visibility");
     if (!inside) closePopover();
+  });
+  btnClose?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closePopover();
+  });
+
+  // Editar (habilitar campos)
+  btnEdit?.addEventListener("click", () => {
+    setReadOnly(false);
   });
 
   // Reposicionar en scroll/resize
@@ -975,17 +1014,24 @@ document.addEventListener("mt:accountSelected", (e) => {
     if (e.key === "Escape" && isOpen) closePopover();
   });
 
-  // Caritas: activar y cambiar clase base → primary
+  // Caritas: activar (respeta disabled)
   panel.addEventListener("click", (e) => {
     const b = e.target.closest(".mtfb-mood [data-mood]");
-    if (!b) return;
-    $$(".mtfb-mood [data-mood]", panel).forEach((x) => {
-      x.classList.remove("is-active", "mt-icon-primary");
-      if (!x.classList.contains("mt-icon-base"))
-        x.classList.add("mt-icon-base");
-    });
-    b.classList.add("is-active", "mt-icon-primary");
-    b.classList.remove("mt-icon-base");
+    if (b) {
+      if (b.disabled) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
+      $$(".mtfb-mood [data-mood]", panel).forEach((x) => {
+        x.classList.remove("is-active", "mt-icon-primary");
+        if (!x.classList.contains("mt-icon-base"))
+          x.classList.add("mt-icon-base");
+      });
+      b.classList.add("is-active", "mt-icon-primary");
+      b.classList.remove("mt-icon-base");
+      return;
+    }
   });
 
   // Guardar AJAX (botón Save)
@@ -993,7 +1039,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     const url =
       (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
 
-    // Usa el nonce que YA tienes (mt-acc-nonce). Fallback al data-attr por si acaso.
+    // Usa el nonce existente (mt-acc-nonce). Fallback al data-attr.
     const rootNonce =
       document.querySelector("#mt-daily-journal")?.dataset?.nonce;
     const nonce = (window.mtAccounts && mtAccounts.nonce) || rootNonce || "";
@@ -1012,6 +1058,9 @@ document.addEventListener("mt:accountSelected", (e) => {
       return;
     }
 
+    // UX: bloquear botón y mostrar preloader
+    const saveBtn = $(".mtfb-save", panel);
+    if (saveBtn) saveBtn.disabled = true;
     document.querySelector(".preloader")?.classList.add("is-active");
 
     const body = new URLSearchParams();
@@ -1035,7 +1084,7 @@ document.addEventListener("mt:accountSelected", (e) => {
         throw new Error(msg);
       }
 
-      // éxito → cambiar ícono ✏️ → 👁️
+      // éxito → cambiar ✏️ → 👁️
       const ic = document.querySelector(
         `${current.rowSel} .mt-dj-visibility .mt-icon`
       );
@@ -1043,7 +1092,8 @@ document.addEventListener("mt:accountSelected", (e) => {
         ic.classList.remove("mt-icon_pencil");
         ic.classList.add("mt-icon_visibility");
       }
-      // Actualiza dataset de la fila para futuras aperturas
+
+      // sincroniza dataset para futuras aperturas
       const rowEl = document.querySelector(current.rowSel);
       if (rowEl) {
         rowEl.dataset.hasFb = "1";
@@ -1052,12 +1102,23 @@ document.addEventListener("mt:accountSelected", (e) => {
         rowEl.dataset.note = note;
       }
 
-      closePopover();
+      // NO cerrar el popover: pasar a modo "ver" y reposicionar
+      setReadOnly(true);
+      positionTo(current.anchor, "bottom");
+
+      // Toast de éxito (opcional)
+      panel.querySelector(".mtfb-toast")?.remove();
+      const toast = document.createElement("div");
+      toast.className = "mtfb-toast";
+      toast.textContent = "Saved ✓";
+      panel.appendChild(toast);
+      setTimeout(() => toast.remove(), 1200);
     } catch (err) {
       console.error("[MT] feedback save error:", err);
       alert(err.message || "Could not save feedback.");
     } finally {
       document.querySelector(".preloader")?.classList.remove("is-active");
+      if (saveBtn) saveBtn.disabled = false;
     }
   });
 })();

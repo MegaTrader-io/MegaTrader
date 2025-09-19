@@ -134,6 +134,13 @@ class Label
     ];
 
     public const META_ACCOUNT_OVERVIEW = [
+        "account_feedback_title" => "How did it feel today?",
+        "account_feedback_question" => "Did I follow my trading plan today?",
+        "account_feedback_yes" => "Yes",
+        "account_feedback_no" => "No",
+        "account_feedback_save" => "Save",
+        "account_feedback_edit" => "Edit",
+        "account_feedback_placeholder" => "I was able to increase my profit by a great margin.",
         "web_app" => "Web App",
         "app_store" => "App Store",
         "play_store" => "Play Store",

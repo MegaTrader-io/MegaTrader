@@ -258,29 +258,40 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 </div>
 <div id="mt-feedback-modal" class="mt-popover" hidden aria-hidden="true" role="dialog" aria-labelledby="mtfb-title">
   <div class="mt-modal__panel" tabindex="-1">
-    <button type="button" class="mt-modal__close" aria-label="Close">×</button>
-
-    <h3 id="mtfb-title" class="mtfb-title">How did it feel today?</h3>
-
-    <div class="mtfb-mood" role="group" aria-label="Mood 1 to 5">
-      <button type="button" data-mood="1" class="mt-icon mt-icon_very-happy mt-icon-base"></button>
-      <button type="button" data-mood="2" class="mt-icon mt-icon_happy mt-icon-base"></button>
-      <button type="button" data-mood="3" class="mt-icon mt-icon_neutral mt-icon-base"></button>
-      <button type="button" data-mood="4" class="mt-icon mt-icon_sad mt-icon-base"></button>
-      <button type="button" data-mood="5" class="mt-icon mt-icon_very-sad mt-icon-base"></button>
+    <div class="mt-feedback-header align-items-center d-flex gap-2">
+      
+      <div id="mtfb-title" class="mtfb-title text-white text-base fw-medium pb-2">
+        <?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_title']; ?>
+      </div>
+      <button type="button" class="mt-modal__close mt-icon mt-icon_close mt-icon-white" aria-label="Close"></button>
     </div>
 
-    <p class="mtfb-q">Did I follow my trading plan today?</p>
+    <div class="mtfb-mood p-2 d-flex justify-content-between gap-2" role="group" aria-label="Mood 1 to 5">
+      <button type="button" data-mood="1" class="mt-icon mt-icon_very-happy mt-icon-base mt-icon-md"></button>
+      <button type="button" data-mood="2" class="mt-icon mt-icon_happy mt-icon-base mt-icon-md"></button>
+      <button type="button" data-mood="3" class="mt-icon mt-icon_neutral mt-icon-base mt-icon-md"></button>
+      <button type="button" data-mood="4" class="mt-icon mt-icon_sad mt-icon-base mt-icon-md"></button>
+      <button type="button" data-mood="5" class="mt-icon mt-icon_very-sad mt-icon-base mt-icon-md"></button>
+    </div>
+
+    <div class="mtfb-q text-white text-base fw-medium py-2">
+      <?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_question']; ?></div>
     <div class="mtfb-plan" role="radiogroup" aria-label="Followed plan">
-      <label><input type="radio" name="mtfb-plan" value="1"> Yes</label>
-      <label><input type="radio" name="mtfb-plan" value="0"> No</label>
+      <label><input type="radio" name="mtfb-plan"
+          value="1"><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_yes']; ?></label>
+      <label><input type="radio" name="mtfb-plan"
+          value="0"><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_no']; ?></label>
     </div>
 
-    <label class="mtfb-note-label" for="mtfb-note">What's the most important thing I learn today?</label>
-    <textarea id="mtfb-note" class="mtfb-note" rows="3" maxlength="1000" placeholder="Type here..."></textarea>
+    <textarea id="mtfb-note" class="mtfb-note" rows="4" maxlength="1000"
+      placeholder="<?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_placeholder']; ?>"
+      aria-label="Daily note"></textarea>
 
     <div class="mtfb-actions">
-      <button type="button" class="mtfb-save">Save</button>
+      <button type="button"
+        class="mtfb-save"><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_save']; ?></button>
+      <button type="button" class="mtfb-edit"
+        hidden><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_edit']; ?></button>
     </div>
 
     <!-- flecha -->
