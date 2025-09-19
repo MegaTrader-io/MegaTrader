@@ -822,3 +822,150 @@ document.addEventListener("mt:accountSelected", (e) => {
       });
   });
 })();
+
+//======= Feedback Modal  ======
+
+(function () {
+  const $ = (s, r=document)=>r.querySelector(s);
+  const $$ = (s, r=document)=>Array.from(r.querySelectorAll(s));
+
+  const pop = $('#mt-feedback-modal');             // mismo id, ahora actúa como popover
+  if (!pop) return;
+  const panel = $('.mt-modal__panel', pop);
+  const arrow = $('.mtfb-arrow', panel);
+  if (panel && !panel.hasAttribute('tabindex')) panel.setAttribute('tabindex','-1');
+
+  let current = { accountId: 0, tradeDate: '', anchor: null, rowSel: '' };
+  let isOpen = false;
+
+  function positionTo(anchorEl, prefer='top') {
+    if (!anchorEl) return;
+    // mostrar temporalmente para medir
+    pop.hidden = false; pop.style.visibility = 'hidden';
+
+    const r = anchorEl.getBoundingClientRect();
+    const pw = panel.offsetWidth, ph = panel.offsetHeight;
+    const gap = 12, margin = 8;
+
+    let side = (prefer === 'top') ? 'bottom' : 'top'; // flecha indica hacia el anchor
+    let top  = r.top - ph - gap;                      // panel arriba del icono
+    if (top < margin) {                               // si no cabe, abajo
+      top  = r.bottom + gap;
+      side = 'top';
+    }
+    let left = r.left + r.width/2 - pw/2;
+    left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
+
+    panel.style.top  = `${Math.round(top)}px`;
+    panel.style.left = `${Math.round(left)}px`;
+
+    // posicionar flecha
+    if (arrow) {
+      arrow.dataset.side = side;
+      const ax = r.left + r.width/2 - left - 8; // 8 = half arrow(16px)
+      arrow.style.left = `${Math.round(Math.max(12, Math.min(ax, pw-28)))}px`;
+    }
+
+    pop.style.visibility = 'visible';
+  }
+
+  function openPopover(anchorEl, {accountId, tradeDate, preset}={}) {
+    current = { accountId, tradeDate, anchor: anchorEl, rowSel: `#dj-row-${tradeDate}` };
+
+    // reset UI
+    $$('.mtfb-mood .mood', panel).forEach(b=>b.classList.remove('is-active'));
+    $$('input[name="mtfb-plan"]', panel).forEach(r=>r.checked=false);
+    $('#mtfb-note', panel).value = '';
+    if (preset) {
+      const m = Math.max(1, Math.min(5, parseInt(preset.mood||0,10)));
+      if (m) panel.querySelector(`.mtfb-mood [data-mood="${m}"]`)?.classList.add('is-active');
+      const rp = preset.followed_plan ? '1':'0';
+      panel.querySelector(`input[name="mtfb-plan"][value="${rp}"]`)?.setAttribute('checked','checked');
+      if (preset.note) $('#mtfb-note', panel).value = preset.note;
+    }
+
+    positionTo(anchorEl, 'top');
+    pop.setAttribute('aria-hidden','false');
+    isOpen = true;
+    panel?.focus();
+  }
+
+  function closePopover() {
+    pop.hidden = true;
+    pop.setAttribute('aria-hidden','true');
+    isOpen = false;
+    current.anchor = null;
+  }
+
+  // Abrir desde el icono (popover)
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.mt-dj-visibility');
+    if (!btn) return;
+
+    const row = btn.closest('.dj-row');
+    const tradeDate = row?.dataset.tradeDate || '';
+
+    const root = $('#mt-daily-journal');
+    const accountId = parseInt(root?.dataset.accountId || '0', 10);
+    if (!accountId || !tradeDate) return;
+
+    openPopover(btn, {accountId, tradeDate});
+  });
+
+  // Cerrar por click fuera
+  document.addEventListener('click', (e)=>{
+    if (!isOpen) return;
+    const inside = e.target.closest('.mt-modal__panel') || e.target.closest('.mt-dj-visibility');
+    if (!inside) closePopover();
+  });
+
+  // Reposicionar en scroll/resize
+  ['scroll','resize'].forEach(ev=>{
+    window.addEventListener(ev, ()=>{ if (isOpen && current.anchor) positionTo(current.anchor); }, {passive:true});
+  });
+
+  // Escape
+  document.addEventListener('keydown', (e)=>{ if (e.key==='Escape' && isOpen) closePopover(); });
+
+  // Mood select
+  panel.addEventListener('click', (e)=>{
+    const b = e.target.closest('.mood');
+    if (!b) return;
+    $$('.mtfb-mood .mood', panel).forEach(x=>x.classList.remove('is-active'));
+    b.classList.add('is-active');
+  });
+
+  // Guardar AJAX
+  $('.mtfb-save', panel)?.addEventListener('click', ()=>{
+    const url   = (window.mtAccounts && mtAccounts.ajaxUrl) || '/wp-admin/admin-ajax.php';
+    const nonce = (window.mtAccounts && mtAccounts.nonce)  || '';
+
+    const moodBtn = $('.mtfb-mood .mood.is-active', panel);
+    const mood = moodBtn ? parseInt(moodBtn.getAttribute('data-mood'),10) : 0;
+    const plan = $('input[name="mtfb-plan"]:checked', panel)?.value === '1' ? '1' : '0';
+    const note = $('#mtfb-note', panel)?.value || '';
+    if (!mood) { alert('Select a mood (1–5).'); return; }
+
+    document.querySelector('.preloader')?.classList.add('is-active');
+
+    const body = new URLSearchParams();
+    body.set('action','mt_save_daily_feedback');
+    body.set('nonce', nonce);
+    body.set('account_id', String(current.accountId));
+    body.set('trade_date', current.tradeDate);
+    body.set('mood', String(mood));
+    body.set('followed_plan', plan);
+    body.set('note', note);
+
+    fetch(url, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body })
+      .then(r=>r.json())
+      .then(j=>{
+        if (!j?.success) throw new Error(j?.data?.msg || 'Save failed');
+        const ic = document.querySelector(`${current.rowSel} .mt-dj-visibility .mt-icon`);
+        if (ic) { ic.classList.remove('mt-icon_pencil'); ic.classList.add('mt-icon_visibility'); }
+        closePopover();
+      })
+      .catch(err=>{ console.error('[MT] feedback save error:', err); alert('Could not save feedback.'); })
+      .finally(()=>{ document.querySelector('.preloader')?.classList.remove('is-active'); });
+  });
+})();

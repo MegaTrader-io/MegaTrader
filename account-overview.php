@@ -211,7 +211,6 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 
           <div class="mt-account-feature-content">
             <?php
-            // Render solo si hay una cuenta seleccionada; pasar accountId al template.
             if (!empty($mt_selected_id)) {
               get_template_part(
                 'template-parts/account/account-feature-content',
@@ -238,14 +237,57 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
             ?>
           </div>
 
-          <div class="mt-account-account-daily-journal">
-            <?php get_template_part('template-parts/account/account-daily-journal'); ?>
+          <div class="mt-account-performance-chart-content">
+            <?php
+            get_template_part(
+              'template-parts/account/account-daily-journal',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+              ]
+            );
+            ?>
           </div>
+
+
         </div>
-        
+
       </div>
     <?php endif; ?>
   </div>
 </div>
+<div id="mt-feedback-modal" class="mt-popover" hidden aria-hidden="true" role="dialog" aria-labelledby="mtfb-title">
+  <div class="mt-modal__panel" tabindex="-1">
+    <button type="button" class="mt-modal__close" aria-label="Close">×</button>
+
+    <h3 id="mtfb-title" class="mtfb-title">How did it feel today?</h3>
+
+    <div class="mtfb-mood" role="group" aria-label="Mood 1 to 5">
+      <button type="button" data-mood="1" class="mt-icon mt-icon-primary mt-icon_very-happy"></button>
+      <button type="button" data-mood="2" class="mt-icon mt-icon-primary mt-icon_happy"></button>
+      <button type="button" data-mood="3" class="mt-icon mt-icon-primary mt-icon_neutral"></button>
+      <button type="button" data-mood="4" class="mt-icon mt-icon-primary mt-icon_sad"></button>
+      <button type="button" data-mood="5" class="mt-icon mt-icon-primary mt-icon_very-sad"></button>
+    </div>
+
+    <p class="mtfb-q">Did I follow my trading plan today?</p>
+    <div class="mtfb-plan" role="radiogroup" aria-label="Followed plan">
+      <label><input type="radio" name="mtfb-plan" value="1"> Yes</label>
+      <label><input type="radio" name="mtfb-plan" value="0"> No</label>
+    </div>
+
+    <label class="mtfb-note-label" for="mtfb-note">What's the most important thing I learn today?</label>
+    <textarea id="mtfb-note" class="mtfb-note" rows="3" maxlength="1000" placeholder="Type here..."></textarea>
+
+    <div class="mtfb-actions">
+      <button type="button" class="mtfb-save">Save</button>
+    </div>
+
+    <!-- flecha -->
+    <span class="mtfb-arrow" aria-hidden="true"></span>
+  </div>
+</div>
+
+
 
 <?php get_footer(); ?>

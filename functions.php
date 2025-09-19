@@ -1974,5 +1974,85 @@ function mt_account_data_ajax() {
   }
 }
 
+// ===== MT Daily Feedback (tabla + AJAX) =====
+add_action('after_setup_theme', function () {
+    global $wpdb;
+    $table = $wpdb->prefix . 'mt_daily_feedback';
+    $charset = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE IF NOT EXISTS $table (
+      id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      user_id BIGINT UNSIGNED NOT NULL,
+      account_id BIGINT UNSIGNED NOT NULL,
+      trade_date DATE NOT NULL,
+      mood TINYINT UNSIGNED NOT NULL DEFAULT 0,           -- 1..5
+      followed_plan TINYINT(1) NOT NULL DEFAULT 0,        -- 0/1
+      note TEXT NULL,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      UNIQUE KEY uniq_user_account_date (user_id, account_id, trade_date),
+      KEY idx_account_date (account_id, trade_date)
+    ) $charset;";
+    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+    dbDelta($sql);
+});
+
+// Helper para leer feedback de una fecha
+function mt_get_daily_feedback($user_id, $account_id, $trade_date) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'mt_daily_feedback';
+    return $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $table WHERE user_id=%d AND account_id=%d AND trade_date=%s",
+        $user_id, $account_id, $trade_date
+    ), ARRAY_A);
+}
+
+// AJAX: guardar feedback
+add_action('wp_ajax_mt_save_daily_feedback', function () {
+    if (!is_user_logged_in()) wp_send_json_error(['msg' => 'Auth required'], 401);
+
+    // Usa el mismo nonce que ya localizas (mtAccounts.nonce)
+    if (empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'mt_accounts_nonce')) {
+        wp_send_json_error(['msg' => 'Bad nonce'], 403);
+    }
+
+    $user_id     = get_current_user_id();
+    $account_id  = isset($_POST['account_id']) ? absint($_POST['account_id']) : 0;
+    $trade_date  = isset($_POST['trade_date']) ? sanitize_text_field($_POST['trade_date']) : '';
+    $mood        = max(1, min(5, intval($_POST['mood'] ?? 0)));
+    $followed    = isset($_POST['followed_plan']) && $_POST['followed_plan'] == '1' ? 1 : 0;
+    $note        = isset($_POST['note']) ? wp_kses_post(wp_unslash($_POST['note'])) : '';
+
+    if (!$account_id || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $trade_date)) {
+        wp_send_json_error(['msg' => 'Bad data'], 400);
+    }
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'mt_daily_feedback';
+    $data = [
+        'user_id' => $user_id,
+        'account_id' => $account_id,
+        'trade_date' => $trade_date,
+        'mood' => $mood,
+        'followed_plan' => $followed,
+        'note' => $note,
+    ];
+    $format = ['%d','%d','%s','%d','%d','%s'];
+
+    // UPSERT
+    $exists = mt_get_daily_feedback($user_id, $account_id, $trade_date);
+    if ($exists) {
+        $ok = $wpdb->update($table, $data, ['id' => $exists['id']], $format, ['%d']);
+    } else {
+        $ok = $wpdb->insert($table, $data, $format);
+    }
+
+    if ($ok === false) wp_send_json_error(['msg' => 'DB error'], 500);
+
+    wp_send_json_success([
+        'saved' => true,
+        'payload' => $data,
+    ]);
+});
+
 
 
