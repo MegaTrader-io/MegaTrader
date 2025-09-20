@@ -31,7 +31,7 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
 <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
   data-bs-target="#changeSubcriptionModal">
   <div class="border-gray d-flex align-items-center gap-2 p-3 rounded-2xl">
-    <div class="d-flex flex-wrap gap-3 flex-grow-1 flex-shirk-0 align-items-center">
+    <div class="flex-fill align-items-center d-flex flex-wrap column-gap-3 row-gap-2">
       <div class="badge-mega badge-mega-sm <?php echo esc_attr($badgeClass); ?>" id="mt-badge">
         <?php
         $st = strtolower($currentStat);
@@ -40,15 +40,15 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
           : esc_html(ucwords(str_replace('-', ' ', $st)));
         ?>
       </div>
-      <div class="d-flex gap-2 align-items-center">
+      <div class="d-flex gap-2 align-items-center flex-fill">
         <div class="mt-icon mt-icon-primary mt-icon_diamond"></div>
         <div class="fw-medium plan-name text-size-24 text-uppercase text-white">
           <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
           <span id="mt-name"><?php echo esc_html($productName); ?></span>
         </div>
       </div>
+      <span class="text-decoration-underline text-primary fw-medium">Reset Challenge</span>
     </div>
-    <span class="text-decoration-underline text-primary fw-medium">Reset Challenge</span>
     <span class="svg-button mt-icon mt-icon_caret-down mt-icon-white"></span>
   </div>
 </button>
