@@ -51,55 +51,36 @@ $links = $args['menu_items'] ?? [];
             </a>
         </div>
     </div>
-
-<style>
-    .mt-sidebar__menu__link {
-        padding: 12px 0;
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        color: white;
-    }
-    .mt-sidebar__menu__link:hover {
-        color: var(--Text-Action-Primary-Text, #FFB34A);
-    }
-    .mt-sidebar__menu__link.active {
-        color: var(--Text-Action-Primary-Text, #FFB34A);
-    }
-    @media (max-width: 1199.98px) {
-        .mt-sidebar__menu {
-            display: none;
-        }
-    }
-</style>
-    <div class="mt-sidebar__menu d-flex flex-column gap-32">
-        <div class="mt-sidebar__menu__group">
-            <div class="mt-sidebar__menu__group__title">DASHBOARD</div>
-            <div class="mt-sidebar__menu__links d-flex flex-column gap-2 align-items-start">
-                <a class="mt-sidebar__menu__link active" href="/my-account/overview/">
-                    <i class="mt-icon mt-icon-sm mt-icon_account"></i>
-                    <span>ACCOUNT OVERVIEW<span>
-                </a>
-                <a class="mt-sidebar__menu__link" href="/my-account/referrals/">
-                    <i class="mt-icon mt-icon-sm mt-icon_checkmark-solid"></i>
-                    <span>REFERRALS<span>
-                </a>
-                <a class="mt-sidebar__menu__link" href="/my-account/payouts/">
-                    <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
-                    <span>PAYOUTS<span>
-                </a>
-                <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/">
-                    <i class="mt-icon mt-icon-sm mt-icon_help"></i>
-                    <span>HELP CENTER<span>
-                </a>
+    <div class="mt-sidebar__menu">
+        <div class="mt-sidebar__wrapper d-flex flex-column gap-32">
+            <div class="mt-sidebar__menu__group">
+                <div class="mt-sidebar__menu__group__title">DASHBOARD</div>
+                <div class="mt-sidebar__menu__links d-flex flex-column gap-2 align-items-start">
+                    <a class="mt-sidebar__menu__link active" href="/my-account/overview/">
+                        <i class="mt-icon mt-icon-sm mt-icon_account"></i>
+                        <span>ACCOUNT OVERVIEW<span>
+                    </a>
+                    <a class="mt-sidebar__menu__link" href="/my-account/referrals/">
+                        <i class="mt-icon mt-icon-sm mt-icon_checkmark-solid"></i>
+                        <span>REFERRALS<span>
+                    </a>
+                    <a class="mt-sidebar__menu__link" href="/my-account/payouts/">
+                        <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
+                        <span>PAYOUTS<span>
+                    </a>
+                    <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/">
+                        <i class="mt-icon mt-icon-sm mt-icon_help"></i>
+                        <span>HELP CENTER<span>
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="mt-sidebar__menu__group">
-            <div class="mt-sidebar__menu__links d-flex flex-column gap-2 align-items-start">
-                <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
-                    <i class="mt-icon mt-icon-sm mt-icon_logout "></i>
-                    <span>LOGOUT<span>
-                </a>
+            <div class="mt-sidebar__menu__group">
+                <div class="mt-sidebar__menu__links d-flex flex-column gap-2 align-items-start">
+                    <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
+                        <i class="mt-icon mt-icon-sm mt-icon_logout "></i>
+                        <span>LOGOUT<span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
