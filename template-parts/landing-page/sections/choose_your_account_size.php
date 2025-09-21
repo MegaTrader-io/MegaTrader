@@ -16,6 +16,63 @@ foreach ($attributes as $attr) {
     }
 }
 
+$defaultPlatform = 'megatraderx';
+$defaultMarketType = 'futures';
+$defaultSlug = $account_types[0]['slug'];
+
+$get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
+
+$filtered = array_filter($products_data['products'], function ($product) use ($defaultSlug) {
+    return $product['slug'] === $defaultSlug;
+});
+
+$product = reset($filtered) ?: null;
+
+$planList = [];
+$defaultMetaInfo = [];
+$has_coupon_global = null;
+foreach ($account_sizes as $size) {
+    $parent_id = $product['id'];
+    $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
+    $id = -1;
+    $price = '0.00';
+    $metaInfoList = [];
+    foreach ($properties as $property) {
+        foreach ($property as $key => $arrayProperties) {
+            switch ($key) {
+                case 'id':
+                    $id = $arrayProperties;
+                    break;
+                case 'price-monthly':
+                    $price = intval(str_replace('$', '', $arrayProperties));
+                    break;
+                case 'meta-info':
+                    $metaInfoList = $arrayProperties;
+                    break;
+            }
+        }
+    }
+
+    foreach (Label::PRODUCT_META as $key => $value) {
+        if ($metaInfoList[$key]) {
+            $defaultMetaInfo[$key] = true;
+        }
+    }
+
+    $coupon = mt_get_best_coupon_for_variation($id);
+    if ($coupon['valid'] && !$has_coupon_global) {
+        $has_coupon_global = true;
+    }
+
+    $planList[] = [
+            'id' => $id,
+            'parent_id' => $parent_id,
+            'price' => $price,
+            'size' => $size,
+            'metaInfoList' => $metaInfoList
+    ];
+}
+
 $addons = get_saved_challenge_addons();
 
 $meta_info_list = [
@@ -61,6 +118,7 @@ $meta_info_list = [
         ]
 ];
 
+$best_products = mt_most_popular_products();
 ?>
 
 <section id="pricing" class="tw-px-4">
@@ -85,6 +143,8 @@ $meta_info_list = [
             <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2">
                 <?php foreach ($account_types as $index => $account_type) : ?>
                     <button data-value="<?= $account_type['slug'] ?>"
+                            data-default-platform="<?= $defaultPlatform ?>"
+                            data-default-market-type="<?= $defaultMarketType ?>"
                             class="btn-account-type tw-group tw-relative tw-w-full tw-rounded-2xl tw-p-6 tw-text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
                         <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4">
                             <div class="tw-text-primary group-[.account-active]:tw-text-black tw-mt-1 group-[.account-active]:filter group-[.account-active]:tw-brightness-[5] group-[.account-active]:tw-invert">
@@ -124,7 +184,9 @@ $meta_info_list = [
                     balance you want to trade. This determines your profit target, drawdown limits, and maximum position
                     size based on your trading style.
                 </div>
-                <div id="slider-mgt" data-sizes="<?= join(',', $account_sizes) ?>"></div>
+                <div class="tw-px-3.5 !tw-mt-5">
+                    <div id="slider-mgt" data-sizes="<?= join(',', $account_sizes) ?>"></div>
+                </div>
             </div>
             <div class="tw-space-y-4 !tw-pt-8 lg:tw-pt-0 lg:tw-flex-1 lg:tw-justify-end">
                 <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8">Addons</div>

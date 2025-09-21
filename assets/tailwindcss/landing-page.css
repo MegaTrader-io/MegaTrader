@@ -188,14 +188,25 @@ body {
     @apply tw-bg-neutral-700;
 }
 
+#slider-mgt.noUi-base,#slider-mgt.noUi-connects {
+    z-index: auto;
+}
+
+.noUi-base, .noUi-connects {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: unset !important;
+}
+
 #slider-mgt .noUi-handle {
     border: 4px solid #FFF;
     background: #FFB34A;
     box-shadow: none;
-
+    cursor: pointer;
     height: 24px;
     width: 24px;
-    top: -11px;
+    top: -8px;
     right: -12px;
     border-radius: 64px;
 }
@@ -208,8 +219,21 @@ body {
     @apply tw-border-none tw-shadow-none;
 }
 
-#slider-mgt .noUi-marker {
-    @apply tw-hidden;
+#slider-mgt .noUi-marker-horizontal.noUi-marker {
+    margin-left: -12px;
+    width: 24px;
+    height: 24px;
+    margin-top: -26px;
+    border-radius: 64px !important;
+    background: #FFF;
+    box-sizing: unset;
+    z-index: 1;
+}
+
+#slider-mgt .noUi-marker-horizontal.noUi-marker.noUi-marker-selected {
+    border: 4px solid #ffb34a;
+    background: white;
+    box-sizing: border-box;
 }
 
 #slider-mgt .noUi-pips > .noUi-value {

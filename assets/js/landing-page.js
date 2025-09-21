@@ -209,6 +209,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 e.currentTarget.classList.add('account-active');
                 internalOptions.accountType = e.currentTarget.dataset.value;
+                internalOptions.defaultPlatform = e.currentTarget.dataset.defaultPlatform;
+                internalOptions.defaultMarketType = e.currentTarget.dataset.defaultMarketType;
                 fn(internalOptions);
             })
         })
@@ -237,6 +239,15 @@ document.addEventListener('DOMContentLoaded', function () {
             },
         });
 
+        softSlider.querySelectorAll('.noUi-marker').forEach((el) => {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', (e) => {
+                const elementMarkerValue = e.currentTarget.nextElementSibling
+                const val = elementMarkerValue.getAttribute('data-value');
+                softSlider.noUiSlider.set(arbitraryValuesForSlider[val]);
+            });
+        });
+
         softSlider.querySelectorAll('.noUi-value').forEach((el) => {
             el.style.cursor = 'pointer';
             el.addEventListener('click', () => {
@@ -245,55 +256,30 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        const pipElements = softSlider.querySelectorAll('.noUi-value');
-        if (pipElements) {
-            pipElements[0].style.left = '2%';
-            pipElements[pipElements.length - 1].style.left = '98%';
-        }
+        softSlider.noUiSlider
+            .on("update", function (valuesIndex, handle) {
+                // document.querySelector('.noUi-marker-selected')?.classList.remove('noUi-marker-selected')
+                document.querySelectorAll('.noUi-value').forEach((element) => {
+                    element.classList.remove('active-pip');
+                });
 
-        const base = softSlider.querySelector('.noUi-base');
+                const value = valuesIndex.at(0)
+                const index = arbitraryValuesForSlider.indexOf(value)
 
-        if (base) {
-            const customElementParent = document.createElement('div');
-            customElementParent.classList.add(
-                "tw-w-full",
-                "tw-h-1",
-                "tw-py-2",
-                "-tw-top-[5px]",
-                "tw-absolute",
-                "tw-z-[2]",
-                "tw-inline-flex",
-                "tw-justify-between",
-                "tw-items-center"
-            );
-
-            pipElements.forEach(() => {
-                const customElement = document.createElement('div');
-                customElement.classList.add('tw-w-1.5', 'tw-h-1.5', 'tw-opacity-30', 'tw-bg-white', 'tw-rounded-full', 'tw-z-[5px]')
-                customElementParent.appendChild(customElement)
-            })
-
-            base.appendChild(customElementParent);
-        }
-
-        softSlider.noUiSlider.on("update", function (valuesIndex, handle) {
-            document.querySelectorAll('.noUi-value').forEach((element) => {
-                element.classList.remove('active-pip');
-            });
-
-            const value = valuesIndex.at(0)
-            const index = arbitraryValuesForSlider.indexOf(value)
-
-            if (!isNaN(index) && index !== undefined) {
-                const element = document.querySelector('.noUi-value[data-value="' + index + '"]');
-                if (element) {
-                    element.classList.add('active-pip');
-
-                    internalOptions.accountSize = arbitraryValuesForSlider[index];
-                    fn(internalOptions);
+                if (!isNaN(index) && index !== undefined) {
+                    const element = document.querySelector('.noUi-value[data-value="' + index + '"]');
+                    if (element) {
+                        element.classList.add('active-pip');
+                        // const elementMarkerValue = element.previousElementSibling;
+                        // elementMarkerValue.classList.add('noUi-marker-selected')
+                        internalOptions.accountSize = arbitraryValuesForSlider[index];
+                        const selectedPlan = document.querySelector('.account-active');
+                        internalOptions.defaultPlatform = selectedPlan.dataset.defaultPlatform;
+                        internalOptions.defaultMarketType = selectedPlan.dataset.defaultMarketType;
+                        fn(internalOptions);
+                    }
                 }
-            }
-        });
+            });
 
         /** Handle Addons **/
         document.querySelectorAll('.addon-option').forEach(btn => {
@@ -648,16 +634,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     const metaInfoElement = document.querySelector(`.metaInfo[data-price="${priceSize}"]`);
                     const template = document.querySelector(`.template-metaInfo`);
 
-                    metaInfoElement.innerHTML = '';
+                    // metaInfoElement.innerHTML = '';
 
                     metaInfoList.forEach(metaInfo => {
-                        const row = template.cloneNode(true);
-                        row.classList.remove('template-metaInfo', 'tw-hidden');
-                        const labelHTML = row.querySelector('.mega-info-row__label');
-                        labelHTML.dataset.key = metaInfo.key;
-                        labelHTML.innerText = metaInfo.label;
-                        row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
-                        metaInfoElement.appendChild(row)
+                        // const row = template.cloneNode(true);
+                        // row.classList.remove('template-metaInfo', 'tw-hidden');
+                        // const labelHTML = row.querySelector('.mega-info-row__label');
+                        // labelHTML.dataset.key = metaInfo.key;
+                        // labelHTML.innerText = metaInfo.label;
+                        // row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
+                        // metaInfoElement.appendChild(row)
                     })
                 }
             }
