@@ -182,6 +182,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadChooseYourAccountSize(fn = function () {
     }) {
+        MT_Tabs.init();
+
         const defaultAccountType = document.querySelector('.btn-account-type.account-active').dataset.value;
         const softSlider = document.getElementById("slider-mgt");
         const arbitraryValuesForSlider = softSlider.dataset.sizes ? softSlider.dataset.sizes.split(',') : [1, 2, 3, 4];

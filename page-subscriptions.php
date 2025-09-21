@@ -25,17 +25,6 @@ get_header();
         }
     }
 
-    function load_tab_content($template_path): ?string {
-        
-        if (!locate_template($template_path . '.php')) {
-            return null;
-        }
-
-        ob_start();
-        get_template_part($template_path);
-        return ob_get_clean();
-    }
-
     $tabs = array_map(function($item) {
         $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
 

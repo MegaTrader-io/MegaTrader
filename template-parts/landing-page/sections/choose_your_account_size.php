@@ -4,6 +4,7 @@ $attributes = $products_data['attributes'] ?? [];
 
 $account_sizes = [];
 $account_types = [];
+$market_type = [];
 
 foreach ($attributes as $attr) {
     switch ($attr['taxonomy']) {
@@ -12,6 +13,9 @@ foreach ($attributes as $attr) {
             break;
         case 'pa_account-types':
             $account_types[] = $attr;
+            break;
+        case 'pa_market-type':
+            $market_type[] = $attr;
             break;
     }
 }
@@ -119,6 +123,23 @@ $meta_info_list = [
 ];
 
 $best_products = mt_most_popular_products();
+
+$tabs = array_map(function($item) {
+    $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+
+    $is_disabled = isset($parsed['config']['status']) && $parsed['config']['status'] === 'disabled';
+
+    return [
+            'id'        => $item['slug'] . $item['id'] . '_tab',
+            'panel_id'  => $item['slug'] . $item['id'] . '_panel',
+            'icon'      => $item['thumbnail_url'],
+            'title'     => $item['name'],
+            'subtitle'  => $item['description'],
+            'disabled'  => $is_disabled,
+            'content'   => ! $is_disabled ? load_tab_content('template-parts/tabs/content-' . $item['slug']) : null,
+    ];
+}, $market_type);
+
 ?>
 
 <section id="pricing" class="tw-px-4">
@@ -132,92 +153,8 @@ $best_products = mt_most_popular_products();
     </div>
 
     <div class="tw-space-y-8 lg:tw-space-y-0 lg:tw-flex lg:tw-gap-8">
-        <div class="tw-flex tw-flex-col tw-h-full tw-space-y-8 lg:tw-gap-y-6 lg:tw-space-y-12">
-            <div>
-                <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8">Account Type</div>
-                <div class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">Pick the plan that aligns
-                    with your trading goals. Each type includes its own drawdown model, payout rules, and evaluation
-                    structure to support your growth.
-                </div>
-            </div>
-            <div class="tw-space-y-2 tw-flex-1 md:tw-space-y-0 md:tw-flex tw-gap-2">
-                <?php foreach ($account_types as $index => $account_type) : ?>
-                    <button data-value="<?= $account_type['slug'] ?>"
-                            data-default-platform="<?= $defaultPlatform ?>"
-                            data-default-market-type="<?= $defaultMarketType ?>"
-                            class="btn-account-type tw-group tw-relative tw-w-full tw-rounded-2xl tw-p-6 tw-text-left account-type <?= $index === 0 ? 'account-active' : '' ?>">
-                        <div class="tw-inline-flex tw-justify-start tw-items-start tw-gap-4">
-                            <div class="tw-text-primary group-[.account-active]:tw-text-black tw-mt-1 group-[.account-active]:filter group-[.account-active]:tw-brightness-[5] group-[.account-active]:tw-invert">
-                                <img src="<?= $account_type['thumbnail_url'] ?>" class="tw-w-9 tw-h-9" alt="Icon">
-                            </div>
-                            <div class="tw-flex-1 tw-inline-flex tw-flex-col tw-justify-center tw-items-start tw-gap-2">
-                                <div class="tw-self-stretch tw-inline-flex tw-justify-start tw-items-start tw-gap-1">
-                                    <div class="tw-justify-start tw-text-white group-[.account-active]:tw-text-black tw-text-xl tw-font-bold tw-leading-loose">
-                                        <?= $account_type['name'] ?>
-                                    </div>
-                                </div>
-                                <div class="tw-justify-start group-[.account-active]:tw-opacity-60 group-[.account-active]:tw-text-black tw-text-stone-400 tw-text-base tw-font-bold tw-leading-normal group-[.plan-selected]:tw-opacity-60 group-[.plan-selected]:tw-text-black">
-                                    <?= $account_type['description'] ?>
-                                </div>
-                            </div>
-                            <div class="tw-w-[30px] tw-h-[30px] tw-right-[8px] tw-top-[8px] tw-absolute group-[.account-active]:tw-block">
-                                <svg width="31" height="30" viewBox="0 0 31 30" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_11266_797" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                          y="0"
-                                          width="31" height="30">
-                                        <rect x="0.5" width="30" height="30" fill="#D9D9D9"></rect>
-                                    </mask>
-                                    <g mask="url(#mask0_11266_797)">
-                                        <path d="M13.75 20.75L22.5625 11.9375L20.8125 10.1875L13.75 17.25L10.1875 13.6875L8.4375 15.4375L13.75 20.75ZM15.5 27.5C13.7708 27.5 12.1458 27.1719 10.625 26.5156C9.10417 25.8594 7.78125 24.9688 6.65625 23.8438C5.53125 22.7188 4.64063 21.3958 3.98438 19.875C3.32812 18.3542 3 16.7292 3 15C3 13.2708 3.32812 11.6458 3.98438 10.125C4.64063 8.60417 5.53125 7.28125 6.65625 6.15625C7.78125 5.03125 9.10417 4.14063 10.625 3.48438C12.1458 2.82812 13.7708 2.5 15.5 2.5C17.2292 2.5 18.8542 2.82812 20.375 3.48438C21.8958 4.14063 23.2188 5.03125 24.3438 6.15625C25.4688 7.28125 26.3594 8.60417 27.0156 10.125C27.6719 11.6458 28 13.2708 28 15C28 16.7292 27.6719 18.3542 27.0156 19.875C26.3594 21.3958 25.4688 22.7188 24.3438 23.8438C23.2188 24.9688 21.8958 25.8594 20.375 26.5156C18.8542 27.1719 17.2292 27.5 15.5 27.5Z"
-                                              fill="#131210"></path>
-                                    </g>
-                                </svg>
-                            </div>
-                        </div>
-                    </button>
-                <?php endforeach; ?>
-            </div>
-            <div class="tw-space-y-2 lg:tw-mb-12 tw-h-full tw-relative">
-                <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8">Account Size</div>
-                <div class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6 !tw-mb-3">Select the account
-                    balance you want to trade. This determines your profit target, drawdown limits, and maximum position
-                    size based on your trading style.
-                </div>
-                <div class="tw-px-3.5 !tw-mt-5">
-                    <div id="slider-mgt" data-sizes="<?= join(',', $account_sizes) ?>"></div>
-                </div>
-            </div>
-            <div class="tw-space-y-4 !tw-pt-8 lg:tw-pt-0 lg:tw-flex-1 lg:tw-justify-end">
-                <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8">Addons</div>
-
-                <?php foreach ($addons as $option_data) : ?>
-                    <div class="addons-item <?php echo esc_attr($option_data['field']); ?>">
-                        <input type="checkbox" name="<?php echo esc_attr($option_data['field']); ?>"
-                               id="option_<?php echo esc_attr($option_data['field']); ?>"
-                               class="tw-hidden tw-peer addon-option"/>
-                        <label for="option_<?php echo esc_attr($option_data['field']); ?>"
-                               class="tw-block hover:tw-cursor-pointer mgt-checkbox tw-bg-mgt-dark tw-w-full tw-rounded-lg tw-p-4 tw-space-y-2 tw-outline tw-outline-1 tw-outline-offset-[-1px] tw-outline-neutral-700 peer-checked:tw-outline-primary tw-transition-colors tw-duration-300">
-
-                            <div class="tw-grid tw-grid-cols-[auto_1fr_auto] tw-items-center tw-gap-4 tw-justify-between">
-                                <div class="box-checked tw-w-[18px] tw-h-[18px] tw-border-2 tw-rounded tw-justify-center tw-flex tw-border-primary"></div>
-
-                                <div class="tw-justify-start tw-text-left tw-text-white tw-text-base tw-font-medium tw-leading-normal">
-                                    <?= $option_data['label'] ?>
-                                </div>
-                                <div class="tw-p-1 tw-bg-neutral-200 tw-rounded tw-inline-flex tw-justify-center tw-items-center tw-gap-2.5">
-                                    <div class="tw-justify-start tw-text-[#131210] tw-text-sm tw-font-bold tw-uppercase tw-leading-none">
-                                        <?= $option_data['adjustment'] . $option_data['adjustment_symbol'] ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tw-justify-start tw-text-stone-400 tw-text-sm tw-font-bold tw-leading-5">
-                                <?= $option_data['description'] ?>
-                            </div>
-                        </label>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+        <div class="tw-flex tw-flex-col tw-h-full tw-space-y-8 lg:tw-gap-y-6 lg:tw-space-y-12 w-full">
+            <?php render_tabs($tabs); ?>
         </div>
         <div class="tw-space-y-8 tw-flex tw-flex-col">
             <div class="tw-flex-1">

@@ -1500,6 +1500,19 @@ if (!function_exists('render_tabs')) {
     }
 }
 
+if (!function_exists('load_tab_content')) {
+    function load_tab_content($template_path): ?string {
+
+        if (!locate_template($template_path . '.php')) {
+            return null;
+        }
+
+        ob_start();
+        get_template_part($template_path);
+        return ob_get_clean();
+    }
+}
+
 
 /* --------- Step Selector Render Function -------- */
 
