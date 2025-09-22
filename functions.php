@@ -2066,5 +2066,29 @@ add_action('wp_ajax_mt_save_daily_feedback', function () {
     ]);
 });
 
+add_filter( 'woocommerce_account_menu_items', function( $items ) {
+    // Keep only what you need
+    $new_items = [];
+
+    // Add "Trade Area" (custom URL)
+    $new_items['trade-area'] = __( 'Trade Area', 'woocommerce' );
+
+    // Add "Manage Subscription"
+    $new_items['custom-manage-subscription'] = __( 'Manage Subscription', 'woocommerce' );
+
+    // Keep original "Payment methods" if present
+    if ( isset( $items['payment-methods'] ) ) {
+        $new_items['payment-methods'] = $items['payment-methods'];
+    }
+
+    return $new_items;
+}, 20 );
+
+add_filter( 'woocommerce_get_endpoint_url', function( $url, $endpoint, $value, $permalink ) {
+    if ( $endpoint === 'trade-area' ) {
+        $url = site_url( '/my-account/overview' );
+    }
+    return $url;
+}, 10, 4 );
 
 
