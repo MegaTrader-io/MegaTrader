@@ -23,35 +23,38 @@ $currentStat = (string) ($current['status'] ?? 'unknown');
 $sizeSlug = (string) ($current['size'] ?? '');
 $productName = (string) ($current['name'] ?? 'Account');
 $status_key = strtolower(trim($currentStat));
-$status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key); 
+$status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
 $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
 
 
 ?>
-<button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
-  data-bs-target="#changeSubcriptionModal">
-  <div class="border-gray d-flex align-items-center gap-2 p-3 rounded-2xl">
-    <div class="flex-fill align-items-center d-flex flex-wrap column-gap-3 row-gap-2">
-      <div class="badge-mega badge-mega-sm <?php echo esc_attr($badgeClass); ?>" id="mt-badge">
-        <?php
-        $st = strtolower($currentStat);
-        echo ($st === 'pending-cancel')
-          ? esc_html__('Pending Cancellation', 'woocommerce')
-          : esc_html(ucwords(str_replace('-', ' ', $st)));
-        ?>
-      </div>
-      <div class="d-flex gap-2 align-items-center flex-fill">
-        <div class="mt-icon mt-icon-primary mt-icon_diamond"></div>
-        <div class="fw-medium plan-name text-size-24 text-uppercase text-white">
-          <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
-          <span id="mt-name"><?php echo esc_html($productName); ?></span>
+
+<div class="account-selection-wrapper">
+  <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
+    data-bs-target="#changeSubcriptionModal">
+    <div class="border-gray d-flex align-items-center gap-2 p-3 rounded-2xl">
+      <div class="flex-fill align-items-center d-flex flex-wrap column-gap-3 row-gap-2">
+        <div class="badge-mega badge-mega-sm <?php echo esc_attr($badgeClass); ?>" id="mt-badge">
+          <?php
+          $st = strtolower($currentStat);
+          echo ($st === 'pending-cancel')
+            ? esc_html__('Pending Cancellation', 'woocommerce')
+            : esc_html(ucwords(str_replace('-', ' ', $st)));
+          ?>
+        </div>
+        <div class="d-flex gap-2 align-items-center flex-fill">
+          <div class="mt-icon mt-icon-primary mt-icon_diamond"></div>
+          <div class="fw-medium plan-name text-size-24 text-uppercase text-white">
+            <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
+            <span id="mt-name"><?php echo esc_html($productName); ?></span>
+          </div>
         </div>
       </div>
-      <span class="text-decoration-underline text-primary fw-medium">Reset Challenge</span>
+      <span class="svg-button mt-icon mt-icon_caret-down mt-icon-white"></span>
     </div>
-    <span class="svg-button mt-icon mt-icon_caret-down mt-icon-white"></span>
-  </div>
-</button>
+  </button>
+  <a class="mega-btn-md mega-btn-secondary-md w-100">Reset Chanllenge</a>
+</div>
 
 <div class="modal modal-subcription fade" id="changeSubcriptionModal" tabindex="-1"
   aria-labelledby="changeSubcriptionModalLabel" aria-hidden="true">
