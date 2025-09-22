@@ -16,6 +16,9 @@ if (!function_exists('megatrader_landing_page_scripts')) {
         $clipboard_js_version = file_exists($js_path . 'clipboard.min.js') ? filemtime($js_path . 'clipboard.min.js') : null;
 
         wp_enqueue_style('bootstrap', MEGATRADER_CSS . 'bootstrap.min.css', array(), _MEGATRADER_VERSION);
+        wp_enqueue_style( 'megatrader-base',		MEGATRADER_CSS .'style.css', array(), REALTIME_VERSION );
+        wp_enqueue_style( 'megatrader-style',       get_stylesheet_uri(), array(), _MEGATRADER_VERSION );
+
         wp_enqueue_style('megatrader-main', $css_uri . 'style-landing-page.css', [], $style_landing_version);
         wp_enqueue_style('megatrader-dev', MEGATRADER_CSS . 'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION);
         wp_enqueue_style('mt-components', MEGATRADER_CSS . 'mt-components.css', array(), REALTIME_VERSION);

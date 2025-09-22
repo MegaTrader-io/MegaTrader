@@ -136,7 +136,10 @@ $tabs = array_map(function($item) {
             'title'     => $item['name'],
             'subtitle'  => $item['description'],
             'disabled'  => $is_disabled,
-            'content'   => ! $is_disabled ? load_tab_content('template-parts/tabs/content-' . $item['slug']) : null,
+            'content'   => ! $is_disabled ? load_tab_content(
+                    template_path: 'template-parts/tabs/content-' . $item['slug'],
+                    layoutType: LayoutType::LandingPage
+            ) : null,
     ];
 }, $market_type);
 

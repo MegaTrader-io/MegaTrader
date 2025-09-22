@@ -1,7 +1,15 @@
 <?php
 
+enum LayoutType: string
+{
+    case MyAccount   = 'my_account';
+    case LandingPage = 'landing_page';
+}
+
 class Label
 {
+    public const LayoutType = '';
+
     public const PRODUCT_META = [
         "profit_target" => "Profit Target",
         "max_contracts" => "Max Contracts",

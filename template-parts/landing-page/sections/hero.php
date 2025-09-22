@@ -31,10 +31,11 @@
 
             <div class="tw-grid tw-grid-cols-1 tw-space-y-4 lg:tw-space-y-0 lg:tw-flex lg:tw-gap-4 tw-justify-center">
                 <a href="https://megatrader.io" target="_blank"
-                   class="tw-pl-3 tw-pr-4 tw-py-3 tw-no-underline tw-rounded-xl tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700 tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
+                   class="tw-pl-3 tw-pr-4 tw-py-3 tw-rounded-xl tw-border-2 tw-border-neutral-700 tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/try-on-web.svg"
                          width="30"
-                         height="30" alt="web icon"/>
+                         height="30"
+                         alt="web icon"/>
                     <div class="tw-flex tw-flex-col tw-items-start">
                         <span class="tw-text-stone-400 tw-text-sm tw-font-medium tw-leading-tight">Try the</span>
                         <span class="tw-text-white tw-text-xl tw-font-medium tw-leading-8">WEB APP</span>
@@ -42,7 +43,7 @@
                 </a>
 
                 <a href="https://megatrader.io" target="_blank"
-                   class="tw-pl-3 tw-pr-4 tw-py-3 tw-no-underline tw-rounded-xl tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700 tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
+                   class="tw-pl-3 tw-pr-4 tw-py-3 tw-rounded-xl tw-border-2 tw-border-neutral-700 tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/try-on-apple.svg"
                          width="30" height="30" alt="apple icon"/>
                     <div class="tw-flex tw-flex-col tw-items-start">
@@ -52,7 +53,7 @@
                 </a>
 
                 <a href="https://megatrader.io" target="_blank"
-                   class="tw-pl-3 tw-pr-4 tw-py-3 tw-no-underline tw-rounded-xl tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-neutral-700 tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
+                   class="tw-pl-3 tw-pr-4 tw-py-3 tw-rounded-xl tw-border-2 tw-border-neutral-700 tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/try-on-google-play.svg"
                          width="30" height="30" alt="play icon"/>
                     <div class="tw-flex tw-flex-col tw-items-start">

@@ -1501,14 +1501,13 @@ if (!function_exists('render_tabs')) {
 }
 
 if (!function_exists('load_tab_content')) {
-    function load_tab_content($template_path): ?string {
-
+    function load_tab_content($template_path, LayoutType $layoutType = LayoutType::MyAccount): ?string {
         if (!locate_template($template_path . '.php')) {
             return null;
         }
 
         ob_start();
-        get_template_part($template_path);
+        get_template_part($template_path, null, ['layoutType' => $layoutType]);;
         return ob_get_clean();
     }
 }

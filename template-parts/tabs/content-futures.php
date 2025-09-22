@@ -1,4 +1,10 @@
 <?php
+    /** @var LayoutType $layoutType */
+    $layoutType = $args['layoutType'] ?? LayoutType::MyAccount;
+
+    if (!$layoutType instanceof LayoutType) {
+        $layoutType = LayoutType::MyAccount;
+    }
 
     $products_data = get_products_with_attributes();
     $attributes = $products_data['attributes'] ?? [];
@@ -260,25 +266,30 @@
             <?php render_platforms($platforms); ?>
         </div>
     </section>
-    <?php 
+
+    <?php if ($layoutType === LayoutType::MyAccount): ?>
+        <?php
         $plan_includes_list = Label::FUTURES['plan_includes_list'];
         if (!empty($plan_includes_list) && count($plan_includes_list) > 0): ?>
-        <section class="plan-includes">
-            <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
-            <ul class="plan-includes__list row list-reboot">
-            <?php foreach ($plan_includes_list as $item) : ?>
-                <li class="plan-includes-list__item col-6 py-2 d-flex align-items-center gap-2">
-                    <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0" aria-hidden="true"></i>
-                    <span><?= htmlspecialchars($item['text']); ?></span>
-                </li>
-            <?php endforeach; ?>
-            </ul>
+            <section class="plan-includes">
+                <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
+                <ul class="plan-includes__list row list-reboot">
+                    <?php foreach ($plan_includes_list as $item) : ?>
+                        <li class="plan-includes-list__item col-6 py-2 d-flex align-items-center gap-2">
+                            <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0"
+                               aria-hidden="true"></i>
+                            <span><?= htmlspecialchars($item['text']); ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </section>
+        <?php endif; ?>
+        <section class="futures-form__footer d-flex flex-column gap-32 sticky-bottom pb-4 mb-n4 bg-1e1e1e">
+            <hr class="m-0">
+            <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn"
+               href="/checkout/"><?= Label::FUTURES['submit_btn_text'] ?></a>
         </section>
     <?php endif; ?>
-    <section class="futures-form__footer d-flex flex-column gap-32 sticky-bottom pb-4 mb-n4 bg-1e1e1e">
-        <hr class="m-0">
-        <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn" href="/checkout/"><?= Label::FUTURES['submit_btn_text'] ?></a>
-    </section>
 </form>
 
 

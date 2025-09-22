@@ -21,21 +21,8 @@
     border: 0 solid #e5e7eb;
 }
 
-a {
-    color: var(--theme-color2);
-    text-decoration: none;
-    outline: 0;
-    -webkit-transition: all ease 0.4s;
-    transition: all ease 0.4s;
-}
-
 body {
-    font-family: var(--font-roboto), sans-serif;
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAiSURBVHgB7cNBDQAACMSwC07wL3IED/xYkwbonSMVSdJTA27fBj9svgvKAAAAAElFTkSuQmCC) 0% 0%/5px 5px repeat, #131210;
-    color: inherit;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 24px;
     display: flex;
     flex-direction: column;
     overflow-x: hidden
@@ -137,7 +124,7 @@ body {
 }
 
 .btn-yellow-link {
-    @apply btn-base tw-w-full md:tw-w-auto tw-text-base tw-font-medium tw-leading-normal tw-bg-primary hover:tw-bg-yellow-600 tw-text-black focus:tw-ring-primary disabled:tw-bg-stone-600 disabled:tw-text-stone-800;
+    @apply btn-base tw-w-full md:tw-w-auto tw-text-base tw-font-medium tw-leading-normal tw-bg-primary hover:tw-bg-yellow-600 hover:tw-text-black tw-text-black focus:tw-ring-primary disabled:tw-bg-stone-600 disabled:tw-text-stone-800;
 }
 
 .variant-style-primary-filled {
