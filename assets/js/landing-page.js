@@ -182,7 +182,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadChooseYourAccountSize(fn = function () {
     }) {
+        /**
+         * Initialize tab component
+         */
+
         MT_Tabs.init();
+
+        /**
+         * **********************************************************
+         * **********************************************************
+         *
+         * Initialize the first selection to set the link GET PLAN
+         */
+
+        const activeTab = document.querySelector('.mt-tabs__item[aria-selected=true]')
+        if (!activeTab) {
+            return;
+        }
+
+        const panelId = activeTab.getAttribute("aria-controls");
+        const panel = document.getElementById(panelId);
+
+        const activeFormTab = panel.querySelector('form');
+
+        if (!activeFormTab) {
+            return;
+        }
+
+        const changeEvent = new Event("change", {
+            bubbles: true,
+            cancelable: true
+        });
+
+        activeFormTab.dispatchEvent(changeEvent);
+
+        /**
+         * **********************************************************
+         * **********************************************************
+         */
 
         const defaultAccountType = document.querySelector('.btn-account-type.account-active').dataset.value;
         const softSlider = document.getElementById("slider-mgt");

@@ -8,8 +8,6 @@ enum LayoutType: string
 
 class Label
 {
-    public const LayoutType = '';
-
     public const PRODUCT_META = [
         "profit_target" => "Profit Target",
         "max_contracts" => "Max Contracts",

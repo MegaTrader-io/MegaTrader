@@ -194,9 +194,9 @@ $tabs = array_map(function($item) {
                         per month
                     </div>
                 </div>
-                <button class="btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
+                <a href="#" id="proceed-to-checkout-btn" class="btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
                     GET PLAN
-                </button>
+                </a>
             </div>
         </div>
     </div>

@@ -294,6 +294,9 @@
 
 
 <script>
+    const CHECKOUT_URL = '<?= home_url( '/checkout/?add-to-cart=PRODUCT_ID' ) ?>';
+    const REGISTER_URL = '<?= home_url( '/auth/register/?redirect_to=' ) ?>';
+    const isUserLoggedIn = <?= is_user_logged_in() ? 'true' : 'false' ?>;
     const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
 
     function normalizeAttributes(data) {
@@ -318,8 +321,19 @@
         const values = getFormValues(form);
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
         const selectedProductId = selectedProduct.id ?? '';
-        const checkoutUrl = `/checkout/?add-to-cart=${selectedProductId}`;
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
+
+        if (!checkoutBtn) {
+            return;
+        }
+
+        const checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', selectedProductId);
+
+        if (!isUserLoggedIn) {
+            checkoutBtn.href = REGISTER_URL + encodeURIComponent(checkoutUrl);
+            return;
+        }
+
         checkoutBtn.href = checkoutUrl;
     }
 
