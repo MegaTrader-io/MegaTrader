@@ -15,8 +15,8 @@ defined('ABSPATH') || exit;
             <?php render_sidebar(); ?>
         </div>
         <div class="mt-page__main">
-            <div class="mega-navigation mb-3">
-                <?php do_action('woocommerce_account_navigation'); ?>
+            <div class="mb-3">
+                <?php account_navigation_render(); ?>
             </div>
 
             <div class="woocommerce-MyAccount-content">

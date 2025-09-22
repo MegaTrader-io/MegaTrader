@@ -161,8 +161,8 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 
       <?php else: ?>
 
-        <div class="mt-account-navigation mega-navigation">
-          <?php get_template_part('template-parts/account/account-navigation'); ?>
+        <div class="mt-account-navigation">
+          <?php account_navigation_render(); ?>
         </div>
 
         <div class="mt-account-selection">

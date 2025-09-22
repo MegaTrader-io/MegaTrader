@@ -26,8 +26,6 @@ if (preg_match('#my-account/view-subscription/(\d+)#', $current_url_path, $match
 
 do_action('woocommerce_before_account_navigation');
 
-$items = wc_get_account_menu_items();
-
 $user_id = get_current_user_id();
 $custom_url = wc_get_account_endpoint_url('orders');
 
@@ -92,29 +90,6 @@ if ($user_id) {
 	}
 
 }
-
-unset($items['dashboard']);
-unset($items['downloads']);
-unset($items['subscriptions']);
-unset($items['orders']);
-
-$items = ['custom-manage-subscription' => __('Manage Subscription', 'woocommerce')] + $items;
-
-$desired_order = [
-    'custom-manage-subscription',
-    'payment-methods',
-    'edit-address',
-    'edit-account',
-];
-$reordered = [];
-foreach ( $desired_order as $endpoint ) {
-    if ( isset( $items[ $endpoint ] ) ) {
-        $reordered[ $endpoint ] = $items[ $endpoint ];
-        unset( $items[ $endpoint ] );
-    }
-}
-
-$items = $reordered;
 
 $current_endpoint = WC()->query->get_current_endpoint();
 $is_manage_subscription_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'orders'], true);
@@ -305,50 +280,7 @@ if (empty($selected_data_id) && !empty($all_items)) {
 do_action('woocommerce_before_account_navigation');
 
 ?>
-
-<nav class="woocommerce-MyAccount-navigation d-none d-lg-block" aria-label="<?php esc_html_e( 'Account pages', 'woocommerce' ); ?>">
-    <ul class="mega-navigation-list text-capitalize">
-        <?php foreach ( $items as $endpoint => $label ) : ?>
-            <?php if ( 'custom-manage-subscription' === $endpoint ) : ?>
-                <li class="woocommerce-MyAccount-navigation-link woocommerce-MyAccount-navigation-link--custom-manage-subscription<?php echo $is_manage_subscription_active ? ' is-active' : ''; ?>">
-                    <a href="<?php echo esc_url( $custom_url ); ?>" <?php echo $is_manage_subscription_active ? 'aria-current="page"' : ''; ?>>
-                        <?php echo esc_html( $label ); ?>
-                    </a>
-                </li>
-                <?php continue; ?>
-            <?php endif; ?>
-
-            <li class="<?php echo wc_get_account_menu_item_classes( $endpoint ); ?>">
-                <a href="<?php echo esc_url( wc_get_account_endpoint_url( $endpoint ) ); ?>" <?php echo wc_is_current_account_menu_item( $endpoint ) ? 'aria-current="page"' : ''; ?>>
-                    <?php echo esc_html( $label ); ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</nav>
-
-<select
-    id="mega-navigation-select"
-    class="mega-navigation-select d-block d-lg-none mb-4 form-select text-a8a29e"
-    onchange="if (this.value) window.location.href=this.value;"
->
-    <?php foreach ( $items as $endpoint => $label ) : ?>
-        <?php if ( 'custom-manage-subscription' === $endpoint ) : ?>
-            <option value="<?php echo esc_url( $custom_url ); ?>" <?php selected( $is_manage_subscription_active ); ?>>
-                <?php echo esc_html( $label ); ?>
-            </option>
-            <?php continue; ?>
-        <?php endif; ?>
-
-        <option
-            value="<?php echo esc_url( wc_get_account_endpoint_url( $endpoint ) ); ?>"
-            <?php selected( wc_is_current_account_menu_item( $endpoint ) ); ?>
-        >
-            <?php echo esc_html( $label ); ?>
-        </option>
-    <?php endforeach; ?>
-</select>
-
+<?php account_navigation_render(); ?>`
 
 <div class="modal modal-subcription fade" id="changeSubcriptionModal" tabindex="-1"
 	aria-labelledby="changeSubcriptionModalLabel" aria-hidden="true">
