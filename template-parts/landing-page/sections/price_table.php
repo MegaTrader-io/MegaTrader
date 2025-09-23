@@ -151,7 +151,7 @@ $tabs = array_map(function ($item) {
                     </div>
                     <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
                     <div class="metaInfo">
-                        <?php foreach ($defaultMetaInfo as $field => $value) : ?>
+                        <?php $defaultMetaInfo = []; foreach ($defaultMetaInfo as $field => $value) : ?>
                             <?php
                             $label = Label::PRODUCT_META[$field];
                             $value = $metaInfoList[$field];
@@ -159,7 +159,68 @@ $tabs = array_map(function ($item) {
                             echo render_template_meta_info(value: $value, label: $label);
                             ?>
                         <?php endforeach; ?>
+
+                        <div class="mt-meta-grid" style="padding: 16px;grid-template-columns: repeat(1, minmax(0, 1fr));">
+                            <div class="mt-meta-item" data-meta-key="profit_target">
+                                <i class="mt-icon mt-icon-white mt-icon_profit"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Profit Target</span>
+                                    <span class="mt-meta-value">$1,500</span>
+                                </div>
+                            </div>
+                            <div class="mt-meta-item" data-meta-key="max_contracts">
+                                <i class="mt-icon mt-icon-white mt-icon_max-contract"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Max Contracts</span>
+                                    <span class="mt-meta-value">1 Mini (10 Micros)</span>
+                                </div>
+                            </div>
+                            <div class="mt-meta-item" data-meta-key="daily_loss_limit">
+                                <i class="mt-icon mt-icon-white mt-icon_daily-loss-limit"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Daily Loss Limit</span>
+                                    <span class="mt-meta-value">None</span>
+                                </div>
+                            </div>
+                            <div class="mt-meta-item" data-meta-key="trailing_max_drawdown">
+                                <i class="mt-icon mt-icon-white mt-icon_max-drawdown"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Trailing Max Drawdown</span>
+                                    <span class="mt-meta-value" data-base="$1,000">$1,000</span>
+                                </div>
+                            </div>
+                            <div class="mt-meta-item" data-meta-key="drawdown_mode">
+                                <i class="mt-icon mt-icon-white mt-icon_drawdown-mode"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Drawdown Mode</span>
+                                    <span class="mt-meta-value">Intraday</span>
+                                </div>
+                            </div>
+                            <div class="mt-meta-item" data-meta-key="min_trading_days">
+                                <i class="mt-icon mt-icon-white mt-icon_calendar"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Min Trading Days Pass</span>
+                                    <span class="mt-meta-value">1</span>
+                                </div>
+                            </div>
+                            <div class="mt-meta-item" data-meta-key="reset_fee">
+                                <i class="mt-icon mt-icon-white mt-icon_reset-fee"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Reset Fee</span>
+                                    <span class="mt-meta-value">$40</span>
+                                </div>
+                            </div>
+                            <div class="mt-meta-item" data-meta-key="activation_fee">
+                                <i class="mt-icon mt-icon-white mt-icon_lightning"></i>
+                                <div class="mt-meta-text">
+                                    <span class="mt-meta-label">Activation Fee</span>
+                                    <span class="mt-meta-value">$125</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+
                 </div>
             </div>
             <div class="price-information tw-w-full lg:w-[360px] lg:tw-justify-end tw-bg-mgt-dark tw-rounded-lg tw-p-4 tw-flex tw-flex-col tw-gap-4">
