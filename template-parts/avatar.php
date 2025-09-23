@@ -13,14 +13,14 @@ $initials = $args['initials'] ?? '';
 
 ?>
 
-<?php if ($has_real_avatar): ?>
-    <div class="avatar-initials" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
+<?php if ($has_real_avatar): ?>`
+    <div class="avatar-initials flex-shrink-0" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
         <img src="<?php echo esc_url($avatar_url); ?>"
              alt="<?php echo esc_attr($display_name); ?>"/>
     </div>
 <?php else: ?>
 
-    <div class="avatar-initials" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
+    <div class="avatar-initials flex-shrink-0" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
         <?php echo esc_html($initials); ?>
     </div>
 <?php endif; ?>

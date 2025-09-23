@@ -78,7 +78,7 @@ $logout_url = wp_logout_url();
             ]); ?>
         </a>
     <?php else: ?>
-        <div class="align-items-center d-flex flex-fill gap-3">
+        <div class="align-items-center d-flex flex-fill gap-3 overflow-hidden">
             <?php get_template_part('template-parts/avatar', null, [
                     'avatar_url' => $avatar_url,
                     'avatar_size' => $avatar_size,
