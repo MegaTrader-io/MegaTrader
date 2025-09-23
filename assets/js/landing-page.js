@@ -484,11 +484,6 @@ document.addEventListener('DOMContentLoaded', function () {
     void loadChooseYourAccountSize(
         (params) => {
             const {product: productionSelected, values} = params;
-            console.info('productionSelected => ', productionSelected, values)
-
-            function formatNumber(value) {
-                return '$' + parseInt(value.toString().replace('$', ''));
-            }
 
             const defaultMetaInfo = {}
             const metaInfo = productionSelected['meta-info'];
@@ -532,6 +527,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const frequencyPanel = document.querySelector(`.frequency-plan`);
 
             const coupon = product?.coupon;
+
+            document.querySelector('.plan-summary__name').innerText = values['account-type'].replace('-', ' ');
+            document.querySelector('.plan-summary__size').innerText = values['account-size'].toUpperCase();
 
             if (coupon && coupon.valid) {
                 badgeCoupon.style.display = 'block';

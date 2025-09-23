@@ -21,6 +21,7 @@ foreach ($attributes as $attr) {
 }
 
 $defaultSlug = $account_types[0]['slug'];
+$defaultPlanName = $account_types[0]['name'];
 
 $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
 
@@ -143,8 +144,15 @@ $tabs = array_map(function ($item) {
             <?php render_tabs($tabs); ?>
         </div>
         <div class="tw-space-y-8 tw-flex tw-flex-col">
-            <!--  <div class="tw-flex-1"> -->
             <div>
+                <div class="plan-summary tw-px-4 tw-h-[104px] tw-flex-col tw-justify-center tw-flex tw-content-center tw-text-white tw-text-2xl tw-font-medium tw-uppercase tw-leading-7">
+                    <div class="plan-summary__name">
+                        <?= $defaultPlanName ?>
+                    </div>
+                    <div class="plan-summary__size">
+                        <?= $size ?>
+                    </div>
+                </div>
                 <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">
                     <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-pt-4">
                         Plan Summary
