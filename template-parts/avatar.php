@@ -25,17 +25,17 @@ $initials = $args['initials'] ?? '';
     </div>
 <?php endif; ?>
 <?php if (!$hide_user_information): ?>
-<div class="avatar-area__user-information flex-fill d-flex flex-column">
-    <div class="text-white text-16px fw-medium">
+<div class="avatar-area__user-information flex-fill d-flex flex-column" style="min-width: 0;">
+    <div class="text-white text-16px fw-medium text-truncate">
         <?php echo esc_html($display_name); ?>
     </div>
 
     <?php if ($billing_country): ?>
-        <div class="user-country text-a8a29e text-16px fw-medium">
+        <div class="user-country text-a8a29e text-16px fw-medium text-truncate">
             <?php echo esc_html($billing_country); ?>
         </div>
     <?php endif; ?>
-    <div class="text-a8a29e text-14px-line-20px fw-medium">
+    <div class="text-a8a29e text-14px-line-20px fw-medium text-truncate">
         <?php echo esc_html($user_email); ?>
     </div>
 </div>

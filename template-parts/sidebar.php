@@ -72,6 +72,10 @@ $links = $args['menu_items'] ?? [];
                                 <i class="mt-icon mt-icon-sm mt-icon_help"></i>
                                 <span>HELP CENTER<span>
                             </a>
+                            <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
+                                <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
+                                <span>LOGOUT<span>
+                            </a>
                         </div>
                     </div>
 
@@ -98,16 +102,6 @@ $links = $args['menu_items'] ?? [];
                     </div>
                 </div>
 
-                <div class="mt-sidebar__menu__group">
-                    <div class="mt-sidebar__menu__group__options">
-                        <div class="mt-sidebar__menu__links d-flex flex-column gap-2 align-items-start">
-                            <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
-                                <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
-                                <span>LOGOUT<span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
