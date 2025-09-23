@@ -581,6 +581,19 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   max-width: 600px;
 }
 
+@media (max-width: 575.98px) {
+  .mobile-max-width-100 {
+    max-width: fit-content;
+
+  }
+}
+@media (max-width: 405.98px) {
+  .mobile-max-width-100 {
+    max-width: 100px;
+
+  }
+}
+
 /* ----- CUSTOM HEIGHT ------ */
 
 .h-0 {
@@ -3376,32 +3389,35 @@ a.pagination-number {
 }
 
 .mt-sidebar__menu__link {
-    padding: 12px 0;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    color: white;
+  padding: 12px 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: white;
 }
+
 .mt-sidebar__menu__link:hover {
-    color: var(--Text-Action-Primary-Text, #FFB34A);
+  color: var(--Text-Action-Primary-Text, #FFB34A);
 }
+
 .mt-sidebar__menu__link.active {
-    color: var(--Text-Action-Primary-Text, #FFB34A);
+  color: var(--Text-Action-Primary-Text, #FFB34A);
 }
 
 @media (max-width: 1199.98px) {
-    .mt-sidebar__menu {
-        display: none;
-    }
-    .mt-my-profile__notification {
-        display: none;
-    }
+  .mt-sidebar__menu {
+    display: none;
+  }
+
+  .mt-my-profile__notification {
+    display: none;
+  }
 }
 
 @media (min-width: 1200px) {
-    .my-acount-logout {
-        display: none;
-    }
+  .my-acount-logout {
+    display: none;
+  }
 }
 
 /*--------- Modal Thanksyou -------*/
@@ -4224,5 +4240,9 @@ textarea.mtfb-note {
   border-radius: var(--Border-Radius-lg, 12px) !important;
   border: var(--Border-Width-sm, 1px) solid var(--Colors-Gray-700, #404040) !important;
   background: rgba(30, 30, 30, 0.70) !important;
- }
-.mtfb-save[disabled]{opacity:.6;cursor:not-allowed}
+}
+
+.mtfb-save[disabled] {
+  opacity: .6;
+  cursor: not-allowed
+}
