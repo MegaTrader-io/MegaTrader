@@ -14,7 +14,8 @@ $links = $args['menu_items'] ?? [];
 
 ?>
 
-<aside class="mt-sidebar w-100 d-flex gap-32 flex-column">
+<aside class="mt-sidebar">
+<div class="mt-sidebar__wrapper mt-card w-100 d-flex gap-32 flex-column">
     <?php get_template_part('template-parts/my-profile'); ?>
 
     <div class="traders-area">
@@ -119,4 +120,5 @@ $links = $args['menu_items'] ?? [];
             </div>
         </div>
     </div>
+</div>
 </aside>
