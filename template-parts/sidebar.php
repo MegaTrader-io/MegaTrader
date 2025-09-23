@@ -15,7 +15,7 @@ $links = $args['menu_items'] ?? [];
 ?>
 
 <aside class="mt-sidebar">
-    <div class="mt-sidebar__wrapper mt-card d-flex gap-32 flex-column overflow-y-auto">
+    <div class="mt-sidebar__wrapper mt-card d-flex gap-32 flex-column">
         <div class="mt-sidebar__logo">
             <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
@@ -45,7 +45,7 @@ $links = $args['menu_items'] ?? [];
 
         </div>
 
-        <div class="mt-sidebar__menu flex-fill">
+        <div class="mt-sidebar__menu flex-fill overflow-y-auto">
             <div class="mt-sidebar__wrapper d-flex flex-column gap-32">
                 <div class="mt-sidebar__menu__group">
                     <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
