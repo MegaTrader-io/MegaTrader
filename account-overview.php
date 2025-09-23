@@ -44,22 +44,23 @@ if (is_user_logged_in()) {
       $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
       $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
 
-      // === Agreement status (reusa $mt_user_email_api, SIEMPRE codificado) ===
+      // === Agreement status (usa email codificado) ===
       $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
         ? mt_get_agreement_status_by_email($mt_user_email_api, 0) // sin caché
         : null;
 
-      // URL con fallback de claves: agreementURL | agreementUrl | agreement_url
+      // URL (acepta claves alternativas)
       $__mt_agreement_url = '';
       if (is_array($__mt_agreement)) {
-        if (!empty($__mt_agreement['agreementURL']))
-          $__mt_agreement_url = (string) $__mt_agreement['agreementURL'];
-        elseif (!empty($__mt_agreement['agreementUrl']))
-          $__mt_agreement_url = (string) $__mt_agreement['agreementUrl'];
-        elseif (!empty($__mt_agreement['agreement_url']))
-          $__mt_agreement_url = (string) $__mt_agreement['agreement_url'];
+        foreach (['agreementURL', 'agreementUrl', 'agreement_url', 'url'] as $k) {
+          if (!empty($__mt_agreement[$k]) && is_string($__mt_agreement[$k])) {
+            $__mt_agreement_url = (string) $__mt_agreement[$k];
+            break;
+          }
+        }
       }
 
+      // Mostrar modal si no está firmado
       $__mt_agreement_show = (is_array($__mt_agreement)
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
@@ -350,6 +351,15 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
   </div>
 </div>
 
+<?php if (current_user_can('manage_options') || isset($_GET['dbg_agreement'])): ?>
+  <div class="mt-debug mt-debug-agreement" style="background:#111;color:#0f0;padding:12px;margin-top:24px;border:1px dashed #444;">
+    <strong>Agreement (debug)</strong>
+    <div>show=<?php echo esc_html($__mt_agreement_show); ?> | url=<?php echo esc_html($__mt_agreement_url ?: ''); ?></div>
+    <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;">
+<?php echo esc_html( wp_json_encode($__mt_agreement, JSON_PRETTY_PRINT) ); ?>
+    </pre>
+  </div>
+<?php endif; ?>
 
 
 
