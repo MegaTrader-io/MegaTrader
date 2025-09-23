@@ -149,9 +149,6 @@ $tabs = array_map(function ($item) {
                     <div class="plan-summary__name">
                         <?= $defaultPlanName ?>
                     </div>
-                    <div class="plan-summary__size">
-                        <?= $size ?>
-                    </div>
                 </div>
                 <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">
                     <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-pt-4">
