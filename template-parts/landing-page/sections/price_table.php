@@ -34,6 +34,7 @@ $product = reset($filtered) ?: null;
 
 $planList = [];
 $defaultMetaInfo = [];
+$metaInfoList = [];
 $has_coupon_global = null;
 foreach ($account_sizes as $size) {
     $parent_id = $product['id'];
@@ -79,64 +80,38 @@ foreach ($account_sizes as $size) {
 
 $addons = get_saved_challenge_addons();
 
-$meta_info_list = [
-        [
-                'key' => 'profit_target',
-                'label' => 'Profit Target',
-                'value' => '$3,000',
-        ],
-        [
-                'key' => 'max_contracts',
-                'label' => 'Max Contracts',
-                'value' => '5 Minis (50 Micros)',
-        ],
-        [
-                'key' => 'daily_loss_limit_soft_breach',
-                'label' => 'Daily Loss Limit (Soft Breach)',
-                'value' => 'None',
-        ],
-        [
-                'key' => 'trailing_max_drawdown',
-                'label' => 'Trailing Max Drawdown',
-                'value' => 'None',
-        ],
-        [
-                'key' => 'drawdown_mode',
-                'label' => 'Drawdown Mode',
-                'value' => 'None',
-        ],
-        [
-                'key' => 'min_trading_days',
-                'label' => 'Min Trading Days to Pass',
-                'value' => 'None',
-        ],
-        [
-                'key' => 'reset_fee',
-                'label' => 'Reset Fee',
-                'value' => 'None',
-        ],
-        [
-                'key' => 'activation_fee',
-                'label' => 'Activation Fee',
-                'value' => 'None',
-        ]
-];
+function render_template_meta_info($value = '', $label = '', $classes = '')
+{
+    $checkIconUrl = get_template_directory_uri() . '/assets/img/landing-page/check.svg';
+
+    return <<<HTML
+<div class="tw-w-full tw-p-4 tw-border-b last:tw-border-b-0 tw-border-stone-800 group-[.mark]:tw-border-[#f1a035] tw-inline-flex tw-justify-start tw-items-center tw-gap-2 {$classes}">
+    <div class="tw-w-6 tw-h-6 tw-relative tw-text-[#A8A29E] group-[.mark]:tw-text-[#131210]">
+        <img src="{$checkIconUrl}"
+             width="24" height="24">
+    </div>
+    <div class="tw-flex-1 tw-justify-start text-stone-400 group-[.mark]:text-[#131210] tw-text-base tw-font-medium tw-leading-normal">
+        <span class="mega-info-row__label">{$label}</span>: <span class="mega-info-row__value">{$value}</span>
+    </div>
+</div>
+HTML;
+}
 
 $best_products = mt_most_popular_products();
 
-$tabs = array_map(function($item) {
+$tabs = array_map(function ($item) {
     $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
 
     $is_disabled = isset($parsed['config']['status']) && $parsed['config']['status'] === 'disabled';
 
     return [
-            'id'        => $item['slug'] . $item['id'] . '_tab',
-            'panel_id'  => $item['slug'] . $item['id'] . '_panel',
-            'icon'      => $item['thumbnail_url'],
-            'title'     => $item['name'],
-            'subtitle'  => $item['description'],
-            'disabled'  => $is_disabled,
-            'content'   => ! $is_disabled ? load_tab_content(
+            'id' => $item['slug'] . $item['id'] . '_tab',
+            'panel_id' => $item['slug'] . $item['id'] . '_panel',
+            'icon' => $item['thumbnail_url'],
+            'title' => $item['name'],
+            'subtitle' => $item['description'],
+            'disabled' => $is_disabled,
+            'content' => !$is_disabled ? load_tab_content(
                     template_path: 'template-parts/tabs/content-' . $item['slug'],
                     layoutType: LayoutType::LandingPage
             ) : null,
@@ -151,7 +126,8 @@ $tabs = array_map(function($item) {
     </div>
 
     <div class="tw-mx-auto tw-pb-8 tw-max-w-[760px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium text-stone-400 md:tw-max-w-[860px]">
-        Choose from tw-flexible account sizes and plans tailored to your trading style—whether you're growing your skills
+        Choose from tw-flexible account sizes and plans tailored to your trading style—whether you're growing your
+        skills
         or ready to trade real capital with confidence
     </div>
 
@@ -162,22 +138,18 @@ $tabs = array_map(function($item) {
         <div class="tw-space-y-8 tw-flex tw-flex-col">
             <div class="tw-flex-1">
                 <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">
-                    <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-pt-4">Plan Summary</div>
+                    <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-pt-4">
+                        Plan Summary
+                    </div>
+                    <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
                     <div class="metaInfo">
-                        <?php foreach ($meta_info_list as $index => $meta_info) : ?>
+                        <?php foreach ($defaultMetaInfo as $field => $value) : ?>
                             <?php
-                            $isLastLoop = $meta_info === end($meta_info_list)
+                                $label = Label::PRODUCT_META[$field];
+                                $value = $metaInfoList[$field];
+
+                                echo render_template_meta_info(value: $value, label: $label);
                             ?>
-                            <div class="tw-w-full tw-p-4 tw-border-b last:tw-border-b-0 tw-border-stone-800 group-[.mark]:tw-border-[#f1a035] tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
-                                <div class="tw-w-6 tw-h-6 tw-relative tw-text-[#A8A29E] group-[.mark]:tw-text-[#131210]">
-                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/check.svg"
-                                         width="24" height="24">
-                                </div>
-                                <div class="<?= $meta_info['key'] ?> tw-flex-1 tw-justify-start text-stone-400 group-[.mark]:text-[#131210] tw-text-base tw-font-medium tw-leading-normal">
-                                    <?= $meta_info['label'] ?>: <span
-                                            class="metaValue"><?= $meta_info['value'] ?></span>
-                                </div>
-                            </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -186,11 +158,13 @@ $tabs = array_map(function($item) {
                 <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8">Plan Total</div>
 
                 <div class="tw-inline-flex tw-justify-start  tw-gap-2 tw-items-center">
-                    <div class="tw-text-right tw-justify-start tw-text-[#ffb34a] tw-tw-text-xl tw-font-medium tw-leading-loose">$</div>
-                    <div class="tw-text-right tw-justify-start tw-text-[#ffb34a] tw-text-[32px] tw-font-medium tw-uppercase tw-leading-10">
+                    <div class="symbol-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-tw-text-xl tw-font-medium tw-leading-loose">
+                        $
+                    </div>
+                    <div class="price-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-text-[32px] tw-font-medium tw-uppercase tw-leading-10">
                         1,423
                     </div>
-                    <div class="w-[76px] tw-text-right tw-justify-center tw-text-[#fff7e6] tw-text-base tw-font-medium tw-leading-normal">
+                    <div class="frequency-plan w-[76px] tw-text-right tw-justify-center tw-text-[#fff7e6] tw-text-base tw-font-medium tw-leading-normal">
                         per month
                     </div>
                 </div>

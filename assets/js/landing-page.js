@@ -185,8 +185,23 @@ document.addEventListener('DOMContentLoaded', function () {
         /**
          * Initialize tab component
          */
-
         MT_Tabs.init();
+
+        document.querySelectorAll(`${MT_Tabs.selector} a`).forEach(itemTab => {
+            const panelId = itemTab.getAttribute("aria-controls");
+            const panel = document.getElementById(panelId);
+            if (!panel) {
+                return;
+            }
+
+            form.addEventListener("product:selected", (e) => {
+                try {
+                    fn(e.detail);
+                } catch (err) {
+                    console.error("unable to listen product:selected:", err);
+                }
+            });
+        })
 
         /**
          * **********************************************************
@@ -220,113 +235,6 @@ document.addEventListener('DOMContentLoaded', function () {
          * **********************************************************
          * **********************************************************
          */
-
-        const defaultAccountType = document.querySelector('.btn-account-type.account-active').dataset.value;
-        const softSlider = document.getElementById("slider-mgt");
-        const arbitraryValuesForSlider = softSlider.dataset.sizes ? softSlider.dataset.sizes.split(',') : [1, 2, 3, 4];
-        const defaultSelection = arbitraryValuesForSlider.at(2);
-        let addons = {}
-
-        document.querySelectorAll('.addons-item input[type=checkbox]').forEach(element => {
-            addons[element.name] = element.checked;
-        })
-
-        let internalOptions = {
-            accountType: defaultAccountType,
-            accountSize: defaultSelection,
-            addons: addons
-        };
-
-        /** Handler Account Type **/
-        const buttons = [];
-        document.querySelectorAll('.btn-account-type').forEach(btn => {
-            buttons.push(btn);
-            btn.addEventListener('click', function (e) {
-                buttons.forEach(btn => {
-                    btn.classList.remove('account-active');
-                })
-
-                e.currentTarget.classList.add('account-active');
-                internalOptions.accountType = e.currentTarget.dataset.value;
-                internalOptions.defaultPlatform = e.currentTarget.dataset.defaultPlatform;
-                internalOptions.defaultMarketType = e.currentTarget.dataset.defaultMarketType;
-                fn(internalOptions);
-            })
-        })
-
-        /** Handle Account Size **/
-        const format = {
-            to: function (value) {
-                return arbitraryValuesForSlider[Math.round(value)];
-            },
-            from: function (value) {
-                return arbitraryValuesForSlider.indexOf(value);
-            }
-        };
-
-        noUiSlider.create(softSlider, {
-            start: [defaultSelection],
-            range: {min: 0, max: arbitraryValuesForSlider.length - 1},
-            step: 1,
-            connect: [true, false],
-            tooltips: false,
-            format,
-            pips: {
-                mode: 'steps',
-                format,
-                density: 64,
-            },
-        });
-
-        softSlider.querySelectorAll('.noUi-marker').forEach((el) => {
-            el.style.cursor = 'pointer';
-            el.addEventListener('click', (e) => {
-                const elementMarkerValue = e.currentTarget.nextElementSibling
-                const val = elementMarkerValue.getAttribute('data-value');
-                softSlider.noUiSlider.set(arbitraryValuesForSlider[val]);
-            });
-        });
-
-        softSlider.querySelectorAll('.noUi-value').forEach((el) => {
-            el.style.cursor = 'pointer';
-            el.addEventListener('click', () => {
-                const val = el.getAttribute('data-value');
-                softSlider.noUiSlider.set(arbitraryValuesForSlider[val]);
-            });
-        });
-
-        softSlider.noUiSlider
-            .on("update", function (valuesIndex, handle) {
-                // document.querySelector('.noUi-marker-selected')?.classList.remove('noUi-marker-selected')
-                document.querySelectorAll('.noUi-value').forEach((element) => {
-                    element.classList.remove('active-pip');
-                });
-
-                const value = valuesIndex.at(0)
-                const index = arbitraryValuesForSlider.indexOf(value)
-
-                if (!isNaN(index) && index !== undefined) {
-                    const element = document.querySelector('.noUi-value[data-value="' + index + '"]');
-                    if (element) {
-                        element.classList.add('active-pip');
-                        // const elementMarkerValue = element.previousElementSibling;
-                        // elementMarkerValue.classList.add('noUi-marker-selected')
-                        internalOptions.accountSize = arbitraryValuesForSlider[index];
-                        const selectedPlan = document.querySelector('.account-active');
-                        internalOptions.defaultPlatform = selectedPlan.dataset.defaultPlatform;
-                        internalOptions.defaultMarketType = selectedPlan.dataset.defaultMarketType;
-                        fn(internalOptions);
-                    }
-                }
-            });
-
-        /** Handle Addons **/
-        document.querySelectorAll('.addon-option').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                internalOptions.addons[e.currentTarget.name] = e.currentTarget.checked;
-                fn(internalOptions);
-            })
-        })
     }
 
     function loadYourPathToProfitableTabs() {
@@ -575,22 +483,18 @@ document.addEventListener('DOMContentLoaded', function () {
     void loadMarkerCarousel();
     void loadChooseYourAccountSize(
         (params) => {
-            const {defaultPlatform, defaultMarketType} = params;
-            const productionSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
-            const productPlatformDetail = productionSelected[params.accountType];
+            const {product: productionSelected, values} = params;
+            console.info('productionSelected => ', productionSelected, values)
 
             function formatNumber(value) {
                 return '$' + parseInt(value.toString().replace('$', ''));
             }
 
             const defaultMetaInfo = {}
-            for (const priceSize in productPlatformDetail) {
-                const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
-                const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
-                for (const metaInfoKey in metaInfo) {
-                    if (metaInfo[metaInfoKey]) {
-                        defaultMetaInfo[metaInfoKey] = true;
-                    }
+            const metaInfo = productionSelected['meta-info'];
+            for (const metaInfoKey in metaInfo) {
+                if (metaInfo[metaInfoKey]) {
+                    defaultMetaInfo[metaInfoKey] = true;
                 }
             }
 
@@ -602,97 +506,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
 
-            const mostPopularElement = document.querySelector('.price-table__plan.price-table__plan--most-popular');
+            const metaInfoElement = document.querySelector('.metaInfo');
 
-            if (mostPopularElement) {
-                mostPopularElement.classList.remove('price-table__plan--most-popular');
-                mostPopularElement.classList.add('price-table__plan--regular-plan');
+            metaInfoElement.innerHTML = '';
 
-                const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
-                if (btnGetPlan) {
-                    btnGetPlan.classList.remove('mega-btn-primary-md');
-                    btnGetPlan.classList.add('mega-btn-default-md');
-                }
-            }
+            const template = document.querySelector(`.template-metaInfo`);
 
-            for (const priceSize in productPlatformDetail) {
-                const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
-                const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
-                const productId = attributes.find(item => item['id'])['id'];
-                const product = MG_GLOBAL?.productsWithBestCoupons?.find(p => p.id === Number(productId));
-                const coupon = product?.coupon;
-                const is_most_popular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
+            metaInfoList.forEach(metaInfo => {
+                const row = template.cloneNode(true);
+                row.classList.remove('template-metaInfo', 'tw-hidden');
+                const labelHTML = row.querySelector('.mega-info-row__label');
+                labelHTML.dataset.key = metaInfo.key;
+                labelHTML.innerText = metaInfo.label;
 
-                if (is_most_popular) {
-                    const mostPopularElement = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
-                    if (mostPopularElement) {
-                        mostPopularElement.classList.add('price-table__plan--most-popular');
-                        mostPopularElement.classList.remove('price-table__plan--regular-plan');
+                row.querySelector('.mega-info-row__value').innerText = productionSelected['meta-info'][metaInfo.key];
+                metaInfoElement.appendChild(row)
+            });
 
-                        const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
-                        if (btnGetPlan) {
-                            btnGetPlan.classList.add('mega-btn-primary-md');
-                            btnGetPlan.classList.remove('mega-btn-default-md');
-                        }
-                    }
-                }
-
-                let price = formatNumber(priceObject);
-                const priceInformation = document.querySelector(`.price-information[data-price="${priceSize}"]`);
-                const pricePanel = document.querySelector(`.price-plan[data-price="${priceSize}"]`);
-                const frequencyPanel = document.querySelector(`.frequency-plan[data-price="${priceSize}"]`);
-                if (pricePanel) {
-                    const badgeCoupon = document.querySelector(`.badge-coupon[data-price="${priceSize}"]`);
-                    const couponBeforePrice = document.querySelector(`.coupon-before-price[data-price="${priceSize}"]`);
-
-                    if (coupon && coupon.valid) {
-                        badgeCoupon.style.display = 'block';
-                        couponBeforePrice.style.display = 'block';
-                        priceInformation.classList.add('has-coupon');
-
-                        couponBeforePrice.querySelector('span').innerText = price;
-                        pricePanel.innerText = formatNumber(coupon.final_total);
-                        badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
-                        badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon;
-                    } else {
-                        badgeCoupon.style.display = 'none';
-                        couponBeforePrice.style.display = 'none';
-                        priceInformation.classList.remove('has-coupon', 'tw-min-h-[140px]', 'tw-items-center');
-
-                        pricePanel.innerText = price;
-                    }
-                }
-
-                if (frequencyPanel) {
-                    frequencyPanel.innerText = ` ${params.accountType !== 'funded-plan' ? 'per month' : 'one time fee'}`;
-                }
-
-                const metaInfoObject = attributes.find(item => item['meta-info']);
-                if (metaInfoObject) {
-                    const metaInfoContext = metaInfoObject['meta-info'];
-                    const metaInfoElement = document.querySelector(`.metaInfo[data-price="${priceSize}"]`);
-                    const template = document.querySelector(`.template-metaInfo`);
-
-                    // metaInfoElement.innerHTML = '';
-
-                    metaInfoList.forEach(metaInfo => {
-                        // const row = template.cloneNode(true);
-                        // row.classList.remove('template-metaInfo', 'tw-hidden');
-                        // const labelHTML = row.querySelector('.mega-info-row__label');
-                        // labelHTML.dataset.key = metaInfo.key;
-                        // labelHTML.innerText = metaInfo.label;
-                        // row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
-                        // metaInfoElement.appendChild(row)
-                    })
-                }
-            }
-
-            if (document.querySelector('.price-information.has-coupon')) {
-                document.querySelectorAll('.price-information:not(.has-coupon)').forEach(element => {
-                    element.classList.add('tw-min-h-[140px]', 'tw-items-center');
-                })
-            }
-
+            const pricePanel = document.querySelector(`.price-plan`);
+            const frequencyPanel = document.querySelector(`.frequency-plan`);
+            pricePanel.innerText = productionSelected['price-monthly'].replace('$', '');
+            frequencyPanel.innerText = `${values['account-type'] !== 'funded-plan' ? 'per month' : 'one time fee'}`;
         }
     );
 
