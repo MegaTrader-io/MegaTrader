@@ -20,8 +20,9 @@ foreach ($attributes as $attr) {
     }
 }
 
+$size = $account_sizes[0];
 $defaultSlug = $account_types[0]['slug'];
-$defaultPlanName = $account_types[0]['name'];
+$defaultPlanName = $account_types[0]['name'] . ' ' . $size;
 
 $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
 
@@ -30,7 +31,6 @@ $filtered = array_filter($products_data['products'], function ($product) use ($d
 });
 
 $product = reset($filtered) ?: null;
-$size = $account_sizes[0];
 
 $productLevel = $product[$defaultSlug][$size][$defaultSlug];
 $defaultPlatform = array_key_first($productLevel);
@@ -156,7 +156,8 @@ $tabs = array_map(function ($item) {
                     </div>
                     <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
                     <div class="metaInfo">
-                        <?php $defaultMetaInfo = []; foreach ($defaultMetaInfo as $field => $value) : ?>
+                        <?php $defaultMetaInfo = [];
+                        foreach ($defaultMetaInfo as $field => $value) : ?>
                             <?php
                             $label = Label::PRODUCT_META[$field];
                             $value = $metaInfoList[$field];
