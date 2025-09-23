@@ -139,7 +139,7 @@ $tabs = array_map(function ($item) {
     </div>
 
     <div class="tw-space-y-8 lg:tw-space-y-0 lg:tw-flex lg:tw-gap-8">
-        <div class="tw-flex tw-flex-col tw-h-full tw-space-y-8 lg:tw-gap-y-6 lg:tw-space-y-12 w-full">
+        <div class="mt-tabs-no-border tw-flex tw-flex-col tw-h-full tw-space-y-8 lg:tw-gap-y-6 lg:tw-space-y-12 w-full">
             <?php render_tabs($tabs); ?>
         </div>
         <div class="tw-space-y-8 tw-flex tw-flex-col">
