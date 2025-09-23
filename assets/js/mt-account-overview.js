@@ -844,7 +844,8 @@ document.addEventListener("mt:accountSelected", (e) => {
   // --- Límite de nota ---
   const NOTE_MAX = 58;
 
-  if (panel && !panel.hasAttribute("tabindex")) panel.setAttribute("tabindex", "-1");
+  if (panel && !panel.hasAttribute("tabindex"))
+    panel.setAttribute("tabindex", "-1");
 
   let current = { accountId: 0, tradeDate: "", anchor: null, rowSel: "" };
   let isOpen = false;
@@ -873,8 +874,10 @@ document.addEventListener("mt:accountSelected", (e) => {
     pop.style.visibility = "hidden";
 
     const rect = anchorEl.getBoundingClientRect();
-    const pw = panel.offsetWidth, ph = panel.offsetHeight;
-    const gap = 12, margin = 8;
+    const pw = panel.offsetWidth,
+      ph = panel.offsetHeight;
+    const gap = 12,
+      margin = 8;
 
     let top = rect.bottom + gap;
     let side = "top";
@@ -900,7 +903,8 @@ document.addEventListener("mt:accountSelected", (e) => {
   function applyNotePlaceholderPolicy(preset) {
     const noteEl = $("#mtfb-note", panel);
     if (!noteEl) return;
-    if (!noteEl.dataset.ph) noteEl.dataset.ph = noteEl.getAttribute("placeholder") || "";
+    if (!noteEl.dataset.ph)
+      noteEl.dataset.ph = noteEl.getAttribute("placeholder") || "";
     if (preset && (preset.note == null || preset.note === "")) {
       noteEl.setAttribute("placeholder", "");
     } else {
@@ -911,7 +915,8 @@ document.addEventListener("mt:accountSelected", (e) => {
   function resetMoodUI(preset) {
     $$(".mtfb-mood [data-mood]", panel).forEach((btn) => {
       btn.classList.remove("is-active", "mt-icon-primary");
-      if (!btn.classList.contains("mt-icon-base")) btn.classList.add("mt-icon-base");
+      if (!btn.classList.contains("mt-icon-base"))
+        btn.classList.add("mt-icon-base");
     });
     $$('input[name="mtfb-plan"]', panel).forEach((r) => {
       r.checked = false;
@@ -941,7 +946,12 @@ document.addEventListener("mt:accountSelected", (e) => {
   }
 
   function openPopover(anchorEl, { accountId, tradeDate, preset } = {}) {
-    current = { accountId, tradeDate, anchor: anchorEl, rowSel: `#dj-row-${tradeDate}` };
+    current = {
+      accountId,
+      tradeDate,
+      anchor: anchorEl,
+      rowSel: `#dj-row-${tradeDate}`,
+    };
     resetMoodUI(preset);
     const isViewing = !!preset;
     setReadOnly(isViewing);
@@ -985,7 +995,9 @@ document.addEventListener("mt:accountSelected", (e) => {
   // Cerrar por click fuera
   document.addEventListener("click", (e) => {
     if (!isOpen) return;
-    const inside = e.target.closest(".mt-modal__panel") || e.target.closest(".mt-dj-visibility");
+    const inside =
+      e.target.closest(".mt-modal__panel") ||
+      e.target.closest(".mt-dj-visibility");
     if (!inside) closePopover();
   });
   btnClose?.addEventListener("click", (e) => {
@@ -1003,9 +1015,13 @@ document.addEventListener("mt:accountSelected", (e) => {
 
   // Reposicionar en scroll/resize
   ["scroll", "resize"].forEach((ev) => {
-    window.addEventListener(ev, () => {
-      if (isOpen && current.anchor) positionTo(current.anchor);
-    }, { passive: true });
+    window.addEventListener(
+      ev,
+      () => {
+        if (isOpen && current.anchor) positionTo(current.anchor);
+      },
+      { passive: true }
+    );
   });
 
   // Escape
@@ -1017,10 +1033,15 @@ document.addEventListener("mt:accountSelected", (e) => {
   panel.addEventListener("click", (e) => {
     const b = e.target.closest(".mtfb-mood [data-mood]");
     if (b) {
-      if (b.disabled) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+      if (b.disabled) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return;
+      }
       $$(".mtfb-mood [data-mood]", panel).forEach((x) => {
         x.classList.remove("is-active", "mt-icon-primary");
-        if (!x.classList.contains("mt-icon-base")) x.classList.add("mt-icon-base");
+        if (!x.classList.contains("mt-icon-base"))
+          x.classList.add("mt-icon-base");
       });
       b.classList.add("is-active", "mt-icon-primary");
       b.classList.remove("mt-icon-base");
@@ -1046,14 +1067,19 @@ document.addEventListener("mt:accountSelected", (e) => {
 
   // Guardar AJAX (botón Save) — sin cerrar el popover
   $(".mtfb-save", panel)?.addEventListener("click", async () => {
-    const url = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    const url =
+      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
 
-    const rootNonce = document.querySelector("#mt-daily-journal")?.dataset?.nonce;
+    const rootNonce =
+      document.querySelector("#mt-daily-journal")?.dataset?.nonce;
     const nonce = (window.mtAccounts && mtAccounts.nonce) || rootNonce || "";
-    if (!nonce) { alert("Missing nonce. Reload the page."); return; }
+    if (!nonce) {
+      alert("Missing nonce. Reload the page.");
+      return;
+    }
 
     const moodBtn = $(".mtfb-mood [data-mood].is-active", panel);
-    const planEl  = $('input[name="mtfb-plan"]:checked', panel);
+    const planEl = $('input[name="mtfb-plan"]:checked', panel);
 
     const hasMood = !!moodBtn;
     const hasPlan = !!planEl;
@@ -1065,11 +1091,15 @@ document.addEventListener("mt:accountSelected", (e) => {
     // NO guardar placeholder
     const noteEl = $("#mtfb-note", panel);
     const rawVal = noteEl ? noteEl.value : "";
-    const phVal  = noteEl ? noteEl.getAttribute("placeholder") || "" : "";
-    const normalize = (s) => (s || "").replace(/\u00A0/g, " ").replace(/\s+/g, " ").trim();
+    const phVal = noteEl ? noteEl.getAttribute("placeholder") || "" : "";
+    const normalize = (s) =>
+      (s || "")
+        .replace(/\u00A0/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
     const normRaw = normalize(rawVal);
-    const normPh  = normalize(noteEl?.dataset?.ph || phVal);
-    const note    = normRaw && normRaw !== normPh ? normRaw : "";
+    const normPh = normalize(noteEl?.dataset?.ph || phVal);
+    const note = normRaw && normRaw !== normPh ? normRaw : "";
 
     const mood = parseInt(moodBtn.getAttribute("data-mood"), 10);
     const plan = planEl.value === "1" ? "1" : "0";
@@ -1099,15 +1129,20 @@ document.addEventListener("mt:accountSelected", (e) => {
         throw new Error(msg);
       }
 
-      const ic = document.querySelector(`${current.rowSel} .mt-dj-visibility .mt-icon`);
-      if (ic) { ic.classList.remove("mt-icon_pencil"); ic.classList.add("mt-icon_visibility"); }
+      const ic = document.querySelector(
+        `${current.rowSel} .mt-dj-visibility .mt-icon`
+      );
+      if (ic) {
+        ic.classList.remove("mt-icon_pencil");
+        ic.classList.add("mt-icon_visibility");
+      }
 
       const rowEl = document.querySelector(current.rowSel);
       if (rowEl) {
-        rowEl.dataset.hasFb    = "1";
-        rowEl.dataset.mood     = String(mood);
+        rowEl.dataset.hasFb = "1";
+        rowEl.dataset.mood = String(mood);
         rowEl.dataset.followed = plan;
-        rowEl.dataset.note     = note;
+        rowEl.dataset.note = note;
       }
 
       setReadOnly(true);
@@ -1117,7 +1152,8 @@ document.addEventListener("mt:accountSelected", (e) => {
         applyNotePlaceholderPolicy({ note });
       } else if (noteEl) {
         if (note === "") noteEl.setAttribute("placeholder", "");
-        else if (noteEl.dataset.ph) noteEl.setAttribute("placeholder", noteEl.dataset.ph);
+        else if (noteEl.dataset.ph)
+          noteEl.setAttribute("placeholder", noteEl.dataset.ph);
       }
 
       positionTo(current.anchor, "bottom");
@@ -1130,3 +1166,89 @@ document.addEventListener("mt:accountSelected", (e) => {
   });
 })();
 
+// ===== Agreement Modal (centrado + backdrop con clases de Bootstrap) =====
+(function () {
+  function init() {
+    var modal = document.getElementById("mt-agreement-modal");
+    if (!modal) return;
+
+    var closeBtn = modal.querySelector(".mt-modal__close");
+    var withBackdrop = null;
+
+    function openModal() {
+      // quitar oculto duro
+      modal.removeAttribute("hidden");
+      modal.setAttribute("aria-hidden", "false");
+      modal.classList.add("show");
+
+      // forzar layout si falta CSS de Bootstrap
+      modal.style.position = "fixed";
+      modal.style.inset = "0";
+      modal.style.display = "flex";
+      modal.style.alignItems = "center";
+      modal.style.justifyContent = "center";
+      modal.style.zIndex = "1055"; // por encima del backdrop
+
+      // crear backdrop
+      withBackdrop = document.createElement("div");
+      withBackdrop.className = "modal-backdrop fade show";
+      withBackdrop.style.zIndex = "1050";
+      document.body.appendChild(withBackdrop);
+
+      document.body.classList.add("modal-open");
+      try {
+        modal.focus();
+      } catch (e) {}
+    }
+
+    function closeModal() {
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      modal.setAttribute("hidden", ""); // vuelve a ocultar
+      modal.style.display = ""; // limpia estilos inyectados
+      modal.style.position = "";
+      modal.style.inset = "";
+      modal.style.alignItems = "";
+      modal.style.justifyContent = "";
+      modal.style.zIndex = "";
+
+      if (withBackdrop && withBackdrop.parentNode) {
+        withBackdrop.parentNode.removeChild(withBackdrop);
+        withBackdrop = null;
+      }
+      if (!document.querySelector(".modal.show")) {
+        document.body.classList.remove("modal-open");
+      }
+    }
+
+    // cerrar con botón
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        closeModal();
+      });
+    }
+
+    // cerrar con Escape
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("show")) {
+        closeModal();
+      }
+    });
+
+    // auto-open si el servidor indicó que falta firma
+    if (modal.getAttribute("data-show") === "1") {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", openModal);
+      } else {
+        openModal();
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();

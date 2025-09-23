@@ -44,6 +44,19 @@ if (is_user_logged_in()) {
       $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
       $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
 
+      // === Agreement status (reusa $mt_user_email) ===
+      $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
+        ? mt_get_agreement_status_by_email($mt_user_email_api, 0) // sin caché
+        : null;
+
+      $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
+        ? (string) $__mt_agreement['agreementURL'] : '';
+
+      $__mt_agreement_show = (is_array($__mt_agreement)
+        && array_key_exists('agreementSigned', $__mt_agreement)
+        && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+
+
       /* === 1) Traer cuentas del usuario (probar plain y encoded para evitar doble encoding) === */
       $accounts_plain = [];
       $accounts_enc = [];
@@ -161,8 +174,8 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 
       <?php else: ?>
 
-        <div class="mt-account-navigation">
-          <?php account_navigation_render(); ?>
+        <div class="mt-account-navigation mega-navigation">
+          <?php get_template_part('template-parts/account/account-navigation'); ?>
         </div>
 
         <div class="mt-account-selection">
@@ -259,7 +272,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 <div id="mt-feedback-modal" class="mt-popover" hidden aria-hidden="true" role="dialog" aria-labelledby="mtfb-title">
   <div class="mt-modal__panel" tabindex="-1">
     <div class="mt-feedback-header align-items-center d-flex gap-2">
-      
+
       <div id="mtfb-title" class="mtfb-title text-white text-base fw-medium flex-grow-1">
         <?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_title']; ?>
       </div>
@@ -275,7 +288,8 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
     </div>
 
     <div class="mtfb-q text-white text-base fw-medium py-2">
-      <?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_question']; ?></div>
+      <?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_question']; ?>
+    </div>
     <div class="mtfb-plan" role="radiogroup" aria-label="Followed plan">
       <label><input type="radio" name="mtfb-plan"
           value="1"><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_yes']; ?></label>
@@ -283,7 +297,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
           value="0"><?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_no']; ?></label>
     </div>
 
-    <textarea id="mtfb-note" class="mtfb-note" rows="2" maxlength="58"
+    <textarea id="mtfb-note" class="mtfb-note" rows="2" maxlength="320"
       placeholder="<?php echo Label::META_ACCOUNT_OVERVIEW['account_feedback_placeholder']; ?>"
       aria-label="Daily note"></textarea>
 
@@ -297,6 +311,41 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
     <span class="mtfb-arrow" aria-hidden="true"></span>
   </div>
 </div>
+
+<div id="mt-agreement-modal"
+     class="modal modal-subcription fade"
+     tabindex="-1"
+     aria-labelledby="mtag-title"
+     aria-hidden="true"
+     data-show="<?php echo $__mt_agreement_show; ?>">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-content gap-3">
+      <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
+        <h5 id="mtag-title" class="modal-title text-white heading-sm-medium">
+          Market Data Agreement required
+        </h5>
+    
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">
+            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
+              style="width: 24px; height: 24px;" />
+          </span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-3">You must sign the market data agreement to continue using your account features.</p>
+        <a href="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>"
+           target="_blank" rel="noopener"
+           class="mega-btn-md mega-btn-primary-md">
+          Open Agreement
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 

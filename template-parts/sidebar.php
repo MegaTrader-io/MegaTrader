@@ -30,7 +30,7 @@ $links = $args['menu_items'] ?? [];
         <div class="mt-card mt-card-dark">
             <?php get_template_part('template-parts/my-profile'); ?>
         </div>
-
+    <!--
         <div class="traders-area">
             <a href="https://app.megatrader.io/" class="mega-btn-md mega-btn-secondary-md w-100">
                 <svg xmlns="http://www.w3.org/2000/svg" width="31" height="30" viewBox="0 0 31 30" fill="none">
@@ -44,6 +44,7 @@ $links = $args['menu_items'] ?? [];
             </a>
 
         </div>
+        -->
 
         <div class="mt-sidebar__menu flex-fill overflow-y-auto">
             <div class="mt-sidebar__wrapper d-flex flex-column gap-32">
