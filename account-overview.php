@@ -44,17 +44,26 @@ if (is_user_logged_in()) {
       $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
       $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
 
-      // === Agreement status (reusa $mt_user_email) ===
+      // === Agreement status (reusa $mt_user_email_api, SIEMPRE codificado) ===
       $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
         ? mt_get_agreement_status_by_email($mt_user_email_api, 0) // sin caché
         : null;
 
-      $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
-        ? (string) $__mt_agreement['agreementURL'] : '';
+      // URL con fallback de claves: agreementURL | agreementUrl | agreement_url
+      $__mt_agreement_url = '';
+      if (is_array($__mt_agreement)) {
+        if (!empty($__mt_agreement['agreementURL']))
+          $__mt_agreement_url = (string) $__mt_agreement['agreementURL'];
+        elseif (!empty($__mt_agreement['agreementUrl']))
+          $__mt_agreement_url = (string) $__mt_agreement['agreementUrl'];
+        elseif (!empty($__mt_agreement['agreement_url']))
+          $__mt_agreement_url = (string) $__mt_agreement['agreement_url'];
+      }
 
       $__mt_agreement_show = (is_array($__mt_agreement)
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+
 
 
       /* === 1) Traer cuentas del usuario (probar plain y encoded para evitar doble encoding) === */
@@ -312,19 +321,15 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
   </div>
 </div>
 
-<div id="mt-agreement-modal"
-     class="modal modal-subcription fade"
-     tabindex="-1"
-     aria-labelledby="mtag-title"
-     aria-hidden="true"
-     data-show="<?php echo $__mt_agreement_show; ?>">
+<div id="mt-agreement-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtag-title"
+  aria-hidden="true" data-show="<?php echo $__mt_agreement_show; ?>">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-3">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <h5 id="mtag-title" class="modal-title text-white heading-sm-medium">
           Market Data Agreement required
         </h5>
-    
+
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
@@ -336,9 +341,8 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 
       <div class="modal-body">
         <p class="mb-3">You must sign the market data agreement to continue using your account features.</p>
-        <a href="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>"
-           target="_blank" rel="noopener"
-           class="mega-btn-md mega-btn-primary-md">
+        <a href="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>" target="_blank" rel="noopener"
+          class="mega-btn-md mega-btn-primary-md">
           Open Agreement
         </a>
       </div>

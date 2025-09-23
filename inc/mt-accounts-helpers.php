@@ -1053,20 +1053,19 @@ if (!function_exists('mt_reset_checkout_url')) {
 
 if (!function_exists('mt_get_agreement_status_by_email')) {
   /**
-   * Recibe email YA codificado (ej: test%2B2%40megatrader.io),
-   * llama [mega_subscriptions_data email="..."] y devuelve:
+   * Recibe email YA codificado (e.g., test%2B2%40megatrader.io),
+   * llama [mega_subscriptions_data] y devuelve:
    * ['agreementURL'=>string|null,'agreementSigned'=>bool|null,'agreementStatus'=>bool|null]
    */
   function mt_get_agreement_status_by_email(string $email_encoded, int $ttl = 120): array
   {
     $email_encoded = is_string($email_encoded) ? trim($email_encoded) : '';
     if ($email_encoded === '') {
-      return ['agreementURL'=>null,'agreementSigned'=>null,'agreementStatus'=>null];
+      return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
     }
 
-    // Si por error llega sin codificar (contiene '@'), codificamos aquí.
     if (strpos($email_encoded, '@') !== false) {
-      $email_encoded = rawurlencode(strtolower($email_encoded));
+      $email_encoded = rawurlencode(strtolower(trim($email_encoded)));
     }
 
     $sc = sprintf(
@@ -1077,21 +1076,43 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
 
     $raw = do_shortcode($sc);
     $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
-    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF") $raw = substr($raw, 3);
-    if ($raw !== '') $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-    $data = json_decode($raw, true);
-    if (!is_array($data)) $data = json_decode(trim(wp_strip_all_tags($raw)), true);
-    if (!is_array($data)) {
-      return ['agreementURL'=>null,'agreementSigned'=>null,'agreementStatus'=>null];
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF") {
+      $raw = substr($raw, 3);
+    }
+    if ($raw !== '') {
+      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
-    // Normaliza booleanos
-    $data['agreementSigned'] = filter_var($data['agreementSigned'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-    $data['agreementStatus'] = filter_var($data['agreementStatus'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+      $data = json_decode(trim(wp_strip_all_tags($raw)), true);
+    }
+    if (!is_array($data)) {
+      return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
+    }
+
+    $data['agreementSigned'] = filter_var(
+      $data['agreementSigned'] ?? null,
+      FILTER_VALIDATE_BOOLEAN,
+      FILTER_NULL_ON_FAILURE
+    );
+    $data['agreementStatus'] = filter_var(
+      $data['agreementStatus'] ?? null,
+      FILTER_VALIDATE_BOOLEAN,
+      FILTER_NULL_ON_FAILURE
+    );
+
+    $agreement_url = null;
+    foreach (['agreementURL', 'agreementUrl', 'agreement_url', 'url'] as $k) {
+      if (!empty($data[$k]) && is_string($data[$k])) {
+        $agreement_url = $data[$k];
+        break;
+      }
+    }
 
     return [
-      'agreementURL'    => isset($data['agreementURL']) && is_string($data['agreementURL']) ? $data['agreementURL'] : null,
+      'agreementURL'    => $agreement_url,
       'agreementSigned' => $data['agreementSigned'],
       'agreementStatus' => $data['agreementStatus'],
     ];
