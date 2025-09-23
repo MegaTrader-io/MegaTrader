@@ -203,6 +203,15 @@
     background: var(--Surface-Body, #131210);
 }
 
+.mt-card.mt-card_bg-layer {
+    border-color: transparent;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.mt-card.mt-card_radius-small {
+    border-radius: var(--Border-Radius-md, 8px);
+}
+
 .mt-card.mt-card-md {
     padding: 24px;
     gap: 16px;
@@ -629,6 +638,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-icon_logout {
     mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_15282_14311" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_15282_14311)"><path d="M5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V5C3 4.45 3.19583 3.97917 3.5875 3.5875C3.97917 3.19583 4.45 3 5 3H12V5H5V19H12V21H5ZM16 17L14.625 15.55L17.175 13H9V11H17.175L14.625 8.45L16 7L21 12L16 17Z" fill="white"/></g></svg>');
 }
+
+.mt-icon_settings {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_15392_12843" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_15392_12843)"><path d="M5 20V13H3V11H9V13H7V20H5ZM5 9V4H7V9H5ZM9 9V7H11V4H13V7H15V9H9ZM11 20V11H13V20H11ZM17 20V17H15V15H21V17H19V20H17ZM17 13V4H19V13H17Z" fill="white"/></g></svg>');
+}
 /* END ICONS */
 
 /* BADGE */
@@ -747,6 +760,44 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 /* END PAGE LAYOUT - SIDEBAR */
 
+/*  Sidebar Sticky */
+
+.mt-sidebar {
+    --sidebar-lg-margin-block: 24px;
+    --sidebar-top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + var(--sidebar-lg-margin-block));
+
+    position: sticky;
+    top: var(--sidebar-top);
+    min-height: calc(100vh - var(--sidebar-top) - var(--sidebar-lg-margin-block));
+}
+
+.mt-sidebar__menu__link {
+  padding: 12px 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: white;
+}
+
+.mt-sidebar__menu__link:hover {
+  color: var(--Text-Action-Primary-Text, #FFB34A);
+}
+
+.mt-sidebar__menu__link.active {
+  color: var(--Text-Action-Primary-Text, #FFB34A);
+}
+
+@media (max-width: 1199.98px) {
+  .mt-my-profile__notification {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .my-acount-logout {
+    display: none;
+  }
+}
 
 /* Tooltip base */
 .mt-tooltip {

@@ -48,7 +48,8 @@ function mt_enqueue_auth_script_on_login_form(): void
         }
         wp_enqueue_script('map-script', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/js/' . $mapJS . '?rand=' . wp_rand(), array('google-map'), SHIPPING_WORKSHOP_VERSION, true);
         wp_localize_script(
-            'map-script', 'countries',
+            'map-script',
+            'countries',
             array(
                 'countries' => [],
                 'map_display' => get_option('aafw_enable_map', 1),
@@ -134,22 +135,19 @@ function mt_process_login(): void
         return;
     }
 
-    $username = trim((string)wp_unslash($_POST['username']));
-    $password = (string)$_POST['password'];
+    $username = trim((string) wp_unslash($_POST['username']));
+    $password = (string) $_POST['password'];
     $remember = isset($_POST['rememberme']);
 
     if ($username === '') {
         wc_add_notice(__('Email is required.', 'your-td'), 'error', ['field' => 'username']);
-    } else if (!is_email($username)) {
+    } elseif (!is_email($username)) {
         wc_add_notice(__('Enter a valid email address.', 'your-td'), 'error', ['field' => 'username']);
     }
-
     if ($password === '') {
         wc_add_notice(__('Password is required.', 'your-td'), 'error', ['field' => 'password']);
     }
-
     if (wc_notice_count('error') > 0) {
-
         return;
     }
 
@@ -164,7 +162,6 @@ function mt_process_login(): void
         }
         return;
     }
-
 
     if (is_multisite()) {
         $user_data = get_user_by(is_email($username) ? 'email' : 'login', $username);
@@ -186,40 +183,75 @@ function mt_process_login(): void
                 'empty_password', 'incorrect_password' => 'password',
                 default => 'general',
             };
-
             foreach ($user->get_error_messages($code) as $msg) {
-                if ($code == 'incorrect_password') {
+                if ($code === 'incorrect_password') {
                     wc_add_notice('Incorrect password', 'error', ['field' => $field]);
                     continue;
                 }
-
-                if ($code == 'invalid_email') {
+                if ($code === 'invalid_email') {
                     wc_add_notice('No account found with this email.', 'error', ['field' => $field]);
                     continue;
                 }
-
                 wc_add_notice($msg, 'error', ['field' => $field]);
             }
-
         }
         do_action('woocommerce_login_failed');
         return;
     }
 
-    $redirect = !empty($_POST['redirect'])
-        ? wp_unslash($_POST['redirect'])
-        : (wc_get_raw_referer() ?: wc_get_page_permalink('myaccount'));
+    $myaccount = wc_get_page_permalink('myaccount');
+    $overview = function_exists('wc_get_account_endpoint_url')
+        ? wc_get_account_endpoint_url('overview', $myaccount)
+        : trailingslashit($myaccount) . 'overview/';
+    $subscriptions = home_url(user_trailingslashit('subscriptions'));
 
-    $redirect = remove_query_arg(['wc_error', 'password-reset'], $redirect);
+    $target = $myaccount;
+    try {
+        if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
+            require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
+        }
 
-    wp_safe_redirect(
-        wp_validate_redirect(
-            apply_filters('woocommerce_login_redirect', $redirect, $user),
-            wc_get_page_permalink('myaccount')
-        )
-    );
+        $raw_email = (string) ($user->user_email ?? '');
+        $san = function_exists('mt_sanitize_email')
+            ? mt_sanitize_email($raw_email)
+            : [
+                'ok' => is_email($raw_email),
+                'email' => strtolower(trim($raw_email)),
+                'api' => rawurlencode(strtolower(trim($raw_email))),
+            ];
+
+        $email_plain = (string) ($san['email'] ?? $raw_email);
+        $email_api = (string) ($san['api'] ?? rawurlencode($raw_email));
+
+        $accounts_plain = [];
+        $accounts_enc = [];
+
+        if (class_exists('MT_Api')) {
+            try {
+                $accounts_plain = MT_Api::fetch_accounts_by_email($email_plain, 1, 50);
+            } catch (Throwable $e) {
+            }
+            try {
+                $accounts_enc = MT_Api::fetch_accounts_by_email($email_api, 1, 50);
+            } catch (Throwable $e) {
+            }
+        }
+
+        $has_accounts = (is_array($accounts_plain) && count($accounts_plain) > 0)
+            || (is_array($accounts_enc) && count($accounts_enc) > 0);
+
+        $target = $has_accounts ? $overview : $subscriptions;
+    } catch (Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[MT Login Redirect] ' . $e->getMessage());
+        }
+    }
+
+    wp_safe_redirect(wp_validate_redirect($target, $myaccount));
     exit;
 }
+
+
 
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_script('mt-auth', get_stylesheet_directory_uri() . '/assets/js/auth.js', [], '1.0.0', true);
@@ -248,7 +280,7 @@ add_action('template_redirect', function () {
     }
 
     // Ruta solicitada (sin query ni hash)
-    $path = (string)wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    $path = (string) wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     $path = trailingslashit($path);
 
     // ¿Es una ruta /auth/* ?
@@ -318,7 +350,7 @@ add_filter('woocommerce_registration_redirect', function ($redirect) {
 }, 10);
 
 add_action('wp_head', function () {
-    $path = (string)wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    $path = (string) wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     if (strpos(trailingslashit($path), '/auth/') === 0) {
         echo "<meta name=\"robots\" content=\"noindex,nofollow\" />\n";
     }

@@ -3382,40 +3382,6 @@ a.pagination-number {
   }
 }
 
-/****** Sidebar Sticky*/
-.mt-sidebar {
-  position: sticky;
-  top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + 32px);
-}
-
-.mt-sidebar__menu__link {
-  padding: 12px 0;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  color: white;
-}
-
-.mt-sidebar__menu__link:hover {
-  color: var(--Text-Action-Primary-Text, #FFB34A);
-}
-
-.mt-sidebar__menu__link.active {
-  color: var(--Text-Action-Primary-Text, #FFB34A);
-}
-
-@media (max-width: 1199.98px) {
-  .mt-my-profile__notification {
-    display: none;
-  }
-}
-
-@media (min-width: 1200px) {
-  .my-acount-logout {
-    display: none;
-  }
-}
-
 /*--------- Modal Thanksyou -------*/
 
 #order-copy-chip {
