@@ -1001,22 +1001,24 @@ if (!function_exists('mt_accounts_build_account_data')) {
  * @return int|null
  */
 if (!function_exists('mt_find_product_by_category_slugs')) {
-	function mt_find_product_by_category_slugs(array $slugs){
-		if (!function_exists('wc_get_products')) return null;
-		$args = [
-			'status'   => 'publish',
-			'limit'    => 1,
-			'category' => array_map('sanitize_title', $slugs),
-		];
-		$products = wc_get_products($args);
-		if (!empty($products)) {
-			$prod = $products[0];
-			if (is_object($prod) && method_exists($prod, 'get_id')) {
-				return (int) $prod->get_id();
-			}
-		}
-		return null;
-	}
+  function mt_find_product_by_category_slugs(array $slugs)
+  {
+    if (!function_exists('wc_get_products'))
+      return null;
+    $args = [
+      'status' => 'publish',
+      'limit' => 1,
+      'category' => array_map('sanitize_title', $slugs),
+    ];
+    $products = wc_get_products($args);
+    if (!empty($products)) {
+      $prod = $products[0];
+      if (is_object($prod) && method_exists($prod, 'get_id')) {
+        return (int) $prod->get_id();
+      }
+    }
+    return null;
+  }
 }
 
 /**
@@ -1026,11 +1028,14 @@ if (!function_exists('mt_find_product_by_category_slugs')) {
  * @return string
  */
 if (!function_exists('mt_checkout_add_to_cart_url')) {
-	function mt_checkout_add_to_cart_url($product_id){
-		if (!$product_id) return '';
-		if (!function_exists('wc_get_checkout_url')) return '';
-		return wc_get_checkout_url() . '?add-to-cart=' . intval($product_id);
-	}
+  function mt_checkout_add_to_cart_url($product_id)
+  {
+    if (!$product_id)
+      return '';
+    if (!function_exists('wc_get_checkout_url'))
+      return '';
+    return wc_get_checkout_url() . '?add-to-cart=' . intval($product_id);
+  }
 }
 
 /**
@@ -1039,23 +1044,39 @@ if (!function_exists('mt_checkout_add_to_cart_url')) {
  * @return string
  */
 if (!function_exists('mt_reset_checkout_url')) {
-	function mt_reset_checkout_url(){
-		$product_id = mt_find_product_by_category_slugs(['reset-fee']);
-		return $product_id ? mt_checkout_add_to_cart_url($product_id) : '';
-	}
+  function mt_reset_checkout_url()
+  {
+    $product_id = mt_find_product_by_category_slugs(['reset-fee']);
+    return $product_id ? mt_checkout_add_to_cart_url($product_id) : '';
+  }
 }
 
+if (!function_exists('mt_get_agreement_status_by_email')) {
+  /**
+   * Llama al shortcode [mega_subscriptions_data] y devuelve:
+   * ['agreementURL'=>?, 'agreementSigned'=>bool|null, 'agreementStatus'=>bool|null]
+   */
+  function mt_get_agreement_status_by_email(string $email, int $ttl = 120)
+  {
+    $email = sanitize_email($email);
+    if (!$email)
+      return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
 
+    $sc = sprintf(
+      '[mega_subscriptions_data email="%s" output="json" ttl="%d"]',
+      esc_attr($email),
+      max(0, $ttl)
+    );
 
+    $raw = do_shortcode($sc);
+    $data = json_decode(is_string($raw) ? trim(wp_unslash($raw)) : '', true);
 
+    if (!is_array($data))
+      return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
 
-
-
-
-
-
-
-
-
-
-
+    return array_replace(
+      ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null],
+      $data
+    );
+  }
+}
