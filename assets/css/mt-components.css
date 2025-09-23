@@ -719,10 +719,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
         gap: 32px;
     }
     .mt-page_md-d-none {
-        display: none;
+        display: none !important;
     }
     .mt-page_md-d-block {
-        display: block;
+        display: block !important;
     }
 }
 
@@ -736,10 +736,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
         width: 390px;
     }
     .mt-page_lg-d-none {
-        display: none;
+        display: none !important;
     }
     .mt-page_lg-d-block {
-        display: block;
+        display: block !important;
     }
 }
 
