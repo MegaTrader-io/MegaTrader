@@ -523,9 +523,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 metaInfoElement.appendChild(row)
             });
 
+            const productsWithBestCoupons = MG_GLOBAL.productsWithBestCoupons || [];
+            const badgeCoupon = document.querySelector(`.badge-coupon`);
+            const couponBeforePrice = document.querySelector(`.coupon-before-price`);
+
+            const product = productsWithBestCoupons.find(product => Number(product.id) === Number(productionSelected.id))
+            let price = Number(productionSelected['price-monthly'].replace('$', ''));
             const pricePanel = document.querySelector(`.price-plan`);
             const frequencyPanel = document.querySelector(`.frequency-plan`);
-            pricePanel.innerText = productionSelected['price-monthly'].replace('$', '');
+
+            const coupon = product?.coupon;
+
+            if (coupon && coupon.valid) {
+                badgeCoupon.style.display = 'block';
+                couponBeforePrice.style.display = 'block';
+                couponBeforePrice.querySelector('span').innerText = formatNumber(price);
+                pricePanel.innerText = coupon.final_total;
+                badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
+                badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon;
+            } else {
+                badgeCoupon.style.display = 'none';
+                couponBeforePrice.style.display = 'none';
+                pricePanel.innerText = price;
+            }
+
             frequencyPanel.innerText = `${values['account-type'] !== 'funded-plan' ? 'per month' : 'one time fee'}`;
         }
     );

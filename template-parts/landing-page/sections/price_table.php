@@ -20,8 +20,6 @@ foreach ($attributes as $attr) {
     }
 }
 
-$defaultPlatform = 'megatraderx';
-$defaultMarketType = 'futures';
 $defaultSlug = $account_types[0]['slug'];
 
 $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
@@ -31,12 +29,19 @@ $filtered = array_filter($products_data['products'], function ($product) use ($d
 });
 
 $product = reset($filtered) ?: null;
+$size = $account_sizes[0];
+
+$productLevel = $product[$defaultSlug][$size][$defaultSlug];
+$defaultPlatform = array_key_first($productLevel);
+$defaultMarketType = array_key_first($productLevel[$defaultPlatform]);
 
 $planList = [];
 $defaultMetaInfo = [];
 $metaInfoList = [];
 $has_coupon_global = null;
-foreach ($account_sizes as $size) {
+$firstProduct = null;
+
+foreach ($account_sizes as $index => $size) {
     $parent_id = $product['id'];
     $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
     $id = -1;
@@ -64,21 +69,25 @@ foreach ($account_sizes as $size) {
         }
     }
 
-    $coupon = mt_get_best_coupon_for_variation($id);
-    if ($coupon['valid'] && !$has_coupon_global) {
-        $has_coupon_global = true;
+    if ($index == 0) {
+        $firstProduct = [
+                'id' => $id,
+                'parent_id' => $parent_id,
+                'price' => $price,
+                'size' => $size,
+                'metaInfoList' => $metaInfoList
+        ];
     }
-
-    $planList[] = [
-            'id' => $id,
-            'parent_id' => $parent_id,
-            'price' => $price,
-            'size' => $size,
-            'metaInfoList' => $metaInfoList
-    ];
 }
 
-$addons = get_saved_challenge_addons();
+$has_coupon = false;
+$coupon = ['discount_total' => null, 'coupon' => null, 'original_total' => null];
+
+if ($firstProduct) {
+    $metaInfoList = $firstProduct['metaInfoList'];
+    $coupon = mt_get_best_coupon_for_variation($firstProduct['id']);
+    $has_coupon = $coupon['valid'];
+}
 
 function render_template_meta_info($value = '', $label = '', $classes = '')
 {
@@ -96,8 +105,6 @@ function render_template_meta_info($value = '', $label = '', $classes = '')
 </div>
 HTML;
 }
-
-$best_products = mt_most_popular_products();
 
 $tabs = array_map(function ($item) {
     $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
@@ -136,7 +143,8 @@ $tabs = array_map(function ($item) {
             <?php render_tabs($tabs); ?>
         </div>
         <div class="tw-space-y-8 tw-flex tw-flex-col">
-            <div class="tw-flex-1">
+            <!--  <div class="tw-flex-1"> -->
+            <div>
                 <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">
                     <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-pt-4">
                         Plan Summary
@@ -145,27 +153,50 @@ $tabs = array_map(function ($item) {
                     <div class="metaInfo">
                         <?php foreach ($defaultMetaInfo as $field => $value) : ?>
                             <?php
-                                $label = Label::PRODUCT_META[$field];
-                                $value = $metaInfoList[$field];
+                            $label = Label::PRODUCT_META[$field];
+                            $value = $metaInfoList[$field];
 
-                                echo render_template_meta_info(value: $value, label: $label);
+                            echo render_template_meta_info(value: $value, label: $label);
                             ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
             </div>
-            <div class="tw-w-full lg:w-[360px] lg:tw-justify-end tw-bg-mgt-dark tw-rounded-lg tw-p-4 tw-flex tw-flex-col tw-gap-4">
+            <div class="price-information tw-w-full lg:w-[360px] lg:tw-justify-end tw-bg-mgt-dark tw-rounded-lg tw-p-4 tw-flex tw-flex-col tw-gap-4">
                 <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8">Plan Total</div>
+                <div class="tw-flex tw-flex-col">
+                    <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
+                         data-price="<?= $size ?>"
+                         class="badge-coupon">
+                        <div class="mt-badge mt-badge-sm mt-badge-secondary !tw-inline-flex !tw-justify-start">
+                            Save <span
+                                    class="badge-coupon__discount_total tw-contents"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
+                            with code
+                            <svg width="1" height="14" viewBox="0 0 1 24" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
+                            </svg>
+                            <div class="badge-coupon__code tw-uppercase tw-justify-start">
+                                <?= $has_coupon ? strtoupper($coupon['coupon']) : '' ?>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="tw-inline-flex tw-justify-start  tw-gap-2 tw-items-center">
-                    <div class="symbol-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-tw-text-xl tw-font-medium tw-leading-loose">
-                        $
+                    <div class="tw-inline-flex tw-justify-start  tw-gap-2 tw-items-center">
+                        <div class="symbol-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-tw-text-xl tw-font-medium tw-leading-loose">
+                            $
+                        </div>
+                        <div class="price-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-text-[32px] tw-font-medium tw-uppercase tw-leading-10">
+                            <?= $has_coupon ? $coupon['final_total'] : $firstProduct['price'] ?>
+                        </div>
+                        <div class="frequency-plan w-[76px] tw-text-right tw-justify-center tw-text-[#fff7e6] tw-text-base tw-font-medium tw-leading-normal">
+                            <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?>
+                        </div>
                     </div>
-                    <div class="price-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-text-[32px] tw-font-medium tw-uppercase tw-leading-10">
-                        1,423
-                    </div>
-                    <div class="frequency-plan w-[76px] tw-text-right tw-justify-center tw-text-[#fff7e6] tw-text-base tw-font-medium tw-leading-normal">
-                        per month
+                    <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
+                         class="coupon-before-price tw-inline-flex tw-justify-start  tw-gap-2 tw-items-center">
+                        <div class="tw-self-stretch tw-justify-start tw-text-rose-500 tw-text-xl tw-font-medium tw-line-through tw-leading-loose">
+                            BEFORE <span>$<?= $firstProduct['price'] ?></span></div>
                     </div>
                 </div>
                 <a href="#" id="proceed-to-checkout-btn" class="btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">

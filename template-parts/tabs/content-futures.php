@@ -323,6 +323,12 @@
         const selectedProductId = selectedProduct.id ?? '';
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
+        const event = new CustomEvent("product:selected", {
+            detail: { product: selectedProduct, values }
+        });
+
+        form.dispatchEvent(event);
+
         if (!checkoutBtn) {
             return;
         }
@@ -335,12 +341,6 @@
         }
 
         checkoutBtn.href = checkoutUrl;
-
-        const event = new CustomEvent("product:selected", {
-            detail: { product: selectedProduct, values }
-        });
-
-        form.dispatchEvent(event);
     }
 
     const form = document.getElementById("futures-form");
