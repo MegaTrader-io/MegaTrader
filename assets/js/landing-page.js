@@ -508,8 +508,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const metaInfoElement = document.querySelector('.metaInfo');
 
-            /**
-             metaInfoElement.innerHTML = '';
+            metaInfoElement.innerHTML = '';
             const template = document.querySelector(`.template-metaInfo`);
 
             metaInfoList.forEach(metaInfo => {
@@ -522,7 +521,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 row.querySelector('.mega-info-row__value').innerText = productionSelected['meta-info'][metaInfo.key];
                 metaInfoElement.appendChild(row)
             });
-             **/
 
             const productsWithBestCoupons = MG_GLOBAL.productsWithBestCoupons || [];
             const badgeCoupon = document.querySelector(`.badge-coupon`);
