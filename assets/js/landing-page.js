@@ -195,11 +195,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             form.addEventListener("product:selected", (e) => {
-                try {
-                    fn(e.detail);
-                } catch (err) {
-                    console.error("unable to listen product:selected:", err);
-                }
+                // try {
+                fn(e.detail);
+                // } catch (err) {
+                //     console.error("unable to listen product:selected:", err);
+                // }
             });
         })
 
@@ -492,6 +492,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 return '$' + parseInt(value.toString().replace('$', ''));
             }
 
+            function formatNumberToString(value) {
+                try {
+                    if (value === null || value === undefined || value === '') {
+                        throw new Error('Invalid input: value is null, undefined or empty');
+                    }
+
+                    const num = Number(value);
+
+                    if (isNaN(num)) {
+                        throw new Error(`Invalid input: "${value}" is not a number`);
+                    }
+
+                    // Verificar si tiene parte decimal
+                    if (Number.isInteger(num)) {
+                        return num.toString(); // sin .00
+                    }
+
+                    return num.toFixed(2); // con dos decimales
+                } catch (err) {
+                    console.error('formatNumberToString error:', err.message);
+                    return '';
+                }
+            }
+
+            function currencyFormat(value) {
+                return '$' + formatNumberToString(value);
+            }
+
             if (!productionSelected) {
                 console.info('values', values);
                 return;
@@ -532,7 +560,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const product = productsWithBestCoupons.find(product => Number(product.id) === Number(productionSelected.id))
             let price = Number(productionSelected['price-monthly'].replace('$', ''));
-            const pricePanel = document.querySelector(`.price-plan`);
+            const pricePlan = document.querySelector(`.price-plan`);
+            const totalPlan = document.querySelector(`.total-plan`);
             const frequencyPanel = document.querySelector(`.frequency-plan`);
 
             const coupon = product?.coupon;
@@ -553,22 +582,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
+
             document.querySelector('.plan-summary__name').innerText = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
 
             if (coupon && coupon.valid) {
                 badgeCoupon.style.display = 'block';
-                couponBeforePrice.style.display = 'block';
-                couponBeforePrice.querySelector('span').innerText = formatNumber(price);
-                pricePanel.innerText = coupon.final_total;
+                if (couponBeforePrice) {
+                    couponBeforePrice.style.display = 'block';
+                    couponBeforePrice.querySelector('span').innerText = formatNumber(price);
+                }
+
+                pricePlan.innerText = currencyFormat(price);
+                totalPlan.innerText = currencyFormat(price - coupon.discount_total);
+
                 badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
-                badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon;
+
+                if (badgeCoupon.querySelector('.badge-coupon__code')) {
+                    badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon;
+                }
             } else {
                 badgeCoupon.style.display = 'none';
-                couponBeforePrice.style.display = 'none';
-                pricePanel.innerText = price;
+                if (couponBeforePrice) {
+                    couponBeforePrice.style.display = 'none';
+                }
+                pricePlan.innerText = currencyFormat(price);
+                totalPlan.innerText = currencyFormat(price);
             }
 
-            frequencyPanel.innerText = `${values['account-type'] !== 'funded-plan' ? 'per month' : 'one time fee'}`;
+            if (frequencyPanel) {
+                frequencyPanel.innerText = `${values['account-type'] !== 'funded-plan' ? 'per month' : 'one time fee'}`;
+            }
         }
     );
 

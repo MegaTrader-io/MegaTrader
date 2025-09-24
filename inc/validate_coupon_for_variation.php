@@ -39,6 +39,8 @@ if (!function_exists('mt_validate_coupon_for_variation')) {
             'product_id' => $product_id,
             'original_total' => $original_total,
             'discount_total' => $discount_total,
+            'discount_type' => $coupon->get_discount_type(),
+            'discount_amount' => $coupon->get_amount(),
             'final_total' => $discounted_total,
         ];
     }
@@ -106,6 +108,30 @@ if (!function_exists('mt_get_best_coupon_for_variation')) {
     }
 }
 
+/**
+ * Devuelve el tipo de descuento de un cupón
+ *
+ * @param string $coupon_code El código del cupón
+ * @return string|null
+ */
+if (!function_exists('mt_get_coupon_discount_type')) {
+    function mt_get_coupon_discount_type($coupon_code)
+    {
+        try {
+            $coupon = new WC_Coupon($coupon_code);
+
+            if (!$coupon || !$coupon->get_id()) {
+                return null; // cupón no existe
+            }
+
+            return $coupon->get_discount_type();
+            // valores posibles: 'percent', 'fixed_cart', 'fixed_product'
+        } catch (Exception $e) {
+            error_log('mt_get_coupon_discount_type error: ' . $e->getMessage());
+            return null;
+        }
+    }
+}
 
 /**
  * Get best selling variation of the current month

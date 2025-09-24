@@ -47,7 +47,6 @@ $defaultMarketType = array_key_first($productLevel[$defaultPlatform]);
 $planList = [];
 $defaultMetaInfo = [];
 $metaInfoList = [];
-$has_coupon_global = null;
 $firstProduct = null;
 
 foreach ($account_sizes as $index => $size) {
@@ -152,21 +151,22 @@ $tabs = array_map(function ($item) {
             <?php render_tabs($tabs); ?>
         </div>
         <div class="tw-space-y-8 tw-flex tw-flex-col">
-            <div>
+            <div class="lg:tw-sticky lg:tw-top-[calc((var(--promo-banner-height,0px))+(var(--admin-bar-height,0px))+(var(--nav-bar-height,0px)))]">
                 <div class="tw-px-4 tw-h-[104px] tw-inline-flex tw-items-center tw-justify-center">
                     <div class="plan-summary tw-inline-flex tw-items-center tw-justify-start tw-gap-2 tw-leading-7">
                         <img class="plan-summary__plan-icon" src="<?= $accountThumbnailUrl; ?>" alt="Plan Icon">
-                        <img class="plan-summary__platform-icon" src="<?= $platformThumbnailUrl; ?>" alt="Platform Icon">
+                        <img class="plan-summary__platform-icon" src="<?= $platformThumbnailUrl; ?>"
+                             alt="Platform Icon">
                         <div class="plan-summary__name tw-text-2xl tw-text-white tw-font-medium tw-uppercase">
                             <?= $defaultPlanName ?>
                         </div>
                     </div>
                 </div>
-                <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">
-                    <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-pt-4">
+                <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
+                <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg tw-space-y-2 tw-py-2">
+                    <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-py-2">
                         Plan Summary
                     </div>
-                    <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
                     <div class="metaInfo">
                         <?php $defaultMetaInfo = [];
                         foreach ($defaultMetaInfo as $field => $value) : ?>
@@ -178,49 +178,40 @@ $tabs = array_map(function ($item) {
                             ?>
                         <?php endforeach; ?>
                     </div>
-                </div>
-            </div>
-            <div class="price-information tw-w-full lg:w-[360px] lg:tw-justify-end tw-bg-mgt-dark tw-rounded-lg tw-p-4 tw-flex tw-flex-col tw-gap-4">
-                <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8">Plan Total</div>
-                <div class="tw-flex tw-flex-col">
-                    <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
-                         data-price="<?= $size ?>"
-                         class="badge-coupon">
-                        <div class="mt-badge mt-badge-sm mt-badge-secondary !tw-inline-flex !tw-justify-start">
-                            Save <span
-                                    class="badge-coupon__discount_total tw-contents"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
-                            with code
-                            <svg width="1" height="14" viewBox="0 0 1 24" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
-                            </svg>
-                            <div class="badge-coupon__code tw-uppercase tw-justify-start">
-                                <?= $has_coupon ? strtoupper($coupon['coupon']) : '' ?>
-                            </div>
+                    <div class="tw-m-2 tw-px-6 tw-py-2 tw-bg-[#131210] tw-backdrop-blur-md tw-rounded-xl tw-max-w-md tw-shadow-2xl tw-font-sans tw-text-gray-900">
+                        <div class="tw-flex tw-justify-between tw-items-center tw-mb-4">
+                            <span class="tw-text-white">Project Cost</span>
+                            <span class="price-plan tw-font-medium tw-text-white"><?= wc_price($firstProduct['price'], ['decimals' => 0]) ?></span>
                         </div>
-                    </div>
 
-                    <div class="tw-inline-flex tw-justify-start  tw-gap-2 tw-items-center">
-                        <div class="symbol-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-tw-text-xl tw-font-medium tw-leading-loose">
-                            $
+                        <div class="badge-coupon tw-flex tw-flex-col tw-items-start tw-mb-2"
+                             style="display: <?= $has_coupon ? 'block' : 'none' ?>">
+                            <div class="tw-flex tw-justify-between tw-w-full tw-items-center">
+                                <span class="tw-text-gray-200">Dribbble Platform Fee <span
+                                            class="tw-inline-block tw-text-gray-400 tw-text-sm"></span></span>
+                                <span class="tw-text-rose-500 tw-font-semibold"> - <span
+                                            class="tw-line-through badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span></span>
+                            </div>
+                            <span class="tw-text-green-600 tw-text-sm tw-mt-1"><?= $coupon['discount_amount'] ?><?= $coupon['discount_type'] == 'percent' ? '%' : 'USD' ?> with your PLAN subscription.<br>
+                            </span>
                         </div>
-                        <div class="price-plan tw-text-right tw-justify-start tw-text-[#ffb34a] tw-text-[32px] tw-font-medium tw-uppercase tw-leading-10">
-                            <?= $has_coupon ? $coupon['final_total'] : $firstProduct['price'] ?>
+
+                        <hr class="tw-border-t tw-border-gray-300 tw-my-4">
+
+                        <div class="tw-flex tw-justify-between tw-items-center">
+                            <span class="tw-text-[#ffb34a] tw-text-lg tw-font-bold">Total Payout</span>
+                            <span class="total-plan tw-text-[#ffb34a] tw-text-lg tw-font-bold"><?= wc_price($has_coupon ? $firstProduct['price'] - $coupon['discount_total'] : $firstProduct['price']) ?></span>
                         </div>
-                        <div class="frequency-plan w-[76px] tw-text-right tw-justify-center tw-text-[#fff7e6] tw-text-base tw-font-medium tw-leading-normal">
-                            <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?>
-                        </div>
-                    </div>
-                    <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
-                         class="coupon-before-price tw-inline-flex tw-justify-start  tw-gap-2 tw-items-center">
-                        <div class="tw-self-stretch tw-justify-start tw-text-rose-500 tw-text-xl tw-font-medium tw-line-through tw-leading-loose">
-                            BEFORE <span>$<?= $firstProduct['price'] ?></span></div>
                     </div>
                 </div>
-                <a href="#" id="proceed-to-checkout-btn" class="btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
+
+                <a href="#" id="proceed-to-checkout-btn"
+                   class="btn-yellow-link tw-mt-4 tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
                     GET PLAN
                 </a>
             </div>
+
+
         </div>
     </div>
 </section>

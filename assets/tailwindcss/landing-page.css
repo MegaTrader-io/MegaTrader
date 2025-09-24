@@ -468,6 +468,6 @@ body[data-scroll-locked] {
 }
 
 .plan-summary .plan-summary__plan-icon, .plan-summary .plan-summary__platform-icon {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
 }
