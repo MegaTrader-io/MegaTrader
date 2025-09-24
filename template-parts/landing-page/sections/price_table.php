@@ -22,7 +22,7 @@ foreach ($attributes as $attr) {
 
 $size = $account_sizes[0];
 $defaultSlug = $account_types[0]['slug'];
-$defaultPlanName = $account_types[0]['name'] . ' ' . $size;
+$defaultPlanName = $size . ' ' . $account_types[0]['name'];
 
 $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
 

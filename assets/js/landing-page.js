@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const coupon = product?.coupon;
 
-            document.querySelector('.plan-summary__name').innerText = values['account-type'].replace('-', ' ') + ' ' +   values['account-size'].toUpperCase();
+            document.querySelector('.plan-summary__name').innerText = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
 
             if (coupon && coupon.valid) {
                 badgeCoupon.style.display = 'block';
