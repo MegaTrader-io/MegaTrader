@@ -744,8 +744,10 @@ function mt_accounts_get_credentials($account_id)
 }
 
 
-// AJAX: devuelve el HTML del template account-data
 // === AJAX: devuelve el HTML de template-parts/account/account-data por accountId ===
+
+add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
+add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
 function mt_accounts_ajax_account_data()
 {
   check_ajax_referer('mt-acc-nonce', 'nonce');
@@ -899,8 +901,7 @@ if (!function_exists('mt_sanitize_email')) {
 
 
 
-add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
-add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
+
 
 // === Performance Chart Payload ===
 
@@ -1062,7 +1063,8 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
   {
     $email_encoded = is_string($email_encoded) ? trim($email_encoded) : '';
     if ($email_encoded === '') {
-      if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT Agreement] empty email');
+      if (defined('WP_DEBUG') && WP_DEBUG)
+        error_log('[MT Agreement] empty email');
       return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
     }
 
@@ -1091,7 +1093,7 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
       $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
     if (defined('WP_DEBUG') && WP_DEBUG) {
-      error_log('[MT Agreement][raw]=' . substr((string)$raw, 0, 800));
+      error_log('[MT Agreement][raw]=' . substr((string) $raw, 0, 800));
     }
 
     // Parseo robusto
@@ -1127,12 +1129,79 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
     }
 
     return [
-      'agreementURL'    => $agreement_url,
+      'agreementURL' => $agreement_url,
       'agreementSigned' => $signed,
       'agreementStatus' => $status,
     ];
   }
 }
+
+// === AJAX: devolver STATUS por accountId ===
+add_action('wp_ajax_mt_accounts_status', 'mt_accounts_ajax_status');
+add_action('wp_ajax_nopriv_mt_accounts_status', 'mt_accounts_ajax_status');
+
+function mt_accounts_ajax_status()
+{
+  // Si usas nonce en front, descoméntalo y usa tu action:
+  // check_ajax_referer('mt-acc-nonce', 'nonce');
+
+  $accountId = sanitize_text_field((string) ($_POST['accountId'] ?? $_POST['account_id'] ?? ''));
+  if ($accountId === '') {
+    wp_send_json_error(['message' => 'Missing accountId']);
+  }
+
+  if (!class_exists('MT_Accounts')) {
+    wp_send_json_error(['message' => 'Missing MT_Accounts']);
+  }
+
+  $acc = null;
+
+  // A) Si existe el método directo por ID
+  if (method_exists('MT_Accounts', 'get_account_by_id')) {
+    $acc = MT_Accounts::get_account_by_id($accountId);
+  }
+
+  // B) Fallback: buscar dentro del listado del usuario
+  if (!$acc && method_exists('MT_Accounts', 'get_accounts')) {
+    $all = MT_Accounts::get_accounts();
+    if (is_array($all)) {
+      foreach ($all as $row) {
+        if ((string) ($row['id'] ?? '') === (string) $accountId) {
+          $acc = $row;
+          break;
+        }
+      }
+    }
+  }
+
+  if (!$acc || !is_array($acc)) {
+    wp_send_json_error(['message' => 'Account not found']);
+  }
+
+  // Normaliza vía prepare_ui
+  $ui = null;
+  if (method_exists('MT_Accounts', 'prepare_ui')) {
+    $ui = MT_Accounts::prepare_ui([$acc]);
+  }
+
+  $status = '';
+  if (is_array($ui)) {
+    $status = (string) ($ui['current']['status'] ?? '');
+  }
+  if ($status === '' && is_array($acc)) {
+    $status = (string) ($acc['status'] ?? '');
+  }
+  $status = trim($status); // "Breached" o "BREACHED"
+
+  if ($status === '') {
+    wp_send_json_error(['message' => 'Status not found']);
+  }
+
+  wp_send_json_success([
+    'status' => $status,
+  ]);
+}
+
 
 
 

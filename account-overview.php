@@ -95,28 +95,14 @@ if (is_user_logged_in()) {
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
 
-      // === Status Breached
-      $__mt_selected_status = '';
-      if (!empty($resolved) && is_array($resolved)) {
-        $__mt_selected_status = (string) ($resolved['status'] ?? '');
-      } elseif (!empty($mt_selected_id) && !empty($mt_account_ui['accounts'])) {
-        foreach ((array) $mt_account_ui['accounts'] as $__accRow) {
-          if ((string) ($__accRow['id'] ?? '') === (string) $mt_selected_id) {
-            $__mt_selected_status = (string) ($__accRow['status'] ?? '');
-            break;
-          }
-        }
-      } else {
-        $__mt_selected_status = (string) ($mt_account_ui['current']['status'] ?? '');
-      }
 
-      $__mt_breach_show = '0';
-      if (class_exists('Label') && defined('Label::ACCOUNT_STATUS_MAP')) {
-        $breached = Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED';
-        if (strcasecmp($__mt_selected_status, $breached) === 0) {
-          $__mt_breach_show = '1';
-        }
-      }
+      // === Flag inicial para abrir el modal de Breach en la PRIMERA CARGA ===
+      $__mt_selected_status = (string) ($resolved['status'] ?? ($mt_account_ui['current']['status'] ?? ''));
+      $__breach_key = (class_exists('Label') && defined('Label::ACCOUNT_STATUS_MAP'))
+        ? (Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED')
+        : 'BREACHED';
+      $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
+
 
 
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
@@ -226,19 +212,18 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
           ?>
         </div>
         <div class="d-flex flex-column gap-32">
-          <div class="mt-account-data" id="mt-account-data">
-            <?php
-            if (!empty($mt_selected_id) && !empty($mt_account_data)) {
-              get_template_part(
-                'template-parts/account/account-data',
-                null,
-                [
-                  'meta' => ['accountId' => $mt_selected_id],
-                  'data' => $mt_account_data,
-                ]
-              );
-            }
-            ?>
+          <div class="mt-account-data" id="mt-account-data"> <?php
+          if (!empty($mt_selected_id) && !empty($mt_account_data)) {
+            get_template_part(
+              'template-parts/account/account-data',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'data' => $mt_account_data,
+              ]
+            );
+          }
+          ?>
           </div>
 
           <div class="mt-account-performance" id="mt-performance-container">

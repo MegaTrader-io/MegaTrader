@@ -33,8 +33,8 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg" alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
                     </div>
                 </a>
-                <a class="p-2" href="javascript:void(0);" onclick="this.querySelector('i').classList.toggle('mt-icon_caret-left'); this.querySelector('i').classList.toggle('mt-icon_caret-right');">
-                    <i class="mt-icon mt-icon_caret-left"></i>
+                <a class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE',{ bubbles:true }));">
+                    <i class="mt-icon mt-icon-white mt-icon_caret-left-solid"></i>
                 </a>
 
             </div>
@@ -144,3 +144,10 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
 
     </div>
 </aside>
+<script>
+
+    document.addEventListener('MT_SIDEBAR_TOGGLE', function(e) {
+        console.log('MT_SIDEBAR_TOGGLE');
+    });
+
+</script>

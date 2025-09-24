@@ -1264,34 +1264,43 @@ document.addEventListener("mt:accountSelected", (e) => {
     init();
   }
 })();
-
-/* ===== Breach Alert Modal  ===== */
+// ===== Breach Alert Modal (centrado + backdrop) =====
 (function () {
   function init() {
     var modal = document.getElementById("mt-breach-alert-modal");
     if (!modal) return;
 
-    var closeBtn  = modal.querySelector(".mt-modal__close");
+    var closeBtn = modal.querySelector(".mt-modal__close");
     var actionBtn = modal.querySelector(".mt-breach-reset-button");
     var withBackdrop = null;
 
     function openModal() {
+      if (modal.classList.contains("show")) return;
+
       modal.removeAttribute("hidden");
       modal.setAttribute("aria-hidden", "false");
       modal.classList.add("show");
+
       modal.style.position = "fixed";
       modal.style.inset = "0";
       modal.style.display = "flex";
       modal.style.alignItems = "center";
       modal.style.justifyContent = "center";
       modal.style.zIndex = "1055";
-      withBackdrop = document.createElement("div");
-      withBackdrop.className = "modal-backdrop fade show";
-      withBackdrop.style.zIndex = "1050";
-      document.body.appendChild(withBackdrop);
+
+      if (!withBackdrop && !document.querySelector(".modal-backdrop.show")) {
+        withBackdrop = document.createElement("div");
+        withBackdrop.className = "modal-backdrop fade show";
+        withBackdrop.style.zIndex = "1050";
+        document.body.appendChild(withBackdrop);
+      }
+
       document.body.classList.add("modal-open");
-      try { modal.focus(); } catch (e) {}
+      try {
+        modal.focus();
+      } catch (e) {}
     }
+
     function closeModal() {
       modal.classList.remove("show");
       modal.setAttribute("aria-hidden", "true");
@@ -1302,6 +1311,7 @@ document.addEventListener("mt:accountSelected", (e) => {
       modal.style.alignItems = "";
       modal.style.justifyContent = "";
       modal.style.zIndex = "";
+
       if (withBackdrop && withBackdrop.parentNode) {
         withBackdrop.parentNode.removeChild(withBackdrop);
         withBackdrop = null;
@@ -1310,20 +1320,116 @@ document.addEventListener("mt:accountSelected", (e) => {
         document.body.classList.remove("modal-open");
       }
     }
-    closeBtn && closeBtn.addEventListener("click", function (e) { e.preventDefault(); closeModal(); });
-    actionBtn && actionBtn.addEventListener("click", function () {
-      var href = actionBtn.getAttribute("href") || "";
-      if (!href || href === "#") return;
-      setTimeout(closeModal, 100);
-    });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && modal.classList.contains("show")) closeModal(); });
 
+    closeBtn &&
+      closeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        closeModal();
+      });
+
+    actionBtn &&
+      actionBtn.addEventListener("click", function () {
+        var href = actionBtn.getAttribute("href") || "";
+        if (!href || href === "#") return;
+        setTimeout(closeModal, 100);
+      });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+    });
+
+    modal.__open = openModal;
+    modal.__close = closeModal;
+
+    // AUTO-OPEN en carga inicial si PHP marcó data-show="1"
     if (modal.getAttribute("data-show") === "1") {
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", openModal);
-      else openModal();
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", openModal);
+      } else {
+        openModal();
+      }
     }
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
-  else init();
-})();
 
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+// === 1) fetchStatus: llama al AJAX y devuelve el JSON ===
+function fetchStatus(accountId) {
+  var url =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+  var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+  var body = new URLSearchParams();
+  body.set("action", "mt_accounts_status"); // handler PHP
+  if (nonce) body.set("nonce", nonce);
+  // Enviar ambos nombres por compatibilidad
+  body.set("accountId", String(accountId || ""));
+  body.set("account_id", String(accountId || ""));
+
+  return fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body,
+  }).then(function (r) {
+    return r.json();
+  });
+}
+
+// === 2) breachGuardCheck: compara el status y abre el modal si es BREACHED ===
+function breachGuardCheck(accountId) {
+  if (!accountId) return;
+
+  return fetchStatus(accountId)
+    .then(function (j) {
+      if (!j || !j.success) return;
+
+      // Normaliza: "Breached" / "BREACHED"
+      var status = (j.data && j.data.status ? String(j.data.status) : "")
+        .trim()
+        .toUpperCase();
+
+      // Mapa localizado desde constants.php; fallback "BREACHED"
+      var target = (
+        window.mtAccounts && mtAccounts.statusBreached
+          ? String(mtAccounts.statusBreached)
+          : "BREACHED"
+      )
+        .trim()
+        .toUpperCase();
+
+      if (status === target) {
+        var modal = document.getElementById("mt-breach-alert-modal");
+        if (!modal || modal.classList.contains("show")) return;
+
+        if (typeof modal.__open === "function") {
+          modal.__open();
+        } else {
+          // Fallback simple
+          modal.setAttribute("data-show", "1");
+          modal.removeAttribute("hidden");
+          modal.setAttribute("aria-hidden", "false");
+          modal.classList.add("show");
+        }
+      }
+    })
+    .catch(function () {});
+}
+
+// Registrar en tu bus y chequear en carga inicial
+if (window.mtRefresh && typeof window.mtRefresh.register === "function") {
+  window.mtRefresh.register("breachGuard", breachGuardCheck);
+}
+(function () {
+  var firstId = (window.mtAccounts && mtAccounts.selectedId) || "";
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      if (firstId) breachGuardCheck(firstId);
+    });
+  } else {
+    if (firstId) breachGuardCheck(firstId);
+  }
+})();
