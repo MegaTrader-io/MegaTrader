@@ -221,6 +221,10 @@
         });
         document.dispatchEvent(ev);
         log("event dispatched: mt:accountSelected", selectedId);
+        if (typeof window.breachGuardCheck === 'function') window.breachGuardCheck(selectedId);
+        console.log('[PICKER] Select ->', selectedId, 'status=', obj?.status);
+
+
 
         // Si otro script ya hace el fetch/$.ajax y actualiza .mt-account-performance,
         // el observer/ ajaxComplete/fallback se encargan de ocultar el preloader.

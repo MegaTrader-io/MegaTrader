@@ -1113,8 +1113,6 @@ function mt_enqueue_overview_script_path_only() {
       wp_localize_script('mt-account-overview', 'mtAccounts', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce'   => wp_create_nonce('mt-acc-nonce'),
-        'selectedId' => (string)($mt_selected_id ?? ''),
-        'statusBreached' => \Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED',
       ]);
       return;
     }

@@ -1136,71 +1136,86 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
   }
 }
 
-// === AJAX: devolver STATUS por accountId ===
+// === AJAX: devolver STATUS por accountId (con logs) ===
 add_action('wp_ajax_mt_accounts_status', 'mt_accounts_ajax_status');
 add_action('wp_ajax_nopriv_mt_accounts_status', 'mt_accounts_ajax_status');
 
-function mt_accounts_ajax_status()
-{
-  // Si usas nonce en front, descoméntalo y usa tu action:
-  // check_ajax_referer('mt-acc-nonce', 'nonce');
+function mt_accounts_ajax_status() {
+   check_ajax_referer('mt-acc-nonce', 'nonce'); // habilítalo luego si quieres
 
-  $accountId = sanitize_text_field((string) ($_POST['accountId'] ?? $_POST['account_id'] ?? ''));
+  $accountId = sanitize_text_field((string)($_POST['accountId'] ?? $_POST['account_id'] ?? ''));
   if ($accountId === '') {
+    error_log('[BREACH][AJAX] Missing accountId');
     wp_send_json_error(['message' => 'Missing accountId']);
   }
 
-  if (!class_exists('MT_Accounts')) {
-    wp_send_json_error(['message' => 'Missing MT_Accounts']);
-  }
+  $found = null;
+  $used  = 'none';
 
-  $acc = null;
-
-  // A) Si existe el método directo por ID
-  if (method_exists('MT_Accounts', 'get_account_by_id')) {
-    $acc = MT_Accounts::get_account_by_id($accountId);
-  }
-
-  // B) Fallback: buscar dentro del listado del usuario
-  if (!$acc && method_exists('MT_Accounts', 'get_accounts')) {
-    $all = MT_Accounts::get_accounts();
-    if (is_array($all)) {
-      foreach ($all as $row) {
-        if ((string) ($row['id'] ?? '') === (string) $accountId) {
-          $acc = $row;
-          break;
-        }
-      }
+  // 1) Usa tu helper si existe (el mismo que usas en el template)
+  if (!$found && function_exists('mt_accounts_resolve_account_by_id')) {
+    try {
+      $found = mt_accounts_resolve_account_by_id($accountId);
+      if (is_array($found)) $used = 'resolve_helper';
+    } catch (Throwable $e) {
+      error_log('[BREACH][AJAX] resolve_helper EX: ' . $e->getMessage());
     }
   }
 
-  if (!$acc || !is_array($acc)) {
+  // 2) Método directo por ID
+  if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_account_by_id')) {
+    try {
+      $found = MT_Accounts::get_account_by_id($accountId);
+      if (is_array($found)) $used = 'get_account_by_id';
+    } catch (Throwable $e) {
+      error_log('[BREACH][AJAX] get_account_by_id EX: ' . $e->getMessage());
+    }
+  }
+
+  // 3) Fallback: buscar en el listado del usuario
+  if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_accounts')) {
+    try {
+      $all = MT_Accounts::get_accounts();
+      $cnt = is_array($all) ? count($all) : 0;
+      error_log(sprintf('[BREACH][AJAX] get_accounts cnt=%d', $cnt));
+      if (is_array($all)) {
+        foreach ($all as $row) {
+          $rid = (string)($row['id'] ?? $row['accountId'] ?? $row['account_id'] ?? '');
+          if ($rid === (string)$accountId) { $found = $row; $used = 'get_accounts'; break; }
+        }
+      }
+    } catch (Throwable $e) {
+      error_log('[BREACH][AJAX] get_accounts EX: ' . $e->getMessage());
+    }
+  }
+
+  if (!$found || !is_array($found)) {
+    error_log(sprintf('[BREACH][AJAX] Account not found id=%s used=%s', $accountId, $used));
     wp_send_json_error(['message' => 'Account not found']);
   }
 
-  // Normaliza vía prepare_ui
-  $ui = null;
-  if (method_exists('MT_Accounts', 'prepare_ui')) {
-    $ui = MT_Accounts::prepare_ui([$acc]);
-  }
-
+  // 4) Normaliza vía prepare_ui si está disponible
   $status = '';
-  if (is_array($ui)) {
-    $status = (string) ($ui['current']['status'] ?? '');
+  if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'prepare_ui')) {
+    try {
+      $ui = MT_Accounts::prepare_ui([$found]);
+      if (is_array($ui)) $status = (string)($ui['current']['status'] ?? '');
+    } catch (Throwable $e) {
+      error_log('[BREACH][AJAX] prepare_ui EX: ' . $e->getMessage());
+    }
   }
-  if ($status === '' && is_array($acc)) {
-    $status = (string) ($acc['status'] ?? '');
-  }
-  $status = trim($status); // "Breached" o "BREACHED"
+  if ($status === '') $status = (string)($found['status'] ?? '');
+  $status = trim($status);
+
+  error_log(sprintf('[BREACH][AJAX] id=%s used=%s status="%s"', $accountId, $used, $status));
 
   if ($status === '') {
     wp_send_json_error(['message' => 'Status not found']);
   }
 
-  wp_send_json_success([
-    'status' => $status,
-  ]);
+  wp_send_json_success(['status' => $status]);
 }
+
 
 
 

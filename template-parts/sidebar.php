@@ -33,7 +33,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg" alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
                     </div>
                 </a>
-                <a class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE',{ bubbles:true }));">
+                <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
                     <i class="mt-icon mt-icon-white mt-icon_caret-left-solid"></i>
                 </a>
 
@@ -145,9 +145,31 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
     </div>
 </aside>
 <script>
+    const expanded = true;
 
-    document.addEventListener('MT_SIDEBAR_TOGGLE', function(e) {
-        console.log('MT_SIDEBAR_TOGGLE');
-    });
+    function sidebarUpdateToggle(expanded){
+        const toggleIcon = document.querySelector('#mt-sidebar-toggle > .mt-icon');
+        console.log({toggleIcon}, expanded)
+        if(toggleIcon){
+            toggleIcon.classList.remove('mt-icon_caret-left-solid', 'mt-icon_caret-right-solid');
+            toggleIcon.classList.add( expanded ? 'mt-icon_caret-left-solid' : 'mt-icon_caret-right-solid');
+        }
+    }
+
+    function sidebarInit(){
+        
+        console.log('sidebarInit')
+        sidebarUpdateToggle(expanded);
+
+
+        document.addEventListener('MT_SIDEBAR_TOGGLE', function(e) {
+            console.log('MT_SIDEBAR_TOGGLE');
+            expanded != expanded;
+            sidebarUpdateToggle(expanded);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', sidebarInit);
+    
 
 </script>

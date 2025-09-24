@@ -96,12 +96,7 @@ if (is_user_logged_in()) {
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
 
 
-      // === Flag inicial para abrir el modal de Breach en la PRIMERA CARGA ===
-      $__mt_selected_status = (string) ($resolved['status'] ?? ($mt_account_ui['current']['status'] ?? ''));
-      $__breach_key = (class_exists('Label') && defined('Label::ACCOUNT_STATUS_MAP'))
-        ? (Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED')
-        : 'BREACHED';
-      $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
+
 
 
 
@@ -149,6 +144,30 @@ if (is_user_logged_in()) {
         }
 
       }
+      // === Flag inicial para abrir el modal de Breach en la PRIMERA CARGA ===
+      $__mt_selected_status = (string) (
+        $resolved['status']
+        ?? ($mt_account_ui['current']['status'] ?? '')
+      );
+
+      $__breach_key = 'BREACHED';
+      if (class_exists('Label')) {
+        $__breach_key = \Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED';
+      }
+
+      // case-insensitive: soporta "Breached" y "BREACHED"
+      $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
+
+if (defined('WP_DEBUG') && WP_DEBUG) {
+  error_log(sprintf(
+    '[BREACH][PHP] selectedId=%s status="%s" key="%s" show=%s',
+    $mt_selected_id,
+    $__mt_selected_status,
+    $__breach_key,
+    $__mt_breach_show
+  ));
+}
+
 
     } else {
       echo '<div class="mt-alert mt-alert--error">Email inválido. Actualiza tu perfil.</div>';
