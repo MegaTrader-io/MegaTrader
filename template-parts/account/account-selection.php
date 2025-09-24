@@ -31,7 +31,7 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
 ?>
 
 <div
-  class="account-selection-wrapper d-flex gap-2 d-flex align-items-center gap-3 p-3 rounded-2xl bg-1e1e1e justify-content-between border-gray">
+  class="account-selection-wrapper d-flex gap-2 d-flex align-items-center gap-3 p-3 rounded-2xl bg-1e1e1e justify-content-between">
   <button type="button" class="mega-btn-md mega-btn-secondary-md flex-shrink-0 flex-grow-1" data-bs-toggle="modal"
     data-bs-target="#changeSubcriptionModal">
     <div class="d-flex align-items-center gap-2 justify-content-between w-100">

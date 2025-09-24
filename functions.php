@@ -2001,4 +2001,33 @@ add_action('wp_ajax_mt_save_daily_feedback', function () {
     ]);
 });
 
+// MUESTRA inputs debajo de Billing en la orden (admin)
+add_action('woocommerce_admin_order_data_after_billing_address', function($order){
+    wp_nonce_field('mt_billing_admin','mt_billing_admin_nonce');
+    ?>
+    <div style="margin-top:8px">
+      <h4>Billing (extra)</h4>
+      <p><label>City<br>
+        <input type="text" name="mt_billing_city" value="<?php echo esc_attr($order->get_billing_city()); ?>" class="widefat">
+      </label></p>
+      <p><label>State<br>
+        <input type="text" name="mt_billing_state" value="<?php echo esc_attr($order->get_billing_state()); ?>" class="widefat">
+      </label></p>
+      <p><label>Postcode<br>
+        <input type="text" name="mt_billing_postcode" value="<?php echo esc_attr($order->get_billing_postcode()); ?>" class="widefat">
+      </label></p>
+      <p><label>Country (ISO)<br>
+        <input type="text" name="mt_billing_country" value="<?php echo esc_attr($order->get_billing_country()); ?>" class="widefat">
+      </label></p>
+      <p><label>Email<br>
+        <input type="email" name="mt_billing_email" value="<?php echo esc_attr($order->get_billing_email()); ?>" class="widefat">
+      </label></p>
+      <p><label>Phone<br>
+        <input type="text" name="mt_billing_phone" value="<?php echo esc_attr($order->get_billing_phone()); ?>" class="widefat">
+      </label></p>
+    </div>
+    <?php
+}, 10, 1);
+
+
 

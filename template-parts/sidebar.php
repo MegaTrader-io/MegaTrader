@@ -2,21 +2,23 @@
 
 defined('ABSPATH') || exit;
 
-/**
- * @var array<int, array{
- *     href: string,
- *     icon?: string,
- *     text: string
- * }> $menu_items
- */
+function is_my_account_path() {
+    $req_path = rtrim( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
 
-$links = $args['menu_items'] ?? [];
+    // Normalize to site base
+    $account_base = rtrim( parse_url( wc_get_page_permalink( 'myaccount' ), PHP_URL_PATH ), '/' );
+
+    // Check if request path starts with the account base
+    return ( strpos( $req_path, $account_base ) === 0 );
+}
+
+$overview_active_class = is_my_account_path() ? 'active' : '';
 
 ?>
 
 <aside class="mt-sidebar">
-    <div class="mt-sidebar__wrapper mt-card d-flex gap-32 flex-column">
-        <div class="mt-sidebar__logo">
+    <div class="mt-sidebar__wrapper mt-card mt-card_border d-flex gap-32 flex-column">
+        <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
             <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
                         alt="MegaTrader" class="mt-sidebar__logo-icon" width="60" height="60" loading="eager">
@@ -25,6 +27,10 @@ $links = $args['menu_items'] ?? [];
                             alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
                 </div>
             </a>
+            <a class="p-2" href="javascript:void(0);" onclick="this.querySelector('i').classList.toggle('mt-icon_caret-left'); this.querySelector('i').classList.toggle('mt-icon_caret-right');">
+                <i class="mt-icon mt-icon_caret-left"></i>
+            </a>
+
         </div>
 
         <div class="mt-card mt-card-dark">
@@ -53,7 +59,7 @@ $links = $args['menu_items'] ?? [];
                     <div class="mt-sidebar__menu__group__options mt-page_md-d-none">
                         <!-- Desktop -->
                         <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                            <a class="mt-sidebar__menu__link active" href="/my-account/overview/">
+                            <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
                                 <i class="mt-icon mt-icon-sm mt-icon_account"></i>
                                 <span>ACCOUNT OVERVIEW<span>
                             </a>

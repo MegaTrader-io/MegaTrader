@@ -3574,7 +3574,7 @@ body.mt-placing .woocommerce-checkout {
   padding: 16px;
   background: var(--Surface-Page, #1E1E1E);
   border-radius: 16px;
-  border: 1px solid var(--Colors-Gray-700, #404040);
+  /*border: 1px solid var(--Colors-Gray-700, #404040);*/
   min-height: 96px;
   color: #e5e5e5;
   box-sizing: border-box

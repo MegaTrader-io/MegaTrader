@@ -121,7 +121,7 @@ class Label
     public const SIDEBAR_META = [
         "launch_button" => "Launch MegatraderX",
         "plan_title" => "Explore the plans",
-        "plan_description" => "Find the perfect plan to enhance your experience.",
+        "plan_description" => "Find the perfect plan to enhance experience.",
         "plan_button" => "Buy a new challenge",
     ];
 
