@@ -324,7 +324,7 @@
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
         const event = new CustomEvent("product:selected", {
-            detail: { product: selectedProduct, values }
+            detail: { product: Object.values(selectedProduct).length > 0 ? selectedProduct: null, values }
         });
 
         form.dispatchEvent(event);

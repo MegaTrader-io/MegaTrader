@@ -483,10 +483,22 @@ document.addEventListener('DOMContentLoaded', function () {
     void loadMarkerCarousel();
     void loadChooseYourAccountSize(
         (params) => {
+            const metaInfoElement = document.querySelector('.metaInfo');
+            metaInfoElement.innerHTML = '';
+
             const {product: productionSelected, values} = params;
 
+            function formatNumber(value) {
+                return '$' + parseInt(value.toString().replace('$', ''));
+            }
+
+            if (!productionSelected) {
+                console.info('values', values);
+                return;
+            }
+
             const defaultMetaInfo = {}
-            const metaInfo = productionSelected['meta-info'];
+            const metaInfo = productionSelected['meta-info'] || [];
             for (const metaInfoKey in metaInfo) {
                 if (metaInfo[metaInfoKey]) {
                     defaultMetaInfo[metaInfoKey] = true;
@@ -501,9 +513,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
 
-            const metaInfoElement = document.querySelector('.metaInfo');
-
-            metaInfoElement.innerHTML = '';
             const template = document.querySelector(`.template-metaInfo`);
 
             metaInfoList.forEach(metaInfo => {
@@ -527,6 +536,22 @@ document.addEventListener('DOMContentLoaded', function () {
             const frequencyPanel = document.querySelector(`.frequency-plan`);
 
             const coupon = product?.coupon;
+
+            const planTypeInputRadio = document.querySelector(`[name="account-type"][value="${values['account-type']}"]`);
+            if (planTypeInputRadio) {
+                const img = planTypeInputRadio.nextElementSibling.querySelector('.mt-card__title__icon');
+                if (img) {
+                    document.querySelector('.plan-summary__plan-icon').src = img.src;
+                }
+            }
+
+            const platformInputRadio = document.querySelector(`[name="platform"][value="${values['platform']}"]`);
+            if (platformInputRadio) {
+                const img = platformInputRadio.nextElementSibling.querySelector('.mt-card__title__image');
+                if (img) {
+                    document.querySelector('.plan-summary__platform-icon').src = img.src;
+                }
+            }
 
             document.querySelector('.plan-summary__name').innerText = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
 

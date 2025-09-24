@@ -4,6 +4,7 @@ $attributes = $products_data['attributes'] ?? [];
 
 $account_sizes = [];
 $account_types = [];
+$platforms = [];
 $market_type = [];
 
 foreach ($attributes as $attr) {
@@ -17,12 +18,19 @@ foreach ($attributes as $attr) {
         case 'pa_market-type':
             $market_type[] = $attr;
             break;
+        case 'pa_platform':
+            $platforms[] = $attr;
+            break;
     }
 }
 
+$defaultAccountType = $account_types[0];
+$accountThumbnailUrl = $defaultAccountType['thumbnail_url'];
+$platformThumbnailUrl = $platforms[0]['thumbnail_url'];
+
 $size = $account_sizes[0];
-$defaultSlug = $account_types[0]['slug'];
-$defaultPlanName = $size . ' ' . $account_types[0]['name'];
+$defaultSlug = $defaultAccountType['slug'];
+$defaultPlanName = $size . ' ' . $defaultAccountType['name'];
 
 $get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
 
@@ -145,9 +153,13 @@ $tabs = array_map(function ($item) {
         </div>
         <div class="tw-space-y-8 tw-flex tw-flex-col">
             <div>
-                <div class="plan-summary tw-px-4 tw-h-[104px] tw-flex-col tw-justify-center tw-flex tw-content-center tw-text-white tw-text-2xl tw-font-medium tw-uppercase tw-leading-7">
-                    <div class="plan-summary__name">
-                        <?= $defaultPlanName ?>
+                <div class="tw-px-4 tw-h-[104px] tw-inline-flex tw-items-center tw-justify-center">
+                    <div class="plan-summary tw-inline-flex tw-items-center tw-justify-start tw-gap-2 tw-leading-7">
+                        <img class="plan-summary__plan-icon" src="<?= $accountThumbnailUrl; ?>" alt="Plan Icon">
+                        <img class="plan-summary__platform-icon" src="<?= $platformThumbnailUrl; ?>" alt="Platform Icon">
+                        <div class="plan-summary__name tw-text-2xl tw-text-white tw-font-medium tw-uppercase">
+                            <?= $defaultPlanName ?>
+                        </div>
                     </div>
                 </div>
                 <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">

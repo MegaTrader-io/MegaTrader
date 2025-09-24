@@ -183,7 +183,7 @@ body {
     @apply tw-bg-neutral-700;
 }
 
-#slider-mgt.noUi-base,#slider-mgt.noUi-connects {
+#slider-mgt.noUi-base, #slider-mgt.noUi-connects {
     z-index: auto;
 }
 
@@ -465,4 +465,9 @@ body[data-scroll-locked] {
     .price-table__most-popular-badge {
         @apply tw-hidden;
     }
+}
+
+.plan-summary .plan-summary__plan-icon, .plan-summary .plan-summary__platform-icon {
+    width: 24px;
+    height: 24px;
 }
