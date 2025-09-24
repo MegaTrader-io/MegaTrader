@@ -186,7 +186,9 @@ class Label
         "feature_content_no_data" => "NO DATA AVAILABLE",
         "feature_content_reward" => "Reward",
         "feature_content_risk" => "Risk",
-
+        "agreement_title" => "Market Data Agreement required",
+        "agreement_body" => "You must sign the market data agreement to continue using your account features.",
+        "agreement_button" => "Open Agreement"
     ];
 
 }

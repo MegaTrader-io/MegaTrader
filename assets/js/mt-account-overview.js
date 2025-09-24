@@ -1173,6 +1173,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     if (!modal) return;
 
     var closeBtn = modal.querySelector(".mt-modal__close");
+    var actionBtn = modal.querySelector(".mt-agreement-button"); // <— botón que abre el agreement
     var withBackdrop = null;
 
     function openModal() {
@@ -1196,9 +1197,7 @@ document.addEventListener("mt:accountSelected", (e) => {
       document.body.appendChild(withBackdrop);
 
       document.body.classList.add("modal-open");
-      try {
-        modal.focus();
-      } catch (e) {}
+      try { modal.focus(); } catch (e) {}
     }
 
     function closeModal() {
@@ -1221,11 +1220,22 @@ document.addEventListener("mt:accountSelected", (e) => {
       }
     }
 
-    // cerrar con botón
+    // cerrar con botón X
     if (closeBtn) {
       closeBtn.addEventListener("click", function (e) {
         e.preventDefault();
         closeModal();
+      });
+    }
+
+    // cerrar cuando el usuario hace clic en “Open Agreement” (abre nueva pestaña)
+    if (actionBtn) {
+      actionBtn.addEventListener("click", function () {
+        // si no hay URL válida, no cerrar
+        var href = actionBtn.getAttribute("href") || "";
+        if (!href || href === "#") return;
+        // da un tick al navegador para abrir el tab y luego cierra
+        setTimeout(closeModal, 100);
       });
     }
 
@@ -1252,3 +1262,4 @@ document.addEventListener("mt:accountSelected", (e) => {
     init();
   }
 })();
+

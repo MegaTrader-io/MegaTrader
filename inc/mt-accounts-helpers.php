@@ -1053,56 +1053,65 @@ if (!function_exists('mt_reset_checkout_url')) {
 
 if (!function_exists('mt_get_agreement_status_by_email')) {
   /**
-   * Recibe email YA codificado (e.g., test%2B2%40megatrader.io),
-   * llama [mega_subscriptions_data] y devuelve:
-   * ['agreementURL'=>string|null,'agreementSigned'=>bool|null,'agreementStatus'=>bool|null]
+   * Recibe email YA codificado (ej: test%2B2@megatrader.io) y llama al shortcode:
+   *   [mega_subscriptions_data email="..." output="json" ttl="..."]
+   * Devuelve: ['agreementURL'=>string|null,'agreementSigned'=>bool|null,'agreementStatus'=>bool|null]
+   * Deja logs si WP_DEBUG está activo.
    */
   function mt_get_agreement_status_by_email(string $email_encoded, int $ttl = 120): array
   {
     $email_encoded = is_string($email_encoded) ? trim($email_encoded) : '';
     if ($email_encoded === '') {
+      if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT Agreement] empty email');
       return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
     }
 
-    if (strpos($email_encoded, '@') !== false) {
-      $email_encoded = rawurlencode(strtolower(trim($email_encoded)));
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[MT Agreement][in] email=' . $email_encoded . ' ttl=' . max(0, $ttl));
     }
 
+    // Pasamos el email tal cual al shortcode (ya codificado)
     $sc = sprintf(
       '[mega_subscriptions_data email="%s" output="json" ttl="%d"]',
       esc_attr($email_encoded),
       max(0, $ttl)
     );
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[MT Agreement][sc]=' . $sc);
+    }
 
     $raw = do_shortcode($sc);
     $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
 
+    // Limpiezas: BOM + entidades HTML
     if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF") {
       $raw = substr($raw, 3);
     }
     if ($raw !== '') {
       $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[MT Agreement][raw]=' . substr((string)$raw, 0, 800));
+    }
 
+    // Parseo robusto
     $data = json_decode($raw, true);
     if (!is_array($data)) {
       $data = json_decode(trim(wp_strip_all_tags($raw)), true);
     }
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[MT Agreement][parsed]=' . (is_array($data) ? wp_json_encode($data) : 'null'));
+    }
+
     if (!is_array($data)) {
       return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
     }
 
-    $data['agreementSigned'] = filter_var(
-      $data['agreementSigned'] ?? null,
-      FILTER_VALIDATE_BOOLEAN,
-      FILTER_NULL_ON_FAILURE
-    );
-    $data['agreementStatus'] = filter_var(
-      $data['agreementStatus'] ?? null,
-      FILTER_VALIDATE_BOOLEAN,
-      FILTER_NULL_ON_FAILURE
-    );
+    // Normalizar booleanos
+    $signed = filter_var($data['agreementSigned'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    $status = filter_var($data['agreementStatus'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
+    // Mapear URL (admite alias)
     $agreement_url = null;
     foreach (['agreementURL', 'agreementUrl', 'agreement_url', 'url'] as $k) {
       if (!empty($data[$k]) && is_string($data[$k])) {
@@ -1111,12 +1120,22 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
       }
     }
 
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[MT Agreement][final] signed=' . var_export($signed, true)
+        . ' status=' . var_export($status, true)
+        . ' url=' . ($agreement_url ?? ''));
+    }
+
     return [
       'agreementURL'    => $agreement_url,
-      'agreementSigned' => $data['agreementSigned'],
-      'agreementStatus' => $data['agreementStatus'],
+      'agreementSigned' => $signed,
+      'agreementStatus' => $status,
     ];
   }
 }
+
+
+
+
 
 

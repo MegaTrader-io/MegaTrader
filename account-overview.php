@@ -42,24 +42,7 @@ if (is_user_logged_in()) {
 
     if (!empty($san['ok'])) {
       $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
-      $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
-
-      // === Agreement status (usa email codificado) ===
-      // === Agreement status (email CODIFICADO y TTL=0) ===
-      $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
-        ? mt_get_agreement_status_by_email($mt_user_email_api, 0)
-        : null;
-
-      // URL desde la respuesta (si viene)
-      $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
-        ? (string) $__mt_agreement['agreementURL']
-        : '';
-
-      // Flag para mostrar modal
-      $__mt_agreement_show = (is_array($__mt_agreement)
-        && array_key_exists('agreementSigned', $__mt_agreement)
-        && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
-
+      $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)      
 
 
 
@@ -98,6 +81,22 @@ if (is_user_logged_in()) {
       if (defined('WP_DEBUG') && WP_DEBUG) {
         error_log('[MT][email] plain=' . $mt_user_email . ' | encoded=' . $mt_user_email_api . ' | cnt_plain=' . $mt_cnt_plain . ' | cnt_enc=' . $mt_cnt_encoded . ' | variant=' . $mt_fetch_variant);
       }
+
+      // === Agreement status (email CODIFICADO y TTL=0) ===
+      $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
+        ? mt_get_agreement_status_by_email($mt_user_email_api, 0)
+        : null;
+
+      // URL desde la respuesta (si viene)
+      $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
+        ? (string) $__mt_agreement['agreementURL']
+        : '';
+
+      // Flag para mostrar modal
+      $__mt_agreement_show = (is_array($__mt_agreement)
+        && array_key_exists('agreementSigned', $__mt_agreement)
+        && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+
 
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
@@ -181,8 +180,17 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
       <?php else: ?>
 
         <div class="mt-account-navigation mega-navigation">
-          <?php get_template_part('template-parts/account/account-navigation'); ?>
+          <?php if (function_exists('account_navigation_render')) {
+            account_navigation_render();
+          } else {
+            get_template_part(
+              'template-parts/account/account-navigation',
+              null,
+              function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
+            );
+          } ?>
         </div>
+
 
         <div class="mt-account-selection">
           <?php
@@ -324,7 +332,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
     <div class="modal-content gap-3">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <h5 id="mtag-title" class="modal-title text-white heading-sm-medium">
-          Market Data Agreement required
+          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_title']; ?>
         </h5>
 
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
@@ -337,21 +345,14 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
       </div>
 
       <div class="modal-body">
-        <p class="mb-3">You must sign the market data agreement to continue using your account features.</p>
+        <p class="mb-3"><?php echo Label::META_ACCOUNT_OVERVIEW['agreement_body']; ?></p>
         <a href="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>" target="_blank" rel="noopener"
-          class="mega-btn-md mega-btn-primary-md">
-          Open Agreement
+          class="mega-btn-md mega-btn-primary-md mt-agreement-button">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_button']; ?>
         </a>
       </div>
     </div>
   </div>
-</div>
-
-<div class="mt-debug mt-debug-agreement" style="background:#111;color:#0f0;padding:12px;margin-top:24px;border:1px dashed #444;">
-  <strong>__mt_agreement</strong>
-  <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;">
-<?php echo esc_html( wp_json_encode($__mt_agreement, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ); ?>
-  </pre>
 </div>
 
 
