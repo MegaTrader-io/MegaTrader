@@ -351,15 +351,14 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
   </div>
 </div>
 
-<?php if (current_user_can('manage_options') || isset($_GET['dbg_agreement'])): ?>
-  <div class="mt-debug mt-debug-agreement" style="background:#111;color:#0f0;padding:12px;margin-top:24px;border:1px dashed #444;">
-    <strong>Agreement (debug)</strong>
-    <div>show=<?php echo esc_html($__mt_agreement_show); ?> | url=<?php echo esc_html($__mt_agreement_url ?: ''); ?></div>
-    <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;">
-<?php echo esc_html( wp_json_encode($__mt_agreement, JSON_PRETTY_PRINT) ); ?>
-    </pre>
-  </div>
-<?php endif; ?>
+<div class="mt-debug mt-debug-agreement" style="background:#111;color:#0f0;padding:12px;margin-top:24px;border:1px dashed #444;">
+  <strong>Agreement (debug)</strong>
+  <div>show=<?php echo esc_html($__mt_agreement_show); ?> | url=<?php echo esc_html($__mt_agreement_url ?: ''); ?></div>
+  <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;">
+<?php echo esc_html( wp_json_encode($__mt_agreement, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ); ?>
+  </pre>
+</div>
+
 
 
 
