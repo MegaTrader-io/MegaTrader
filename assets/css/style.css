@@ -5916,7 +5916,7 @@ a.text-theme:hover,
     font-size: 16px;
     font-weight: 500;
     padding: 16px;
-    border: 1px solid var(--ot-border-color);
+    /*border: 1px solid var(--ot-border-color);*/
     border-radius: 8px;
     margin-bottom: 16px;
     color: var(--title-color);

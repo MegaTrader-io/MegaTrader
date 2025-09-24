@@ -1799,7 +1799,7 @@ label[for="wc-nmi-new-payment-method"] {
 .woocommerce .woocommerce-checkout #payment ul.payment_methods .wc-saved-payment-methods li,
 .woocommerce-checkout #payment div.payment_box p:last-child,
 .woocommerce-checkout #payment div.form-row.place-order {
-  background-color: var(--smoke-color);
+  background-color: var(--smoke-color2);
   padding: 16px;
   margin: 0 !important;
 }
@@ -3050,14 +3050,14 @@ a.pagination-number {
 
 .mt-payment-cards .woocommerce-SavedPaymentMethods-token {
   flex: 1 1 0;
-  border: 1px solid var(--Colors-Gray-700, #404040);
+  /*border: 1px solid var(--Colors-Gray-700, #404040);*/
 }
 
 .mt-payment-cards .woocommerce-SavedPaymentMethods-new {
   border-radius: 16px;
   flex: 1 1 0;
   display: flex;
-  border: 1px solid var(--Colors-Gray-700, #404040);
+  /*border: 1px solid var(--Colors-Gray-700, #404040);*/
 }
 
 .mt-payment-cards .saved-cc-content {
@@ -3067,7 +3067,7 @@ a.pagination-number {
 .mt-payment-cards .wc-upe-form.wc-payment-form {
   border-radius: 16px;
   padding: 16px !important;
-  border: 1px solid var(--Colors-Gray-700, #404040);
+  /*border: 1px solid var(--Colors-Gray-700, #404040);*/
 }
 
 .mt-payment-cards .saved-cc-body {

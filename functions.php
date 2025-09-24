@@ -2001,33 +2001,36 @@ add_action('wp_ajax_mt_save_daily_feedback', function () {
     ]);
 });
 
-// MUESTRA inputs debajo de Billing en la orden (admin)
-add_action('woocommerce_admin_order_data_after_billing_address', function($order){
-    wp_nonce_field('mt_billing_admin','mt_billing_admin_nonce');
-    ?>
-    <div style="margin-top:8px">
-      <h4>Billing (extra)</h4>
-      <p><label>City<br>
-        <input type="text" name="mt_billing_city" value="<?php echo esc_attr($order->get_billing_city()); ?>" class="widefat">
-      </label></p>
-      <p><label>State<br>
-        <input type="text" name="mt_billing_state" value="<?php echo esc_attr($order->get_billing_state()); ?>" class="widefat">
-      </label></p>
-      <p><label>Postcode<br>
-        <input type="text" name="mt_billing_postcode" value="<?php echo esc_attr($order->get_billing_postcode()); ?>" class="widefat">
-      </label></p>
-      <p><label>Country (ISO)<br>
-        <input type="text" name="mt_billing_country" value="<?php echo esc_attr($order->get_billing_country()); ?>" class="widefat">
-      </label></p>
-      <p><label>Email<br>
-        <input type="email" name="mt_billing_email" value="<?php echo esc_attr($order->get_billing_email()); ?>" class="widefat">
-      </label></p>
-      <p><label>Phone<br>
-        <input type="text" name="mt_billing_phone" value="<?php echo esc_attr($order->get_billing_phone()); ?>" class="widefat">
-      </label></p>
-    </div>
-    <?php
-}, 10, 1);
+// Billing completo (solo lectura) debajo del bloque Billing en Admin > Pedido
 
+add_action('woocommerce_checkout_order_processed', function($order_id, $posted){
+    $o = wc_get_order($order_id);
+    $map = [
+      'billing_first_name' => 'set_billing_first_name',
+      'billing_last_name'  => 'set_billing_last_name',
+      'billing_company'    => 'set_billing_company',
+      'billing_address_1'  => 'set_billing_address_1',
+      'billing_address_2'  => 'set_billing_address_2',
+      'billing_city'       => 'set_billing_city',
+      'billing_state'      => 'set_billing_state',
+      'billing_postcode'   => 'set_billing_postcode',
+      'billing_country'    => 'set_billing_country',
+      'billing_email'      => 'set_billing_email',
+      'billing_phone'      => 'set_billing_phone',
+    ];
+    foreach($map as $k=>$setter){
+        if (isset($posted[$k])) $o->$setter( wc_clean( wp_unslash($posted[$k]) ) );
+    }
+    $o->save();
+
+    // Log de verificación (puedes quitarlo cuando confirmes)
+    error_log('BILLING SAVED: ' . wp_json_encode([
+      'address_1' => $o->get_billing_address_1(),
+      'city'      => $o->get_billing_city(),
+      'state'     => $o->get_billing_state(),
+      'postcode'  => $o->get_billing_postcode(),
+      'country'   => $o->get_billing_country(),
+    ]));
+}, 999, 2);
 
 
