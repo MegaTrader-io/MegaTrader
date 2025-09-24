@@ -1197,7 +1197,9 @@ document.addEventListener("mt:accountSelected", (e) => {
       document.body.appendChild(withBackdrop);
 
       document.body.classList.add("modal-open");
-      try { modal.focus(); } catch (e) {}
+      try {
+        modal.focus();
+      } catch (e) {}
     }
 
     function closeModal() {
@@ -1261,5 +1263,67 @@ document.addEventListener("mt:accountSelected", (e) => {
   } else {
     init();
   }
+})();
+
+/* ===== Breach Alert Modal  ===== */
+(function () {
+  function init() {
+    var modal = document.getElementById("mt-breach-alert-modal");
+    if (!modal) return;
+
+    var closeBtn  = modal.querySelector(".mt-modal__close");
+    var actionBtn = modal.querySelector(".mt-breach-reset-button");
+    var withBackdrop = null;
+
+    function openModal() {
+      modal.removeAttribute("hidden");
+      modal.setAttribute("aria-hidden", "false");
+      modal.classList.add("show");
+      modal.style.position = "fixed";
+      modal.style.inset = "0";
+      modal.style.display = "flex";
+      modal.style.alignItems = "center";
+      modal.style.justifyContent = "center";
+      modal.style.zIndex = "1055";
+      withBackdrop = document.createElement("div");
+      withBackdrop.className = "modal-backdrop fade show";
+      withBackdrop.style.zIndex = "1050";
+      document.body.appendChild(withBackdrop);
+      document.body.classList.add("modal-open");
+      try { modal.focus(); } catch (e) {}
+    }
+    function closeModal() {
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      modal.setAttribute("hidden", "");
+      modal.style.display = "";
+      modal.style.position = "";
+      modal.style.inset = "";
+      modal.style.alignItems = "";
+      modal.style.justifyContent = "";
+      modal.style.zIndex = "";
+      if (withBackdrop && withBackdrop.parentNode) {
+        withBackdrop.parentNode.removeChild(withBackdrop);
+        withBackdrop = null;
+      }
+      if (!document.querySelector(".modal.show")) {
+        document.body.classList.remove("modal-open");
+      }
+    }
+    closeBtn && closeBtn.addEventListener("click", function (e) { e.preventDefault(); closeModal(); });
+    actionBtn && actionBtn.addEventListener("click", function () {
+      var href = actionBtn.getAttribute("href") || "";
+      if (!href || href === "#") return;
+      setTimeout(closeModal, 100);
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && modal.classList.contains("show")) closeModal(); });
+
+    if (modal.getAttribute("data-show") === "1") {
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", openModal);
+      else openModal();
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();
 

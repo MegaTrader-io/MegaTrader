@@ -82,20 +82,41 @@ if (is_user_logged_in()) {
         error_log('[MT][email] plain=' . $mt_user_email . ' | encoded=' . $mt_user_email_api . ' | cnt_plain=' . $mt_cnt_plain . ' | cnt_enc=' . $mt_cnt_encoded . ' | variant=' . $mt_fetch_variant);
       }
 
-      // === Agreement status (email CODIFICADO y TTL=0) ===
+      // === Agreement Modal ===
       $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
         ? mt_get_agreement_status_by_email($mt_user_email_api, 0)
         : null;
 
-      // URL desde la respuesta (si viene)
       $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
         ? (string) $__mt_agreement['agreementURL']
         : '';
 
-      // Flag para mostrar modal
       $__mt_agreement_show = (is_array($__mt_agreement)
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+
+      // === Status Breached
+      $__mt_selected_status = '';
+      if (!empty($resolved) && is_array($resolved)) {
+        $__mt_selected_status = (string) ($resolved['status'] ?? '');
+      } elseif (!empty($mt_selected_id) && !empty($mt_account_ui['accounts'])) {
+        foreach ((array) $mt_account_ui['accounts'] as $__accRow) {
+          if ((string) ($__accRow['id'] ?? '') === (string) $mt_selected_id) {
+            $__mt_selected_status = (string) ($__accRow['status'] ?? '');
+            break;
+          }
+        }
+      } else {
+        $__mt_selected_status = (string) ($mt_account_ui['current']['status'] ?? '');
+      }
+
+      $__mt_breach_show = '0';
+      if (class_exists('Label') && defined('Label::ACCOUNT_STATUS_MAP')) {
+        $breached = Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED';
+        if (strcasecmp($__mt_selected_status, $breached) === 0) {
+          $__mt_breach_show = '1';
+        }
+      }
 
 
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
@@ -332,7 +353,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
     <div class="modal-content gap-3">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <h5 id="mtag-title" class="modal-title text-white heading-sm-medium">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_title']; ?>
+          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_title']; ?>
         </h5>
 
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
@@ -345,15 +366,57 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
       </div>
 
       <div class="modal-body">
-        <p class="mb-3"><?php echo Label::META_ACCOUNT_OVERVIEW['agreement_body']; ?></p>
+        <p class="mb-3"><?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body']; ?></p>
         <a href="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>" target="_blank" rel="noopener"
           class="mega-btn-md mega-btn-primary-md mt-agreement-button">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_button']; ?>
+          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_button']; ?>
         </a>
       </div>
     </div>
   </div>
 </div>
+
+<div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
+  aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-content gap-3">
+      <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
+        <h5 id="mtbreach-title" class="modal-title text-white heading-sm-medium">
+          Breach alert
+        </h5>
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">
+            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
+              style="width:24px;height:24px;">
+          </span>
+        </button>
+      </div>
+
+      <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
+        <!-- Icon -->
+        <div aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="106" height="94" viewBox="0 0 106 94" fill="none">
+            <path
+              d="M45.2041 4.99999C48.6682 -1.00001 57.3284 -0.999995 60.7925 5.00001L104.094 80C107.558 86 103.228 93.5 96.2996 93.5H9.69701C2.76881 93.5 -1.56131 86 1.90279 80L45.2041 4.99999Z"
+              fill="#F43F5E" />
+          </svg>
+        </div>
+
+        <p class="h5 m-0">Ups!</p>
+        <p class="m-0">Your evaluation has failed!</p>
+        <p class="m-0">In order to continue trading you need to reset your account.</p>
+
+        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button" href="/my-account/reset">
+          Reset account
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 

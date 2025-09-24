@@ -2,12 +2,28 @@
 
 enum LayoutType: string
 {
-    case MyAccount   = 'my_account';
+    case MyAccount = 'my_account';
     case LandingPage = 'landing_page';
 }
 
 class Label
 {
+    public const STATUS_ACTIVE = 'ACTIVE';
+    public const STATUS_BREACHED = 'BREACHED';
+    public const STATUS_PASSED = 'PASSED';
+    public const STATUS_UPGRADED = 'UPGRADED';
+    public const STATUS_PENDING_ACTIVATION = 'PENDING_ACTIVATION';
+    public const STATUS_RESET = 'RESET';
+
+    public const ACCOUNT_STATUS_MAP = [
+        'ACTIVE' => self::STATUS_ACTIVE,
+        'BREACHED' => self::STATUS_BREACHED,
+        'PASSED' => self::STATUS_PASSED,
+        'UPGRADED' => self::STATUS_UPGRADED,
+        'PENDING_ACTIVATION' => self::STATUS_PENDING_ACTIVATION,
+        'RESET' => self::STATUS_RESET,
+    ];
+
     public const PRODUCT_META = [
         "profit_target" => "Profit Target",
         "max_contracts" => "Max Contracts",
@@ -186,9 +202,13 @@ class Label
         "feature_content_no_data" => "NO DATA AVAILABLE",
         "feature_content_reward" => "Reward",
         "feature_content_risk" => "Risk",
-        "agreement_title" => "Market Data Agreement required",
-        "agreement_body" => "You must sign the market data agreement to continue using your account features.",
-        "agreement_button" => "Open Agreement"
+        "agreement_modal_title" => "Market Data Agreement required",
+        "agreement_modal_body" => "You must sign the market data agreement to continue using your account features.",
+        "agreement_modal_button" => "Open Agreement",
+        "breach_modal_title" => "Ups!",
+        "breach_modal_body_title" => "Your evaluation has failed!",
+        "breach_modal_body_description" => "In order to continue trading you need to reset your account.",
+        "breach_modal_button" => "Reset account"
     ];
 
 }

@@ -15,17 +15,22 @@ function is_my_account_path() {
 $overview_active_class = is_my_account_path() ? 'active' : '';
 
 ?>
-
+<style>
+.mt-sidebar .mt-sidebar__container { 
+    transition: opacity 0.2s 
+}
+.mt-sidebar.mt-sidebar_collapsed .mt-sidebar__container {
+    opacity: 0;
+}
+</style>
 <aside class="mt-sidebar">
     <div class="mt-sidebar__wrapper mt-card mt-card_border">
-        <div class="mt-sidebar__container d-flex gap-32 flex-column h-100 overflow-hidden">
+        <div class="mt-sidebar__container d-flex gap-32 flex-column overflow-hidden">
             <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
                 <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
-                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
-                            alt="MegaTrader" class="mt-sidebar__logo-icon" width="60" height="60" loading="eager">
+                    <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="60" height="60" loading="eager">
                     <div class="mt-sidebar__logo-text">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg"
-                                alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg" alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
                     </div>
                 </a>
                 <a class="p-2" href="javascript:void(0);" onclick="this.querySelector('i').classList.toggle('mt-icon_caret-left'); this.querySelector('i').classList.toggle('mt-icon_caret-right');">
