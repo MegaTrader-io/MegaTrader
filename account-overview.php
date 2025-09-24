@@ -45,25 +45,21 @@ if (is_user_logged_in()) {
       $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
 
       // === Agreement status (usa email codificado) ===
+      // === Agreement status (email CODIFICADO y TTL=0) ===
       $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
-        ? mt_get_agreement_status_by_email($mt_user_email_api, 0) // sin caché
+        ? mt_get_agreement_status_by_email($mt_user_email_api, 0)
         : null;
 
-      // URL (acepta claves alternativas)
-      $__mt_agreement_url = '';
-      if (is_array($__mt_agreement)) {
-        foreach (['agreementURL', 'agreementUrl', 'agreement_url', 'url'] as $k) {
-          if (!empty($__mt_agreement[$k]) && is_string($__mt_agreement[$k])) {
-            $__mt_agreement_url = (string) $__mt_agreement[$k];
-            break;
-          }
-        }
-      }
+      // URL desde la respuesta (si viene)
+      $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
+        ? (string) $__mt_agreement['agreementURL']
+        : '';
 
-      // Mostrar modal si no está firmado
+      // Flag para mostrar modal
       $__mt_agreement_show = (is_array($__mt_agreement)
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+
 
 
 
@@ -352,8 +348,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 </div>
 
 <div class="mt-debug mt-debug-agreement" style="background:#111;color:#0f0;padding:12px;margin-top:24px;border:1px dashed #444;">
-  <strong>Agreement (debug)</strong>
-  <div>show=<?php echo esc_html($__mt_agreement_show); ?> | url=<?php echo esc_html($__mt_agreement_url ?: ''); ?></div>
+  <strong>__mt_agreement</strong>
   <pre style="white-space:pre-wrap;word-break:break-word;margin:8px 0 0;">
 <?php echo esc_html( wp_json_encode($__mt_agreement, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ); ?>
   </pre>
