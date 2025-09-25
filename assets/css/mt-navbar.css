@@ -159,7 +159,6 @@ body.admin-bar {
 
 .mt-navbar__nav-link--active {
     background-color: var(--mgt-dark);
-    border-color: var(--Secondary-400);
 }
 
 .mt-navbar__user {
