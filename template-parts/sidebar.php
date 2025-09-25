@@ -193,7 +193,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                     <i class="mt-icon mt-icon_dollar-solid"></i>
                 </a>
                 <span class="mt-tooltip__panel" role="tooltip">
-                    <div class="mt-tooltip__body"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?></div>
+                    <div class="mt-tooltip__body text-uppercase"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?></div>
                 </span>
             </span>
                 

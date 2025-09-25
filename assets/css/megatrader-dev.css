@@ -76,6 +76,9 @@
   --bs-modal-width: 600px;
 }
 
+
+
+
 /* MD-DOWN */
 @media (max-width: 767.98px) {
   .modal .modal-content {
@@ -83,8 +86,25 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .modal.modal-profile {
+    --bs-modal-width: 1024px;
+  }
+}
+
+@media (min-width: 768px) and (max-width:1023.98px) {
+  .modal.modal-profile {
+    --bs-modal-width: cal(100vw - (var(--modal-content-padding) * 2) );
+  }
+}
+
 /* MD-UP */
 @media (min-width: 768px) {
+  .modal .modal-dialog {
+    width: var(--bs-modal-width);
+    max-width: unset;
+  }
+
   .modal .modal-content {
     --modal-content-padding: 16px;
     --modal-content-border: 1px solid var(--ot-border-color);
