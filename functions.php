@@ -316,6 +316,8 @@ add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $u
         return $redirect_to ?: admin_url();
     }
 
+    nocache_headers();
+
     return home_url('/auth/login/?logged_out=1');
 }, 10, 3);
 
