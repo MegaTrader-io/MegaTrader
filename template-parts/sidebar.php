@@ -146,7 +146,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         </span>
                     </span>
                     <span class="mt-tooltip">                        
-                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
@@ -154,7 +154,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         </span>
                     </span>
                     <span class="mt-tooltip">                        
-                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
@@ -162,7 +162,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         </span>
                     </span>
                     <span class="mt-tooltip">                        
-                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
@@ -170,7 +170,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         </span>
                     </span>
                     <span class="mt-tooltip">                        
-                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_help"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
@@ -178,7 +178,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         </span>
                     </span>
                     <span class="mt-tooltip">                        
-                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
@@ -190,10 +190,10 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
 
             <span class="mt-tooltip">                        
                 <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
-                    <i class="mt-icon mt-icon_dollar"></i>
+                    <i class="mt-icon mt-icon_dollar-solid"></i>
                 </a>
                 <span class="mt-tooltip__panel" role="tooltip">
-                    <div class="mt-tooltip__body"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?>/div>
+                    <div class="mt-tooltip__body"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?></div>
                 </span>
             </span>
                 
