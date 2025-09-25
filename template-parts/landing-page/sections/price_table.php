@@ -102,7 +102,7 @@ function render_template_meta_info($value = '', $label = '', $classes = '')
     $checkIconUrl = get_template_directory_uri() . '/assets/img/landing-page/check.svg';
 
     return <<<HTML
-<div class="tw-w-full tw-p-4 tw-border-b last:tw-border-b-0 tw-border-stone-800 group-[.mark]:tw-border-[#f1a035] tw-inline-flex tw-justify-start tw-items-center tw-gap-2 {$classes}">
+<div class="tw-w-full tw-py-3 tw-inline-flex tw-justify-start tw-items-center tw-gap-2 {$classes}">
     <div class="tw-w-6 tw-h-6 tw-relative tw-text-[#A8A29E] group-[.mark]:tw-text-[#131210]">
         <img src="{$checkIconUrl}"
              width="24" height="24">
@@ -163,11 +163,11 @@ $tabs = array_map(function ($item) {
                     </div>
                 </div>
                 <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
-                <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg tw-space-y-2 tw-py-2">
-                    <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-loose tw-px-4 tw-py-2">
+                <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">
+                    <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8 tw-px-4 tw-pt-4 tw-pb-2">
                         Plan Summary
                     </div>
-                    <div class="metaInfo">
+                    <div class="metaInfo py-2 px-4">
                         <?php $defaultMetaInfo = [];
                         foreach ($defaultMetaInfo as $field => $value) : ?>
                             <?php
@@ -178,58 +178,35 @@ $tabs = array_map(function ($item) {
                             ?>
                         <?php endforeach; ?>
                     </div>
-                    <div class="tw-m-2 tw-px-6 tw-py-2 tw-bg-[#131210] tw-backdrop-blur-md tw-rounded-xl tw-max-w-md tw-shadow-2xl tw-font-sans tw-text-gray-900">
-                        <div class="tw-flex tw-justify-between tw-items-center tw-mb-4">
-                            <span class="tw-text-white">Project Cost</span>
-                            <span class="price-plan tw-font-medium tw-text-white"><?= wc_price($firstProduct['price'], ['decimals' => 0]) ?></span>
-                        </div>
-
-                        <div class="badge-coupon tw-flex tw-flex-col tw-items-start tw-mb-2"
-                             style="display: <?= $has_coupon ? 'block' : 'none' ?>">
-                            <div class="tw-flex tw-justify-between tw-w-full tw-items-center">
-                                <span class="tw-text-gray-200">Dribbble Platform Fee <span
-                                            class="tw-inline-block tw-text-gray-400 tw-text-sm"></span></span>
-                                <span class="tw-text-rose-500 tw-font-semibold"> - <span
-                                            class="tw-line-through badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span></span>
-                            </div>
-                            <span class="tw-text-green-600 tw-text-sm tw-mt-1"><?= $coupon['discount_amount'] ?><?= $coupon['discount_type'] == 'percent' ? '%' : 'USD' ?> with your PLAN subscription.<br>
-                            </span>
-                        </div>
-
-                        <hr class="tw-border-t tw-border-gray-300 tw-my-4">
-
-                        <div class="tw-flex tw-justify-between tw-items-center">
-                            <span class="tw-text-[#ffb34a] tw-text-lg tw-font-bold">Total Payout</span>
-                            <span class="total-plan tw-text-[#ffb34a] tw-text-lg tw-font-bold"><?= wc_price($has_coupon ? $firstProduct['price'] - $coupon['discount_total'] : $firstProduct['price']) ?></span>
-                        </div>
-                    </div>
-
                     <div class="mt-pricing-card mt-pricing-card--light">
                         <div class="mt-pricing-card__header">
-                            <span class="mt-pricing-card__header-text">Save $105 with code</span>
+                            <div class="mt-pricing-card__header-text mt-pricing-card--discount_total">Save <span><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span> with code</div>
                             <div class="mt-pricing-card__code-container">
-                                <span class="mt-pricing-card__code">MEGA50</span>
-                                <button class="mt-pricing-card__copy-btn" aria-label="Copy Code"></button>
+                                <span class="mt-pricing-card__code text-uppercase"><?= $has_coupon ? $coupon['coupon'] : 0 ?></span>
+                                <button type="button" class="mt-pricing-card__copy-btn btn-copy" aria-label="Copy Code" data-copy-text="<?= $has_coupon ? $coupon['coupon'] : 0 ?>">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_15572_33010" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                            <rect width="24" height="24" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_15572_33010)">
+                                            <path d="M9 18C8.45 18 7.97917 17.8042 7.5875 17.4125C7.19583 17.0208 7 16.55 7 16V4C7 3.45 7.19583 2.97917 7.5875 2.5875C7.97917 2.19583 8.45 2 9 2H18C18.55 2 19.0208 2.19583 19.4125 2.5875C19.8042 2.97917 20 3.45 20 4V16C20 16.55 19.8042 17.0208 19.4125 17.4125C19.0208 17.8042 18.55 18 18 18H9ZM5 22C4.45 22 3.97917 21.8042 3.5875 21.4125C3.19583 21.0208 3 20.55 3 20V6H5V20H16V22H5Z" fill="black"/>
+                                        </g>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
-
                         <div class="mt-pricing-card__content">
                             <div class="mt-pricing-card__price-group gap-2">
-                                <span class="mt-badge mt-badge-rounded-sm mt-badge-light">Before: $349</span>
-                                <div>
-                                    <span class="mt-pricing-card__current-price">$244</span>
-                                    <span class="mt-pricing-card__fee-type">one time fee</span>
+                                <span class="coupon-before-price mt-badge mt-badge-rounded-sm mt-badge-light" style="display: <?= $has_coupon ? 'block' : 'none' ?>">Before: <span><?= wc_price($firstProduct['price'], ['decimals' => 0]) ?></span></span>
+                                <div class="d-flex align-items-end gap-1">
+                                    <span class="mt-pricing-card__current-price total-plan"><?= wc_price($has_coupon ? $firstProduct['price'] - $coupon['discount_total'] : $firstProduct['price'], ['decimals' => 0]) ?></span>
+                                    <span class="mt-pricing-card__fee-type frequency-plan"><?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?></span>
                                 </div>
                             </div>
-                            <button class="mega-btn-md mega-btn-secondary-md">CONTINUE</button>
+                            <a href="#" id="proceed-to-checkout-btn" class="mega-btn-md mega-btn-secondary-md">CONTINUE</a>
                         </div>
                     </div>
                 </div>
-
-                <a href="#" id="proceed-to-checkout-btn"
-                   class="btn-yellow-link tw-mt-4 tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
-                    GET PLAN
-                </a>
             </div>
 
 

@@ -298,10 +298,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         tempBtn.remove();
                     }
 
-                    element.querySelector('.mgt-copy-tooltip').classList.remove('tw-hidden');
-                    setTimeout(() => {
-                        element.querySelector('.mgt-copy-tooltip').classList.add('tw-hidden');
-                    }, 800);
+                    const copyTooltip = element.querySelector('.mgt-copy-tooltip');
+                    if (copyTooltip) {
+                        copyTooltip.classList.remove('tw-hidden');
+                        setTimeout(() => {
+                            copyTooltip.classList.add('tw-hidden');
+                        }, 800);
+                    }
                 } catch (err) {
                     console.error("Error copying to clipboard:", err);
                 }
@@ -555,12 +558,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             const productsWithBestCoupons = MG_GLOBAL.productsWithBestCoupons || [];
-            const badgeCoupon = document.querySelector(`.badge-coupon`);
+            const priceCard = document.querySelector(`.mt-pricing-card`);
             const couponBeforePrice = document.querySelector(`.coupon-before-price`);
 
             const product = productsWithBestCoupons.find(product => Number(product.id) === Number(productionSelected.id))
             let price = Number(productionSelected['price-monthly'].replace('$', ''));
-            const pricePlan = document.querySelector(`.price-plan`);
             const totalPlan = document.querySelector(`.total-plan`);
             const frequencyPanel = document.querySelector(`.frequency-plan`);
 
@@ -586,26 +588,32 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('.plan-summary__name').innerText = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
 
             if (coupon && coupon.valid) {
-                badgeCoupon.style.display = 'block';
+                priceCard.querySelector('.mt-pricing-card__header').style.display = 'flex';
                 if (couponBeforePrice) {
                     couponBeforePrice.style.display = 'block';
                     couponBeforePrice.querySelector('span').innerText = formatNumber(price);
                 }
 
-                pricePlan.innerText = currencyFormat(price);
                 totalPlan.innerText = currencyFormat(price - coupon.discount_total);
 
-                badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
+                priceCard.querySelector('.mt-pricing-card--discount_total span').innerText = formatNumber(coupon.discount_total);
 
-                if (badgeCoupon.querySelector('.badge-coupon__code')) {
-                    badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon;
+                const couponText = priceCard.querySelector('.mt-pricing-card__code');
+                const btnCopyCoupon = priceCard.querySelector('.mt-pricing-card__copy-btn');
+
+                if (couponText && coupon.coupon) {
+                    couponText.innerText = coupon.coupon.toUpperCase();
+                }
+
+                if (btnCopyCoupon && coupon.coupon) {
+                    btnCopyCoupon.dataset.copyText = coupon.coupon.toUpperCase();
                 }
             } else {
-                badgeCoupon.style.display = 'none';
+                priceCard.querySelector('.mt-pricing-card__header').style.display = 'none';
                 if (couponBeforePrice) {
                     couponBeforePrice.style.display = 'none';
                 }
-                pricePlan.innerText = currencyFormat(price);
+
                 totalPlan.innerText = currencyFormat(price);
             }
 

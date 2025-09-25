@@ -1425,24 +1425,12 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     background: linear-gradient(90deg, rgba(19, 18, 16, 0) 0%, var(--Surface-Body, #131210) 100%);
 }
 
-/* Variables para los colores */
-:root {
-    --color-header-bg: #f8e7c1; /* Color crema/amarillo claro */
-    --color-accent-bg: #f69527; /* Naranja para el acento */
-    --color-cta-light: #fff;
-    --color-cta-dark: #f69527;
-    --color-text-dark: #333;
-    --color-text-light: #fff;
-}
-
 /* --- Bloque Base: mt-pricing-card (Estilos comunes) --- */
 .mt-pricing-card {
-    max-width: 350px;
     border-radius: 8px;
     overflow: hidden;
-    font-family: var(--title-font);
+    font-family: var(--Type-Font-Family-Body, Roboto);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    margin: 20px;
 }
 
 /* --- Elementos de la Cabecera (Comunes) --- */
@@ -1450,13 +1438,12 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--color-header-bg);
-    padding: 10px 15px;
-    color: var(--color-text-dark);
+    background-color: var(--Primary-100, #f8e7c1);
+    padding: 8px 12px;
+    color: var(--Surface-Body, #131210);
 }
 
 .mt-pricing-card__header-text {
-    align-self: stretch;
     color: var(--Surface-Body, #131210);
     font-size: 14px;
     font-weight: 500;
@@ -1482,22 +1469,17 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 .mt-pricing-card__copy-btn {
-    /* Estilo del icono de copiar (simulado) */
-    background-color: var(--color-text-dark);
-    width: 14px;
-    height: 14px;
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
+    background: transparent;
+    padding: 0;
+    display: inline-flex;
 }
-
 
 /* --- Elementos del Cuerpo (Comunes) --- */
 .mt-pricing-card__content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 12px 16px;
 }
 
 .mt-pricing-card__price-group {
@@ -1528,24 +1510,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     word-wrap: break-word
 }
 
-.mt-pricing-card__cta {
-    /* Botón CTA Base */
-    background-color: var(--color-cta-dark);
-    color: var(--color-text-light);
-    border: none;
-    border-radius: 6px;
-    padding: 12px 25px;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
 /* --- Modificador mt-pricing-card--light (Variantes 1 y 2 - Fondo blanco) --- */
 .mt-pricing-card--light .mt-pricing-card__content {
-    background-color: var(--color-text-light); /* Fondo blanco */
-    color: var(--color-text-dark); /* Texto oscuro */
+    background-color: var(--white-color, #fff); /* Fondo blanco */
+    color: var(--Surface-Body, #131210); /* Texto oscuro */
 }
 
 /* Estilo específico para el precio original en la variante light */
@@ -1554,29 +1522,4 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     font-weight: bold;
     font-size: 14px;
     margin-bottom: 5px;
-}
-
-/* --- Modificador mt-pricing-card--accent (Variante 3 - Fondo naranja) --- */
-.mt-pricing-card--accent .mt-pricing-card__header {
-    background-color: rgba(0, 0, 0, 0.2); /* Oscurece el header sobre el fondo naranja */
-    color: var(--color-text-light);
-}
-
-.mt-pricing-card--accent .mt-pricing-card__code-container {
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.mt-pricing-card--accent .mt-pricing-card__copy-btn {
-    background-color: var(--color-text-light); /* Icono de copiar blanco */
-}
-
-.mt-pricing-card--accent .mt-pricing-card__content {
-    background-color: var(--color-accent-bg); /* Fondo naranja */
-    color: var(--color-text-light); /* Texto blanco */
-}
-
-/* Modificador del Elemento Botón para la variante accent */
-.mt-pricing-card__cta--inverted {
-    background-color: var(--color-cta-light); /* Botón blanco */
-    color: var(--color-cta-dark); /* Texto naranja */
 }
