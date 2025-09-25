@@ -1734,6 +1734,9 @@ add_action( 'template_redirect', function () {
 
 
 add_action('template_redirect', function () {
+  if ( ! is_user_logged_in() ) {
+    nocache_headers();
+  }
 
   if ( is_user_logged_in() ) return;
 
