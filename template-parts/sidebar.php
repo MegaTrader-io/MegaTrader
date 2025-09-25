@@ -145,7 +145,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
     </div>
 </aside>
 <script>
-    const expanded = true;
+    let expanded = true;
 
     function sidebarUpdateToggle(expanded){
         const toggleIcon = document.querySelector('#mt-sidebar-toggle > .mt-icon');
@@ -163,8 +163,8 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
 
 
         document.addEventListener('MT_SIDEBAR_TOGGLE', function(e) {
-            console.log('MT_SIDEBAR_TOGGLE');
-            expanded != expanded;
+            console.log('MT_SIDEBAR_TOGGLE', expanded);
+            expanded = !expanded;
             sidebarUpdateToggle(expanded);
         });
     }
