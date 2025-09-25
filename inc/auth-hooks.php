@@ -270,6 +270,8 @@ JS;
  */
 add_action('template_redirect', function () {
     if (isset($_GET['logged_out']) && $_GET['logged_out'] == 1) {
+        nocache_headers();
+
         if (function_exists('wc_add_notice')) {
             wc_add_notice(__('You have successfully logged out.', 'your-td'), 'success');
         }
