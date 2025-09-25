@@ -299,13 +299,13 @@ require_once get_template_directory() . '/inc/account-navigation-module.php';
 // }
 
 
-//function custom_logout_redirect() {
-//    wp_clear_auth_cookie();
-//    wp_destroy_current_session();
-//    return wp_redirect('https://megatrader.io/');
-//    exit();
-//}
-//add_action('wp_logout', 'custom_logout_redirect');
+function custom_logout_redirect() {
+    wp_clear_auth_cookie();
+    wp_destroy_current_session();
+    return wp_redirect('https://megatrader.io/');
+    exit();
+}
+add_action('wp_logout', 'custom_logout_redirect');
 
 add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $user) {
     if (is_admin()) {
@@ -1581,6 +1581,10 @@ function mt_redirect_subscriptions_endpoint() {
 
 add_action( 'template_redirect', 'mt_redirect_my_account_orders' );
 function mt_redirect_my_account_orders() {
+    if (is_user_logged_in()) {
+        nocache_headers();
+    }
+
     // Sólo para usuarios logueados en el endpoint “orders” de My Account
     if ( ! is_user_logged_in() || ! is_wc_endpoint_url( 'orders' ) ) {
         return;
