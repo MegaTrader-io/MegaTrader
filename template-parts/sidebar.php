@@ -72,7 +72,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                                 <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                                 <span>ACCOUNT SETTINGS<span>
                             </a>
-                            <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/">
+                            <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/" target="_blank">
                                 <i class="mt-icon mt-icon-sm mt-icon_help"></i>
                                 <span>HELP CENTER<span>
                             </a>
@@ -137,7 +137,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
 
             <div class="mt-sidebar__menu__group__options">
                 <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                    <span class="mt-tooltip">                        
+                    <span class="mt-tooltip" data-placement="right">                        
                         <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_account"></i>
                         </a>
@@ -145,7 +145,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                             <div class="mt-tooltip__body">ACCOUNT OVERVIEW</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip">                        
+                    <span class="mt-tooltip" data-placement="right">                        
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
                         </a>
@@ -153,7 +153,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                             <div class="mt-tooltip__body">REFERRALS</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip">                        
+                    <span class="mt-tooltip" data-placement="right">                        
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
                         </a>
@@ -161,7 +161,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                             <div class="mt-tooltip__body">PAYOUTS</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip">                        
+                    <span class="mt-tooltip" data-placement="right">                        
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                         </a>
@@ -169,15 +169,15 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                             <div class="mt-tooltip__body">ACCOUNT SETTINGS</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip">                        
-                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
+                    <span class="mt-tooltip" data-placement="right">                        
+                        <a class="mt-sidebar__menu__link" href="/my-account/overview/" target="_blank">
                             <i class="mt-icon mt-icon-sm mt-icon_help"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
                             <div class="mt-tooltip__body">HELP CENTER</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip">                        
+                    <span class="mt-tooltip" data-placement="right">                        
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
                         </a>
@@ -188,7 +188,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                 </div>
             </div>
 
-            <span class="mt-tooltip">                        
+            <span class="mt-tooltip" data-placement="right">                        
                 <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
                     <i class="mt-icon mt-icon_dollar-solid"></i>
                 </a>

@@ -1066,6 +1066,41 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     /* solape con borde */
 }
 
+/* LEFT / RIGHT arrows for portal bubble */
+.mt-tooltip__panel.is-portal[data-placement="left"]::before,
+.mt-tooltip__panel.is-portal[data-placement="left"]::after {
+  top: var(--arrow-top, 50%);
+  left: 100%;
+  transform: translateY(-50%);
+}
+.mt-tooltip__panel.is-portal[data-placement="left"]::before {
+  border-width: 7px;
+  border-color: transparent transparent transparent var(--Colors-Gray-700, #404040);
+}
+.mt-tooltip__panel.is-portal[data-placement="left"]::after {
+  border-width: 6px;
+  border-color: transparent transparent transparent var(--Black, #000);
+  margin-left: -1px;
+}
+
+.mt-tooltip__panel.is-portal[data-placement="right"]::before,
+.mt-tooltip__panel.is-portal[data-placement="right"]::after {
+  top: var(--arrow-top, 50%);
+  right: 100%;
+  left: auto;
+  transform: translateY(-50%);
+}
+.mt-tooltip__panel.is-portal[data-placement="right"]::before {
+  border-width: 7px;
+  border-color: transparent var(--Colors-Gray-700, #404040) transparent transparent;
+}
+.mt-tooltip__panel.is-portal[data-placement="right"]::after {
+  border-width: 6px;
+  border-color: transparent var(--Black, #000) transparent transparent;
+  margin-right: -1px;
+}
+
+
 /* ===== Progress Bar (global) ===== */
 .mt-progress-bar {
     position: relative;
