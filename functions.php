@@ -317,6 +317,8 @@ add_filter('logout_redirect', function ($redirect_to, $requested_redirect_to, $u
     }
 
     nocache_headers();
+    wp_clear_auth_cookie();
+    wp_destroy_current_session();
 
     return home_url('/auth/login/?logged_out=1');
 }, 10, 3);
