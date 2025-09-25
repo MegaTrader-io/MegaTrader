@@ -203,6 +203,27 @@ $tabs = array_map(function ($item) {
                             <span class="total-plan tw-text-[#ffb34a] tw-text-lg tw-font-bold"><?= wc_price($has_coupon ? $firstProduct['price'] - $coupon['discount_total'] : $firstProduct['price']) ?></span>
                         </div>
                     </div>
+
+                    <div class="mt-pricing-card mt-pricing-card--light">
+                        <div class="mt-pricing-card__header">
+                            <span class="mt-pricing-card__header-text">Save $105 with code</span>
+                            <div class="mt-pricing-card__code-container">
+                                <span class="mt-pricing-card__code">MEGA50</span>
+                                <button class="mt-pricing-card__copy-btn" aria-label="Copy Code"></button>
+                            </div>
+                        </div>
+
+                        <div class="mt-pricing-card__content">
+                            <div class="mt-pricing-card__price-group gap-2">
+                                <span class="mt-badge mt-badge-rounded-sm mt-badge-light">Before: $349</span>
+                                <div>
+                                    <span class="mt-pricing-card__current-price">$244</span>
+                                    <span class="mt-pricing-card__fee-type">one time fee</span>
+                                </div>
+                            </div>
+                            <button class="mega-btn-md mega-btn-secondary-md">CONTINUE</button>
+                        </div>
+                    </div>
                 </div>
 
                 <a href="#" id="proceed-to-checkout-btn"

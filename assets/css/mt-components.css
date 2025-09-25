@@ -723,6 +723,12 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     border-radius: 16px;
 }
 
+.mt-badge.mt-badge-rounded-sm {
+    padding: 4px;
+    border-radius: 4px;
+    line-height: 16px;
+}
+
 .mt-badge.mt-badge-primary {
     background-color: var(--Primary-500, #F1A035);
 }
@@ -1374,4 +1380,160 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-tabs-gradient--right {
     right: 0;
     background: linear-gradient(90deg, rgba(19, 18, 16, 0) 0%, var(--Surface-Body, #131210) 100%);
+}
+
+/* Variables para los colores */
+:root {
+    --color-header-bg: #f8e7c1; /* Color crema/amarillo claro */
+    --color-accent-bg: #f69527; /* Naranja para el acento */
+    --color-cta-light: #fff;
+    --color-cta-dark: #f69527;
+    --color-text-dark: #333;
+    --color-text-light: #fff;
+}
+
+/* --- Bloque Base: mt-pricing-card (Estilos comunes) --- */
+.mt-pricing-card {
+    max-width: 350px;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: var(--title-font);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    margin: 20px;
+}
+
+/* --- Elementos de la Cabecera (Comunes) --- */
+.mt-pricing-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-header-bg);
+    padding: 10px 15px;
+    color: var(--color-text-dark);
+}
+
+.mt-pricing-card__header-text {
+    align-self: stretch;
+    color: var(--Surface-Body, #131210);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    word-wrap: break-word
+}
+
+.mt-pricing-card__code-container {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 10px;
+}
+
+.mt-pricing-card__code {
+    margin-right: 8px;
+    text-align: right;
+    color: var(--Surface-Body, #131210);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    word-wrap: break-word
+}
+
+.mt-pricing-card__copy-btn {
+    /* Estilo del icono de copiar (simulado) */
+    background-color: var(--color-text-dark);
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+
+/* --- Elementos del Cuerpo (Comunes) --- */
+.mt-pricing-card__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.mt-pricing-card__price-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.mt-pricing-card__current-price {
+    color: black;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 28px;
+    word-wrap: break-word
+}
+
+.mt-pricing-card__current-price--large {
+    /* Modificador para el precio cuando no hay precio original */
+    font-size: 38px;
+}
+
+.mt-pricing-card__fee-type {
+    color: var(--colors-gray-700);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word
+}
+
+.mt-pricing-card__cta {
+    /* Botón CTA Base */
+    background-color: var(--color-cta-dark);
+    color: var(--color-text-light);
+    border: none;
+    border-radius: 6px;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* --- Modificador mt-pricing-card--light (Variantes 1 y 2 - Fondo blanco) --- */
+.mt-pricing-card--light .mt-pricing-card__content {
+    background-color: var(--color-text-light); /* Fondo blanco */
+    color: var(--color-text-dark); /* Texto oscuro */
+}
+
+/* Estilo específico para el precio original en la variante light */
+.mt-pricing-card--light .mt-pricing-card__original-price {
+    color: #e62e60; /* Rojo/magenta */
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* --- Modificador mt-pricing-card--accent (Variante 3 - Fondo naranja) --- */
+.mt-pricing-card--accent .mt-pricing-card__header {
+    background-color: rgba(0, 0, 0, 0.2); /* Oscurece el header sobre el fondo naranja */
+    color: var(--color-text-light);
+}
+
+.mt-pricing-card--accent .mt-pricing-card__code-container {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.mt-pricing-card--accent .mt-pricing-card__copy-btn {
+    background-color: var(--color-text-light); /* Icono de copiar blanco */
+}
+
+.mt-pricing-card--accent .mt-pricing-card__content {
+    background-color: var(--color-accent-bg); /* Fondo naranja */
+    color: var(--color-text-light); /* Texto blanco */
+}
+
+/* Modificador del Elemento Botón para la variante accent */
+.mt-pricing-card__cta--inverted {
+    background-color: var(--color-cta-light); /* Botón blanco */
+    color: var(--color-cta-dark); /* Texto naranja */
 }
