@@ -789,7 +789,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
     .mt-page__sidebar {
         flex: 0 0 auto;
-        width: 390px;
+        width: fit-content;
     }
     .mt-page_lg-d-none {
         display: none !important;
@@ -815,6 +815,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 .mt-sidebar__wrapper {
     max-height: calc(100vh - var(--sidebar-top) - var(--sidebar-lg-margin-block));
+    width: 390px;
 }
 
 .mt-sidebar__menu__link {
