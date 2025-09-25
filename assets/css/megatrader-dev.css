@@ -55,6 +55,13 @@
   --Colors-Gray-50: #FAFAFA;
   --Text-Action-Light-Text: #FFF;
   --mt-header-height: 0px;
+  --mt-main-width: 784px;
+}
+
+[data-fit-main] {
+  inline-size: var(--mt-main-width, 100%);
+  max-inline-size: 100%;
+  min-width: 0;
 }
 
 .empty-d-none:empty {
@@ -587,6 +594,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
   }
 }
+
 @media (max-width: 405.98px) {
   .mobile-max-width-100 {
     max-width: 100px;
@@ -3429,21 +3437,6 @@ body.mt-placing .woocommerce-checkout {
 }
 
 
-/*** Account Overview - Feature Content ***/
-.mt-feature-tabs {
-  display: block;
-  max-width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.mt-tabs-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 
 /*** Account Overview – FeatureContent (interior) ***/
 /* ===== TABS / CARRUSEL ===== */
@@ -3892,7 +3885,7 @@ body.mt-placing .woocommerce-checkout {
 
 /* Viewport: fija el ancho visible para forzar scroll-x si no cabe */
 #mt-daily-journal .dj-viewport {
-  inline-size: var(--dj-viewport);
+  inline-size: var(--dj-viewport, 784px);
   max-inline-size: 100%;
 }
 

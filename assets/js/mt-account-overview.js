@@ -1186,7 +1186,7 @@ document.addEventListener("mt:accountSelected", (e) => {
       modal.style.display = "flex";
       modal.style.alignItems = "center";
       modal.style.justifyContent = "center";
-      modal.style.zIndex = "1055"; // por encima del backdrop
+      modal.style.zIndex = "1055";
 
       withBackdrop = document.createElement("div");
       withBackdrop.className = "modal-backdrop fade show";
@@ -1450,3 +1450,59 @@ document.addEventListener("mt:accountSelected", function (e) {
   var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
   if (id) breachGuardCheck(id);
 });
+
+// == Main width var: --mt-main-width (+ --dj-viewport) ==
+(function () {
+  function clamp(n){ return Math.max(784, Math.round(n||0)); } // base inicial
+
+  function calcMainWidth(){
+    var page = document.querySelector('.mt-page');
+    var side = document.querySelector('.mt-page__sidebar');
+    if (!page) return 0;
+    var gap  = parseFloat(getComputedStyle(page).gap || 0) || 0;
+    var pageW = page.clientWidth;
+    var sideW = side ? side.getBoundingClientRect().width : 0;
+    return clamp(pageW - sideW - gap);
+  }
+
+  function applyWidth(){
+    var w = calcMainWidth();
+    if (!w) return;
+
+    // var global
+    document.documentElement.style.setProperty('--mt-main-width', w + 'px');
+    document.body.style.setProperty('--mt-main-width', w + 'px');
+
+    // var específica del journal
+    var dj = document.getElementById('mt-daily-journal');
+    if (dj) dj.style.setProperty('--dj-viewport', w + 'px');
+  }
+
+  function boot(){
+    applyWidth();
+
+    var page = document.querySelector('.mt-page');
+    var side = document.querySelector('.mt-page__sidebar');
+
+    if (window.ResizeObserver && page){
+      var ro = new ResizeObserver(applyWidth);
+      ro.observe(page);
+      if (side){
+        var ro2 = new ResizeObserver(applyWidth);
+        ro2.observe(side);
+        side.addEventListener('transitionend', function(e){
+          if (['width','flex-basis','transform'].includes(e.propertyName)){
+            requestAnimationFrame(applyWidth);
+          }
+        });
+      }
+    } else {
+      var t; window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(applyWidth,100); });
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
+  else boot();
+})();
+
+

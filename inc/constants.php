@@ -206,7 +206,7 @@ class Label
         "agreement_modal_body_title" => "Ups!",
         "agreement_modal_body_description" => "Please sign data agreement!",
         "agreement_modal_body_subtitle" => "Before you can start trading you need to sign the data agreement.",
-        "agreement_modal_button" => "Open Agreement",
+        "agreement_modal_button" => "Review & Sign",
         "breach_modal_title" => "Breach alert!",
         "breach_modal_body_title" => "Ups!",
         "breach_modal_body_description" => "Your evaluation has failed!",

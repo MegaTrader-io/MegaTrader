@@ -204,7 +204,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
         </div>
 
 
-        <div class="mt-account-selection">
+        <div class="mt-account-selection" data-fit-main>
           <?php
           get_template_part(
             'template-parts/account/account-selection',
@@ -216,7 +216,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
           );
           ?>
         </div>
-        <div class="d-flex flex-column gap-32">
+        <div class="d-flex flex-column gap-32" data-fit-main>
           <div class="mt-account-data" id="mt-account-data"> <?php
           if (!empty($mt_selected_id) && !empty($mt_account_data)) {
             get_template_part(

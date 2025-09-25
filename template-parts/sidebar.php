@@ -117,28 +117,86 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                 <div class="btn-challenge">
                     <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
                         <?php echo esc_html(Label::SIDEBAR_META['plan_button']); ?>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
-                            <mask id="mask0_12909_529" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
-                                height="24">
-                                <rect width="24" height="24" fill="#D9D9D9" />
-                            </mask>
-                            <g mask="url(#mask0_12909_529)">
-                                <path d="M12.6 12L8 7.4L9.4 6L15.4 12L9.4 18L8 16.6L12.6 12Z" fill="black" />
-                            </g>
-                        </svg>
+                        <i class="mt-icon mt-icon_caret-right"></i>
                     </a>
                 </div>
             </div>
         </div>
+
+        <!-- COLLAPSED -->
         <div class="mt-sidebar__container__collapsed d-flex gap-32 flex-column overflow-hidden align-items-center">
             <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
                 <i class="mt-icon mt-icon-white mt-icon_caret-right-solid"></i>
             </a>
+            
             <div class="mt-sidebar__logo_collapsed">
                 <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
                     <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="50" height="50" loading="eager">
                 </a>
             </div>
+
+            <div class="mt-sidebar__menu__group__options">
+                <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
+                    <span class="mt-tooltip">                        
+                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                            <i class="mt-icon mt-icon-sm mt-icon_account"></i>
+                        </a>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <div class="mt-tooltip__body">ACCOUNT OVERVIEW</div>
+                        </span>
+                    </span>
+                    <span class="mt-tooltip">                        
+                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                            <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
+                        </a>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <div class="mt-tooltip__body">REFERRALS</div>
+                        </span>
+                    </span>
+                    <span class="mt-tooltip">                        
+                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                            <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
+                        </a>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <div class="mt-tooltip__body">PAYOUTS</div>
+                        </span>
+                    </span>
+                    <span class="mt-tooltip">                        
+                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                            <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
+                        </a>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <div class="mt-tooltip__body">ACCOUNT SETTINGS</div>
+                        </span>
+                    </span>
+                    <span class="mt-tooltip">                        
+                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                            <i class="mt-icon mt-icon-sm mt-icon_help"></i>
+                        </a>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <div class="mt-tooltip__body">HELP CENTER</div>
+                        </span>
+                    </span>
+                    <span class="mt-tooltip">                        
+                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                            <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
+                        </a>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <div class="mt-tooltip__body">LOGOUT</div>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <span class="mt-tooltip">                        
+                <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
+                    <i class="mt-icon mt-icon_dollar"></i>
+                </a>
+                <span class="mt-tooltip__panel" role="tooltip">
+                    <div class="mt-tooltip__body"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?>/div>
+                </span>
+            </span>
+                
         </div>
     </div>
 </aside>
