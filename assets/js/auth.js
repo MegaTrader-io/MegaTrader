@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Eliminar el parámetro de la URL sin recargar la página
         url.searchParams.delete("logged_out");
+
+        history.pushState(null, "", "/auth/login/");
+        window.onpopstate = () => {
+            history.pushState(null, "", "/auth/login/");
+        };
+
         window.history.replaceState({}, document.title, url.toString());
     }
 
