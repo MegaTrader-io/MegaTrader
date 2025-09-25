@@ -1381,7 +1381,7 @@ document.addEventListener("mt:accountSelected", function (e) {
   else boot();
 })();
 
-// ==== Modal Profile (tabs + AJAX billing) ====
+// ==== Profile modal (Bootstrap-like) ====
 (function () {
   function qs(s, r = document) {
     return r.querySelector(s);
@@ -1390,161 +1390,130 @@ document.addEventListener("mt:accountSelected", function (e) {
     return Array.from(r.querySelectorAll(s));
   }
 
-  // Mostrar SOLO el panel activo
   function showOnly(modal, tabId) {
-    // Tabs (left)
-    qsa('[data-role="tab"]', modal).forEach(function (tab) {
-      var active = tab.getAttribute("data-tab") === tabId;
-      tab.setAttribute("data-status", active ? "active" : "normal");
+    // Tabs
+    qsa(".mt-tab", modal).forEach(function (b) {
+      var on = b.getAttribute("data-tab") === tabId;
+      b.classList.toggle("active", on);
+      // resalta el activo como en el diseño
+      b.style.background = on ? "#1E1E1E" : "";
+      b.style.outline = on ? "1px solid #fff" : "";
     });
-    // Panels (right)
+    // Panels
     qsa("[data-panel]", modal).forEach(function (p) {
       var show = p.getAttribute("data-panel") === tabId;
       p.hidden = !show;
-      p.style.display = show ? "block" : "none"; // por si tu CSS ignora [hidden]
+      p.style.display = show ? "block" : "none"; // por si [hidden] lo pisa el CSS
     });
   }
 
-  function focusFirstEditable(root) {
-    var el =
-      root &&
-      root.querySelector(
-        'input:not([disabled]):not([type="hidden"]), select, textarea, button:not([disabled])'
-      );
-    if (el) {
-      try {
-        el.focus();
-      } catch (e) {}
+  function openModal(modal) {
+    if (modal.classList.contains("show")) return;
+    showOnly(modal, "pi"); // tab por defecto
+
+    modal.classList.add("show");
+    modal.style.display = "block";
+    modal.removeAttribute("aria-hidden");
+    document.body.classList.add("modal-open");
+
+    // Backdrop (igual que tus otros)
+    var bd = document.createElement("div");
+    bd.className = "modal-backdrop fade show";
+    bd.dataset.role = "mt-profile-backdrop";
+    document.body.appendChild(bd);
+  }
+
+  function closeModal(modal) {
+    modal.classList.remove("show");
+    modal.style.display = "";
+    modal.setAttribute("aria-hidden", "true");
+
+    var bd = document.querySelector(
+      '.modal-backdrop[data-role="mt-profile-backdrop"]'
+    );
+    if (bd) bd.remove();
+
+    // si no quedan otros .modal.show, quita lock
+    if (!document.querySelector(".modal.show")) {
+      document.body.classList.remove("modal-open");
     }
   }
 
   function init() {
     var modal = document.getElementById("mt-profile-modal");
-    if (
-      !modal ||
-      !modal.classList.contains("modal") ||
-      !modal.classList.contains("modal-profile")
-    )
-      return;
+    if (!modal) return;
 
-    var panel = qs(".mt-profile-modal__panel", modal);
-    var formPI = document.getElementById("mt-profile-form");
-    var btnSavePI = document.getElementById("mt-profile-save");
-    var withBackdrop = null;
-    var DEFAULT_TAB = "pi";
-
-    // ------- open / close (sin tocar tu CSS del modal) -------
-    function openModal() {
-      if (modal.classList.contains("show")) return;
-
-      // estado inicial tabs
-      showOnly(modal, DEFAULT_TAB);
-
-      modal.removeAttribute("hidden");
-      modal.setAttribute("aria-hidden", "false");
-      modal.classList.add("show");
-
-      // backdrop compatible
-      withBackdrop = document.createElement("div");
-      withBackdrop.className = "modal-backdrop fade show";
-      document.body.appendChild(withBackdrop);
-      document.body.classList.add("modal-open");
-
-      try {
-        panel && panel.focus();
-      } catch (e) {}
-      focusFirstEditable(
-        modal.querySelector('[data-panel="' + DEFAULT_TAB + '"]')
-      );
-    }
-
-    function closeModal() {
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      modal.setAttribute("hidden", "");
-
-      if (withBackdrop) {
-        withBackdrop.remove();
-        withBackdrop = null;
-      }
-      // si no hay otros .modal.show, quita el lock
-      if (!document.querySelector(".modal.show")) {
-        document.body.classList.remove("modal-open");
-      }
-    }
-
-    // ------- triggers -------
+    // Triggers
     qsa(".mt-account-settings-js").forEach(function (el) {
       el.addEventListener(
         "click",
         function (e) {
           if (el.getAttribute("href") === "#") e.preventDefault();
-          openModal();
+          openModal(modal);
         },
         { passive: false }
       );
     });
 
-    // cerrar
+    // Cerrar (botón)
     qsa(".js-close-profile-modal", modal).forEach(function (btn) {
       btn.addEventListener("click", function (e) {
         e.preventDefault();
-        closeModal();
+        closeModal(modal);
       });
     });
+
+    // Cerrar (ESC)
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+      if (e.key === "Escape" && modal.classList.contains("show"))
+        closeModal(modal);
     });
+
+    // Cerrar (click fuera)
     document.addEventListener("click", function (e) {
       if (!modal.classList.contains("show")) return;
       var inside =
-        e.target.closest(".mt-profile-modal__panel") ||
+        e.target.closest(".modal-content") ||
         e.target.closest(".mt-account-settings-js");
-      if (!inside) closeModal();
+      if (!inside) closeModal(modal);
     });
 
-    // ------- tabs click -------
-    qsa('[data-role="tab"]', modal).forEach(function (tab) {
-      tab.addEventListener("click", function () {
-        var id = tab.getAttribute("data-tab") || DEFAULT_TAB;
-        showOnly(modal, id);
-        focusFirstEditable(modal.querySelector('[data-panel="' + id + '"]'));
+    // Tabs
+    qsa(".mt-tab", modal).forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        showOnly(modal, btn.getAttribute("data-tab") || "pi");
       });
     });
 
-    // Asegura estado por defecto al cargar (por si el HTML vino sin hidden)
-    showOnly(modal, DEFAULT_TAB);
+    // Asegura estado inicial si el HTML no trajo hidden correcto
+    showOnly(modal, "pi");
 
-    // ------- helpers validación -------
+    // Submit (billing) – AJAX
+    var form = qs("#mt-profile-form", modal);
+    var btnSave = qs("#mt-profile-save", modal);
+
     function markInvalid(input, msg) {
       input.classList.add("is-invalid");
-      var fb =
-        input.parentElement &&
-        input.parentElement.querySelector(".invalid-feedback");
-      if (fb) {
+      var fb = input.nextElementSibling;
+      if (fb && fb.classList.contains("invalid-feedback")) {
         fb.style.display = "block";
         if (msg) fb.textContent = msg;
       }
     }
-    function clearInvalid(form) {
-      qsa(".is-invalid", form).forEach(function (n) {
-        n.classList.remove("is-invalid");
-      });
-      qsa(".invalid-feedback", form).forEach(function (n) {
-        n.style.display = "none";
-      });
+    function clearInvalid(root) {
+      qsa(".is-invalid", root).forEach((n) => n.classList.remove("is-invalid"));
+      qsa(".invalid-feedback", root).forEach((n) => (n.style.display = "none"));
     }
-    var required = function (v) {
+    function required(v) {
       return (v || "").trim().length > 0;
-    };
-    var validZip = function (v) {
+    }
+    function validZip(v) {
       return /^[0-9A-Za-z \-]{3,10}$/.test(v || "");
-    };
-    var validPhone = function (v) {
+    }
+    function validPhone(v) {
       return /^[0-9()+ \-\.]{7,20}$/.test(v || "");
-    };
+    }
 
-    // ------- serialize -------
     function serialize(form) {
       var fd = new FormData(form);
       if (!fd.get("action")) fd.set("action", "mt_save_billing_profile");
@@ -1555,18 +1524,17 @@ document.addEventListener("mt:accountSelected", function (e) {
       return new URLSearchParams(fd);
     }
 
-    // ------- submit (billing) -------
-    formPI &&
-      formPI.addEventListener("submit", function (e) {
+    form &&
+      form.addEventListener("submit", function (e) {
         e.preventDefault();
-        clearInvalid(formPI);
+        clearInvalid(form);
 
-        var addr = qs('[name="billing_address_1"]', formPI);
-        var city = qs('[name="billing_city"]', formPI);
-        var state = qs('[name="billing_state"]', formPI);
-        var zip = qs('[name="billing_postcode"]', formPI);
-        var country = qs('[name="billing_country"]', formPI);
-        var phone = qs('[name="billing_phone"]', formPI);
+        var addr = form.querySelector('[name="billing_address_1"]');
+        var city = form.querySelector('[name="billing_city"]');
+        var state = form.querySelector('[name="billing_state"]');
+        var zip = form.querySelector('[name="billing_postcode"]');
+        var country = form.querySelector('[name="billing_country"]');
+        var phone = form.querySelector('[name="billing_phone"]');
 
         var ok = true;
         if (!required(addr.value)) {
@@ -1598,9 +1566,9 @@ document.addEventListener("mt:accountSelected", function (e) {
         var url =
           (window.mtAccounts && mtAccounts.ajaxUrl) ||
           "/wp-admin/admin-ajax.php";
-        var body = serialize(formPI);
+        var body = serialize(form);
 
-        if (qs("#mt-profile-save")) qs("#mt-profile-save").disabled = true;
+        if (btnSave) btnSave.disabled = true;
         document.querySelector(".preloader")?.classList.add("is-active");
 
         fetch(url, {
@@ -1608,12 +1576,10 @@ document.addEventListener("mt:accountSelected", function (e) {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body,
         })
-          .then(function (r) {
-            return r.json().then(function (j) {
-              return { ok: r.ok, status: r.status, j: j };
-            });
-          })
-          .then(function (res) {
+          .then((r) =>
+            r.json().then((j) => ({ ok: r.ok, status: r.status, j }))
+          )
+          .then((res) => {
             if (!res.ok || !res.j?.success) {
               var msg =
                 (res.j && res.j.data && res.j.data.msg) || "HTTP " + res.status;
@@ -1621,57 +1587,17 @@ document.addEventListener("mt:accountSelected", function (e) {
             }
             try {
               window?.mtRefresh?.refreshAll && window.mtRefresh.refreshAll();
-            } catch (e) {}
-            closeModal();
+            } catch (_) {}
+            closeModal(modal);
           })
-          .catch(function (err) {
+          .catch((err) => {
             alert(err.message || "Could not save profile.");
           })
-          .finally(function () {
+          .finally(() => {
             document.querySelector(".preloader")?.classList.remove("is-active");
-            if (qs("#mt-profile-save")) qs("#mt-profile-save").disabled = false;
+            if (btnSave) btnSave.disabled = false;
           });
       });
-
-    // ------- UX local para otros tabs (sin envío) -------
-    var pwdForm = modal.querySelector('[data-panel="pwd"]');
-    if (pwdForm) {
-      var np = qs('[name="new_password"]', pwdForm);
-      var rp = qs('[name="confirm_password"]', pwdForm);
-      pwdForm.addEventListener("input", function () {
-        qsa(".invalid-feedback", pwdForm).forEach(function (n) {
-          n.style.display = "none";
-        });
-        qsa(".is-invalid", pwdForm).forEach(function (n) {
-          n.classList.remove("is-invalid");
-        });
-        if (np && rp && np.value && rp.value && np.value !== rp.value) {
-          rp.classList.add("is-invalid");
-          var fb =
-            rp.parentElement &&
-            rp.parentElement.querySelector(".invalid-feedback");
-          if (fb) {
-            fb.textContent = "Passwords must match.";
-            fb.style.display = "block";
-          }
-        }
-      });
-      pwdForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-      });
-    }
-
-    var twofaForm = modal.querySelector('[data-panel="2fa"]');
-    if (twofaForm) {
-      var otp = qs('[name="otp"]', twofaForm);
-      twofaForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-      });
-      otp &&
-        otp.addEventListener("input", function () {
-          otp.value = otp.value.replace(/\D+/g, "").slice(0, 6);
-        });
-    }
   }
 
   if (document.readyState === "loading") {
