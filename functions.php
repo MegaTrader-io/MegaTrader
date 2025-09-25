@@ -1736,18 +1736,10 @@ add_action( 'template_redirect', function () {
 
 
 add_action('template_redirect', function () {
-      if (is_page_template('page-subscriptions.php')) {
-        // Forzar cabeceras de no-cache siempre
-        nocache_headers();
-
-        // Si no hay sesión, redirigir al login
-        if (!is_user_logged_in()) {
-            wp_safe_redirect(home_url('/auth/login/?session_expired=1'));
-            exit;
-        }
-    }
-
-  if ( is_user_logged_in() ) return;
+  if ( is_user_logged_in() ) {
+    nocache_headers();  
+    return;
+  };
 
   if ( is_admin() && ! wp_doing_ajax() ) return;
   if ( wp_doing_ajax() || wp_doing_cron() ) return;
