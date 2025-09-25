@@ -901,8 +901,6 @@ if (!function_exists('mt_sanitize_email')) {
 
 
 
-
-
 // === Performance Chart Payload ===
 
 if (!function_exists('mt_accounts_build_performance_chart')) {
@@ -913,9 +911,8 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
     $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
     $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
 
-    // === Serie diaria de currentBalance (línea amarilla) ===
     $candidates = [
-      $m['dailyBalances'] ?? null, // [{date, currentBalance}]
+      $m['dailyBalances'] ?? null,
       $m['balanceDaily'] ?? null,
       $m['balanceSeries'] ?? null,
       $account['balances'] ?? null,
@@ -941,7 +938,6 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
         $series[] = ['date' => gmdate('Y-m-d'), 'value' => $cb];
     }
 
-    // Título "<size> <name>"
     $program = $account['program'] ?? null;
     $plabel = (string) ($program['label'] ?? $program['description'] ?? 'Account');
     $sb = $program['startingBalance'] ?? null;
@@ -957,10 +953,10 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
 
     return [
       'title' => $title,
-      'plan_revenue' => $series,  // ← línea amarilla: currentBalance por día
-      'series' => $series,  // (compat)
-      'upper_bound' => $upper_bound,   // equityPassLevel (línea constante)
-      'lower_bound' => $lower_bound,     // maxLossLimitEquityLevel (línea constante)
+      'plan_revenue' => $series,
+      'series' => $series,
+      'upper_bound' => $upper_bound,
+      'lower_bound' => $lower_bound,
     ];
   }
 }
@@ -1146,7 +1142,6 @@ function mt_accounts_ajax_status()
 
   $found = null;
 
-  // 1) Helper de resolución (mismo que usas en el template)
   if (!$found && function_exists('mt_accounts_resolve_account_by_id')) {
     try {
       $found = mt_accounts_resolve_account_by_id($accountId);
@@ -1154,7 +1149,6 @@ function mt_accounts_ajax_status()
     }
   }
 
-  // 2) Método directo por ID
   if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_account_by_id')) {
     try {
       $found = MT_Accounts::get_account_by_id($accountId);
@@ -1162,7 +1156,6 @@ function mt_accounts_ajax_status()
     }
   }
 
-  // 3) Fallback: buscar en listado del usuario
   if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_accounts')) {
     try {
       $all = MT_Accounts::get_accounts();
@@ -1183,7 +1176,6 @@ function mt_accounts_ajax_status()
     wp_send_json_error(['message' => 'Account not found']);
   }
 
-  // 4) Normaliza vía prepare_ui si está disponible
   $status = '';
   if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'prepare_ui')) {
     try {
@@ -1204,6 +1196,27 @@ function mt_accounts_ajax_status()
   wp_send_json_success(['status' => $status]);
 }
 
+// === AJAX (stub): Daily Journal ===
+// Devuelve estructura vacía pero válida para el front.
+add_action('wp_ajax_mt_account_daily_journal', 'mt_account_daily_journal_ajax');
+add_action('wp_ajax_nopriv_mt_account_daily_journal', 'mt_account_daily_journal_ajax');
+
+function mt_account_daily_journal_ajax()
+{
+  // Usa el mismo nonce que ya localizas en mt-account-overview.js
+  check_ajax_referer('mt-acc-nonce', 'nonce');
+
+  $account_id = sanitize_text_field((string) ($_POST['account_id'] ?? ''));
+  if ($account_id === '') {
+    wp_send_json_error(['message' => 'Missing account_id']);
+  }
+
+  // STUB: sin conexión a API, devolvemos filas vacías y per_page fijo.
+  wp_send_json_success([
+    'rowsHtml' => '',   // sin filas (el front limpia y no rompe)
+    'per_page' => 7,    // mismo default del componente
+  ]);
+}
 
 
 

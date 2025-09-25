@@ -203,11 +203,14 @@ class Label
         "feature_content_reward" => "Reward",
         "feature_content_risk" => "Risk",
         "agreement_modal_title" => "Market Data Agreement required",
-        "agreement_modal_body" => "You must sign the market data agreement to continue using your account features.",
+        "agreement_modal_body_title" => "Ups!",
+        "agreement_modal_body_description" => "Please sign data agreement!",
+        "agreement_modal_body_subtitle" => "Before you can start trading you need to sign the data agreement.",
         "agreement_modal_button" => "Open Agreement",
-        "breach_modal_title" => "Ups!",
-        "breach_modal_body_title" => "Your evaluation has failed!",
-        "breach_modal_body_description" => "In order to continue trading you need to reset your account.",
+        "breach_modal_title" => "Breach alert!",
+        "breach_modal_body_title" => "Ups!",
+        "breach_modal_body_description" => "Your evaluation has failed!",
+        "breach_modal_body_subtitle" => "In order to continue trading you need to reset your account.",
         "breach_modal_button" => "Reset account"
     ];
 

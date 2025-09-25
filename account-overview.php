@@ -96,10 +96,6 @@ if (is_user_logged_in()) {
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
 
 
-
-
-
-
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
@@ -157,16 +153,6 @@ if (is_user_logged_in()) {
 
       // case-insensitive: soporta "Breached" y "BREACHED"
       $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
-
-if (defined('WP_DEBUG') && WP_DEBUG) {
-  error_log(sprintf(
-    '[BREACH][PHP] selectedId=%s status="%s" key="%s" show=%s',
-    $mt_selected_id,
-    $__mt_selected_status,
-    $__breach_key,
-    $__mt_breach_show
-  ));
-}
 
 
     } else {
@@ -289,7 +275,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
             ?>
           </div>
 
-          <div class="mt-account-performance-chart-content">
+          <div class="mt-account-daily-journal">
             <?php
             get_template_part(
               'template-parts/account/account-daily-journal',
@@ -354,12 +340,11 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 <div id="mt-agreement-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtag-title"
   aria-hidden="true" data-show="<?php echo $__mt_agreement_show; ?>">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-    <div class="modal-content gap-3">
-      <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-        <h5 id="mtag-title" class="modal-title text-white heading-sm-medium">
+    <div class="modal-content gap-32">
+      <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
+        <span id="mtag-title" class="modal-title text-white heading-sm-medium text-uppercase">
           <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_title']; ?>
-        </h5>
-
+        </span>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
@@ -369,10 +354,24 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
         </button>
       </div>
 
-      <div class="modal-body">
-        <p class="mb-3"><?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body']; ?></p>
+      <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
+        <div aria-hidden="true">
+          <div class="modal-body-image modal-image-warning">
+            <img decoding="async" src="/wp-content/uploads/2025/07/warning.svg" alt="http://Warning%20icon">
+          </div>
+        </div>
+        <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_title']; ?>
+        </span>
+          <span class="text-white fw-medium text-uppercase text-2xl leading-7">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_description']; ?>
+        </span>
+          <span class="fw-medium text-a8a29e text-base">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_subtitle']; ?>
+        </span>
+
         <a href="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>" target="_blank" rel="noopener"
-          class="mega-btn-md mega-btn-primary-md mt-agreement-button">
+          class="mega-btn-md mega-btn-primary-md mt-agreement-button mt-4">
           <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_button']; ?>
         </a>
       </div>
@@ -383,11 +382,10 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 <div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
   aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-    <div class="modal-content gap-3">
-      <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-        <h5 id="mtbreach-title" class="modal-title text-white heading-sm-medium">
-          Breach alert
-        </h5>
+    <div class="modal-content gap-32">
+      <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
+        <span id="mtbreach-title" class="modal-title text-white heading-sm-medium text-uppercase">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_title']; ?></span>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
@@ -398,26 +396,29 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
       </div>
 
       <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
-        <!-- Icon -->
         <div aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="106" height="94" viewBox="0 0 106 94" fill="none">
-            <path
-              d="M45.2041 4.99999C48.6682 -1.00001 57.3284 -0.999995 60.7925 5.00001L104.094 80C107.558 86 103.228 93.5 96.2996 93.5H9.69701C2.76881 93.5 -1.56131 86 1.90279 80L45.2041 4.99999Z"
-              fill="#F43F5E" />
-          </svg>
+          <div class="modal-body-image modal-image-warning">
+            <img decoding="async" src="/wp-content/uploads/2025/07/warning.svg" alt="http://Warning%20icon">
+          </div>
         </div>
 
-        <p class="h5 m-0">Ups!</p>
-        <p class="m-0">Your evaluation has failed!</p>
-        <p class="m-0">In order to continue trading you need to reset your account.</p>
+        <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_title']; ?>
+        </span>
+        <span class="text-white fw-medium text-uppercase text-2xl leading-7">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description']; ?>
+        </span>
+        <span class="fw-medium text-a8a29e text-base">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
+        </span>
 
-        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button" href="/my-account/reset">
-          Reset account
+        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4" href="/my-account/reset">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?>
         </a>
+
       </div>
     </div>
   </div>
-</div>
 
 
 
@@ -425,4 +426,4 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 
 
 
-<?php get_footer(); ?>
+  <?php get_footer(); ?>

@@ -822,10 +822,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     max-height: calc(100vh - var(--sidebar-top) - var(--sidebar-lg-margin-block));
     transition: width .2s ease-out;
 }
-.mt-sidebar .mt-sidebar__container { 
-    width: calc(var(--sidebar-width-expanded) - (2 * var(--sidebar-padding)));
-    transition: opacity 0.2s;
-}
+
 .mt-sidebar .mt-sidebar__container__collapsed { 
     position: absolute;
     inset: var(--sidebar-padding);
@@ -848,6 +845,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 @media (min-width: 1200px) {
     .mt-sidebar__wrapper  {
         width: var(--sidebar-width-expanded);
+    }
+    .mt-sidebar .mt-sidebar__container { 
+        width: calc(var(--sidebar-width-expanded) - (2 * var(--sidebar-padding)));
+        transition: opacity 0.2s;
     }
 }
 @media (max-width: 1199.98px) {
