@@ -315,8 +315,6 @@
   };
 })();
 
-
-
 // ===== Refresh Bus (centraliza todos los componentes) =====
 window.mtRefresh = (function () {
   const handlers = {};
@@ -1324,56 +1322,301 @@ document.addEventListener("mt:accountSelected", function (e) {
 
 // == Main width var: --mt-main-width (+ --dj-viewport) ==
 (function () {
-  function clamp(n){ return Math.max(784, Math.round(n||0)); } // base inicial
+  function clamp(n) {
+    return Math.max(784, Math.round(n || 0));
+  } // base inicial
 
-  function calcMainWidth(){
-    var page = document.querySelector('.mt-page');
-    var side = document.querySelector('.mt-page__sidebar');
+  function calcMainWidth() {
+    var page = document.querySelector(".mt-page");
+    var side = document.querySelector(".mt-page__sidebar");
     if (!page) return 0;
-    var gap  = parseFloat(getComputedStyle(page).gap || 0) || 0;
+    var gap = parseFloat(getComputedStyle(page).gap || 0) || 0;
     var pageW = page.clientWidth;
     var sideW = side ? side.getBoundingClientRect().width : 0;
     return clamp(pageW - sideW - gap);
   }
 
-  function applyWidth(){
+  function applyWidth() {
     var w = calcMainWidth();
     if (!w) return;
 
     // var global
-    document.documentElement.style.setProperty('--mt-main-width', w + 'px');
-    document.body.style.setProperty('--mt-main-width', w + 'px');
+    document.documentElement.style.setProperty("--mt-main-width", w + "px");
+    document.body.style.setProperty("--mt-main-width", w + "px");
 
     // var específica del journal
-    var dj = document.getElementById('mt-daily-journal');
-    if (dj) dj.style.setProperty('--dj-viewport', w + 'px');
+    var dj = document.getElementById("mt-daily-journal");
+    if (dj) dj.style.setProperty("--dj-viewport", w + "px");
   }
 
-  function boot(){
+  function boot() {
     applyWidth();
 
-    var page = document.querySelector('.mt-page');
-    var side = document.querySelector('.mt-page__sidebar');
+    var page = document.querySelector(".mt-page");
+    var side = document.querySelector(".mt-page__sidebar");
 
-    if (window.ResizeObserver && page){
+    if (window.ResizeObserver && page) {
       var ro = new ResizeObserver(applyWidth);
       ro.observe(page);
-      if (side){
+      if (side) {
         var ro2 = new ResizeObserver(applyWidth);
         ro2.observe(side);
-        side.addEventListener('transitionend', function(e){
-          if (['width','flex-basis','transform'].includes(e.propertyName)){
+        side.addEventListener("transitionend", function (e) {
+          if (["width", "flex-basis", "transform"].includes(e.propertyName)) {
             requestAnimationFrame(applyWidth);
           }
         });
       }
     } else {
-      var t; window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(applyWidth,100); });
+      var t;
+      window.addEventListener("resize", function () {
+        clearTimeout(t);
+        t = setTimeout(applyWidth, 100);
+      });
     }
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, {once:true});
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
   else boot();
 })();
 
+// ==== Profile Modal: open/close, tabs, validate, AJAX save (robusto) ====
+(function () {
+  function qs(s, r = document) {
+    return r.querySelector(s);
+  }
+  function qsa(s, r = document) {
+    return Array.from(r.querySelectorAll(s));
+  }
 
+  function init() {
+    var modal = document.getElementById("mt-profile-modal");
+    if (!modal) return; // el modal no está en el DOM
+
+    var panel = qs(".mt-profile-modal__panel", modal);
+    var form = document.getElementById("mt-profile-form");
+    var btnSave = document.getElementById("mt-profile-save");
+    var withBackdrop = null;
+
+    // --------- Open / Close ----------
+    function openModal() {
+      if (modal.classList.contains("show")) return;
+      modal.removeAttribute("hidden");
+      modal.setAttribute("aria-hidden", "false");
+      modal.classList.add("show");
+
+      // estilos in-place (compatibles con tus otros modales)
+      modal.style.position = "fixed";
+      modal.style.inset = "0";
+      modal.style.display = "flex";
+      modal.style.alignItems = "center";
+      modal.style.justifyContent = "center";
+      modal.style.zIndex = "1055";
+
+      withBackdrop = document.createElement("div");
+      withBackdrop.className = "modal-backdrop fade show";
+      withBackdrop.style.zIndex = "1050";
+      document.body.appendChild(withBackdrop);
+      document.body.classList.add("modal-open");
+
+      try {
+        panel && panel.focus();
+      } catch (e) {}
+    }
+
+    function closeModal() {
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      modal.setAttribute("hidden", "");
+
+      // limpiar estilos inline
+      modal.style.display = "";
+      modal.style.position = "";
+      modal.style.inset = "";
+      modal.style.alignItems = "";
+      modal.style.justifyContent = "";
+      modal.style.zIndex = "";
+
+      if (withBackdrop && withBackdrop.parentNode) {
+        withBackdrop.parentNode.removeChild(withBackdrop);
+        withBackdrop = null;
+      }
+      if (!document.querySelector(".modal.show")) {
+        document.body.classList.remove("modal-open");
+      }
+    }
+
+    // Click en cerrar
+    qsa(".js-close-profile-modal", modal).forEach(function (b) {
+      b.addEventListener("click", function (e) {
+        e.preventDefault();
+        closeModal();
+      });
+    });
+
+    // Escape global
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+    });
+
+    // Click fuera (cierra si clic fuera del panel)
+    document.addEventListener("click", function (e) {
+      if (!modal.classList.contains("show")) return;
+      var inside =
+        e.target.closest(".mt-profile-modal__panel") ||
+        e.target.closest(".mt-account-settings-js");
+      if (!inside) closeModal();
+    });
+
+    // --------- Triggers dedicados (.mt-account-settings-js) ----------
+    // NO dependemos de data-modal-target; cualquier click en el trigger abre el modal.
+    qsa(".mt-account-settings-js").forEach(function (el) {
+      el.addEventListener(
+        "click",
+        function (e) {
+          // Previene scroll hacia arriba por el href="#"
+          if (el.getAttribute("href") === "#") e.preventDefault();
+          openModal();
+        },
+        { passive: false }
+      );
+    });
+
+    // --------- Tabs ----------
+    qsa(".mt-tab", modal).forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (b.disabled) return;
+        qsa(".mt-tab", modal).forEach(function (x) {
+          x.classList.remove("active");
+        });
+        b.classList.add("active");
+        var id = b.getAttribute("data-tab");
+        qsa("[data-panel]", modal).forEach(function (p) {
+          p.hidden = p.getAttribute("data-panel") !== id;
+        });
+      });
+    });
+
+    // --------- Validation helpers ----------
+    function invalidate(input, msg) {
+      input.classList.add("is-invalid");
+      var fb = input.nextElementSibling;
+      if (fb && fb.classList.contains("invalid-feedback") && msg) {
+        fb.textContent = msg;
+      }
+    }
+    function clearInvalid(formEl) {
+      qsa(".is-invalid", formEl).forEach(function (n) {
+        n.classList.remove("is-invalid");
+      });
+    }
+    function required(val) {
+      return (val || "").trim().length > 0;
+    }
+    function validZip(val) {
+      return /^[0-9A-Za-z \-]{3,10}$/.test(val || "");
+    }
+    function validPhone(val) {
+      return /^[0-9()+ \-\.]{7,20}$/.test(val || "");
+    }
+
+    // --------- Serialize (x-www-form-urlencoded) ----------
+    function serialize(formEl) {
+      var fd = new FormData(formEl);
+      if (!fd.get("action")) fd.set("action", "mt_save_billing_profile");
+      if (!fd.get("nonce")) {
+        var n = modal.getAttribute("data-nonce") || "";
+        if (n) fd.set("nonce", n);
+      }
+      return new URLSearchParams(fd);
+    }
+
+    // --------- Submit ----------
+    form &&
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        clearInvalid(form);
+
+        var addr = qs('[name="billing_address_1"]', form);
+        var city = qs('[name="billing_city"]', form);
+        var state = qs('[name="billing_state"]', form);
+        var zip = qs('[name="billing_postcode"]', form);
+        var country = qs('[name="billing_country"]', form);
+        var phone = qs('[name="billing_phone"]', form);
+
+        var ok = true;
+        if (!required(addr.value)) {
+          invalidate(addr, "Address required.");
+          ok = false;
+        }
+        if (!required(city.value)) {
+          invalidate(city, "City required.");
+          ok = false;
+        }
+        if (!required(state.value)) {
+          invalidate(state, "State required.");
+          ok = false;
+        }
+        if (!validZip(zip.value)) {
+          invalidate(zip, "Valid ZIP required.");
+          ok = false;
+        }
+        if (!required(country.value)) {
+          invalidate(country, "Country required.");
+          ok = false;
+        }
+        if (!validPhone(phone.value)) {
+          invalidate(phone, "Valid phone required.");
+          ok = false;
+        }
+        if (!ok) return;
+
+        var url =
+          (window.mtAccounts && mtAccounts.ajaxUrl) ||
+          "/wp-admin/admin-ajax.php";
+        var body = serialize(form);
+
+        if (btnSave) btnSave.disabled = true;
+        // usa tu preloader global si existe
+        document.querySelector(".preloader")?.classList.add("is-active");
+
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body,
+        })
+          .then(function (r) {
+            return r.json().then(function (j) {
+              return { ok: r.ok, status: r.status, j: j };
+            });
+          })
+          .then(function (res) {
+            if (!res.ok || !res.j?.success) {
+              var msg =
+                (res.j && res.j.data && res.j.data.msg) || "HTTP " + res.status;
+              throw new Error(msg);
+            }
+            // éxito: cerrar y refrescar UI si tienes mecanismo global
+            try {
+              window?.mtRefresh?.refreshAll && window.mtRefresh.refreshAll();
+            } catch (e) {}
+            closeModal();
+          })
+          .catch(function (err) {
+            alert(err.message || "Could not save profile.");
+          })
+          .finally(function () {
+            document.querySelector(".preloader")?.classList.remove("is-active");
+            if (btnSave) btnSave.disabled = false;
+          });
+      });
+  }
+
+  // DOM listo (robusto)
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();

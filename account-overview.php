@@ -294,6 +294,10 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
     <?php endif; ?>
   </div>
 </div>
+<?php
+get_template_part('template-parts/account/mt-account-profile'); // sin args; el modal es autónomo
+?>
+
 <div id="mt-feedback-modal" class="mt-popover" hidden aria-hidden="true" role="dialog" aria-labelledby="mtfb-title">
   <div class="mt-modal__panel" tabindex="-1">
     <div class="mt-feedback-header align-items-center d-flex gap-2">
@@ -419,6 +423,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
       </div>
     </div>
   </div>
+
 
 
 

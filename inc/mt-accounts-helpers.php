@@ -1218,6 +1218,84 @@ function mt_account_daily_journal_ajax()
   ]);
 }
 
+// === Profile (My Profile modal) ============================================
+// Helpers + AJAX para cargar/guardar BILLING del usuario logueado.
+// No colisiona con nada existente.
+
+if ( ! function_exists('mt_get_current_user_profile') ) {
+  function mt_get_current_user_profile(): array {
+    if ( ! is_user_logged_in() ) return array('ok'=>false,'msg'=>'Not logged in');
+    $uid = get_current_user_id();
+    $u   = wp_get_current_user();
+
+    $data = array(
+      'first_name'        => get_user_meta($uid, 'first_name', true),
+      'last_name'         => get_user_meta($uid, 'last_name', true),
+      'email'             => $u ? $u->user_email : '',
+      'billing_address_1' => get_user_meta($uid, 'billing_address_1', true),
+      'billing_city'      => get_user_meta($uid, 'billing_city', true),
+      'billing_state'     => get_user_meta($uid, 'billing_state', true),
+      'billing_postcode'  => get_user_meta($uid, 'billing_postcode', true),
+      'billing_country'   => get_user_meta($uid, 'billing_country', true),
+      'billing_phone'     => get_user_meta($uid, 'billing_phone', true),
+    );
+    return array('ok'=>true, 'data'=>$data);
+  }
+}
+
+if ( ! function_exists('mt_update_current_user_billing') ) {
+  function mt_update_current_user_billing(array $in): array {
+    if ( ! is_user_logged_in() ) return array('ok'=>false,'msg'=>'Not logged in');
+    $uid = get_current_user_id();
+
+    $fields = array(
+      'billing_address_1','billing_city','billing_state',
+      'billing_postcode','billing_country','billing_phone'
+    );
+    foreach ($fields as $k) {
+      if ( array_key_exists($k, $in) ) {
+        $v = is_string($in[$k]) ? wp_strip_all_tags($in[$k]) : '';
+        update_user_meta($uid, $k, $v);
+      }
+    }
+    return array('ok'=>true);
+  }
+}
+
+// Obtener perfil (si luego quieres refrescar dinámicamente desde el front)
+add_action('wp_ajax_mt_get_profile', function(){
+  check_ajax_referer('mt_profile_nonce', 'nonce');
+  $res = mt_get_current_user_profile();
+  if ( ! $res['ok'] ) wp_send_json_error(array('msg'=>$res['msg']), 401);
+  wp_send_json_success($res['data']);
+});
+
+// Guardar solo BILLING
+add_action('wp_ajax_mt_save_billing_profile', function(){
+  check_ajax_referer('mt_profile_nonce', 'nonce');
+  if ( ! is_user_logged_in() ) wp_send_json_error(array('msg'=>'Not logged in'), 401);
+
+  $payload = array(
+    'billing_address_1' => $_POST['billing_address_1'] ?? '',
+    'billing_city'      => $_POST['billing_city'] ?? '',
+    'billing_state'     => $_POST['billing_state'] ?? '',
+    'billing_postcode'  => $_POST['billing_postcode'] ?? '',
+    'billing_country'   => $_POST['billing_country'] ?? '',
+    'billing_phone'     => $_POST['billing_phone'] ?? '',
+  );
+
+  // Validación mínima server
+  foreach (array_keys($payload) as $k) {
+    if ( empty(trim((string)$payload[$k])) ) {
+      wp_send_json_error(array('msg'=>"Missing field: $k"), 400);
+    }
+  }
+
+  $r = mt_update_current_user_billing($payload);
+  if ( ! $r['ok'] ) wp_send_json_error(array('msg'=>$r['msg'] ?? 'Error'), 500);
+
+  wp_send_json_success(array('msg'=>'Saved'));
+});
 
 
 
