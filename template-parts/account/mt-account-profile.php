@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH') || exit;
+if ( ! defined('ABSPATH') ) { exit; }
 
 $current_user = wp_get_current_user();
 $user_id      = get_current_user_id();
@@ -17,8 +17,9 @@ $billing = array(
   'billing_phone'     => get_user_meta($user_id, 'billing_phone', true),
 );
 ?>
+
 <div id="mt-profile-modal"
-     class="mt-modal mt-profile-modal"
+     class="modal modal-profile"
      data-module="profile-modal"
      role="dialog" aria-modal="true"
      aria-labelledby="mt-profile-title"
@@ -45,14 +46,17 @@ $billing = array(
             Personal information
           </button>
           <button type="button" class="btn w-100 text-start mt-tab" data-tab="verif"
+                  disabled
                   style="border-radius:12px;color:#FAFAFA;text-transform:uppercase;font-weight:500">
             Verification
           </button>
           <button type="button" class="btn w-100 text-start mt-tab" data-tab="pwd"
+                  disabled
                   style="border-radius:12px;color:#FAFAFA;text-transform:uppercase;font-weight:500">
             Password
           </button>
           <button type="button" class="btn w-100 text-start mt-tab" data-tab="2fa"
+                  disabled
                   style="border-radius:12px;color:#FAFAFA;text-transform:uppercase;font-weight:500">
             2FA (Two-factor-authentication)
           </button>
@@ -64,7 +68,6 @@ $billing = array(
 
       <!-- Content (right) -->
       <section class="flex-grow-1 d-flex flex-column" style="gap:16px">
-        <!-- Header user -->
         <div class="d-flex align-items-start" style="gap:16px">
           <!-- Avatar iniciales -->
           <div class="position-relative d-inline-flex" style="width:96px;height:96px">
@@ -96,7 +99,7 @@ $billing = array(
           </div>
         </div>
 
-        <!-- ============ TAB: Personal information (Billing editable) ============ -->
+        <!-- Panel: Personal information -->
         <form id="mt-profile-form" data-panel="pi" novalidate class="d-flex flex-column" style="gap:16px">
           <div class="row g-3">
             <div class="col-md-6">
@@ -112,6 +115,7 @@ $billing = array(
               <input class="form-control" value="<?php echo esc_attr($billing['email']); ?>" disabled>
             </div>
 
+            <!-- Billing editable -->
             <div class="col-12 mt-2">
               <div class="text-uppercase fw-bold small text-secondary">Billing</div>
             </div>
@@ -157,82 +161,10 @@ $billing = array(
           <input type="hidden" name="nonce" value="<?php echo esc_attr($nonce); ?>">
         </form>
 
-        <!-- ============ TAB: Verification ============ -->
-        <form data-panel="verif" hidden class="d-flex flex-column" style="gap:16px">
-          <div class="alert alert-warning mb-0">
-            <strong>Status:</strong> Your email is <span class="text-danger">UNVERIFIED</span>.
-          </div>
-
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label small">Email</label>
-              <input class="form-control" value="<?php echo esc_attr($billing['email']); ?>" disabled>
-            </div>
-            <div class="col-12">
-              <p class="text-secondary small mb-0">
-                We’ve sent a verification link to your email. Didn’t get it?
-              </p>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-2">
-            <button type="button" class="btn btn-outline-secondary" disabled>Change email</button>
-            <button type="button" class="btn btn-warning text-uppercase fw-medium" disabled>Resend verification</button>
-          </div>
-        </form>
-
-        <!-- ============ TAB: Password ============ -->
-        <form data-panel="pwd" hidden novalidate class="d-flex flex-column" style="gap:16px">
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label small">Current password</label>
-              <input type="password" class="form-control" name="current_password" autocomplete="current-password" required>
-              <div class="invalid-feedback">Current password required.</div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small">New password</label>
-              <input type="password" class="form-control" name="new_password" autocomplete="new-password" minlength="8" required>
-              <div class="invalid-feedback">Min 8 characters.</div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small">Confirm new password</label>
-              <input type="password" class="form-control" name="confirm_password" autocomplete="new-password" minlength="8" required>
-              <div class="invalid-feedback">Passwords must match.</div>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-2">
-            <button type="button" class="btn btn-outline-secondary">Cancel</button>
-            <button type="button" class="btn btn-warning text-uppercase fw-medium" disabled>Update password</button>
-          </div>
-        </form>
-
-        <!-- ============ TAB: 2FA ============ -->
-        <form data-panel="2fa" hidden class="d-flex flex-column" style="gap:16px">
-          <div class="alert alert-secondary mb-0">
-            <strong>Two-Factor Authentication:</strong> <span class="text-danger">Disabled</span>
-          </div>
-
-          <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label small">Authenticator app</label>
-              <div class="p-3 rounded" style="background:#1E1E1E;border:1px solid #404040;">
-                <div class="small text-secondary mb-2">Scan this QR in your authenticator app (placeholder):</div>
-                <div style="width:140px;height:140px;background:#2a2a2a;border-radius:8px;"></div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small">Enter 6-digit code</label>
-              <input type="text" class="form-control" name="otp" pattern="^[0-9]{6}$" placeholder="••••••">
-              <div class="invalid-feedback">Enter a valid 6-digit code.</div>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-2">
-            <button type="button" class="btn btn-outline-secondary" disabled>Disable 2FA</button>
-            <button type="button" class="btn btn-warning text-uppercase fw-medium" disabled>Enable 2FA</button>
-          </div>
-        </form>
+        <!-- Paneles futuros (placeholder) -->
+        <div data-panel="verif" hidden></div>
+        <div data-panel="pwd" hidden></div>
+        <div data-panel="2fa" hidden></div>
       </section>
     </div>
   </div>

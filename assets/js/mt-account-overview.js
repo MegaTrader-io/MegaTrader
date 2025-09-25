@@ -1381,7 +1381,7 @@ document.addEventListener("mt:accountSelected", function (e) {
   else boot();
 })();
 
-// ==== Profile Modal: open/close, tabs, validate, AJAX save (robusto) ====
+// ==== Modal Profile (tabs + AJAX billing) ====
 (function () {
   function qs(s, r = document) {
     return r.querySelector(s);
@@ -1390,39 +1390,72 @@ document.addEventListener("mt:accountSelected", function (e) {
     return Array.from(r.querySelectorAll(s));
   }
 
+  // Mostrar SOLO el panel activo
+  function showOnly(modal, tabId) {
+    // Tabs (left)
+    qsa('[data-role="tab"]', modal).forEach(function (tab) {
+      var active = tab.getAttribute("data-tab") === tabId;
+      tab.setAttribute("data-status", active ? "active" : "normal");
+    });
+    // Panels (right)
+    qsa("[data-panel]", modal).forEach(function (p) {
+      var show = p.getAttribute("data-panel") === tabId;
+      p.hidden = !show;
+      p.style.display = show ? "block" : "none"; // por si tu CSS ignora [hidden]
+    });
+  }
+
+  function focusFirstEditable(root) {
+    var el =
+      root &&
+      root.querySelector(
+        'input:not([disabled]):not([type="hidden"]), select, textarea, button:not([disabled])'
+      );
+    if (el) {
+      try {
+        el.focus();
+      } catch (e) {}
+    }
+  }
+
   function init() {
     var modal = document.getElementById("mt-profile-modal");
-    if (!modal) return; // el modal no está en el DOM
+    if (
+      !modal ||
+      !modal.classList.contains("modal") ||
+      !modal.classList.contains("modal-profile")
+    )
+      return;
 
     var panel = qs(".mt-profile-modal__panel", modal);
-    var form = document.getElementById("mt-profile-form");
-    var btnSave = document.getElementById("mt-profile-save");
+    var formPI = document.getElementById("mt-profile-form");
+    var btnSavePI = document.getElementById("mt-profile-save");
     var withBackdrop = null;
+    var DEFAULT_TAB = "pi";
 
-    // --------- Open / Close ----------
+    // ------- open / close (sin tocar tu CSS del modal) -------
     function openModal() {
       if (modal.classList.contains("show")) return;
+
+      // estado inicial tabs
+      showOnly(modal, DEFAULT_TAB);
+
       modal.removeAttribute("hidden");
       modal.setAttribute("aria-hidden", "false");
       modal.classList.add("show");
 
-      // estilos in-place (compatibles con tus otros modales)
-      modal.style.position = "fixed";
-      modal.style.inset = "0";
-      modal.style.display = "flex";
-      modal.style.alignItems = "center";
-      modal.style.justifyContent = "center";
-      modal.style.zIndex = "1055";
-
+      // backdrop compatible
       withBackdrop = document.createElement("div");
       withBackdrop.className = "modal-backdrop fade show";
-      withBackdrop.style.zIndex = "1050";
       document.body.appendChild(withBackdrop);
       document.body.classList.add("modal-open");
 
       try {
         panel && panel.focus();
       } catch (e) {}
+      focusFirstEditable(
+        modal.querySelector('[data-panel="' + DEFAULT_TAB + '"]')
+      );
     }
 
     function closeModal() {
@@ -1430,37 +1463,38 @@ document.addEventListener("mt:accountSelected", function (e) {
       modal.setAttribute("aria-hidden", "true");
       modal.setAttribute("hidden", "");
 
-      // limpiar estilos inline
-      modal.style.display = "";
-      modal.style.position = "";
-      modal.style.inset = "";
-      modal.style.alignItems = "";
-      modal.style.justifyContent = "";
-      modal.style.zIndex = "";
-
-      if (withBackdrop && withBackdrop.parentNode) {
-        withBackdrop.parentNode.removeChild(withBackdrop);
+      if (withBackdrop) {
+        withBackdrop.remove();
         withBackdrop = null;
       }
+      // si no hay otros .modal.show, quita el lock
       if (!document.querySelector(".modal.show")) {
         document.body.classList.remove("modal-open");
       }
     }
 
-    // Click en cerrar
-    qsa(".js-close-profile-modal", modal).forEach(function (b) {
-      b.addEventListener("click", function (e) {
+    // ------- triggers -------
+    qsa(".mt-account-settings-js").forEach(function (el) {
+      el.addEventListener(
+        "click",
+        function (e) {
+          if (el.getAttribute("href") === "#") e.preventDefault();
+          openModal();
+        },
+        { passive: false }
+      );
+    });
+
+    // cerrar
+    qsa(".js-close-profile-modal", modal).forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
         e.preventDefault();
         closeModal();
       });
     });
-
-    // Escape global
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
-
-    // Click fuera (cierra si clic fuera del panel)
     document.addEventListener("click", function (e) {
       if (!modal.classList.contains("show")) return;
       var inside =
@@ -1469,61 +1503,50 @@ document.addEventListener("mt:accountSelected", function (e) {
       if (!inside) closeModal();
     });
 
-    // --------- Triggers dedicados (.mt-account-settings-js) ----------
-    // NO dependemos de data-modal-target; cualquier click en el trigger abre el modal.
-    qsa(".mt-account-settings-js").forEach(function (el) {
-      el.addEventListener(
-        "click",
-        function (e) {
-          // Previene scroll hacia arriba por el href="#"
-          if (el.getAttribute("href") === "#") e.preventDefault();
-          openModal();
-        },
-        { passive: false }
-      );
-    });
-
-    // --------- Tabs ----------
-    qsa(".mt-tab", modal).forEach(function (b) {
-      b.addEventListener("click", function () {
-        if (b.disabled) return;
-        qsa(".mt-tab", modal).forEach(function (x) {
-          x.classList.remove("active");
-        });
-        b.classList.add("active");
-        var id = b.getAttribute("data-tab");
-        qsa("[data-panel]", modal).forEach(function (p) {
-          p.hidden = p.getAttribute("data-panel") !== id;
-        });
+    // ------- tabs click -------
+    qsa('[data-role="tab"]', modal).forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var id = tab.getAttribute("data-tab") || DEFAULT_TAB;
+        showOnly(modal, id);
+        focusFirstEditable(modal.querySelector('[data-panel="' + id + '"]'));
       });
     });
 
-    // --------- Validation helpers ----------
-    function invalidate(input, msg) {
+    // Asegura estado por defecto al cargar (por si el HTML vino sin hidden)
+    showOnly(modal, DEFAULT_TAB);
+
+    // ------- helpers validación -------
+    function markInvalid(input, msg) {
       input.classList.add("is-invalid");
-      var fb = input.nextElementSibling;
-      if (fb && fb.classList.contains("invalid-feedback") && msg) {
-        fb.textContent = msg;
+      var fb =
+        input.parentElement &&
+        input.parentElement.querySelector(".invalid-feedback");
+      if (fb) {
+        fb.style.display = "block";
+        if (msg) fb.textContent = msg;
       }
     }
-    function clearInvalid(formEl) {
-      qsa(".is-invalid", formEl).forEach(function (n) {
+    function clearInvalid(form) {
+      qsa(".is-invalid", form).forEach(function (n) {
         n.classList.remove("is-invalid");
       });
+      qsa(".invalid-feedback", form).forEach(function (n) {
+        n.style.display = "none";
+      });
     }
-    function required(val) {
-      return (val || "").trim().length > 0;
-    }
-    function validZip(val) {
-      return /^[0-9A-Za-z \-]{3,10}$/.test(val || "");
-    }
-    function validPhone(val) {
-      return /^[0-9()+ \-\.]{7,20}$/.test(val || "");
-    }
+    var required = function (v) {
+      return (v || "").trim().length > 0;
+    };
+    var validZip = function (v) {
+      return /^[0-9A-Za-z \-]{3,10}$/.test(v || "");
+    };
+    var validPhone = function (v) {
+      return /^[0-9()+ \-\.]{7,20}$/.test(v || "");
+    };
 
-    // --------- Serialize (x-www-form-urlencoded) ----------
-    function serialize(formEl) {
-      var fd = new FormData(formEl);
+    // ------- serialize -------
+    function serialize(form) {
+      var fd = new FormData(form);
       if (!fd.get("action")) fd.set("action", "mt_save_billing_profile");
       if (!fd.get("nonce")) {
         var n = modal.getAttribute("data-nonce") || "";
@@ -1532,42 +1555,42 @@ document.addEventListener("mt:accountSelected", function (e) {
       return new URLSearchParams(fd);
     }
 
-    // --------- Submit ----------
-    form &&
-      form.addEventListener("submit", function (e) {
+    // ------- submit (billing) -------
+    formPI &&
+      formPI.addEventListener("submit", function (e) {
         e.preventDefault();
-        clearInvalid(form);
+        clearInvalid(formPI);
 
-        var addr = qs('[name="billing_address_1"]', form);
-        var city = qs('[name="billing_city"]', form);
-        var state = qs('[name="billing_state"]', form);
-        var zip = qs('[name="billing_postcode"]', form);
-        var country = qs('[name="billing_country"]', form);
-        var phone = qs('[name="billing_phone"]', form);
+        var addr = qs('[name="billing_address_1"]', formPI);
+        var city = qs('[name="billing_city"]', formPI);
+        var state = qs('[name="billing_state"]', formPI);
+        var zip = qs('[name="billing_postcode"]', formPI);
+        var country = qs('[name="billing_country"]', formPI);
+        var phone = qs('[name="billing_phone"]', formPI);
 
         var ok = true;
         if (!required(addr.value)) {
-          invalidate(addr, "Address required.");
+          markInvalid(addr, "Address required.");
           ok = false;
         }
         if (!required(city.value)) {
-          invalidate(city, "City required.");
+          markInvalid(city, "City required.");
           ok = false;
         }
         if (!required(state.value)) {
-          invalidate(state, "State required.");
+          markInvalid(state, "State required.");
           ok = false;
         }
         if (!validZip(zip.value)) {
-          invalidate(zip, "Valid ZIP required.");
+          markInvalid(zip, "Valid ZIP required.");
           ok = false;
         }
         if (!required(country.value)) {
-          invalidate(country, "Country required.");
+          markInvalid(country, "Country required.");
           ok = false;
         }
         if (!validPhone(phone.value)) {
-          invalidate(phone, "Valid phone required.");
+          markInvalid(phone, "Valid phone required.");
           ok = false;
         }
         if (!ok) return;
@@ -1575,10 +1598,9 @@ document.addEventListener("mt:accountSelected", function (e) {
         var url =
           (window.mtAccounts && mtAccounts.ajaxUrl) ||
           "/wp-admin/admin-ajax.php";
-        var body = serialize(form);
+        var body = serialize(formPI);
 
-        if (btnSave) btnSave.disabled = true;
-        // usa tu preloader global si existe
+        if (qs("#mt-profile-save")) qs("#mt-profile-save").disabled = true;
         document.querySelector(".preloader")?.classList.add("is-active");
 
         fetch(url, {
@@ -1597,7 +1619,6 @@ document.addEventListener("mt:accountSelected", function (e) {
                 (res.j && res.j.data && res.j.data.msg) || "HTTP " + res.status;
               throw new Error(msg);
             }
-            // éxito: cerrar y refrescar UI si tienes mecanismo global
             try {
               window?.mtRefresh?.refreshAll && window.mtRefresh.refreshAll();
             } catch (e) {}
@@ -1608,12 +1629,51 @@ document.addEventListener("mt:accountSelected", function (e) {
           })
           .finally(function () {
             document.querySelector(".preloader")?.classList.remove("is-active");
-            if (btnSave) btnSave.disabled = false;
+            if (qs("#mt-profile-save")) qs("#mt-profile-save").disabled = false;
           });
       });
+
+    // ------- UX local para otros tabs (sin envío) -------
+    var pwdForm = modal.querySelector('[data-panel="pwd"]');
+    if (pwdForm) {
+      var np = qs('[name="new_password"]', pwdForm);
+      var rp = qs('[name="confirm_password"]', pwdForm);
+      pwdForm.addEventListener("input", function () {
+        qsa(".invalid-feedback", pwdForm).forEach(function (n) {
+          n.style.display = "none";
+        });
+        qsa(".is-invalid", pwdForm).forEach(function (n) {
+          n.classList.remove("is-invalid");
+        });
+        if (np && rp && np.value && rp.value && np.value !== rp.value) {
+          rp.classList.add("is-invalid");
+          var fb =
+            rp.parentElement &&
+            rp.parentElement.querySelector(".invalid-feedback");
+          if (fb) {
+            fb.textContent = "Passwords must match.";
+            fb.style.display = "block";
+          }
+        }
+      });
+      pwdForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+      });
+    }
+
+    var twofaForm = modal.querySelector('[data-panel="2fa"]');
+    if (twofaForm) {
+      var otp = qs('[name="otp"]', twofaForm);
+      twofaForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+      });
+      otp &&
+        otp.addEventListener("input", function () {
+          otp.value = otp.value.replace(/\D+/g, "").slice(0, 6);
+        });
+    }
   }
 
-  // DOM listo (robusto)
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
