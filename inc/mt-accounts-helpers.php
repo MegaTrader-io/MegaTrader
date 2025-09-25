@@ -1072,7 +1072,6 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
       error_log('[MT Agreement][in] email=' . $email_encoded . ' ttl=' . max(0, $ttl));
     }
 
-    // Pasamos el email tal cual al shortcode (ya codificado)
     $sc = sprintf(
       '[mega_subscriptions_data email="%s" output="json" ttl="%d"]',
       esc_attr($email_encoded),
@@ -1085,7 +1084,6 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
     $raw = do_shortcode($sc);
     $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
 
-    // Limpiezas: BOM + entidades HTML
     if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF") {
       $raw = substr($raw, 3);
     }
@@ -1096,7 +1094,6 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
       error_log('[MT Agreement][raw]=' . substr((string) $raw, 0, 800));
     }
 
-    // Parseo robusto
     $data = json_decode($raw, true);
     if (!is_array($data)) {
       $data = json_decode(trim(wp_strip_all_tags($raw)), true);
@@ -1109,11 +1106,9 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
       return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
     }
 
-    // Normalizar booleanos
     $signed = filter_var($data['agreementSigned'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
     $status = filter_var($data['agreementStatus'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-    // Mapear URL (admite alias)
     $agreement_url = null;
     foreach (['agreementURL', 'agreementUrl', 'agreement_url', 'url'] as $k) {
       if (!empty($data[$k]) && is_string($data[$k])) {
@@ -1136,29 +1131,26 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
   }
 }
 
-// === AJAX: devolver STATUS por accountId (con logs) ===
+// === AJAX: devolver STATUS por accountId ===
 add_action('wp_ajax_mt_accounts_status', 'mt_accounts_ajax_status');
 add_action('wp_ajax_nopriv_mt_accounts_status', 'mt_accounts_ajax_status');
 
-function mt_accounts_ajax_status() {
-   check_ajax_referer('mt-acc-nonce', 'nonce'); // habilítalo luego si quieres
+function mt_accounts_ajax_status()
+{
+  check_ajax_referer('mt-acc-nonce', 'nonce');
 
-  $accountId = sanitize_text_field((string)($_POST['accountId'] ?? $_POST['account_id'] ?? ''));
+  $accountId = sanitize_text_field((string) ($_POST['accountId'] ?? $_POST['account_id'] ?? ''));
   if ($accountId === '') {
-    error_log('[BREACH][AJAX] Missing accountId');
     wp_send_json_error(['message' => 'Missing accountId']);
   }
 
   $found = null;
-  $used  = 'none';
 
-  // 1) Usa tu helper si existe (el mismo que usas en el template)
+  // 1) Helper de resolución (mismo que usas en el template)
   if (!$found && function_exists('mt_accounts_resolve_account_by_id')) {
     try {
       $found = mt_accounts_resolve_account_by_id($accountId);
-      if (is_array($found)) $used = 'resolve_helper';
     } catch (Throwable $e) {
-      error_log('[BREACH][AJAX] resolve_helper EX: ' . $e->getMessage());
     }
   }
 
@@ -1166,31 +1158,28 @@ function mt_accounts_ajax_status() {
   if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_account_by_id')) {
     try {
       $found = MT_Accounts::get_account_by_id($accountId);
-      if (is_array($found)) $used = 'get_account_by_id';
     } catch (Throwable $e) {
-      error_log('[BREACH][AJAX] get_account_by_id EX: ' . $e->getMessage());
     }
   }
 
-  // 3) Fallback: buscar en el listado del usuario
+  // 3) Fallback: buscar en listado del usuario
   if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_accounts')) {
     try {
       $all = MT_Accounts::get_accounts();
-      $cnt = is_array($all) ? count($all) : 0;
-      error_log(sprintf('[BREACH][AJAX] get_accounts cnt=%d', $cnt));
       if (is_array($all)) {
         foreach ($all as $row) {
-          $rid = (string)($row['id'] ?? $row['accountId'] ?? $row['account_id'] ?? '');
-          if ($rid === (string)$accountId) { $found = $row; $used = 'get_accounts'; break; }
+          $rid = (string) ($row['id'] ?? $row['accountId'] ?? $row['account_id'] ?? '');
+          if ($rid === (string) $accountId) {
+            $found = $row;
+            break;
+          }
         }
       }
     } catch (Throwable $e) {
-      error_log('[BREACH][AJAX] get_accounts EX: ' . $e->getMessage());
     }
   }
 
   if (!$found || !is_array($found)) {
-    error_log(sprintf('[BREACH][AJAX] Account not found id=%s used=%s', $accountId, $used));
     wp_send_json_error(['message' => 'Account not found']);
   }
 
@@ -1199,15 +1188,14 @@ function mt_accounts_ajax_status() {
   if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'prepare_ui')) {
     try {
       $ui = MT_Accounts::prepare_ui([$found]);
-      if (is_array($ui)) $status = (string)($ui['current']['status'] ?? '');
+      if (is_array($ui))
+        $status = (string) ($ui['current']['status'] ?? '');
     } catch (Throwable $e) {
-      error_log('[BREACH][AJAX] prepare_ui EX: ' . $e->getMessage());
     }
   }
-  if ($status === '') $status = (string)($found['status'] ?? '');
+  if ($status === '')
+    $status = (string) ($found['status'] ?? '');
   $status = trim($status);
-
-  error_log(sprintf('[BREACH][AJAX] id=%s used=%s status="%s"', $accountId, $used, $status));
 
   if ($status === '') {
     wp_send_json_error(['message' => 'Status not found']);

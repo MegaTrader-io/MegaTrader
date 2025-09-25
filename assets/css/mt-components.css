@@ -807,6 +807,9 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 /*  Sidebar Sticky */
 
 .mt-sidebar {
+    --sidebar-width-expanded: 390px;
+    --sidebar-width-collapsed: 96px;
+    --sidebar-padding: 16px; /* this is actually from the mt-card */
     --sidebar-lg-margin-block: 32px;
     --sidebar-top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + var(--sidebar-lg-margin-block));
 
@@ -815,24 +818,36 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 .mt-sidebar__wrapper {
+    position: relative;
     max-height: calc(100vh - var(--sidebar-top) - var(--sidebar-lg-margin-block));
     transition: width .2s ease-out;
 }
 .mt-sidebar .mt-sidebar__container { 
-    transition: opacity 0.2s 
+    width: calc(var(--sidebar-width-expanded) - (2 * var(--sidebar-padding)));
+    transition: opacity 0.2s;
+}
+.mt-sidebar .mt-sidebar__container__collapsed { 
+    position: absolute;
+    inset: var(--sidebar-padding);
+    visibility: hidden;
+    opacity: 0;
 }
 
 .mt-sidebar.mt-sidebar_collapsed .mt-sidebar__wrapper {
-    width: 96px;
+    width: var(--sidebar-width-collapsed);
 }
-
 .mt-sidebar.mt-sidebar_collapsed .mt-sidebar__container {
     opacity: 0;
+}
+.mt-sidebar.mt-sidebar_collapsed .mt-sidebar__container__collapsed {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.2s .3s;
 }
 
 @media (min-width: 1200px) {
     .mt-sidebar__wrapper  {
-        width: 390px;
+        width: var(--sidebar-width-expanded);
     }
 }
 @media (max-width: 1199.98px) {

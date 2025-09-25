@@ -222,7 +222,6 @@
         document.dispatchEvent(ev);
         log("event dispatched: mt:accountSelected", selectedId);
         if (typeof window.breachGuardCheck === 'function') window.breachGuardCheck(selectedId);
-        console.log('[PICKER] Select ->', selectedId, 'status=', obj?.status);
 
 
 

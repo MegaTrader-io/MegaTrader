@@ -130,7 +130,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                 </div>
             </div>
         </div>
-        <div class="mt-sidebar__container d-flex gap-32 flex-column overflow-hidden">
+        <div class="mt-sidebar__container__collapsed d-flex gap-32 flex-column overflow-hidden align-items-center">
             <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
                 <i class="mt-icon mt-icon-white mt-icon_caret-right-solid"></i>
             </a>
