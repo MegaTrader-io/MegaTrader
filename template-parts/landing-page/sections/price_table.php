@@ -204,7 +204,7 @@ $tabs = array_map(function ($item) {
                                     <span class="mt-pricing-card__fee-type frequency-plan"><?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?></span>
                                 </div>
                             </div>
-                            <a href="#" id="proceed-to-checkout-btn" class="mega-btn-md mega-btn-secondary-md">PURCHASE PLAN</a>
+                            <a href="#" id="proceed-to-checkout-btn" class="mega-btn-md mega-btn-secondary-md">BUY PLAN</a>
                         </div>
                     </div>
                 </div>
