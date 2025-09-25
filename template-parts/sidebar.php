@@ -15,14 +15,6 @@ function is_my_account_path() {
 $overview_active_class = is_my_account_path() ? 'active' : '';
 
 ?>
-<style>
-.mt-sidebar .mt-sidebar__container { 
-    transition: opacity 0.2s 
-}
-.mt-sidebar.mt-sidebar_collapsed .mt-sidebar__container {
-    opacity: 0;
-}
-</style>
 <aside class="mt-sidebar">
     <div class="mt-sidebar__wrapper mt-card mt-card_border">
         <div class="mt-sidebar__container d-flex gap-32 flex-column overflow-hidden">
@@ -138,7 +130,16 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                 </div>
             </div>
         </div>
-
+        <div class="mt-sidebar__container d-flex gap-32 flex-column overflow-hidden">
+            <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
+                <i class="mt-icon mt-icon-white mt-icon_caret-right-solid"></i>
+            </a>
+            <div class="mt-sidebar__logo_collapsed">
+                <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
+                    <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="50" height="50" loading="eager">
+                </a>
+            </div>
+        </div>
     </div>
 </aside>
 <script>
@@ -146,23 +147,27 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
 
     function sidebarUpdateToggle(expanded){
         const toggleIcon = document.querySelector('#mt-sidebar-toggle > .mt-icon');
-        console.log({toggleIcon}, expanded)
         if(toggleIcon){
             toggleIcon.classList.remove('mt-icon_caret-left-solid', 'mt-icon_caret-right-solid');
             toggleIcon.classList.add( expanded ? 'mt-icon_caret-left-solid' : 'mt-icon_caret-right-solid');
         }
     }
 
+    function updateDesktopContentVisibility(){
+        document.querySelector('.mt-sidebar')?.classList[expanded ? 'remove' : 'add']('mt-sidebar_collapsed');
+    }
+
     function sidebarInit(){
-        
-        console.log('sidebarInit')
+
         sidebarUpdateToggle(expanded);
+        updateDesktopContentVisibility(expanded);
 
 
         document.addEventListener('MT_SIDEBAR_TOGGLE', function(e) {
-            console.log('MT_SIDEBAR_TOGGLE', expanded);
             expanded = !expanded;
+
             sidebarUpdateToggle(expanded);
+            updateDesktopContentVisibility(expanded);
         });
     }
 
