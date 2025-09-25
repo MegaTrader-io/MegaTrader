@@ -58,63 +58,60 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
             </div>
             -->
 
-            <div class="mt-sidebar__menu flex-fill overflow-y-auto">
-                <div class="mt-sidebar__wrapper d-flex flex-column gap-32">
-                    <div class="mt-sidebar__menu__group">
-                        <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
-                        <div class="mt-sidebar__menu__group__options mt-page_md-d-none">
-                            <!-- Desktop -->
-                            <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                                <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
-                                    <i class="mt-icon mt-icon-sm mt-icon_account"></i>
-                                    <span>ACCOUNT OVERVIEW<span>
-                                </a>
-                                <a class="mt-sidebar__menu__link" href="/my-account/referrals/">
-                                    <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
-                                    <span>REFERRALS<span>
-                                </a>
-                                <a class="mt-sidebar__menu__link" href="/my-account/payouts/">
-                                    <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
-                                    <span>PAYOUTS<span>
-                                </a>
-                                <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
-                                    <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
-                                    <span>ACCOUNT SETTINGS<span>
-                                </a>
-                                <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/">
-                                    <i class="mt-icon mt-icon-sm mt-icon_help"></i>
-                                    <span>HELP CENTER<span>
-                                </a>
-                                <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
-                                    <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
-                                    <span>LOGOUT<span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="d-none mt-page_md-d-block">
-                            <!-- Tablet/Mobile -->
-                            <select id="account-nav-select" class="mt-sidebar__select"
-                            onchange="if (this.value) window.location.href=this.value;">
+            <div class="mt-sidebar__menu flex-fill overflow-y-auto d-flex flex-column gap-32"">
+                <div class="mt-sidebar__menu__group">
+                    <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
+                    <div class="mt-sidebar__menu__group__options mt-page_md-d-none">
+                        <!-- Desktop -->
+                        <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
+                            <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
                                 <i class="mt-icon mt-icon-sm mt-icon_account"></i>
-                                <optgroup label="DASHBOARD">
-                                    <option value="/my-account/overview/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/overview/'); ?> checked>
-                                        ACCOUNT OVERVIEW
-                                    </option>
-                                    <option value="/my-account/referrals/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/referrals/'); ?>>
-                                        REFERRALS
-                                    </option>
-                                    <option value="/my-account/payouts/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/payouts/'); ?>>
-                                        PAYOUTS
-                                    </option>
-                                    <option value="https://help.megatrader.io/en/" <?php selected($_SERVER['REQUEST_URI'], '/help/'); ?>>
-                                        HELP CENTER
-                                    </option>
-                                </optgroup>
-                            </select>
+                                <span>ACCOUNT OVERVIEW<span>
+                            </a>
+                            <a class="mt-sidebar__menu__link" href="/my-account/referrals/">
+                                <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
+                                <span>REFERRALS<span>
+                            </a>
+                            <a class="mt-sidebar__menu__link" href="/my-account/payouts/">
+                                <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
+                                <span>PAYOUTS<span>
+                            </a>
+                            <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
+                                <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
+                                <span>ACCOUNT SETTINGS<span>
+                            </a>
+                            <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/">
+                                <i class="mt-icon mt-icon-sm mt-icon_help"></i>
+                                <span>HELP CENTER<span>
+                            </a>
+                            <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
+                                <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
+                                <span>LOGOUT<span>
+                            </a>
                         </div>
                     </div>
 
+                    <div class="d-none mt-page_md-d-block">
+                        <!-- Tablet/Mobile -->
+                        <select id="account-nav-select" class="mt-sidebar__select"
+                        onchange="if (this.value) window.location.href=this.value;">
+                            <i class="mt-icon mt-icon-sm mt-icon_account"></i>
+                            <optgroup label="DASHBOARD">
+                                <option value="/my-account/overview/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/overview/'); ?> checked>
+                                    ACCOUNT OVERVIEW
+                                </option>
+                                <option value="/my-account/referrals/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/referrals/'); ?>>
+                                    REFERRALS
+                                </option>
+                                <option value="/my-account/payouts/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/payouts/'); ?>>
+                                    PAYOUTS
+                                </option>
+                                <option value="https://help.megatrader.io/en/" <?php selected($_SERVER['REQUEST_URI'], '/help/'); ?>>
+                                    HELP CENTER
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
             </div>
 

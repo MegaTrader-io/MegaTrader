@@ -198,6 +198,7 @@
     gap: 8px;
     width: 100%;
     height: 100%;
+    border: 1px solid transparent;
     border-radius: var(--Border-Radius-xl, 16px);
     background: var(--Surface-Page, #1E1E1E);
     padding: var(--Scale-400, 16px);
@@ -815,7 +816,16 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 .mt-sidebar__wrapper {
     max-height: calc(100vh - var(--sidebar-top) - var(--sidebar-lg-margin-block));
-    width: 390px;
+}
+@media (min-width: 1200px) {
+    .mt-sidebar__wrapper {
+        width: 390px;
+    }
+}
+@media (max-width: 1199.98px) {
+  .mt-sidebar__wrapper {
+    width: 100%;
+  }
 }
 
 .mt-sidebar__menu__link {
