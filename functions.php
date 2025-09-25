@@ -1581,10 +1581,6 @@ function mt_redirect_subscriptions_endpoint() {
 
 add_action( 'template_redirect', 'mt_redirect_my_account_orders' );
 function mt_redirect_my_account_orders() {
-    if (is_user_logged_in()) {
-        nocache_headers();
-    }
-
     // Sólo para usuarios logueados en el endpoint “orders” de My Account
     if ( ! is_user_logged_in() || ! is_wc_endpoint_url( 'orders' ) ) {
         return;
