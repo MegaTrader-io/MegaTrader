@@ -68,7 +68,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                                 <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
                                 <span>PAYOUTS<span>
                             </a>
-                            <a class="mt-sidebar__menu__link mt-account-settings-js" href="#" data-modal-target="#mt-profile-modal">
+                            <a class="mt-sidebar__menu__link mt-account-settings-js" href="javascript:void(0)" data-modal-target="#mt-profile-modal">
                                 <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                                 <span>ACCOUNT SETTINGS<span>
                             </a>
@@ -162,7 +162,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         </span>
                     </span>
                     <span class="mt-tooltip" data-placement="right">                        
-                        <a class="mt-sidebar__menu__link mt-account-settings-js" href="#" data-modal-target="#mt-profile-modal">
+                        <a class="mt-sidebar__menu__link mt-account-settings-js" href="javascript:void(0)" data-modal-target="#mt-profile-modal">
                             <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
