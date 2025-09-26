@@ -8,7 +8,8 @@
  *
  * @package megatrader
  */
-
+nocache_headers();
+header("Cache-Control: private, must-revalidate");
 
 get_header();
 

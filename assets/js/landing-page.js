@@ -631,3 +631,10 @@ document.addEventListener('DOMContentLoaded', function () {
     loadFooterModals();
 });
 
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+        console.info('reload landing page', new Date());
+        window.location.reload();
+    }
+});
+

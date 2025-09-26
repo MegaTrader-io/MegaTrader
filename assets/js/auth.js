@@ -243,3 +243,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+        console.info('reload auth', new Date());
+        window.location.reload();
+    }
+});
