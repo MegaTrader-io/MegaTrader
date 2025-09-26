@@ -2039,20 +2039,6 @@ add_action('woocommerce_checkout_order_processed', function($order_id, $posted){
 }, 999, 2);
 
 
-// Cargar scripts de Checkout (p.ej. Address Autocomplete) también en My Account > Overview
-add_filter('woocommerce_is_checkout', function ($is_checkout) {
-    if ($is_checkout) {
-        return true;
-    }
-
-    // Detecta el endpoint /my-account/overview/ (o una página "overview" si no es endpoint)
-    $on_overview_endpoint = function_exists('is_account_page') && is_account_page()
-        && function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('overview');
-
-    $on_overview_page = function_exists('is_page') && is_page('overview');
-
-    return ($on_overview_endpoint || $on_overview_page) ? true : $is_checkout;
-}, 9);
 
 if (!function_exists('profile_url')) {
     function profile_url()

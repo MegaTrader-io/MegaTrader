@@ -200,9 +200,6 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
         </div>
     </div>
 </aside>
-<?php
-get_template_part('template-parts/account/mt-account-profile'); 
-?>
 
 <script>
     let expanded = true;
