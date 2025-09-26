@@ -730,13 +730,16 @@ function change_payment_modal_should_show() {
 					// IDs collapse
 					$collapse_id = 'collapseOrder' . ($offset + $index);
 					$heading_id = 'headingOrder' . ($offset + $index);
+					$expanded = ($index === 0);
 					?>
 					<div class="accordion-item mega-accordion-item">
 						<h2 class="accordion-header" id="<?php echo esc_attr($heading_id); ?>">
 							<button
-								class="accordion-button mega-accordion-button collapsed d-flex justify-content-between align-items-center"
-								type="button" data-bs-toggle="collapse"
-								data-bs-target="#<?php echo esc_attr($collapse_id); ?>" aria-expanded="false"
+								class="accordion-button mega-accordion-button <?php echo $expanded ? '' : 'collapsed'; ?> d-flex justify-content-between align-items-center"
+      							type="button" 
+								data-bs-toggle="collapse"
+								data-bs-target="#<?php echo esc_attr($collapse_id); ?>" 
+								aria-expanded="<?php echo $expanded ? 'true' : 'false'; ?>"
 								aria-controls="<?php echo esc_attr($collapse_id); ?>">
 								<div class="flex-grow-1">
 									<div class="fw-medium text-14px-line-20px text-white">
@@ -766,7 +769,7 @@ function change_payment_modal_should_show() {
 								</svg>
 							</button>
 						</h2>
-						<div id="<?php echo esc_attr($collapse_id); ?>" class="accordion-collapse collapse"
+						<div id="<?php echo esc_attr($collapse_id); ?>" class="accordion-collapse collapse <?php echo $expanded ? 'show' : ''; ?>"
 							aria-labelledby="<?php echo esc_attr($heading_id); ?>" data-bs-parent="#relatedOrdersAccordion">
 							<div class="accordion-body d-flex gap-3 pt-0">
 								<div class="accordion-body-list d-flex flex-column flex-grow-1">
