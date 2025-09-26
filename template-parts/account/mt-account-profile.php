@@ -4,6 +4,7 @@
 $current_user = wp_get_current_user();
 $user_id = get_current_user_id();
 $nonce = wp_create_nonce('mt_profile_nonce');
+$mt_billing_nonce = wp_create_nonce('mt_save_billing');
 
 $billing = [
   'first_name' => get_user_meta($user_id, 'first_name', true),
@@ -98,7 +99,7 @@ $billing = [
           </div>
 
           <!-- Panel: Personal information (DEFAULT) -->
-          <form id="mt-profile-form" data-panel="pi" novalidate>
+          <form id="mt-profile-form" data-panel="pi" class="checkout" novalidate>
             <div class="billing-details pt-3">
               <?php
               $user_id = get_current_user_id();
@@ -121,7 +122,7 @@ $billing = [
 
               <input type="hidden" id="mt_save_billing_nonce" value="<?php echo esc_attr($mt_billing_nonce); ?>">
               <button type="button" id="mt-save-billing" class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
-                Save details
+                Save changes
               </button>
             </div>
           </form>
