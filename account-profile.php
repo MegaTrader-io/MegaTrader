@@ -17,6 +17,7 @@ get_header();
       } ?>
     </div>
     <div class="mt-page__main d-flex flex-column gap-3">
+        Comming Soon
      </div>
 
 </div>

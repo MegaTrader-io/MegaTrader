@@ -1,6 +1,6 @@
 <?php
 /**
- * Template: Account Overview (parent)
+ *  Template Name: Account Overview
  */
 defined('ABSPATH') || exit;
 
@@ -9,7 +9,7 @@ if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
   require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
 }
 
-get_header();
+
 
 /* === Estado base === */
 $mt_user_email = '';
@@ -169,129 +169,117 @@ $GLOBALS['mt_performance'] = $mt_performance;
 $GLOBALS['mt_feature_content'] = $mt_feature_content;
 $GLOBALS['mt_account_data'] = $mt_account_data;
 $GLOBALS['mt_chart'] = $mt_chart ?? [];
+
+
+
+if (empty($mt_account_ui['accounts'])) {
+  wp_safe_redirect(trailingslashit(home_url('/subscriptions')));
+  exit;
+}
+
+get_header();
+
 ?>
 
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
   data-email-api="<?php echo esc_attr($mt_user_email_api); ?>">
-
   <div class="mt-page">
     <div class="mt-page__sidebar">
       <?php if (function_exists('render_sidebar')) {
         render_sidebar();
       } ?>
     </div>
-
     <div class="mt-page__main d-flex flex-column gap-3">
-
-      <?php if (empty($mt_account_ui['accounts'])): ?>
-
-        <div class="mt-account-no-order">
-          <?php get_template_part('template-parts/account/account-no-order'); ?>
-        </div>
-
-      <?php else: ?>
-
-        <div class="mt-account-navigation mega-navigation">
-          <?php if (function_exists('account_navigation_render')) {
-            account_navigation_render();
-          } else {
-            get_template_part(
-              'template-parts/account/account-navigation',
-              null,
-              function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
-            );
-          } ?>
-        </div>
-
-
-        <div class="mt-account-selection" data-fit-main>
-          <?php
+      <div class="mt-account-navigation mega-navigation">
+        <?php if (function_exists('account_navigation_render')) {
+          account_navigation_render();
+        } else {
           get_template_part(
-            'template-parts/account/account-selection',
+            'template-parts/account/account-navigation',
+            null,
+            function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
+          );
+        } ?>
+      </div>
+      <div class="mt-account-selection" data-fit-main>
+        <?php
+        get_template_part(
+          'template-parts/account/account-selection',
+          null,
+          [
+            'prepared' => $mt_account_ui,
+            'selectedId' => $mt_selected_id,
+          ]
+        );
+        ?>
+      </div>
+      <div class="d-flex flex-column gap-32" data-fit-main>
+        <div class="mt-account-data" id="mt-account-data"> <?php
+        if (!empty($mt_selected_id) && !empty($mt_account_data)) {
+          get_template_part(
+            'template-parts/account/account-data',
             null,
             [
-              'prepared' => $mt_account_ui,
-              'selectedId' => $mt_selected_id,
+              'meta' => ['accountId' => $mt_selected_id],
+              'data' => $mt_account_data,
             ]
           );
-          ?>
+        }
+        ?>
         </div>
-        <div class="d-flex flex-column gap-32" data-fit-main>
-          <div class="mt-account-data" id="mt-account-data"> <?php
-          if (!empty($mt_selected_id) && !empty($mt_account_data)) {
+        <div class="mt-account-performance" id="mt-performance-container">
+          <?php
+          if (!empty($mt_performance)) {
             get_template_part(
-              'template-parts/account/account-data',
+              'template-parts/account/account-performance',
               null,
               [
+                'performance' => $mt_performance,
                 'meta' => ['accountId' => $mt_selected_id],
-                'data' => $mt_account_data,
               ]
             );
           }
           ?>
-          </div>
-
-          <div class="mt-account-performance" id="mt-performance-container">
-            <?php
-            // Renderiza performance si hay payload construido (tu helper decide si aplica por status)
-            if (!empty($mt_performance)) {
-              get_template_part(
-                'template-parts/account/account-performance',
-                null,
-                [
-                  'performance' => $mt_performance,
-                  'meta' => ['accountId' => $mt_selected_id],
-                ]
-              );
-            }
-            ?>
-          </div>
-
-          <div class="mt-account-feature-content">
-            <?php
-            if (!empty($mt_selected_id)) {
-              get_template_part(
-                'template-parts/account/account-feature-content',
-                null,
-                [
-                  'meta' => ['accountId' => $mt_selected_id],
-                  'feature' => $mt_feature_content,
-                ]
-              );
-            }
-            ?>
-          </div>
-
-          <div class="mt-account-performance-chart-content">
-            <?php
-            get_template_part(
-              'template-parts/account/account-performance-chart',
-              null,
-              [
-                'meta' => ['accountId' => $mt_selected_id],
-                'chart' => $mt_chart ?? [],
-              ]
-            );
-            ?>
-          </div>
-
-          <div class="mt-account-daily-journal">
-            <?php
-            get_template_part(
-              'template-parts/account/account-daily-journal',
-              null,
-              [
-                'meta' => ['accountId' => $mt_selected_id],
-              ]
-            );
-            ?>
-          </div>
-
-
         </div>
-
+        <div class="mt-account-feature-content">
+          <?php
+          if (!empty($mt_selected_id)) {
+            get_template_part(
+              'template-parts/account/account-feature-content',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'feature' => $mt_feature_content,
+              ]
+            );
+          }
+          ?>
+        </div>
+        <div class="mt-account-performance-chart-content">
+          <?php
+          get_template_part(
+            'template-parts/account/account-performance-chart',
+            null,
+            [
+              'meta' => ['accountId' => $mt_selected_id],
+              'chart' => $mt_chart ?? [],
+            ]
+          );
+          ?>
+        </div>
+        <div class="mt-account-daily-journal">
+          <?php
+          get_template_part(
+            'template-parts/account/account-daily-journal',
+            null,
+            [
+              'meta' => ['accountId' => $mt_selected_id],
+            ]
+          );
+          ?>
+        </div>
       </div>
-    <?php endif; ?>
+    </div>
   </div>
 </div>
 
@@ -364,10 +352,10 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
           <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_title']; ?>
         </span>
-          <span class="text-white fw-medium text-uppercase text-2xl leading-7">
+        <span class="text-white fw-medium text-uppercase text-2xl leading-7">
           <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_description']; ?>
         </span>
-          <span class="fw-medium text-a8a29e text-base">
+        <span class="fw-medium text-a8a29e text-base">
           <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_subtitle']; ?>
         </span>
 
@@ -420,12 +408,8 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
       </div>
     </div>
   </div>
+</div>
 
 
 
-
-
-
-
-
-  <?php get_footer(); ?>
+<?php get_footer(); ?>

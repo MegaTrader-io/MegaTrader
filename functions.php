@@ -2093,3 +2093,25 @@ if (!function_exists('profile_url')) {
         return wp_validate_redirect($target, $myaccount);
     }
 }
+
+// Redirige /my-account -> /my-account/overview/ (solo usuarios logueados)
+add_action('template_redirect', function () {
+    if (is_admin()) return;
+    if (!function_exists('is_account_page') || !is_account_page()) return;
+
+    if (function_exists('is_wc_endpoint_url') && is_wc_endpoint_url()) return;
+
+    $current_path  = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/') . '/';
+    $overview_url  = home_url('/my-account/overview/');
+    $overview_path = rtrim(parse_url($overview_url, PHP_URL_PATH), '/') . '/';
+
+    if ($current_path === $overview_path) return;
+
+    if (is_user_logged_in()) {
+        wp_safe_redirect($overview_url, 302); // usa 302 mientras pruebas; cambia a 301 cuando quede fijo
+        exit;
+    }
+});
+
+
+

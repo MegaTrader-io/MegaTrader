@@ -2,17 +2,34 @@
 
 defined('ABSPATH') || exit;
 
-function is_my_account_path() {
-    $req_path = rtrim( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
+$mt_current_account_section = static function (): string {
+    $req_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    $req_path = rtrim($req_path ?: '/', '/');
 
-    // Normalize to site base
-    $account_base = rtrim( parse_url( wc_get_page_permalink( 'myaccount' ), PHP_URL_PATH ), '/' );
+    $account_base_url = wc_get_page_permalink('myaccount');           // e.g. https://.../my-account/
+    $account_base     = (string) parse_url($account_base_url, PHP_URL_PATH);
+    $account_base     = rtrim($account_base ?: '/my-account', '/');
 
-    // Check if request path starts with the account base
-    return ( strpos( $req_path, $account_base ) === 0 );
-}
+    if (strpos($req_path, $account_base) !== 0) {
+        return '';
+    }
 
-$overview_active_class = is_my_account_path() ? 'active' : '';
+    // resto del path después de /my-account
+    $rest  = ltrim(substr($req_path, strlen($account_base)), '/');    // '' | 'overview/...' | 'profile/...'
+    $first = $rest === '' ? '' : strtolower(strtok($rest, '/'));
+
+    // La raíz (/my-account/) o 'dashboard' cuentan como 'overview'
+    if ($first === '' || $first === 'dashboard') {
+        $first = 'overview';
+    }
+    return $first;
+};
+
+$mt_is_active = static function (string $slug, string $class = 'active') use ($mt_current_account_section): string {
+    return $mt_current_account_section() === strtolower($slug) ? $class : '';
+};
+
+$account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
 
 ?>
 <aside class="mt-sidebar">
@@ -56,7 +73,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                     <div class="mt-sidebar__menu__group__options mt-page_md-d-none">
                         <!-- Desktop -->
                         <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                            <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
+                            <a class="mt-sidebar__menu__link <?php echo esc_attr($mt_is_active('overview')); ?>" href="/my-account/overview/">
                                 <i class="mt-icon mt-icon-sm mt-icon_account"></i>
                                 <span>ACCOUNT OVERVIEW<span>
                             </a>
@@ -68,7 +85,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                                 <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
                                 <span>PAYOUTS<span>
                             </a>
-                            <a class="mt-sidebar__menu__link mt-account-settings-js" href="javascript:void(0)" data-modal-target="#mt-profile-modal">
+                            <a class="mt-sidebar__menu__link <?php echo esc_attr($mt_is_active('profile')); ?>" href="/my-account/profile/">
                                 <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                                 <span>ACCOUNT SETTINGS<span>
                             </a>
@@ -162,7 +179,7 @@ $overview_active_class = is_my_account_path() ? 'active' : '';
                         </span>
                     </span>
                     <span class="mt-tooltip" data-placement="right">                        
-                        <a class="mt-sidebar__menu__link mt-account-settings-js" href="javascript:void(0)" data-modal-target="#mt-profile-modal">
+                        <a class="mt-sidebar__menu__link " href="/my-account/profile/">
                             <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">

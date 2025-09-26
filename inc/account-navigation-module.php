@@ -22,6 +22,9 @@ add_filter( 'woocommerce_get_endpoint_url', function( $url, $endpoint, $value, $
     if ( $endpoint === 'trade-area' ) {
         $url = site_url( '/my-account/overview' );
     }
+    if ( $endpoint === 'subscriptions' ) {
+        return trailingslashit( home_url( '/subscriptions' ) );
+    }
     return $url;
 }, 10, 4 );
 
@@ -47,7 +50,7 @@ function account_navigation_get_args() {
 
         if(!$is_active && $label === 'Manage Subscription'){
             $current_endpoint = WC()->query->get_current_endpoint();
-            $is_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'orders'], true);
+            $is_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'subscriptions'], true);
         }
 
         $items[] = [
