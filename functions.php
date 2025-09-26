@@ -130,6 +130,8 @@ function megatrader_scripts() {
     wp_enqueue_style( 'mt-components',          MEGATRADER_CSS .'mt-components.css', array(), REALTIME_VERSION);
     wp_enqueue_style( 'mt-navbar-style',         MEGATRADER_CSS . 'mt-navbar.css', array(), REALTIME_VERSION);
 
+  
+
 
 
 	//Register All JS
@@ -143,6 +145,8 @@ function megatrader_scripts() {
     wp_enqueue_script( 'mt-account-picker',	        MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-tooltips-js',	        MEGATRADER_JS .'mt-tooltips.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-billing-validation-js',	        MEGATRADER_JS .'billing-validation.js', array(), REALTIME_VERSION, true);
+   
 
 
 
@@ -1020,19 +1024,6 @@ function enqueue_thankyou_validation_script() {
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_thankyou_validation_script');
-
-function enqueue_billing_validation_script() {
-    if (is_checkout()) {
-        wp_enqueue_script(
-            'billing-validation',
-            get_stylesheet_directory_uri() . '/assets/js/billing-validation.js',
-            array(),
-            time(),
-            true
-        );
-    }
-}
-add_action('wp_enqueue_scripts', 'enqueue_billing_validation_script');
 
 
 function enqueue_coupon_message_script() {
@@ -2039,55 +2030,60 @@ add_action('woocommerce_checkout_order_processed', function($order_id, $posted){
     ]));
 }, 999, 2);
 
-
-function profile_url()
-{
-    $myaccount = wc_get_page_permalink('myaccount');
-    $overview = function_exists('wc_get_account_endpoint_url')
-            ? wc_get_account_endpoint_url('overview', $myaccount)
-            : trailingslashit($myaccount) . 'overview/';
-    $subscriptions = home_url(user_trailingslashit('subscriptions'));
-    $target = $myaccount;
-    try {
-        if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
-            require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
-        }
-
-        $raw_email = (string)($user->user_email ?? '');
-        $san = function_exists('mt_sanitize_email')
-                ? mt_sanitize_email($raw_email)
-                : [
-                        'ok' => is_email($raw_email),
-                        'email' => strtolower(trim($raw_email)),
-                        'api' => rawurlencode(strtolower(trim($raw_email))),
-                ];
-
-        $email_plain = (string)($san['email'] ?? $raw_email);
-        $email_api = (string)($san['api'] ?? rawurlencode($raw_email));
-
-        $accounts_plain = [];
-        $accounts_enc = [];
-
-        if (class_exists('MT_Api')) {
-            try {
-                $accounts_plain = MT_Api::fetch_accounts_by_email($email_plain, 1, 50);
-            } catch (Throwable $e) {
+if (!function_exists('profile_url')) {
+    function profile_url()
+    {
+        $myaccount = wc_get_page_permalink('myaccount');
+        $overview = function_exists('wc_get_account_endpoint_url')
+                ? wc_get_account_endpoint_url('overview', $myaccount)
+                : trailingslashit($myaccount) . 'overview/';
+        $subscriptions = home_url(user_trailingslashit('subscriptions'));
+        $target = $myaccount;
+        try {
+            if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
+                require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
             }
-            try {
-                $accounts_enc = MT_Api::fetch_accounts_by_email($email_api, 1, 50);
-            } catch (Throwable $e) {
+
+            $raw_email = (string)($user->user_email ?? '');
+            $san = function_exists('mt_sanitize_email')
+                    ? mt_sanitize_email($raw_email)
+                    : [
+                            'ok' => is_email($raw_email),
+                            'email' => strtolower(trim($raw_email)),
+                            'api' => rawurlencode(strtolower(trim($raw_email))),
+                    ];
+
+            $email_plain = (string)($san['email'] ?? $raw_email);
+            $email_api = (string)($san['api'] ?? rawurlencode($raw_email));
+
+            $accounts_plain = [];
+            $accounts_enc = [];
+
+            if (class_exists('MT_Api')) {
+                try {
+                    $accounts_plain = MT_Api::fetch_accounts_by_email($email_plain, 1, 50);
+                } catch (Throwable $e) {
+                }
+                try {
+                    $accounts_enc = MT_Api::fetch_accounts_by_email($email_api, 1, 50);
+                } catch (Throwable $e) {
+                }
+            }
+
+            $has_accounts = (is_array($accounts_plain) && count($accounts_plain) > 0)
+                    || (is_array($accounts_enc) && count($accounts_enc) > 0);
+
+            $target = $has_accounts ? $overview : $subscriptions;
+        } catch (Throwable $e) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('[MT Login Redirect] ' . $e->getMessage());
             }
         }
 
-        $has_accounts = (is_array($accounts_plain) && count($accounts_plain) > 0)
-                || (is_array($accounts_enc) && count($accounts_enc) > 0);
-
-        $target = $has_accounts ? $overview : $subscriptions;
-    } catch (Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('[MT Login Redirect] ' . $e->getMessage());
-        }
+        return wp_validate_redirect($target, $myaccount);
     }
-
-    return wp_validate_redirect($target, $myaccount);
 }
+
+
+
+

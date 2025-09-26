@@ -1381,21 +1381,17 @@ document.addEventListener("mt:accountSelected", function (e) {
   else boot();
 })();
 
-// ==== Profile modal (Bootstrap-like) ====
+// ==== Profile modal (Bootstrap-like, sin submit/save) ====
 (function () {
-  function qs(s, r = document) {
-    return r.querySelector(s);
-  }
-  function qsa(s, r = document) {
-    return Array.from(r.querySelectorAll(s));
-  }
+  function qs(s, r = document) { return r.querySelector(s); }
+  function qsa(s, r = document) { return Array.from(r.querySelectorAll(s)); }
 
   function showOnly(modal, tabId) {
     // Tabs
     qsa(".mt-tab", modal).forEach(function (b) {
       var on = b.getAttribute("data-tab") === tabId;
       b.classList.toggle("active", on);
-      // resalta el activo como en el diseño
+      // estilo activo (como tu diseño)
       b.style.background = on ? "#1E1E1E" : "";
       b.style.outline = on ? "1px solid #fff" : "";
     });
@@ -1403,20 +1399,20 @@ document.addEventListener("mt:accountSelected", function (e) {
     qsa("[data-panel]", modal).forEach(function (p) {
       var show = p.getAttribute("data-panel") === tabId;
       p.hidden = !show;
-      p.style.display = show ? "block" : "none"; // por si [hidden] lo pisa el CSS
+      p.style.display = show ? "block" : "none"; // por si tu CSS pisa [hidden]
     });
   }
 
   function openModal(modal) {
     if (modal.classList.contains("show")) return;
-    showOnly(modal, "pi"); // tab por defecto
+    showOnly(modal, "pi"); // por defecto abrir en "Personal information"
 
     modal.classList.add("show");
     modal.style.display = "block";
     modal.removeAttribute("aria-hidden");
     document.body.classList.add("modal-open");
 
-    // Backdrop (igual que tus otros)
+    // Backdrop consistente con tus otros modales
     var bd = document.createElement("div");
     bd.className = "modal-backdrop fade show";
     bd.dataset.role = "mt-profile-backdrop";
@@ -1428,12 +1424,9 @@ document.addEventListener("mt:accountSelected", function (e) {
     modal.style.display = "";
     modal.setAttribute("aria-hidden", "true");
 
-    var bd = document.querySelector(
-      '.modal-backdrop[data-role="mt-profile-backdrop"]'
-    );
+    var bd = document.querySelector('.modal-backdrop[data-role="mt-profile-backdrop"]');
     if (bd) bd.remove();
 
-    // si no quedan otros .modal.show, quita lock
     if (!document.querySelector(".modal.show")) {
       document.body.classList.remove("modal-open");
     }
@@ -1443,19 +1436,27 @@ document.addEventListener("mt:accountSelected", function (e) {
     var modal = document.getElementById("mt-profile-modal");
     if (!modal) return;
 
-    // Triggers
+    // Triggers (.mt-account-settings-js) – evita "#" en URL
     qsa(".mt-account-settings-js").forEach(function (el) {
-      el.addEventListener(
-        "click",
-        function (e) {
-          if (el.getAttribute("href") === "#") e.preventDefault();
+      el.setAttribute("href", "javascript:void(0)");
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-controls", "mt-profile-modal");
+
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openModal(modal);
+      }, { passive: false });
+
+      el.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
           openModal(modal);
-        },
-        { passive: false }
-      );
+        }
+      });
     });
 
-    // Cerrar (botón)
+    // Cerrar (botones con .js-close-profile-modal)
     qsa(".js-close-profile-modal", modal).forEach(function (btn) {
       btn.addEventListener("click", function (e) {
         e.preventDefault();
@@ -1465,16 +1466,15 @@ document.addEventListener("mt:accountSelected", function (e) {
 
     // Cerrar (ESC)
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && modal.classList.contains("show"))
+      if (e.key === "Escape" && modal.classList.contains("show")) {
         closeModal(modal);
+      }
     });
 
-    // Cerrar (click fuera)
+    // Cerrar (click fuera del panel)
     document.addEventListener("click", function (e) {
       if (!modal.classList.contains("show")) return;
-      var inside =
-        e.target.closest(".modal-content") ||
-        e.target.closest(".mt-account-settings-js");
+      var inside = e.target.closest(".modal-content") || e.target.closest(".mt-account-settings-js");
       if (!inside) closeModal(modal);
     });
 
@@ -1485,124 +1485,14 @@ document.addEventListener("mt:accountSelected", function (e) {
       });
     });
 
-    // Asegura estado inicial si el HTML no trajo hidden correcto
+    // Estado inicial por si el HTML llega sin hidden correcto
     showOnly(modal, "pi");
-
-    // Submit (billing) – AJAX
-    var form = qs("#mt-profile-form", modal);
-    var btnSave = qs("#mt-profile-save", modal);
-
-    function markInvalid(input, msg) {
-      input.classList.add("is-invalid");
-      var fb = input.nextElementSibling;
-      if (fb && fb.classList.contains("invalid-feedback")) {
-        fb.style.display = "block";
-        if (msg) fb.textContent = msg;
-      }
-    }
-    function clearInvalid(root) {
-      qsa(".is-invalid", root).forEach((n) => n.classList.remove("is-invalid"));
-      qsa(".invalid-feedback", root).forEach((n) => (n.style.display = "none"));
-    }
-    function required(v) {
-      return (v || "").trim().length > 0;
-    }
-    function validZip(v) {
-      return /^[0-9A-Za-z \-]{3,10}$/.test(v || "");
-    }
-    function validPhone(v) {
-      return /^[0-9()+ \-\.]{7,20}$/.test(v || "");
-    }
-
-    function serialize(form) {
-      var fd = new FormData(form);
-      if (!fd.get("action")) fd.set("action", "mt_save_billing_profile");
-      if (!fd.get("nonce")) {
-        var n = modal.getAttribute("data-nonce") || "";
-        if (n) fd.set("nonce", n);
-      }
-      return new URLSearchParams(fd);
-    }
-
-    form &&
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        clearInvalid(form);
-
-        var addr = form.querySelector('[name="billing_address_1"]');
-        var city = form.querySelector('[name="billing_city"]');
-        var state = form.querySelector('[name="billing_state"]');
-        var zip = form.querySelector('[name="billing_postcode"]');
-        var country = form.querySelector('[name="billing_country"]');
-        var phone = form.querySelector('[name="billing_phone"]');
-
-        var ok = true;
-        if (!required(addr.value)) {
-          markInvalid(addr, "Address required.");
-          ok = false;
-        }
-        if (!required(city.value)) {
-          markInvalid(city, "City required.");
-          ok = false;
-        }
-        if (!required(state.value)) {
-          markInvalid(state, "State required.");
-          ok = false;
-        }
-        if (!validZip(zip.value)) {
-          markInvalid(zip, "Valid ZIP required.");
-          ok = false;
-        }
-        if (!required(country.value)) {
-          markInvalid(country, "Country required.");
-          ok = false;
-        }
-        if (!validPhone(phone.value)) {
-          markInvalid(phone, "Valid phone required.");
-          ok = false;
-        }
-        if (!ok) return;
-
-        var url =
-          (window.mtAccounts && mtAccounts.ajaxUrl) ||
-          "/wp-admin/admin-ajax.php";
-        var body = serialize(form);
-
-        if (btnSave) btnSave.disabled = true;
-        document.querySelector(".preloader")?.classList.add("is-active");
-
-        fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body,
-        })
-          .then((r) =>
-            r.json().then((j) => ({ ok: r.ok, status: r.status, j }))
-          )
-          .then((res) => {
-            if (!res.ok || !res.j?.success) {
-              var msg =
-                (res.j && res.j.data && res.j.data.msg) || "HTTP " + res.status;
-              throw new Error(msg);
-            }
-            try {
-              window?.mtRefresh?.refreshAll && window.mtRefresh.refreshAll();
-            } catch (_) {}
-            closeModal(modal);
-          })
-          .catch((err) => {
-            alert(err.message || "Could not save profile.");
-          })
-          .finally(() => {
-            document.querySelector(".preloader")?.classList.remove("is-active");
-            if (btnSave) btnSave.disabled = false;
-          });
-      });
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", init, { once: true });
   } else {
     init();
   }
 })();
+

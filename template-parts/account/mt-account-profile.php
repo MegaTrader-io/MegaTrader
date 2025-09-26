@@ -99,72 +99,31 @@ $billing = [
 
           <!-- Panel: Personal information (DEFAULT) -->
           <form id="mt-profile-form" data-panel="pi" novalidate>
-            <div class="row g-3 mt-1">
-              <div class="col-md-6">
-                <label class="form-label text-uppercase small text-secondary mb-1">First name</label>
-                <input class="form-control" value="<?php echo esc_attr($billing['first_name']); ?>" disabled>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label text-uppercase small text-secondary mb-1">Last name</label>
-                <input class="form-control" value="<?php echo esc_attr($billing['last_name']); ?>" disabled>
-              </div>
-              <div class="col-12">
-                <label class="form-label text-uppercase small text-secondary mb-1">Email</label>
-                <input class="form-control" value="<?php echo esc_attr($billing['email']); ?>" disabled>
-              </div>
+            <div class="billing-details pt-3">
+              <?php
+              $user_id = get_current_user_id();
+              $current_state = $user_id ? get_user_meta($user_id, 'billing_state', true) : '';
+              ?>
 
-              <div class="col-12 mt-2">
-                <div class="text-uppercase fw-bold small text-secondary">Billing</div>
+              <?php
+              do_action('woocommerce_before_checkout_form');
+              do_action('woocommerce_checkout_before_customer_details');
+              ?>
+              <div id="customer_details">
+                <input type="hidden" id="billing_state_current" value="<?php echo esc_attr($current_state); ?>">
+                <?php do_action('woocommerce_checkout_billing'); ?>
+                <?php do_action('woocommerce_checkout_shipping'); ?>
               </div>
+              <?php
+              do_action('woocommerce_checkout_after_customer_details');
+              do_action('woocommerce_after_checkout_form');
+              ?>
 
-              <div class="col-12">
-                <label class="form-label small">Address</label>
-                <input name="billing_address_1" class="form-control"
-                  value="<?php echo esc_attr($billing['billing_address_1']); ?>" required>
-                <div class="invalid-feedback">Address required.</div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small">City</label>
-                <input name="billing_city" class="form-control"
-                  value="<?php echo esc_attr($billing['billing_city']); ?>" required>
-                <div class="invalid-feedback">City required.</div>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label small">State</label>
-                <input name="billing_state" class="form-control"
-                  value="<?php echo esc_attr($billing['billing_state']); ?>" required>
-                <div class="invalid-feedback">State required.</div>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label small">Zip-code</label>
-                <input name="billing_postcode" class="form-control"
-                  value="<?php echo esc_attr($billing['billing_postcode']); ?>" required
-                  pattern="^[0-9A-Za-z \-]{3,10}$">
-                <div class="invalid-feedback">Valid ZIP required.</div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small">Country</label>
-                <input name="billing_country" class="form-control"
-                  value="<?php echo esc_attr($billing['billing_country']); ?>" required>
-                <div class="invalid-feedback">Country required.</div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small">Phone</label>
-                <input name="billing_phone" class="form-control"
-                  value="<?php echo esc_attr($billing['billing_phone']); ?>" required pattern="^[0-9()+ \-\.]{7,20}$">
-                <div class="invalid-feedback">Valid phone required.</div>
-              </div>
+              <input type="hidden" id="mt_save_billing_nonce" value="<?php echo esc_attr($mt_billing_nonce); ?>">
+              <button type="button" id="mt-save-billing" class="ot-btn bg-mgt-primary text-black fw-medium mt-3 w-100">
+                Save details
+              </button>
             </div>
-
-            <div class="d-flex justify-content-end gap-2 mt-3">
-              <button type="button"
-                class="btn btn-outline-secondary mt-modal__close js-close-profile-modal">Cancel</button>
-              <button type="submit" class="btn btn-warning text-uppercase fw-medium" id="mt-profile-save">Save
-                changes</button>
-            </div>
-
-            <input type="hidden" name="action" value="mt_save_billing_profile">
-            <input type="hidden" name="nonce" value="<?php echo esc_attr($nonce); ?>">
           </form>
 
           <!-- Panel: Verification -->
