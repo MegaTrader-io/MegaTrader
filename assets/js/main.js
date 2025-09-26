@@ -374,3 +374,10 @@ const $ = jQuery; //TODO: remove, temp for dev mode
 // })
 
 MT_Tabs.init();
+
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+        console.info('reload main', new Date());
+        window.location.reload();
+    }
+});
