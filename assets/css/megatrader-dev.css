@@ -3431,11 +3431,11 @@ body.mt-checkout-frozen .modal * {
 }
 
 .modal {
-  z-index: 200000 !important;
+  z-index: 1999 !important;
 }
 
 .modal-backdrop {
-  z-index: 199990 !important;
+  z-index: 1998 !important;
 }
 
 .mt-subscriptions {
