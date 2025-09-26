@@ -146,6 +146,7 @@ function megatrader_scripts() {
     wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-tooltips-js',	        MEGATRADER_JS .'mt-tooltips.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-billing-validation-js',	        MEGATRADER_JS .'billing-validation.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-sidebar-js',	        MEGATRADER_JS .'mt-sidebar.js', array(), REALTIME_VERSION, true);
    
 
 

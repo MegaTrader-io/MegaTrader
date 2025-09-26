@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       const iti = window.intlTelInput(phoneInput, {
         initialCountry: countryCode.toLowerCase(),
-        nationalMode: false,
+        nationalMode: true,
         separateDialCode: true,
       });
 
@@ -1215,6 +1215,137 @@ document.addEventListener("DOMContentLoaded", function () {
     el.innerHTML = html;
   }
 
+  // === Hidrata inputs de billing desde el RESUMEN (vista de solo lectura) ===
+  function hydrateBillingFormFromSummary() {
+    try {
+      const nameEl = document.getElementById("mt-sum-name");
+      const emailEl = document.getElementById("mt-sum-email");
+      const phoneEl = document.getElementById("mt-sum-phone");
+      const addrEl = document.getElementById("mt-sum-address");
+      if (!nameEl || !addrEl) return;
+
+      // Limpiamos state guardado para que no "pelee" con lo nuevo
+      try {
+        localStorage.removeItem("mt_billing_state");
+      } catch (_) {}
+
+      // --- Nombre ---
+      const nameTxt = (nameEl.textContent || "").trim();
+      const parts = nameTxt.split(/\s+/);
+      const first =
+        parts.length > 1 ? parts.slice(0, -1).join(" ") : parts[0] || "";
+      const last = parts.length > 1 ? parts.slice(-1).join(" ") : "";
+      setWooVal("billing_first_name", first);
+      setWooVal("billing_last_name", last);
+
+      // --- Email ---
+      const emailTxt = (emailEl?.textContent || "").trim();
+      if (emailTxt) setWooVal("billing_email", emailTxt);
+
+      // --- Teléfono (del resumen suele venir en E.164) ---
+      const phoneTxt = (phoneEl?.textContent || "").trim();
+      if (phoneTxt) {
+        if (window.iti && typeof window.iti.setNumber === "function") {
+          // Muestra nacional (porque nationalMode=true) pero conserva full interno
+          window.iti.setNumber(phoneTxt);
+        } else {
+          const tel = document.getElementById("billing_phone");
+          if (tel) tel.value = phoneTxt.replace(/[^\d+]/g, "");
+        }
+      }
+
+      // --- Dirección ---
+      const lines = (addrEl.innerText || "")
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const l1 = lines[0] || ""; // "Address 1, Address 2?"
+      const l2 = lines[1] || ""; // "City, StateName, ZIP"
+      const l3 = lines[2] || ""; // "Country Name"
+
+      // Address 1/2
+      let address_1 = l1,
+        address_2 = "";
+      if (l1.includes(",")) {
+        const p = l1.split(",").map((s) => s.trim());
+        address_1 = p[0] || "";
+        address_2 = p.slice(1).join(", ");
+      }
+      setWooVal("billing_address_1", address_1);
+      setWooVal("billing_address_2", address_2);
+
+      // City / State label / Zip
+      let city = "",
+        stateLabel = "",
+        postcode = "";
+      const m = l2.match(/^(.+?)[,\s]+([^,]+)[,\s]+([A-Za-z0-9\- ]+)$/);
+      if (m) {
+        city = (m[1] || "").trim();
+        stateLabel = (m[2] || "").trim();
+        postcode = (m[3] || "").trim();
+      }
+      setWooVal("billing_city", city);
+      setWooVal("billing_postcode", postcode);
+
+      // Country por NOMBRE → code del <select>
+      const countrySel = document.getElementById("billing_country");
+      let countryChanged = false;
+      if (countrySel && l3) {
+        const opt = Array.from(countrySel.options).find(
+          (o) => (o.text || "").trim().toLowerCase() === l3.trim().toLowerCase()
+        );
+        if (opt && countrySel.value !== opt.value) {
+          countrySel.value = opt.value;
+          countrySel.dispatchEvent(new Event("change", { bubbles: true }));
+          countryChanged = true;
+        }
+      }
+
+      // State: mapear por ETIQUETA (nombre visible) → value del <select>
+      const applyStateFromLabel = () => {
+        const stEl = document.getElementById("billing_state");
+        if (!stEl) return false;
+        if (stEl.tagName === "SELECT") {
+          const stOpt = Array.from(stEl.options).find(
+            (o) =>
+              (o.text || "").trim().toLowerCase() === stateLabel.toLowerCase()
+          );
+          if (stOpt) {
+            stEl.value = stOpt.value;
+            stEl.dispatchEvent(new Event("change", { bubbles: true }));
+            try {
+              localStorage.setItem("mt_billing_state", stOpt.value || "");
+            } catch (_) {}
+            return true;
+          }
+        } else {
+          if (stateLabel) {
+            stEl.value = stateLabel;
+            stEl.dispatchEvent(new Event("change", { bubbles: true }));
+            return true;
+          }
+        }
+        return false;
+      };
+
+      // Si cambiamos país, esperamos a que Woo repueble <select> de estados
+      if (countryChanged) {
+        setTimeout(() => {
+          if (!applyStateFromLabel()) setTimeout(applyStateFromLabel, 200);
+        }, 250);
+      } else {
+        applyStateFromLabel();
+      }
+
+      // Recalcular totales
+      if (typeof jQuery !== "undefined") {
+        jQuery(document.body).trigger("update_checkout");
+      }
+    } catch (e) {
+      console.warn("hydrateBillingFormFromSummary failed", e);
+    }
+  }
+
   function initBillingSummary() {
     const summary = document.getElementById("mt-billing-summary");
     const formBox = document.getElementById("mt-billing-form");
@@ -1305,7 +1436,9 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!summary || !formBox) return;
       formBox.classList.remove("d-none");
       summary.classList.add("d-none");
+      hydrateBillingFormFromSummary();
       restoreStateIfEmpty();
+      
 
       if (typeof jQuery !== "undefined" && jQuery.fn && jQuery.fn.slideDown) {
         jQuery(formBox).stop(true, true).hide().slideDown(200);
@@ -1421,6 +1554,13 @@ document.addEventListener("DOMContentLoaded", function () {
           setWooVal("billing_postcode", payload.billing_postcode);
           setWooVal("billing_country", payload.billing_country);
 
+          // Deja la caja de teléfono en formato nacional (sin +1) en la UI
+          try {
+            if (window.iti && typeof window.iti.setNumber === "function") {
+              window.iti.setNumber(payload.billing_phone); // carga E.164 y la UI muestra nacional
+            }
+          } catch (_) {}
+
           // guarda el último estado válido
           try {
             localStorage.setItem(
@@ -1452,6 +1592,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Inicializa y reata tras fragment refresh
   initBillingSummary();
+  // Hidrata una vez al cargar, por si el form ya está visible o lo abrirán en breve
+  setTimeout(() => {
+    try {
+      hydrateBillingFormFromSummary();
+    } catch (_) {}
+  }, 0);
+
   if (typeof jQuery !== "undefined") {
     jQuery(document.body).on("updated_checkout", function () {
       try {
