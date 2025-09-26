@@ -99,7 +99,7 @@ $billing = [
           </div>
 
           <!-- Panel: Personal information (DEFAULT) -->
-          <form id="mt-profile-form" data-panel="pi" class="checkout" novalidate>
+          <form id="checkout-form" data-panel="pi"  novalidate>
             <div class="billing-details pt-3">
               <?php
               $user_id = get_current_user_id();
