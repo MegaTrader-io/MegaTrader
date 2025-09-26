@@ -55,6 +55,10 @@ function mt_process_registration(): void
     $phone = isset($_POST['phone']) && is_string($_POST['phone'])
         ? trim((string)wp_unslash($_POST['phone'])) : '';
 
+    $billing_country = isset($_POST['billing_country']) && is_string($_POST['billing_country'])
+        ? trim((string)sanitize_text_field($_POST['billing_country'])) : '';
+
+
     $password = isset($_POST['password']) && is_string($_POST['password'])
         ? (string)$_POST['password'] : '';
 
@@ -166,6 +170,7 @@ function mt_process_registration(): void
     update_user_meta($new_customer, 'billing_first_name', $firstname);
     update_user_meta($new_customer, 'billing_last_name', $lastname);
     update_user_meta($new_customer, 'billing_phone', $phone);
+    update_user_meta($new_customer, 'billing_country', $billing_country);
 
     wp_update_user([
         'ID' => $new_customer,

@@ -112,6 +112,22 @@ $valid_states = WC()->countries->get_states($default_country);
         <?php endif; ?>
     </div>
 
+    <div class="auth-form__container">
+        <div class="col">
+            <select name="billing_country" id="billing_country"
+                    class="form-select form-control woocommerce-select <?= MT_WC_Error::has_error('billing_country') ? 'auth-form--error-message' : '' ?>">
+                <option value="" disabled>Country</option>
+                <?php foreach (WC()->countries->get_allowed_countries() as $key => $value): ?>
+                    <option value="<?= esc_attr($key) ?>" <?= selected($default_country, $key, false) ?> ><?= esc_html($value) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?php if (MT_WC_Error::has_error('billing_country')): ?>
+                <span id="error-billing_country"
+                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_country') ?></span>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <?php if ('no' === get_option('woocommerce_registration_generate_password')) : ?>
         <div class="password-wrapper">
             <input class="form-control password-wrapper__password <?= MT_WC_Error::has_error('password') ? 'auth-form--error-message' : '' ?>"
