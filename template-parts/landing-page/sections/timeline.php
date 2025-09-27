@@ -52,7 +52,7 @@
                 <div class="tw-w-[2px] tw-bg-[#ffb34a] tw-h-full tw-ml-4 sm:tw-ml-auto"></div>
             </div>
             <div class="tw-hidden sm:tw-flex sm:tw-justify-center">
-                <div class="tw-p-4 tw-bg-mgt-dark tw-border tw-border-transparent tw-rounded-2xl tw-w-full tw-max-w-[585px] tw-pb-0 tw-flex tw-justify-center tw-border-b-0">
+                <div class="tw-p-4 tw-bg-mgt-dark mgt-card--shadow tw-border tw-border-transparent tw-rounded-2xl tw-w-full tw-max-w-[585px] tw-pb-0 tw-flex tw-justify-center tw-border-b-0">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/Window-congrats.svg"
                          class="h-auto tw-max-w-full"
                          alt="veriff" width="440" height="543"/>
@@ -62,7 +62,7 @@
 
         <div id="how-it-works-03" class="tw-grid tw-grid-cols-[24px_1fr] sm:tw-grid-cols-[1fr_14px_1fr] tw-gap-8">
             <div class="tw-hidden sm:tw-flex tw-justify-center">
-                <div class="tw-p-4 tw-bg-mgt-dark tw-border tw-border-transparent tw-rounded-2xl tw-w-full tw-max-w-[585px] tw-pb-0 tw-flex tw-justify-center tw-border-b-0 tw-relative">
+                <div class="tw-p-4 tw-bg-mgt-dark mgt-card--shadow tw-border tw-border-transparent tw-rounded-2xl tw-w-full tw-max-w-[585px] tw-pb-0 tw-flex tw-justify-center tw-border-b-0 tw-relative">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/Window-request-payouts.svg"
                          class="h-auto tw-max-w-full"
                          alt="veriff" width="360" height="524"/>
@@ -111,7 +111,7 @@
                 <div class="tw-w-[2px] tw-bg-[#ffb34a] tw-h-full tw-ml-4 sm:tw-ml-auto"></div>
             </div>
             <div class="tw-hidden sm:tw-flex sm:tw-justify-center">
-                <div class="tw-p-4 tw-bg-mgt-dark tw-border tw-border-transparent tw-rounded-2xl tw-w-full tw-max-w-[585px] tw-pb-0 tw-flex tw-justify-center tw-border-b-0">
+                <div class="tw-p-4 tw-bg-mgt-dark mgt-card--shadow tw-border tw-border-transparent tw-rounded-2xl tw-w-full tw-max-w-[585px] tw-pb-0 tw-flex tw-justify-center tw-border-b-0">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/Window-selfie-veriff.svg"
                          class="h-auto tw-max-w-full"
                          alt="veriff" width="440" height="543"/>
