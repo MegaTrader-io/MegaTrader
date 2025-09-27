@@ -93,13 +93,12 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                                 <i class="mt-icon mt-icon-sm mt-icon_help"></i>
                                 <span>HELP CENTER<span>
                             </a>
-                            <a class="mt-sidebar__menu__link" href="<?= wp_logout_url(); ?>">
+                            <a class="mt-sidebar__menu__link btn-logout" href="<?= wp_logout_url(); ?>">
                                 <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
                                 <span>LOGOUT<span>
                             </a>
                         </div>
                     </div>
-
                     <div class="d-none mt-page_md-d-block">
                         <!-- Tablet/Mobile -->
                         <select id="account-nav-select" class="mt-sidebar__select"

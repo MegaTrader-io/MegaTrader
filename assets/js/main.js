@@ -132,6 +132,12 @@ const $ = jQuery; //TODO: remove, temp for dev mode
             });
         }
 
+        $('.btn-logout').on('click', function (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            window.location.replace(ev.currentTarget.href);
+        })
+
         $('.woocommerce-orders-table__cell-order-status').each(function () {
             var statusText = $(this).text().trim().toLowerCase().replace(/\s+/g, '-'); // Replaces spaces with hyphens
             $(this).addClass('status-' + statusText);
