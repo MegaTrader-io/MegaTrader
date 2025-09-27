@@ -97,7 +97,7 @@ $features = [
             <?php endforeach; ?>
         </div>
     </div>
-    <div class="mgt-card tw-w-full tw-py-8">
+    <div class="mgt-card mgt-card--shadow tw-w-full tw-py-8">
         <div class="tw-hidden md:tw-flex">
             <?php foreach (mt_sort_list_by_order($platforms) as $index => $platform): ?>
                 <?php

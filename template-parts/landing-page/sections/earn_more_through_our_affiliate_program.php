@@ -1,6 +1,6 @@
 <section id="feature-earn-more-throuch"
          class="tw-flex tw-flex-col lg:tw-grid lg:tw-grid-cols-[auto_1fr] tw-gap-12 tw-px-4 tw-py-12">
-    <div class="mgt-card tw-hidden tw-order-2 sm:tw-flex tw-h-full tw-w-full tw-items-center lg:tw-order-none">
+    <div class="mgt-card mgt-card--shadow tw-hidden tw-order-2 sm:tw-flex tw-h-full tw-w-full tw-items-center lg:tw-order-none">
         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/FeatureContent.png"
              class="tw-w-full 2xl:tw-max-w-[689px] 2xl:tw-w-auto"
              alt="chart performance"/>
