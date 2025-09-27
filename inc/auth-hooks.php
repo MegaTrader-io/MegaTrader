@@ -206,6 +206,14 @@ function mt_process_login(): void
 
 
 add_action('wp_enqueue_scripts', function () {
+    // Obtén la ruta relativa de la URL actual
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+
+    // Solo aplica si la URL empieza con /auth/
+    if (strpos($request_uri, '/auth/') !== 0) {
+        return;
+    }
+
     wp_enqueue_script('mt-auth', get_stylesheet_directory_uri() . '/assets/js/auth.js', [], '1.0.0', true);
 
     $inline = <<<JS

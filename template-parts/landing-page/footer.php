@@ -14,9 +14,9 @@ HTML;
 $btnRows = array_chunk($buttons, 2);
 ?>
     <footer
-            class="tw-w-full tw-max-w-7xl tw-flex-1 tw-h-dvh tw-mx-auto tw-px-4 tw-pb-8  tw-flex tw-items-center tw-justify-between tw-flex-col tw-space-y-8">
+            class="tw-w-full  tw-max-w-7xl tw-flex-1 tw-h-dvh tw-mx-auto tw-px-4 tw-pb-8  tw-flex tw-items-center tw-justify-between tw-flex-col tw-space-y-8">
         <div
-                class="tw-w-full tw-p-8 bg-[#131210] tw-rounded-[20px] tw-outline tw-outline-1 tw-outline-neutral-700">
+                class="tw-w-full tw-p-8 tw-bg-[#131210] tw-rounded-[20px] tw-outline tw-outline-1 tw-outline-neutral-700">
             <div class="tw-w-full tw-grid tw-grid-cols-2 tw-space-y-8 lg:tw-space-y-0 lg:tw-space-x-8">
                 <div class="tw-space-y-4 tw-col-span-2 lg:tw-col-span-1">
                     <div class="tw-flex tw-gap-4 tw-items-center">
