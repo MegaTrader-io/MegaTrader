@@ -1,7 +1,7 @@
 <?php
 $email = 'support@megatrader.io';
 ?>
-<div class="mgt-card tw-space-y-4 tw-mt-8 tw-border-none tw-border-transparent">
+<div class="mgt-card mgt-card--shadow tw-space-y-4 tw-mt-8 tw-border-none tw-border-transparent">
     <div
             class="tw-justify-start tw-text-white tw-text-xl tw-font-medium tw-leading-8">Still
         have questions?

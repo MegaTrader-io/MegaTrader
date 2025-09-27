@@ -155,6 +155,10 @@ body {
     @apply tw-p-4 tw-bg-mgt-dark tw-border tw-border-transparent tw-rounded-2xl;
 }
 
+.mgt-card--shadow {
+    @apply tw-shadow-[0px_20px_20px_20px_rgba(0,0,0,0.10)] tw-shadow-[0px_8px_10px_-6px_rgba(0,0,0,0.10)];
+}
+
 .badge-base {
     @apply tw-text-[#131210] tw-leading-normal tw-font-bold tw-uppercase tw-justify-center tw-items-center tw-gap-2.5 tw-inline-flex;
 }
