@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
             history.pushState(null, "", "/auth/login/");
         };
 
-        window.history.replaceState({}, document.title, url.toString());
+        // window.history.replaceState({}, document.title, url.toString());
     }
 
     function setStateWhenReady(stateCode) {
