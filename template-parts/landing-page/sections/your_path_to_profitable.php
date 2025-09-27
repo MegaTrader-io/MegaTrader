@@ -202,7 +202,7 @@ $items = [
                     </div>
                 </div>
 
-                <div class="mgt-card tw-hidden sm:tw-flex tw-h-[680px] tw-w-full tw-justify-center tw-border-b-0 !tw-bg-[#1E1E1E] !tw-pt-24 !tw-pb-0 lg:tw-max-w-[558px]">
+                <div class="mgt-card mgt-card--shadow tw-hidden sm:tw-flex tw-h-[680px] tw-w-full tw-justify-center tw-border-b-0 !tw-bg-[#1E1E1E] !tw-pt-24 !tw-pb-0 lg:tw-max-w-[558px]">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/<?= $item['image'] ?>"
                          alt="<?= $item['title'] ?>"
                          width="440"
