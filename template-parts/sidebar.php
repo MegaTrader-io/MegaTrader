@@ -93,7 +93,13 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                                 <i class="mt-icon mt-icon-sm mt-icon_help"></i>
                                 <span>HELP CENTER<span>
                             </a>
-                            <a class="mt-sidebar__menu__link btn-logout" href="<?= wp_logout_url(); ?>">
+                            <a class="mt-sidebar__menu__link btn-logout" href="<?php echo esc_url(
+                                    add_query_arg(
+                                            'time',
+                                            time(),
+                                            wp_logout_url()
+                                    )
+                            ); ?>">
                                 <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
                                 <span>LOGOUT<span>
                             </a>
