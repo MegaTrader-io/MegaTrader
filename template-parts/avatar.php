@@ -10,10 +10,12 @@ $billing_country = $args['billing_country'] ?? '';
 $user_email = $args['user_email'] ?? '';
 $hide_user_information = $args['hide_user_information'] ?? false;
 $initials = $args['initials'] ?? '';
+$collapsed = $args['collapsed'] ?? false;
+$collapsed_class = $collapsed ? 'collapsed' : '';
 
 ?>
 
-<div class="mt-avatar">
+<div class="mt-avatar <?= $collapsed_class ?>">
     <div class="mt-avatar__wrapper">
         <?php if ($has_real_avatar): ?>
             <div class="mt-avatar__initials flex-shrink-0" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">

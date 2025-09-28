@@ -156,7 +156,15 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                     <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="50" height="50" loading="eager">
                 </a>
             </div>
-
+            <div class="mt-sidebar__profile_collapsed">
+                <div class="mt-card mt-card-dark mt-card-xs">
+                    <?php get_template_part('template-parts/my-profile', null, [
+                        'avatar_size' => 44,
+                        'collapsed' => true,
+                    ]); ?>
+                </div>
+            </div>
+            
             <div class="mt-sidebar__menu__group__options">
                 <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
                     <span class="mt-tooltip" data-placement="right">                        

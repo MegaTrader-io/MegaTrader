@@ -235,6 +235,12 @@
     border: 1px solid var(--Colors-Gray-700, #404040);
 }
 
+.mt-card.mt-card-xs {
+    padding: 8px;
+    border-radius: var(--Border-Radius-xl, 8px);
+    gap: 12px;
+}
+
 .mt-card.mt-card-md {
     padding: 24px;
     gap: 16px;
