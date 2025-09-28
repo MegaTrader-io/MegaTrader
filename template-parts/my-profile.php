@@ -63,9 +63,9 @@ $logout_url = wp_logout_url();
 
 ?>
 
-<div class="mt-my-profile d-flex gap-4 align-items-center justify-content-start">
-    <?php if ($go_to_dashboard) : ?>
-        <a href="<?= profile_url() ?>" class="avatar-area align-items-center d-flex flex-fill gap-3">
+<div class="mt-my-profile">
+    <?php if ( $go_to_dashboard) : ?>
+        <a href="<?= profile_url() ?>" class="mt-my-profile__avatar-link flex-fill">
             <?php get_template_part('template-parts/avatar', null, [
                     'avatar_url' => $avatar_url,
                     'avatar_size' => $avatar_size,
@@ -78,7 +78,7 @@ $logout_url = wp_logout_url();
             ]); ?>
         </a>
     <?php else: ?>
-        <div class="align-items-center d-flex flex-fill gap-3 overflow-hidden">
+        <div class="mt-my-profile__avatar flex-fill">
             <?php get_template_part('template-parts/avatar', null, [
                     'avatar_url' => $avatar_url,
                     'avatar_size' => $avatar_size,

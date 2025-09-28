@@ -13,30 +13,34 @@ $initials = $args['initials'] ?? '';
 
 ?>
 
-<?php if ($has_real_avatar): ?>
-    <div class="avatar-initials flex-shrink-0" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
-        <img src="<?php echo esc_url($avatar_url); ?>"
-             alt="<?php echo esc_attr($display_name); ?>"/>
-    </div>
-<?php else: ?>
+<div class="mt-avatar">
+    <div class="mt-avatar__wrapper">
+        <?php if ($has_real_avatar): ?>
+            <div class="mt-avatar__initials flex-shrink-0" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
+                <img src="<?php echo esc_url($avatar_url); ?>"
+                    alt="<?php echo esc_attr($display_name); ?>"/>
+            </div>
+        <?php else: ?>
 
-    <div class="avatar-initials flex-shrink-0" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
-        <?php echo esc_html($initials); ?>
-    </div>
-<?php endif; ?>
-<?php if (!$hide_user_information): ?>
-<div class="avatar-area__user-information flex-fill d-flex flex-column" style="min-width: 0;">
-    <div class="text-white text-16px fw-medium text-truncate">
-        <?php echo esc_html($display_name); ?>
-    </div>
+            <div class="mt-avatar__initials flex-shrink-0" style="--avatar-size: <?php echo esc_attr($avatar_size); ?>px;">
+                <?php echo esc_html($initials); ?>
+            </div>
+        <?php endif; ?>
+        <?php if (!$hide_user_information): ?>
+        <div class="mt-avatar__user-information flex-fill d-flex flex-column" style="min-width: 0;">
+            <div class="text-white text-16px fw-medium text-truncate">
+                <?php echo esc_html($display_name); ?>
+            </div>
 
-    <?php if ($billing_country): ?>
-        <div class="user-country text-a8a29e text-16px fw-medium text-truncate">
-            <?php echo esc_html($billing_country); ?>
+            <?php if ($billing_country): ?>
+                <div class="user-country text-a8a29e text-16px fw-medium text-truncate">
+                    <?php echo esc_html($billing_country); ?>
+                </div>
+            <?php endif; ?>
+            <div class="text-a8a29e text-14px-line-20px fw-medium text-truncate">
+                <?php echo esc_html($user_email); ?>
+            </div>
         </div>
-    <?php endif; ?>
-    <div class="text-a8a29e text-14px-line-20px fw-medium text-truncate">
-        <?php echo esc_html($user_email); ?>
+        <?php endif; ?>
     </div>
 </div>
-<?php endif; ?>

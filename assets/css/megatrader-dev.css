@@ -2046,7 +2046,43 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
   gap: 16px;
 }
 
-.avatar-initials {
+/* MY PROFILE */
+.mt-my-profile {
+   display: flex;
+   gap: 24px;
+   justify-content: start;
+   align-items: center;
+}
+
+.mt-my-profile__avatar-link {
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.mt-my-profile__avatar-link {
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.mt-my-profile__avatar-link:hover {
+  opacity: 1;
+}
+
+.mt-my-profile.collapsed {
+   flex-direction: column;
+}
+/* MT-AVATAR */
+
+.mt-avatar__wrapper {
+  display: flex;;
+  gap: 16px;
+  align-items: center;
+  overflow: hidden;
+}
+
+.mt-avatar__initials {
   width: var(--avatar-size, 64px);
   height: var(--avatar-size, 64px);
   border-radius: 50%;
@@ -2063,14 +2099,8 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
   overflow: hidden;
 }
 
-a.avatar-area {
-  text-decoration: none;
-  opacity: 0.8;
-  transition: opacity 0.3s ease-in-out;
-}
-
-a.avatar-area:hover {
-  opacity: 1;
+.mt-avatar.collapsed .mt-avatar__user-information {
+  display: none !important;
 }
 
 /* ------- Addons ------- */
