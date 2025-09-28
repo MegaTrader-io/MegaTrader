@@ -91,10 +91,7 @@ $logout_url = wp_logout_url();
         </div>
     <?php endif; ?>
 
-    <a class="mt-my-profile__notification" type="button" aria-label="Notifications">
-        <div class="mt-icon mt-icon-white mt-icon_notifications"></div>
-    </a>
-    <div class="my-acount-logout">
+    <div class="my-account-logout">
         <a href="<?php echo esc_url($logout_url); ?>" class="logout-link" aria-label="Logout">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                  fill="none">
