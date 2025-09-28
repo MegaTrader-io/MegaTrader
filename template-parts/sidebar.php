@@ -70,7 +70,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
             <div class="mt-sidebar__menu flex-fill overflow-y-auto d-flex flex-column gap-32"">
                 <div class="mt-sidebar__menu__group">
                     <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
-                    <div class="mt-sidebar__menu__group__options mt-page_md-d-none">
+                    <div class="mt-sidebar__menu__group__options">
                         <!-- Desktop -->
                         <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
                             <a class="mt-sidebar__menu__link <?php echo esc_attr($mt_is_active('overview')); ?>" href="/my-account/overview/">
@@ -105,8 +105,8 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                             </a>
                         </div>
                     </div>
+                    <!--
                     <div class="d-none mt-page_md-d-block">
-                        <!-- Tablet/Mobile -->
                         <select id="account-nav-select" class="mt-sidebar__select"
                         onchange="if (this.value) window.location.href=this.value;">
                             <i class="mt-icon mt-icon-sm mt-icon_account"></i>
@@ -126,6 +126,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                             </optgroup>
                         </select>
                     </div>
+                    -->
                 </div>
             </div>
 

@@ -1,4 +1,7 @@
 <?php
+
+    defined('ABSPATH') || exit;
+
     /** @var LayoutType $layoutType */
     $layoutType = $args['layoutType'] ?? LayoutType::MyAccount;
 
@@ -275,7 +278,7 @@
                 <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
                 <ul class="plan-includes__list row list-reboot">
                     <?php foreach ($plan_includes_list as $item) : ?>
-                        <li class="plan-includes-list__item col-6 py-2 d-flex align-items-center gap-2">
+                        <li class="plan-includes-list__item col-12 col-md-6 py-2 d-flex align-items-center gap-2">
                             <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0"
                                aria-hidden="true"></i>
                             <span><?= htmlspecialchars($item['text']); ?></span>
@@ -284,7 +287,7 @@
                 </ul>
             </section>
         <?php endif; ?>
-        <section class="futures-form__footer d-flex flex-column gap-32 sticky-bottom pb-4 mb-n4 bg-1e1e1e">
+        <section class="futures-form__footer d-flex flex-column gap-32 pb-4 mb-n4 bg-1e1e1e">
             <hr class="m-0">
             <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn"
                href="/checkout/"><?= Label::FUTURES['submit_btn_text'] ?></a>
@@ -348,6 +351,25 @@
     form.addEventListener("change", updateSelectedProduct);
     updateSelectedProduct();
 
+</script>
+
+<script>
+  const stickyFooter = document.querySelector('.futures-form__footer');
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach(entry => {
+        console.log(entry)
+        if (entry.isIntersecting && entry.boundingClientRect.top > 0) {
+          stickyFooter.classList.add('sticky-bottom');
+          obs.unobserve(entry.target); // stop observing after first time
+        }
+      });
+    },
+    { threshold: 0.9 } // adjust sensitivity
+  );
+    console.log("OBSERVING")
+  observer.observe(stickyFooter);
 </script>
 
 
