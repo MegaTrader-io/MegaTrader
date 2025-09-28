@@ -63,7 +63,7 @@ $logout_url = wp_logout_url();
 
 ?>
 
-<div class="mt-my-profile d-flex gap-3 align-items-center justify-content-start">
+<div class="mt-my-profile d-flex gap-4 align-items-center justify-content-start">
     <?php if ($go_to_dashboard) : ?>
         <a href="<?= profile_url() ?>" class="avatar-area align-items-center d-flex flex-fill gap-3">
             <?php get_template_part('template-parts/avatar', null, [
