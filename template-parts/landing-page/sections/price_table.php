@@ -148,7 +148,7 @@ $tabs = array_map(function ($item) {
 
     <div class="tw-space-y-8 lg:tw-space-y-0 lg:tw-flex lg:tw-gap-8">
         <div class="mt-tabs-no-border tw-flex tw-flex-col tw-h-full tw-space-y-8 lg:tw-gap-y-6 lg:tw-space-y-12 w-full">
-            <?php render_tabs($tabs); ?>
+            <?php render_tabs($tabs, tabs_modal_id: 'price-table-select-type'); ?>
         </div>
         <div class="tw-space-y-8 tw-flex tw-flex-col">
             <div class="lg:tw-sticky lg:tw-top-[calc((var(--promo-banner-height,0px))+(var(--admin-bar-height,0px))+(var(--nav-bar-height,0px)))]">

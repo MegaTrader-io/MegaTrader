@@ -1498,9 +1498,10 @@ if (!function_exists('render_modal')) {
 /* --------- TABS Render Function -------- */
 
 if (!function_exists('render_tabs')) {
-    function render_tabs($tabs, $selected_id = null) {
+    function render_tabs($tabs, $selected_id = null, $tabs_modal_id = null) {
         set_query_var('tabs', $tabs);
         set_query_var('selected_id', $selected_id);
+        set_query_var('tabs_modal_id', $tabs_modal_id);
         get_template_part('template-parts/mt-tabs');
     }
 }

@@ -59,10 +59,15 @@
 
 $tabs        = get_query_var('tabs');
 $selected_id = get_query_var('selected_id');
+$tabsModalId = get_query_var('tabs_modal_id');
 
 // Default to first tab if none selected
 if ($selected_id === null && !empty($tabs)) {
     $selected_id = $tabs[0]['id'];
+}
+
+if ($tabsModalId === null) {
+    $tabsModalId = "mt-generic-modal";
 }
 
 $first_key = array_key_first($tabs);
@@ -71,7 +76,6 @@ $last_key  = array_key_last($tabs);
 
 <div class="mt-tabs">
   <div class="mt-tabs__container">
-
     <!-- Tablist -->
     <div class="mt-tabs__list" role="tablist">
       <?php foreach ($tabs as $tab): ?>
@@ -131,7 +135,7 @@ $last_key  = array_key_last($tabs);
       </div>
       <?php
         $modal_content = ob_get_clean();
-        render_modal([
+        echo render_modal([
           'modalId'     	=> $tabsModalId,
           'modalTitle'  	=> 'Select Type',
           'bodyContent' 	=> $modal_content,
@@ -141,7 +145,7 @@ $last_key  = array_key_last($tabs);
     <!-- Tabpanels -->
 
     <?php foreach ($tabs as $key => $tab): ?>
-        <?php if (!empty($tab['content'])): 
+        <?php if (!empty($tab['content'])):
             $is_hidden_class = $tab['id'] === $selected_id ? '' : 'is-hidden';
             $position_class  = $key === $first_key ? 'is-first' : ($key === $last_key ? 'is-last' : '');
         ?>
