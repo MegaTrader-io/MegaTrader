@@ -75,7 +75,7 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
         <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
-            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
               style="width: 24px; height: 24px;" />
           </span>
         </button>
@@ -171,7 +171,6 @@ $payload = [
     'modal' => '#changeSubcriptionModal',
     'card' => '.subscription-card',
     'check' => '.checkmark-icon',
-    // 👇 contenedor que se reemplaza con el HTML devuelto por AJAX
     'performance' => '.mt-account-performance'
   ],
   // 👇 datos para la llamada AJAX

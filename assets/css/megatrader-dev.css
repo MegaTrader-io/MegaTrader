@@ -2049,7 +2049,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 /* MY PROFILE */
 .mt-my-profile {
    display: flex;
-   gap: 24px;
+   gap: 16px;
    justify-content: start;
    align-items: center;
 }

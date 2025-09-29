@@ -1048,12 +1048,16 @@ if (!function_exists('mt_reset_checkout_url')) {
   }
 }
 
+
 if (!function_exists('mt_get_agreement_status_by_email')) {
+
   /**
-   * Recibe email YA codificado (ej: test%2B2@megatrader.io) y llama al shortcode:
-   *   [mega_subscriptions_data email="..." output="json" ttl="..."]
-   * Devuelve: ['agreementURL'=>string|null,'agreementSigned'=>bool|null,'agreementStatus'=>bool|null]
-   * Deja logs si WP_DEBUG está activo.
+   * Obtiene estado de acuerdo por email (URL-encoded) desde el shortcode.
+   * Devuelve:
+   *  - agreementURL (string|null)
+   *  - agreementSigned (bool|null)
+   *  - agreementStatus (string|null)           // valor original (p.ej., "ACTIVE")
+   *  - agreementStatusBool (bool|null)         // derivado de status string (p.ej., ACTIVE => true)
    */
   function mt_get_agreement_status_by_email(string $email_encoded, int $ttl = 120): array
   {
@@ -1061,49 +1065,69 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
     if ($email_encoded === '') {
       if (defined('WP_DEBUG') && WP_DEBUG)
         error_log('[MT Agreement] empty email');
-      return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
+      return [
+        'agreementURL' => null,
+        'agreementSigned' => null,
+        'agreementStatus' => null,
+        'agreementStatusBool' => null,
+      ];
+    }
+    if (strpos($email_encoded, '%') === false && strpos($email_encoded, '@') !== false) {
+      $email_encoded = rawurlencode(strtolower($email_encoded));
+      if (defined('WP_DEBUG') && WP_DEBUG)
+        error_log('[MT Agreement][normalized_email]=' . $email_encoded);
     }
 
     if (defined('WP_DEBUG') && WP_DEBUG) {
       error_log('[MT Agreement][in] email=' . $email_encoded . ' ttl=' . max(0, $ttl));
     }
 
+    // Ejecutar shortcode
     $sc = sprintf(
       '[mega_subscriptions_data email="%s" output="json" ttl="%d"]',
       esc_attr($email_encoded),
       max(0, $ttl)
     );
-    if (defined('WP_DEBUG') && WP_DEBUG) {
+    if (defined('WP_DEBUG') && WP_DEBUG)
       error_log('[MT Agreement][sc]=' . $sc);
-    }
 
     $raw = do_shortcode($sc);
     $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
 
-    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF") {
+    // Quitar BOM si existe y decodificar entidades HTML
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
       $raw = substr($raw, 3);
-    }
-    if ($raw !== '') {
+    if ($raw !== '')
       $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    }
+
     if (defined('WP_DEBUG') && WP_DEBUG) {
-      error_log('[MT Agreement][raw]=' . substr((string) $raw, 0, 800));
+      $preview = substr((string) $raw, 0, 800);
+      error_log('[MT Agreement][raw(len)]= ' . strlen((string) $raw));
+      error_log('[MT Agreement][raw(preview)]= ' . $preview);
     }
 
+    // Intento de parseo JSON (con fallback limpiando tags)
     $data = json_decode($raw, true);
-    if (!is_array($data)) {
+    if (!is_array($data))
       $data = json_decode(trim(wp_strip_all_tags($raw)), true);
-    }
+
     if (defined('WP_DEBUG') && WP_DEBUG) {
+      $jsonErr = function_exists('json_last_error_msg') ? json_last_error_msg() : 'N/A';
+      error_log('[MT Agreement][json_error]= ' . $jsonErr);
       error_log('[MT Agreement][parsed]=' . (is_array($data) ? wp_json_encode($data) : 'null'));
     }
 
     if (!is_array($data)) {
-      return ['agreementURL' => null, 'agreementSigned' => null, 'agreementStatus' => null];
+      return [
+        'agreementURL' => null,
+        'agreementSigned' => null,
+        'agreementStatus' => null,
+        'agreementStatusBool' => null,
+      ];
     }
 
-    $signed = filter_var($data['agreementSigned'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-    $status = filter_var($data['agreementStatus'] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    if (isset($data['data']) && is_array($data['data']))
+      $data = $data['data'];
 
     $agreement_url = null;
     foreach (['agreementURL', 'agreementUrl', 'agreement_url', 'url'] as $k) {
@@ -1113,16 +1137,48 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
       }
     }
 
+    $signed_raw = $data['agreementSigned'] ?? ($data['signed'] ?? null);
+    $signed = filter_var($signed_raw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+    $status_raw = $data['agreementStatus'] ?? ($data['status'] ?? null);
+    $status_str = is_string($status_raw) ? trim($status_raw) : (is_bool($status_raw) ? ($status_raw ? 'true' : 'false') : null);
+    $status_lc = is_string($status_str) ? strtolower($status_str) : null;
+
+    $status_true_set = ['active', 'signed', 'approved', 'enabled', 'complete', 'completed', 'ok'];
+    $status_false_set = ['required', 'pending', 'waiting', 'needed', 'unsigned', 'declined', 'rejected'];
+
+    $status_bool = null;
+    if ($status_lc !== null) {
+      if (in_array($status_lc, $status_true_set, true))
+        $status_bool = true;
+      if (in_array($status_lc, $status_false_set, true))
+        $status_bool = false;
+      if ($status_bool === null) {
+        $tmp = filter_var($status_lc, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($tmp !== null)
+          $status_bool = $tmp;
+      }
+    }
+
+    if ($signed === null && $status_bool !== null)
+      $signed = $status_bool;
+
+    if ($signed === false && $status_bool === true)
+      $signed = true;
+
     if (defined('WP_DEBUG') && WP_DEBUG) {
-      error_log('[MT Agreement][final] signed=' . var_export($signed, true)
-        . ' status=' . var_export($status, true)
+      error_log('[MT Agreement][final] signed_raw=' . var_export($signed_raw, true)
+        . ' signed=' . var_export($signed, true)
+        . ' status_raw=' . var_export($status_str, true)
+        . ' status_bool=' . var_export($status_bool, true)
         . ' url=' . ($agreement_url ?? ''));
     }
 
     return [
       'agreementURL' => $agreement_url,
       'agreementSigned' => $signed,
-      'agreementStatus' => $status,
+      'agreementStatus' => $status_str,
+      'agreementStatusBool' => $status_bool,
     ];
   }
 }
@@ -1130,6 +1186,7 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
 // === AJAX: devolver STATUS por accountId ===
 add_action('wp_ajax_mt_accounts_status', 'mt_accounts_ajax_status');
 add_action('wp_ajax_nopriv_mt_accounts_status', 'mt_accounts_ajax_status');
+
 
 function mt_accounts_ajax_status()
 {
@@ -1222,79 +1279,90 @@ function mt_account_daily_journal_ajax()
 // Helpers + AJAX para cargar/guardar BILLING del usuario logueado.
 // No colisiona con nada existente.
 
-if ( ! function_exists('mt_get_current_user_profile') ) {
-  function mt_get_current_user_profile(): array {
-    if ( ! is_user_logged_in() ) return array('ok'=>false,'msg'=>'Not logged in');
+if (!function_exists('mt_get_current_user_profile')) {
+  function mt_get_current_user_profile(): array
+  {
+    if (!is_user_logged_in())
+      return array('ok' => false, 'msg' => 'Not logged in');
     $uid = get_current_user_id();
-    $u   = wp_get_current_user();
+    $u = wp_get_current_user();
 
     $data = array(
-      'first_name'        => get_user_meta($uid, 'first_name', true),
-      'last_name'         => get_user_meta($uid, 'last_name', true),
-      'email'             => $u ? $u->user_email : '',
+      'first_name' => get_user_meta($uid, 'first_name', true),
+      'last_name' => get_user_meta($uid, 'last_name', true),
+      'email' => $u ? $u->user_email : '',
       'billing_address_1' => get_user_meta($uid, 'billing_address_1', true),
-      'billing_city'      => get_user_meta($uid, 'billing_city', true),
-      'billing_state'     => get_user_meta($uid, 'billing_state', true),
-      'billing_postcode'  => get_user_meta($uid, 'billing_postcode', true),
-      'billing_country'   => get_user_meta($uid, 'billing_country', true),
-      'billing_phone'     => get_user_meta($uid, 'billing_phone', true),
+      'billing_city' => get_user_meta($uid, 'billing_city', true),
+      'billing_state' => get_user_meta($uid, 'billing_state', true),
+      'billing_postcode' => get_user_meta($uid, 'billing_postcode', true),
+      'billing_country' => get_user_meta($uid, 'billing_country', true),
+      'billing_phone' => get_user_meta($uid, 'billing_phone', true),
     );
-    return array('ok'=>true, 'data'=>$data);
+    return array('ok' => true, 'data' => $data);
   }
 }
 
-if ( ! function_exists('mt_update_current_user_billing') ) {
-  function mt_update_current_user_billing(array $in): array {
-    if ( ! is_user_logged_in() ) return array('ok'=>false,'msg'=>'Not logged in');
+if (!function_exists('mt_update_current_user_billing')) {
+  function mt_update_current_user_billing(array $in): array
+  {
+    if (!is_user_logged_in())
+      return array('ok' => false, 'msg' => 'Not logged in');
     $uid = get_current_user_id();
 
     $fields = array(
-      'billing_address_1','billing_city','billing_state',
-      'billing_postcode','billing_country','billing_phone'
+      'billing_address_1',
+      'billing_city',
+      'billing_state',
+      'billing_postcode',
+      'billing_country',
+      'billing_phone'
     );
     foreach ($fields as $k) {
-      if ( array_key_exists($k, $in) ) {
+      if (array_key_exists($k, $in)) {
         $v = is_string($in[$k]) ? wp_strip_all_tags($in[$k]) : '';
         update_user_meta($uid, $k, $v);
       }
     }
-    return array('ok'=>true);
+    return array('ok' => true);
   }
 }
 
 // Obtener perfil (si luego quieres refrescar dinámicamente desde el front)
-add_action('wp_ajax_mt_get_profile', function(){
+add_action('wp_ajax_mt_get_profile', function () {
   check_ajax_referer('mt_profile_nonce', 'nonce');
   $res = mt_get_current_user_profile();
-  if ( ! $res['ok'] ) wp_send_json_error(array('msg'=>$res['msg']), 401);
+  if (!$res['ok'])
+    wp_send_json_error(array('msg' => $res['msg']), 401);
   wp_send_json_success($res['data']);
 });
 
 // Guardar solo BILLING
-add_action('wp_ajax_mt_save_billing_profile', function(){
+add_action('wp_ajax_mt_save_billing_profile', function () {
   check_ajax_referer('mt_profile_nonce', 'nonce');
-  if ( ! is_user_logged_in() ) wp_send_json_error(array('msg'=>'Not logged in'), 401);
+  if (!is_user_logged_in())
+    wp_send_json_error(array('msg' => 'Not logged in'), 401);
 
   $payload = array(
     'billing_address_1' => $_POST['billing_address_1'] ?? '',
-    'billing_city'      => $_POST['billing_city'] ?? '',
-    'billing_state'     => $_POST['billing_state'] ?? '',
-    'billing_postcode'  => $_POST['billing_postcode'] ?? '',
-    'billing_country'   => $_POST['billing_country'] ?? '',
-    'billing_phone'     => $_POST['billing_phone'] ?? '',
+    'billing_city' => $_POST['billing_city'] ?? '',
+    'billing_state' => $_POST['billing_state'] ?? '',
+    'billing_postcode' => $_POST['billing_postcode'] ?? '',
+    'billing_country' => $_POST['billing_country'] ?? '',
+    'billing_phone' => $_POST['billing_phone'] ?? '',
   );
 
   // Validación mínima server
   foreach (array_keys($payload) as $k) {
-    if ( empty(trim((string)$payload[$k])) ) {
-      wp_send_json_error(array('msg'=>"Missing field: $k"), 400);
+    if (empty(trim((string) $payload[$k]))) {
+      wp_send_json_error(array('msg' => "Missing field: $k"), 400);
     }
   }
 
   $r = mt_update_current_user_billing($payload);
-  if ( ! $r['ok'] ) wp_send_json_error(array('msg'=>$r['msg'] ?? 'Error'), 500);
+  if (!$r['ok'])
+    wp_send_json_error(array('msg' => $r['msg'] ?? 'Error'), 500);
 
-  wp_send_json_success(array('msg'=>'Saved'));
+  wp_send_json_success(array('msg' => 'Saved'));
 });
 
 

@@ -337,7 +337,7 @@ get_header();
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
-            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
               style="width: 24px; height: 24px;" />
           </span>
         </button>
@@ -378,7 +378,7 @@ get_header();
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
-            <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
               style="width:24px;height:24px;">
           </span>
         </button>

@@ -23,7 +23,7 @@ $login = $data['login'] ?? null;
 $server = $data['server'] ?? null;
 $pwd = $data['password'] ?? null;
 
-$platform_img = 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
+$platform_img = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
 if (!empty($args['platform_image'])) {
   $platform_img = esc_url_raw($args['platform_image']);
 }
