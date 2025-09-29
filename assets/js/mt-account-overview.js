@@ -50,8 +50,9 @@
   /* ========= Progress genérico ========= */
   function initProgressBars(root = document) {
     $$(".mt-progress-bar", root).forEach((el) => {
-      const v = clamp(el.dataset.progress, 0, 100);
+      const v = clamp(el.getAttribute('aria-valuenow'), 0, 100);
       el.style.setProperty("--mt-progress-value", v + "%");
+      console.log(v, el)
     });
   }
 

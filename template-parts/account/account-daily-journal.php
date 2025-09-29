@@ -12,68 +12,22 @@ if (!defined('ABSPATH')) exit;
 
 $root_id  = 'mt-daily-journal';
 $pager_id = 'mt-daily-journal-pager';
-$per_page = 7;
 
-/** ===== Helpers locales (seguros) ===== */
-if (!function_exists('mt_money_fmt')) {
-  function mt_money_fmt($n) {
-    $s = ($n < 0) ? '-' : '';
-    return $s . '$' . number_format(abs((float)$n), 2);
-  }
+// Payload inyectado desde overview
+$in = isset($args['data']) && is_array($args['data']) ? $args['data'] : [];
+$rows = isset($in['rows']) && is_array($in['rows']) ? $in['rows'] : [];
+$per_page = isset($in['per_page']) ? (int)$in['per_page'] : 7;
+
+// Contexto de cuenta (como ya lo tenías)
+$user_id = get_current_user_id();
+$acc_id  = 0;
+if (isset($args) && is_array($args)) {
+  if (isset($args['meta']['accountId'])) $acc_id = (int) $args['meta']['accountId'];
+  elseif (isset($args['accountId']))     $acc_id = (int) $args['accountId'];
 }
+if (!$acc_id && isset($current_account_id)) $acc_id = (int) $current_account_id;
+if (!$acc_id)                                $acc_id = (int) get_user_meta($user_id, 'mt_current_account_id', true);
 
-/**
- * Acepta openTime ISO-8601 (p.ej. 2025-09-12T17:58:28.759Z)
- * Devuelve ['iso' => 'YYYY-MM-DD', 'label' => 'MM/DD/YYYY']
- */
-if (!function_exists('mt_parse_open_time')) {
-  function mt_parse_open_time($openTime) {
-    try {
-      $dt = !empty($openTime)
-        ? new DateTime($openTime, new DateTimeZone('UTC'))
-        : new DateTime('now', new DateTimeZone('UTC'));
-    } catch (Exception $e) {
-      $dt = new DateTime('now', new DateTimeZone('UTC'));
-    }
-    return [
-      'iso'   => $dt->format('Y-m-d'),
-      'label' => $dt->format('m/d/Y'),
-    ];
-  }
-}
-
-/** ===== Datos mock mientras conectas API =====
- * Cuando conectes la API, mapea tu respuesta a este esquema:
- * [
- *   'openTime' => '2025-09-12T17:58:28.759Z',
- *   'net'      => (float),
- *   'hi'       => (float),
- *   'lo'       => (float),
- *   'ct'       => (int),
- *   'fees'     => (float),
- *   'trades'   => (int),
- *   'awin'     => (float),
- *   'aloss'    => (float),
- *   'win'      => (float),  // porcentaje
- *   'max'      => (string), // "W/L" consecutivos
- *   'dur'      => (string), // "avgW avgL"
- * ]
- */
-$rows = [
-  ['openTime' => '2025-07-11T10:00:00.000Z', 'net' => -73.40, 'hi' => -1.00,  'lo' => -73.40,  'ct' => 70,  'fees' => 25.90,  'trades' => 4,  'awin' => 2.60,  'aloss' => 39.90, 'win' => 50.00, 'max' => '2/1',  'dur' => '00:05:05 00:01:17'],
-  ['openTime' => '2025-07-12T10:00:00.000Z', 'net' => 45.10,  'hi' => 88.20,  'lo' => -5.25,   'ct' => 22,  'fees' => 12.20,  'trades' => 9,  'awin' => 18.00, 'aloss' => 9.50,  'win' => 62.50, 'max' => '3/1',  'dur' => '00:08:10 00:03:25'],
-  ['openTime' => '2025-07-13T10:00:00.000Z', 'net' => -234.28,'hi' => 6.90,   'lo' => -240.78, 'ct' => 158, 'fees' => 139.28, 'trades' => 22, 'awin' => 28.07, 'aloss' => 22.04, 'win' => 22.73, 'max' => '2/12', 'dur' => '00:06:09 00:04:42'],
-  ['openTime' => '2025-07-10T10:00:00.000Z', 'net' => 120.50, 'hi' => 160.10, 'lo' => -8.40,   'ct' => 11,  'fees' => 6.80,   'trades' => 5,  'awin' => 42.30, 'aloss' => 15.60, 'win' => 66.67, 'max' => '4/1',  'dur' => '00:04:20 00:02:10'],
-  ['openTime' => '2025-07-13T10:00:00.000Z', 'net' => -15.75, 'hi' => 20.00,  'lo' => -30.40,  'ct' => 33,  'fees' => 9.99,   'trades' => 7,  'awin' => 10.15, 'aloss' => 11.30, 'win' => 42.86, 'max' => '2/2',  'dur' => '00:03:50 00:02:40'],
-  ['openTime' => '2025-07-12T10:00:00.000Z', 'net' => 90.00,  'hi' => 120.00, 'lo' => -2.10,   'ct' => 40,  'fees' => 19.10,  'trades' => 8,  'awin' => 25.50, 'aloss' => 10.40, 'win' => 62.50, 'max' => '3/1',  'dur' => '00:07:33 00:03:01'],
-  ['openTime' => '2025-07-12T10:00:00.000Z', 'net' => 90.00,  'hi' => 120.00, 'lo' => -2.10,   'ct' => 40,  'fees' => 19.10,  'trades' => 8,  'awin' => 25.50, 'aloss' => 10.40, 'win' => 62.50, 'max' => '3/1',  'dur' => '00:07:33 00:03:01'],
-  ['openTime' => '2025-07-12T10:00:00.000Z', 'net' => 90.00,  'hi' => 120.00, 'lo' => -2.10,   'ct' => 40,  'fees' => 19.10,  'trades' => 8,  'awin' => 25.50, 'aloss' => 10.40, 'win' => 62.50, 'max' => '3/1',  'dur' => '00:07:33 00:03:01'],
-  ['openTime' => '2025-07-14T10:00:00.000Z', 'net' => 120.50, 'hi' => 160.10, 'lo' => -8.40,   'ct' => 11,  'fees' => 6.80,   'trades' => 5,  'awin' => 42.30, 'aloss' => 15.60, 'win' => 66.67, 'max' => '4/1',  'dur' => '00:04:20 00:02:10'],
-  ['openTime' => '2025-07-13T10:00:00.000Z', 'net' => -15.75, 'hi' => 20.00,  'lo' => -30.40,  'ct' => 33,  'fees' => 9.99,   'trades' => 7,  'awin' => 10.15, 'aloss' => 11.30, 'win' => 42.86, 'max' => '2/2',  'dur' => '00:03:50 00:02:40'],
-  ['openTime' => '2025-07-12T10:00:00.000Z', 'net' => 90.00,  'hi' => 120.00, 'lo' => -2.10,   'ct' => 40,  'fees' => 19.10,  'trades' => 8,  'awin' => 25.50, 'aloss' => 10.40, 'win' => 62.50, 'max' => '3/1',  'dur' => '00:07:33 00:03:01'],
-  ['openTime' => '2025-07-12T10:00:00.000Z', 'net' => 90.00,  'hi' => 120.00, 'lo' => -2.10,   'ct' => 40,  'fees' => 19.10,  'trades' => 8,  'awin' => 25.50, 'aloss' => 10.40, 'win' => 62.50, 'max' => '3/1',  'dur' => '00:07:33 00:03:01'],
-  ['openTime' => '2025-07-12T10:00:00.000Z', 'net' => 90.00,  'hi' => 120.00, 'lo' => -2.10,   'ct' => 40,  'fees' => 19.10,  'trades' => 8,  'awin' => 25.50, 'aloss' => 10.40, 'win' => 62.50, 'max' => '3/1',  'dur' => '00:07:33 00:03:01'],
-];
 
 /** ===== Contexto de cuenta (lee desde $args['meta']['accountId']) ===== */
 $user_id = get_current_user_id();

@@ -22,6 +22,8 @@ $mt_cnt_plain = 0;
 $mt_cnt_encoded = 0;
 $mt_feature_content = []; // payload para account-feature-content
 $mt_account_data = []; // payload para account-data
+$mt_daily_journal = [];
+
 
 
 /* === Usuario + email saneado === */
@@ -124,6 +126,12 @@ if (is_user_logged_in()) {
         if (function_exists('mt_accounts_build_feature_content')) {
           $mt_feature_content['apiData'] = mt_accounts_build_feature_content($resolved);
         }
+
+        // === Daily Journal payload (helper → payload) ===
+        if (!empty($mt_selected_id) && function_exists('mt_accounts_build_daily_journal')) {
+          $mt_daily_journal = mt_accounts_build_daily_journal($mt_selected_id, 1, 30);
+        }
+
 
         if (!empty($resolved) && function_exists('mt_accounts_build_performance_chart')) {
           $mt_chart = mt_accounts_build_performance_chart($resolved);
@@ -274,6 +282,7 @@ get_header();
             null,
             [
               'meta' => ['accountId' => $mt_selected_id],
+              'data' => $mt_daily_journal,
             ]
           );
           ?>
@@ -337,8 +346,7 @@ get_header();
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
-            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
-              style="width: 24px; height: 24px;" />
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width: 24px; height: 24px;" />
           </span>
         </button>
       </div>
@@ -378,8 +386,7 @@ get_header();
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
-            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
-              style="width:24px;height:24px;">
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;">
           </span>
         </button>
       </div>

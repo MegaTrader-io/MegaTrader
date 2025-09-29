@@ -68,12 +68,12 @@ class MT_Accounts
   public static function prepare_ui(array $accounts): array
   {
     // ===== Config logos (mantener/ajustar según tu código actual) =====
-    $DEFAULT_LOGO = 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
+    $DEFAULT_LOGO = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
     $PLATFORM_LOGOS = [
       self::norm('MegaTrader') => $DEFAULT_LOGO,
-      self::norm('NinjaTrader') => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/02/icon_ninjatrader.svg',
-      self::norm('Tradovate') => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/02/icon_tradovate.svg',
-      self::norm('Quantower') => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/02/icon_quantower.svg',
+      self::norm('NinjaTrader') => '/wp-content/uploads/2025/02/icon_ninjatrader.svg',
+      self::norm('Tradovate') => '/wp-content/uploads/2025/02/icon_tradovate.svg',
+      self::norm('Quantower') => '/wp-content/uploads/2025/02/icon_quantower.svg',
     ];
 
     // ===== 1) USAR TODAS LAS CUENTAS (sin filtrar por estado) =====
@@ -580,6 +580,7 @@ if (!function_exists('mt_value_icon_classes')) {
 // - value == 0                => neutral (check gris)
 // - value > 0 && target <= 0  => success (tratamos meta no válida como cumplida)
 // - value > 0 && value > tgt  => success (check verde)
+// - value == 0 target  => success (check verde)
 // - value > 0 && value <= tgt => neutral (check gris)
 // - value no numérico         => neutral
 if (!function_exists('mt_value_compare_icon_classes')) {
@@ -606,6 +607,11 @@ if (!function_exists('mt_value_compare_icon_classes')) {
 
     if ($t <= 0)
       return $cls_pos;           // meta no válida => consideramos cumplida
+
+    if (abs($v - $t) < 1e-9) {
+      return $cls_pos;
+    }
+
     return ($v > $t) ? $cls_pos : $cls_neutral;
   }
 }
@@ -1253,27 +1259,122 @@ function mt_accounts_ajax_status()
   wp_send_json_success(['status' => $status]);
 }
 
+// === METRICS: fetch por shortcode (igual patrón que account_json) ===
+if (!function_exists('mt_metrics_fetch_by_shortcode')) {
+  function mt_metrics_fetch_by_shortcode($accountId, $page = 1, $perPage = 30)
+  {
+    $accountId = trim((string) $accountId);
+    if ($accountId === '')
+      return null;
+
+    $sc = sprintf(
+      '[mega_metrics_data id="%s" page="%d" perpage="%d" output="json" ttl="%d"]',
+      esc_attr($accountId),
+      (int) $page,
+      (int) $perPage,
+      15
+    );
+
+    $raw = do_shortcode($sc);
+    $raw = is_string($raw) ? trim(wp_strip_all_tags($raw)) : '';
+    $data = $raw ? json_decode($raw, true) : null;
+
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[DJ][metrics_sc][id=' . $accountId . '] page=' . $page . ' perPage=' . $perPage);
+      error_log('[DJ][metrics_sc][raw]=' . substr((string) $raw, 0, 800));
+    }
+
+    return is_array($data) ? $data : null;
+  }
+}
+
+// === METRICS: mapear respuesta → payload Daily Journal (rows/per_page) ===
+if (!function_exists('mt_accounts_build_daily_journal')) {
+  function mt_accounts_build_daily_journal($accountId, $page = 1, $perPage = 30)
+  {
+    $json = mt_metrics_fetch_by_shortcode($accountId, $page, $perPage);
+    $items = [];
+
+    if (is_array($json)) {
+      if (isset($json['data']) && is_array($json['data']))
+        $items = $json['data'];
+      elseif (isset($json[0]) && is_array($json[0]))
+        $items = $json;
+    }
+
+    $rows = [];
+    foreach ($items as $it) {
+      $m = isset($it['metrics']) && is_array($it['metrics']) ? $it['metrics'] : [];
+
+      $openTime = $m['tradeDateTimeUTC'] ?? $m['tradeDate'] ?? $m['dailyResetTimeUTC'] ?? null;
+
+      $net = $m['dailyTotalRealizedPnL'] ?? $m['todayPnL'] ?? $m['dailyTotalPnL'] ?? 0;
+      $hi = $m['topDayProfit'] ?? $m['tradingTopDayRealizedProfit'] ?? $m['maxProfit'] ?? 0;
+
+      // Low: si trae "worstDayRealizedLoss" o "tradingWorstDayRealizedLost" lo forzamos negativo
+      $loSrc1 = $m['tradingWorstDayRealizedLost'] ?? null;
+      $loSrc2 = $m['worstDayRealizedLoss'] ?? null;
+      $lo = 0;
+      if (is_numeric($loSrc1))
+        $lo = -abs((float) $loSrc1);
+      elseif (is_numeric($loSrc2))
+        $lo = -abs((float) $loSrc2);
+
+      $rows[] = [
+        'openTime' => $openTime ?: gmdate('c'),
+        'net' => (float) $net,
+        'hi' => (float) $hi,
+        'lo' => (float) $lo,
+        'ct' => (int) ($m['totalClosedVolume'] ?? 0),
+        'fees' => (float) ($m['dailyFees'] ?? $m['fees'] ?? 0), // si luego el backend agrega dailyFees, lo tomará
+        'trades' => (int) ($m['tradesPlaced'] ?? 0),
+        'awin' => (float) ($m['averageWinningTrade'] ?? 0),
+        'aloss' => (float) ($m['averageLosingTrade'] ?? 0),
+        'win' => (float) ($m['winRate'] ?? 0), // 0..100
+        'max' => '',  // pendiente de backend (consecutive W/L)
+        'dur' => '',  // pendiente de backend (avg W/L duration)
+      ];
+    }
+
+    // Orden por fecha desc
+    usort($rows, function ($a, $b) {
+      $ta = strtotime((string) ($a['openTime'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['openTime'] ?? '')) ?: 0;
+      return $tb <=> $ta;
+    });
+
+    return [
+      'rows' => $rows,
+      'per_page' => (int) $perPage,
+    ];
+  }
+}
+
+
 // === AJAX (stub): Daily Journal ===
-// Devuelve estructura vacía pero válida para el front.
 add_action('wp_ajax_mt_account_daily_journal', 'mt_account_daily_journal_ajax');
 add_action('wp_ajax_nopriv_mt_account_daily_journal', 'mt_account_daily_journal_ajax');
 
 function mt_account_daily_journal_ajax()
 {
-  // Usa el mismo nonce que ya localizas en mt-account-overview.js
   check_ajax_referer('mt-acc-nonce', 'nonce');
 
   $account_id = sanitize_text_field((string) ($_POST['account_id'] ?? ''));
+  $page = isset($_POST['page']) ? (int) $_POST['page'] : 1;
+  $per = isset($_POST['per_page']) ? (int) $_POST['per_page'] : 30;
+
   if ($account_id === '') {
     wp_send_json_error(['message' => 'Missing account_id']);
   }
 
-  // STUB: sin conexión a API, devolvemos filas vacías y per_page fijo.
-  wp_send_json_success([
-    'rowsHtml' => '',   // sin filas (el front limpia y no rompe)
-    'per_page' => 7,    // mismo default del componente
-  ]);
+  if (!function_exists('mt_accounts_build_daily_journal')) {
+    wp_send_json_error(['message' => 'Helper not available']);
+  }
+
+  $payload = mt_accounts_build_daily_journal($account_id, $page, $per);
+  wp_send_json_success($payload); // { rows: [...], per_page: N }
 }
+
 
 // === Profile (My Profile modal) ============================================
 // Helpers + AJAX para cargar/guardar BILLING del usuario logueado.
@@ -1365,6 +1466,29 @@ add_action('wp_ajax_mt_save_billing_profile', function () {
   wp_send_json_success(array('msg' => 'Saved'));
 });
 
+// inc/mt-accounts-helpers.php
+if (!function_exists('mt_money_fmt')) {
+  function mt_money_fmt($n) {
+    $s = ($n < 0) ? '-' : '';
+    return $s . '$' . number_format(abs((float)$n), 2);
+  }
+}
+
+if (!function_exists('mt_parse_open_time')) {
+  function mt_parse_open_time($openTime) {
+    try {
+      $dt = !empty($openTime)
+        ? new DateTime($openTime, new DateTimeZone('UTC'))
+        : new DateTime('now', new DateTimeZone('UTC'));
+    } catch (Exception $e) {
+      $dt = new DateTime('now', new DateTimeZone('UTC'));
+    }
+    return [
+      'iso'   => $dt->format('Y-m-d'),
+      'label' => $dt->format('m/d/Y'),
+    ];
+  }
+}
 
 
 

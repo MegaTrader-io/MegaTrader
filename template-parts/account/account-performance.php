@@ -97,11 +97,6 @@ if ($profitNum !== null && $targetNum !== null) {
     $profitFillPct = max(0, min(100, (max(0, $profitNum) / $targetNum) * 100));
 }
 
-$daysFillPct = ($minDays > 0)
-    ? max(0, min(100, ($daysTraded / $minDays) * 100))
-    : 0;
-
-
 
 /* Formatted variables */
 $ui = mt_profit_ui_from_percent($profitPct);
@@ -119,7 +114,7 @@ $profitText = mt_format_signed_money($profit);
 $profitIconClass = mt_value_compare_icon_classes($profit, $profitTarget);
 
 $daysFillPct = ($minDays > 0) ? max(0, min(100, ($daysTraded / $minDays) * 100)) : 0;
-$daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays); // usa el helper nuevo
+$daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays); 
 $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
 
 $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyLoss) : 0;
