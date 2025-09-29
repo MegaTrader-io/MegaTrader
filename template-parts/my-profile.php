@@ -80,6 +80,23 @@ $collapsed_class = $collapsed ? 'collapsed' : '';
                     'collapsed' => $collapsed,
             ]); ?>
         </a>
+
+        <div class="my-account-logout">
+            <a href="<?php echo esc_url($logout_url); ?>" class="logout-link" aria-label="Logout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                     fill="none">
+                    <mask id="mask0_12101_26191" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                          x="0" y="0" width="24" height="24">
+                        <rect width="24" height="24" fill="#D9D9D9"/>
+                    </mask>
+                    <g mask="url(#mask0_12101_26191)">
+                        <path
+                                d="M5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V5C3 4.45 3.19583 3.97917 3.5875 3.5875C3.97917 3.19583 4.45 3 5 3H12V5H5V19H12V21H5ZM16 17L14.625 15.55L17.175 13H9V11H17.175L14.625 8.45L16 7L21 12L16 17Z"
+                                fill="white"/>
+                    </g>
+                </svg>
+            </a>
+        </div>
     <?php else: ?>
         <div class="mt-my-profile__avatar flex-fill">
             <?php get_template_part('template-parts/avatar', null, [
@@ -93,16 +110,16 @@ $collapsed_class = $collapsed ? 'collapsed' : '';
                     'collapsed' => $collapsed,
             ]); ?>
         </div>
-    <?php endif; ?>
 
-    <div class="mt-my-profile__notifications">
-        <span class="mt-tooltip" data-placement="right">                        
-            <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="javascript:void(0)">
-                <i class="mt-icon mt-icon-sm mt-icon_notifications "></i>
-            </a>
-            <span class="mt-tooltip__panel" role="tooltip">
-                <div class="mt-tooltip__body">Notifications</div>
+        <div class="mt-my-profile__notifications">
+            <span class="mt-tooltip" data-placement="right">
+                <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="javascript:void(0)">
+                    <i class="mt-icon mt-icon-sm mt-icon_notifications "></i>
+                </a>
+                <span class="mt-tooltip__panel" role="tooltip">
+                    <div class="mt-tooltip__body">Notifications</div>
+                </span>
             </span>
-        </span>
-    </div>
+        </div>
+    <?php endif; ?>
 </div>
