@@ -2054,19 +2054,24 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
    align-items: center;
 }
 
-.mt-my-profile__avatar-link {
+.mt-my-profile__avatar {
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+
+.mt-my-profile__avatar_link {
   text-decoration: none;
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
 }
 
-.mt-my-profile__avatar-link {
+.mt-my-profile__avatar_link {
   text-decoration: none;
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
 }
 
-.mt-my-profile__avatar-link:hover {
+.mt-my-profile__avatar_link:hover {
   opacity: 1;
 }
 

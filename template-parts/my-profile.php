@@ -67,7 +67,7 @@ $collapsed_class = $collapsed ? 'collapsed' : '';
 ?>
 <div class="mt-my-profile <?= $collapsed_class ?>">
     <?php if ( $go_to_dashboard) : ?>
-        <a href="<?= profile_url() ?>" class="mt-my-profile__avatar-link flex-fill">
+        <a href="<?= profile_url() ?>" class="mt-my-profile__avatar mt-my-profile__avatar_link">
             <?php get_template_part('template-parts/avatar', null, [
                     'avatar_url' => $avatar_url,
                     'avatar_size' => $avatar_size,
@@ -98,7 +98,7 @@ $collapsed_class = $collapsed ? 'collapsed' : '';
             </a>
         </div>
     <?php else: ?>
-        <div class="mt-my-profile__avatar flex-fill">
+        <div class="mt-my-profile__avatar">
             <?php get_template_part('template-parts/avatar', null, [
                     'avatar_url' => $avatar_url,
                     'avatar_size' => $avatar_size,
