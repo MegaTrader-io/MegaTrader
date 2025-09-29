@@ -1259,9 +1259,10 @@ function mt_accounts_ajax_status()
   wp_send_json_success(['status' => $status]);
 }
 
-// === METRICS: fetch por shortcode (igual patrón que account_json) ===
+
+/* === MÉTRICS vía shortcode (JSON) === */
 if (!function_exists('mt_metrics_fetch_by_shortcode')) {
-  function mt_metrics_fetch_by_shortcode($accountId, $page = 1, $perPage = 30)
+  function mt_metrics_fetch_by_shortcode($accountId, $page = 1, $perPage = 30, $ttl = 15)
   {
     $accountId = trim((string) $accountId);
     if ($accountId === '')
@@ -1272,29 +1273,150 @@ if (!function_exists('mt_metrics_fetch_by_shortcode')) {
       esc_attr($accountId),
       (int) $page,
       (int) $perPage,
-      15
+      (int) $ttl
     );
 
     $raw = do_shortcode($sc);
-    $raw = is_string($raw) ? trim(wp_strip_all_tags($raw)) : '';
-    $data = $raw ? json_decode($raw, true) : null;
-
-    if (defined('WP_DEBUG') && WP_DEBUG) {
-      error_log('[DJ][metrics_sc][id=' . $accountId . '] page=' . $page . ' perPage=' . $perPage);
-      error_log('[DJ][metrics_sc][raw]=' . substr((string) $raw, 0, 800));
-    }
-
+    if (!is_string($raw) || $raw === '')
+      return null;
+    $raw = trim(wp_strip_all_tags($raw));
+    $data = json_decode($raw, true);
     return is_array($data) ? $data : null;
   }
 }
 
-// === METRICS: mapear respuesta → payload Daily Journal (rows/per_page) ===
+/* === TRADES vía shortcode (JSON) === */
+if (!function_exists('mt_trades_fetch_by_shortcode')) {
+  function mt_trades_fetch_by_shortcode(string $accountId, string $type = 'CLOSED', int $page = 1, int $perPage = 500)
+  {
+    $accountId = trim((string) $accountId);
+    if ($accountId === '')
+      return null;
+
+    $sc = sprintf(
+      '[mega_trades_data id="%s" type="%s" page="%d" perpage="%d" output="json"]',
+      esc_attr($accountId),
+      esc_attr($type),
+      (int) $page,
+      (int) $perPage
+    );
+
+    $raw = do_shortcode($sc);
+    $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
+      $raw = substr($raw, 3);
+    if ($raw !== '')
+      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    $json = json_decode($raw, true);
+    if (!is_array($json))
+      $json = json_decode(trim(wp_strip_all_tags($raw)), true);
+    if (!is_array($json))
+      return null;
+
+    if (isset($json['data']) && is_array($json['data']))
+      return $json['data'];
+    if (isset($json[0]) && is_array($json[0]))
+      return $json;
+    return null;
+  }
+}
+
+/* === TRADES: streaks + duraciones por día (YYYY-MM-DD) === */
+if (!function_exists('mt_trades_day_stats')) {
+  function mt_trades_day_stats(string $accountId, string $day_iso): array
+  {
+    static $cache = [];
+    $day_iso = substr((string) $day_iso, 0, 10);
+    if ($day_iso === '') {
+      return ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
+    }
+    if (!isset($cache[$accountId])) {
+      $trades = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500);
+      $cache[$accountId] = is_array($trades) ? $trades : [];
+    }
+    $trades = $cache[$accountId];
+
+    $dayTrades = array_values(array_filter($trades, function ($t) use ($day_iso) {
+      if (!isset($t['closeTime']))
+        return false;
+      return substr((string) $t['closeTime'], 0, 10) === $day_iso;
+    }));
+    if (empty($dayTrades)) {
+      return ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
+    }
+
+    usort($dayTrades, function ($a, $b) {
+      $ta = strtotime((string) ($a['closeTime'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['closeTime'] ?? '')) ?: 0;
+      return $ta <=> $tb;
+    });
+
+    $maxW = 0;
+    $maxL = 0;
+    $runW = 0;
+    $runL = 0;
+    $sumW = 0;
+    $cntW = 0;
+    $sumL = 0;
+    $cntL = 0;
+
+    foreach ($dayTrades as $t) {
+      if (!array_key_exists('pnl', $t)) {
+        $runW = 0;
+        $runL = 0;
+        continue;
+      }
+      $pnl = $t['pnl'];
+
+      $durSec = null;
+      if (isset($t['openTime'], $t['closeTime'])) {
+        $o = strtotime((string) $t['openTime']);
+        $c = strtotime((string) $t['closeTime']);
+        if ($o && $c && $c >= $o)
+          $durSec = $c - $o;
+      }
+
+      if (is_numeric($pnl) && $pnl > 0) {
+        $runW++;
+        $runL = 0;
+        $maxW = max($maxW, $runW);
+        if ($durSec !== null) {
+          $sumW += $durSec;
+          $cntW++;
+        }
+      } elseif (is_numeric($pnl) && $pnl < 0) {
+        $runL++;
+        $runW = 0;
+        $maxL = max($maxL, $runL);
+        if ($durSec !== null) {
+          $sumL += $durSec;
+          $cntL++;
+        }
+      } else {
+        $runW = 0;
+        $runL = 0;
+      }
+    }
+
+    $fmt = function ($s) {
+      $s = (int) round($s);
+      return sprintf('%02d:%02d:%02d', floor($s / 3600), floor(($s % 3600) / 60), $s % 60); };
+    return [
+      'maxConsecWins' => $maxW > 0 ? $maxW : '-',
+      'maxConsecLosses' => $maxL > 0 ? $maxL : '-',
+      'avgWinDuration' => $cntW > 0 ? $fmt($sumW / $cntW) : '-',
+      'avgLossDuration' => $cntL > 0 ? $fmt($sumL / $cntL) : '-',
+    ];
+  }
+}
+
+/* === DAILY JOURNAL: construir payload (SIN fallbacks → '-') === */
 if (!function_exists('mt_accounts_build_daily_journal')) {
   function mt_accounts_build_daily_journal($accountId, $page = 1, $perPage = 30)
   {
     $json = mt_metrics_fetch_by_shortcode($accountId, $page, $perPage);
     $items = [];
-
     if (is_array($json)) {
       if (isset($json['data']) && is_array($json['data']))
         $items = $json['data'];
@@ -1304,76 +1426,135 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
 
     $rows = [];
     foreach ($items as $it) {
-      $m = isset($it['metrics']) && is_array($it['metrics']) ? $it['metrics'] : [];
+      $m = (isset($it['metrics']) && is_array($it['metrics'])) ? $it['metrics'] : [];
 
-      $openTime = $m['tradeDateTimeUTC'] ?? $m['tradeDate'] ?? $m['dailyResetTimeUTC'] ?? null;
+      $openTime = $m['tradeDateTimeUTC'] ?? null;
+      $day_iso = $openTime ? substr($openTime, 0, 10) : '';
 
-      $net = $m['dailyTotalRealizedPnL'] ?? $m['todayPnL'] ?? $m['dailyTotalPnL'] ?? 0;
-      $hi = $m['topDayProfit'] ?? $m['tradingTopDayRealizedProfit'] ?? $m['maxProfit'] ?? 0;
+      $net = array_key_exists('dailyTotalRealizedPnL', $m) ? (float) $m['dailyTotalRealizedPnL'] : '-';
 
-      // Low: si trae "worstDayRealizedLoss" o "tradingWorstDayRealizedLost" lo forzamos negativo
-      $loSrc1 = $m['tradingWorstDayRealizedLost'] ?? null;
-      $loSrc2 = $m['worstDayRealizedLoss'] ?? null;
-      $lo = 0;
-      if (is_numeric($loSrc1))
-        $lo = -abs((float) $loSrc1);
-      elseif (is_numeric($loSrc2))
-        $lo = -abs((float) $loSrc2);
+      $hi = (isset($m['dailyHighestBalance'], $m['startingBalance']) && is_numeric($m['dailyHighestBalance']) && is_numeric($m['startingBalance']))
+        ? ((float) $m['dailyHighestBalance'] - (float) $m['startingBalance']) : '-';
+
+      $lo = (isset($m['dailyLowestBalance'], $m['startingBalance']) && is_numeric($m['dailyLowestBalance']) && is_numeric($m['startingBalance']))
+        ? ((float) $m['dailyLowestBalance'] - (float) $m['startingBalance']) : '-';
+
+      $ct = array_key_exists('totalClosedVolume', $m) ? (int) $m['totalClosedVolume'] : '-';
+      $fees = array_key_exists('dailyTotalFees', $m) ? (float) $m['dailyTotalFees'] : '-';
+      $trades = array_key_exists('tradesPlaced', $m) ? (int) $m['tradesPlaced'] : '-';
+      $awin = array_key_exists('averageWinningTrade', $m) ? (float) $m['averageWinningTrade'] : '-';
+      $aloss = array_key_exists('averageLosingTrade', $m) ? (float) $m['averageLosingTrade'] : '-';
+      $winPct = array_key_exists('winRate', $m) ? (float) $m['winRate'] : '-';
+
+      $stats = ($accountId && $day_iso !== '') ? mt_trades_day_stats((string) $accountId, $day_iso)
+        : ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
+
+      $maxW = $stats['maxConsecWins'] ?? '-';
+      $maxL = $stats['maxConsecLosses'] ?? '-';
+      $dWin = $stats['avgWinDuration'] ?? '-';
+      $dLos = $stats['avgLossDuration'] ?? '-';
+
+      $max = ($maxW === '-' && $maxL === '-') ? '-' : ((is_numeric($maxW) ? $maxW : '-') . '/' . (is_numeric($maxL) ? $maxL : '-'));
+      $dur = ($dWin === '-' && $dLos === '-') ? '-' : ($dWin . ' ' . $dLos);
 
       $rows[] = [
-        'openTime' => $openTime ?: gmdate('c'),
-        'net' => (float) $net,
-        'hi' => (float) $hi,
-        'lo' => (float) $lo,
-        'ct' => (int) ($m['totalClosedVolume'] ?? 0),
-        'fees' => (float) ($m['dailyFees'] ?? $m['fees'] ?? 0), // si luego el backend agrega dailyFees, lo tomará
-        'trades' => (int) ($m['tradesPlaced'] ?? 0),
-        'awin' => (float) ($m['averageWinningTrade'] ?? 0),
-        'aloss' => (float) ($m['averageLosingTrade'] ?? 0),
-        'win' => (float) ($m['winRate'] ?? 0), // 0..100
-        'max' => '',  // pendiente de backend (consecutive W/L)
-        'dur' => '',  // pendiente de backend (avg W/L duration)
+        'openTime' => $openTime ?: '',
+        'net' => $net,
+        'hi' => $hi,
+        'lo' => $lo,
+        'ct' => $ct,
+        'fees' => $fees,
+        'trades' => $trades,
+        'awin' => $awin,
+        'aloss' => $aloss,
+        'win' => $winPct,
+        'max' => $max,
+        'dur' => $dur,
       ];
     }
 
-    // Orden por fecha desc
     usort($rows, function ($a, $b) {
       $ta = strtotime((string) ($a['openTime'] ?? '')) ?: 0;
       $tb = strtotime((string) ($b['openTime'] ?? '')) ?: 0;
       return $tb <=> $ta;
     });
 
-    return [
-      'rows' => $rows,
-      'per_page' => (int) $perPage,
-    ];
+    return ['rows' => $rows, 'per_page' => (int) $perPage];
+  }
+}
+
+/* === DAILY JOURNAL: render SOLO filas (para AJAX) === */
+if (!function_exists('mt_daily_journal_rows_html')) {
+  function mt_daily_journal_rows_html(array $rows, int $per_page, $acc_id): string
+  {
+    $user_id = get_current_user_id();
+
+    $fmt_money = function ($v) {
+      if ($v === '-' || $v === null || $v === '')
+        return '-';
+      if (!is_numeric($v))
+        return '-';
+      $n = (float) $v;
+      $sign = $n < 0 ? '-' : '';
+      $abs = abs($n);
+      return $sign . '$' . number_format($abs, 2, '.', ',');
+    };
+    $fmt_int = function ($v) {
+      return ($v === '-' ? '-' : number_format((int) $v)); };
+    $fmt_pct = function ($v) {
+      return ($v === '-' ? '-' : (number_format((float) $v, 2) . '%')); };
+
+    ob_start();
+    foreach ($rows as $i => $r) {
+      $page = (int) floor($i / max(1, $per_page)) + 1;
+
+      $ts = isset($r['openTime']) ? strtotime((string) $r['openTime']) : 0;
+      $day_iso = $ts ? gmdate('Y-m-d', $ts) : '';
+      $day_label = $ts ? gmdate('m/d/Y', $ts) : '-';
+
+      $fb = ($acc_id && $day_iso && function_exists('mt_get_daily_feedback'))
+        ? mt_get_daily_feedback($user_id, (int) $acc_id, $day_iso) : null;
+      $has_fb = !empty($fb);
+      $mood = $has_fb ? (int) ($fb['mood'] ?? 0) : 0;
+      $follow = $has_fb ? ((int) ($fb['followed_plan'] ?? 0) ? 1 : 0) : 0;
+      $note = $has_fb ? (string) ($fb['note'] ?? '') : '';
+
+      $net = $r['net'] ?? '-';
+      $net_class = (is_numeric($net) ? ($net > 0 ? 'text-success' : ($net < 0 ? 'text-danger' : '')) : '');
+
+      ?>
+      <div class="dj-grid dj-row" id="dj-row-<?php echo esc_attr($day_iso); ?>" data-page="<?php echo esc_attr($page); ?>"
+        data-trade-date="<?php echo esc_attr($day_iso); ?>" data-has-fb="<?php echo $has_fb ? '1' : '0'; ?>"
+        data-mood="<?php echo $has_fb ? (int) $mood : ''; ?>" data-followed="<?php echo $has_fb ? (int) $follow : ''; ?>"
+        data-note="<?php echo $has_fb ? esc_attr($note) : ''; ?>" style="<?php echo $page === 1 ? '' : 'display:none'; ?>">
+        <div class="dj-cell is-left">
+          <span class="mt-dj-visibility" role="button" tabindex="0" aria-label="Add daily feedback" title="Daily feedback">
+            <i class="mt-icon mt-icon-white <?php echo $has_fb ? 'mt-icon_visibility' : 'mt-icon_pencil'; ?>"
+              aria-hidden="true"></i>
+          </span>
+        </div>
+
+        <div class="dj-cell is-right"><?php echo esc_html($day_label); ?></div>
+        <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html($fmt_money($net)); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['hi'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['lo'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['ct'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['fees'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['trades'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['dur'] ?? '-')); ?></div>
+      </div>
+      <?php
+    }
+    return trim(ob_get_clean());
   }
 }
 
 
-// === AJAX (stub): Daily Journal ===
-add_action('wp_ajax_mt_account_daily_journal', 'mt_account_daily_journal_ajax');
-add_action('wp_ajax_nopriv_mt_account_daily_journal', 'mt_account_daily_journal_ajax');
 
-function mt_account_daily_journal_ajax()
-{
-  check_ajax_referer('mt-acc-nonce', 'nonce');
-
-  $account_id = sanitize_text_field((string) ($_POST['account_id'] ?? ''));
-  $page = isset($_POST['page']) ? (int) $_POST['page'] : 1;
-  $per = isset($_POST['per_page']) ? (int) $_POST['per_page'] : 30;
-
-  if ($account_id === '') {
-    wp_send_json_error(['message' => 'Missing account_id']);
-  }
-
-  if (!function_exists('mt_accounts_build_daily_journal')) {
-    wp_send_json_error(['message' => 'Helper not available']);
-  }
-
-  $payload = mt_accounts_build_daily_journal($account_id, $page, $per);
-  wp_send_json_success($payload); // { rows: [...], per_page: N }
-}
 
 
 // === Profile (My Profile modal) ============================================

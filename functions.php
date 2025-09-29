@@ -1927,6 +1927,43 @@ function mt_account_data_ajax() {
   }
 }
 
+// === Daily Journal AJAX (render filas) ===
+add_action('wp_ajax_mt_account_daily_journal', 'mt_ajax_account_daily_journal');
+add_action('wp_ajax_nopriv_mt_account_daily_journal', 'mt_ajax_account_daily_journal');
+function mt_ajax_account_daily_journal() {
+  $nonce = $_POST['nonce'] ?? '';
+  if (!wp_verify_nonce($nonce, 'mt-acc-nonce')) {
+    wp_send_json_error(['message' => 'Invalid nonce'], 403);
+  }
+
+  $account_id = sanitize_text_field((string)($_POST['account_id'] ?? ''));
+  if ($account_id === '') {
+    wp_send_json_error(['message' => 'Missing account_id'], 400);
+  }
+
+  $ui_per = isset($_POST['per_page']) ? (int)$_POST['per_page'] : 7; // # de filas por página en UI
+  $ui_per = $ui_per > 0 ? $ui_per : 7;
+
+  if (!function_exists('mt_accounts_build_daily_journal')) {
+    wp_send_json_error(['message' => 'Helper not available'], 500);
+  }
+
+  // Trae MÁS filas de las que muestra por página para tener historial (p.ej. 60)
+  $payload = mt_accounts_build_daily_journal($account_id, 1, 60);
+  $rows    = is_array($payload['rows'] ?? null) ? $payload['rows'] : [];
+
+  // Render SOLO filas (mismo markup que el template)
+  $rowsHtml = function_exists('mt_daily_journal_rows_html')
+    ? mt_daily_journal_rows_html($rows, $ui_per, $account_id)
+    : '';
+
+  wp_send_json_success([
+    'rowsHtml' => $rowsHtml,
+    'per_page' => $ui_per,
+  ]);
+}
+
+
 // ===== MT Daily Feedback (tabla + AJAX) =====
 add_action('after_setup_theme', function () {
     global $wpdb;

@@ -249,14 +249,12 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
 
     function sidebarInit(){
 
-        sidebarUpdateToggle(expanded);
         updateDesktopContentVisibility(expanded);
 
 
         document.addEventListener('MT_SIDEBAR_TOGGLE', function(e) {
             expanded = !expanded;
 
-            sidebarUpdateToggle(expanded);
             updateDesktopContentVisibility(expanded);
         });
     }

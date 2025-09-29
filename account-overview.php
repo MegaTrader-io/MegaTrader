@@ -161,6 +161,15 @@ if (is_user_logged_in()) {
 
       // case-insensitive: soporta "Breached" y "BREACHED"
       $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
+      $__breach_reset_url = '/my-account/reset'; // fallback
+      $__reset_product_id = (string) (
+        $resolved['rules']['resetProductId']
+        ?? ($mt_account_ui['current']['resetProductId'] ?? '')
+      );
+
+      if ($__reset_product_id !== '' && function_exists('wc_get_checkout_url')) {
+        $__breach_reset_url = wc_get_checkout_url() . '?add-to-cart=' . urlencode($__reset_product_id);
+      }
 
 
     } else {
@@ -408,7 +417,7 @@ get_header();
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
         </span>
 
-        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4" href="/my-account/reset">
+        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4" href="<?php echo esc_url($__breach_reset_url); ?>">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?>
         </a>
 
