@@ -118,6 +118,9 @@ class MT_Accounts
         'platform' => $platformRaw,
         'logo' => $logo,
         'createdAt' => (string) ($acc['createdAt'] ?? ''),
+        'mainProductId' => (string) ($acc['rules']['mainProductId'] ?? ''),
+        'resetProductId' => (string) ($acc['rules']['resetProductId'] ?? ''),
+        'activationProductId' => (string) ($acc['rules']['activationProductId'] ?? ''),
       ];
     };
 
@@ -1033,24 +1036,21 @@ if (!function_exists('mt_find_product_by_category_slugs')) {
 if (!function_exists('mt_checkout_add_to_cart_url')) {
   function mt_checkout_add_to_cart_url($product_id)
   {
-    if (!$product_id)
-      return '';
-    if (!function_exists('wc_get_checkout_url'))
+    if (!$product_id || !function_exists('wc_get_checkout_url'))
       return '';
     return wc_get_checkout_url() . '?add-to-cart=' . intval($product_id);
   }
 }
 
-/**
- * Get Reset link to checkout based on 'reset-fee' product category.
- *
- * @return string
- */
 if (!function_exists('mt_reset_checkout_url')) {
-  function mt_reset_checkout_url()
+  function mt_reset_checkout_url($product_id = null)
   {
-    $product_id = mt_find_product_by_category_slugs(['reset-fee']);
-    return $product_id ? mt_checkout_add_to_cart_url($product_id) : '';
+    if (is_numeric($product_id) && (int) $product_id > 0) {
+      return mt_checkout_add_to_cart_url((int) $product_id);
+    }
+    // Fallback legacy por categoría
+    $fallback_id = mt_find_product_by_category_slugs(['reset-fee']);
+    return $fallback_id ? mt_checkout_add_to_cart_url($fallback_id) : '';
   }
 }
 
@@ -1468,14 +1468,16 @@ add_action('wp_ajax_mt_save_billing_profile', function () {
 
 // inc/mt-accounts-helpers.php
 if (!function_exists('mt_money_fmt')) {
-  function mt_money_fmt($n) {
+  function mt_money_fmt($n)
+  {
     $s = ($n < 0) ? '-' : '';
-    return $s . '$' . number_format(abs((float)$n), 2);
+    return $s . '$' . number_format(abs((float) $n), 2);
   }
 }
 
 if (!function_exists('mt_parse_open_time')) {
-  function mt_parse_open_time($openTime) {
+  function mt_parse_open_time($openTime)
+  {
     try {
       $dt = !empty($openTime)
         ? new DateTime($openTime, new DateTimeZone('UTC'))
@@ -1484,7 +1486,7 @@ if (!function_exists('mt_parse_open_time')) {
       $dt = new DateTime('now', new DateTimeZone('UTC'));
     }
     return [
-      'iso'   => $dt->format('Y-m-d'),
+      'iso' => $dt->format('Y-m-d'),
       'label' => $dt->format('m/d/Y'),
     ];
   }

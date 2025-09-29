@@ -1,11 +1,14 @@
 <?php
-// File: public_html/wp-content/themes/megatrader-addons/template-parts/account/account-selection.php
 defined('ABSPATH') || exit;
 
 $prepared = isset($args['prepared']) && is_array($args['prepared']) ? $args['prepared'] : null;
 $current = $prepared['current'] ?? null;
 $accounts = $prepared['accounts'] ?? [];
-$reset_url = function_exists('mt_reset_checkout_url') ? mt_reset_checkout_url() : '';
+$resetId = (string) ($current['resetProductId'] ?? '');
+$hasReset = $resetId !== '';
+$checkout = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
+$reset_url = $hasReset ? ($checkout . '?add-to-cart=' . urlencode($resetId)) : '';
+
 
 
 
@@ -25,13 +28,16 @@ $sizeSlug = (string) ($current['size'] ?? '');
 $productName = (string) ($current['name'] ?? 'Account');
 $status_key = strtolower(trim($currentStat));
 $status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
-$badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
+$badgeBase = class_exists('MT_Accounts') ? MT_Accounts::badge_class($currentStat) : 'badge-mega-default';
+$badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
+
+
 
 
 ?>
 
 <div
-  class="account-selection-wrapper d-flex gap-2 d-flex align-items-center gap-3 p-3 rounded-2xl bg-1e1e1e justify-content-between">
+  class="account-selection-wrapper d-flex gap-2 align-items-center gap-3 p-3 rounded-2xl bg-1e1e1e justify-content-between">
   <button type="button" class="mega-btn-md mega-btn-secondary-md flex-shrink-0 flex-grow-1" data-bs-toggle="modal"
     data-bs-target="#changeSubcriptionModal">
     <div class="d-flex align-items-center gap-2 justify-content-between w-100">
@@ -58,10 +64,15 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
   <?php $attrs = $reset_url ? '' : 'onclick="alert(\'Reset product not found.\'); return false;" aria-disabled="true"'; ?>
 
   <a class="custom-reset-btn mega-btn-md mega-btn-primary-md d-none d-sm-block"
-    href="<?php echo esc_url($reset_url ?: '#'); ?>"> Reset Challenge</a>
-
+    href="<?php echo esc_url($hasReset ? $reset_url : '#'); ?>" <?php echo $hasReset ? '' : 'hidden aria-disabled="true"'; ?>>
+    Reset Challenge
+  </a>
   <a class="custom-reset-btn mega-btn-md mega-btn-primary-md d-sm-none"
-    href="<?php echo esc_url($reset_url ?: '#'); ?>" aria-label="Reset Challenge">...</a>
+    href="<?php echo esc_url($hasReset ? $reset_url : '#'); ?>" aria-label="Reset Challenge" <?php echo $hasReset ? '' : 'hidden aria-disabled="true"'; ?>>
+    ...
+  </a>
+
+
 
 </div>
 
@@ -75,8 +86,7 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
         <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
-            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
-              style="width: 24px; height: 24px;" />
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width: 24px; height: 24px;" />
           </span>
         </button>
       </div>
@@ -101,7 +111,9 @@ $badgeClass = trim($badgeClass . ' badge-mega-' . ($status_key ?: 'default'));
               <div class="<?php echo esc_attr($card_classes); ?>" role="button"
                 data-account-id="<?php echo esc_attr($aid); ?>" data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
                 data-size="<?php echo esc_attr($a['size'] ?? ''); ?>"
+                data-reset-id="<?php echo esc_attr($a['resetProductId'] ?? ''); ?>"
                 data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>">
+
                 <div class="checkmark-icon position-absolute"
                   style="top: 10px; right: 10px; <?php echo $isCur ? '' : 'display:none;'; ?>">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -171,7 +183,7 @@ $payload = [
     'modal' => '#changeSubcriptionModal',
     'card' => '.subscription-card',
     'check' => '.checkmark-icon',
-    'performance' => '.mt-account-performance'
+    'performance' => '.mt-account-performance',
   ],
   // 👇 datos para la llamada AJAX
   'ajax' => [
@@ -179,6 +191,7 @@ $payload = [
     'nonce' => wp_create_nonce('mt-acc-nonce'),
     'action' => 'mt_accounts_performance',
   ],
+  'checkoutBase' => function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout',
   'debug' => false,
 ];
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
@@ -211,6 +224,26 @@ wp_add_inline_script($handle, <<<JS
     selectedId = card.getAttribute('data-account-id');
     setBtnEnabled(true);
   }
+    function updateResetButtons(){
+    var active = grid.querySelector(CFG.selectors.card+'.'+CFG.selectionClass);
+    var resetId = active ? (active.getAttribute('data-reset-id') || '') : '';
+    var base = CFG.checkoutBase || (window.MT_DATA && window.MT_DATA.checkoutBase) || '/checkout';
+    var btns = document.querySelectorAll('.custom-reset-btn');
+
+    btns.forEach(function(a){
+      if (!a) return;
+      if (resetId) {
+        a.href = base + '?add-to-cart=' + encodeURIComponent(resetId);
+        a.classList.remove('d-none');
+        a.removeAttribute('aria-disabled');
+      } else {
+        a.href = '#';
+        a.classList.add('d-none');
+        a.setAttribute('aria-disabled', 'true');
+      }
+    });
+  }
+
 
   grid.addEventListener('click', function(e){
     var card = e.target.closest(CFG.selectors.card);
@@ -224,6 +257,7 @@ wp_add_inline_script($handle, <<<JS
   } else {
     setBtnEnabled(false);
   }
+    updateResetButtons();
 
   btn.addEventListener('click', function(){
     if (!selectedId) return;
@@ -262,6 +296,7 @@ wp_add_inline_script($handle, <<<JS
             badgeEl.textContent = status ? (status.replace(/-/g,' ').replace(/\\b\\w/g, function(m){ return m.toUpperCase(); })) : 'Active';
           }
         }
+          updateResetButtons();
       })
       .catch(function(err){
         console.error('[MT] AJAX error:', err);
