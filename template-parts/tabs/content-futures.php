@@ -359,7 +359,6 @@
   const observer = new IntersectionObserver(
     (entries, obs) => {
       entries.forEach(entry => {
-        console.log(entry)
         if (entry.isIntersecting && entry.boundingClientRect.top > 0) {
           stickyFooter.classList.add('sticky-bottom');
           obs.unobserve(entry.target); // stop observing after first time
@@ -368,7 +367,6 @@
     },
     { threshold: 0.9 } // adjust sensitivity
   );
-    console.log("OBSERVING")
   observer.observe(stickyFooter);
 </script>
 

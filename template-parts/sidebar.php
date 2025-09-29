@@ -48,7 +48,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
 
             </div>
 
-            <div class="mt-card mt-card-dark">
+            <div class="mt-card mt-card-dark h-auto">
                 <?php get_template_part('template-parts/my-profile'); ?>
             </div>
             <!--
@@ -130,7 +130,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                 </div>
             </div>
 
-            <div class="mt-card mt-card_bg-layer mt-card_radius-small gap-3">
+            <div class="mt-card mt-card_bg-layer mt-card_radius-small gap-3 h-auto">
                 <div class="text-white text-size-20 fw-medium text-uppercase">
                     <?php echo esc_html(Label::SIDEBAR_META['plan_title']); ?>
                 </div>
