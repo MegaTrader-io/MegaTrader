@@ -182,10 +182,10 @@
     .mt-tabs__panel.is-last {
         border-top-right-radius: 0;
     }
+}
 
-    .mt-tabs__item__cta {
-        display: none;
-    }
+.mt-tabs__item__cta {
+    display: none;
 }
 
 .mt-tabs-no-border .mt-tabs__list a, .mt-tabs-no-border .mt-tabs__panel {
