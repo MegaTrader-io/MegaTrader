@@ -18,7 +18,7 @@ get_header();
         </div>
         <div class="mt-page__main">
             <div class="mb-3">
-                <?php account_navigation_render(); ?>
+                <?php account_setting_navigation_render() ?>
             </div>
 
             <div class="woocommerce-MyAccount-content">

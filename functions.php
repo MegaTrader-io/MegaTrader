@@ -2080,7 +2080,7 @@ add_action('woocommerce_checkout_order_processed', function($order_id, $posted){
 
 
 if (!function_exists('profile_url')) {
-    function profile_url()
+    function profile_url($user_email)
     {
         $myaccount = wc_get_page_permalink('myaccount');
         $overview = function_exists('wc_get_account_endpoint_url')
@@ -2093,7 +2093,7 @@ if (!function_exists('profile_url')) {
                 require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
             }
 
-            $raw_email = (string)($user->user_email ?? '');
+            $raw_email = (string)($user_email ?? '');
             $san = function_exists('mt_sanitize_email')
                     ? mt_sanitize_email($raw_email)
                     : [

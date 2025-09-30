@@ -199,7 +199,11 @@ function mt_process_login(): void
         return;
     }
 
-    wp_safe_redirect(profile_url());
+    wp_safe_redirect(
+        profile_url(
+            user_email: $user->user_email
+        )
+    );
     exit;
 }
 

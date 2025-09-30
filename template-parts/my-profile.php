@@ -6,6 +6,7 @@ $avatar_size = $args['avatar_size'] ?? 64;
 $go_to_dashboard = $args['go_to_dashboard'] ?? false;;
 $hide_user_information = $args['hide_user_information'] ?? false;
 
+/** @var null|WP_User $current_user */
 $current_user = wp_get_current_user();
 // Retrieve first and last name from user meta
 $first_name = get_user_meta($current_user->ID, 'first_name', true);
@@ -63,11 +64,12 @@ $logout_url = wp_logout_url();
 
 $collapsed = $args['collapsed'] ?? false;
 $collapsed_class = $collapsed ? 'collapsed' : '';
+$account_overview_url = profile_url(user_email: $user_email);
 
 ?>
 <div class="mt-my-profile <?= $collapsed_class ?>">
     <?php if ( $go_to_dashboard) : ?>
-        <a href="<?= profile_url() ?>" class="mt-my-profile__avatar mt-my-profile__avatar_link">
+        <a href="<?= $account_overview_url ?>" class="mt-my-profile__avatar mt-my-profile__avatar_link">
             <?php get_template_part('template-parts/avatar', null, [
                     'avatar_url' => $avatar_url,
                     'avatar_size' => $avatar_size,

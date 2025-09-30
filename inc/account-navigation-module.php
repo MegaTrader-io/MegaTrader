@@ -38,8 +38,16 @@ function account_navigation_get_args() {
         return [];
     }
 
+    return items_navigation_get_args(
+        wc_get_account_menu_items()
+    );
+}
+
+function items_navigation_get_args($menu_items = [], $aria_label = '', $select_id = '') {
+    $aria_label = $aria_label ?: __( 'Account pages', 'woocommerce' );
+    $select_id = $select_id ?: 'mega-navigation-select';
+
     $items = [];
-    $menu_items = wc_get_account_menu_items();
     $req_path  = rtrim( parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH ), '/' );
 
     foreach ( $menu_items as $endpoint => $label ) {
@@ -67,8 +75,8 @@ function account_navigation_get_args() {
 
     return [
         'items'      => $items,
-        'aria_label' => __( 'Account pages', 'woocommerce' ),
-        'select_id'  => 'mega-navigation-select',
+        'aria_label' => $aria_label,
+        'select_id'  => $select_id,
     ];
 }
  
@@ -78,4 +86,16 @@ function account_navigation_get_args() {
 function account_navigation_render() {
     $args = account_navigation_get_args();
     get_template_part( 'template-parts/account/account-navigation', null, $args );
+}
+
+function account_setting_navigation_render(): void
+{
+    $endpoints = [
+        'profile' => __('Personal Information', 'woocommerce'),
+        'verification' => __('Verification', 'woocommerce'),
+        'password' => __('Password', 'woocommerce'),
+        'two-factor-authentication' => __('2FA (Two-factor-authentication)', 'woocommerce'),
+    ];
+
+    get_template_part('template-parts/account/account-navigation', null, items_navigation_get_args($endpoints));
 }

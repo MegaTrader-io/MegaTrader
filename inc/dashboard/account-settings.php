@@ -2,16 +2,16 @@
 
 if (!defined('ABSPATH')) exit;
 //
-add_filter('woocommerce_account_menu_items', function ($items) {
-    $new_items = [];
-
-    $new_items['profile'] = __('Personal Information', 'woocommerce');
-    $new_items['verification'] = __('Verification', 'woocommerce');
-    $new_items['password'] = __('Password', 'woocommerce');
-    $new_items['two-factor-authentication'] = __('2FA (Two-factor-authentication)', 'woocommerce');
-
-    return $new_items;
-}, 21);
+//add_filter('woocommerce_account_menu_items', function ($items) {
+//    $new_items = [];
+//
+//    $new_items['profile'] = __('Personal Information', 'woocommerce');
+//    $new_items['verification'] = __('Verification', 'woocommerce');
+//    $new_items['password'] = __('Password', 'woocommerce');
+//    $new_items['two-factor-authentication'] = __('2FA (Two-factor-authentication)', 'woocommerce');
+//
+//    return $new_items;
+//}, 21);
 
 function mt_process_billing_form()
 {
