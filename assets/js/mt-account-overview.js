@@ -611,8 +611,7 @@ document.addEventListener("mt:accountSelected", (e) => {
 })();
 // ===== Performance Chart (AJAX refresh) =====
 (function () {
-  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
-    return;
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function") return;
 
   // Ejecuta <script> inline dentro del contenedor, envueltos en IIFE para evitar colisiones globales
   function runInlineScripts(container) {
@@ -623,65 +622,101 @@ document.addEventListener("mt:accountSelected", (e) => {
       document.body.appendChild(s);
       document.body.removeChild(s);
     });
+
+    // Por si el inline no lo hace, degradado suave:
+    var sel = container.querySelector("#lastDaysSelect");
+    if (sel && sel.options.length === 1) sel.disabled = true;
   }
 
   // Asegura ApexCharts antes de ejecutar los inline
   function ensureApexThen(container, cb) {
     if (window.ApexCharts) return cb();
     var url =
-      container
-        .querySelector('script[src*="apexcharts"]')
-        ?.getAttribute("src") || "https://cdn.jsdelivr.net/npm/apexcharts";
+      container.querySelector('script[src*="apexcharts"]')?.getAttribute("src") ||
+      "https://cdn.jsdelivr.net/npm/apexcharts";
     var tag = document.createElement("script");
     tag.src = url;
     tag.onload = cb;
-    tag.onerror = cb; // en caso de estar ya cargado por otro lado
+    tag.onerror = cb; // por si ya estaba cargado
     document.head.appendChild(tag);
   }
+
+  // --- NUEVO: control de concurrencia ---
+  let ctrl = null;       // AbortController
+  let reqToken = 0;      // token para race-guard
 
   window.mtRefresh.register("performanceChart", function (accountId) {
     var wrap = document.querySelector(".mt-account-performance-chart-content");
     if (!wrap) return;
 
-    var url =
-      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
     var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+    // Cancela request previo si existía
+    try { ctrl?.abort(); } catch (e) {}
+    ctrl = new AbortController();
+
+    // Token de carrera: esta invocación debe ser la ganadora
+    const myToken = ++reqToken;
+
     var body = new URLSearchParams();
     body.set("action", "mt_account_performance_chart");
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
 
-    console.log("[MT][Chart][AJAX] request", {
-      url,
-      nonce,
-      accountId: String(accountId || ""),
-    });
+    console.log("[MT][Chart][AJAX] request", { url, nonce, accountId: String(accountId || "") });
 
     return fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body,
+      signal: ctrl.signal
     })
-      .then(function (r) {
-        return r.json();
-      })
+      .then(function (r) { return r.json(); })
       .then(function (j) {
+        // Si llegó otra respuesta más nueva, descartamos esta
+        if (myToken !== reqToken) return;
+
         console.log("[MT][Chart][AJAX] response", {
           ok: !!(j && j.success),
-          htmlBytes: ((j && j.data && j.data.html) || "").length,
+          htmlBytes: ((j && j.data && j.data.html) || "").length
         });
         if (!j || !j.success || !j.data || j.data.html == null) return;
-        wrap.innerHTML = j.data.html; // reemplaza TODO el componente
+
+        // Limpia restos del chart anterior (si existían)
+        try {
+          if (window.__mtChartInstance && typeof window.__mtChartInstance.destroy === "function") {
+            window.__mtChartInstance.destroy();
+            window.__mtChartInstance = null;
+          }
+        } catch (e) { console.warn("[MT][Chart] destroy prev error", e); }
+
+        // Limpieza de tooltips/crosshairs tanto globales como dentro del contenedor
+        document.querySelectorAll(
+          ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs"
+        ).forEach(n => n.remove());
+        wrap.querySelectorAll(
+          ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas"
+        ).forEach(n => n.remove());
+
+        // Pinta el nuevo HTML del componente
+        wrap.innerHTML = j.data.html;
+
+        // Espera ApexCharts y ejecuta el script inline del chart
         ensureApexThen(wrap, function () {
-          // espera ApexCharts si hace falta
-          runInlineScripts(wrap); // ejecuta el script inline del chart
+          runInlineScripts(wrap);
         });
       })
       .catch(function (err) {
+        if (err?.name === "AbortError") {
+          console.warn("[MT] chart AJAX aborted");
+          return;
+        }
         console.error("[MT] chart AJAX error:", err);
       });
   });
 })();
+
 
 // ===== Account Data (AJAX refresh) =====
 (function () {
