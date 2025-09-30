@@ -293,7 +293,7 @@ wp_add_inline_script($handle, <<<JS
           if (nameEl) nameEl.textContent = nameVal;
           if (badgeEl) {
             var status = (active.getAttribute('data-status') || '').toLowerCase();
-            badgeEl.textContent = status ? (status.replace(/-/g,' ').replace(/\\b\\w/g, function(m){ return m.toUpperCase(); })) : 'Active';
+            badgeEl.textContent = status ? (status.replace(/-/g,' ').replace(/\\b\\w/g, function(m){ return m.toUpperCase(); })) : 'NoStatusDefine';
           }
         }
           updateResetButtons();
