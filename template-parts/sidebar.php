@@ -34,7 +34,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
 ?>
 <aside class="mt-sidebar">
     <div class="mt-sidebar__wrapper mt-card mt-card_border">
-        <div class="mt-sidebar__container d-flex gap-32 flex-column overflow-hidden">
+        <div class="mt-sidebar__container d-flex flex-column overflow-hidden">
             <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
                 <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
                     <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="60" height="60" loading="eager">
@@ -147,7 +147,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
         </div>
 
         <!-- COLLAPSED -->
-        <div class="mt-sidebar__container__collapsed d-flex gap-32 flex-column overflow-hidden align-items-center">
+        <div class="mt-sidebar__container__collapsed d-flex flex-column overflow-hidden align-items-center">
             <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
                 <i class="mt-icon mt-icon-white mt-icon_caret-right-solid"></i>
             </a>

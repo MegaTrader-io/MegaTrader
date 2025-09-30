@@ -651,6 +651,12 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
 
+    console.log("[MT][Chart][AJAX] request", {
+      url,
+      nonce,
+      accountId: String(accountId || ""),
+    });
+
     return fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -660,6 +666,10 @@ document.addEventListener("mt:accountSelected", (e) => {
         return r.json();
       })
       .then(function (j) {
+        console.log("[MT][Chart][AJAX] response", {
+          ok: !!(j && j.success),
+          htmlBytes: ((j && j.data && j.data.html) || "").length,
+        });
         if (!j || !j.success || !j.data || j.data.html == null) return;
         wrap.innerHTML = j.data.html; // reemplaza TODO el componente
         ensureApexThen(wrap, function () {

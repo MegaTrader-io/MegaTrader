@@ -856,6 +856,11 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     transition: all .2s ease-out;
 }
 
+.mt-sidebar__container,
+.mt-sidebar__container__collapsed {
+    gap: 30px;
+}
+
 .mt-sidebar .mt-sidebar__container__collapsed { 
     position: absolute;
     inset: var(--sidebar-padding);

@@ -912,63 +912,167 @@ if (!function_exists('mt_sanitize_email')) {
 
 // === Performance Chart Payload ===
 
+
 if (!function_exists('mt_accounts_build_performance_chart')) {
   function mt_accounts_build_performance_chart(array $account): array
   {
-    $m = $account['metrics'] ?? $account['metric'] ?? [];
+    $tz = new DateTimeZone('UTC');
 
-    $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
-    $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
+    $accountId = (string)($account['accountId'] ?? $account['id'] ?? '');
+    $firstRaw  = (string)($account['firstTradeDate'] ?? '');
+    $firstDt   = $firstRaw ? new DateTime($firstRaw, $tz) : null;
+    if ($firstDt) $firstDt->setTime(0,0,0);
 
-    $candidates = [
-      $m['dailyBalances'] ?? null,
-      $m['balanceDaily'] ?? null,
-      $m['balanceSeries'] ?? null,
-      $account['balances'] ?? null,
-      $account['history']['dailyBalance'] ?? null,
-    ];
-    $series = [];
-    foreach ($candidates as $cand) {
-      if (!is_array($cand) || empty($cand))
-        continue;
-      foreach ($cand as $row) {
-        $date = (string) ($row['date'] ?? $row['day'] ?? $row['d'] ?? '');
-        $balRaw = $row['currentBalance'] ?? $row['balance'] ?? $row['y'] ?? null;
-        if (!$date || !is_numeric($balRaw))
-          continue;
-        $series[] = ['date' => substr($date, 0, 10), 'value' => (float) $balRaw];
+    $todayDt = new DateTime('now', $tz);
+    $todayDt->setTime(0,0,0);
+
+    // Rango base tentativo
+    $fromDt = $firstDt ?: clone $todayDt;
+    if ($fromDt > $todayDt) $fromDt = clone $todayDt;
+
+    // --- 1) Descubrir días reales vía /metrics (puede corregir el from) ---
+    $fromYmd = $fromDt->format('Y-m-d');
+    $toYmd   = $todayDt->format('Y-m-d');
+    $uniqueDays = [];
+
+    if ($accountId && function_exists('mega_api_get_metrics')) {
+      $probe = mega_api_get_metrics($accountId, 1, 10, $fromYmd, $toYmd);
+      if (is_array($probe) && !empty($probe['data']) && is_array($probe['data'])) {
+        foreach ($probe['data'] as $row) {
+          $m = isset($row['metrics']) && is_array($row['metrics']) ? $row['metrics'] : [];
+          $tdu = isset($m['tradeDateUTC']) ? (string)$m['tradeDateUTC'] : '';
+          if ($tdu !== '') {
+            try {
+              $dt = new DateTime($tdu, $tz);
+            } catch (\Throwable $e) {
+              $dt = DateTime::createFromFormat('Y-m-d', substr($tdu,0,10), $tz);
+            }
+            if ($dt) {
+              // EOD del día anterior
+              $dt->modify('-1 day');
+              $uniqueDays[$dt->format('Y-m-d')] = true;
+            }
+          }
+        }
       }
-      if (!empty($series))
-        break;
-    }
-    if (empty($series)) {
-      $cb = is_numeric($m['currentBalance'] ?? null) ? (float) $m['currentBalance'] : null;
-      if ($cb !== null)
-        $series[] = ['date' => gmdate('Y-m-d'), 'value' => $cb];
     }
 
+    // Si encontramos días reales, usamos el mínimo para from y el conteo para periods
+    if (!empty($uniqueDays)) {
+      $all = array_keys($uniqueDays);
+      sort($all); // asc
+      $fromDt = DateTime::createFromFormat('Y-m-d', $all[0], $tz);
+      $fromDt->setTime(0,0,0);
+    }
+
+    // Conteo “found” (inclusive). Si no hubo probe, usar diff basado en firstDt/hoy
+    $daysFound = !empty($uniqueDays)
+      ? count($uniqueDays)
+      : ((int)$fromDt->diff($todayDt)->days + 1);
+
+    // --- 2) Periodos exactos según tu regla ---
+    $periods = [];
+    if ($daysFound < 7) {
+      $periods[] = ['value' => $daysFound, 'text' => "SINCE START ({$daysFound} DAYS)"];
+    } elseif ($daysFound < 14) {
+      $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
+      $periods[] = ['value' => $daysFound, 'text' => "SINCE START ({$daysFound} DAYS)"];
+    } elseif ($daysFound < 30) {
+      $periods[] = ['value' => 7,  'text' => 'LAST 7 DAYS'];
+      $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
+      $periods[] = ['value' => $daysFound, 'text' => "SINCE START ({$daysFound} DAYS)"];
+    } else { // >= 30 -> 4 valores
+      $periods[] = ['value' => 7,  'text' => 'LAST 7 DAYS'];
+      $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
+      $periods[] = ['value' => 30, 'text' => 'LAST 30 DAYS'];
+      $periods[] = ['value' => $daysFound, 'text' => "SINCE START ({$daysFound} DAYS)"];
+    }
+
+    // --- Límites ---
+    $m = $account['metrics'] ?? $account['metric'] ?? [];
+    $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float)$m['equityPassLevel'] : null;
+    $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float)$m['maxLossLimitEquityLevel'] : null;
+
+    // --- 3) Serie: una petición por día (fromDate=toDate=YYYY-MM-DD) ---
+    $series = [];
+    if ($accountId) {
+      // Lista de fechas a consultar: si tenemos uniqueDays úsalo, si no genera rango
+      $dates = [];
+      if (!empty($uniqueDays)) {
+        $dates = array_keys($uniqueDays);
+        sort($dates); // ascendente
+      } else {
+        $cur = clone $fromDt;
+        for ($i = 0; $i < $daysFound; $i++) {
+          $dates[] = $cur->format('Y-m-d');
+          $cur->modify('+1 day');
+        }
+      }
+
+      foreach ($dates as $ymd) {
+        $resp = null;
+
+        // Usa directamente mega_api_get_metrics que mapea fromDate/toDate
+        if (function_exists('mega_api_get_metrics')) {
+          try { $resp = mega_api_get_metrics($accountId, 1, 10, $ymd, $ymd); } catch (\Throwable $e) {}
+        }
+
+        // Fallback a tu helper si existe
+        if ((!is_array($resp) || empty($resp)) && function_exists('mt_metrics_fetch_by_shortcode')) {
+          try { $resp = mt_metrics_fetch_by_shortcode($accountId, ['from' => $ymd, 'to' => $ymd]); } catch (\Throwable $e) {}
+          if (!is_array($resp) || empty($resp)) {
+            try { $resp = mt_metrics_fetch_by_shortcode($accountId, $ymd, $ymd); } catch (\Throwable $e) {}
+          }
+        }
+
+        // Extraer currentBalance del día
+        $balance = null; $bestTs = 0;
+        if (is_array($resp) && !empty($resp['data']) && is_array($resp['data'])) {
+          foreach ($resp['data'] as $row) {
+            $met = isset($row['metrics']) && is_array($row['metrics']) ? $row['metrics'] : [];
+            $cb  = $met['currentBalance'] ?? null;
+            if (!is_numeric($cb)) continue;
+            $tsStr = $row['updatedAt'] ?? $row['createdAt'] ?? ($met['tradeDateTimeUTC'] ?? $met['tradeDateUTC'] ?? '');
+            $ts = $tsStr ? strtotime($tsStr) : 0;
+            if ($ts >= $bestTs) { $bestTs = $ts; $balance = (float)$cb; }
+          }
+        }
+
+        if (is_numeric($balance)) {
+          $series[] = ['date' => $ymd, 'value' => (float)$balance];
+        }
+      }
+    }
+
+    if (empty($series)) {
+      $cb = is_numeric($m['currentBalance'] ?? null) ? (float)$m['currentBalance'] : null;
+      if ($cb !== null) $series[] = ['date' => $todayDt->format('Y-m-d'), 'value' => $cb];
+    }
+
+    // --- Título (sin cambios) ---
     $program = $account['program'] ?? null;
-    $plabel = (string) ($program['label'] ?? $program['description'] ?? 'Account');
-    $sb = $program['startingBalance'] ?? null;
-    $size = '';
-    $name = $plabel ?: 'Account';
+    $plabel  = (string)($program['label'] ?? $program['description'] ?? 'Account');
+    $sb      = $program['startingBalance'] ?? null;
+    $size    = ''; $name = $plabel ?: 'Account';
     if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'parse_program_label')) {
       [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
     } elseif (is_numeric($sb) && $sb > 0) {
-      $k = (int) round($sb / 1000);
-      $size = $k > 0 ? ($k . 'k') : (string) $sb;
+      $k = (int)round($sb / 1000);
+      $size = $k > 0 ? ($k.'k') : (string)$sb;
     }
-    $title = trim(($size ? $size . ' ' : '') . $name);
+    $title = trim(($size ? $size.' ' : '').$name);
 
     return [
-      'title' => $title,
+      'title'        => $title,
       'plan_revenue' => $series,
-      'series' => $series,
-      'upper_bound' => $upper_bound,
-      'lower_bound' => $lower_bound,
+      'series'       => $series,
+      'upper_bound'  => $upper_bound,
+      'lower_bound'  => $lower_bound,
+      'periods'      => $periods,
     ];
   }
 }
+
 
 // === Account Data (payload) ===
 if (!function_exists('mt_accounts_build_account_data')) {
