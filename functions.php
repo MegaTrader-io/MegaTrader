@@ -176,6 +176,7 @@ add_action('wp', function () {
 
 require_once get_template_directory() . '/inc/mt-navbar.php';
 require_once get_template_directory() . '/inc/landing-page-hooks.php';
+require_once get_template_directory() . '/inc/dashboard/account-settings.php';
 
 add_action('wp_enqueue_scripts', function () {
     if (
