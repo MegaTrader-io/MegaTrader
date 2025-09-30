@@ -209,6 +209,11 @@ body.admin-bar {
     .mt-navbar.mt-navbar--my-account .mt-navbar__auth-link {
         display: block !important;
     }
+    .mt-navbar.mt-navbar--my-account .mt-navbar__container {
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 16px;
+    }
 }
 @media (min-width: 1200px) {
     .mt-navbar.mt-navbar--my-account .mt-navbar__links {

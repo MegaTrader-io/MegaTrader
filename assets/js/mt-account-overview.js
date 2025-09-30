@@ -50,9 +50,8 @@
   /* ========= Progress genérico ========= */
   function initProgressBars(root = document) {
     $$(".mt-progress-bar", root).forEach((el) => {
-      const v = clamp(el.getAttribute('aria-valuenow'), 0, 100);
+      const v = clamp(el.dataset.progress, 0, 100);
       el.style.setProperty("--mt-progress-value", v + "%");
-      console.log(v, el)
     });
   }
 
@@ -465,16 +464,27 @@ document.addEventListener("mt:accountSelected", (e) => {
         if (!j?.success || !j?.data) return;
         const { rowsHtml, per_page } = j.data;
 
+        // 1) Reinyectar filas (manteniendo el header)
         if (scroll && rowsHtml != null) {
-          // limpiar filas actuales (mantener header .dj-headrow)
-          qsa(".dj-row", scroll).forEach((n) => n.remove());
+          Array.from(scroll.querySelectorAll(".dj-row")).forEach((n) =>
+            n.remove()
+          );
           const tmp = document.createElement("div");
           tmp.innerHTML = rowsHtml;
-          qsa(".dj-row", tmp).forEach((n) => scroll.appendChild(n));
+          Array.from(tmp.querySelectorAll(".dj-row")).forEach((n) =>
+            scroll.appendChild(n)
+          );
         }
+
+        // 2) Actualizar atributos del ROOT (id y per-page) para mantenerlos en sync
+        root.setAttribute("data-account-id", String(accountId || ""));
         if (per_page) root.setAttribute("data-per-page", String(per_page));
 
+        // 3) Recalcular estado (y resetear a página 1 en cambio de cuenta)
         const st = root.__djState || stateFrom(root);
+        if (per_page) st.perPage = parseInt(per_page, 10) || st.perPage;
+        st.currentPage = 1;
+
         recalcAndRender(root, st);
         root.__djState = st;
       });
@@ -848,7 +858,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     const row = btn.closest(".dj-row");
     const tradeDate = row?.dataset.tradeDate || "";
     const root = document.querySelector("#mt-daily-journal");
-    const accountId = parseInt(root?.dataset.accountId || "0", 10);
+    const accountId = root?.dataset.accountId || "";
     if (!accountId || !tradeDate) return;
 
     let preset;

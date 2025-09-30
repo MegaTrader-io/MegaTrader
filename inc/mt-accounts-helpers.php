@@ -1343,6 +1343,7 @@ if (!function_exists('mt_trades_day_stats')) {
       return substr((string) $t['closeTime'], 0, 10) === $day_iso;
     }));
     if (empty($dayTrades)) {
+      // SIN TRADES ESE DÍA → todo en '-'
       return ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
     }
 
@@ -1401,15 +1402,20 @@ if (!function_exists('mt_trades_day_stats')) {
 
     $fmt = function ($s) {
       $s = (int) round($s);
-      return sprintf('%02d:%02d:%02d', floor($s / 3600), floor(($s % 3600) / 60), $s % 60); };
+      return sprintf('%02d:%02d:%02d', floor($s / 3600), floor(($s % 3600) / 60), $s % 60);
+    };
+
+    // CON TRADES ESE DÍA:
+    // - Si faltan pérdidas/ganancias → 0 y 00:00:00 (no '-')
     return [
-      'maxConsecWins' => $maxW > 0 ? $maxW : '-',
-      'maxConsecLosses' => $maxL > 0 ? $maxL : '-',
-      'avgWinDuration' => $cntW > 0 ? $fmt($sumW / $cntW) : '-',
-      'avgLossDuration' => $cntL > 0 ? $fmt($sumL / $cntL) : '-',
+      'maxConsecWins' => ($maxW > 0) ? $maxW : 0,
+      'maxConsecLosses' => ($maxL > 0) ? $maxL : 0,
+      'avgWinDuration' => ($cntW > 0) ? $fmt($sumW / $cntW) : '00:00:00',
+      'avgLossDuration' => ($cntL > 0) ? $fmt($sumL / $cntL) : '00:00:00',
     ];
   }
 }
+
 
 /* === DAILY JOURNAL: construir payload (SIN fallbacks → '-') === */
 if (!function_exists('mt_accounts_build_daily_journal')) {
@@ -1432,13 +1438,10 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $day_iso = $openTime ? substr($openTime, 0, 10) : '';
 
       $net = array_key_exists('dailyTotalRealizedPnL', $m) ? (float) $m['dailyTotalRealizedPnL'] : '-';
-
       $hi = (isset($m['dailyHighestBalance'], $m['startingBalance']) && is_numeric($m['dailyHighestBalance']) && is_numeric($m['startingBalance']))
         ? ((float) $m['dailyHighestBalance'] - (float) $m['startingBalance']) : '-';
-
       $lo = (isset($m['dailyLowestBalance'], $m['startingBalance']) && is_numeric($m['dailyLowestBalance']) && is_numeric($m['startingBalance']))
         ? ((float) $m['dailyLowestBalance'] - (float) $m['startingBalance']) : '-';
-
       $ct = array_key_exists('totalClosedVolume', $m) ? (int) $m['totalClosedVolume'] : '-';
       $fees = array_key_exists('dailyTotalFees', $m) ? (float) $m['dailyTotalFees'] : '-';
       $trades = array_key_exists('tradesPlaced', $m) ? (int) $m['tradesPlaced'] : '-';
@@ -1446,7 +1449,20 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $aloss = array_key_exists('averageLosingTrade', $m) ? (float) $m['averageLosingTrade'] : '-';
       $winPct = array_key_exists('winRate', $m) ? (float) $m['winRate'] : '-';
 
-      $stats = ($accountId && $day_iso !== '') ? mt_trades_day_stats((string) $accountId, $day_iso)
+      // Día de los trades para streaks/duraciones
+      $trades_day_iso = '';
+      if (!empty($m['lastTradeDate'])) {
+        $trades_day_iso = substr((string) $m['lastTradeDate'], 0, 10);
+      } elseif ($openTime) {
+        $ts = strtotime((string) $openTime);
+        if ($ts) {
+          $hhmmss = gmdate('H:i:s', $ts);
+          $trades_day_iso = ($hhmmss === '00:00:00') ? gmdate('Y-m-d', $ts - 86400) : gmdate('Y-m-d', $ts);
+        }
+      }
+
+      $stats = ($accountId && $trades_day_iso !== '')
+        ? mt_trades_day_stats((string) $accountId, $trades_day_iso)
         : ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
 
       $maxW = $stats['maxConsecWins'] ?? '-';
@@ -1454,8 +1470,10 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $dWin = $stats['avgWinDuration'] ?? '-';
       $dLos = $stats['avgLossDuration'] ?? '-';
 
-      $max = ($maxW === '-' && $maxL === '-') ? '-' : ((is_numeric($maxW) ? $maxW : '-') . '/' . (is_numeric($maxL) ? $maxL : '-'));
-      $dur = ($dWin === '-' && $dLos === '-') ? '-' : ($dWin . ' ' . $dLos);
+      // Si hubo trades ese día, mt_trades_day_stats ya devuelve 0/00:00:00 en el lado ausente
+      // Construimos las cadenas finales:
+      $max = ($maxW === '-' && $maxL === '-') ? '-' : ($maxW . '/' . $maxL);
+      $dur = ($dWin === '-' && $dLos === '-') ? '-' : ($dWin . ' / ' . $dLos);
 
       $rows[] = [
         'openTime' => $openTime ?: '',
@@ -1483,6 +1501,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
   }
 }
 
+
 /* === DAILY JOURNAL: render SOLO filas (para AJAX) === */
 if (!function_exists('mt_daily_journal_rows_html')) {
   function mt_daily_journal_rows_html(array $rows, int $per_page, $acc_id): string
@@ -1500,9 +1519,11 @@ if (!function_exists('mt_daily_journal_rows_html')) {
       return $sign . '$' . number_format($abs, 2, '.', ',');
     };
     $fmt_int = function ($v) {
-      return ($v === '-' ? '-' : number_format((int) $v)); };
+      return ($v === '-' ? '-' : number_format((int) $v));
+    };
     $fmt_pct = function ($v) {
-      return ($v === '-' ? '-' : (number_format((float) $v, 2) . '%')); };
+      return ($v === '-' ? '-' : (number_format((float) $v, 2) . '%'));
+    };
 
     ob_start();
     foreach ($rows as $i => $r) {
@@ -1552,8 +1573,6 @@ if (!function_exists('mt_daily_journal_rows_html')) {
     return trim(ob_get_clean());
   }
 }
-
-
 
 
 

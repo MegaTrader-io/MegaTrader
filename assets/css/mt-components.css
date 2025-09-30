@@ -873,6 +873,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     transition: opacity 0.2s, visibility 0s 0.2s;
 }
 .mt-sidebar.mt-sidebar_collapsed .mt-sidebar__container__collapsed {
+    overflow-y: scroll !important;
+    margin-right: -28px;
+    padding-right: 16px;
+
     visibility: visible;
     opacity: 1;
     transition: opacity 0.2s .3s;
