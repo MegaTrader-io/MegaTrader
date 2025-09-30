@@ -99,19 +99,19 @@ if (is_array($plan_revenue)) {
 
   // Tooltip HTML custom (visual como el mock)
   function customTip({ series, seriesIndex, dataPointIndex }) {
-    const d   = (window.__DATE_LABELS__?.[dataPointIndex]) || '';
-    const val = (series?.[0]?.[dataPointIndex] ?? null);
-    const ub  = UPPER_BOUND;
-    const lb  = LOWER_BOUND;
+  const d   = (window.__DATE_LABELS__?.[dataPointIndex]) || '';
+  const val = (series?.[0]?.[dataPointIndex] ?? null);
+  const ub  = UPPER_BOUND;
+  const lb  = LOWER_BOUND;
 
-    return `
-      <div class="mt-apex-tip">
-        <div class="mt-apex-tip__date"><b>Date:</b> ${d}</div>
-        <div class="mt-apex-tip__row"><span>Current Balance</span><b>${val != null ? toMoney(val) : '-'}</b></div>
-        ${Number.isFinite(ub) ? `<div class="mt-apex-tip__row"><span>Profit Target</span><b>${toMoney(ub)}</b></div>` : ''}
-        ${Number.isFinite(lb) ? `<div class="mt-apex-tip__row"><span>Max Drawdown</span><b>${toMoney(lb)}</b></div>` : ''}
-      </div>`;
-  }
+  return `
+    <div class="mt-apex-tip">
+      <div class="mt-apex-tip__date"><b>Date:</b> ${d}</div>
+      <div class="mt-apex-tip__row"><span>Current Balance:</span><b>${val != null ? toMoney(val) : '-'}</b></div>
+      ${Number.isFinite(ub) ? `<div class="mt-apex-tip__row"><span>Profit Target:</span><b>${toMoney(ub)}</b></div>` : ''}
+      ${Number.isFinite(lb) ? `<div class="mt-apex-tip__row"><span>Max Drawdown:</span><b>${toMoney(lb)}</b></div>` : ''}
+    </div>`;
+}
 
   function getChartConfig(len) {
     return {
@@ -207,29 +207,48 @@ if (is_array($plan_revenue)) {
 </script>
 
 <style>
-  /* ===== Tooltip custom ===== */
-  .mt-apex-tip{
-    background:#000; /* negro */
-    color:#fff;
-    border:1px solid var(--Colors-Gray-700, #404040); /* borde pedido */
-    border-radius:8px;
-    padding:10px 12px;
-    min-width:220px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.35);
-  }
-  .mt-apex-tip__date{
-    color:#fff; /* blanco */
-    font-size:14px;
-    line-height:20px;
-    margin-bottom:8px;
-  }
-  .mt-apex-tip__row{
-    display:flex; justify-content:space-between; gap:12px;
-    font-size:14px; line-height:20px;
-    color: var(--Text-Body, #A8A29E); /* texto cuerpo */
-  }
-  .mt-apex-tip__row b{ font-weight:600; color:#fff; }
+/* Contenedor del tooltip de Apex: sin transiciones, sin box-shadow/border propios */
+.apexcharts-tooltip{
+  position:absolute !important;
+  /* NO fijamos left/top; dejamos que el transform del follower lo mueva */
+  transition:none !important;
+  will-change: transform, opacity;
+  pointer-events:none !important;
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  z-index: 10;
+}
+/* Estado oculto controlado por el follower */
+.apexcharts-tooltip.mt-tip-hidden{
+  transform: translate3d(-9999px, -9999px, 0) !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+}
 
-  /* (opcional) si tu tema aplica transform en contenedores, ayuda al posicionamiento */
-  .account-performance-chart { position: relative; }
+/* Tooltip custom (visual) */
+.mt-apex-tip{
+  background:#000;
+  color:#fff;
+  border:1px solid var(--Colors-Gray-700, #404040);
+  border-radius:8px;
+  padding:10px 12px;
+  min-width:220px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.35);
+}
+.mt-apex-tip__date{
+  color:#fff;
+  font-size:14px;
+  line-height:20px;
+  margin-bottom:8px;
+}
+.mt-apex-tip__row{
+  display:flex; justify-content:space-between; gap:12px;
+  font-size:14px; line-height:20px;
+  color: var(--Text-Body, #A8A29E);
+}
+.mt-apex-tip__row b{ font-weight:600; color:#fff; }
+
 </style>
+
