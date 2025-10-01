@@ -309,11 +309,11 @@ if (!function_exists('mt_get_order_card_brand_last4')) {
                 <div class="thankyou-info">
                     <div class="text-center mb-15">
                         <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block"
-                            src="https://subscriptions.megatrader.io/wp-content/themes/megatrader-addons/assets/img/thank-you.png"
-                            alt="thank you" width="690" height="132">
+                            src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png" alt="thank you" width="690"
+                            height="132">
                         <img decoding="async" class="d-inline-block d-sm-none"
-                            src="https://subscriptions.megatrader.io/wp-content/themes/megatrader-addons/assets/img/thank-you2.png"
-                            alt="thank you" width="327" height="132">
+                            src="/wp-content/themes/megatrader-addons/assets/img/thank-you2.png" alt="thank you" width="327"
+                            height="132">
                     </div>
                     <h2 class="mb-3">Amazing !</h2>
                     <h3 class="box-title">Congratulations! You've got covered</h3>
@@ -712,13 +712,16 @@ if (isset($order) && $order && !$order->has_status('failed')):
 
     $pm_suffix = $last4 ? sprintf('Ending in %s', esc_html($last4)) : esc_html($pm_title);
 
+    $base = trailingslashit(home_url('/wp-content/'));
+
     $icons_map = [
-        'mastercard' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/mastercard.svg',
-        'visa' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/visa.svg',
-        'discover' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/discover.svg',
-        'amex' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/amex.svg',
+        'mastercard' => $base . 'uploads/2025/07/mastercard.svg',
+        'visa' => $base . 'uploads/2025/07/visa.svg',
+        'discover' => $base . 'uploads/2025/07/discover.svg',
+        'amex' => $base . 'uploads/2025/07/amex.svg',
     ];
     $card_icon = ($brand && isset($icons_map[$brand])) ? $icons_map[$brand] : '';
+
     ?>
     <!-- Modal -->
     <div class="modal fade" id="orderSuccessModal" tabindex="-1" aria-labelledby="orderSuccessLabel" aria-hidden="true">
@@ -732,8 +735,8 @@ if (isset($order) && $order && !$order->has_status('failed')):
                     </h5>
                     <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
                         aria-label="Close">
-                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
-                            alt="Close" style="width:24px;height:24px;" />
+                        <img src="wp-content/uploads/2025/05/cancel-circle-1.png'); ?>" alt="Close"
+                            style="width:24px;height:24px;" />
                     </button>
                 </div>
 
@@ -742,10 +745,10 @@ if (isset($order) && $order && !$order->has_status('failed')):
                     <!-- Imágenes -->
                     <div class="text-center w-100">
                         <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block"
-                            src="https://subscriptions.megatrader.io/wp-content/themes/megatrader-addons/assets/img/thank-you.png"
+                            src="<?php echo esc_url(home_url('/wp-content/themes/megatrader-addons/assets/img/thank-you.png')); ?>"
                             alt="thank you" width="690" height="132">
                         <img decoding="async" class="d-inline-block d-sm-none"
-                            src="https://subscriptions.megatrader.io/wp-content/themes/megatrader-addons/assets/img/thank-you2.png"
+                            src="<?php echo esc_url(home_url('/wp-content/themes/megatrader-addons/assets/img/thank-you2.png')); ?>"
                             alt="thank you" width="327" height="132">
                     </div>
 
@@ -760,7 +763,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
                     </div>
 
                     <!-- Chip de Order -->
-                    <div id="order-copy-chip"
+                    <div id="order-copy-chip test-pp"
                         class="px-3 py-2 bg-1e1e1e outline-dark rounded-2 d-inline-flex align-items-center gap-2 order-chip"
                         data-order="<?php echo esc_attr($order_number); ?>" role="button" tabindex="0"
                         aria-label="Copy order number">

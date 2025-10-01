@@ -349,10 +349,10 @@ if (isset($order) && $order && !$order->has_status('failed')):
     $pm_suffix = $last4 ? sprintf('Ending in %s', esc_html($last4)) : esc_html($pm_title);
 
     $icons_map = [
-        'mastercard' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/mastercard.svg',
-        'visa' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/visa.svg',
-        'discover' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/discover.svg',
-        'amex' => 'https://subscriptions.megatrader.io/wp-content/uploads/2025/07/amex.svg',
+        'mastercard' => '/wp-content/uploads/2025/07/mastercard.svg',
+        'visa' => '/wp-content/uploads/2025/07/visa.svg',
+        'discover' => '/wp-content/uploads/2025/07/discover.svg',
+        'amex' => '/wp-content/uploads/2025/07/amex.svg',
     ];
     $card_icon = ($brand && isset($icons_map[$brand])) ? $icons_map[$brand] : '';
     ?>
@@ -368,7 +368,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
                     </h5>
                     <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
                         aria-label="Close">
-                        <img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
+                        <img src="/wp-content/uploads/2025/05/cancel-circle-1.png"
                             alt="Close" style="width:24px;height:24px;" />
                     </button>
                 </div>
@@ -378,10 +378,10 @@ if (isset($order) && $order && !$order->has_status('failed')):
                     <!-- Imágenes -->
                     <div class="text-center w-100">
                         <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block"
-                            src="https://subscriptions.megatrader.io/wp-content/themes/megatrader-addons/assets/img/thank-you.png"
+                            src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png"
                             alt="thank you" width="690" height="132">
                         <img decoding="async" class="d-inline-block d-sm-none"
-                            src="https://subscriptions.megatrader.io/wp-content/themes/megatrader-addons/assets/img/thank-you2.png"
+                            src="/wp-content/themes/megatrader-addons/assets/img/thank-you2.png"
                             alt="thank you" width="327" height="132">
                     </div>
 

@@ -4,10 +4,8 @@
       if (!modalEl || modalEl.__mtBound) return;
       modalEl.__mtBound = true;
 
-      const DEST =
-        modalEl.getAttribute("data-overview-url") ||
-        (opts && opts.overviewUrl) ||
-        "/my-account/overview/";
+      const DEST = new URL('/my-account/overview/', window.location.origin).href;
+
 
       const dialogEl  = modalEl.querySelector(".modal-dialog");
       const contentEl = modalEl.querySelector(".modal-content");
@@ -107,7 +105,6 @@
           console.log("[MT modal] SHOW called");
           instance.show();
         } else {
-          // Fallback sin Bootstrap
           modalEl.classList.add("show");
           modalEl.style.display = "block";
           modalEl.removeAttribute("aria-hidden");
@@ -144,15 +141,12 @@
       let obsModal;
       try {
         obsModal = new MutationObserver(() => {
-          // Ya no logueamos aquí; y solo observamos el propio modal (sin subtree)
           if (!wasEverVisible || didRedirect) return;
-          // Si de repente deja de ser visible (raro), redirecciona
           if (!isModalTrulyVisible()) go();
         });
         obsModal.observe(modalEl, {
           attributes: true,
           attributeFilter: ["class", "style", "aria-hidden"]
-          // subtree: false
         });
       } catch (_) {}
 
@@ -160,7 +154,6 @@
       try {
         obsBody = new MutationObserver((mutations) => {
           if (!wasEverVisible || didRedirect) return;
-          // Solo reaccionamos si EL MODAL fue removido del DOM
           for (const m of mutations) {
             if (m.type === "childList" && m.removedNodes && m.removedNodes.length) {
               for (const n of m.removedNodes) {
@@ -171,15 +164,12 @@
             }
           }
         });
-        // Observa SOLO cambios directos en children de <body>, sin subtree
         obsBody.observe(d.body, { childList: true });
       } catch (_) {}
 
-      // Sin intervalos; solo eventos “reales”
       try { w.addEventListener("resize",  () => { if (!wasEverVisible || didRedirect) return; if (!isModalTrulyVisible()) go(); }, { passive: true }); } catch(_) {}
-      try { w.addEventListener("scroll",  () => { if (!wasEverVisible || didRedirect) return; if (!isModalTrulyVisible()) go(); }, { passive: true }); } catch(_) {}
 
-      // ---------- Copiar número de orden ----------
+      // ---------- Copy Order number ----------
       (function setupCopyChip() {
         const chip = d.getElementById("order-copy-chip") || modalEl.querySelector(".order-chip");
         if (!chip) return;
