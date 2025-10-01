@@ -27,7 +27,7 @@ if (preg_match('#my-account/view-subscription/(\d+)#', $current_url_path, $match
 do_action('woocommerce_before_account_navigation');
 
 $user_id = get_current_user_id();
-$custom_url = wc_get_account_endpoint_url('orders');
+$custom_url = home_url('/subscriptions/');
 
 if ($user_id) {
 	$all_orders = wc_get_orders([
@@ -92,7 +92,7 @@ if ($user_id) {
 }
 
 $current_endpoint = WC()->query->get_current_endpoint();
-$is_manage_subscription_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'orders'], true);
+$is_manage_subscription_active = in_array($current_endpoint, ['view-order', 'view-subscription'], true);
 
 $customer_subscriptions = wcs_get_users_subscriptions($user_id);
 
@@ -292,7 +292,7 @@ do_action('woocommerce_before_account_navigation');
 				<button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">
-						<img src="https://subscriptions.megatrader.io/wp-content/uploads/2025/05/cancel-circle-1.png"
+						<img src="/wp-content/uploads/2025/05/cancel-circle-1.png"
 							alt="Close" style="width: 24px; height: 24px;" />
 					</span>
 				</button>

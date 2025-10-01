@@ -207,6 +207,8 @@ get_header();
       } ?>
     </div>
     <div class="mt-page__main d-flex flex-column gap-3">
+      
+      <?php /* ?>
       <div class="mt-account-navigation mega-navigation">
         <?php if (function_exists('account_navigation_render')) {
           account_navigation_render();
@@ -218,6 +220,8 @@ get_header();
           );
         } ?>
       </div>
+      <?php */ ?>
+
       <div class="mt-account-selection" data-fit-main>
         <?php
         get_template_part(

@@ -19,7 +19,41 @@
 
 defined('ABSPATH') || exit;
 
-do_action('woocommerce_before_account_orders', $has_orders); ?>
+/**
+ * Fallback: asegurar $has_orders si no viene desde el hook de WooCommerce.
+ */
+if (!isset($has_orders)) {
+    $user_id = get_current_user_id();
+    if ($user_id && function_exists('wc_get_orders')) {
+        $has_orders = (bool) wc_get_orders([
+            'customer_id' => $user_id,
+            'limit' => 1,
+            'return' => 'ids',
+        ]);
+    } else {
+        $has_orders = false;
+    }
+}
+
+/**
+ * Redirección: si NO hay órdenes, enviar a /subscriptions/
+ * (antes de cualquier salida para permitir wp_safe_redirect)
+ */
+if (!$has_orders) {
+    $dest = home_url('/subscriptions/');
+    if (!headers_sent()) {
+        wp_safe_redirect($dest);
+        exit;
+    }
+    // Fallback JS si ya hubo salida
+    echo '<script>window.location.replace(' . wp_json_encode(esc_url_raw($dest)) . ');</script>';
+    return;
+}
+
+/** Ya con órdenes, continuar flujo normal */
+do_action('woocommerce_before_account_orders', $has_orders);
+
+?>
 
 <?php if ($has_orders): ?>
 
@@ -140,7 +174,7 @@ do_action('woocommerce_before_account_orders', $has_orders); ?>
                     ?>
                     <a id="get_started_btn" href="<?php echo esc_url($shop_url); ?>"
                         class="btn w-100 mega-btn-md mega-btn-primary-md">
-                        <?php esc_html_e('Get Started', 'woocommerce'); ?>
+                        <?php esc_html_e('Get Started123', 'woocommerce'); ?>
                     </a>
 
                 </div>
