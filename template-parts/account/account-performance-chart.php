@@ -355,16 +355,16 @@ if (is_array($plan_revenue)) {
   left: var(--arrow-x, 22px); /* se actualiza desde JS */
   pointer-events:none;
   border-style: solid;
+  top: 100%;
 }
 .mt-apex-tip::before{ /* BORDE */
-  bottom:-9px;
-  border-width:9px 9px 0 9px;
+  border-width:7px;
   border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
 }
 .mt-apex-tip::after{  /* RELLENO */
-  bottom:-8px;
-  border-width:8px 8px 0 8px;
+  border-width:7px;
   border-color:#000 transparent transparent transparent;
+  margin-top: -1px;
 }
 
 /* Tipografía del contenido */

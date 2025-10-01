@@ -532,9 +532,9 @@ document.addEventListener("mt:accountSelected", (e) => {
 })();
 
 // ===== Feature Content (AJAX refresh) =====
+// ===== Feature Content (AJAX refresh) =====
 (function () {
-  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
-    return;
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function") return;
 
   function clamp(n, min, max) {
     n = parseInt(n, 10) || 0;
@@ -545,7 +545,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   function initFeatureContent(root) {
     if (!root) return;
 
-    // Donuts (data-donut-value -> 0..100)
+    // Donuts
     root.querySelectorAll(".mt-donut").forEach(function (d) {
       var v = clamp(d.dataset.donutValue, 0, 100);
       d.style.setProperty("--mt-donut-value", v);
@@ -554,7 +554,7 @@ document.addEventListener("mt:accountSelected", (e) => {
       if (t) t.textContent = v ? v + "%" : "0%";
     });
 
-    // Barras (intenta data-bar-value; si no, lee --w del style inline)
+    // Barras
     root.querySelectorAll(".mt-bar").forEach(function (el) {
       var raw = el.getAttribute("data-bar-value");
       if (raw == null || raw === "") {
@@ -566,14 +566,14 @@ document.addEventListener("mt:accountSelected", (e) => {
       el.classList.toggle("is-empty", v === 0);
     });
 
-    // Dualbar (data-reward/data-risk -> widths %)
+    // Dualbar
     root.querySelectorAll(".mt-dualbar").forEach(function (db) {
       var reward = clamp(db.getAttribute("data-reward"), 0, 100);
-      var risk = clamp(db.getAttribute("data-risk"), 0, 100);
+      var risk   = clamp(db.getAttribute("data-risk"),   0, 100);
       var segReward = db.querySelector(".mt-dualbar__seg--reward");
-      var segRisk = db.querySelector(".mt-dualbar__seg--risk");
+      var segRisk   = db.querySelector(".mt-dualbar__seg--risk");
       if (segReward) segReward.style.width = reward + "%";
-      if (segRisk) segRisk.style.width = risk + "%";
+      if (segRisk)   segRisk.style.width   = risk   + "%";
       db.style.setProperty("--split", reward + "%");
 
       db.classList.toggle("is-empty", reward === 0 && risk === 0);
@@ -584,32 +584,41 @@ document.addEventListener("mt:accountSelected", (e) => {
     var wrap = document.querySelector(".mt-account-feature-content");
     if (!wrap) return;
 
-    var url =
-      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
-    var body = new URLSearchParams();
-    body.set("action", "mt_account_feature_content");
-    body.set("nonce", nonce);
+    var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce)   || "";
+    var body  = new URLSearchParams();
+    body.set("action",  "mt_account_feature_content");
+    body.set("nonce",   nonce);
     body.set("accountId", String(accountId || ""));
 
+    // 🔒 Cerrar cualquier tooltip abierto ANTES de reemplazar HTML
+    if (window.mtTooltips && typeof window.mtTooltips.closeAll === "function") {
+      window.mtTooltips.closeAll();
+    }
+
     return fetch(url, {
-      method: "POST",
+      method:  "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body,
+      body:    body,
     })
-      .then(function (r) {
-        return r.json();
-      })
-      .then(function (j) {
-        if (!j || !j.success || j.data == null || j.data.html == null) return;
-        wrap.innerHTML = j.data.html; // reemplaza TODO el componente
-        initFeatureContent(wrap); // re-inicializa donuts + barras + dualbar
-      })
-      .catch(function (err) {
-        console.error("[MT] feature AJAX error:", err);
-      });
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j || !j.success || !j.data || j.data.html == null) return;
+
+      wrap.innerHTML = j.data.html;        // ⬅️ reemplaza el bloque
+      initFeatureContent(wrap);            // ♻️ re-init visual (donuts/barras)
+
+      // ✅ Re-inicializa tooltips en el NUEVO contenido
+      if (window.mtTooltips && typeof window.mtTooltips.refresh === "function") {
+        window.mtTooltips.refresh(wrap);
+      }
+    })
+    .catch(function (err) {
+      console.error("[MT] feature AJAX error:", err);
+    });
   });
 })();
+
 
 // ===== Performance Chart (AJAX refresh) =====
 (function () {
@@ -670,54 +679,67 @@ document.addEventListener("mt:accountSelected", (e) => {
 
   // ---------- TIP FOLLOWER (rápido y robusto; sin “piquito”) ----------
   function makeTipFollower(root) {
-    try { root.__tipFollowerCleanup && root.__tipFollowerCleanup(); } catch (_) {}
-    try { root.__tipFollowerObserver && root.__tipFollowerObserver.disconnect(); } catch (_) {}
+    try {
+      root.__tipFollowerCleanup && root.__tipFollowerCleanup();
+    } catch (_) {}
+    try {
+      root.__tipFollowerObserver && root.__tipFollowerObserver.disconnect();
+    } catch (_) {}
 
     ensureTipCSS();
 
     function attach() {
       const canvas = root.querySelector(".apexcharts-canvas");
-      const svg    = root.querySelector(".apexcharts-svg");
+      const svg = root.querySelector(".apexcharts-svg");
       if (!canvas || !svg) return;
 
-      const base  = root.querySelector(".apexcharts-inner") || canvas;
+      const base = root.querySelector(".apexcharts-inner") || canvas;
       const tipEl = () => root.querySelector(".apexcharts-tooltip");
 
-      let rafId = 0, wantX = -9999, wantY = -9999;
+      let rafId = 0,
+        wantX = -9999,
+        wantY = -9999;
 
       function render() {
         rafId = 0;
         const tip = tipEl();
         if (!tip) return;
 
-        const r  = base.getBoundingClientRect ? base.getBoundingClientRect() : { left:0, top:0, width:0, height:0 };
-        const tw = tip.offsetWidth  || 220;
+        const r = base.getBoundingClientRect
+          ? base.getBoundingClientRect()
+          : { left: 0, top: 0, width: 0, height: 0 };
+        const tw = tip.offsetWidth || 220;
         const th = tip.offsetHeight || 60;
 
         // Clamp dentro del área del chart
-        let x = Math.max(6, Math.min(wantX, r.width  - tw - 6));
+        let x = Math.max(6, Math.min(wantX, r.width - tw - 6));
         let y = Math.max(6, Math.min(wantY, r.height - th - 6));
 
         tip.classList.remove("mt-tip-hidden");
-        tip.style.transform  = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
-        tip.style.opacity    = "1";
+        tip.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(
+          y
+        )}px, 0)`;
+        tip.style.opacity = "1";
         tip.style.visibility = "visible";
-        tip.style.left = "0px";   // neutraliza intentos de Apex de moverlo
-        tip.style.top  = "0px";
+        tip.style.left = "0px"; // neutraliza intentos de Apex de moverlo
+        tip.style.top = "0px";
       }
 
       function queue(x, y) {
-        wantX = x; wantY = y;
+        wantX = x;
+        wantY = y;
         if (!rafId) rafId = requestAnimationFrame(render);
       }
 
       function posFrom(ev) {
         const tip = tipEl();
-        const r   = base.getBoundingClientRect ? base.getBoundingClientRect() : { left:0, top:0 };
-        const mx  = ev.clientX - r.left;
-        const my  = ev.clientY - r.top;
-        const tw  = tip ? (tip.offsetWidth  || 220) : 220;
-        const th  = tip ? (tip.offsetHeight || 60)  : 60;
+        const r = base.getBoundingClientRect
+          ? base.getBoundingClientRect()
+          : { left: 0, top: 0 };
+        const mx = ev.clientX - r.left;
+        const my = ev.clientY - r.top;
+        const tw = tip ? tip.offsetWidth || 220 : 220;
+        const th = tip ? tip.offsetHeight || 60 : 60;
 
         // Arriba y levemente a la derecha del puntero (sensación “pegado”)
         let x = mx + 12;
@@ -726,10 +748,17 @@ document.addEventListener("mt:accountSelected", (e) => {
         return { x, y };
       }
 
-      function onMove(ev)  { const p = posFrom(ev); queue(p.x, p.y); }
-      function onEnter(ev) { const p = posFrom(ev); queue(p.x, p.y); }
+      function onMove(ev) {
+        const p = posFrom(ev);
+        queue(p.x, p.y);
+      }
+      function onEnter(ev) {
+        const p = posFrom(ev);
+        queue(p.x, p.y);
+      }
       function onLeave() {
-        const tip = tipEl(); if (!tip) return;
+        const tip = tipEl();
+        if (!tip) return;
         tip.classList.add("mt-tip-hidden");
         tip.style.opacity = "0";
         tip.style.visibility = "hidden";
@@ -737,29 +766,31 @@ document.addEventListener("mt:accountSelected", (e) => {
       }
 
       const target = svg || canvas;
-      target.addEventListener("pointermove",  onMove,  { passive: true });
-      target.addEventListener("mousemove",     onMove,  { passive: true });
+      target.addEventListener("pointermove", onMove, { passive: true });
+      target.addEventListener("mousemove", onMove, { passive: true });
       target.addEventListener("pointerenter", onEnter, { passive: true });
-      target.addEventListener("mouseenter",    onEnter, { passive: true });
+      target.addEventListener("mouseenter", onEnter, { passive: true });
       target.addEventListener("pointerleave", onLeave, { passive: true });
-      target.addEventListener("mouseleave",    onLeave, { passive: true });
+      target.addEventListener("mouseleave", onLeave, { passive: true });
 
       onLeave(); // oculta residuos
 
       // Pre-warm tras el primer render del chart
       requestAnimationFrame(() => {
-        const r = base.getBoundingClientRect ? base.getBoundingClientRect() : null;
+        const r = base.getBoundingClientRect
+          ? base.getBoundingClientRect()
+          : null;
         if (!r) return;
         onEnter({ clientX: r.left + 24, clientY: r.top + 24 });
       });
 
       root.__tipFollowerCleanup = function () {
-        target.removeEventListener("pointermove",  onMove);
-        target.removeEventListener("mousemove",     onMove);
+        target.removeEventListener("pointermove", onMove);
+        target.removeEventListener("mousemove", onMove);
         target.removeEventListener("pointerenter", onEnter);
-        target.removeEventListener("mouseenter",    onEnter);
+        target.removeEventListener("mouseenter", onEnter);
         target.removeEventListener("pointerleave", onLeave);
-        target.removeEventListener("mouseleave",    onLeave);
+        target.removeEventListener("mouseleave", onLeave);
         if (rafId) cancelAnimationFrame(rafId);
         rafId = 0;
       };
@@ -767,7 +798,10 @@ document.addEventListener("mt:accountSelected", (e) => {
 
     // Engancha cuando existan los nodos de Apex
     const obs = new MutationObserver(() => {
-      if (root.querySelector(".apexcharts-canvas") && root.querySelector(".apexcharts-svg")) {
+      if (
+        root.querySelector(".apexcharts-canvas") &&
+        root.querySelector(".apexcharts-svg")
+      ) {
         attach();
         obs.disconnect();
       }
@@ -786,7 +820,9 @@ document.addEventListener("mt:accountSelected", (e) => {
 
   // ***** BOOT en carga inicial (sin esperar a un AJAX) *****
   (function bootInitialFollower() {
-    const wrap = document.querySelector(".mt-account-performance-chart-content") || document;
+    const wrap =
+      document.querySelector(".mt-account-performance-chart-content") ||
+      document;
     const root =
       wrap.querySelector("#account-performance-chart")?.parentElement || wrap;
     hookFollower(root);
@@ -805,7 +841,9 @@ document.addEventListener("mt:accountSelected", (e) => {
     var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
     // Aborta request anterior si existía
-    try { ctrl?.abort(); } catch (_) {}
+    try {
+      ctrl?.abort();
+    } catch (_) {}
     ctrl = new AbortController();
     const myToken = ++reqToken;
 
@@ -815,7 +853,9 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("accountId", String(accountId || ""));
 
     console.log("[MT][Chart][AJAX] request", {
-      url, nonce, accountId: String(accountId || ""),
+      url,
+      nonce,
+      accountId: String(accountId || ""),
     });
 
     return fetch(url, {
@@ -836,19 +876,36 @@ document.addEventListener("mt:accountSelected", (e) => {
 
         // Destruye instancia previa y limpia DOM residual de Apex
         try {
-          if (window.__mtChartInstance && typeof window.__mtChartInstance.destroy === "function") {
+          if (
+            window.__mtChartInstance &&
+            typeof window.__mtChartInstance.destroy === "function"
+          ) {
             window.__mtChartInstance.destroy();
             window.__mtChartInstance = null;
           }
-        } catch (e) { console.warn("[MT][Chart] destroy prev error", e); }
+        } catch (e) {
+          console.warn("[MT][Chart] destroy prev error", e);
+        }
 
         document
-          .querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs")
-          .forEach((n) => { try { n.remove(); } catch (_) {} });
+          .querySelectorAll(
+            ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs"
+          )
+          .forEach((n) => {
+            try {
+              n.remove();
+            } catch (_) {}
+          });
 
         wrap
-          .querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas")
-          .forEach((n) => { try { n.remove(); } catch (_) {} });
+          .querySelectorAll(
+            ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas"
+          )
+          .forEach((n) => {
+            try {
+              n.remove();
+            } catch (_) {}
+          });
 
         // Inyecta HTML del nuevo componente
         wrap.innerHTML = j.data.html;
@@ -857,7 +914,8 @@ document.addEventListener("mt:accountSelected", (e) => {
         ensureApexThen(wrap, function () {
           runInlineScripts(wrap);
           const root =
-            wrap.querySelector("#account-performance-chart")?.parentElement || wrap;
+            wrap.querySelector("#account-performance-chart")?.parentElement ||
+            wrap;
           hookFollower(root);
         });
       })
@@ -870,8 +928,6 @@ document.addEventListener("mt:accountSelected", (e) => {
       });
   });
 })();
-
-
 
 // ===== Account Data (AJAX refresh) =====
 (function () {
