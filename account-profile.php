@@ -42,18 +42,7 @@ get_header();
                                             information
                                         </div>
                                     </div>
-                                    <div class="toggle-panel__arrow">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <mask id="mask0_15865_49243" style="mask-type:alpha"
-                                                  maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                                                <rect width="24" height="24" fill="#D9D9D9"/>
-                                            </mask>
-                                            <g mask="url(#mask0_15865_49243)">
-                                                <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                                            </g>
-                                        </svg>
-                                    </div>
+                                    <div class="toggle-panel__arrow"></div>
                                 </button>
                             </h2>
                             <div id="collapseOne" class="toggle-panel__content collapse show"
@@ -86,16 +75,6 @@ get_header();
                                         </div>
                                     </div>
                                     <div class="toggle-panel__arrow">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <mask id="mask0_15865_49243" style="mask-type:alpha"
-                                                  maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                                                <rect width="24" height="24" fill="#D9D9D9"/>
-                                            </mask>
-                                            <g mask="url(#mask0_15865_49243)">
-                                                <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                                            </g>
-                                        </svg>
                                     </div>
                                 </button>
                             </h2>
@@ -129,23 +108,13 @@ get_header();
                                         </div>
                                     </div>
                                     <div class="toggle-panel__arrow">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <mask id="mask0_15865_49243" style="mask-type:alpha"
-                                                  maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                                                <rect width="24" height="24" fill="#D9D9D9"/>
-                                            </mask>
-                                            <g mask="url(#mask0_15865_49243)">
-                                                <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                                            </g>
-                                        </svg>
                                     </div>
                                 </button>
                             </h2>
                             <div id="collapseThree" class="toggle-panel__content collapse"
                                  data-bs-parent="#accordionExample">
                                 <div class="toggle-panel__body">
-                                    <?php get_template_part("template-parts/account/password"); ?>
+                                    <?php get_template_part("template-parts/account/account-settings-password"); ?>
                                 </div>
                             </div>
                         </div>
@@ -172,16 +141,6 @@ get_header();
                                         </div>
                                     </div>
                                     <div class="toggle-panel__arrow">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <mask id="mask0_15865_49243" style="mask-type:alpha"
-                                                  maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                                                <rect width="24" height="24" fill="#D9D9D9"/>
-                                            </mask>
-                                            <g mask="url(#mask0_15865_49243)">
-                                                <path d="M12 15L7 10H17L12 15Z" fill="white"/>
-                                            </g>
-                                        </svg>
                                     </div>
                                 </button>
                             </h2>

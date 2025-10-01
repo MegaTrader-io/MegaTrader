@@ -4294,9 +4294,16 @@ textarea.mtfb-note {
     flex: 1;
 }
 
+.toggle-panel__header:not(.collapsed) .toggle-panel__arrow {
+    transform: rotate(180deg);
+}
+
 .toggle-panel__arrow {
-    align-items: center;
-    display: flex;
+    width: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='5' viewBox='0 0 10 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 5L0 0H10L5 5Z' fill='white'/%3E%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 9px 7px;
 }
 
 .toggle-panel__description{
