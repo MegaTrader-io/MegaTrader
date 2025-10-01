@@ -274,7 +274,12 @@ wp_add_inline_script($handle, <<<JS
       .then(function(res){
         if (!res || !res.success) throw new Error(res && res.data && res.data.message || 'AJAX failed');
 
+        if (window.mtTooltips?.closeAll) mtTooltips.closeAll();
+
         perf.innerHTML = res.data.html || '';
+
+        if (window.mtTooltips?.refresh) mtTooltips.refresh(perf);
+
 
         var modalEl = document.querySelector(CFG.selectors.modal);
         if (modalEl && window.bootstrap) {

@@ -31,6 +31,14 @@ $mt_is_active = static function (string $slug, string $class = 'active') use ($m
 
 $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
 
+$menu_links = [
+    [
+        'text' => 'ACCOUNT OVERVIEW',
+        'icon' => '',
+        'href' => ''
+    ]
+];
+
 ?>
 <aside class="mt-sidebar">
     <div class="mt-sidebar__wrapper mt-card mt-card_border">
@@ -85,9 +93,13 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                                 <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
                                 <span>PAYOUTS<span>
                             </a>
-                            <a class="mt-sidebar__menu__link <?php echo esc_attr($mt_is_active('profile')); ?>" href="/my-account/profile/">
+                            <a class="mt-sidebar__menu__link <?= esc_attr($mt_is_active('profile')); ?>" href="/my-account/profile/">
                                 <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                                 <span>ACCOUNT SETTINGS<span>
+                            </a>
+                            <a class="mt-sidebar__menu__link" href="/my-account/orders">
+                                <i class="mt-icon mt-icon-sm mt-icon_dollar-solid"></i>
+                                <span class="text-uppercase">Subscriptions & Billing<span>
                             </a>
                             <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/" target="_blank">
                                 <i class="mt-icon mt-icon-sm mt-icon_help"></i>
@@ -105,28 +117,6 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                             </a>
                         </div>
                     </div>
-                    <!--
-                    <div class="d-none mt-page_md-d-block">
-                        <select id="account-nav-select" class="mt-sidebar__select"
-                        onchange="if (this.value) window.location.href=this.value;">
-                            <i class="mt-icon mt-icon-sm mt-icon_account"></i>
-                            <optgroup label="DASHBOARD">
-                                <option value="/my-account/overview/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/overview/'); ?> checked>
-                                    ACCOUNT OVERVIEW
-                                </option>
-                                <option value="/my-account/referrals/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/referrals/'); ?>>
-                                    REFERRALS
-                                </option>
-                                <option value="/my-account/payouts/" <?php selected($_SERVER['REQUEST_URI'], '/my-account/payouts/'); ?>>
-                                    PAYOUTS
-                                </option>
-                                <option value="https://help.megatrader.io/en/" <?php selected($_SERVER['REQUEST_URI'], '/help/'); ?>>
-                                    HELP CENTER
-                                </option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    -->
                 </div>
             </div>
 
@@ -193,11 +183,19 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                         </span>
                     </span>
                     <span class="mt-tooltip" data-placement="right">                        
-                        <a class="mt-sidebar__menu__link " href="/my-account/profile/">
+                        <a class="mt-sidebar__menu__link <?= esc_attr($mt_is_active('profile')); ?>" href="/my-account/profile/">
                             <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
                             <div class="mt-tooltip__body">ACCOUNT SETTINGS</div>
+                        </span>
+                    </span>
+                    <span class="mt-tooltip" data-placement="right">                        
+                        <a class="mt-sidebar__menu__link " href="/my-account/orders">
+                            <i class="mt-icon mt-icon-sm mt-icon_dollar-solid"></i>
+                        </a>
+                        <span class="mt-tooltip__panel" role="tooltip">
+                            <div class="mt-tooltip__body text-uppercase">Subscriptions & Billing</div>
                         </span>
                     </span>
                     <span class="mt-tooltip" data-placement="right">                        

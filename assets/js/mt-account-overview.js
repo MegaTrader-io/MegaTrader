@@ -534,7 +534,8 @@ document.addEventListener("mt:accountSelected", (e) => {
 // ===== Feature Content (AJAX refresh) =====
 // ===== Feature Content (AJAX refresh) =====
 (function () {
-  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function") return;
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
+    return;
 
   function clamp(n, min, max) {
     n = parseInt(n, 10) || 0;
@@ -569,11 +570,11 @@ document.addEventListener("mt:accountSelected", (e) => {
     // Dualbar
     root.querySelectorAll(".mt-dualbar").forEach(function (db) {
       var reward = clamp(db.getAttribute("data-reward"), 0, 100);
-      var risk   = clamp(db.getAttribute("data-risk"),   0, 100);
+      var risk = clamp(db.getAttribute("data-risk"), 0, 100);
       var segReward = db.querySelector(".mt-dualbar__seg--reward");
-      var segRisk   = db.querySelector(".mt-dualbar__seg--risk");
+      var segRisk = db.querySelector(".mt-dualbar__seg--risk");
       if (segReward) segReward.style.width = reward + "%";
-      if (segRisk)   segRisk.style.width   = risk   + "%";
+      if (segRisk) segRisk.style.width = risk + "%";
       db.style.setProperty("--split", reward + "%");
 
       db.classList.toggle("is-empty", reward === 0 && risk === 0);
@@ -584,11 +585,12 @@ document.addEventListener("mt:accountSelected", (e) => {
     var wrap = document.querySelector(".mt-account-feature-content");
     if (!wrap) return;
 
-    var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-    var nonce = (window.mtAccounts && mtAccounts.nonce)   || "";
-    var body  = new URLSearchParams();
-    body.set("action",  "mt_account_feature_content");
-    body.set("nonce",   nonce);
+    var url =
+      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+    var body = new URLSearchParams();
+    body.set("action", "mt_account_feature_content");
+    body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
 
     // 🔒 Cerrar cualquier tooltip abierto ANTES de reemplazar HTML
@@ -597,28 +599,32 @@ document.addEventListener("mt:accountSelected", (e) => {
     }
 
     return fetch(url, {
-      method:  "POST",
+      method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body:    body,
+      body: body,
     })
-    .then(function (r) { return r.json(); })
-    .then(function (j) {
-      if (!j || !j.success || !j.data || j.data.html == null) return;
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (j) {
+        if (!j || !j.success || !j.data || j.data.html == null) return;
 
-      wrap.innerHTML = j.data.html;        // ⬅️ reemplaza el bloque
-      initFeatureContent(wrap);            // ♻️ re-init visual (donuts/barras)
+        wrap.innerHTML = j.data.html; // ⬅️ reemplaza el bloque
+        initFeatureContent(wrap); // ♻️ re-init visual (donuts/barras)
 
-      // ✅ Re-inicializa tooltips en el NUEVO contenido
-      if (window.mtTooltips && typeof window.mtTooltips.refresh === "function") {
-        window.mtTooltips.refresh(wrap);
-      }
-    })
-    .catch(function (err) {
-      console.error("[MT] feature AJAX error:", err);
-    });
+        // ✅ Re-inicializa tooltips en el NUEVO contenido
+        if (
+          window.mtTooltips &&
+          typeof window.mtTooltips.refresh === "function"
+        ) {
+          window.mtTooltips.refresh(wrap);
+        }
+      })
+      .catch(function (err) {
+        console.error("[MT] feature AJAX error:", err);
+      });
   });
 })();
-
 
 // ===== Performance Chart (AJAX refresh) =====
 (function () {
@@ -935,16 +941,26 @@ document.addEventListener("mt:accountSelected", (e) => {
     return;
 
   window.mtRefresh.register("accountData", function (accountId) {
-    var wrap = document.querySelector(".mt-account-data");
+    // Elige el contenedor correcto: .mt-account-data (principal)
+    // y como fallback #mt-performance-container si ese es el que reemplazas en tu theme.
+    var wrap =
+      document.querySelector(".mt-account-data") ||
+      document.querySelector("#mt-performance-container");
     if (!wrap) return;
 
     var url =
       (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
     var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
     var body = new URLSearchParams();
     body.set("action", "mt_account_data");
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
+
+    // 🔒 Cierra cualquier tooltip abierto ANTES del replace
+    if (window.mtTooltips && typeof window.mtTooltips.closeAll === "function") {
+      window.mtTooltips.closeAll();
+    }
 
     return fetch(url, {
       method: "POST",
@@ -956,7 +972,23 @@ document.addEventListener("mt:accountSelected", (e) => {
       })
       .then(function (j) {
         if (!j || !j.success || !j.data || j.data.html == null) return;
+
+        // Reemplaza el contenido
         wrap.innerHTML = j.data.html;
+
+        // ♻️ Re-inicializa UI propia (por si hay donuts/barras dentro)
+        try {
+          // Si tienes helpers locales, los puedes llamar aquí:
+          // initDonuts?.(wrap); initDualBars?.(wrap); initProgressBars?.(wrap);
+        } catch (_) {}
+
+        // ✅ Muy importante: volver a atar tooltips en el HTML nuevo
+        if (
+          window.mtTooltips &&
+          typeof window.mtTooltips.refresh === "function"
+        ) {
+          window.mtTooltips.refresh(wrap);
+        }
       })
       .catch(function (err) {
         console.error("[MT] account-data AJAX error:", err);
