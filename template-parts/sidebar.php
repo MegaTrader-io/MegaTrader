@@ -74,7 +74,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                         <!-- Desktop -->
                         <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
                             <a class="mt-sidebar__menu__link <?php echo esc_attr($mt_is_active('overview')); ?>" href="/my-account/overview/">
-                                <i class="mt-icon mt-icon-sm mt-icon_account"></i>
+                                <i class="mt-icon mt-icon-sm mt-icon_bar-chart"></i>
                                 <span>ACCOUNT OVERVIEW<span>
                             </a>
                             <a class="mt-sidebar__menu__link" href="/my-account/referrals/">
@@ -170,7 +170,7 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
                 <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
                     <span class="mt-tooltip" data-placement="right">                        
                         <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
-                            <i class="mt-icon mt-icon-sm mt-icon_account"></i>
+                            <i class="mt-icon mt-icon-sm mt-icon_bar-chart"></i>
                         </a>
                         <span class="mt-tooltip__panel" role="tooltip">
                             <div class="mt-tooltip__body">ACCOUNT OVERVIEW</div>

@@ -616,7 +616,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
     return;
 
-  // Ejecuta <script> inline dentro del contenedor, envueltos en IIFE para evitar colisiones globales
+  // Ejecuta <script> inline dentro del contenedor (evita colisiones globales)
   function runInlineScripts(container) {
     container.querySelectorAll("script:not([src])").forEach(function (old) {
       var s = document.createElement("script");
@@ -644,112 +644,130 @@ document.addEventListener("mt:accountSelected", (e) => {
     document.head.appendChild(tag);
   }
 
-  // ---------- TIP FOLLOWER (forzar tooltip dinámico tras refrescos) ----------
-  // ---------- TIP FOLLOWER (rápido y robusto) ----------
+  // Inyecta CSS una sola vez para que el follower tenga control total
+  function ensureTipCSS() {
+    if (window.__mtTipFollowerCSS) return;
+    const css = `
+      .apexcharts-tooltip{
+        position:absolute !important;
+        left:0 !important; top:0 !important;            /* neutraliza el posicionamiento de Apex */
+        transition:none !important;
+        pointer-events:none !important;
+        background:transparent !important;
+        border:0 !important; box-shadow:none !important; padding:0 !important;
+        z-index:10;
+      }
+      .apexcharts-tooltip.mt-tip-hidden{
+        transform: translate3d(-9999px, -9999px, 0) !important;
+        opacity:0 !important; visibility:hidden !important;
+      }
+    `;
+    const style = document.createElement("style");
+    style.textContent = css;
+    document.head.appendChild(style);
+    window.__mtTipFollowerCSS = true;
+  }
+
+  // ---------- TIP FOLLOWER (rápido y robusto; sin “piquito”) ----------
   function makeTipFollower(root) {
-    try {
-      root.__tipFollowerCleanup && root.__tipFollowerCleanup();
-    } catch (_) {}
-    try {
-      root.__tipFollowerObserver && root.__tipFollowerObserver.disconnect();
-    } catch (_) {}
+    try { root.__tipFollowerCleanup && root.__tipFollowerCleanup(); } catch (_) {}
+    try { root.__tipFollowerObserver && root.__tipFollowerObserver.disconnect(); } catch (_) {}
+
+    ensureTipCSS();
 
     function attach() {
       const canvas = root.querySelector(".apexcharts-canvas");
-      const svg = root.querySelector(".apexcharts-svg");
+      const svg    = root.querySelector(".apexcharts-svg");
       if (!canvas || !svg) return;
 
-      // Base geométrica para calcular coords
-      const base = root.querySelector(".apexcharts-inner") || canvas;
-
-      // Contenedor del tooltip que crea Apex
+      const base  = root.querySelector(".apexcharts-inner") || canvas;
       const tipEl = () => root.querySelector(".apexcharts-tooltip");
 
-      let rafId = 0,
-        wantX = -9999,
-        wantY = -9999;
+      let rafId = 0, wantX = -9999, wantY = -9999;
 
       function render() {
         rafId = 0;
         const tip = tipEl();
         if (!tip) return;
-        tip.classList.remove("mt-tip-hidden"); // quitar estado oculto
-        tip.style.transform = `translate3d(${Math.round(wantX)}px, ${Math.round(
-          wantY
-        )}px, 0)`;
-        tip.style.opacity = 1;
+
+        const r  = base.getBoundingClientRect ? base.getBoundingClientRect() : { left:0, top:0, width:0, height:0 };
+        const tw = tip.offsetWidth  || 220;
+        const th = tip.offsetHeight || 60;
+
+        // Clamp dentro del área del chart
+        let x = Math.max(6, Math.min(wantX, r.width  - tw - 6));
+        let y = Math.max(6, Math.min(wantY, r.height - th - 6));
+
+        tip.classList.remove("mt-tip-hidden");
+        tip.style.transform  = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+        tip.style.opacity    = "1";
         tip.style.visibility = "visible";
+        tip.style.left = "0px";   // neutraliza intentos de Apex de moverlo
+        tip.style.top  = "0px";
       }
+
       function queue(x, y) {
-        wantX = x;
-        wantY = y;
+        wantX = x; wantY = y;
         if (!rafId) rafId = requestAnimationFrame(render);
       }
+
       function posFrom(ev) {
-        const r = (base.getBoundingClientRect &&
-          base.getBoundingClientRect()) || { left: 0, top: 0 };
-        return { x: ev.clientX - r.left + 12, y: ev.clientY - r.top + 12 };
-      }
-      function onMove(ev) {
-        const p = posFrom(ev);
-        queue(p.x, p.y);
-      }
-      function onEnter(ev) {
-        const p = posFrom(ev);
-        wantX = p.x;
-        wantY = p.y;
-        if (!rafId) rafId = requestAnimationFrame(render);
-      }
-      function onLeave() {
         const tip = tipEl();
-        if (!tip) return;
-        tip.classList.add("mt-tip-hidden");
-        tip.style.opacity = 0;
-        tip.style.visibility = "hidden";
-        tip.style.transform = `translate3d(-9999px, -9999px, 0)`;
+        const r   = base.getBoundingClientRect ? base.getBoundingClientRect() : { left:0, top:0 };
+        const mx  = ev.clientX - r.left;
+        const my  = ev.clientY - r.top;
+        const tw  = tip ? (tip.offsetWidth  || 220) : 220;
+        const th  = tip ? (tip.offsetHeight || 60)  : 60;
+
+        // Arriba y levemente a la derecha del puntero (sensación “pegado”)
+        let x = mx + 12;
+        let y = my - th - 12;
+
+        return { x, y };
       }
 
-      // Escucha en el SVG (siempre recibe los punteros) + fallback al canvas
+      function onMove(ev)  { const p = posFrom(ev); queue(p.x, p.y); }
+      function onEnter(ev) { const p = posFrom(ev); queue(p.x, p.y); }
+      function onLeave() {
+        const tip = tipEl(); if (!tip) return;
+        tip.classList.add("mt-tip-hidden");
+        tip.style.opacity = "0";
+        tip.style.visibility = "hidden";
+        tip.style.transform = "translate3d(-9999px, -9999px, 0)";
+      }
+
       const target = svg || canvas;
-      target.addEventListener("pointermove", onMove, { passive: true });
-      target.addEventListener("mousemove", onMove, { passive: true });
+      target.addEventListener("pointermove",  onMove,  { passive: true });
+      target.addEventListener("mousemove",     onMove,  { passive: true });
       target.addEventListener("pointerenter", onEnter, { passive: true });
-      target.addEventListener("mouseenter", onEnter, { passive: true });
+      target.addEventListener("mouseenter",    onEnter, { passive: true });
       target.addEventListener("pointerleave", onLeave, { passive: true });
-      target.addEventListener("mouseleave", onLeave, { passive: true });
+      target.addEventListener("mouseleave",    onLeave, { passive: true });
 
-      // Oculta cualquier residual al montar
-      onLeave();
+      onLeave(); // oculta residuos
 
-      // Pre-warm: primera posición inmediata tras el render del chart
+      // Pre-warm tras el primer render del chart
       requestAnimationFrame(() => {
-        const r = base.getBoundingClientRect
-          ? base.getBoundingClientRect()
-          : null;
+        const r = base.getBoundingClientRect ? base.getBoundingClientRect() : null;
         if (!r) return;
-        wantX = 16;
-        wantY = 16; // posición segura
-        if (!rafId) rafId = requestAnimationFrame(render);
+        onEnter({ clientX: r.left + 24, clientY: r.top + 24 });
       });
 
       root.__tipFollowerCleanup = function () {
-        target.removeEventListener("pointermove", onMove);
-        target.removeEventListener("mousemove", onMove);
+        target.removeEventListener("pointermove",  onMove);
+        target.removeEventListener("mousemove",     onMove);
         target.removeEventListener("pointerenter", onEnter);
-        target.removeEventListener("mouseenter", onEnter);
+        target.removeEventListener("mouseenter",    onEnter);
         target.removeEventListener("pointerleave", onLeave);
-        target.removeEventListener("mouseleave", onLeave);
+        target.removeEventListener("mouseleave",    onLeave);
         if (rafId) cancelAnimationFrame(rafId);
         rafId = 0;
       };
     }
 
-    // Engancha cuando exista el canvas/svg
+    // Engancha cuando existan los nodos de Apex
     const obs = new MutationObserver(() => {
-      if (
-        root.querySelector(".apexcharts-canvas") &&
-        root.querySelector(".apexcharts-svg")
-      ) {
+      if (root.querySelector(".apexcharts-canvas") && root.querySelector(".apexcharts-svg")) {
         attach();
         obs.disconnect();
       }
@@ -758,9 +776,26 @@ document.addEventListener("mt:accountSelected", (e) => {
     root.__tipFollowerObserver = obs;
   }
 
+  // Helper: enganchar follower con pequeños retries
+  function hookFollower(root) {
+    if (!root) return;
+    makeTipFollower(root);
+    requestAnimationFrame(() => makeTipFollower(root));
+    setTimeout(() => makeTipFollower(root), 150);
+  }
+
+  // ***** BOOT en carga inicial (sin esperar a un AJAX) *****
+  (function bootInitialFollower() {
+    const wrap = document.querySelector(".mt-account-performance-chart-content") || document;
+    const root =
+      wrap.querySelector("#account-performance-chart")?.parentElement || wrap;
+    hookFollower(root);
+  })();
+
   let ctrl = null;
   let reqToken = 0;
 
+  // ***** REFRESH vía AJAX *****
   window.mtRefresh.register("performanceChart", function (accountId) {
     var wrap = document.querySelector(".mt-account-performance-chart-content");
     if (!wrap) return;
@@ -770,9 +805,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
     // Aborta request anterior si existía
-    try {
-      ctrl?.abort();
-    } catch (_) {}
+    try { ctrl?.abort(); } catch (_) {}
     ctrl = new AbortController();
     const myToken = ++reqToken;
 
@@ -782,9 +815,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("accountId", String(accountId || ""));
 
     console.log("[MT][Chart][AJAX] request", {
-      url,
-      nonce,
-      accountId: String(accountId || ""),
+      url, nonce, accountId: String(accountId || ""),
     });
 
     return fetch(url, {
@@ -793,11 +824,9 @@ document.addEventListener("mt:accountSelected", (e) => {
       body: body,
       signal: ctrl.signal,
     })
-      .then(function (r) {
-        return r.json();
-      })
-      .then(function (j) {
-        if (myToken !== reqToken) return; // respuesta antigua
+      .then((r) => r.json())
+      .then((j) => {
+        if (myToken !== reqToken) return; // respuesta vieja
 
         console.log("[MT][Chart][AJAX] response", {
           ok: !!(j && j.success),
@@ -807,57 +836,29 @@ document.addEventListener("mt:accountSelected", (e) => {
 
         // Destruye instancia previa y limpia DOM residual de Apex
         try {
-          if (
-            window.__mtChartInstance &&
-            typeof window.__mtChartInstance.destroy === "function"
-          ) {
+          if (window.__mtChartInstance && typeof window.__mtChartInstance.destroy === "function") {
             window.__mtChartInstance.destroy();
             window.__mtChartInstance = null;
           }
-        } catch (e) {
-          console.warn("[MT][Chart] destroy prev error", e);
-        }
+        } catch (e) { console.warn("[MT][Chart] destroy prev error", e); }
 
         document
-          .querySelectorAll(
-            ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs"
-          )
-          .forEach((n) => {
-            try {
-              n.remove();
-            } catch (_) {}
-          });
+          .querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs")
+          .forEach((n) => { try { n.remove(); } catch (_) {} });
 
         wrap
-          .querySelectorAll(
-            ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas"
-          )
-          .forEach((n) => {
-            try {
-              n.remove();
-            } catch (_) {}
-          });
+          .querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas")
+          .forEach((n) => { try { n.remove(); } catch (_) {} });
 
         // Inyecta HTML del nuevo componente
         wrap.innerHTML = j.data.html;
 
-        // Espera ApexCharts, ejecuta inline y engancha follower
+        // Espera ApexCharts, ejecuta inline y re-engancha follower
         ensureApexThen(wrap, function () {
           runInlineScripts(wrap);
-
-          // El chart se crea dentro de #account-performance-chart → su padre es el root del panel
-          var root =
-            wrap.querySelector("#account-performance-chart")?.parentElement ||
-            wrap;
-
-          // Enganchamos follower inmediatamente y también al siguiente frame
-          makeTipFollower(root);
-          requestAnimationFrame(function () {
-            makeTipFollower(root);
-          });
-          setTimeout(function () {
-            makeTipFollower(root);
-          }, 150); // por si render es un poco más tarde
+          const root =
+            wrap.querySelector("#account-performance-chart")?.parentElement || wrap;
+          hookFollower(root);
         });
       })
       .catch(function (err) {
@@ -869,6 +870,8 @@ document.addEventListener("mt:accountSelected", (e) => {
       });
   });
 })();
+
+
 
 // ===== Account Data (AJAX refresh) =====
 (function () {
