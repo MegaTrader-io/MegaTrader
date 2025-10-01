@@ -176,7 +176,6 @@ add_action('wp', function () {
 
 require_once get_template_directory() . '/inc/mt-navbar.php';
 require_once get_template_directory() . '/inc/landing-page-hooks.php';
-require_once get_template_directory() . '/inc/dashboard/account-settings.php';
 
 add_action('wp_enqueue_scripts', function () {
     if (
@@ -289,6 +288,7 @@ require_once get_template_directory() . '/inc/validate_coupon_for_variation.php'
 
 // Load navigation module
 require_once get_template_directory() . '/inc/account-navigation-module.php';
+require_once get_template_directory() . '/inc/account-settings-module.php';
 
 /**
  * Plugin Scripts

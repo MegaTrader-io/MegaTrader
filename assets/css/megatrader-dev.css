@@ -4256,3 +4256,53 @@ textarea.mtfb-note {
   opacity: .6;
   cursor: not-allowed
 }
+
+.account-settings__sections-wrapper > * + * {
+    margin-top: 16px;
+}
+
+.toggle-panel__title-wrapper {
+    margin-bottom: 0;
+    width: 100%;
+    line-height: inherit;
+}
+
+.toggle-panel__header {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    text-align: left;
+    gap: 16px;
+    justify-content: space-between;
+}
+
+.toggle-panel__icon {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-panel__title{
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+}
+
+.toggle-panel__details {
+    flex: 1;
+}
+
+.toggle-panel__arrow {
+    align-items: center;
+    display: flex;
+}
+
+.toggle-panel__description{
+    color: #A8A29E;
+    font-size: 16px;
+    flex: 1;
+    font-weight: 700;
+    line-height: 24px;
+}
