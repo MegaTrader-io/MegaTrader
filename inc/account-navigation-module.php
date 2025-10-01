@@ -88,13 +88,13 @@ function account_navigation_render() {
     get_template_part( 'template-parts/account/account-navigation', null, $args );
 }
 
-function account_setting_navigation_render(): void
+function account_settings_navigation_render(): void
 {
     $endpoints = [
         'profile' => __('Personal Information', 'woocommerce'),
-        'verification' => __('Verification', 'woocommerce'),
-        'password' => __('Password', 'woocommerce'),
-        'two-factor-authentication' => __('2FA (Two-factor-authentication)', 'woocommerce'),
+        'profile/verification' => __('Verification', 'woocommerce'),
+        'profile/password' => __('Password', 'woocommerce'),
+        'profile/two-factor-authentication' => __('2FA (Two-factor-authentication)', 'woocommerce'),
     ];
 
     get_template_part('template-parts/account/account-navigation', null, items_navigation_get_args($endpoints));
