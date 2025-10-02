@@ -4299,11 +4299,8 @@ textarea.mtfb-note {
 }
 
 .toggle-panel__arrow {
-    width: 24px;
-    background-image: url("data:image/svg+xml,%3Csvg width='10' height='5' viewBox='0 0 10 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 5L0 0H10L5 5Z' fill='white'/%3E%3C/svg%3E%0A");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 9px 7px;
+    display: flex;
+    align-items: center;
 }
 
 .toggle-panel__description{

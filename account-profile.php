@@ -42,7 +42,9 @@ get_header();
                                             information
                                         </div>
                                     </div>
-                                    <div class="toggle-panel__arrow"></div>
+                                    <div class="toggle-panel__arrow">
+                                        <i class="mt-icon mt-icon-white mt-icon_caret-up-solid"></i>
+                                    </div>
                                 </button>
                             </h2>
                             <div id="collapseOne" class="toggle-panel__content collapse show"
@@ -75,6 +77,7 @@ get_header();
                                         </div>
                                     </div>
                                     <div class="toggle-panel__arrow">
+                                        <i class="mt-icon mt-icon-white mt-icon_caret-up-solid"></i>
                                     </div>
                                 </button>
                             </h2>
@@ -108,6 +111,7 @@ get_header();
                                         </div>
                                     </div>
                                     <div class="toggle-panel__arrow">
+                                        <i class="mt-icon mt-icon-white mt-icon_caret-up-solid"></i>
                                     </div>
                                 </button>
                             </h2>
@@ -141,6 +145,7 @@ get_header();
                                         </div>
                                     </div>
                                     <div class="toggle-panel__arrow">
+                                        <i class="mt-icon mt-icon-white mt-icon_caret-up-solid"></i>
                                     </div>
                                 </button>
                             </h2>
