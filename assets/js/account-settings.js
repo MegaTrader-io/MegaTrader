@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.iti.destroy();
                 delete phoneInput.style.paddingLeft;
             }
+
             const iti = window.intlTelInput(phoneInput, {
                 initialCountry: countryCode.toLowerCase(),
                 nationalMode: false,

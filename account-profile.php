@@ -163,3 +163,6 @@ get_header();
     </div>
 
 <?php get_footer(); ?>
+<?php
+wc_clear_notices();
+?>
