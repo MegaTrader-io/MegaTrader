@@ -4313,3 +4313,85 @@ textarea.mtfb-note {
     font-weight: 700;
     line-height: 24px;
 }
+
+.mt-user-profile-card {
+    display: flex;
+    padding: 20px;
+    outline: 1px var(--colors-gray-700) solid;
+    outline-offset: -1px;
+    margin-bottom: 32px;
+}
+
+.mt-user-profile-card__avatar-container {
+    position: relative;
+    margin-right: 20px;
+}
+
+.mt-user-profile-card__edit-icon {
+    padding: 4px;
+    bottom: 0;
+    left: 34px;
+    position: absolute;
+    background: white;
+    overflow: hidden;
+    border-radius: 16px;
+    outline: 1px white solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: inline-flex
+}
+
+.mt-user-profile-card__member-since {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 16px;
+}
+
+.mt-user-profile-card__details > * + * {
+    margin-top: 8px;
+}
+
+.mt-user-profile-card__status-icon {
+    display: flex;
+}
+
+.mt-user-profile-card__avatar-image {
+    width: 96px;
+    position: relative;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.mt-user-profile-card__avatar-image--initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mt-user-profile-card__status {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    gap: 4px;
+}
+
+.mt-user-profile-card__status--unverified {
+    color: var(--error-color);
+}
+
+.mt-user-profile-card__status--verified {
+    color: var(--success-color);
+}
+
+
+.mt-user-profile-card__status--verified .mt-user-profile-card__status-icon {
+    color: var(--success-color);
+}
+
+.mt-user-profile-card__status--unverified .mt-user-profile-card__status-icon {
+    color: var(--error-color);
+}

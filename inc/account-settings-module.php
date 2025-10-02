@@ -20,7 +20,7 @@ function mt_process_billing_form()
     }
 
     // Validar campos obligatorios
-    $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'billing_city', 'billing_phone', 'billing_email'];
+    $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'billing_city', 'billing_phone', 'billing_email', 'billing_country'];
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
             wc_add_notice(sprintf(__('%s is required.', 'woocommerce'), ucfirst(str_replace('_', ' ', $field))), 'error');
@@ -40,6 +40,7 @@ function mt_process_billing_form()
         $customer->set_billing_city(sanitize_text_field($_POST['billing_city']));
         $customer->set_billing_state(sanitize_text_field($_POST['billing_state']));
         $customer->set_billing_postcode(sanitize_text_field($_POST['billing_postcode']));
+        $customer->set_billing_country(sanitize_text_field($_POST['billing_country']));
         $customer->set_billing_phone(sanitize_text_field($_POST['billing_phone']));
         $customer->set_billing_email(sanitize_email($_POST['billing_email']));
 

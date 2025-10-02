@@ -10105,3 +10105,8 @@ tr:nth-of-type(4) bdi {
     display: flex;
     gap: 16px;
 }
+
+
+.space-y-4 > * + * {
+    margin-top: 16px !important;
+}
