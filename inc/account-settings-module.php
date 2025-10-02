@@ -2,6 +2,23 @@
 
 if (!defined('ABSPATH')) exit;
 
+function mt_account_settings_module()
+{
+    $js_path = get_template_directory() . '/assets/js/';
+    $js_uri = get_template_directory_uri() . '/assets/js/';
+    $js_version = file_exists($js_path . 'account-settings.js') ? filemtime($js_path . 'account-settings.js') : null;
+
+    mt_intl_tel_input_assets();
+
+    wp_enqueue_script('account-settings-module', $js_uri . 'account-settings.js', [], $js_version, true);
+}
+
+add_action('wp_enqueue_scripts', function () {
+    if (is_user_logged_in() && is_page_template('account-profile.php')) {
+        mt_account_settings_module();
+    }
+});
+
 function mt_process_billing_form()
 {
     if (!isset($_POST['mt_save_billing'])) {

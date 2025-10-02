@@ -4393,6 +4393,11 @@ textarea.mtfb-note {
     color: var(--error-color);
 }
 
+.w-phone-full .iti {
+    width: 100%;
+}
+
+
  /* ======= APEX TOOLTIP CONTAINER - GRAPGIC CHART ======= */
   .apexcharts-tooltip {
     position: absolute !important;

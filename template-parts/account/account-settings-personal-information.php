@@ -58,7 +58,8 @@ $valid_states = WC()->countries->get_states($billing_country);
             </div>
             <div class="col-lg-6">
                 <div class="form-group no-label">
-                    <label class="mb-1" for="billing_last_name"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
+                    <label class="mb-1"
+                           for="billing_last_name"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
                     <input type="text" class="form-control" name="billing_last_name" id="billing_last_name"
                            placeholder="<?php esc_attr_e('Last Name', 'megatrader'); ?>"
                            value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_last_name', true)); ?>">
@@ -125,8 +126,8 @@ $valid_states = WC()->countries->get_states($billing_country);
                     <?php endif; ?>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="form-group no-label">
+            <div class="col-lg-6 ">
+                <div class="form-group no-label w-phone-full">
                     <label class="mb-1" for="billing_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
                     <input type="tel" class="form-control" name="billing_phone" id="billing_phone"
                            placeholder="<?php esc_attr_e('Phone Number', 'megatrader'); ?>"
