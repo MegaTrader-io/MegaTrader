@@ -207,8 +207,15 @@ get_header();
       } ?>
     </div>
     <div class="mt-page__main d-flex flex-column gap-3">
-      
-      <?php /* ?>
+
+      <div class="mt-page__main-header">
+        <div class="mt-page__title text-white text-size-20 fw-medium text-uppercase">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['page_title_overview']; ?>
+        </div>
+        <span class="mt-page__subtitle text-a8a29e text-14px-line-20px fw-medium">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['page_subtitle_overview']; ?>
+        </span>
+      </div>
       <div class="mt-account-navigation mega-navigation">
         <?php if (function_exists('account_navigation_render')) {
           account_navigation_render();
@@ -220,7 +227,7 @@ get_header();
           );
         } ?>
       </div>
-      <?php */ ?>
+
 
       <div class="mt-account-selection" data-fit-main>
         <?php
@@ -421,7 +428,8 @@ get_header();
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
         </span>
 
-        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4" href="<?php echo esc_url($__breach_reset_url); ?>">
+        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4"
+          href="<?php echo esc_url($__breach_reset_url); ?>">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?>
         </a>
 

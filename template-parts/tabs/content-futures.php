@@ -304,11 +304,12 @@
 
     const radiosTargetGroups = ['account-size', 'account-type', 'platform'];
     const form = document.getElementById("futures-form");
+    const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
     
     function ensureRadioDefaults(form, targetGroups) {
         targetGroups.forEach(name => {
             const radios = Array.from(form.querySelectorAll(`input[type="radio"][name="${name}"]`));
-            if (radios.length === 0) return; // skip if no radios for this name
+            if (radios.length === 0) return;
 
             if (!radios.some(r => r.checked)) {
                 const defaultRadio = radios.find(r => r.hasAttribute('data-default'));
@@ -339,7 +340,6 @@
         const values = getFormValues(form);
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
         const selectedProductId = selectedProduct.id ?? '';
-        const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
         const event = new CustomEvent("product:selected", {
             detail: { product: Object.values(selectedProduct).length > 0 ? selectedProduct: null, values }
@@ -361,9 +361,13 @@
         checkoutBtn.href = checkoutUrl;
     }
 
-    form.addEventListener("change", updateSelectedProduct);
+    checkoutBtn.addEventListener('click', () => {
+        ensureRadioDefaults(form, radiosTargetGroups);
+        updateSelectedProduct();
+    })
+
     ensureRadioDefaults(form, radiosTargetGroups);
-    updateSelectedProduct();
+    
 
 </script>
 

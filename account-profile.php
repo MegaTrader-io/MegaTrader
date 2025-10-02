@@ -19,8 +19,7 @@ get_header();
                 <div class="account-settings">
                     <div class="section-header mb-4">
                         <div class="text-white text-size-20 fw-medium text-uppercase">ACCOUNT SETTINGS</div>
-                        <p class="fw-medium text-size-14 fw-medium mb-0">Manage your personal information, security and
-                            verification settings.</p>
+                        <span class="text-a8a29e text-14px-line-20px fw-medium">Manage your personal information, security and verification settings.</span>
                     </div>
 
                     <div class="account-settings__sections-wrapper" id="accordionExample">

@@ -2534,6 +2534,10 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
   color: var(--error-color);
 }
 
+.dot-status-passed {
+    color: var(--Colors-Gray-200);
+}
+
 .dot-status-default {
   color: var(--Colors-Gray-200);
 }

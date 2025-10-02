@@ -156,6 +156,8 @@ class Label
     ];
 
     public const META_ACCOUNT_OVERVIEW = [
+        "page_title_overview" => "Account Overview",
+        "page_subtitle_overview" => "View your trading metrics, account progress, and performance insights in one place",
         "account_feedback_title" => "How did it feel today?",
         "account_feedback_question" => "Did I follow my trading plan today?",
         "account_feedback_yes" => "Yes",
