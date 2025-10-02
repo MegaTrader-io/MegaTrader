@@ -121,6 +121,7 @@ class MT_Accounts
         'mainProductId' => (string) ($acc['rules']['mainProductId'] ?? ''),
         'resetProductId' => (string) ($acc['rules']['resetProductId'] ?? ''),
         'activationProductId' => (string) ($acc['rules']['activationProductId'] ?? ''),
+        'accountId' => (string) ($acc['platform']['accountId'] ?? ''),
       ];
     };
 
@@ -1073,6 +1074,7 @@ if (!function_exists('mt_accounts_build_account_data')) {
     $server = (string) ($plat['server'] ?? $account['server'] ?? '');
     $login = (string) ($plat['login'] ?? $account['login'] ?? '');
     $password = (string) ($plat['password'] ?? $account['password'] ?? '');
+    $accountId = (string) ($plat['accountId'] ?? $account['accountId'] ?? '');
 
     // Fallback de login al email del usuario por si la API no lo trae
     if ($login === '' && is_user_logged_in()) {
@@ -1086,6 +1088,7 @@ if (!function_exists('mt_accounts_build_account_data')) {
       'server' => $server,
       'login' => $login,
       'password' => $password,
+      'accountId' => $accountId
     ];
   }
 }
