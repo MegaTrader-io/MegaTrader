@@ -100,30 +100,83 @@ class MT_Accounts
     }
 
     // ===== 3) Helpers de mapeo (NO tocar la firma de tus métodos) =====
+    // dentro de MT_Accounts::prepare_ui(), sustituye SOLO este closure:
     $mapAccount = function (array $acc) use ($PLATFORM_LOGOS, $DEFAULT_LOGO) {
+      $id = (string) ($acc['id'] ?? '');
+
+      // ---- Program/label → size + name (igual que tenías)
       $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
       $sb = $acc['program']['startingBalance'] ?? null;
       [$size, $name] = self::parse_program_label($plabel, $sb);
 
-      $platformRaw = (string) ($acc['platform'] ?? ($acc['program']['platform'] ?? ''));
+      // ---- Platform "texto" para logo (soporta array o string)
+      $platformRaw = '';
+      if (isset($acc['platform'])) {
+        if (is_array($acc['platform'])) {
+          $platformRaw = (string) ($acc['platform']['platform'] ?? $acc['platform']['name'] ?? '');
+        } else {
+          $platformRaw = (string) $acc['platform'];
+        }
+      }
+      if ($platformRaw === '' && isset($acc['program']['platform'])) {
+        $platformRaw = (string) $acc['program']['platform'];
+      }
       $platformKey = self::norm($platformRaw);
       $logo = $PLATFORM_LOGOS[$platformKey] ?? $DEFAULT_LOGO;
 
+      // ---- Lo que trae getAll
+      $status = (string) ($acc['status'] ?? '');
+      $rules = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
+      $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
+      $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
+
+      // ---- ¿Falta algo? (solo entonces pedimos getAccountById)
+      $needRules = empty($rules['mainProductId']) || empty($rules['resetProductId']) || empty($rules['activationProductId']);
+      $needPlatId = ($platAccountId === '');
+
+      if (($needRules || $needPlatId) && $id !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
+        try {
+          $full = mt_accounts_resolve_account_by_id($id); // SIN cache, tu helper ya lo hace directo
+          if (is_array($full)) {
+            // Completar accountId si faltaba
+            if ($needPlatId) {
+              $platAccountId = (string) ($full['platform']['accountId'] ?? $full['accountId'] ?? $platAccountId);
+            }
+            // Completar rules.* faltantes
+            if ($needRules && !empty($full['rules']) && is_array($full['rules'])) {
+              foreach (['mainProductId', 'resetProductId', 'activationProductId'] as $rk) {
+                if (empty($rules[$rk]) && isset($full['rules'][$rk])) {
+                  $rules[$rk] = (string) $full['rules'][$rk];
+                }
+              }
+            }
+            // Si no teníamos platformRaw, intenta tomarlo del byId
+            if ($platformRaw === '' && isset($full['platform']) && is_array($full['platform'])) {
+              $platformRaw = (string) ($full['platform']['platform'] ?? $full['platform']['name'] ?? $platformRaw);
+              $platformKey = self::norm($platformRaw);
+              $logo = $PLATFORM_LOGOS[$platformKey] ?? $logo;
+            }
+          }
+        } catch (\Throwable $e) { /* silencio para no romper producción */
+        }
+      }
+
       return [
-        'id' => (string) ($acc['id'] ?? ''),
-        'status' => (string) ($acc['status'] ?? ''),
-        'badgeClass' => self::badge_class($acc['status'] ?? ''),
+        'id' => $id,
+        'status' => (string) $status,
+        'badgeClass' => self::badge_class($status),
         'size' => $size,
-        'name' => $name,
+        'name' => $name ?: 'Account',
         'platform' => $platformRaw,
         'logo' => $logo,
         'createdAt' => (string) ($acc['createdAt'] ?? ''),
-        'mainProductId' => (string) ($acc['rules']['mainProductId'] ?? ''),
-        'resetProductId' => (string) ($acc['rules']['resetProductId'] ?? ''),
-        'activationProductId' => (string) ($acc['rules']['activationProductId'] ?? ''),
-        'accountId' => (string) ($acc['platform']['accountId'] ?? ''),
+        'mainProductId' => (string) ($rules['mainProductId'] ?? ''),
+        'resetProductId' => (string) ($rules['resetProductId'] ?? ''),
+        'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
+        'accountId' => (string) $platAccountId,
       ];
     };
+
 
     // ===== 4) Construir payload UI (conservar estructura) =====
     $current = $mapAccount($cur);
@@ -937,8 +990,8 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
     $accountId = (string) ($account['accountId'] ?? $account['id'] ?? '');
 
 
-    $totalSinceStart = (int) $firstDt->diff($todayDt)->days + 1; 
-    $pointsToLoad = min(30, max(1, $totalSinceStart));       
+    $totalSinceStart = (int) $firstDt->diff($todayDt)->days + 1;
+    $pointsToLoad = min(30, max(1, $totalSinceStart));
 
     $startDt = (clone $todayDt)->modify('-' . ($pointsToLoad - 1) . ' days');
     $dates = [];
@@ -960,7 +1013,7 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
       $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
       $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
       $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
-    } else { 
+    } else {
       $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
       $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
       $periods[] = ['value' => 30, 'text' => 'LAST 30 DAYS'];
@@ -1065,7 +1118,6 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
 if (!function_exists('mt_accounts_build_account_data')) {
   function mt_accounts_build_account_data(array $account): array
   {
-    // La API puede venir como objeto "platform" con campos internos.
     $plat = $account['platform'] ?? [];
     if (!is_array($plat))
       $plat = [];
@@ -1784,8 +1836,3 @@ if (!function_exists('mt_parse_open_time')) {
     ];
   }
 }
-
-
-
-
-

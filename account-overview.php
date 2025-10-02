@@ -97,7 +97,7 @@ if (is_user_logged_in()) {
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
 
-
+        
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
