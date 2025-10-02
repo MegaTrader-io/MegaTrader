@@ -623,7 +623,7 @@ function change_payment_modal_should_show() {
 	</div>
 </div>
 <div class="block-object-rules d-flex gap-3 d-flex gap-3 mb-32">
-	<div class="account-box w-100 border-mg-buttton-secondary">
+	<div class="mt-card h-auto">
 		<div class="text-white text-size-20 fw-medium text-uppercase">Objectives</div>
 		<div class="d-flex flex-column">
 			<?php foreach ($objectives_meta as $key => $value): ?>
@@ -639,7 +639,7 @@ function change_payment_modal_should_show() {
 		</div>
 	</div>
 
-	<div class="account-box w-100 border-mg-buttton-secondary">
+	<div class="mt-card h-auto">
 		<div class="text-white text-size-20 fw-medium text-uppercase">Rules</div>
 		<div class="d-flex flex-column">
 			<?php foreach ($rules_meta as $key => $value): ?>
@@ -658,7 +658,7 @@ function change_payment_modal_should_show() {
 </div>
 <?php if (!empty($orders_to_show)): ?>
 	<div class="mb-32">
-		<div class="border-mg-buttton-secondary mb-4 overflow-hidden rounded-2xl">
+		<div class="border-0 mb-4 mt-card overflow-hidden p-0">
 			<div class="fw-medium text-size-20 text-uppercase text-white p-3 bg-1e1e1e">
 				Related Orders
 			</div>
