@@ -37,11 +37,11 @@ $card_class = 'account-performance-chart mt-card' . ($has_enough_points ? '' : '
 
 
 // Ruta imagen overlay
-$overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/graph-overlay.svg';
+$overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/graph-empty.svg';
 ?>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<div class="account-performance-chart mt-card <?= esc_attr($card_class) ?>">
+<div class="account-performance-chart mt-card mt-card-dark <?= esc_attr($card_class) ?>">
   <div class="account-performance-chart__overlay" <?php echo $has_enough_points ? 'hidden' : ''; ?>>
     <img class="apc-overlay__img" src="<?php echo esc_url($overlay_img); ?>" alt="" loading="lazy" />
     <span class="apc-overlay__text">There is not enough data to generate the graph.</span>
@@ -327,134 +327,3 @@ $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/gra
     });
   }
 </script>
-
-<style>
-  /* ======= APEX TOOLTIP CONTAINER ======= */
-  .apexcharts-tooltip {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    overflow: visible !important;
-    transition: none !important;
-    will-change: transform, opacity;
-    pointer-events: none !important;
-    border: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    z-index: 10;
-  }
-
-  .apexcharts-tooltip.mt-tip-hidden {
-    transform: translate3d(-9999px, -9999px, 0) !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-
-  /* ======= TOOLTIP CUSTOM ======= */
-  .mt-apex-tip {
-    position: relative;
-    background: #000;
-    color: #fff;
-    border: 1px solid var(--Colors-Gray-700, #404040);
-    border-radius: 8px;
-    padding: 10px 12px;
-    min-width: 220px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-  }
-
-  .mt-apex-tip::before,
-  .mt-apex-tip::after {
-    content: "";
-    position: absolute;
-    left: var(--arrow-x, 22px);
-    pointer-events: none;
-    border-style: solid;
-    top: 100%;
-  }
-
-  .mt-apex-tip::before {
-    border-width: 7px;
-    border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
-  }
-
-  .mt-apex-tip::after {
-    border-width: 7px;
-    border-color: #000 transparent transparent transparent;
-    margin-top: -1px;
-  }
-
-  .mt-apex-tip__date {
-    color: #fff;
-    font-size: 14px;
-    line-height: 20px;
-    margin-bottom: 8px;
-  }
-
-  .mt-apex-tip__row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--Text-Body, #A8A29E);
-  }
-
-  .mt-apex-tip__row b {
-    font-weight: 600;
-    color: #fff;
-  }
-
-  .mt-apex-tip__marker {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    margin-right: 8px;
-    vertical-align: middle;
-  }
-
-  .account-performance-chart.is-empty{
-  min-height: 505px;          /* fuerza el alto del card */
-  position: relative;         /* asegura que el overlay absoluto se ancle al card */
-}
-
-  .account-performance-chart.mt-card{
-  position: relative; 
-  overflow: hidden;
-}
-
-.account-performance-chart__overlay{
-  position: absolute;
-  inset: 0;               
-  z-index: 10;           
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.apc-overlay__img{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;   
-  pointer-events: none;
-}
-
-.account-performance-chart__overlay::after{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,.85);
-}
-
-.apc-overlay__text{
-  position: relative;     
-  z-index: 1;
-  color: #fff;
-  padding: 12px 16px;
-}
-
-</style>
