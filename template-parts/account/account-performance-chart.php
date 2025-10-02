@@ -33,13 +33,15 @@ if (is_array($plan_revenue)) {
 $MIN_POINTS = 7;
 $points_count = count($js_series);
 $has_enough_points = ($points_count >= $MIN_POINTS);
+$card_class = 'account-performance-chart mt-card' . ($has_enough_points ? '' : ' is-empty');
+
 
 // Ruta imagen overlay
 $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/graph-overlay.svg';
 ?>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<div class="account-performance-chart mt-card">
+<div class="account-performance-chart mt-card <?= esc_attr($card_class) ?>">
   <div class="account-performance-chart__overlay" <?php echo $has_enough_points ? 'hidden' : ''; ?>>
     <img class="apc-overlay__img" src="<?php echo esc_url($overlay_img); ?>" alt="" loading="lazy" />
     <span class="apc-overlay__text">There is not enough data to generate the graph.</span>
@@ -411,6 +413,11 @@ $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/gra
     margin-right: 8px;
     vertical-align: middle;
   }
+
+  .account-performance-chart.is-empty{
+  min-height: 505px;          /* fuerza el alto del card */
+  position: relative;         /* asegura que el overlay absoluto se ancle al card */
+}
 
   .account-performance-chart.mt-card{
   position: relative; 

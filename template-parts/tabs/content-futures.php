@@ -46,10 +46,10 @@
             $radio_id = esc_attr('account-size-' . $slug);
 
             $checked_attr = '';
-            if( ! $is_disabled && ! $is_active_assigned){
-                // $checked_attr = 'checked="true"';
-                $is_active_assigned = true;
-            }
+            // if( ! $is_disabled && ! $is_active_assigned){
+            //     $checked_attr = 'checked="true"';
+            //     $is_active_assigned = true;
+            // }
             ?>
             <input type="radio" name="account-size" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>>
             <div class="radio__label__wrapper">
@@ -105,10 +105,10 @@
 
 
             $checked_attr = '';
-            if( ! $is_disabled && ! $is_active_assigned){
-                // $checked_attr = 'checked="true"';
-                $is_active_assigned = true;
-            }
+            // if( ! $is_disabled && ! $is_active_assigned){
+            //     // $checked_attr = 'checked="true"';
+            //     $is_active_assigned = true;
+            // }
             ?>
             <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
             <div class="radio__label__wrapper">
@@ -151,7 +151,7 @@
     function render_platforms($platforms) {
         if (empty($platforms)) return;
         
-        $is_active_assigned = false;
+        // $is_active_assigned = false;
         foreach ($platforms as $index => $item) {
             $slug = esc_attr($item['slug']);
             $name = esc_html($item['name']);
@@ -177,10 +177,10 @@
             $radio_id = esc_attr('platform-' . $slug);
 
             $checked_attr = '';
-            if( ! $is_disabled && ! $is_active_assigned){
-                // $checked_attr = 'checked="true"';
-                $is_active_assigned = true;
-            }
+            // if( ! $is_disabled && ! $is_active_assigned){
+            //     $checked_attr = 'checked="true"';
+            //     $is_active_assigned = true;
+            // }
             ?>
             <input type="radio" name="platform" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
             <div class="radio__label__wrapper">
@@ -302,6 +302,21 @@
     const isUserLoggedIn = <?= is_user_logged_in() ? 'true' : 'false' ?>;
     const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
 
+    const radiosTargetGroups = ['account-size', 'account-type', 'platform'];
+    const form = document.getElementById("futures-form");
+    
+    function ensureRadioDefaults(form, targetGroups) {
+        targetGroups.forEach(name => {
+            const radios = Array.from(form.querySelectorAll(`input[type="radio"][name="${name}"]`));
+            if (radios.length === 0) return; // skip if no radios for this name
+
+            if (!radios.some(r => r.checked)) {
+                const defaultRadio = radios.find(r => r.hasAttribute('data-default'));
+                (defaultRadio || radios[0]).checked = true;
+            }
+        });
+    }
+
     function normalizeAttributes(data) {
         if (!data || !Array.isArray(data)) return {};
 
@@ -346,9 +361,8 @@
         checkoutBtn.href = checkoutUrl;
     }
 
-    const form = document.getElementById("futures-form");
-
     form.addEventListener("change", updateSelectedProduct);
+    ensureRadioDefaults(form, radiosTargetGroups);
     updateSelectedProduct();
 
 </script>
