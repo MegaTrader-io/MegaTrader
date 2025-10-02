@@ -47,7 +47,7 @@
 
             $checked_attr = '';
             if( ! $is_disabled && ! $is_active_assigned){
-                $checked_attr = 'checked="true"';
+                // $checked_attr = 'checked="true"';
                 $is_active_assigned = true;
             }
             ?>
@@ -106,7 +106,7 @@
 
             $checked_attr = '';
             if( ! $is_disabled && ! $is_active_assigned){
-                $checked_attr = 'checked="true"';
+                // $checked_attr = 'checked="true"';
                 $is_active_assigned = true;
             }
             ?>
@@ -178,7 +178,7 @@
 
             $checked_attr = '';
             if( ! $is_disabled && ! $is_active_assigned){
-                $checked_attr = 'checked="true"';
+                // $checked_attr = 'checked="true"';
                 $is_active_assigned = true;
             }
             ?>
