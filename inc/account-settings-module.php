@@ -6,11 +6,27 @@ function mt_account_settings_module()
 {
     $js_path = get_template_directory() . '/assets/js/';
     $js_uri = get_template_directory_uri() . '/assets/js/';
-    $js_version = file_exists($js_path . 'account-settings.js') ? filemtime($js_path . 'account-settings.js') : null;
+    $js_file = 'account-settings.js';
 
-    mt_intl_tel_input_assets();
+    $js_version = file_exists($js_path . $js_file)
+        ? filemtime($js_path . $js_file)
+        : false;
 
-    wp_enqueue_script('account-settings-module', $js_uri . 'account-settings.js', [], $js_version, true);
+    if (function_exists('mt_intl_tel_input_assets')) {
+        mt_intl_tel_input_assets();
+    }
+
+    $deps = [];
+
+    wp_register_script(
+        'account-settings-module',
+        $js_uri . $js_file,
+        $deps,
+        $js_version,
+        true
+    );
+
+    wp_enqueue_script('account-settings-module');
 }
 
 add_action('wp_enqueue_scripts', function () {
@@ -36,16 +52,11 @@ function mt_process_billing_form()
         return;
     }
 
-    // Validar campos obligatorios
-    $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'billing_city', 'billing_phone', 'billing_email', 'billing_country'];
+    $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'billing_city', 'billing_state', 'billing_postcode', 'billing_phone', 'billing_country'];
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
-            wc_add_notice(sprintf(__('%s is required.', 'woocommerce'), ucfirst(str_replace('_', ' ', $field))), 'error');
+            wc_add_notice(__("This field is required", 'your-td'), 'error', ['field' => $field]);;
         }
-    }
-
-    if (!empty($_POST['billing_email']) && !is_email($_POST['billing_email'])) {
-        wc_add_notice(__('Please enter a valid email address.', 'woocommerce'), 'error');
     }
 
     if (!wc_notice_count('error')) {
@@ -59,7 +70,6 @@ function mt_process_billing_form()
         $customer->set_billing_postcode(sanitize_text_field($_POST['billing_postcode']));
         $customer->set_billing_country(sanitize_text_field($_POST['billing_country']));
         $customer->set_billing_phone(sanitize_text_field($_POST['billing_phone']));
-        $customer->set_billing_email(sanitize_email($_POST['billing_email']));
 
         $customer->save();
 

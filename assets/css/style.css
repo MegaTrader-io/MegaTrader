@@ -1068,9 +1068,10 @@ textarea.is-invalid {
 .invalid-feedback {
     margin-top: 8px;
     font-size: 14px;
-    line-height: 24px;
+    line-height: 20px;
     font-weight: 500;
     text-transform: capitalize;
+    color: var(--error-color);
 }
 
 .row.no-gutters>.form-group {

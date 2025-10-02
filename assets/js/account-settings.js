@@ -2,9 +2,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const phoneInput = document.getElementById("billing_phone");
     console.info('phoneInput', phoneInput);
     if (phoneInput) {
+        window.iti = window.intlTelInput(phoneInput, {
+            initialCountry: 'us',
+            nationalMode: false,
+            separateDialCode: true,
+        });
+
         function initPhoneInput(countryCode = "us") {
             if (window.iti) {
                 window.iti.destroy();
+                delete phoneInput.style.paddingLeft;
             }
             const iti = window.intlTelInput(phoneInput, {
                 initialCountry: countryCode.toLowerCase(),
