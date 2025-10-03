@@ -14,7 +14,7 @@ $attributes = $products_data['attributes'] ?? [];
 
 $page_slug = pathinfo(__FILE__, PATHINFO_FILENAME);
 
-$remember_previous_selection = $layoutType === LayoutType::MyAccount;
+$remember_previous_selection = true;
 
 $account_sizes = [];
 $account_types = [];
