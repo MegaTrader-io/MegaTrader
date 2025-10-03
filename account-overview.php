@@ -23,6 +23,8 @@ $mt_cnt_encoded = 0;
 $mt_feature_content = []; // payload para account-feature-content
 $mt_account_data = []; // payload para account-data
 $mt_daily_journal = [];
+$cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
+
 
 
 
@@ -189,7 +191,7 @@ if (is_user_logged_in()) {
         $__breach_key = \Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED';
       }
 
-      // case-insensitive: soporta "Breached" y "BREACHED"
+      //  Modal "BREACHED"
       $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
       $__breach_reset_url = '/my-account/reset'; // fallback
       $__reset_product_id = (string) (
@@ -200,6 +202,70 @@ if (is_user_logged_in()) {
       if ($__reset_product_id !== '' && function_exists('wc_get_checkout_url')) {
         $__breach_reset_url = wc_get_checkout_url() . '?add-to-cart=' . urlencode($__reset_product_id);
       }
+
+      /* ==== Passed/Activation meta & helpers ==== */
+      $__pending_act_key = 'PENDING_ACTIVATION';
+      if (class_exists('Label')) {
+        $__pending_act_key = \Label::ACCOUNT_STATUS_MAP['PENDING_ACTIVATION'] ?? 'PENDING_ACTIVATION';
+      }
+
+      $__passed_key = 'PASSED';
+      if (class_exists('Label')) {
+        $__passed_key = \Label::ACCOUNT_STATUS_MAP['PASSED'] ?? 'PASSED';
+      }
+
+      // Normalizador para comparar (solo para lógica interna)
+      $__norm = function ($s) {
+        $s = strtoupper(trim((string) $s));
+        return preg_replace('/[^A-Z0-9]/', '', $s);
+      };
+
+      // status actual (dos variantes: "raw" para data-attr, "norm" para comparar)
+      $__status_norm_raw = (string) ($__mt_selected_status ?? '');
+      $__status_norm = $__norm($__status_norm_raw);
+
+      $__pending_act_key_norm = $__norm($__pending_act_key);
+      $__passed_key_norm = $__norm($__passed_key);
+
+      // ¿Mostrar modal Passed/Activation en render inicial?
+      $__mt_account_passed_show = (
+        $__status_norm === $__pending_act_key_norm ||
+        $__status_norm === $__passed_key_norm
+      ) ? '1' : '0';
+
+      // Activation product id y URL
+      $__activation_product_id = (string) (
+        $resolved['rules']['activationProductId'] ?? ($mt_account_ui['current']['activationProductId'] ?? '')
+      );
+      $__has_activation_id = ($__activation_product_id !== '' && $__activation_product_id !== '0' && strtolower($__activation_product_id) !== 'null');
+
+      $__activation_url = ($__has_activation_id && function_exists('wc_get_checkout_url'))
+        ? wc_get_checkout_url() . '?add-to-cart=' . urlencode($__activation_product_id)
+        : '';
+
+      // Nota (siempre pintada en SSR)
+      $__note_text = '';
+      if (
+        ($__status_norm === $__pending_act_key_norm && $__has_activation_id) ||
+        ($__status_norm === $__passed_key_norm && $__has_activation_id)
+      ) {
+        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending'];
+      } elseif ($__status_norm === $__passed_key_norm && !$__has_activation_id) {
+        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button'];
+      }
+
+      // Botón (usar SIEMPRE los estados normalizados)
+      $__passed_btn_html = '';
+      if ($__status_norm === $__pending_act_key_norm && $__has_activation_id) {
+        $__passed_btn_html = '<a class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4" href="' .
+          esc_url($__activation_url) . '">' .
+          esc_html(Label::META_ACCOUNT_OVERVIEW['passed_modal_button']) . '</a>';
+      } elseif ($__status_norm === $__passed_key_norm && $__has_activation_id) {
+        $__passed_btn_html = '<a class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4 disabled" aria-disabled="true" href="#">' .
+          esc_html(Label::META_ACCOUNT_OVERVIEW['passed_modal_button']) . '</a>';
+      }
+
+
 
 
     } else {
@@ -451,14 +517,12 @@ get_header();
           </span>
         </button>
       </div>
-
       <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
         <div aria-hidden="true">
           <div class="modal-body-image modal-image-warning">
             <img decoding="async" src="/wp-content/uploads/2025/07/warning.svg" alt="http://Warning%20icon">
           </div>
         </div>
-
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_title']; ?>
         </span>
@@ -468,16 +532,63 @@ get_header();
         <span class="fw-medium text-a8a29e text-base">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
         </span>
-
         <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4"
           href="<?php echo esc_url($__breach_reset_url); ?>">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?>
         </a>
-
       </div>
     </div>
   </div>
 </div>
+
+<div id="mt-account-passed-modal" class="modal modal-subcription fade" tabindex="-1"
+  aria-labelledby="mtactivation-title" aria-hidden="true" data-show="<?php echo $__mt_account_passed_show; ?>"
+  data-note-pending="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending']); ?>"
+  data-note-pending-no-button="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button']); ?>"
+  data-current-status="<?php echo esc_attr(strtoupper((string) $__status_norm_raw)); ?>"
+  data-activation-id="<?php echo esc_attr($__activation_product_id); ?>">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-content gap-32">
+      <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
+        <span id="mtactivation-title" class="modal-title text-white heading-sm-medium text-uppercase">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_title']; ?></span>
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;">
+          </span>
+        </button>
+      </div>
+      <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
+        <div aria-hidden="true">
+          <div class="modal-body-image ">
+            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png"
+              alt="http://Thank%20you%20icon">
+          </div>
+        </div>
+        <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_title']; ?>
+        </span>
+        <span class="text-white fw-medium text-uppercase text-2xl leading-7">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_description']; ?>
+        </span>
+        <span class="fw-medium text-a8a29e text-base">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle']; ?>
+        </span>
+
+        <div class="mt-note" id="mt-passed-note" data-status="info">
+          <span class="mt-icon mt-icon-info mt-icon_info-solid"></span>
+          <span class="fw-medium text-a8a29e text-base" data-note-text>
+            <?php echo esc_html($__note_text); ?>
+          </span>
+        </div>
+
+        <?php echo $__passed_btn_html; ?>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <?php get_footer(); ?>

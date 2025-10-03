@@ -214,17 +214,14 @@ class Label
         "breach_modal_body_description" => "Your evaluation has failed!",
         "breach_modal_body_subtitle" => "In order to continue trading you need to reset your account.",
         "breach_modal_button" => "Reset account",
-        'passed_modal_title' => 'ACCOUNT PASSED – UNDER REVIEW',
-        'passed_modal_headline' => 'Congrats!',
-        'passed_modal_subhead' => 'Your account has passed the evaluation',
-        'passed_modal_copy' => "Your account is under compliance review. Once approved, you’ll be able to pay the activation fee and unlock your funded account.",
-
-        'passed_modal_button_activate' => 'Activate Now',
-        'passed_modal_button_pending' => 'Activation Pending',
+        'passed_modal_title' => 'Account Passed – Under Review',
+        'passed_modal_body_title' => 'Congrats!',
+        'passed_modal_body_description' => 'Your account has passed the evaluation',
+        'passed_modal_body_subtitle' => "Your account is under compliance review. Once approved, you’ll be able to pay the activation fee and unlock your funded account.",
+        'passed_modal_button' => 'Activation Pending',
 
         'passed_modal_note_pending' => 'Activation will open once review is complete.', 
-        'passed_modal_note_passed_with' => 'Activation will open once review is complete.', 
-        'passed_modal_note_passed_none' => 'Automatic Activation After Review',
+        'passed_modal_note_pending_no_button' => 'Automatic Activation After Review',
     ];
 
 }

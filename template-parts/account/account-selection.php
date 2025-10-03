@@ -200,6 +200,8 @@ href="<?php echo esc_url($hasReset ? $reset_url : '#'); ?>" aria-label="Reset Ch
                 data-platform-account-id="<?php echo esc_attr($accPlatId); ?>"
                 data-size="<?php echo esc_attr($a['size'] ?? ''); ?>"
                 data-reset-id="<?php echo esc_attr($a['resetProductId'] ?? ''); ?>"
+                data-activation-id="<?php echo esc_attr($a['activationProductId'] ?? ''); ?>"
+
                 data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>" data-logo="<?php echo esc_url($logo_src); ?>"
                 data-order="<?php echo esc_attr($ord); ?>" style="display:none;">
                 <!-- oculto inicial hasta aplicar filtro -->
@@ -320,6 +322,7 @@ wp_add_inline_script($handle, <<<JS
     if (!grid) return;
     var active = grid.querySelector(CFG.selectors.card + '.' + CFG.selectionClass);
     var resetId = active ? (active.getAttribute('data-reset-id') || '') : '';
+    var activationId = active ? (active.getAttribute('data-activation-id') || '') : '';
     var base = CFG.checkoutBase || (window.MT_DATA && window.MT_DATA.checkoutBase) || '/checkout';
     var btns = document.querySelectorAll('.custom-reset-btn');
 

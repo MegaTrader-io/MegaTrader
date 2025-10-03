@@ -465,6 +465,9 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-icon.mt-icon.mt-icon-gray {
     background-color: #404040;
 }
+.mt-icon.mt-icon-info {
+    background-color: #60A5FA;
+}
 
 
 .mt-icon_account {
