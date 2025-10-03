@@ -229,15 +229,15 @@ href="<?php echo esc_url($hasReset ? $reset_url : '#'); ?>" aria-label="Reset Ch
                 </div>
 
                 <div class="subscription-card__body text-center">
-                  <div class="subscription-card__name fw-medium text-16px text-white">
+                  <div class="subscription-card__name fw-medium text-base text-white">
                     <?php echo esc_html(($a['size'] ?? '') . ' ' . ($a['name'] ?? 'Account')); ?>
                   </div>
-                  <div class="subscription-card__id text-14px text-a8a29e text-uppercase text-truncate">
+                  <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">
                     #<?php echo esc_html($accPlatId ?: $aid); ?>
                   </div>
                   <?php
                   if ($progText !== '' && $progClass !== ''): ?>
-                    <div class="badge-mega badge-mega-sm <?php echo esc_attr($progClass); ?>">
+                    <div class=" mt-2 badge-mega badge-mega-sm badge-mega-fit-content <?php echo esc_attr($progClass); ?>">
                       <?php echo esc_html($progText); ?>
                     </div>
                   <?php endif; ?>

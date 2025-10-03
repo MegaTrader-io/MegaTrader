@@ -1564,6 +1564,11 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   min-height: 28px;
 }
 
+.badge-mega-fit-content {
+  width: fit-content;
+    margin: auto;
+}
+
 .badge-mega-active {
   background-color: var(--theme-color3);
 }
@@ -2592,6 +2597,9 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 
 .dot-status-pending-cancel {
   color: #94A3B8;
+}
+.dot-status-pending-activation {
+  color: var(--theme-color);
 }
 
 /* --- Dot Position --- */
