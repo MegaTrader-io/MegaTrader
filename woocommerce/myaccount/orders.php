@@ -50,7 +50,6 @@ if (!$has_orders) {
     return;
 }
 
-/** Ya con órdenes, continuar flujo normal */
 do_action('woocommerce_before_account_orders', $has_orders);
 
 ?>

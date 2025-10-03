@@ -7,6 +7,8 @@ if ( ! defined('ABSPATH') ) exit;
 add_filter('woocommerce_account_menu_items', function ($items) {
     $new_items = [];
 
+    $new_items['trade-area'] = __('Account Metrics', 'woocommerce');
+
    
     $new_items['subscriptions'] = __('Manage Subscription', 'woocommerce');
 
@@ -22,7 +24,7 @@ add_filter( 'woocommerce_get_endpoint_url', function( $url, $endpoint, $value, $
         $url = site_url( '/my-account/overview' );
     }
     if ( $endpoint === 'subscriptions' ) {
-        return trailingslashit( home_url( '/subscriptions' ) );
+        return trailingslashit( home_url( 'my-account/orders' ) );
     }
     return $url;
 }, 10, 4 );
@@ -57,7 +59,7 @@ function items_navigation_get_args($menu_items = [], $aria_label = '', $select_i
 
         if(!$is_active && $label === 'Manage Subscription'){
             $current_endpoint = WC()->query->get_current_endpoint();
-            $is_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'subscriptions'], true);
+            $is_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'orders'], true);
         }
 
         $items[] = [
