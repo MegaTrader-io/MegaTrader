@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     phoneInput.classList.remove("is-invalid");
                     errorContainer.style.display = "none";
                     phoneInput.setCustomValidity("");
+
                 } else {
                     phoneInput.classList.add("is-invalid");
                     errorContainer.style.display = "block";
@@ -83,6 +84,25 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         } else {
             fallbackToIP();
+        }
+
+        const form = phoneInput.closest("form");
+        if (form) {
+            form.addEventListener("submit", function () {
+                if (window.iti) {
+                    const fullNumber = window.iti.getNumber();
+                    console.info("📞 Full number on submit:", fullNumber);
+
+                    let hiddenInput = form.querySelector("input[name='billing_phone_full']");
+                    if (!hiddenInput) {
+                        hiddenInput = document.createElement("input");
+                        hiddenInput.type = "hidden";
+                        hiddenInput.name = "billing_phone_full";
+                        form.appendChild(hiddenInput);
+                    }
+                    hiddenInput.value = fullNumber;
+                }
+            });
         }
     }
 });

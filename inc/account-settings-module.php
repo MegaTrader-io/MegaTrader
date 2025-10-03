@@ -69,7 +69,7 @@ function mt_process_billing_form()
         $customer->set_billing_state(sanitize_text_field($_POST['billing_state']));
         $customer->set_billing_postcode(sanitize_text_field($_POST['billing_postcode']));
         $customer->set_billing_country(sanitize_text_field($_POST['billing_country']));
-        $customer->set_billing_phone(sanitize_text_field($_POST['billing_phone']));
+        $customer->set_billing_phone(sanitize_text_field($_POST['billing_phone_full']));
 
         $customer->save();
 
