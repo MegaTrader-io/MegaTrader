@@ -216,6 +216,7 @@ $GLOBALS['mt_performance'] = $mt_performance;
 $GLOBALS['mt_feature_content'] = $mt_feature_content;
 $GLOBALS['mt_account_data'] = $mt_account_data;
 $GLOBALS['mt_chart'] = $mt_chart ?? [];
+$GLOBALS['mt_active_order_id'] = isset($__active_order_id) ? (int)$__active_order_id : 0;
 
 
 
@@ -255,9 +256,11 @@ get_header();
             function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
           );
         } ?>
-        <form id="mt-manage-subs-form" action="<?php echo esc_url(trailingslashit(home_url('my-account/orders'))); ?>"
-          method="post" class="d-none">
+        <form id="mt-manage-subs-form"
+          action="<?php echo esc_url(trailingslashit(home_url('my-account/orders'))); ?>" method="post"
+          class="d-none">
           <input type="hidden" name="orderId" value="">
+          <input type="hidden" name="optionalOrderId" value="">
         </form>
       </div>
 
@@ -469,7 +472,6 @@ get_header();
     </div>
   </div>
 </div>
-
 
 
 <?php get_footer(); ?>

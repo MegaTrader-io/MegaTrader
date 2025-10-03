@@ -19,20 +19,32 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
 /**
  * URLs de endpoints del menú
- * - trade-area  -> /my-account/overview
- * - subscriptions -> /my-account/orders  (orderId lo inyecta JS con data-order-id)
+ * - trade-area    -> /my-account/overview
+ * - subscriptions -> /my-account/orders?orderId=XXXX (si tenemos el ID activo)
  */
 add_filter('woocommerce_get_endpoint_url', function ($url, $endpoint, $value, $permalink) {
+
     if ($endpoint === 'trade-area') {
         return site_url('/my-account/overview');
     }
 
     if ($endpoint === 'subscriptions') {
-        // Siempre al base; el orderId lo maneja el JS
-        return trailingslashit(home_url('my-account/orders'));
+        $base = trailingslashit(home_url('my-account/orders'));
+
+        // Tomamos el orderId calculado en account-overview.php
+        $oid = isset($GLOBALS['mt_active_order_id']) ? (int)$GLOBALS['mt_active_order_id'] : 0;
+
+        // Si no hay global (p.ej. otras pantallas), dejamos el base sin query
+        if ($oid > 0) {
+            // Evita duplicados si algo ya trae query
+            $base = add_query_arg(['orderId' => $oid], $base);
+        }
+
+        return $base;
     }
 
     return $url;
+
 }, 10, 4);
 
 /**
@@ -56,27 +68,18 @@ function items_navigation_get_args($menu_items = [], $aria_label = '', $select_i
     $req_path = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
 
     foreach ($menu_items as $endpoint => $label) {
-        $url = wc_get_account_endpoint_url($endpoint);
+        // wc_get_account_endpoint_url ya pasa por el filtro de arriba
+        $url      = wc_get_account_endpoint_url($endpoint);
+        $url_path = rtrim(parse_url($url, PHP_URL_PATH), '/');
 
-        // Para "subscriptions" devolvemos /my-account/orders (JS hará el resto con orderId)
-        if ($endpoint === 'subscriptions') {
-            $url = trailingslashit(home_url('my-account/orders'));
-        }
-
-        $url_path  = rtrim(parse_url($url, PHP_URL_PATH), '/');
         $is_active = ($req_path === $url_path);
 
         // Marcar activo cuando estamos en orders / view-subscription
         if (!$is_active && $label === 'Manage Subscription') {
             $current_endpoint = function_exists('WC') ? WC()->query->get_current_endpoint() : '';
-            $is_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'orders', 'subscriptions'], true);
-
-            if (!$is_active && strpos($req_path, '/my-account/view-subscription') !== false) {
-                $is_active = true;
-            }
-            if (!$is_active && strpos($req_path, '/my-account/orders') !== false) {
-                $is_active = true;
-            }
+            $is_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'orders', 'subscriptions'], true)
+                      || strpos($req_path, '/my-account/view-subscription') !== false
+                      || strpos($req_path, '/my-account/orders') !== false;
         }
 
         $items[] = [
@@ -113,9 +116,9 @@ function account_navigation_render()
 function account_settings_navigation_render(): void
 {
     $endpoints = [
-        'profile'                         => __('Personal Information', 'woocommerce'),
-        'profile/verification'            => __('Verification', 'woocommerce'),
-        'profile/password'                => __('Password', 'woocommerce'),
+        'profile'                           => __('Personal Information', 'woocommerce'),
+        'profile/verification'              => __('Verification', 'woocommerce'),
+        'profile/password'                  => __('Password', 'woocommerce'),
         'profile/two-factor-authentication' => __('2FA (Two-factor-authentication)', 'woocommerce'),
     ];
 

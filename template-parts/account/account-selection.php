@@ -145,6 +145,7 @@ $badgeClass   = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                 $status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
                 $dot_class  = 'dot-status-' . $status_key;
                 $logo_src   = (string) ($a['logo'] ?? '');
+                $ord       = (int) ($a['order'] ??  0);
               ?>
               <div class="<?php echo esc_attr($card_class); ?>" role="button"
                    data-account-id="<?php echo esc_attr($aid); ?>"
@@ -154,6 +155,7 @@ $badgeClass   = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                    data-reset-id="<?php echo esc_attr($a['resetProductId'] ?? ''); ?>"
                    data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>"
                    data-logo="<?php echo esc_url($logo_src); ?>"
+                   data-order="<?php echo esc_attr($ord); ?>"
                    style="display:none;"><!-- oculto inicial hasta aplicar filtro -->
 
                 <div class="checkmark-icon position-absolute"
