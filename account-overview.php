@@ -216,9 +216,12 @@ $GLOBALS['mt_performance'] = $mt_performance;
 $GLOBALS['mt_feature_content'] = $mt_feature_content;
 $GLOBALS['mt_account_data'] = $mt_account_data;
 $GLOBALS['mt_chart'] = $mt_chart ?? [];
-$GLOBALS['mt_active_order_id'] = isset($__active_order_id) ? (int)$__active_order_id : 0;
+$GLOBALS['mt_active_order_id'] = isset($__active_order_id) ? (int) $__active_order_id : 0;
 
-
+if (empty($mt_account_ui['accounts'])) {
+  wp_safe_redirect(trailingslashit(home_url('/subscriptions')));
+  exit;
+}
 
 get_header();
 
@@ -256,9 +259,8 @@ get_header();
             function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
           );
         } ?>
-        <form id="mt-manage-subs-form"
-          action="<?php echo esc_url(trailingslashit(home_url('my-account/orders'))); ?>" method="post"
-          class="d-none">
+        <form id="mt-manage-subs-form" action="<?php echo esc_url(trailingslashit(home_url('my-account/orders'))); ?>"
+          method="post" class="d-none">
           <input type="hidden" name="orderId" value="">
           <input type="hidden" name="optionalOrderId" value="">
         </form>
@@ -320,26 +322,30 @@ get_header();
         </div>
         <div class="mt-account-performance-chart-content">
           <?php
-          get_template_part(
-            'template-parts/account/account-performance-chart',
-            null,
-            [
-              'meta' => ['accountId' => $mt_selected_id],
-              'chart' => $mt_chart ?? [],
-            ]
-          );
+          if (!empty($mt_selected_id)) {
+            get_template_part(
+              'template-parts/account/account-performance-chart',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'chart' => $mt_chart ?? [],
+              ]
+            );
+          }
           ?>
         </div>
         <div class="mt-account-daily-journal">
           <?php
-          get_template_part(
-            'template-parts/account/account-daily-journal',
-            null,
-            [
-              'meta' => ['accountId' => $mt_selected_id],
-              'data' => $mt_daily_journal,
-            ]
-          );
+          if (!empty($mt_selected_id)) {
+            get_template_part(
+              'template-parts/account/account-daily-journal',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'data' => $mt_daily_journal,
+              ]
+            );
+          }
           ?>
         </div>
       </div>

@@ -1639,11 +1639,9 @@ document.addEventListener("mt:accountSelected", function (e) {
     var w = calcMainWidth();
     if (!w) return;
 
-    // var global
     document.documentElement.style.setProperty("--mt-main-width", w + "px");
     document.body.style.setProperty("--mt-main-width", w + "px");
 
-    // var específica del journal
     var dj = document.getElementById("mt-daily-journal");
     if (dj) dj.style.setProperty("--dj-viewport", w + "px");
   }
@@ -1681,12 +1679,10 @@ document.addEventListener("mt:accountSelected", function (e) {
 })();
 
 // === Bind nav -> POST /my-account/orders con orderId actual ===
-// === Bind nav -> POST /my-account/orders con orderId actual ===
 function mtBindManageSubsNav() {
   var nav = document.querySelector(".mega-navigation");
   if (!nav) return;
 
-  // evita múltiples bindings
   if (nav.__mtBoundManageSubs) return;
   nav.__mtBoundManageSubs = true;
 
@@ -1739,7 +1735,6 @@ function mtBindManageSubsNav() {
     }
     var form = ensurePostForm(toUrl);
 
-    // normaliza action por si el href viniera mal
     var action =
       toUrl && toUrl.indexOf("/my-account/orders") !== -1
         ? toUrl
@@ -1757,7 +1752,6 @@ function mtBindManageSubsNav() {
     form.submit();
   }
 
-  // Link de menú "Manage Subscription"
   var link = nav.querySelector('a[href*="/my-account/orders"]');
   if (link) {
     link.addEventListener(
@@ -1771,7 +1765,6 @@ function mtBindManageSubsNav() {
     );
   }
 
-  // Select móvil (neutraliza inline onchange y maneja aquí)
   var select = document.getElementById("mega-navigation-select");
   if (select) {
     try { select.onchange = null; select.removeAttribute("onchange"); } catch (_) {}
@@ -1838,11 +1831,9 @@ function mtBindManageSubsNav() {
       ORDERS_BASE + (orderId ? "?orderId=" + encodeURIComponent(orderId) : "");
     var nav = document.querySelector(".mega-navigation");
 
-    // link de escritorio
     var a = nav && nav.querySelector('a[href*="/my-account/orders"]');
     if (a) a.href = url;
 
-    // opción en el <select> móvil (tiene onchange que navega al value)
     var sel = document.getElementById("mega-navigation-select");
     if (sel) {
       Array.prototype.forEach.call(sel.options || [], function (opt) {
@@ -1852,7 +1843,6 @@ function mtBindManageSubsNav() {
       });
     }
 
-    // mantener el form oculto sincronizado (fallback si decides usar POST)
     var form = document.getElementById("mt-manage-subs-form");
     if (form) {
       var i1 = form.querySelector('input[name="orderId"]');
@@ -1864,25 +1854,20 @@ function mtBindManageSubsNav() {
   }
 
   function setActiveOrder(orderId) {
-    // DOM root
     var root = document.getElementById("mt-account-overview");
     if (root) root.setAttribute("data-order-id", orderId ? String(orderId) : "");
 
-    // estado JS (por si otros módulos lo quieren)
     window.mtOrders = window.mtOrders || {};
     window.mtOrders.activeOrderId = orderId || 0;
 
-    // reescribe menús
     rewriteManageSubsURLs(orderId);
   }
 
-  // 1) Estado inicial desde el root
   (function init() {
     var initial = getRootOrderId();
     if (initial) rewriteManageSubsURLs(initial);
   })();
 
-  // 2) Cuando el selector de cuentas confirme, usamos el evento (si lo emites)
   document.addEventListener("mt:accountSelected", function (ev) {
     var d = (ev && ev.detail) || {};
     var id = d.accountId || d.id || "";
@@ -1891,23 +1876,19 @@ function mtBindManageSubsNav() {
       var map = buildOrdersMap();
       ord = map[id] || 0;
     }
-    // Si no vino en el detail, cae al active card
     if (!ord) ord = readOrderFromActiveCard();
     setActiveOrder(ord);
   });
 
-  // 3) Plan B: si el botón "Select" no dispara el evento, lo enganchamos aquí
   document.addEventListener("click", function (e) {
     var btn = e.target.closest("#select-subscription-btn");
     if (!btn) return;
-    // después de que tu JS marque la card como .active
     setTimeout(function () {
       var ord = readOrderFromActiveCard();
       if (ord) setActiveOrder(ord);
     }, 0);
   });
 
-  // 4) Integración con el binder antiguo: si ya reescribimos a ?orderId=, deja pasar
   (function softenBinder() {
     try {
       var nav = document.querySelector(".mega-navigation");
@@ -1917,11 +1898,9 @@ function mtBindManageSubsNav() {
       link.addEventListener(
         "click",
         function (e) {
-          // si ya tiene ?orderId, no hagas POST ni nada especial
           if (/\borderId=\d+/.test(this.href)) return;
-          // fallback: intenta POST con el form oculto
           var orderId = getRootOrderId() || readOrderFromActiveCard();
-          if (!orderId) return; // deja ir GET limpio
+          if (!orderId) return; 
           e.preventDefault();
           var form = document.getElementById("mt-manage-subs-form");
           if (!form) return (window.location.href = this.href);
@@ -1939,7 +1918,6 @@ function mtBindManageSubsNav() {
 })();
 
 
-// Inicializar (una vez cargado el DOM)
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", mtBindManageSubsNav, { once: true });
 } else {

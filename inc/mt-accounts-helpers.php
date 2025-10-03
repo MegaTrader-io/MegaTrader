@@ -105,7 +105,23 @@ class MT_Accounts
       $id = (string) ($acc['id'] ?? '');
 
       // ---- Program/label → size + name
+      $ptypeLabel = '';
+      $ptypeClass = '';
       $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
+      $rawLabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? ''));
+
+      if ($rawLabel !== '') {
+        $parts = array_map('trim', explode('|', $rawLabel));
+        $last = $parts ? trim(end($parts)) : '';
+        $ptypeLabel = $last; // p.ej. "Evaluation" o "Funded"
+
+        $key = strtolower(preg_replace('/[^a-z0-9]+/', '-', $last));
+        if ($key === 'evaluation')
+          $ptypeClass = 'badge-mega-evaluation';
+        elseif ($key === 'funded')
+          $ptypeClass = 'badge-mega-funded';
+      }
+
       $sb = $acc['program']['startingBalance'] ?? null;
       [$size, $name] = self::parse_program_label($plabel, $sb);
 
@@ -182,7 +198,9 @@ class MT_Accounts
         'resetProductId' => (string) ($rules['resetProductId'] ?? ''),
         'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
         'accountId' => (string) $platAccountId,
-        'order' => $order, // NEW: ahora garantizamos que venga si existe en byId
+        'order' => $order,
+        'programTypeText' => $ptypeLabel,
+        'programTypeClass' => $ptypeClass,
       ];
     };
 
