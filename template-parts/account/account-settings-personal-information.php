@@ -170,7 +170,7 @@ $valid_states = WC()->countries->get_states($billing_country);
         </div>
 
         <div>
-            <button type="submit" disabled class="mega-btn-md mega-btn-primary-md" name="mt_save_billing" value="1">
+            <button type="submit" class="mega-btn-md mega-btn-primary-md" name="mt_save_billing" value="1">
                 <?php _e('Save changes', 'woocommerce'); ?>
             </button>
         </div>
