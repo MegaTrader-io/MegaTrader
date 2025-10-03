@@ -1292,6 +1292,11 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .text-ffd78a {
   color: var(--theme-color2);
 }
+.text-60A5FA {
+  color: #60A5FA;
+}
+
+
 
 
 .text-blue-400 {
@@ -2627,7 +2632,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 /* --- Modal Scroll Layout ----- */
 @media (min-width: 768px) {
   .modal-subcription .modal-body {
-    max-height: 425px;
+    max-height: 515px;
   }
 }
 

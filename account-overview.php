@@ -204,66 +204,52 @@ if (is_user_logged_in()) {
       }
 
       /* ==== Passed/Activation meta & helpers ==== */
-      $__pending_act_key = 'PENDING_ACTIVATION';
-      if (class_exists('Label')) {
-        $__pending_act_key = \Label::ACCOUNT_STATUS_MAP['PENDING_ACTIVATION'] ?? 'PENDING_ACTIVATION';
-      }
 
-      $__passed_key = 'PASSED';
-      if (class_exists('Label')) {
-        $__passed_key = \Label::ACCOUNT_STATUS_MAP['PASSED'] ?? 'PASSED';
-      }
-
-      // Normalizador para comparar (solo para lógica interna)
-      $__norm = function ($s) {
-        $s = strtoupper(trim((string) $s));
-        return preg_replace('/[^A-Z0-9]/', '', $s);
+      $__normalize_id = function ($v) {
+        if ($v === null)
+          return '';
+        $s = trim((string) $v);
+        $sl = strtolower($s);
+        return ($s === '' || $s === '0' || $sl === 'null') ? '' : $s;
       };
 
-      // status actual (dos variantes: "raw" para data-attr, "norm" para comparar)
-      $__status_norm_raw = (string) ($__mt_selected_status ?? '');
-      $__status_norm = $__norm($__status_norm_raw);
+      $__status_raw = (string) ($resolved['status'] ?? ($mt_account_ui['current']['status'] ?? ''));
+      $__status_norm = strtoupper(trim($__status_raw));
 
-      $__pending_act_key_norm = $__norm($__pending_act_key);
-      $__passed_key_norm = $__norm($__passed_key);
-
-      // ¿Mostrar modal Passed/Activation en render inicial?
-      $__mt_account_passed_show = (
-        $__status_norm === $__pending_act_key_norm ||
-        $__status_norm === $__passed_key_norm
-      ) ? '1' : '0';
-
-      // Activation product id y URL
       $__activation_product_id = (string) (
-        $resolved['rules']['activationProductId'] ?? ($mt_account_ui['current']['activationProductId'] ?? '')
+        $resolved['rules']['activationProductId'] ??
+        ($mt_account_ui['current']['activationProductId'] ?? '')
       );
-      $__has_activation_id = ($__activation_product_id !== '' && $__activation_product_id !== '0' && strtolower($__activation_product_id) !== 'null');
+
+      $__has_activation_id = ($__normalize_id($__activation_product_id) !== '');
 
       $__activation_url = ($__has_activation_id && function_exists('wc_get_checkout_url'))
         ? wc_get_checkout_url() . '?add-to-cart=' . urlencode($__activation_product_id)
-        : '';
+        : '#';
 
-      // Nota (siempre pintada en SSR)
+      $__mt_account_passed_show = (in_array($__status_norm, ['PENDING_ACTIVATION', 'PASSED'], true)) ? '1' : '0';
+
       $__note_text = '';
       if (
-        ($__status_norm === $__pending_act_key_norm && $__has_activation_id) ||
-        ($__status_norm === $__passed_key_norm && $__has_activation_id)
+        ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) ||
+        ($__status_norm === 'PASSED' && $__has_activation_id)
       ) {
         $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending'];
-      } elseif ($__status_norm === $__passed_key_norm && !$__has_activation_id) {
+      } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
         $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button'];
       }
 
-      // Botón (usar SIEMPRE los estados normalizados)
-      $__passed_btn_html = '';
-      if ($__status_norm === $__pending_act_key_norm && $__has_activation_id) {
-        $__passed_btn_html = '<a class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4" href="' .
-          esc_url($__activation_url) . '">' .
-          esc_html(Label::META_ACCOUNT_OVERVIEW['passed_modal_button']) . '</a>';
-      } elseif ($__status_norm === $__passed_key_norm && $__has_activation_id) {
-        $__passed_btn_html = '<a class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4 disabled" aria-disabled="true" href="#">' .
-          esc_html(Label::META_ACCOUNT_OVERVIEW['passed_modal_button']) . '</a>';
+      $__btn_classes = []; 
+      if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
+      } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
+        $__btn_classes[] = 'disabled';
+      } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
+        $__btn_classes[] = 'd-none';
+      } else {
+        $__btn_classes[] = 'd-none';
       }
+      $__btn_classes_attr = implode(' ', $__btn_classes);
+
 
 
 
@@ -545,13 +531,14 @@ get_header();
   aria-labelledby="mtactivation-title" aria-hidden="true" data-show="<?php echo $__mt_account_passed_show; ?>"
   data-note-pending="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending']); ?>"
   data-note-pending-no-button="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button']); ?>"
-  data-current-status="<?php echo esc_attr(strtoupper((string) $__status_norm_raw)); ?>"
+  data-current-status="<?php echo esc_attr($__status_norm); ?>"
   data-activation-id="<?php echo esc_attr($__activation_product_id); ?>">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mtactivation-title" class="modal-title text-white heading-sm-medium text-uppercase">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_title']; ?></span>
+          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_title']; ?>
+        </span>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
@@ -559,14 +546,15 @@ get_header();
           </span>
         </button>
       </div>
-      <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
+
+      <div class="modal-body d-flex flex-column align-items-center text-center">
         <div aria-hidden="true">
           <div class="modal-body-image ">
-            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png"
-              alt="http://Thank%20you%20icon">
+            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png" alt="http://Thank%20you%20icon">
           </div>
         </div>
-        <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
+
+        <span class="fw-medium leading-60px text-5xl text-uppercase text-white">
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_title']; ?>
         </span>
         <span class="text-white fw-medium text-uppercase text-2xl leading-7">
@@ -576,14 +564,19 @@ get_header();
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle']; ?>
         </span>
 
-        <div class="mt-note" id="mt-passed-note" data-status="info">
+        <div class="mt-note bg-1e1e1e d-flex gap-3 mt-4 mt-note p-3 rounded-3" id="mt-passed-note" data-status="info">
           <span class="mt-icon mt-icon-info mt-icon_info-solid"></span>
-          <span class="fw-medium text-a8a29e text-base" data-note-text>
+          <span class="text-60A5FA fw-medium text-base" data-note-text>
             <?php echo esc_html($__note_text); ?>
           </span>
         </div>
 
-        <?php echo $__passed_btn_html; ?>
+        <a id="mt-activation-btn"
+           class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4 <?php echo esc_attr($__btn_classes_attr); ?>"
+           href="<?php echo esc_url($__activation_url); ?>"
+           aria-disabled="<?php echo (strpos($__btn_classes_attr, 'disabled') !== false) ? 'true' : 'false'; ?>">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_button']; ?>
+        </a>
       </div>
     </div>
   </div>

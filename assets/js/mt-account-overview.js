@@ -1931,31 +1931,79 @@ if (document.readyState === "loading") {
   mtBindManageSubsNav();
 }
 
-// ===== Passed and Pendig Activation Modal (centrado + backdrop) =====
-
+/* ===== Passed & Pending Activation Modal ===== */
 (function () {
-  // ====== INIT modal: mismo patrón que el breach ======
-  function initModal() {
+  function normalizeId(v){
+    if (v == null) return "";
+    var s = String(v).trim();
+    var sl = s.toLowerCase();
+    return (s === "" || s === "0" || sl === "null") ? "" : s;
+  }
+
+  function setNote(status, activationId, modal){
+    var noteEl = modal.querySelector("#mt-passed-note [data-note-text]");
+    if (!noteEl) return;
+
+    var st = String(status || "").trim().toUpperCase();
+    var hasId = normalizeId(activationId) !== "";
+
+    var notePending = modal.dataset.notePending || "Activation will open once review is complete.";
+    var noteNoBtn   = modal.dataset.notePendingNoButton || "Automatic Activation After Review";
+
+    if ((st === "PENDING_ACTIVATION" && hasId) || (st === "PASSED" && hasId)) {
+      noteEl.textContent = notePending;
+    } else if (st === "PASSED" && !hasId) {
+      noteEl.textContent = noteNoBtn;
+    } else {
+      // estados que no aplican al modal: deja el texto como está
+    }
+  }
+
+  function setButton(status, activationId, modal){
+    var btn = modal.querySelector("#mt-activation-btn");
+    if (!btn) return;
+
+    var st = String(status || "").trim().toUpperCase();
+    var hasId = normalizeId(activationId) !== "";
+
+    btn.classList.remove("disabled", "d-none");
+    btn.setAttribute("aria-disabled", "false");
+
+    // Reglas pedidas:
+    // PENDING_ACTIVATION + id -> visible habilitado
+    // PASSED + id              -> visible deshabilitado
+    // PASSED + sin id          -> oculto (d-none)
+    if (st === "PENDING_ACTIVATION" && hasId) {
+      // nada extra
+    } else if (st === "PASSED" && hasId) {
+      btn.classList.add("disabled");
+      btn.setAttribute("aria-disabled", "true");
+    } else if (st === "PASSED" && !hasId) {
+      btn.classList.add("d-none");
+    } else {
+      // cualquier otro -> oculto por seguridad
+      btn.classList.add("d-none");
+    }
+  }
+
+  function syncUI(modal){
+    var status = modal.dataset.currentStatus || "";
+    var actId  = modal.dataset.activationId || "";
+    setNote(status, actId, modal);
+    setButton(status, actId, modal);
+  }
+
+  function initModal(){
     var modal = document.getElementById("mt-account-passed-modal");
     if (!modal) return;
 
     var closeBtn = modal.querySelector(".mt-modal__close");
     var withBackdrop = null;
 
-    function openModal() {
+    function openModal(){
       if (modal.classList.contains("show")) return;
-
-      // sincroniza data-show para que el DOM refleje el estado real
       modal.setAttribute("data-show", "1");
-
-      // asegura que el texto de la nota esté correcto con los datasets actuales
-      try {
-        setNoteFrom(
-          modal.dataset.currentStatus,
-          modal.dataset.activationId,
-          modal
-        );
-      } catch (_) {}
+      syncUI(modal);
 
       modal.removeAttribute("hidden");
       modal.setAttribute("aria-hidden", "false");
@@ -1974,14 +2022,11 @@ if (document.readyState === "loading") {
         withBackdrop.style.zIndex = "1050";
         document.body.appendChild(withBackdrop);
       }
-
       document.body.classList.add("modal-open");
-      try {
-        modal.focus();
-      } catch (e) {}
+      try { modal.focus(); } catch(_) {}
     }
 
-    function closeModal() {
+    function closeModal(){
       modal.classList.remove("show");
       modal.setAttribute("aria-hidden", "true");
       modal.setAttribute("hidden", "");
@@ -1991,8 +2036,6 @@ if (document.readyState === "loading") {
       modal.style.alignItems = "";
       modal.style.justifyContent = "";
       modal.style.zIndex = "";
-
-      // sincroniza data-show
       modal.setAttribute("data-show", "0");
 
       if (withBackdrop && withBackdrop.parentNode) {
@@ -2010,182 +2053,97 @@ if (document.readyState === "loading") {
         closeModal();
       });
     }
-
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
 
-    // Exponer para uso externo
-    modal.__open = openModal;
+    modal.__open  = openModal;
     modal.__close = closeModal;
 
-    // Si el server pidió mostrar en el primer render
     if (modal.getAttribute("data-show") === "1") {
-      setNoteFrom(
-        modal.dataset.currentStatus,
-        modal.dataset.activationId,
-        modal
-      );
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openModal, {
-          once: true,
-        });
+        document.addEventListener("DOMContentLoaded", openModal, { once:true });
       } else {
         openModal();
       }
     }
   }
 
-  function normalizeId(v) {
-    if (v == null) return "";
-    var s = String(v).trim().toLowerCase();
-    return s === "" || s === "0" || s === "null" ? "" : String(v).trim();
-  }
-
-  // Pinta la nota sin destruir el icono (usa el span [data-note-text] si existe)
-  function setNoteFrom(status, activationId, modalEl) {
-    var modal = modalEl || document.getElementById("mt-account-passed-modal");
-    if (!modal) return false;
-
-    var noteEl = document.getElementById("mt-passed-note");
-    if (!noteEl) return false;
-
-    var st = String(status || "")
-      .trim()
-      .toUpperCase();
-    var hasId = normalizeId(activationId) !== "";
-
-    var notePending =
-      modal.dataset.notePending ||
-      "Activation will open once review is complete.";
-    var noteNoBtn =
-      modal.dataset.notePendingNoButton || "Automatic Activation After Review";
-
-    var copy = "";
-    if ((st === "PENDING_ACTIVATION" && hasId) || (st === "PASSED" && hasId)) {
-      copy = notePending;
-    } else if (st === "PASSED" && !hasId) {
-      copy = noteNoBtn;
-    } else {
-      // estado no aplicable al modal
-      return false;
-    }
-
-    var textSpan = noteEl.querySelector("[data-note-text]");
-    if (textSpan) {
-      textSpan.textContent = copy;
-    } else {
-      // fallback: si no existe el span interno, no rompas el icono
-      // intenta ubicar el 2do span; si no, como último recurso, solo texto
-      var spans = noteEl.querySelectorAll("span");
-      if (spans.length >= 2) spans[1].textContent = copy;
-      else noteEl.textContent = copy;
-    }
-
-    // actualiza datasets (por si reabren)
-    modal.dataset.currentStatus = st;
-    modal.dataset.activationId = hasId ? String(activationId).trim() : "";
-
-    return true;
-  }
-
-  function getActivationIdFromDOM(accountId) {
-    var sel =
-      '#mt-accounts-grid .subscription-card[data-account-id="' +
-      String(accountId).replace(/"/g, "&quot;") +
-      '"]';
-    var card =
-      document.querySelector(sel) ||
-      document.querySelector(
-        '.subscription-card[data-account-id="' +
-          String(accountId).replace(/"/g, "&quot;") +
-          '"]'
-      );
+  // Chequeo vía AJAX ya existente (usa fetchStatus)
+  function getActivationIdFromDOM(accountId){
+    var sel = '#mt-accounts-grid .subscription-card[data-account-id="'+ String(accountId).replace(/"/g,'&quot;') +'"]';
+    var card = document.querySelector(sel) || document.querySelector('.subscription-card[data-account-id="'+ String(accountId).replace(/"/g,'&quot;') +'"]');
     if (!card) return "";
     return card.getAttribute("data-activation-id") || "";
   }
 
-  var __passedGuard = { pending: false, lastId: null, lastAt: 0 };
+  var __passedGuard = { pending:false, lastId:null, lastAt:0 };
 
-  function passedGuardCheck(accountId) {
+  function passedGuardCheck(accountId){
     if (!accountId) return;
-
     var now = Date.now();
     if (__passedGuard.pending) return;
-    if (__passedGuard.lastId === accountId && now - __passedGuard.lastAt < 800)
-      return;
+    if (__passedGuard.lastId === accountId && (now - __passedGuard.lastAt < 800)) return;
 
     __passedGuard.pending = true;
     __passedGuard.lastId = accountId;
     __passedGuard.lastAt = now;
 
     return fetchStatus(accountId)
-      .then(function (j) {
+      .then(function(j){
         if (!j || !j.success) return;
 
-        var rawStatus =
-          j.data && j.data.status != null ? String(j.data.status) : "";
-        var status = rawStatus.trim().toUpperCase();
+        var statusRaw = (j.data && j.data.status != null) ? String(j.data.status) : "";
+        var status    = statusRaw.trim().toUpperCase();
 
         var actId =
-          j.data && (j.data.activationProductId || j.data.activation_product_id)
-            ? j.data.activationProductId || j.data.activation_product_id
+          (j.data && (j.data.activationProductId || j.data.activation_product_id))
+            ? (j.data.activationProductId || j.data.activation_product_id)
             : getActivationIdFromDOM(accountId);
 
         if (status === "PASSED" || status === "PENDING_ACTIVATION") {
           var modal = document.getElementById("mt-account-passed-modal");
           if (!modal) return;
 
-          var ok = setNoteFrom(status, actId, modal);
-          if (!ok) return;
+          // Actualiza datasets y sincroniza UI
+          modal.dataset.currentStatus = status;
+          modal.dataset.activationId  = (actId == null ? "" : String(actId));
 
           if (typeof modal.__open === "function") {
             modal.__open();
           } else {
             modal.setAttribute("data-show", "1");
+            syncUI(modal);
             modal.removeAttribute("hidden");
             modal.setAttribute("aria-hidden", "false");
             modal.classList.add("show");
           }
         }
       })
-      .finally(function () {
-        __passedGuard.pending = false;
-      });
+      .finally(function(){ __passedGuard.pending = false; });
   }
 
-  // 1) init del modal
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initModal, { once: true });
+    document.addEventListener("DOMContentLoaded", initModal, { once:true });
   } else {
     initModal();
   }
 
-  // 2) registrar en el bus global si existe
   if (window.mtRefresh && typeof window.mtRefresh.register === "function") {
     window.mtRefresh.register("passedGuard", passedGuardCheck);
   }
-  // 3) exponer global
   window.passedGuardCheck = passedGuardCheck;
 
-  // 4) primer chequeo con la cuenta inicial
-  (function () {
+  (function(){
     var firstId = (window.mtAccounts && mtAccounts.selectedId) || "";
     if (document.readyState === "loading") {
-      document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-          if (firstId) passedGuardCheck(firstId);
-        },
-        { once: true }
-      );
+      document.addEventListener("DOMContentLoaded", function(){ if (firstId) passedGuardCheck(firstId); }, { once:true });
     } else {
       if (firstId) passedGuardCheck(firstId);
     }
   })();
 
-  // 5) soporte al evento del picker
-  document.addEventListener("mt:accountSelected", function (e) {
+  document.addEventListener("mt:accountSelected", function(e){
     var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
     if (id) passedGuardCheck(id);
   });
