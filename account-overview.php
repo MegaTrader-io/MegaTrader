@@ -97,7 +97,7 @@ if (is_user_logged_in()) {
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
 
-        
+
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
@@ -148,6 +148,36 @@ if (is_user_logged_in()) {
         }
 
       }
+      /* === Mapa id => order y order activo === */
+      $__orders_map_by_id = [];
+
+      // Mapea todas las cuentas
+      if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
+        foreach ($mt_account_ui['accounts'] as $row) {
+          $id = (string) ($row['id'] ?? '');
+          $ord = (int) ($row['order'] ?? $row['orderId'] ?? $row['orderID'] ?? 0);
+          if ($id !== '') {
+            $__orders_map_by_id[$id] = $ord;
+          }
+        }
+      }
+      // Asegura la "current" también en el mapa (por si no vino en accounts)
+      if (!empty($mt_account_ui['current']['id'])) {
+        $cid = (string) $mt_account_ui['current']['id'];
+        if (!isset($__orders_map_by_id[$cid])) {
+          $__orders_map_by_id[$cid] = (int) ($mt_account_ui['current']['order'] ?? $mt_account_ui['current']['orderId'] ?? $mt_account_ui['current']['orderID'] ?? 0);
+        }
+      }
+
+      // Order activo según la cuenta seleccionada
+      $__active_order_id = 0;
+      if ($mt_selected_id !== '') {
+        $__active_order_id = (int) ($__orders_map_by_id[$mt_selected_id] ?? 0);
+        // Fallback explícito por si sólo está en 'current'
+        if (!$__active_order_id && !empty($mt_account_ui['current']) && (string) $mt_account_ui['current']['id'] === (string) $mt_selected_id) {
+          $__active_order_id = (int) ($mt_account_ui['current']['order'] ?? 0);
+        }
+      }
       // === Flag inicial para abrir el modal de Breach en la PRIMERA CARGA ===
       $__mt_selected_status = (string) (
         $resolved['status']
@@ -189,17 +219,16 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 
 
 
-if (empty($mt_account_ui['accounts'])) {
-  wp_safe_redirect(trailingslashit(home_url('/subscriptions')));
-  exit;
-}
-
 get_header();
+
+
 
 ?>
 
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
-  data-email-api="<?php echo esc_attr($mt_user_email_api); ?>">
+  data-email-api="<?php echo esc_attr($mt_user_email_api); ?>"
+  data-order-id="<?php echo esc_attr($__active_order_id); ?>">
+
   <div class="mt-page">
     <div class="mt-page__sidebar">
       <?php if (function_exists('render_sidebar')) {
@@ -226,8 +255,11 @@ get_header();
             function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
           );
         } ?>
+        <form id="mt-manage-subs-form" action="<?php echo esc_url(trailingslashit(home_url('my-account/orders'))); ?>"
+          method="post" class="d-none">
+          <input type="hidden" name="orderId" value="">
+        </form>
       </div>
-
 
       <div class="mt-account-selection" data-fit-main>
         <?php

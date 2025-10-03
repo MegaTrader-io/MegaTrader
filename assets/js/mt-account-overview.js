@@ -1679,3 +1679,100 @@ document.addEventListener("mt:accountSelected", function (e) {
     document.addEventListener("DOMContentLoaded", boot, { once: true });
   else boot();
 })();
+
+// === Bind nav -> POST /my-account/orders con orderId actual ===
+function mtBindManageSubsNav() {
+  var nav = document.querySelector(".mega-navigation");
+  if (!nav) return;
+
+  // evita múltiples bindings
+  if (nav.__mtBoundManageSubs) return;
+  nav.__mtBoundManageSubs = true;
+
+  function readOrderId() {
+    var root = document.getElementById("mt-account-overview");
+    var raw =
+      (root && (root.getAttribute("data-order-id") || root.dataset.orderId)) ||
+      "";
+    raw = String(raw).replace(/[^\d]/g, "");
+    return parseInt(raw, 10) || 0;
+  }
+
+  function ensurePostForm(actionUrl) {
+    var form = document.getElementById("mt-manage-subs-form");
+    if (!form) {
+      form = document.createElement("form");
+      form.id = "mt-manage-subs-form";
+      form.method = "post";
+      form.action =
+        actionUrl ||
+        (window.location.origin
+          ? window.location.origin + "/my-account/orders/"
+          : "/my-account/orders/");
+      form.className = "d-none";
+
+      var input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "orderId";
+      form.appendChild(input);
+
+      document.body.appendChild(form);
+    }
+    return form;
+  }
+
+  function submitPost(toUrl) {
+    var orderId = readOrderId();
+    if (!orderId) {
+      // si no hay orderId, sigue el link normal
+      window.location.href = toUrl;
+      return;
+    }
+    var form = ensurePostForm(toUrl);
+    var inp = form.querySelector('input[name="orderId"]');
+    if (inp) inp.value = String(orderId);
+    if (toUrl) form.action = toUrl;
+    form.submit();
+  }
+
+  // Link de menú "Manage Subscription"
+  var link = nav.querySelector('a[href*="/my-account/orders"]');
+  if (link) {
+    link.addEventListener(
+      "click",
+      function (e) {
+        e.preventDefault();
+        submitPost(this.href);
+      },
+      { passive: false }
+    );
+  }
+
+  // Select móvil (si existe)
+  var select = document.getElementById("mega-navigation-select");
+  if (select) {
+    select.addEventListener(
+      "change",
+      function (e) {
+        var url = this.value || "";
+        if (!url) return;
+        if (url.indexOf("/my-account/orders") !== -1) {
+          e.preventDefault();
+          submitPost(url);
+        } else {
+          window.location.href = url;
+        }
+      },
+      { passive: false }
+    );
+  }
+}
+
+// Inicializar (una vez cargado el DOM)
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mtBindManageSubsNav, {
+    once: true,
+  });
+} else {
+  mtBindManageSubsNav();
+}

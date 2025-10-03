@@ -104,7 +104,7 @@ class MT_Accounts
     $mapAccount = function (array $acc) use ($PLATFORM_LOGOS, $DEFAULT_LOGO) {
       $id = (string) ($acc['id'] ?? '');
 
-      // ---- Program/label → size + name (igual que tenías)
+      // ---- Program/label → size + name
       $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
       $sb = $acc['program']['startingBalance'] ?? null;
       [$size, $name] = self::parse_program_label($plabel, $sb);
@@ -130,11 +130,15 @@ class MT_Accounts
       $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
       $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
 
+      // ---- NEW: order desde el listado
+      $order = (string) ($acc['order'] ?? '');
+
       // ---- ¿Falta algo? (solo entonces pedimos getAccountById)
       $needRules = empty($rules['mainProductId']) || empty($rules['resetProductId']) || empty($rules['activationProductId']);
       $needPlatId = ($platAccountId === '');
+      $needOrder = ($order === ''); // NEW: falta order
 
-      if (($needRules || $needPlatId) && $id !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
+      if (($needRules || $needPlatId || $needOrder) && $id !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
         try {
           $full = mt_accounts_resolve_account_by_id($id); // SIN cache, tu helper ya lo hace directo
           if (is_array($full)) {
@@ -156,6 +160,10 @@ class MT_Accounts
               $platformKey = self::norm($platformRaw);
               $logo = $PLATFORM_LOGOS[$platformKey] ?? $logo;
             }
+            // NEW: completar order si faltaba
+            if ($needOrder) {
+              $order = (string) ($full['order'] ?? $order);
+            }
           }
         } catch (\Throwable $e) { /* silencio para no romper producción */
         }
@@ -174,10 +182,10 @@ class MT_Accounts
         'resetProductId' => (string) ($rules['resetProductId'] ?? ''),
         'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
         'accountId' => (string) $platAccountId,
-        'orderID' => (string) ($acc['order'] ?? ''),
-
+        'order' => $order, // NEW: ahora garantizamos que venga si existe en byId
       ];
     };
+
 
 
     // ===== 4) Construir payload UI (conservar estructura) =====
