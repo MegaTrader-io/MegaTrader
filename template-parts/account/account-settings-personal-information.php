@@ -41,7 +41,7 @@ $valid_states = WC()->countries->get_states($billing_country);
 <div class="woocommerce-MyAccount-content">
     <?php get_template_part("template-parts/user-profile-card"); ?>
 
-    <form method="post" class="space-y-4">
+    <form method="post" class="space-y-3">
         <?php wp_nonce_field('mt_save_billing_address', 'mt_billing_nonce'); ?>
 
         <div class="row">
@@ -170,7 +170,7 @@ $valid_states = WC()->countries->get_states($billing_country);
         </div>
 
         <div>
-            <button type="submit" class="mega-btn-md mega-btn-primary-md" name="mt_save_billing" value="1">
+            <button type="submit" disabled class="mega-btn-md mega-btn-primary-md" name="mt_save_billing" value="1">
                 <?php _e('Save changes', 'woocommerce'); ?>
             </button>
         </div>

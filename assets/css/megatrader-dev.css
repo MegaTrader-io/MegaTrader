@@ -1634,19 +1634,23 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   border: 1px solid var(--theme-color);
 }
 
-.mega-btn-primary-md:hover,
-.mega-btn-primary-md.active {
+.mega-btn-primary-md:is([disabled]) {
+    border: 1px solid transparent;
+}
+
+.mega-btn-primary-md:not([disabled]):hover,
+.mega-btn-primary-md:not([disabled]).active {
   color: var(--black-color);
   background-color: var(--Surface-Primary-Hover);
   border: 1px solid var(--Surface-Primary-Hover);
 }
 
-.mega-btn-primary-md:focus,
-.mega-btn-primary-md:focus-within {
+.mega-btn-primary-md:is([disabled]):focus,
+.mega-btn-primary-md:is([disabled]):focus-within {
   border: 1px solid var(--Primary-200);
 }
 
-.mega-btn-md.mega-btn-primary-md.disabled {
+.mega-btn-md.mega-btn-primary-md:is(.disabled, [disabled]) {
   background: var(--light-color, #57534E);
   color: var(--surface-dark, #292524);
 }
@@ -1669,7 +1673,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   border: 1px solid var(--Colors-Gray-50);
 }
 
-.mega-btn-md.mega-btn-secondary-md.disabled {
+.mega-btn-md.mega-btn-secondary-md:is(.disabled, [disabled]){
   background: var(--light-color, #57534E);
   color: var(--surface-dark, #292524);
 }
@@ -4284,6 +4288,10 @@ textarea.mtfb-note {
   cursor: not-allowed
 }
 
+.mt-card.account-settings__section {
+   gap: 16px;
+}
+
 .account-settings__sections-wrapper > * + * {
     margin-top: 16px;
 }
@@ -4401,23 +4409,6 @@ textarea.mtfb-note {
     align-items: center;
     font-weight: 500;
     gap: 4px;
-}
-
-.mt-user-profile-card__status--unverified {
-    color: var(--error-color);
-}
-
-.mt-user-profile-card__status--verified {
-    color: var(--success-color);
-}
-
-
-.mt-user-profile-card__status--verified .mt-user-profile-card__status-icon {
-    color: var(--success-color);
-}
-
-.mt-user-profile-card__status--unverified .mt-user-profile-card__status-icon {
-    color: var(--error-color);
 }
 
 .w-phone-full .iti {

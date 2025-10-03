@@ -1559,3 +1559,40 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     font-size: 14px;
     margin-bottom: 5px;
 }
+
+.mt-verified {
+    display: flex;
+    gap: 4px;
+}
+
+.mt-verified__status-icon {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+}
+
+.mt-verified[data-verified="1"] {
+    color: var(--success-color);
+}
+
+.mt-verified[data-verified="0"] {
+    color: var(--error-color);
+}
+
+.mt-verified[data-verified="1"] .mt-verified__status-text_unverified {
+    display: none;
+}
+
+.mt-verified[data-verified="0"] .mt-verified__status-text_verified {
+    display: none;
+}
+
+.mt-verified[data-verified="1"] .mt-verified__status-icon {
+    color: var(--success-color);
+}
+
+.mt-verified[data-verified="0"] .mt-verified__status-icon {
+    color: var(--error-color);
+}

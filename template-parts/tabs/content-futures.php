@@ -1,244 +1,244 @@
 <?php
 
-    defined('ABSPATH') || exit;
+defined('ABSPATH') || exit;
 
-    /** @var LayoutType $layoutType */
-    $layoutType = $args['layoutType'] ?? LayoutType::MyAccount;
+/** @var LayoutType $layoutType */
+$layoutType = $args['layoutType'] ?? LayoutType::MyAccount;
 
-    if (!$layoutType instanceof LayoutType) {
-        $layoutType = LayoutType::MyAccount;
+if (!$layoutType instanceof LayoutType) {
+    $layoutType = LayoutType::MyAccount;
+}
+
+$products_data = get_products_with_attributes();
+$attributes = $products_data['attributes'] ?? [];
+
+$account_sizes = [];
+$account_types = [];
+$platforms = [];
+
+foreach ($attributes as $attr) {
+    switch ($attr['taxonomy']) {
+        case 'pa_account-size':
+            $account_sizes[] = $attr;
+            break;
+        case 'pa_account-types':
+            $account_types[] = $attr;
+            break;
+        case 'pa_platform':
+            $platforms[] = $attr;
+            break;
     }
+}
 
-    $products_data = get_products_with_attributes();
-    $attributes = $products_data['attributes'] ?? [];
+function render_account_sizes($account_sizes) {
+    if (empty($account_sizes)) return;
 
-    $account_sizes = [];
-    $account_types = [];
-    $platforms = [];
+    foreach ($account_sizes as $index => $item) {
+        $slug = esc_attr($item['slug']);
+        $name = esc_html($item['name']);
+        $description = esc_html($item['description']);
 
-    foreach ($attributes as $attr) {
-        switch ($attr['taxonomy']) {
-            case 'pa_account-size':
-                $account_sizes[] = $attr;
-                break;
-            case 'pa_account-types':
-                $account_types[] = $attr;
-                break;
-            case 'pa_platform':
-                $platforms[] = $attr;
-                break;
+        $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+        $config = isset($parsed['config']) ? $parsed['config'] : [];
+        $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
+        $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
+        $disabled_class = $is_disabled ? ' disabled-within' : '';
+        $radio_id = esc_attr('account-size-' . $slug);
+
+        $checked_attr = '';
+        if( ! $is_disabled && ! $is_active_assigned){
+            // $checked_attr = 'checked="true"';
+            $is_active_assigned = true;
         }
-    }
-    
-    function render_account_sizes($account_sizes) {
-        if (empty($account_sizes)) return;
-
-        foreach ($account_sizes as $index => $item) {
-            $slug = esc_attr($item['slug']);
-            $name = esc_html($item['name']);
-            $description = esc_html($item['description']);
-
-            $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
-            $config = isset($parsed['config']) ? $parsed['config'] : [];
-            $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
-            $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
-            $disabled_class = $is_disabled ? ' disabled-within' : '';
-            $radio_id = esc_attr('account-size-' . $slug);
-
-            $checked_attr = '';
-            // if( ! $is_disabled && ! $is_active_assigned){
-            //     $checked_attr = 'checked="true"';
-            //     $is_active_assigned = true;
-            // }
-            ?>
-            <input type="radio" name="account-size" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>>
-            <div class="radio__label__wrapper">
-                <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $disabled_class?>"
-                    for="<?= $radio_id ?>" 
-                    data-value="<?= $slug ?>" 
-                    title="<?= $description ?>"
-                >
-                    <div class="mt-card__header">
-                        <i class="mt-card__radio disabled-target"></i>
-                        <?php if ($badge): 
-                            $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                            $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+        ?>
+        <input type="radio" name="account-size" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>>
+        <div class="radio__label__wrapper">
+            <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $disabled_class?>"
+                   for="<?= $radio_id ?>"
+                   data-value="<?= $slug ?>"
+                   title="<?= $description ?>"
+            >
+                <div class="mt-card__header">
+                    <i class="mt-card__radio disabled-target"></i>
+                    <?php if ($badge):
+                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
                         ?>
-                            <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
-                        <?php endif; ?>    
-                    </div>
-                    <div class="mt-card__title disabled-target justify-content-center">
-                        <span class="mt-card__title__text"><?= esc_html($name); ?></span>
-                    </div>
-                    <?php if (!empty($parsed['data'])): ?>
-                        <ul class="mt-card__check-list disabled-target">
-                            <?php foreach ($parsed['data'] as $text): ?>
-                                <li class="mt-card__check-list__item">
-                                    <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
-                                    <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
                     <?php endif; ?>
-                </label>
-            </div>
-            <?php
-        }
+                </div>
+                <div class="mt-card__title disabled-target justify-content-center">
+                    <span class="mt-card__title__text"><?= esc_html($name); ?></span>
+                </div>
+                <?php if (!empty($parsed['data'])): ?>
+                    <ul class="mt-card__check-list disabled-target">
+                        <?php foreach ($parsed['data'] as $text): ?>
+                            <li class="mt-card__check-list__item">
+                                <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
+                                <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </label>
+        </div>
+        <?php
     }
+}
 
-    function render_account_types($account_types) {
-        if (empty($account_types)) return;
+function render_account_types($account_types) {
+    if (empty($account_types)) return;
 
-        foreach ($account_types as $index => $item) {
-            $slug = esc_attr($item['slug']);
-            $name = esc_html($item['name']);
-            $description = esc_attr($item['description']);
-            $thumbnail = esc_url($item['thumbnail_url']);
+    foreach ($account_types as $index => $item) {
+        $slug = esc_attr($item['slug']);
+        $name = esc_html($item['name']);
+        $description = esc_attr($item['description']);
+        $thumbnail = esc_url($item['thumbnail_url']);
 
-            $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
-            $config = isset($parsed['config']) ? $parsed['config'] : [];
-            $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
+        $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+        $config = isset($parsed['config']) ? $parsed['config'] : [];
+        $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
 
-            $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
-            $disabled_class = $is_disabled ? ' disabled-within' : '';
-            $radio_id = esc_attr('account-type-' . $slug);
+        $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
+        $disabled_class = $is_disabled ? ' disabled-within' : '';
+        $radio_id = esc_attr('account-type-' . $slug);
 
 
-            $checked_attr = '';
-            // if( ! $is_disabled && ! $is_active_assigned){
-            //     // $checked_attr = 'checked="true"';
-            //     $is_active_assigned = true;
-            // }
-            ?>
-            <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
-            <div class="radio__label__wrapper">
-                <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
-                    for="<?= $radio_id ?>" 
-                    data-value="<?= $slug ?>" 
-                    title="<?= $description ?>"
-                >
-                    <div class="mt-card__header">
-                        <i class="mt-card__radio disabled-target"></i>
-                        <?php if ($badge): 
-                            $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                            $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+        $checked_attr = '';
+        if( ! $is_disabled && ! $is_active_assigned){
+            // $checked_attr = 'checked="true"';
+            $is_active_assigned = true;
+        }
+        ?>
+        <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
+        <div class="radio__label__wrapper">
+            <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
+                   for="<?= $radio_id ?>"
+                   data-value="<?= $slug ?>"
+                   title="<?= $description ?>"
+            >
+                <div class="mt-card__header">
+                    <i class="mt-card__radio disabled-target"></i>
+                    <?php if ($badge):
+                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
                         ?>
-                            <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
-                        <?php endif; ?>    
-                    </div>
-                    <div class="mt-card__title disabled-target">
-                        <?php if ($thumbnail): ?>
-                            <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
-                        <?php endif; ?>   
-                        <span class="mt-card__title__text"><?= $name; ?></span>
-                    </div>
-                    <?php if (!empty($parsed['data'])): ?>
-                        <ul class="mt-card__check-list disabled-target">
-                            <?php foreach ($parsed['data'] as $text): ?>
-                                <li class="mt-card__check-list__item">
-                                    <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
-                                    <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
                     <?php endif; ?>
-                </label>
-            </div>
-            <?php
-        }
+                </div>
+                <div class="mt-card__title disabled-target">
+                    <?php if ($thumbnail): ?>
+                        <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
+                    <?php endif; ?>
+                    <span class="mt-card__title__text"><?= $name; ?></span>
+                </div>
+                <?php if (!empty($parsed['data'])): ?>
+                    <ul class="mt-card__check-list disabled-target">
+                        <?php foreach ($parsed['data'] as $text): ?>
+                            <li class="mt-card__check-list__item">
+                                <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
+                                <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </label>
+        </div>
+        <?php
     }
-    
-    function render_platforms($platforms) {
-        if (empty($platforms)) return;
-        
-        // $is_active_assigned = false;
-        foreach ($platforms as $index => $item) {
-            $slug = esc_attr($item['slug']);
-            $name = esc_html($item['name']);
-            $description = esc_html($item['description']);
-            $thumbnail = esc_url($item['thumbnail_url']);
+}
 
-            $comingSoon = '';
-            if (!empty($item['attribute_meta']) && is_array($item['attribute_meta'])) {
-                foreach ($item['attribute_meta'] as $meta) {
-                    $normalized = strtolower(str_replace(' ', '', trim($meta)));
-                    if ($normalized === 'comingsoon') {
-                        $comingSoon = ' coming-soon';
-                        break;
-                    }
+function render_platforms($platforms) {
+    if (empty($platforms)) return;
+
+    $is_active_assigned = false;
+    foreach ($platforms as $index => $item) {
+        $slug = esc_attr($item['slug']);
+        $name = esc_html($item['name']);
+        $description = esc_html($item['description']);
+        $thumbnail = esc_url($item['thumbnail_url']);
+
+        $comingSoon = '';
+        if (!empty($item['attribute_meta']) && is_array($item['attribute_meta'])) {
+            foreach ($item['attribute_meta'] as $meta) {
+                $normalized = strtolower(str_replace(' ', '', trim($meta)));
+                if ($normalized === 'comingsoon') {
+                    $comingSoon = ' coming-soon';
+                    break;
                 }
             }
+        }
 
-            $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
-            $config = isset($parsed['config']) ? $parsed['config'] : [];
-            $badge = isset($config['badge']) ? $config['badge'] : [];
-            $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
-            $disabled_class = $is_disabled ? ' disabled-within' : '';
-            $radio_id = esc_attr('platform-' . $slug);
+        $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+        $config = isset($parsed['config']) ? $parsed['config'] : [];
+        $badge = isset($config['badge']) ? $config['badge'] : [];
+        $is_disabled = isset($config['status']) && $config['status'] === 'disabled';
+        $disabled_class = $is_disabled ? ' disabled-within' : '';
+        $radio_id = esc_attr('platform-' . $slug);
 
-            $checked_attr = '';
-            // if( ! $is_disabled && ! $is_active_assigned){
-            //     $checked_attr = 'checked="true"';
-            //     $is_active_assigned = true;
-            // }
-            ?>
-            <input type="radio" name="platform" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
-            <div class="radio__label__wrapper">
-                <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
-                    for="<?= $radio_id ?>" 
-                    data-value="<?= $slug ?>" 
-                    title="<?= $description ?>"
-                >
-                    <div class="mt-card__header">
-                        <i class="mt-card__radio disabled-target"></i>
-                        <?php if ($badge): 
-                            $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                            $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+        $checked_attr = '';
+        if( ! $is_disabled && ! $is_active_assigned){
+            // $checked_attr = 'checked="true"';
+            $is_active_assigned = true;
+        }
+        ?>
+        <input type="radio" name="platform" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
+        <div class="radio__label__wrapper">
+            <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
+                   for="<?= $radio_id ?>"
+                   data-value="<?= $slug ?>"
+                   title="<?= $description ?>"
+            >
+                <div class="mt-card__header">
+                    <i class="mt-card__radio disabled-target"></i>
+                    <?php if ($badge):
+                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
                         ?>
-                            <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
-                        <?php endif; ?> 
-                    </div>
-                    <div class="mt-card__title disabled-target">
-                        <?php if ($thumbnail): ?>
-                            <img class="mt-card__title__image" src="<?= $thumbnail; ?>" alt="Icon">
-                        <?php endif; ?>   
-                        <span class="mt-card__title__text"><?= $name; ?></span>
-                    </div>
-                    <?php if (!empty($parsed['data'])): ?>
-                        <ul class="mt-card__check-list disabled-target">
-                            <?php foreach ($parsed['data'] as $text): ?>
-                                <li class="mt-card__check-list__item">
-                                    <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
-                                    <span class="mt-card__check-list__item__text"><?= esc_html($text); ?></span>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
+                        <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
                     <?php endif; ?>
-                    <?php if (!empty($config['links'])): ?>
-                        <div class="mt-card__links disabled-target">
-                            <?php foreach ($config['links'] as $link): 
-                                $href = isset($link['url']) ? $link['icon'] : 'javascript:void(0);';
+                </div>
+                <div class="mt-card__title disabled-target">
+                    <?php if ($thumbnail): ?>
+                        <img class="mt-card__title__image" src="<?= $thumbnail; ?>" alt="Icon">
+                    <?php endif; ?>
+                    <span class="mt-card__title__text"><?= $name; ?></span>
+                </div>
+                <?php if (!empty($parsed['data'])): ?>
+                    <ul class="mt-card__check-list disabled-target">
+                        <?php foreach ($parsed['data'] as $text): ?>
+                            <li class="mt-card__check-list__item">
+                                <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
+                                <span class="mt-card__check-list__item__text"><?= esc_html($text); ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+                <?php if (!empty($config['links'])): ?>
+                    <div class="mt-card__links disabled-target">
+                        <?php foreach ($config['links'] as $link):
+                            $href = isset($link['url']) ? $link['icon'] : 'javascript:void(0);';
                             ?>
                             <a class="mt-card__links__item" href="<?= esc_attr($href); ?>">
                                 <div class="mt-badge mt-badge-md mt-badge-pill mt-badge-dark">
-                                <?php if(isset($link['icon'])): ?>
-                                    <i class="mt-icon mt-icon_<?= esc_attr($link['icon']) ?>"></i>
-                                <?php endif; ?>
-                                <?php if(isset($link['text'])): ?>
-                                    <span class="mt-card__links__text"><?= esc_html($link['text']); ?></span>
-                                <?php endif; ?>
+                                    <?php if(isset($link['icon'])): ?>
+                                        <i class="mt-icon mt-icon_<?= esc_attr($link['icon']) ?>"></i>
+                                    <?php endif; ?>
+                                    <?php if(isset($link['text'])): ?>
+                                        <span class="mt-card__links__text"><?= esc_html($link['text']); ?></span>
+                                    <?php endif; ?>
                                 </div>
                             </a>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </label>
-            </div>
-            <?php
-        }
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </label>
+        </div>
+        <?php
     }
-  
- ?>
+}
+
+?>
 
 <form class="futures-form d-flex flex-column gap-32" id="futures-form">
     <input type="hidden" name="market-type" value="futures" />
@@ -302,22 +302,6 @@
     const isUserLoggedIn = <?= is_user_logged_in() ? 'true' : 'false' ?>;
     const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
 
-    const radiosTargetGroups = ['account-size', 'account-type', 'platform'];
-    const form = document.getElementById("futures-form");
-    const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
-    
-    function ensureRadioDefaults(form, targetGroups) {
-        targetGroups.forEach(name => {
-            const radios = Array.from(form.querySelectorAll(`input[type="radio"][name="${name}"]`));
-            if (radios.length === 0) return;
-
-            if (!radios.some(r => r.checked)) {
-                const defaultRadio = radios.find(r => r.hasAttribute('data-default'));
-                (defaultRadio || radios[0]).checked = true;
-            }
-        });
-    }
-
     function normalizeAttributes(data) {
         if (!data || !Array.isArray(data)) return {};
 
@@ -340,6 +324,7 @@
         const values = getFormValues(form);
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
         const selectedProductId = selectedProduct.id ?? '';
+        const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
         const event = new CustomEvent("product:selected", {
             detail: { product: Object.values(selectedProduct).length > 0 ? selectedProduct: null, values }
@@ -361,31 +346,30 @@
         checkoutBtn.href = checkoutUrl;
     }
 
-    checkoutBtn.addEventListener('click', () => {
-        ensureRadioDefaults(form, radiosTargetGroups);
-        updateSelectedProduct();
-    })
+    const form = document.getElementById("futures-form");
 
-    ensureRadioDefaults(form, radiosTargetGroups);
-    
+    form.addEventListener("change", updateSelectedProduct);
+    updateSelectedProduct();
 
 </script>
 
 <script>
-  const stickyFooter = document.querySelector('.futures-form__footer');
+    const stickyFooter = document.querySelector('.futures-form__footer');
 
-  const observer = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.boundingClientRect.top > 0) {
-          stickyFooter.classList.add('sticky-bottom');
-          obs.unobserve(entry.target); // stop observing after first time
-        }
-      });
-    },
-    { threshold: 0.9 } // adjust sensitivity
-  );
-  observer.observe(stickyFooter);
+    if (stickyFooter) {
+        const observer = new IntersectionObserver(
+            (entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.boundingClientRect.top > 0) {
+                        stickyFooter.classList.add('sticky-bottom');
+                        obs.unobserve(entry.target); // stop observing after first time
+                    }
+                });
+            },
+            { threshold: 0.9 } // adjust sensitivity
+        );
+        observer.observe(stickyFooter);
+    }
 </script>
 
 
