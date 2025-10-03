@@ -37,8 +37,6 @@ foreach ($attributes as $attr) {
 function render_account_sizes($account_sizes) {
     if (empty($account_sizes)) return;
 
-    $is_active_assigned = false; // inicialización
-
     foreach ($account_sizes as $index => $item) {
         $slug = esc_attr($item['slug']);
         $name = esc_html($item['name']);
