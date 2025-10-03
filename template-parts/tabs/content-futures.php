@@ -12,6 +12,10 @@ if (!$layoutType instanceof LayoutType) {
 $products_data = get_products_with_attributes();
 $attributes = $products_data['attributes'] ?? [];
 
+$page_slug = pathinfo(__FILE__, PATHINFO_FILENAME);
+
+$remember_previous_selection = $layoutType === LayoutType::MyAccount;
+
 $account_sizes = [];
 $account_types = [];
 $platforms = [];
@@ -32,6 +36,8 @@ foreach ($attributes as $attr) {
 
 function render_account_sizes($account_sizes) {
     if (empty($account_sizes)) return;
+
+    $is_active_assigned = false; // inicialización
 
     foreach ($account_sizes as $index => $item) {
         $slug = esc_attr($item['slug']);
@@ -297,6 +303,12 @@ function render_platforms($platforms) {
 
 
 <script>
+    const PAGE_KEY = '<?= $page_slug ?>-storage';
+    window[PAGE_KEY] = {
+        screenLoaded: false
+    };
+
+    const REMEMBER_PREVIOUS_SELECTION = <?= $remember_previous_selection ? 'true' : 'false' ?>;
     const CHECKOUT_URL = '<?= home_url( '/checkout/?add-to-cart=PRODUCT_ID' ) ?>';
     const REGISTER_URL = '<?= home_url( '/auth/register/?redirect_to=' ) ?>';
     const isUserLoggedIn = <?= is_user_logged_in() ? 'true' : 'false' ?>;
@@ -321,8 +333,15 @@ function render_platforms($platforms) {
     }
 
     function updateSelectedProduct(){
-        const values = getFormValues(form);
+        let values = getFormValues(form);
+        console.log('values', new Date());
+
+        if (window[PAGE_KEY].screenLoaded === true && REMEMBER_PREVIOUS_SELECTION) {
+            localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+        }
+
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
+        console.log('selectedProduct', selectedProduct);
         const selectedProductId = selectedProduct.id ?? '';
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
@@ -349,8 +368,48 @@ function render_platforms($platforms) {
     const form = document.getElementById("futures-form");
 
     form.addEventListener("change", updateSelectedProduct);
-    updateSelectedProduct();
 
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            const saved = localStorage.getItem(PAGE_KEY);
+
+            if (saved && REMEMBER_PREVIOUS_SELECTION) {
+                const values = JSON.parse(saved);
+                Object.entries(values).forEach(([key, value]) => {
+                    const input = form.querySelector(`input[name="${key}"][value="${value}"]`);
+                    if (input) {
+                        input.checked = true;
+                    }
+                });
+
+                localStorage.removeItem(PAGE_KEY)
+            } else {
+                let values = getFormValues(form);
+
+                if (Object.keys(values).length < 4) {
+                    console.info('values before', values);
+                    document.querySelectorAll('form > section input:first-child').forEach(input => {
+                        input.checked = true
+                    });
+                }
+            }
+
+
+            updateSelectedProduct();
+
+            window[PAGE_KEY].screenLoaded = true;
+
+
+            const btnCheckout = document.getElementById('proceed-to-checkout-btn');
+
+            if (btnCheckout) {
+                btnCheckout.addEventListener('click', function () {
+                    let values = getFormValues(form);
+                    localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+                });
+            }
+        }, 0);
+    });
 </script>
 
 <script>

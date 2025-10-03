@@ -133,6 +133,13 @@ $menu_links = [
                         <i class="mt-icon mt-icon_caret-right"></i>
                     </a>
                 </div>
+                <script>
+                    document.querySelector('.btn-challenge a').addEventListener('click', function(){
+                        localStorage.removeItem('content-crypto-storage');
+                        localStorage.removeItem('content-forex-storage');
+                        localStorage.removeItem('content-futures-storage');
+                    });
+                </script>
             </div>
         </div>
 
@@ -141,7 +148,7 @@ $menu_links = [
             <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
                 <i class="mt-icon mt-icon-white mt-icon_caret-right-solid"></i>
             </a>
-            
+
             <div class="mt-sidebar__logo_collapsed">
                 <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
                     <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="50" height="50" loading="eager">
@@ -155,10 +162,10 @@ $menu_links = [
                     ]); ?>
                 </div>
             </div>
-            
+
             <div class="mt-sidebar__menu__group__options">
                 <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                    <span class="mt-tooltip" data-placement="right">                        
+                    <span class="mt-tooltip" data-placement="right">
                         <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_bar-chart"></i>
                         </a>
@@ -166,7 +173,7 @@ $menu_links = [
                             <div class="mt-tooltip__body">ACCOUNT OVERVIEW</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip" data-placement="right">                        
+                    <span class="mt-tooltip" data-placement="right">
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
                         </a>
@@ -174,7 +181,7 @@ $menu_links = [
                             <div class="mt-tooltip__body">REFERRALS</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip" data-placement="right">                        
+                    <span class="mt-tooltip" data-placement="right">
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
                         </a>
@@ -182,7 +189,7 @@ $menu_links = [
                             <div class="mt-tooltip__body">PAYOUTS</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip" data-placement="right">                        
+                    <span class="mt-tooltip" data-placement="right">
                         <a class="mt-sidebar__menu__link <?= esc_attr($mt_is_active('profile')); ?>" href="/my-account/profile/">
                             <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
                         </a>
@@ -190,7 +197,7 @@ $menu_links = [
                             <div class="mt-tooltip__body">ACCOUNT SETTINGS</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip" data-placement="right">                        
+                    <span class="mt-tooltip" data-placement="right">
                         <a class="mt-sidebar__menu__link " href="/my-account/orders">
                             <i class="mt-icon mt-icon-sm mt-icon_dollar-solid"></i>
                         </a>
@@ -198,7 +205,7 @@ $menu_links = [
                             <div class="mt-tooltip__body text-uppercase">Subscriptions & Billing</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip" data-placement="right">                        
+                    <span class="mt-tooltip" data-placement="right">
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/" target="_blank">
                             <i class="mt-icon mt-icon-sm mt-icon_help"></i>
                         </a>
@@ -206,7 +213,7 @@ $menu_links = [
                             <div class="mt-tooltip__body">HELP CENTER</div>
                         </span>
                     </span>
-                    <span class="mt-tooltip" data-placement="right">                        
+                    <span class="mt-tooltip" data-placement="right">
                         <a class="mt-sidebar__menu__link" href="/my-account/overview/">
                             <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
                         </a>
@@ -217,7 +224,7 @@ $menu_links = [
                 </div>
             </div>
 
-            <span class="mt-tooltip" data-placement="right">                        
+            <span class="mt-tooltip" data-placement="right">
                 <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
                     <i class="mt-icon mt-icon_dollar-solid"></i>
                 </a>
@@ -225,7 +232,7 @@ $menu_links = [
                     <div class="mt-tooltip__body text-uppercase"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?></div>
                 </span>
             </span>
-                
+
         </div>
     </div>
 </aside>
@@ -258,6 +265,6 @@ $menu_links = [
     }
 
     document.addEventListener('DOMContentLoaded', sidebarInit);
-    
+
 
 </script>
