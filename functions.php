@@ -1538,7 +1538,9 @@ if (!function_exists('render_sidebar')) {
     }
 }
 
-/**** Block Subscription list page */
+/**** Block Subscription list page  */
+
+/*
 
 add_action( 'template_redirect', 'mt_redirect_subscriptions_endpoint', 1 );
 function mt_redirect_subscriptions_endpoint() {
@@ -1582,6 +1584,8 @@ function mt_redirect_subscriptions_endpoint() {
     exit;
 }
 
+
+/*
 add_action( 'template_redirect', 'mt_redirect_my_account_orders' );
 function mt_redirect_my_account_orders() {
     // Sólo para usuarios logueados en el endpoint “orders” de My Account
@@ -1621,7 +1625,6 @@ function mt_redirect_my_account_orders() {
         return;
     }
 
-    /** @var WC_Order $last_order */
     $last_order = array_values( $valid_orders )[0];
 
     // 5) ¿Tiene suscripción relacionada? (WooCommerce Subscriptions)
@@ -1642,7 +1645,7 @@ function mt_redirect_my_account_orders() {
 
     wp_safe_redirect( $url );
     exit;
-}
+}*/
 
 
 // === Guardar billing via AJAX ===
