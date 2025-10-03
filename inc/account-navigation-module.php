@@ -10,9 +10,11 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     $new_items['trade-area']    = __('Account Metrics', 'woocommerce');
     $new_items['subscriptions'] = __('Manage Subscription', 'woocommerce');
 
+/*
     if (isset($items['payment-methods'])) {
         $new_items['payment-methods'] = $items['payment-methods'];
     }
+    */
 
     return $new_items;
 }, 20);

@@ -203,6 +203,9 @@ body.admin-bar {
     padding-left: 12px;
     padding-right: 12px;
 }
+.mt-navbar.mt-navbar--my-account {
+    margin-bottom: 0;
+}
 
 /* My Account Variant */
 @media (max-width: 1199.98px) {
