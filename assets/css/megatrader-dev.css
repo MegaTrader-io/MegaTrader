@@ -1604,7 +1604,12 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .badge-mega-secondary {
   background-color: #14b8a6;
 }
-
+.badge-mega-evaluation {
+  background-color: #E5E5E5;
+}
+.badge-mega-funded {
+  background-color: #14B8A6;
+}
 
 
 /* --- Custom Button ------*/

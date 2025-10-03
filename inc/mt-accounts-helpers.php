@@ -108,18 +108,20 @@ class MT_Accounts
       $ptypeLabel = '';
       $ptypeClass = '';
       $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
-      $rawLabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? ''));
 
-      if ($rawLabel !== '') {
-        $parts = array_map('trim', explode('|', $rawLabel));
+      if ($plabel !== '') {
+        $parts = array_map('trim', explode('|', $plabel));
         $last = $parts ? trim(end($parts)) : '';
-        $ptypeLabel = $last; // p.ej. "Evaluation" o "Funded"
+        $ptypeLabel = $last; 
 
-        $key = strtolower(preg_replace('/[^a-z0-9]+/', '-', $last));
-        if ($key === 'evaluation')
+        $key = strtolower(preg_replace('/\s+/', '-', $last)); 
+        if ($key === 'evaluation') {
           $ptypeClass = 'badge-mega-evaluation';
-        elseif ($key === 'funded')
+        } elseif ($key === 'funded') {
           $ptypeClass = 'badge-mega-funded';
+        } else {
+          $ptypeClass = 'badge-mega-default'; 
+        }
       }
 
       $sb = $acc['program']['startingBalance'] ?? null;
