@@ -528,11 +528,14 @@ get_header();
 </div>
 
 <div id="mt-account-passed-modal" class="modal modal-subcription fade" tabindex="-1"
-  aria-labelledby="mtactivation-title" aria-hidden="true" data-show="<?php echo $__mt_account_passed_show; ?>"
+  aria-labelledby="mtactivation-title" aria-hidden="true"
+  data-show="<?php echo $__mt_account_passed_show; ?>"
   data-note-pending="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending']); ?>"
   data-note-pending-no-button="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button']); ?>"
   data-current-status="<?php echo esc_attr($__status_norm); ?>"
-  data-activation-id="<?php echo esc_attr($__activation_product_id); ?>">
+  data-activation-id="<?php echo esc_attr($__activation_product_id); ?>"
+  data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
+
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
@@ -557,7 +560,7 @@ get_header();
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white">
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_title']; ?>
         </span>
-        <span class="text-white fw-medium text-uppercase text-2xl leading-7">
+        <span class="text-white fw-medium text-uppercase text-2xl leading-7 py-1">
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_description']; ?>
         </span>
         <span class="fw-medium text-a8a29e text-base">

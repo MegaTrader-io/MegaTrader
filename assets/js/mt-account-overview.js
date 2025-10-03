@@ -1933,81 +1933,109 @@ if (document.readyState === "loading") {
 
 /* ===== Passed & Pending Activation Modal ===== */
 (function () {
-  function normalizeId(v){
+  function normalizeId(v) {
     if (v == null) return "";
     var s = String(v).trim();
     var sl = s.toLowerCase();
-    return (s === "" || s === "0" || sl === "null") ? "" : s;
+    return s === "" || s === "0" || sl === "null" ? "" : s;
   }
 
-  function setNote(status, activationId, modal){
+  function buildActivationHref(modal, activationId) {
+    var base = (modal && modal.dataset.checkoutBase) || "";
+    var id = normalizeId(activationId);
+    return base && id ? base + encodeURIComponent(id) : "#";
+  }
+
+  function setNote(status, activationId, modal) {
     var noteEl = modal.querySelector("#mt-passed-note [data-note-text]");
     if (!noteEl) return;
 
-    var st = String(status || "").trim().toUpperCase();
+    var st = String(status || "")
+      .trim()
+      .toUpperCase();
     var hasId = normalizeId(activationId) !== "";
 
-    var notePending = modal.dataset.notePending || "Activation will open once review is complete.";
-    var noteNoBtn   = modal.dataset.notePendingNoButton || "Automatic Activation After Review";
+    var notePending =
+      modal.dataset.notePending ||
+      "Activation will open once review is complete.";
+    var noteNoBtn =
+      modal.dataset.notePendingNoButton || "Automatic Activation After Review";
 
     if ((st === "PENDING_ACTIVATION" && hasId) || (st === "PASSED" && hasId)) {
       noteEl.textContent = notePending;
     } else if (st === "PASSED" && !hasId) {
       noteEl.textContent = noteNoBtn;
     } else {
-      // estados que no aplican al modal: deja el texto como está
     }
   }
 
-  function setButton(status, activationId, modal){
+  function setButton(status, activationId, modal) {
     var btn = modal.querySelector("#mt-activation-btn");
     if (!btn) return;
 
-    var st = String(status || "").trim().toUpperCase();
+    var st = String(status || "")
+      .trim()
+      .toUpperCase();
     var hasId = normalizeId(activationId) !== "";
+
+    btn.href = buildActivationHref(modal, activationId);
 
     btn.classList.remove("disabled", "d-none");
     btn.setAttribute("aria-disabled", "false");
 
-    // Reglas pedidas:
-    // PENDING_ACTIVATION + id -> visible habilitado
-    // PASSED + id              -> visible deshabilitado
-    // PASSED + sin id          -> oculto (d-none)
+
     if (st === "PENDING_ACTIVATION" && hasId) {
-      // nada extra
     } else if (st === "PASSED" && hasId) {
       btn.classList.add("disabled");
       btn.setAttribute("aria-disabled", "true");
     } else if (st === "PASSED" && !hasId) {
       btn.classList.add("d-none");
+      btn.href = "#"; 
     } else {
-      // cualquier otro -> oculto por seguridad
       btn.classList.add("d-none");
+      btn.href = "#";
     }
   }
 
-  function syncUI(modal){
+  function syncUI(modal) {
     var status = modal.dataset.currentStatus || "";
-    var actId  = modal.dataset.activationId || "";
+    var actId = modal.dataset.activationId || "";
     setNote(status, actId, modal);
     setButton(status, actId, modal);
   }
 
-  function initModal(){
+  function initModal() {
     var modal = document.getElementById("mt-account-passed-modal");
     if (!modal) return;
 
     var closeBtn = modal.querySelector(".mt-modal__close");
+    var actionBtn = modal.querySelector("#mt-activation-btn");
     var withBackdrop = null;
 
-    function openModal(){
+    if (actionBtn && !actionBtn.__mtBoundGuard) {
+      actionBtn.addEventListener("click", function (e) {
+        if (
+          this.classList.contains("disabled") ||
+          this.getAttribute("aria-disabled") === "true" ||
+          !this.href ||
+          this.href.endsWith("#")
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+      actionBtn.__mtBoundGuard = true;
+    }
+
+    function openModal() {
       if (modal.classList.contains("show")) return;
-      modal.setAttribute("data-show", "1");
+
       syncUI(modal);
 
       modal.removeAttribute("hidden");
       modal.setAttribute("aria-hidden", "false");
       modal.classList.add("show");
+      modal.setAttribute("data-show", "1");
 
       modal.style.position = "fixed";
       modal.style.inset = "0";
@@ -2022,11 +2050,14 @@ if (document.readyState === "loading") {
         withBackdrop.style.zIndex = "1050";
         document.body.appendChild(withBackdrop);
       }
+
       document.body.classList.add("modal-open");
-      try { modal.focus(); } catch(_) {}
+      try {
+        modal.focus();
+      } catch (_) {}
     }
 
-    function closeModal(){
+    function closeModal() {
       modal.classList.remove("show");
       modal.setAttribute("aria-hidden", "true");
       modal.setAttribute("hidden", "");
@@ -2053,61 +2084,75 @@ if (document.readyState === "loading") {
         closeModal();
       });
     }
+
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
 
-    modal.__open  = openModal;
+    modal.__open = openModal;
     modal.__close = closeModal;
 
+    // Mostrar en carga si data-show="1"
     if (modal.getAttribute("data-show") === "1") {
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openModal, { once:true });
+        document.addEventListener("DOMContentLoaded", openModal, {
+          once: true,
+        });
       } else {
         openModal();
       }
     }
   }
 
-  // Chequeo vía AJAX ya existente (usa fetchStatus)
-  function getActivationIdFromDOM(accountId){
-    var sel = '#mt-accounts-grid .subscription-card[data-account-id="'+ String(accountId).replace(/"/g,'&quot;') +'"]';
-    var card = document.querySelector(sel) || document.querySelector('.subscription-card[data-account-id="'+ String(accountId).replace(/"/g,'&quot;') +'"]');
+  // Utilidad: fallback desde la card si el AJAX no trae el id (se mantiene)
+  function getActivationIdFromDOM(accountId) {
+    var sel =
+      '#mt-accounts-grid .subscription-card[data-account-id="' +
+      String(accountId).replace(/"/g, "&quot;") +
+      '"]';
+    var card =
+      document.querySelector(sel) ||
+      document.querySelector(
+        '.subscription-card[data-account-id="' +
+          String(accountId).replace(/"/g, "&quot;") +
+          '"]'
+      );
     if (!card) return "";
     return card.getAttribute("data-activation-id") || "";
   }
 
-  var __passedGuard = { pending:false, lastId:null, lastAt:0 };
+  var __passedGuard = { pending: false, lastId: null, lastAt: 0 };
 
-  function passedGuardCheck(accountId){
+  function passedGuardCheck(accountId) {
     if (!accountId) return;
     var now = Date.now();
     if (__passedGuard.pending) return;
-    if (__passedGuard.lastId === accountId && (now - __passedGuard.lastAt < 800)) return;
+    if (__passedGuard.lastId === accountId && now - __passedGuard.lastAt < 800)
+      return;
 
     __passedGuard.pending = true;
     __passedGuard.lastId = accountId;
     __passedGuard.lastAt = now;
 
     return fetchStatus(accountId)
-      .then(function(j){
+      .then(function (j) {
         if (!j || !j.success) return;
 
-        var statusRaw = (j.data && j.data.status != null) ? String(j.data.status) : "";
-        var status    = statusRaw.trim().toUpperCase();
+        var statusRaw =
+          j.data && j.data.status != null ? String(j.data.status) : "";
+        var status = statusRaw.trim().toUpperCase();
 
         var actId =
-          (j.data && (j.data.activationProductId || j.data.activation_product_id))
-            ? (j.data.activationProductId || j.data.activation_product_id)
+          j.data && (j.data.activationProductId || j.data.activation_product_id)
+            ? j.data.activationProductId || j.data.activation_product_id
             : getActivationIdFromDOM(accountId);
 
         if (status === "PASSED" || status === "PENDING_ACTIVATION") {
           var modal = document.getElementById("mt-account-passed-modal");
           if (!modal) return;
 
-          // Actualiza datasets y sincroniza UI
           modal.dataset.currentStatus = status;
-          modal.dataset.activationId  = (actId == null ? "" : String(actId));
+          modal.dataset.activationId = actId == null ? "" : String(actId);
 
           if (typeof modal.__open === "function") {
             modal.__open();
@@ -2120,11 +2165,13 @@ if (document.readyState === "loading") {
           }
         }
       })
-      .finally(function(){ __passedGuard.pending = false; });
+      .finally(function () {
+        __passedGuard.pending = false;
+      });
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initModal, { once:true });
+    document.addEventListener("DOMContentLoaded", initModal, { once: true });
   } else {
     initModal();
   }
@@ -2134,16 +2181,22 @@ if (document.readyState === "loading") {
   }
   window.passedGuardCheck = passedGuardCheck;
 
-  (function(){
+  (function () {
     var firstId = (window.mtAccounts && mtAccounts.selectedId) || "";
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", function(){ if (firstId) passedGuardCheck(firstId); }, { once:true });
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          if (firstId) passedGuardCheck(firstId);
+        },
+        { once: true }
+      );
     } else {
       if (firstId) passedGuardCheck(firstId);
     }
   })();
 
-  document.addEventListener("mt:accountSelected", function(e){
+  document.addEventListener("mt:accountSelected", function (e) {
     var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
     if (id) passedGuardCheck(id);
   });
