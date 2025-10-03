@@ -16,7 +16,7 @@ defined('ABSPATH') || exit;
         </div>
 
         <div class="mt-page__main">
-            <div class="mt-page__main-header">
+            <div class="mt-page__main-header mb-3">
                 <div class="mt-page__title text-white text-size-20 fw-medium text-uppercase">
                     <?php echo Label::META_ACCOUNT_OVERVIEW['page_title_overview']; ?>
                 </div>
