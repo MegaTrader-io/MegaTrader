@@ -332,11 +332,6 @@ function render_platforms($platforms) {
 
     function updateSelectedProduct(){
         let values = getFormValues(form);
-        console.log('values', new Date());
-
-        if (window[PAGE_KEY].screenLoaded === true && REMEMBER_PREVIOUS_SELECTION) {
-            localStorage.setItem(PAGE_KEY, JSON.stringify(values));
-        }
 
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
         console.log('selectedProduct', selectedProduct);
@@ -394,9 +389,6 @@ function render_platforms($platforms) {
 
 
             updateSelectedProduct();
-
-            window[PAGE_KEY].screenLoaded = true;
-
 
             const btnCheckout = document.getElementById('proceed-to-checkout-btn');
 
