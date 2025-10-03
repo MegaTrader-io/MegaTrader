@@ -24,7 +24,7 @@ get_header();
 
                 <div class="account-settings__sections-wrapper" id="accordionExample">
 
-                    <div class="mt-card account-settings__section toggle-panel toggle-panel--expanded">
+                    <div class="mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">
                             <button class="toggle-panel__header" data-bs-toggle="collapse"
                                     data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -46,7 +46,7 @@ get_header();
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseOne" class="toggle-panel__content collapse show"
+                        <div id="collapseOne" class="toggle-panel__content collapse"
                              data-bs-parent="#accordionExample">
                             <div class="toggle-panel__body">
                                 <?php get_template_part("template-parts/account/account-settings-personal-information"); ?>
@@ -54,7 +54,7 @@ get_header();
                         </div>
                     </div>
 
-                    <div class="mt-card account-settings__section toggle-panel">
+                    <div class="mt-card account-settings__section toggle-panel toggle-panel--expanded">
                         <h2 class="toggle-panel__title-wrapper">
                             <button class="toggle-panel__header toggle-panel__header--collapsed" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
@@ -93,7 +93,7 @@ get_header();
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseTwo" class="toggle-panel__content collapse"
+                        <div id="collapseTwo" class="toggle-panel__content collapse show"
                              data-bs-parent="#accordionExample">
                             <div class="toggle-panel__body">
                                 <?php get_template_part("template-parts/account/account-settings-verification"); ?>

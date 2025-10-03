@@ -44,10 +44,10 @@ SVG,
         ],
 ];
 ?>
-<div class="mt-card mt-card-dark h😀-auto space-y-3 mt-">
-    <div class="d-flex gap-3 justify-content-between align-items-center">
+<div class="mt-card mt-card-dark h😀-auto space-y-3">
+    <div class="features">
         <?php foreach ($features as $feature): ?>
-            <div class="d-flex align-items-center gap-16">
+            <div class="features__item">
                 <div class="mt-card__icon-wrapper space-y-3">
                     <div class="d-flex align-items-center gap-1 text-white">
                         <?= $feature['icon'] ?> <span><?= $feature['title'] ?></span>
@@ -66,3 +66,31 @@ SVG,
         </button>
     </div>
 </div>
+
+
+<style>
+    .features {
+        gap: 16px;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .features > * + * {
+        margin-top: 16px;
+    }
+
+    @media (min-width: 768px) {
+        .features {
+            display: flex;
+        }
+
+        .features > * + * {
+            margin-top: 0;
+        }
+    }
+
+    .features__item {
+        display: flex;
+        align-items: center;
+    }
+</style>
