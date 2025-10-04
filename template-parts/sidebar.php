@@ -39,9 +39,15 @@ $menu_links = [
     ]
 ];
 
+$v2 = isset($_GET['v2']);
+
 ?>
 <aside class="mt-sidebar">
     <div class="mt-sidebar__wrapper mt-card mt-card_border">
+
+    <?php if($v2): ?>
+        <?php get_template_part('template-parts/main-menu'); ?>
+    <?php else: ?>
         <div class="mt-sidebar__container d-flex flex-column overflow-hidden">
             <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
                 <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
@@ -234,6 +240,7 @@ $menu_links = [
             </span>
 
         </div>
+    <?php endif; ?>
     </div>
 </aside>
 
