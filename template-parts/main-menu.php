@@ -60,7 +60,7 @@ function render_menu_link(array $item): string {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 15px;
     color: orange;
     z-index: 999999;
     position: fixed;
