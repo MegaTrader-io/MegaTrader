@@ -40,9 +40,9 @@ $menu_links = [
 ];
 
 function render_menu_link(array $item): string {
-    $href = htmlspecialchars($item['href'] ?? '#');
-    $text = htmlspecialchars($item['text'] ?? '');
-    $icon = htmlspecialchars($item['icon'] ?? '');
+    $href = esc_attr($item['href'] ?? '#');
+    $text = esc_html($item['text'] ?? '');
+    $icon = esc_attr($item['icon'] ?? '');
     ?>
         <a class="mt-sidebar__menu__link" href="<?= $href ?>" >
             <?php if ($icon): ?>
