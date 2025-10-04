@@ -2,9 +2,76 @@
 
 defined('ABSPATH') || exit;
 
+$mt_current_account_section = static function (): string {
+    $req_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    $req_path = rtrim($req_path ?: '/', '/');
 
+    $account_base_url = wc_get_page_permalink('myaccount');           // e.g. https://.../my-account/
+    $account_base     = (string) parse_url($account_base_url, PHP_URL_PATH);
+    $account_base     = rtrim($account_base ?: '/my-account', '/');
+
+    if (strpos($req_path, $account_base) !== 0) {
+        return '';
+    }
+
+    // resto del path después de /my-account
+    $rest  = ltrim(substr($req_path, strlen($account_base)), '/');    // '' | 'overview/...' | 'profile/...'
+    $first = $rest === '' ? '' : strtolower(strtok($rest, '/'));
+
+    // La raíz (/my-account/) o 'dashboard' cuentan como 'overview'
+    if ($first === '' || $first === 'dashboard') {
+        $first = 'overview';
+    }
+    return $first;
+};
+
+$mt_is_active = static function (string $slug, string $class = 'active') use ($mt_current_account_section): string {
+    return $mt_current_account_section() === strtolower($slug) ? $class : '';
+};
+
+$account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
+
+$menu_links = [
+    [
+        'text' => 'ACCOUNT OVERVIEW',
+        'icon' => '',
+        'href' => ''
+    ]
+];
+
+function render_menu_link(array $item): string {
+    $href = htmlspecialchars($item['href'] ?? '#');
+    $text = htmlspecialchars($item['text'] ?? '');
+    $icon = htmlspecialchars($item['icon'] ?? '');
+    ?>
+        <a class="mt-sidebar__menu__link" href="<?= $href ?>" >
+            <?php if ($icon): ?>
+                <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
+            <?php endif; ?>
+            <span><?= $text ?></span>
+        </a>
+    <?php
+}
 
 ?>
+<style>
+.l30:after {
+    content: 'L30';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: orange;
+    z-index: 999999;
+    position: fixed;
+    inset: 80px 40px auto auto;
+    width: 40px;
+    height: 40px;
+    border: 2px red dashed;
+    border-radius: 50%;
+    background: rgba(0,0,255, .7);
+}
+</style>
 
         <div class="mt-sidebar__container l30 d-flex flex-column overflow-hidden">
             <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
