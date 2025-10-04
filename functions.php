@@ -1758,6 +1758,7 @@ add_action('template_redirect', function () {
   // ====== White List ======
   $public_paths = [
     '/',              // Home
+    '/privacy-policy/',   // privacy-policy
     '/auth/login/',   // login Page
     '/auth/register/',   // Register Page
     '/auth/lost-password/',   // Lost Password Page
