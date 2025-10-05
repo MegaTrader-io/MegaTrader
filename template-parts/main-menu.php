@@ -40,7 +40,7 @@ $menu_links = [
     ]
 ];
 
-function render_menu_link(array $item): string {
+function render_menu_link(array $item) {
     $class = esc_attr($item['class'] ?? '');
     $href = esc_attr($item['href'] ?? '#');
     $text = esc_html($item['text'] ?? '');
