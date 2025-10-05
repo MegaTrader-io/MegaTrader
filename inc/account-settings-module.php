@@ -2,6 +2,104 @@
 
 if (!defined('ABSPATH')) exit;
 
+
+// ✅ Endpoint AJAX seguro
+add_action('wp_ajax_mt_update_password', 'mt_update_password_callback');
+
+function mt_update_password_callback() {
+    // ✅ Verificar login
+    if (!is_user_logged_in()) {
+        wp_send_json_error([
+            'errors' => [
+                'global' => __('You must be logged in to change your password.', 'megatrader')
+            ]
+        ], 403);
+    }
+
+    // ✅ Validar nonce
+    if (!isset($_POST['mt_password_nonce']) || !wp_verify_nonce($_POST['mt_password_nonce'], 'mt_save_password')) {
+        wp_send_json_error([
+            'errors' => [
+                'global' => __('Invalid security token. Please reload and try again.', 'megatrader')
+            ]
+        ], 400);
+    }
+
+    // ✅ Sanitizar entradas
+    $current_password = sanitize_text_field($_POST['current_password'] ?? '');
+    $new_password = sanitize_text_field($_POST['new_password'] ?? '');
+    $confirm_password = sanitize_text_field($_POST['confirm_password'] ?? '');
+
+    $user_id = get_current_user_id();
+    $user = get_userdata($user_id);
+
+    $errors = [];
+
+    // ✅ Validar campos vacíos
+    if (empty($current_password)) {
+        $errors['current_password'] = __('This field is required', 'megatrader');
+    }
+
+    if (empty($new_password)) {
+        $errors['new_password'] = __('This field is required', 'megatrader');
+    }
+
+    if (empty($confirm_password)) {
+        $errors['confirm_password'] = __('This field is required', 'megatrader');
+    }
+
+    // Si faltan campos, terminamos aquí
+    if (!empty($errors)) {
+        wp_send_json_error(['errors' => $errors], 422);
+    }
+
+    // ✅ Verificar contraseña actual
+    if (!wp_check_password($current_password, $user->user_pass, $user_id)) {
+        $errors['current_password'] = __('Your current password is incorrect.', 'megatrader');
+        wp_send_json_error(['errors' => $errors], 401);
+    }
+
+    // ✅ Verificar coincidencia de contraseñas
+    if ($new_password !== $confirm_password) {
+        $errors['confirm_password'] = __('New passwords do not match.', 'megatrader');
+    }
+
+    // ✅ Validar longitud mínima
+    if (strlen($new_password) < 8) {
+        $errors['new_password'] = __('The new password must be at least 8 characters long.', 'megatrader');
+    }
+
+    // Si hay errores en validaciones
+    if (!empty($errors)) {
+        wp_send_json_error(['errors' => $errors], 422);
+    }
+
+    // ✅ Actualizar sin cerrar sesión
+    try {
+        $update_result = wp_update_user([
+            'ID' => $user_id,
+            'user_pass' => $new_password,
+        ]);
+
+        if (is_wp_error($update_result)) {
+            wp_send_json_error([
+                'errors' => ['global' => $update_result->get_error_message()],
+            ], 500);
+        }
+
+        wp_send_json_success([
+            'message' => __('Password updated successfully.', 'megatrader'),
+        ]);
+    } catch (Throwable $e) {
+        wp_send_json_error([
+            'errors' => [
+                'global' => __('Unexpected error updating password.', 'megatrader')
+            ],
+            'debug' => WP_DEBUG ? $e->getMessage() : null
+        ], 500);
+    }
+}
+
 function mt_account_settings_module()
 {
     $js_path = get_template_directory() . '/assets/js/';
@@ -27,6 +125,10 @@ function mt_account_settings_module()
     );
 
     wp_enqueue_script('account-settings-module');
+
+    wp_localize_script('account-settings-module', 'wpAjax', [
+        'ajaxUrl' => admin_url('admin-ajax.php')
+    ]);
 }
 
 add_action('wp_enqueue_scripts', function () {
