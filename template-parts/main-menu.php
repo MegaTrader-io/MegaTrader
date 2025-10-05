@@ -33,18 +33,20 @@ $account_base_url = trailingslashit( wc_get_page_permalink('myaccount') );
 
 $menu_links = [
     [
+        'class' => $mt_is_active('overview', 'active'),
         'text' => 'ACCOUNT OVERVIEW',
-        'icon' => '',
-        'href' => ''
+        'icon' => 'mt-icon_bar-chart',
+        'href' => '/my-account/overview/',
     ]
 ];
 
 function render_menu_link(array $item): string {
+    $class = esc_attr($item['class'] ?? '');
     $href = esc_attr($item['href'] ?? '#');
     $text = esc_html($item['text'] ?? '');
     $icon = esc_attr($item['icon'] ?? '');
     ?>
-        <a class="mt-sidebar__menu__link" href="<?= $href ?>" >
+        <a class="mt-sidebar__menu__link <?= $class ?>" href="<?= $href ?>" >
             <?php if ($icon): ?>
                 <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
             <?php endif; ?>
@@ -97,6 +99,10 @@ function render_menu_link(array $item): string {
                     <div class="mt-sidebar__menu__group__options">
                         <!-- Desktop -->
                         <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
+                            <?php foreach ($menu_links as $item) {
+                                echo render_menu_link($item);
+                            }
+                            ?>
                             <a class="mt-sidebar__menu__link <?php echo esc_attr($mt_is_active('overview')); ?>" href="/my-account/overview/">
                                 <i class="mt-icon mt-icon-sm mt-icon_bar-chart"></i>
                                 <span>ACCOUNT OVERVIEW<span>
