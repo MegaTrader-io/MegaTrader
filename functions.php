@@ -1760,6 +1760,8 @@ add_action('template_redirect', function () {
     '/',              // Home
     '/privacy-policy/',   // privacy-policy
     '/privacy-policy',   // privacy-policy
+    '/terms-of-service/',   // terms-of-service
+    '/terms-of-service',   // terms-of-service
     '/auth/login/',   // login Page
     '/auth/register/',   // Register Page
     '/auth/lost-password/',   // Lost Password Page
