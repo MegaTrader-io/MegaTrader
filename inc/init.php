@@ -9,6 +9,7 @@ if ( ! file_exists( $base . 'mt-api.php' ) ) {
 
 $api     = $base . 'mt-api.php';
 $helpers = $base . 'mt-accounts-helpers.php';
+$error_wc_error = $base . 'mt-wc-error.php';
 
 if ( file_exists( $api ) ) {
     require_once $api;
@@ -23,3 +24,11 @@ if ( file_exists( $helpers ) ) {
 } else {
     error_log('[MT] MISSING: ' . $helpers);
 }
+
+if ( file_exists( $error_wc_error ) ) {
+    require_once $error_wc_error;
+    error_log('[MT] Loaded: ' . $error_wc_error);
+} else {
+    error_log('[MT] MISSING: ' . $error_wc_error);
+}
+

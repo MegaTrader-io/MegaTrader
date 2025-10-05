@@ -2,25 +2,6 @@
 
 $errors = wc_get_notices('error');
 
-final class MT_WC_Error
-{
-    public static $field_errors = array();
-
-    public static function has_error($field): bool
-    {
-        return isset(self::$field_errors[$field]) && !empty(self::$field_errors[$field]);
-    }
-
-    public static function get_error($field)
-    {
-        if (!isset(self::$field_errors[$field])) {
-            return '';
-        }
-
-        return self::$field_errors[$field];
-    }
-}
-
 foreach ($errors as $error) {
     if (!isset($error['data']['field'])) {
         continue;

@@ -1599,3 +1599,36 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-verified[data-verified="0"] .mt-verified__status-icon {
     color: var(--error-color);
 }
+
+
+.mt-password-wrapper {
+    position: relative;
+}
+
+.mt-password-wrapper__password {
+    padding-right: 3rem;
+}
+
+.mt-password-wrapper__btn_eye {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.875rem;
+    z-index: 10;
+    height: 1.5rem;
+    width: 1.5rem;
+    border-style: none;
+    -webkit-mask-image: url(/wp-content/themes/megatrader-addons/assets/img/eye-close.svg);
+    mask-image: url(/wp-content/themes/megatrader-addons/assets/img/eye-close.svg);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    background-color: #a8a29e;
+}
+
+.mt-password-wrapper__password[type=text] ~ .mt-password-wrapper__btn_eye {
+    -webkit-mask-image: url(/wp-content/themes/megatrader-addons/assets/img/eye-open.svg);
+    mask-image: url(/wp-content/themes/megatrader-addons/assets/img/eye-open.svg);
+}
