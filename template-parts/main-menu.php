@@ -57,7 +57,7 @@ $menu_links = [
         'href' => '/my-account/profile/',
     ],
     [
-        'class' => ($mt_is_active('orders', 'active') ?? $mt_is_active('view-subscription', 'active')),
+        'class' => $mt_is_active('orders', 'active') ?: $mt_is_active('view-subscription', 'active'),
         'text' => 'SUBSCRIPTIONS & BILLING',
         'icon' => 'mt-icon_dollar-solid',
         'href' => '/my-account/orders',
@@ -93,6 +93,26 @@ function render_menu_link(array $item) {
         </a>
     <?php
 }
+
+function render_menu_link_collapsed(array $item) {
+    $class = esc_attr($item['class'] ?? '');
+    $href = esc_url($item['href'] ?? '#');
+    $target = esc_attr($item['target'] ?? '');
+    $text = esc_html($item['text'] ?? '');
+    $icon = esc_attr($item['icon'] ?? '');
+    ?>
+        <span class="mt-tooltip" data-placement="right">
+            <a class="mt-sidebar__menu__link <?= $class ?>" href="<?= $href ?>" target="<?= $target ?>">
+                <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
+            </a>
+            <span class="mt-tooltip__panel" role="tooltip">
+                <div class="mt-tooltip__body"><?= $text ?></div>
+            </span>
+        </span>
+    <?php
+}
+
+
 
 ?>
 <style>
@@ -142,40 +162,6 @@ function render_menu_link(array $item) {
                                 echo render_menu_link($item);
                             }
                             ?>
-                            <a class="mt-sidebar__menu__link <?php echo esc_attr($mt_is_active('overview')); ?>" href="/my-account/overview/">
-                                <i class="mt-icon mt-icon-sm mt-icon_bar-chart"></i>
-                                <span>ACCOUNT OVERVIEW<span>
-                            </a>
-                            <a class="mt-sidebar__menu__link" href="/my-account/referrals/">
-                                <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
-                                <span>REFERRALS<span>
-                            </a>
-                            <a class="mt-sidebar__menu__link" href="/my-account/payouts/">
-                                <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
-                                <span>PAYOUTS<span>
-                            </a>
-                            <a class="mt-sidebar__menu__link <?= esc_attr($mt_is_active('profile')); ?>" href="/my-account/profile/">
-                                <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
-                                <span>ACCOUNT SETTINGS<span>
-                            </a>
-                            <a class="mt-sidebar__menu__link" href="/my-account/orders">
-                                <i class="mt-icon mt-icon-sm mt-icon_dollar-solid"></i>
-                                <span class="text-uppercase">Subscriptions & Billing<span>
-                            </a>
-                            <a class="mt-sidebar__menu__link" href="https://help.megatrader.io/en/" target="_blank">
-                                <i class="mt-icon mt-icon-sm mt-icon_help"></i>
-                                <span>HELP CENTER<span>
-                            </a>
-                            <a class="mt-sidebar__menu__link btn-logout" href="<?php echo esc_url(
-                                    add_query_arg(
-                                            'time',
-                                            time(),
-                                            wp_logout_url()
-                                    )
-                            ); ?>">
-                                <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
-                                <span>LOGOUT<span>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -226,62 +212,10 @@ function render_menu_link(array $item) {
 
             <div class="mt-sidebar__menu__group__options">
                 <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                    <span class="mt-tooltip" data-placement="right">
-                        <a class="mt-sidebar__menu__link <?= $overview_active_class ?>" href="/my-account/overview/">
-                            <i class="mt-icon mt-icon-sm mt-icon_bar-chart"></i>
-                        </a>
-                        <span class="mt-tooltip__panel" role="tooltip">
-                            <div class="mt-tooltip__body">ACCOUNT OVERVIEW</div>
-                        </span>
-                    </span>
-                    <span class="mt-tooltip" data-placement="right">
-                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
-                            <i class="mt-icon mt-icon-sm mt-icon_people-plus"></i>
-                        </a>
-                        <span class="mt-tooltip__panel" role="tooltip">
-                            <div class="mt-tooltip__body">REFERRALS</div>
-                        </span>
-                    </span>
-                    <span class="mt-tooltip" data-placement="right">
-                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
-                            <i class="mt-icon mt-icon-sm mt-icon_wallet"></i>
-                        </a>
-                        <span class="mt-tooltip__panel" role="tooltip">
-                            <div class="mt-tooltip__body">PAYOUTS</div>
-                        </span>
-                    </span>
-                    <span class="mt-tooltip" data-placement="right">
-                        <a class="mt-sidebar__menu__link <?= esc_attr($mt_is_active('profile')); ?>" href="/my-account/profile/">
-                            <i class="mt-icon mt-icon-sm mt-icon_settings"></i>
-                        </a>
-                        <span class="mt-tooltip__panel" role="tooltip">
-                            <div class="mt-tooltip__body">ACCOUNT SETTINGS</div>
-                        </span>
-                    </span>
-                    <span class="mt-tooltip" data-placement="right">
-                        <a class="mt-sidebar__menu__link " href="/my-account/orders">
-                            <i class="mt-icon mt-icon-sm mt-icon_dollar-solid"></i>
-                        </a>
-                        <span class="mt-tooltip__panel" role="tooltip">
-                            <div class="mt-tooltip__body text-uppercase">Subscriptions & Billing</div>
-                        </span>
-                    </span>
-                    <span class="mt-tooltip" data-placement="right">
-                        <a class="mt-sidebar__menu__link" href="/my-account/overview/" target="_blank">
-                            <i class="mt-icon mt-icon-sm mt-icon_help"></i>
-                        </a>
-                        <span class="mt-tooltip__panel" role="tooltip">
-                            <div class="mt-tooltip__body">HELP CENTER</div>
-                        </span>
-                    </span>
-                    <span class="mt-tooltip" data-placement="right">
-                        <a class="mt-sidebar__menu__link" href="/my-account/overview/">
-                            <i class="mt-icon mt-icon-sm mt-icon_logout"></i>
-                        </a>
-                        <span class="mt-tooltip__panel" role="tooltip">
-                            <div class="mt-tooltip__body">LOGOUT</div>
-                        </span>
-                    </span>
+                    <?php foreach ($menu_links as $item) {
+                        echo render_menu_link_collapsed($item);
+                    }
+                    ?>
                 </div>
             </div>
 
