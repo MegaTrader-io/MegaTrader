@@ -37,16 +37,55 @@ $menu_links = [
         'text' => 'ACCOUNT OVERVIEW',
         'icon' => 'mt-icon_bar-chart',
         'href' => '/my-account/overview/',
-    ]
+    ],
+    [
+        'class' => $mt_is_active('referrals', 'active'),
+        'text' => 'REFERRALS',
+        'icon' => 'mt-icon_people-plus',
+        'href' => '/my-account/referrals/',
+    ],
+    [
+        'class' => $mt_is_active('payouts', 'active'),
+        'text' => 'PAYOUTS',
+        'icon' => 'mt-icon_wallet',
+        'href' => '/my-account/payouts/',
+    ],
+    [
+        'class' => $mt_is_active('profile', 'active'),
+        'text' => 'ACCOUNT SETTINGS',
+        'icon' => 'mt-icon_settings',
+        'href' => '/my-account/profile/',
+    ],
+    [
+        'class' => ($mt_is_active('orders', 'active') ?? $mt_is_active('view-subscription', 'active')),
+        'text' => 'SUBSCRIPTIONS & BILLING',
+        'icon' => 'mt-icon_dollar-solid',
+        'href' => '/my-account/orders',
+    ],
+    [
+        'class' => $mt_is_active('profile', 'active'),
+        'text' => 'HELP CENTER',
+        'icon' => 'mt-icon_settings',
+        'href' => 'https://help.megatrader.io/en/',
+        'target' => '_blank'
+    ],
+    [
+        'class' => 'btn-logout ' . $mt_is_active('profile', 'active'),
+        'text' => 'LOGOUT',
+        'icon' => 'mt-icon_logout',
+        'href' => add_query_arg('time', time(), wp_logout_url()),
+    ],
 ];
+                          
 
 function render_menu_link(array $item) {
     $class = esc_attr($item['class'] ?? '');
-    $href = esc_attr($item['href'] ?? '#');
+    $href = esc_url($item['href'] ?? '#');
+    $target = esc_attr($item['target'] ?? '');
     $text = esc_html($item['text'] ?? '');
     $icon = esc_attr($item['icon'] ?? '');
     ?>
-        <a class="mt-sidebar__menu__link <?= $class ?>" href="<?= $href ?>" >
+        <a class="mt-sidebar__menu__link <?= $class ?>" href="<?= $href ?>" target="<?= $target ?>">
             <?php if ($icon): ?>
                 <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
             <?php endif; ?>
