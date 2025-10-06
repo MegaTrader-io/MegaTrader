@@ -244,9 +244,9 @@ $v2 = isset($_GET['v2']);
     </div>
 </aside>
 
-// <?php get_template_part('template-parts/main-menu', null, [
-//     'is_overlay' => true
-// ]); ?>
+<?php get_template_part('template-parts/main-menu', null, [
+    'is_overlay' => true
+]); ?>
 
 <script>
     let expanded = true;
