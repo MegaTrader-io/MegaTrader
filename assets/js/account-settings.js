@@ -101,8 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const sessionToken = result.data.token;
-        console.info('sessionToken', sessionToken);
+        const {sessionToken, url: VERIFF_SESSION_URL} = result.data.token;
 
         // 🔹 Iniciar Veriff embebido
         const veriff = Veriff({
@@ -122,6 +121,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         console.info('veriff', veriff);
 
-        veriff.setSession({ sessionToken });
+        window.veriffSDK.createVeriffFrame({ url: VERIFF_SESSION_URL });
     });
 });
