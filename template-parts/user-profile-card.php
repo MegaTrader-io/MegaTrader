@@ -25,12 +25,12 @@ $initials = mb_strtoupper($initials);
 
 /// Genera la URL de Gravatar con default=404
 $avatar_url = get_avatar_url($current_user->ID, [
-    'size' => $avatar_size,
-    'default' => '404',
+        'size' => $avatar_size,
+        'default' => '404',
 ]);
 
 $response = wp_safe_remote_head($avatar_url, [
-    'timeout' => 2,
+        'timeout' => 2,
 ]);
 
 $has_real_avatar = false;
@@ -42,6 +42,8 @@ if (!is_wp_error($response)) {
     }
 }
 
+
+$is_verified = get_query_var('mt_is_verified');
 ?>
 
 <div class="mt-user-profile-card mt-card mt-card-dark h-auto">
@@ -89,8 +91,8 @@ if (!is_wp_error($response)) {
                 since: <?php echo esc_html($current_user && $current_user->user_registered ? date_i18n('m/d/Y', strtotime($current_user->user_registered)) : '—'); ?>
             </div>
             <?php
-                get_template_part('template-parts/verified', null, [
-                        'verified' => false
+            get_template_part('template-parts/verified', null, [
+                    'verified' => $is_verified
             ]);
             ?>
         </div>

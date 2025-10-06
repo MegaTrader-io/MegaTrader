@@ -2,6 +2,104 @@
 
 if (!defined('ABSPATH')) exit;
 
+function mt_account_settings_module()
+{
+    $js_path = get_template_directory() . '/assets/js/';
+    $js_uri = get_template_directory_uri() . '/assets/js/';
+    $js_file = 'account-settings.js';
+    $js_veriff_file = 'mt-veriff-validation.js';
+
+    // ✅ Obtener versiones dinámicas para invalidar cache
+    $js_version_main = file_exists($js_path . $js_file) ? filemtime($js_path . $js_file) : false;
+    $js_version_veriff = file_exists($js_path . $js_veriff_file) ? filemtime($js_path . $js_veriff_file) : false;
+
+    // ✅ Si usas intl-tel-input para campos telefónicos, lo cargas
+    if (function_exists('mt_intl_tel_input_assets')) {
+        mt_intl_tel_input_assets();
+    }
+
+    // ✅ Registrar SDK principal de Veriff
+    wp_register_script(
+        'veriff-sdk',
+        'https://cdn.veriff.me/sdk/js/1.5/veriff.min.js',
+        [],
+        '1.5.0',
+        true
+    );
+
+    // ✅ Registrar SDK “in-context” (iframe helper)
+    wp_register_script(
+        'veriff-incontext',
+        'https://cdn.veriff.me/incontext/js/v1/veriff.js',
+        ['veriff-sdk'],
+        null,
+        true
+    );
+
+    // ✅ Registrar tu script principal de ajustes de cuenta
+    wp_register_script(
+        'account-settings-module',
+        $js_uri . $js_file,
+        [],
+        $js_version_main,
+        true
+    );
+
+    // ✅ Registrar el script de validación Veriff
+    wp_register_script(
+        'veriff-validation-module',
+        $js_uri . $js_veriff_file,
+        ['veriff-incontext', 'account-settings-module'], // depende de ambos
+        $js_version_veriff,
+        true
+    );
+
+    // ✅ Encolar scripts en el orden correcto
+    wp_enqueue_script('veriff-sdk');
+    wp_enqueue_script('veriff-incontext');
+    wp_enqueue_script('account-settings-module');
+    wp_enqueue_script('veriff-validation-module');
+
+    // ✅ Variables globales accesibles desde ambos JS
+    $localize_data = [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'veriffKey' => VERIFF_API_KEY,
+        'nonce' => wp_create_nonce('mt_veriff_nonce'),
+        'isLoggedIn' => is_user_logged_in(),
+    ];
+
+    wp_localize_script('account-settings-module', 'wpAjax', $localize_data);
+    wp_localize_script('veriff-validation-module', 'wpAjax', $localize_data);
+}
+
+
+if (!function_exists('mt_is_user_verified')) {
+    /**
+     * Check if a user is verified via Veriff.
+     *
+     * @param int|null $user_id Optional. User ID. Defaults to current user.
+     * @return bool True if the user's Veriff status is 'approved'.
+     */
+    function mt_is_user_verified(?int $user_id = null): bool
+    {
+        // ✅ Si no se pasa un user_id, usar el usuario actual
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+
+        // Si no hay usuario logueado, retornar falso
+        if (!$user_id) {
+            return false;
+        }
+
+        // Obtener el meta de verificación
+        $status = get_user_meta($user_id, 'veriff_status', true);
+
+        // ✅ Retornar true solo si el estado es "approved"
+        return $status === 'approved';
+    }
+}
+
 // ✅ Endpoint AJAX seguro
 add_action('wp_ajax_mt_update_password', 'mt_update_password_callback');
 
@@ -99,64 +197,6 @@ function mt_update_password_callback()
         ], 500);
     }
 }
-
-function mt_account_settings_module()
-{
-    $js_path = get_template_directory() . '/assets/js/';
-    $js_uri = get_template_directory_uri() . '/assets/js/';
-    $js_file = 'account-settings.js';
-
-    // ✅ Usamos filemtime() para invalidar cache del build JS
-    $js_version = file_exists($js_path . $js_file)
-        ? filemtime($js_path . $js_file)
-        : false;
-
-    // ✅ Si usas intl-tel-input para campos telefónicos, lo cargas
-    if (function_exists('mt_intl_tel_input_assets')) {
-        mt_intl_tel_input_assets();
-    }
-
-    // ✅ Registrar SDK principal de Veriff
-    wp_register_script(
-        'veriff-sdk',
-        'https://cdn.veriff.me/sdk/js/1.5/veriff.min.js',
-        [],
-        '1.5.0',
-        true
-    );
-
-    // ✅ Registrar SDK “in-context” (iframe helper)
-    wp_register_script(
-        'veriff-incontext',
-        'https://cdn.veriff.me/incontext/js/v1/veriff.js',
-        ['veriff-sdk'], // depende del SDK principal
-        null,
-        true
-    );
-
-    // ✅ Registrar tu script principal de ajustes
-    wp_register_script(
-        'account-settings-module',
-        $js_uri . $js_file,
-        ['veriff-incontext'], // depende del SDK in-context
-        $js_version,
-        true
-    );
-
-    // ✅ Encolar scripts en el orden correcto
-    wp_enqueue_script('veriff-sdk');
-    wp_enqueue_script('veriff-incontext');
-    wp_enqueue_script('account-settings-module');
-
-    // ✅ Pasar variables globales de WordPress al JS
-    wp_localize_script('account-settings-module', 'wpAjax', [
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'veriffKey' => VERIFF_API_KEY,
-        'nonce' => wp_create_nonce('mt_veriff_nonce'),
-        'isLoggedIn' => is_user_logged_in(),
-    ]);
-}
-
 
 add_action('wp_enqueue_scripts', function () {
     if (is_user_logged_in() && is_page_template('account-profile.php')) {

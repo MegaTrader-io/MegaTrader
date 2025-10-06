@@ -1,6 +1,21 @@
 jQuery(document).ready(function ($) {
   const preloader = $(".preloader");
 
+  $.preloader = {
+      show: function () {
+          preloader.fadeIn(150);
+      },
+      hide: function () {
+          preloader.fadeOut(150);
+      },
+      toggle: function () {
+          preloader.fadeToggle(150);
+      },
+      isVisible: function () {
+          return preloader.is(':visible');
+      }
+  }
+
   $(document).on("click", "a", function (e) {
     const href = $(this).attr("href");
     if (

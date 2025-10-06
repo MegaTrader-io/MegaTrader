@@ -9,6 +9,24 @@ add_action('rest_api_init', function () {
 });
 
 add_action('wp_ajax_mt_start_veriff_verification', 'mt_start_veriff_verification');
+add_action('wp_ajax_mt_veriffy_status', 'mt_get_veriff_status');
+
+function mt_get_veriff_status()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => 'You must be logged out to verify your identity.'], 401);
+    }
+
+    $user = wp_get_current_user();
+    $status = get_user_meta($user->ID, 'veriff_status', true);
+    $updated_at = get_user_meta($user->ID, 'veriff_updated_at', true);
+
+    wp_send_json_success([
+        'status' => $status,
+        'updated_at' => $updated_at,
+    ]);
+}
+
 
 function mt_start_veriff_verification()
 {
@@ -55,14 +73,14 @@ function mt_start_veriff_verification()
     ]);
 
     if (is_wp_error($response)) {
-        wp_send_json_error(['message' => 'Request error: ' . $response->get_error_message()], 500);
+        wp_send_json_error(['message' => 'Request error: ' . $response->get_error_message()], 422);
     }
 
     error_log('Veriff response: ' . wp_remote_retrieve_body($response));
 
     $data = json_decode(wp_remote_retrieve_body($response), true);
     if (empty($data['verification'])) {
-        wp_send_json_error(['message' => 'Invalid API response.'], 500);
+        wp_send_json_error(['message' => 'Invalid API response.'], 422);
     }
 
     wp_send_json_success([

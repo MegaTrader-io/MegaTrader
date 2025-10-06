@@ -1,5 +1,4 @@
 <?php
-
 $success = wc_get_notices('success');
 $errors = wc_get_notices('error');
 
