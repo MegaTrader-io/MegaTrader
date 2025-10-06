@@ -33,6 +33,7 @@ function showMessage(text, type = 'info') {
 async function checkVerificationStatus() {
     try {
         // showMessage('Checking verification status...', 'info');
+        $.preloader.show();
 
         // Esperar breve para asegurar que el webhook llegó
         await new Promise((r) => setTimeout(r, 2000));
@@ -52,6 +53,7 @@ async function checkVerificationStatus() {
             // showMessage('✅ Your identity has been verified successfully!', 'success');
             changeIdentityToVerified();
         } else {
+            $.preloader.hide();
             console.info(`Verification status: ${status}`);
             // showMessage(`Verification status: ${status}`, 'warning');
         }
