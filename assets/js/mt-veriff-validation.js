@@ -40,7 +40,7 @@ async function checkVerificationStatus() {
         const response = await fetch(wpAjax.ajaxUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({action: 'mt_get_veriff_status'}),
+            body: new URLSearchParams({action: 'mt_get_veriff_status', security: wpAjax.nonce}),
         });
 
         const result = await response.json();

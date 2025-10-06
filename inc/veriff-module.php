@@ -9,13 +9,15 @@ add_action('rest_api_init', function () {
 });
 
 add_action('wp_ajax_mt_start_veriff_verification', 'mt_start_veriff_verification');
-add_action('wp_ajax_mt_veriffy_status', 'mt_get_veriff_status');
+add_action('wp_ajax_mt_get_veriff_status', 'mt_get_veriff_status');
 
 function mt_get_veriff_status()
 {
     if (!is_user_logged_in()) {
-        wp_send_json_error(['message' => 'You must be logged out to verify your identity.'], 401);
+        wp_send_json_error(['message' => 'You must be logged in to verify your identity.'], 401);
     }
+
+    check_ajax_referer('mt_veriff_nonce', 'security');
 
     $user = wp_get_current_user();
     $status = get_user_meta($user->ID, 'veriff_status', true);
@@ -24,9 +26,9 @@ function mt_get_veriff_status()
     wp_send_json_success([
         'status' => $status,
         'updated_at' => $updated_at,
+        'verified' => ($status === 'approved'),
     ]);
 }
-
 
 function mt_start_veriff_verification()
 {
