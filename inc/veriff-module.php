@@ -99,7 +99,7 @@ function mt_veriff_callback_handler(WP_REST_Request $request)
     error_log('Veriff callback headers: ' . print_r($headers, true));
     error_log('Veriff callback received: ' . print_r($body, true));
 
-    $signature = $headers['x-hmac-signature'][0] ?? null;
+    $signature = $headers['x_signature'][0] ?? null;
 
     if (!$signature) {
         return new WP_REST_Response(['error' => 'Missing signature'], 400);
