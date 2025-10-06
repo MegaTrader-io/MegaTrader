@@ -94,7 +94,7 @@
 
 @media (min-width: 768px) and (max-width:1023.98px) {
   .modal.modal-profile {
-    --bs-modal-width: cal(100vw - (var(--modal-content-padding) * 2) );
+    --bs-modal-width: cal(100vw - (var(--modal-content-padding) * 2));
   }
 }
 
@@ -378,6 +378,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   --title-line-height: 28px;
   --title-weight: 500;
   --title-margin: 0;
+  text-transform: uppercase;
 }
 
 /* ------ Z-INDEX ------ */
@@ -1292,6 +1293,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .text-ffd78a {
   color: var(--theme-color2);
 }
+
 .text-60A5FA {
   color: #60A5FA;
 }
@@ -1571,7 +1573,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .badge-mega-fit-content {
   width: fit-content;
-    margin: auto;
+  margin: auto;
 }
 
 .badge-mega-active {
@@ -1614,9 +1616,11 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .badge-mega-secondary {
   background-color: #14b8a6;
 }
+
 .badge-mega-evaluation {
   background-color: #E5E5E5;
 }
+
 .badge-mega-funded {
   background-color: #14B8A6;
 }
@@ -1650,7 +1654,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 }
 
 .mega-btn-primary-md:is([disabled]) {
-    border: 1px solid transparent;
+  border: 1px solid transparent;
 }
 
 .mega-btn-primary-md:not([disabled]):hover,
@@ -1688,7 +1692,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   border: 1px solid var(--Colors-Gray-50);
 }
 
-.mega-btn-md.mega-btn-secondary-md:is(.disabled, [disabled]){
+.mega-btn-md.mega-btn-secondary-md:is(.disabled, [disabled]) {
   background: var(--light-color, #57534E);
   color: var(--surface-dark, #292524);
 }
@@ -1727,7 +1731,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .mega-btn-dark-md:hover,
 .mega-btn-dark-md:active {
   background: #131210;
-  border: 1px solid #D4D4D4; 
+  border: 1px solid #D4D4D4;
 }
 
 .mega-btn-dark-md:focus,
@@ -2090,10 +2094,10 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 
 /* MY PROFILE */
 .mt-my-profile {
-   display: flex;
-   gap: 8px 16px;
-   justify-content: start;
-   align-items: center;
+  display: flex;
+  gap: 8px 16px;
+  justify-content: start;
+  align-items: center;
 }
 
 .mt-my-profile__avatar {
@@ -2118,12 +2122,14 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 }
 
 .mt-my-profile.collapsed {
-   flex-direction: column;
+  flex-direction: column;
 }
+
 /* MT-AVATAR */
 
 .mt-avatar__wrapper {
-  display: flex;;
+  display: flex;
+  ;
   gap: 16px;
   align-items: center;
   overflow: hidden;
@@ -2577,7 +2583,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 }
 
 .dot-status-passed {
-    color: var(--Colors-Gray-200);
+  color: var(--Colors-Gray-200);
 }
 
 .dot-status-default {
@@ -2603,6 +2609,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 .dot-status-pending-cancel {
   color: #94A3B8;
 }
+
 .dot-status-pending-activation {
   color: var(--theme-color);
 }
@@ -4307,216 +4314,216 @@ textarea.mtfb-note {
 }
 
 .mt-card.account-settings__section {
-   gap: 16px;
+  gap: 16px;
 }
 
-.account-settings__sections-wrapper > * + * {
-    margin-top: 16px;
+.account-settings__sections-wrapper>*+* {
+  margin-top: 16px;
 }
 
 .toggle-panel__title-wrapper {
-    margin-bottom: 0;
-    width: 100%;
-    line-height: inherit;
+  margin-bottom: 0;
+  width: 100%;
+  line-height: inherit;
 }
 
 .toggle-panel__header {
-    background-color: transparent;
-    border: none;
-    width: 100%;
-    padding: 0;
-    display: flex;
-    text-align: left;
-    gap: 16px;
-    justify-content: space-between;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  text-align: left;
+  gap: 16px;
+  justify-content: space-between;
 }
 
 .toggle-panel__icon {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
-.toggle-panel__title{
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 24px;
+.toggle-panel__title {
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
 }
 
 .toggle-panel__details {
-    flex: 1;
+  flex: 1;
 }
 
 .toggle-panel__header:not(.collapsed) .toggle-panel__arrow {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .toggle-panel__arrow {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
-.toggle-panel__description{
-    color: #A8A29E;
-    font-size: 16px;
-    flex: 1;
-    font-weight: 700;
-    line-height: 24px;
+.toggle-panel__description {
+  color: #A8A29E;
+  font-size: 16px;
+  flex: 1;
+  font-weight: 700;
+  line-height: 24px;
 }
 
 .mt-user-profile-card {
-    display: flex;
-    padding: 20px;
-    outline: 1px var(--colors-gray-700) solid;
-    outline-offset: -1px;
-    margin-bottom: 32px;
+  display: flex;
+  padding: 20px;
+  outline: 1px var(--colors-gray-700) solid;
+  outline-offset: -1px;
+  margin-bottom: 32px;
 }
 
 .mt-user-profile-card__avatar-container {
-    position: relative;
-    margin-right: 20px;
+  position: relative;
+  margin-right: 20px;
 }
 
 .mt-user-profile-card__edit-icon {
-    padding: 4px;
-    bottom: 0;
-    left: 34px;
-    position: absolute;
-    background: white;
-    overflow: hidden;
-    border-radius: 16px;
-    outline: 1px white solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    display: inline-flex
+  padding: 4px;
+  bottom: 0;
+  left: 34px;
+  position: absolute;
+  background: white;
+  overflow: hidden;
+  border-radius: 16px;
+  outline: 1px white solid;
+  outline-offset: -1px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  display: inline-flex
 }
 
 .mt-user-profile-card__member-since {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
 }
 
-.mt-user-profile-card__details > * + * {
-    margin-top: 8px;
+.mt-user-profile-card__details>*+* {
+  margin-top: 8px;
 }
 
 .mt-user-profile-card__status-icon {
-    display: flex;
+  display: flex;
 }
 
 .mt-user-profile-card__avatar-image {
-    width: 96px;
-    position: relative;
-    height: 96px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 96px;
+  position: relative;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .mt-user-profile-card__avatar-image--initials {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mt-user-profile-card__status {
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-    gap: 4px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  gap: 4px;
 }
 
 .w-phone-full .iti {
-    width: 100%;
+  width: 100%;
 }
 
- /* ======= APEX TOOLTIP CONTAINER - GRAPGIC CHART ======= */
-  .apexcharts-tooltip {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    overflow: visible !important;
-    transition: none !important;
-    will-change: transform, opacity;
-    pointer-events: none !important;
-    border: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    z-index: 10;
-  }
+/* ======= APEX TOOLTIP CONTAINER - GRAPGIC CHART ======= */
+.apexcharts-tooltip {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  overflow: visible !important;
+  transition: none !important;
+  will-change: transform, opacity;
+  pointer-events: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  z-index: 10;
+}
 
-  .apexcharts-tooltip.mt-tip-hidden {
-    transform: translate3d(-9999px, -9999px, 0) !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
+.apexcharts-tooltip.mt-tip-hidden {
+  transform: translate3d(-9999px, -9999px, 0) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
 
-  /* ======= TOOLTIP CUSTOM ======= */
-  .mt-apex-tip {
-    position: relative;
-    background: #000;
-    color: #fff;
-    border: 1px solid var(--Colors-Gray-700, #404040);
-    border-radius: 8px;
-    padding: 10px 12px;
-    min-width: 220px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-  }
+/* ======= TOOLTIP CUSTOM ======= */
+.mt-apex-tip {
+  position: relative;
+  background: #000;
+  color: #fff;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 220px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
 
-  .mt-apex-tip::before,
-  .mt-apex-tip::after {
-    content: "";
-    position: absolute;
-    left: var(--arrow-x, 22px);
-    pointer-events: none;
-    border-style: solid;
-    top: 100%;
-  }
+.mt-apex-tip::before,
+.mt-apex-tip::after {
+  content: "";
+  position: absolute;
+  left: var(--arrow-x, 22px);
+  pointer-events: none;
+  border-style: solid;
+  top: 100%;
+}
 
-  .mt-apex-tip::before {
-    border-width: 7px;
-    border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
-  }
+.mt-apex-tip::before {
+  border-width: 7px;
+  border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
+}
 
-  .mt-apex-tip::after {
-    border-width: 7px;
-    border-color: #000 transparent transparent transparent;
-    margin-top: -1px;
-  }
+.mt-apex-tip::after {
+  border-width: 7px;
+  border-color: #000 transparent transparent transparent;
+  margin-top: -1px;
+}
 
-  .mt-apex-tip__date {
-    color: #fff;
-    font-size: 14px;
-    line-height: 20px;
-    margin-bottom: 8px;
-  }
+.mt-apex-tip__date {
+  color: #fff;
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 8px;
+}
 
-  .mt-apex-tip__row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--Text-Body, #A8A29E);
-  }
+.mt-apex-tip__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--Text-Body, #A8A29E);
+}
 
-  .mt-apex-tip__row b {
-    font-weight: 600;
-    color: #fff;
-  }
+.mt-apex-tip__row b {
+  font-weight: 600;
+  color: #fff;
+}
 
-  .mt-apex-tip__marker {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    margin-right: 8px;
-    vertical-align: middle;
-  }
+.mt-apex-tip__marker {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
 
 .account-performance-chart.is-empty {
   min-height: 505px;
@@ -4568,15 +4575,43 @@ textarea.mtfb-note {
 }
 
 .account-performance-chart__overlay {
-  pointer-events: all;    
-  cursor: not-allowed;    
+  pointer-events: all;
+  cursor: not-allowed;
 }
 
 .account-performance-chart__overlay[hidden] {
-  pointer-events: none;    
+  pointer-events: none;
 }
 
 .account-performance-chart.is-empty {
-  cursor: not-allowed;     
+  cursor: not-allowed;
 }
 
+/* Account Selection */
+#changeSubcriptionModal #mt-acc-filter-btn {
+  background: #1e1e1e;
+  border: 1px solid #3b3b3b;
+  color: #fff;
+}
+
+#changeSubcriptionModal #mt-acc-filter-menu {
+  border: 1px solid #3b3b3b;
+  background: #1e1e1e;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#changeSubcriptionModal #mt-acc-filter-menu .dropdown-item {
+  color: #fff;
+}
+
+#changeSubcriptionModal #mt-acc-filter-menu .dropdown-item:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+#changeSubcriptionModal #mt-acc-filter-menu .dropdown-item.active,
+#changeSubcriptionModal #mt-acc-filter-menu .dropdown-item:active {
+  background: #FFB34A;
+  color: #000;
+}

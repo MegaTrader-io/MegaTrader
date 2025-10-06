@@ -81,7 +81,7 @@ href="<?php echo esc_url($hasReset ? $reset_url : '#'); ?>" aria-label="Reset Ch
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down" style="--bs-modal-width: 450px;">
     <div class="modal-content gap-4">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-        <h5 class="modal-title text-white heading-sm-medium" id="changeSubcriptionModalLabel">Select account</h5>
+        <span class="modal-title text-white heading-sm-medium" id="changeSubcriptionModalLabel">Select account</span>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">
@@ -143,37 +143,6 @@ href="<?php echo esc_url($hasReset ? $reset_url : '#'); ?>" aria-label="Reset Ch
             </select>
           </div>
         </div>
-
-        <style>
-          /* Estilos del dropdown (scoped al modal) */
-          #changeSubcriptionModal #mt-acc-filter-btn {
-            background: #1e1e1e;
-            border: 1px solid #3b3b3b;
-            color: #fff;
-          }
-
-          #changeSubcriptionModal #mt-acc-filter-menu {
-            border: 1px solid #3b3b3b;
-            background: #1e1e1e;
-            border-radius: 12px;
-            overflow: hidden;
-          }
-
-          #changeSubcriptionModal #mt-acc-filter-menu .dropdown-item {
-            color: #fff;
-          }
-
-          #changeSubcriptionModal #mt-acc-filter-menu .dropdown-item:hover {
-            background: #2a2a2a;
-            color: #fff;
-          }
-
-          #changeSubcriptionModal #mt-acc-filter-menu .dropdown-item.active,
-          #changeSubcriptionModal #mt-acc-filter-menu .dropdown-item:active {
-            background: #FFB34A;
-            color: #000;
-          }
-        </style>
 
         <div class="subscription-scroll-area px-lg-3 p-0">
           <div class="subscription-grid" id="mt-accounts-grid">

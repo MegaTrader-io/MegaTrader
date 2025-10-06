@@ -239,7 +239,7 @@ if (is_user_logged_in()) {
         $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button'];
       }
 
-      $__btn_classes = []; 
+      $__btn_classes = [];
       if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
       } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
         $__btn_classes[] = 'disabled';
@@ -250,8 +250,10 @@ if (is_user_logged_in()) {
       }
       $__btn_classes_attr = implode(' ', $__btn_classes);
 
-
-
+      $__show_note = true;
+      if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
+        $__show_note = false;
+      }
 
 
     } else {
@@ -270,14 +272,12 @@ $GLOBALS['mt_account_data'] = $mt_account_data;
 $GLOBALS['mt_chart'] = $mt_chart ?? [];
 $GLOBALS['mt_active_order_id'] = isset($__active_order_id) ? (int) $__active_order_id : 0;
 
-
 if (empty($mt_account_ui['accounts'])) {
   wp_safe_redirect(trailingslashit(home_url('/subscriptions')));
   exit;
 }
 
 get_header();
-
 
 
 ?>
@@ -454,7 +454,7 @@ get_header();
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
-        <span id="mtag-title" class="modal-title text-white heading-sm-medium text-uppercase">
+        <span id="mtag-title" class="modal-title text-white heading-sm-medium">
           <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_title']; ?>
         </span>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
@@ -495,7 +495,7 @@ get_header();
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
-        <span id="mtbreach-title" class="modal-title text-white heading-sm-medium text-uppercase">
+        <span id="mtbreach-title" class="modal-title text-white heading-sm-medium">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_title']; ?></span>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
           aria-label="Close">
@@ -529,8 +529,7 @@ get_header();
 </div>
 
 <div id="mt-account-passed-modal" class="modal modal-subcription fade" tabindex="-1"
-  aria-labelledby="mtactivation-title" aria-hidden="true"
-  data-show="<?php echo $__mt_account_passed_show; ?>"
+  aria-labelledby="mtactivation-title" aria-hidden="true" data-show="<?php echo $__mt_account_passed_show; ?>"
   data-note-pending="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending']); ?>"
   data-note-pending-no-button="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button']); ?>"
   data-current-status="<?php echo esc_attr($__status_norm); ?>"
@@ -540,7 +539,7 @@ get_header();
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
-        <span id="mtactivation-title" class="modal-title text-white heading-sm-medium text-uppercase">
+        <span id="mtactivation-title" class="modal-title text-white heading-sm-medium">
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_title']; ?>
         </span>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
@@ -554,7 +553,8 @@ get_header();
       <div class="modal-body d-flex flex-column align-items-center text-center">
         <div aria-hidden="true">
           <div class="modal-body-image ">
-            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png" alt="http://Thank%20you%20icon">
+            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png"
+              alt="http://Thank%20you%20icon">
           </div>
         </div>
 
@@ -568,17 +568,19 @@ get_header();
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle']; ?>
         </span>
 
-        <div class="mt-note bg-1e1e1e d-flex gap-3 mt-4 mt-note p-3 rounded-3" id="mt-passed-note" data-status="info">
-          <span class="mt-icon mt-icon-info mt-icon_info-solid"></span>
-          <span class="text-60A5FA fw-medium text-base" data-note-text>
-            <?php echo esc_html($__note_text); ?>
-          </span>
-        </div>
+        <?php if ($__show_note): ?>
+          <div class="mt-note bg-1e1e1e d-flex gap-3 mt-4 p-3 rounded-3" id="mt-passed-note" data-status="info">
+            <span class="mt-icon mt-icon-info mt-icon_info-solid"></span>
+            <span class="text-60A5FA fw-medium text-base" data-note-text>
+              <?php echo esc_html($__note_text); ?>
+            </span>
+          </div>
+        <?php endif; ?>
 
         <a id="mt-activation-btn"
-           class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4 <?php echo esc_attr($__btn_classes_attr); ?>"
-           href="<?php echo esc_url($__activation_url); ?>"
-           aria-disabled="<?php echo (strpos($__btn_classes_attr, 'disabled') !== false) ? 'true' : 'false'; ?>">
+          class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4 <?php echo esc_attr($__btn_classes_attr); ?>"
+          href="<?php echo esc_url($__activation_url); ?>"
+          aria-disabled="<?php echo (strpos($__btn_classes_attr, 'disabled') !== false) ? 'true' : 'false'; ?>">
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_button']; ?>
         </a>
       </div>
