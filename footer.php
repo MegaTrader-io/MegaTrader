@@ -54,6 +54,41 @@
   </div>
 </div>
 
+<!-- MT Error Modal -->
+<div id="mt-error-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mt-error-title"
+  aria-hidden="true" hidden>
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content gap-32">
+      <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
+        <span id="mt-error-title" class="modal-title text-white heading-sm-medium">ERROR</span>
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;">
+          </span>
+        </button>
+      </div>
+
+      <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
+        <div aria-hidden="true">
+          <div class="modal-body-image modal-image-warning">
+            <img id="mt-error-icon" decoding="async" src="/wp-content/uploads/2025/07/warning.svg" alt="Warning icon">
+          </div>
+        </div>
+        <span id="mt-error-headline" class="fw-medium text-white text-3xl text-uppercase">Ups!</span>
+        <span id="mt-error-message" class="fw-medium text-a8a29e text-base">
+          Ocurrió un error inesperado.
+        </span>
+
+        <button type="button" class="mega-btn-md mega-btn-primary-md mt-4" data-bs-dismiss="modal"
+          aria-label="Close">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down modal-mega">
     <div class="modal-content align-items-center d-flex flex-column flex-shrink-0">
@@ -824,6 +859,7 @@
     </div>
   </div>
 </div>
+
 
 <script>
   jQuery(document).ready(function ($) {
