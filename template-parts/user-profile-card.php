@@ -91,9 +91,7 @@ $is_verified = get_query_var('mt_is_verified');
                 since: <?php echo esc_html($current_user && $current_user->user_registered ? date_i18n('m/d/Y', strtotime($current_user->user_registered)) : '—'); ?>
             </div>
             <?php
-            get_template_part('template-parts/verified', null, [
-                    'verified' => $is_verified
-            ]);
+            get_template_part('template-parts/verified');
             ?>
         </div>
     </div>

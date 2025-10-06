@@ -1,8 +1,8 @@
 <?php
-$verified = $args['verified'] ?? false;
+$is_verified = get_query_var('mt_is_verified');
 ?>
 
-<div class="mt-verified" data-verified="<?= $verified ? '1' : '0' ?>">
+<div class="mt-verified" data-verified="<?= $is_verified ? '1' : '0' ?>">
     <div class="mt-verified__status-icon">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <mask id="mask0_15865_48540" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
