@@ -42,25 +42,17 @@ $menu_links = [
         'class' => $mt_is_active('referrals', 'active'),
         'text' => 'REFERRALS',
         'icon' => 'mt-icon_people-plus',
-        'href' => '/my-account/referrals/',
-    ],
-    [
-        'class' => $mt_is_active('payouts', 'active'),
-        'text' => 'PAYOUTS',
-        'icon' => 'mt-icon_wallet',
-        'href' => '/my-account/payouts/',
+        'is_disabled' => true,
+        'badge' => [
+            'text' => 'COMING SOON',
+            'style' => 'light'
+        ]
     ],
     [
         'class' => $mt_is_active('profile', 'active'),
         'text' => 'ACCOUNT SETTINGS',
         'icon' => 'mt-icon_settings',
         'href' => '/my-account/profile/',
-    ],
-    [
-        'class' => $mt_is_active('orders', 'active') ?: $mt_is_active('view-subscription', 'active'),
-        'text' => 'SUBSCRIPTIONS & BILLING',
-        'icon' => 'mt-icon_dollar-solid',
-        'href' => '/my-account/orders',
     ],
     [
         'class' => $mt_is_active('profile', 'active'),
@@ -80,16 +72,23 @@ $menu_links = [
 
 function render_menu_link(array $item) {
     $class = esc_attr($item['class'] ?? '');
-    $href = esc_url($item['href'] ?? '#');
+    $is_disabled_class = esc_attr(($item['is_disabled'] ?? false) ? 'disabled' : '');
+    $href = esc_url($item['href'] ?? 'javascript:void(0)');
     $target = esc_attr($item['target'] ?? '');
     $text = esc_html($item['text'] ?? '');
     $icon = esc_attr($item['icon'] ?? '');
+    $badge = $item['badge'] ?? null;
     ?>
-        <a class="mt-sidebar__menu__link <?= $class ?>" href="<?= $href ?>" target="<?= $target ?>">
+        <a class="mt-sidebar__menu__link <?= $class ?> <?= $is_disabled_class ?>" href="<?= $href ?>" target="<?= $target ?>">
             <?php if ($icon): ?>
                 <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
             <?php endif; ?>
             <span><?= $text ?></span>
+            <?php if ($badge): ?>
+                <div class="mt-badge mt-badge-<?= esc_attr($badge['style'] ?? 'light')?>">
+                    <?= esc_html($badge['text'] ?? '') ?>
+                </div>
+            <?php endif; ?>
         </a>
     <?php
 }
