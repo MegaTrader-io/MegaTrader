@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const sessionToken = result.data.token;
+        console.info('sessionToken', sessionToken);
 
         // 🔹 Iniciar Veriff embebido
         const veriff = Veriff({
@@ -119,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             },
         });
+        console.info('veriff', veriff);
 
         veriff.setSession({ sessionToken });
     });
