@@ -874,11 +874,36 @@ document.addEventListener("mt:accountSelected", (e) => {
       .then((j) => {
         if (myToken !== reqToken) return; // respuesta vieja
 
+        const ok = !!(
+          j &&
+          j.success &&
+          j.data &&
+          typeof j.data.html === "string"
+        );
         console.log("[MT][Chart][AJAX] response", {
-          ok: !!(j && j.success),
-          htmlBytes: ((j && j.data && j.data.html) || "").length,
+          ok,
+          htmlBytes: ok ? j.data.html.length : 0,
+          message: j?.data?.message || j?.data?.error || "",
         });
-        if (!j || !j.success || !j.data || j.data.html == null) return;
+
+        if (!ok) {
+          const msg =
+            (j && j.data && (j.data.message || j.data.error)) ||
+            "Unable to load the performance chart.";
+
+          if (window.mtModal && typeof window.mtModal.show === "function") {
+            window.mtModal.show({
+              id: "mt-error-modal", // ID del modal en el footer
+              title: "ERROR",
+              body: msg,
+              type: "error",
+              closeText: "Close",
+            });
+          } else {
+            alert("ERROR\n\n" + msg);
+          }
+          return;
+        }
 
         // Destruye instancia previa y limpia DOM residual de Apex
         try {
@@ -931,6 +956,22 @@ document.addEventListener("mt:accountSelected", (e) => {
           return;
         }
         console.error("[MT] chart AJAX error:", err);
+
+        const msg =
+          (err && (err.message || err.statusText)) ||
+          "Network or server error while loading the performance chart.";
+
+        if (window.mtModal && typeof window.mtModal.show === "function") {
+          window.mtModal.show({
+            id: "mt-error-modal", // ID del modal en el footer
+            title: "ERROR",
+            body: msg,
+            type: "error",
+            closeText: "Close",
+          });
+        } else {
+          alert("ERROR\n\n" + msg);
+        }
       });
   });
 })();
@@ -1983,14 +2024,13 @@ if (document.readyState === "loading") {
     btn.classList.remove("disabled", "d-none");
     btn.setAttribute("aria-disabled", "false");
 
-
     if (st === "PENDING_ACTIVATION" && hasId) {
     } else if (st === "PASSED" && hasId) {
       btn.classList.add("disabled");
       btn.setAttribute("aria-disabled", "true");
     } else if (st === "PASSED" && !hasId) {
       btn.classList.add("d-none");
-      btn.href = "#"; 
+      btn.href = "#";
     } else {
       btn.classList.add("d-none");
       btn.href = "#";
