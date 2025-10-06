@@ -45,6 +45,8 @@ SVG,
 ];
 ?>
 
+<div id="veriff-container"></div>
+
 <div class="space-y-3">
     <div class="mt-card mt-card-dark gap-32 gap-md-3 mb-3">
         <div class="features">
@@ -63,7 +65,7 @@ SVG,
         </div>
 
         <div class="d-md-flex align-items-center justify-content-between">
-            <button type="button" disabled class="mega-btn-md mega-btn-secondary-md">
+            <button type="button" id="get-verified-btn" class="mega-btn-md mega-btn-secondary-md">
                 GET VERIFIED NOW
             </button>
 

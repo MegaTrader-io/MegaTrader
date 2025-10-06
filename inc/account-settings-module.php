@@ -2,11 +2,11 @@
 
 if (!defined('ABSPATH')) exit;
 
-
 // ✅ Endpoint AJAX seguro
 add_action('wp_ajax_mt_update_password', 'mt_update_password_callback');
 
-function mt_update_password_callback() {
+function mt_update_password_callback()
+{
     // ✅ Verificar login
     if (!is_user_logged_in()) {
         wp_send_json_error([
@@ -106,30 +106,57 @@ function mt_account_settings_module()
     $js_uri = get_template_directory_uri() . '/assets/js/';
     $js_file = 'account-settings.js';
 
+    // ✅ Usamos filemtime() para invalidar cache del build JS
     $js_version = file_exists($js_path . $js_file)
         ? filemtime($js_path . $js_file)
         : false;
 
+    // ✅ Si usas intl-tel-input para campos telefónicos, lo cargas
     if (function_exists('mt_intl_tel_input_assets')) {
         mt_intl_tel_input_assets();
     }
 
-    $deps = [];
+    // ✅ Registrar SDK principal de Veriff
+    wp_register_script(
+        'veriff-sdk',
+        'https://cdn.veriff.me/sdk/js/1.5/veriff.min.js',
+        [],
+        '1.5.0',
+        true
+    );
 
+    // ✅ Registrar SDK “in-context” (iframe helper)
+    wp_register_script(
+        'veriff-incontext',
+        'https://cdn.veriff.me/incontext/js/v1/veriff.js',
+        ['veriff-sdk'], // depende del SDK principal
+        null,
+        true
+    );
+
+    // ✅ Registrar tu script principal de ajustes
     wp_register_script(
         'account-settings-module',
         $js_uri . $js_file,
-        $deps,
+        ['veriff-incontext'], // depende del SDK in-context
         $js_version,
         true
     );
 
+    // ✅ Encolar scripts en el orden correcto
+    wp_enqueue_script('veriff-sdk');
+    wp_enqueue_script('veriff-incontext');
     wp_enqueue_script('account-settings-module');
 
+    // ✅ Pasar variables globales de WordPress al JS
     wp_localize_script('account-settings-module', 'wpAjax', [
-        'ajaxUrl' => admin_url('admin-ajax.php')
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'veriffKey' => VERIFF_API_KEY,
+        'nonce' => wp_create_nonce('mt_veriff_nonce'),
+        'isLoggedIn' => is_user_logged_in(),
     ]);
 }
+
 
 add_action('wp_enqueue_scripts', function () {
     if (is_user_logged_in() && is_page_template('account-profile.php')) {
@@ -183,3 +210,5 @@ function mt_process_billing_form()
 }
 
 add_action('wp', 'mt_process_billing_form');
+
+require_once 'veriff-module.php';

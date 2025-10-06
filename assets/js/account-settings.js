@@ -62,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-
     form.addEventListener("submit", function () {
         if (window.iti) {
             const fullNumber = window.iti.getNumber();
@@ -77,5 +76,50 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             hiddenInput.value = fullNumber;
         }
+    });
+
+    const btn = document.getElementById('get-verified-btn');
+    if (!btn || typeof Veriff === 'undefined') return;
+
+    btn.addEventListener('click', async () => {
+        btn.disabled = true;
+
+        // Llamar tu endpoint AJAX que crea la sesión en Veriff
+        const response = await fetch(wpAjax.ajaxUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                action: 'mt_start_veriff_verification',
+                security: wpAjax.nonce,
+            }),
+        });
+
+        const result = await response.json();
+        if (!result.success) {
+            alert(result.data?.message || 'Error starting verification.');
+            btn.disabled = false;
+            return;
+        }
+
+        const sessionToken = result.data.token;
+
+        // 🔹 Iniciar Veriff embebido
+        const veriff = Veriff({
+            host: 'https://stationapi.veriff.com',
+            apiKey: wpAjax.veriffKey,
+            parentId: 'veriff-container',
+            onSession: function (err, response) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                veriff.mount({
+                    sessionToken,
+                    onFinish: (res) => console.log('Verification finished:', res),
+                });
+            },
+        });
+
+        veriff.setSession({ sessionToken });
     });
 });
