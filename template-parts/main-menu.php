@@ -57,7 +57,7 @@ $menu_links = [
     [
         'class' => $mt_is_active('profile', 'active'),
         'text' => 'HELP CENTER',
-        'icon' => 'mt-icon_settings',
+        'icon' => 'mt-icon_help',
         'href' => 'https://help.megatrader.io/en/',
         'target' => '_blank'
     ],
@@ -69,48 +69,62 @@ $menu_links = [
     ],
 ];
                           
-
-function render_menu_link(array $item) {
-    $class = esc_attr($item['class'] ?? '');
-    $is_disabled_class = esc_attr(($item['is_disabled'] ?? false) ? 'disabled' : '');
-    $href = esc_url($item['href'] ?? 'javascript:void(0)');
-    $target = esc_attr($item['target'] ?? '');
-    $text = esc_html($item['text'] ?? '');
-    $icon = esc_attr($item['icon'] ?? '');
-    $badge = $item['badge'] ?? null;
-    ?>
-        <a class="mt-sidebar__menu__link <?= $class ?> <?= $is_disabled_class ?>" href="<?= $href ?>" target="<?= $target ?>">
-            <span class="mt-sidebar__menu__link__content">
-                <?php if ($icon): ?>
-                    <i class="mt-sidebar__menu__link__icon mt-icon mt-icon-sm <?= $icon ?>"></i>
+if (!function_exists('render_menu_link')) {
+    function render_menu_link(array $item) {
+        $class = esc_attr($item['class'] ?? '');
+        $is_disabled_class = esc_attr(($item['is_disabled'] ?? false) ? 'disabled' : '');
+        $href = esc_url($item['href'] ?? 'javascript:void(0)');
+        $target = esc_attr($item['target'] ?? '');
+        $text = esc_html($item['text'] ?? '');
+        $icon = esc_attr($item['icon'] ?? '');
+        $badge = $item['badge'] ?? null;
+        ?>
+            <a class="mt-sidebar__menu__link <?= $class ?> <?= $is_disabled_class ?>" href="<?= $href ?>" target="<?= $target ?>">
+                <span class="mt-sidebar__menu__link__content">
+                    <?php if ($icon): ?>
+                        <i class="mt-sidebar__menu__link__icon mt-icon mt-icon-sm <?= $icon ?>"></i>
+                    <?php endif; ?>
+                    <span class="mt-sidebar__menu__link__text"><?= $text ?></span>
+                </span>
+                <?php if ($badge): ?>
+                    <div class="mt-badge mt-badge-<?= esc_attr($badge['style'] ?? 'light')?>">
+                        <?= esc_html($badge['text'] ?? '') ?>
+                    </div>
                 <?php endif; ?>
-                <span class="mt-sidebar__menu__link__text"><?= $text ?></span>
-            </span>
-            <?php if ($badge): ?>
-                <div class="mt-badge mt-badge-<?= esc_attr($badge['style'] ?? 'light')?>">
-                    <?= esc_html($badge['text'] ?? '') ?>
-                </div>
-            <?php endif; ?>
-        </a>
-    <?php
+            </a>
+        <?php
+    }
 }
 
-function render_menu_link_collapsed(array $item) {
-    $class = esc_attr($item['class'] ?? '');
-    $href = esc_url($item['href'] ?? '#');
-    $target = esc_attr($item['target'] ?? '');
-    $text = esc_html($item['text'] ?? '');
-    $icon = esc_attr($item['icon'] ?? '');
-    ?>
-        <span class="mt-tooltip" data-placement="right">
-            <a class="mt-sidebar__menu__link <?= $class ?>" href="<?= $href ?>" target="<?= $target ?>">
-                <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
-            </a>
-            <span class="mt-tooltip__panel" role="tooltip">
-                <div class="mt-tooltip__body"><?= $text ?></div>
+if (!function_exists('render_menu_link_collapsed')) {
+    function render_menu_link_collapsed(array $item) {
+        $class = esc_attr($item['class'] ?? '');
+        $is_disabled_class = esc_attr(($item['is_disabled'] ?? false) ? 'disabled' : '');
+        $href = esc_url($item['href'] ?? 'javascript:void(0)');
+        $target = esc_attr($item['target'] ?? '');
+        $text = esc_html($item['text'] ?? '');
+        $icon = esc_attr($item['icon'] ?? '');
+        $badge = $item['badge'] ?? null;
+        ?>
+            <span class="mt-tooltip" data-placement="right">
+                <a class="mt-sidebar__menu__link <?= $class ?> <?= $is_disabled_class ?>" href="<?= $href ?>" target="<?= $target ?>">
+                    <span class="mt-sidebar__menu__link__content">
+                        <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
+                    </span>
+                </a>
+                <span class="mt-tooltip__panel" role="tooltip">
+                    <div class="mt-tooltip__body d-flex align-items-center gap-3">
+                        <span><?= $text ?></span>
+                        <?php if ($badge): ?>
+                            <div class="mt-badge mt-badge-<?= esc_attr($badge['style'] ?? 'light')?>">
+                                <?= esc_html($badge['text'] ?? '') ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </span>
             </span>
-        </span>
-    <?php
+        <?php
+    }
 }
 
 $is_overlay = $args['is_overlay'] ?? false;

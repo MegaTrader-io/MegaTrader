@@ -270,6 +270,7 @@ $GLOBALS['mt_account_data'] = $mt_account_data;
 $GLOBALS['mt_chart'] = $mt_chart ?? [];
 $GLOBALS['mt_active_order_id'] = isset($__active_order_id) ? (int) $__active_order_id : 0;
 
+
 if (empty($mt_account_ui['accounts'])) {
   wp_safe_redirect(trailingslashit(home_url('/subscriptions')));
   exit;

@@ -844,8 +844,8 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-sidebar {
     --sidebar-width-expanded: 390px;
     --sidebar-width-collapsed: 96px;
-    --sidebar-height-expanded: 845px;
-    --sidebar-height-collapsed: 750px;
+    --sidebar-height-expanded: 741px;
+    --sidebar-height-collapsed: 655px;
     --sidebar-padding: 16px; /* this is actually from the mt-card */
     --sidebar-lg-margin-block: 32px;
     --sidebar-top: calc(var(--promo-banner-height, 0px) + var(--admin-bar-height, 0px) + var(--nav-bar-height, 0px) + var(--sidebar-lg-margin-block));
