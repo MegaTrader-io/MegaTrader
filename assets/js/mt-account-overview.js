@@ -299,15 +299,20 @@
     body.set("nonce", nonce);
     body.set("account_id", String(accountId || 0));
 
-    fetch(url, {
+    window.MEGATRADER.fetchJSON(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body,
     })
-      .then((r) => r.json())
       .then((j) => {
         if (j && j.success && j.data && j.data.html)
           container.innerHTML = j.data.html;
+      })
+      .catch((err) => {
+        window.MEGATRADER?.showError?.(
+          "Account Data Error",
+          err?.message || "Unable to load account data."
+        );
       })
       .finally(() =>
         document.querySelector(".preloader")?.classList.remove("is-active")
@@ -454,12 +459,11 @@ document.addEventListener("mt:accountSelected", (e) => {
 
     const scroll = qs(".dj-scroll", root);
 
-    return fetch(url, {
+    return window.MEGATRADER.fetchJSON(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body,
     })
-      .then((r) => r.json())
       .then((j) => {
         if (!j?.success || !j?.data) return;
         const { rowsHtml, per_page } = j.data;
@@ -476,17 +480,23 @@ document.addEventListener("mt:accountSelected", (e) => {
           );
         }
 
-        // 2) Actualizar atributos del ROOT (id y per-page) para mantenerlos en sync
+        // 2) Actualizar atributos del ROOT (id y per-page)
         root.setAttribute("data-account-id", String(accountId || ""));
         if (per_page) root.setAttribute("data-per-page", String(per_page));
 
-        // 3) Recalcular estado (y resetear a página 1 en cambio de cuenta)
+        // 3) Recalcular estado (y reset a página 1)
         const st = root.__djState || stateFrom(root);
         if (per_page) st.perPage = parseInt(per_page, 10) || st.perPage;
         st.currentPage = 1;
 
         recalcAndRender(root, st);
         root.__djState = st;
+      })
+      .catch((err) => {
+        window.MEGATRADER?.showError?.(
+          "Daily Journal Error",
+          err?.message || "Unable to load daily journal."
+        );
       });
   }
 
@@ -531,7 +541,6 @@ document.addEventListener("mt:accountSelected", (e) => {
   }
 })();
 
-// ===== Feature Content (AJAX refresh) =====
 // ===== Feature Content (AJAX refresh) =====
 (function () {
   if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
@@ -593,19 +602,16 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
 
-    // 🔒 Cerrar cualquier tooltip abierto ANTES de reemplazar HTML
+    // 🔒 Cerrar tooltips antes del replace
     if (window.mtTooltips && typeof window.mtTooltips.closeAll === "function") {
       window.mtTooltips.closeAll();
     }
 
-    return fetch(url, {
+    return window.MEGATRADER.fetchJSON(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body,
     })
-      .then(function (r) {
-        return r.json();
-      })
       .then(function (j) {
         if (!j || !j.success || !j.data || j.data.html == null) return;
 
@@ -621,7 +627,10 @@ document.addEventListener("mt:accountSelected", (e) => {
         }
       })
       .catch(function (err) {
-        console.error("[MT] feature AJAX error:", err);
+        window.MEGATRADER?.showError?.(
+          "Feature Content Error",
+          err?.message || "Unable to load feature content."
+        );
       });
   });
 })();
@@ -683,7 +692,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     window.__mtTipFollowerCSS = true;
   }
 
-  // ---------- TIP FOLLOWER (rápido y robusto; sin “piquito”) ----------
+  // ---------- TIP FOLLOWER ----------
   function makeTipFollower(root) {
     try {
       root.__tipFollowerCleanup && root.__tipFollowerCleanup();
@@ -717,7 +726,6 @@ document.addEventListener("mt:accountSelected", (e) => {
         const tw = tip.offsetWidth || 220;
         const th = tip.offsetHeight || 60;
 
-        // Clamp dentro del área del chart
         let x = Math.max(6, Math.min(wantX, r.width - tw - 6));
         let y = Math.max(6, Math.min(wantY, r.height - th - 6));
 
@@ -727,7 +735,7 @@ document.addEventListener("mt:accountSelected", (e) => {
         )}px, 0)`;
         tip.style.opacity = "1";
         tip.style.visibility = "visible";
-        tip.style.left = "0px"; // neutraliza intentos de Apex de moverlo
+        tip.style.left = "0px";
         tip.style.top = "0px";
       }
 
@@ -747,7 +755,6 @@ document.addEventListener("mt:accountSelected", (e) => {
         const tw = tip ? tip.offsetWidth || 220 : 220;
         const th = tip ? tip.offsetHeight || 60 : 60;
 
-        // Arriba y levemente a la derecha del puntero (sensación “pegado”)
         let x = mx + 12;
         let y = my - th - 12;
 
@@ -779,9 +786,8 @@ document.addEventListener("mt:accountSelected", (e) => {
       target.addEventListener("pointerleave", onLeave, { passive: true });
       target.addEventListener("mouseleave", onLeave, { passive: true });
 
-      onLeave(); // oculta residuos
+      onLeave();
 
-      // Pre-warm tras el primer render del chart
       requestAnimationFrame(() => {
         const r = base.getBoundingClientRect
           ? base.getBoundingClientRect()
@@ -802,7 +808,6 @@ document.addEventListener("mt:accountSelected", (e) => {
       };
     }
 
-    // Engancha cuando existan los nodos de Apex
     const obs = new MutationObserver(() => {
       if (
         root.querySelector(".apexcharts-canvas") &&
@@ -816,7 +821,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     root.__tipFollowerObserver = obs;
   }
 
-  // Helper: enganchar follower con pequeños retries
   function hookFollower(root) {
     if (!root) return;
     makeTipFollower(root);
@@ -824,7 +828,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     setTimeout(() => makeTipFollower(root), 150);
   }
 
-  // ***** BOOT en carga inicial (sin esperar a un AJAX) *****
   (function bootInitialFollower() {
     const wrap =
       document.querySelector(".mt-account-performance-chart-content") ||
@@ -837,7 +840,6 @@ document.addEventListener("mt:accountSelected", (e) => {
   let ctrl = null;
   let reqToken = 0;
 
-  // ***** REFRESH vía AJAX *****
   window.mtRefresh.register("performanceChart", function (accountId) {
     var wrap = document.querySelector(".mt-account-performance-chart-content");
     if (!wrap) return;
@@ -846,7 +848,6 @@ document.addEventListener("mt:accountSelected", (e) => {
       (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
     var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
-    // Aborta request anterior si existía
     try {
       ctrl?.abort();
     } catch (_) {}
@@ -864,13 +865,12 @@ document.addEventListener("mt:accountSelected", (e) => {
       accountId: String(accountId || ""),
     });
 
-    return fetch(url, {
+    return window.MEGATRADER.fetchJSON(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body,
       signal: ctrl.signal,
     })
-      .then((r) => r.json())
       .then((j) => {
         if (myToken !== reqToken) return; // respuesta vieja
 
@@ -890,22 +890,14 @@ document.addEventListener("mt:accountSelected", (e) => {
           const msg =
             (j && j.data && (j.data.message || j.data.error)) ||
             "Unable to load the performance chart.";
-
-          if (window.mtModal && typeof window.mtModal.show === "function") {
-            window.mtModal.show({
-              id: "mt-error-modal", // ID del modal en el footer
-              title: "ERROR",
-              body: msg,
-              type: "error",
-              closeText: "Close",
-            });
-          } else {
-            alert("ERROR\n\n" + msg);
-          }
+          window.MEGATRADER?.showError?.("Chart Error", msg, {
+            iconSrc:
+              "/wp-content/themes/megatrader-addons/assets/img/error.svg",
+            headline: "Oops!",
+          });
           return;
         }
 
-        // Destruye instancia previa y limpia DOM residual de Apex
         try {
           if (
             window.__mtChartInstance &&
@@ -938,10 +930,8 @@ document.addEventListener("mt:accountSelected", (e) => {
             } catch (_) {}
           });
 
-        // Inyecta HTML del nuevo componente
         wrap.innerHTML = j.data.html;
 
-        // Espera ApexCharts, ejecuta inline y re-engancha follower
         ensureApexThen(wrap, function () {
           runInlineScripts(wrap);
           const root =
@@ -961,17 +951,10 @@ document.addEventListener("mt:accountSelected", (e) => {
           (err && (err.message || err.statusText)) ||
           "Network or server error while loading the performance chart.";
 
-        if (window.mtModal && typeof window.mtModal.show === "function") {
-          window.mtModal.show({
-            id: "mt-error-modal", // ID del modal en el footer
-            title: "ERROR",
-            body: msg,
-            type: "error",
-            closeText: "Close",
-          });
-        } else {
-          alert("ERROR\n\n" + msg);
-        }
+        window.MEGATRADER?.showError?.("Chart Error", msg, {
+          iconSrc: "/wp-content/themes/megatrader-addons/assets/img/error.svg",
+          headline: "Oops!",
+        });
       });
   });
 })();
@@ -982,8 +965,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     return;
 
   window.mtRefresh.register("accountData", function (accountId) {
-    // Elige el contenedor correcto: .mt-account-data (principal)
-    // y como fallback #mt-performance-container si ese es el que reemplazas en tu theme.
     var wrap =
       document.querySelector(".mt-account-data") ||
       document.querySelector("#mt-performance-container");
@@ -998,32 +979,24 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
 
-    // 🔒 Cierra cualquier tooltip abierto ANTES del replace
     if (window.mtTooltips && typeof window.mtTooltips.closeAll === "function") {
       window.mtTooltips.closeAll();
     }
 
-    return fetch(url, {
+    return window.MEGATRADER.fetchJSON(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: body,
     })
-      .then(function (r) {
-        return r.json();
-      })
       .then(function (j) {
         if (!j || !j.success || !j.data || j.data.html == null) return;
 
-        // Reemplaza el contenido
         wrap.innerHTML = j.data.html;
 
-        // ♻️ Re-inicializa UI propia (por si hay donuts/barras dentro)
         try {
-          // Si tienes helpers locales, los puedes llamar aquí:
           // initDonuts?.(wrap); initDualBars?.(wrap); initProgressBars?.(wrap);
         } catch (_) {}
 
-        // ✅ Muy importante: volver a atar tooltips en el HTML nuevo
         if (
           window.mtTooltips &&
           typeof window.mtTooltips.refresh === "function"
@@ -1032,7 +1005,10 @@ document.addEventListener("mt:accountSelected", (e) => {
         }
       })
       .catch(function (err) {
-        console.error("[MT] account-data AJAX error:", err);
+        window.MEGATRADER?.showError?.(
+          "Account Data Error",
+          err?.message || "Unable to load account data."
+        );
       });
   });
 })();
@@ -1050,7 +1026,6 @@ document.addEventListener("mt:accountSelected", (e) => {
   const btnEdit = $(".mtfb-edit", panel);
   const btnClose = $(".mt-modal__close", panel);
 
-  // --- Límite de nota ---
   const NOTE_MAX = 58;
 
   if (panel && !panel.hasAttribute("tabindex"))
@@ -1108,7 +1083,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     pop.style.visibility = "visible";
   }
 
-  // Helper: manejar placeholder visible/oculto según nota
   function applyNotePlaceholderPolicy(preset) {
     const noteEl = $("#mtfb-note", panel);
     if (!noteEl) return;
@@ -1179,7 +1153,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     current.anchor = null;
   }
 
-  // Abrir desde el ícono (pencil/eye)
   document.addEventListener("click", (e) => {
     const btn = e.target.closest(".mt-dj-visibility");
     if (!btn) return;
@@ -1201,7 +1174,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     openPopover(btn, { accountId, tradeDate, preset });
   });
 
-  // Cerrar por click fuera
   document.addEventListener("click", (e) => {
     if (!isOpen) return;
     const inside =
@@ -1215,14 +1187,12 @@ document.addEventListener("mt:accountSelected", (e) => {
     closePopover();
   });
 
-  // Editar (habilitar campos) → restaurar placeholder original para escribir
   btnEdit?.addEventListener("click", () => {
     const noteEl = $("#mtfb-note", panel);
     if (noteEl) noteEl.setAttribute("placeholder", noteEl.dataset.ph || "");
     setReadOnly(false);
   });
 
-  // Reposicionar en scroll/resize
   ["scroll", "resize"].forEach((ev) => {
     window.addEventListener(
       ev,
@@ -1233,12 +1203,10 @@ document.addEventListener("mt:accountSelected", (e) => {
     );
   });
 
-  // Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && isOpen) closePopover();
   });
 
-  // Caritas: activar (respeta disabled) y revalidar Save
   panel.addEventListener("click", (e) => {
     const b = e.target.closest(".mtfb-mood [data-mood]");
     if (b) {
@@ -1259,12 +1227,10 @@ document.addEventListener("mt:accountSelected", (e) => {
     }
   });
 
-  // Radios: revalidar Save al cambiar Sí/No
   panel.addEventListener("change", (e) => {
     if (e.target && e.target.name === "mtfb-plan") updateSaveEnabled();
   });
 
-  // --- Enforce maxlength en textarea (incluye pegar) ---
   const noteField = $("#mtfb-note", panel);
   if (noteField) noteField.setAttribute("maxlength", String(NOTE_MAX));
   panel.addEventListener("input", (e) => {
@@ -1274,7 +1240,6 @@ document.addEventListener("mt:accountSelected", (e) => {
     }
   });
 
-  // Guardar AJAX (botón Save) — sin cerrar el popover
   $(".mtfb-save", panel)?.addEventListener("click", async () => {
     const url =
       (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
@@ -1297,7 +1262,6 @@ document.addEventListener("mt:accountSelected", (e) => {
       return;
     }
 
-    // NO guardar placeholder
     const noteEl = $("#mtfb-note", panel);
     const rawVal = noteEl ? noteEl.value : "";
     const phVal = noteEl ? noteEl.getAttribute("placeholder") || "" : "";
@@ -1327,14 +1291,14 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("note", note);
 
     try {
-      const res = await fetch(url, {
+      const j = await window.MEGATRADER.fetchJSON(url, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
       });
-      const j = await res.json().catch(() => null);
-      if (!res.ok || !j?.success) {
-        const msg = j?.data?.msg || `HTTP ${res.status}`;
+
+      if (!j?.success) {
+        const msg = j?.data?.msg || `Unexpected error`;
         throw new Error(msg);
       }
 
@@ -1356,7 +1320,6 @@ document.addEventListener("mt:accountSelected", (e) => {
 
       setReadOnly(true);
 
-      // si la nota quedó vacía, no mostrar placeholder mientras queda abierto
       if (typeof applyNotePlaceholderPolicy === "function") {
         applyNotePlaceholderPolicy({ note });
       } else if (noteEl) {
@@ -1367,7 +1330,10 @@ document.addEventListener("mt:accountSelected", (e) => {
 
       positionTo(current.anchor, "bottom");
     } catch (err) {
-      alert(err.message || "Could not save feedback.");
+      window.MEGATRADER?.showError?.(
+        "Feedback Error",
+        err?.message || "Could not save feedback."
+      );
     } finally {
       document.querySelector(".preloader")?.classList.remove("is-active");
       if (saveBtn) saveBtn.disabled = false;
@@ -1382,7 +1348,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     if (!modal) return;
 
     var closeBtn = modal.querySelector(".mt-modal__close");
-    var actionBtn = modal.querySelector(".mt-agreement-button"); // <— botón que abre el agreement
+    var actionBtn = modal.querySelector(".mt-agreement-button");
     var withBackdrop = null;
 
     function openModal() {
@@ -1573,17 +1539,13 @@ function fetchStatus(accountId) {
   body.set("accountId", String(accountId || ""));
   body.set("account_id", String(accountId || ""));
 
-  return fetch(url, {
+  return window.MEGATRADER.fetchJSON(url, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: body,
-  })
-    .then(function (r) {
-      return r.json();
-    })
-    .catch(function () {
-      return null;
-    });
+  }).catch(function () {
+    return null;
+  });
 }
 
 var __breachGuard = { pending: false, lastId: null, lastAt: 0 };
@@ -1664,7 +1626,7 @@ document.addEventListener("mt:accountSelected", function (e) {
 (function () {
   function clamp(n) {
     return Math.max(784, Math.round(n || 0));
-  } // base inicial
+  }
 
   function calcMainWidth() {
     var page = document.querySelector(".mt-page");
@@ -1758,7 +1720,6 @@ function mtBindManageSubsNav() {
       i1.name = "orderId";
       form.appendChild(i1);
 
-      // opcional: segunda clave aceptada por orders.php
       var i2 = document.createElement("input");
       i2.type = "hidden";
       i2.name = "optionalOrderId";
@@ -1772,7 +1733,6 @@ function mtBindManageSubsNav() {
   function submitPost(toUrl) {
     var orderId = readOrderId();
     if (!orderId) {
-      // si no hay orderId, navega normal
       window.location.href = toUrl;
       return;
     }
@@ -1955,7 +1915,7 @@ function mtBindManageSubsNav() {
           var i2 = form.querySelector('input[name="optionalOrderId"]');
           if (i1) i1.value = String(orderId);
           if (i2) i2.value = String(orderId);
-          form.action = this.href.replace(/\?.*$/, ""); // base
+          form.action = this.href.replace(/\?.*$/, "");
           form.submit();
         },
         { passive: false }
@@ -2132,7 +2092,6 @@ if (document.readyState === "loading") {
     modal.__open = openModal;
     modal.__close = closeModal;
 
-    // Mostrar en carga si data-show="1"
     if (modal.getAttribute("data-show") === "1") {
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", openModal, {
@@ -2144,7 +2103,6 @@ if (document.readyState === "loading") {
     }
   }
 
-  // Utilidad: fallback desde la card si el AJAX no trae el id (se mantiene)
   function getActivationIdFromDOM(accountId) {
     var sel =
       '#mt-accounts-grid .subscription-card[data-account-id="' +
