@@ -1,5 +1,4 @@
 (function () {
-  // Espera DOM
   function onReady(fn) {
     if (document.readyState !== "loading") fn();
     else document.addEventListener("DOMContentLoaded", fn, { once: true });
@@ -7,6 +6,13 @@
 
   onReady(function () {
     if (!window.MT_DATA) return;
+
+    // === Error modal alias ===
+    var showErr = function (t, m, o) {
+      if (window.MEGATRADER && typeof MEGATRADER.showError === "function")
+        return MEGATRADER.showError(t, m, o || {});
+      console.error("[MT][Error]", t, m);
+    };
 
     var DEBUG = !!window.MT_DATA.debug;
     var SEL = window.MT_DATA.selectors || {};
@@ -64,7 +70,7 @@
         preloaderFallbackTimer = setTimeout(hidePreloader, 7000);
         log("preloader: show");
       } else {
-        log("preloader: .preloader no encontrado o jQuery no disponible");
+        showErr("Preloader not available", ".preloader or jQuery not found.");
       }
     }
     function hidePreloader() {
@@ -93,6 +99,8 @@
       if (ACCS.length > 0) {
         selectedId = ACCS[0].id;
         log("selectedId fallback ->", selectedId);
+      } else {
+        showErr("No accounts", "No accounts found for this user.");
       }
     }
 
@@ -187,9 +195,15 @@
     // Botón Select
     if (btnSel) {
       btnSel.addEventListener("click", function () {
-        if (!selectedId) return;
+        if (!selectedId) {
+          showErr("Select an account", "Please choose an account to continue.");
+          return;
+        }
         var obj = getAccountById(selectedId);
-        if (!obj) return;
+        if (!obj) {
+          showErr("Invalid account", "The selected account is not available.");
+          return;
+        }
 
         // Actualizar cabecera
         if (elBadge) {
@@ -211,6 +225,10 @@
         if (elSize) elSize.textContent = obj.size || "";
         if (elName) elName.textContent = obj.name || "Account";
 
+        if (!elBadge && !elSize && !elName) {
+          showErr("UI not ready", "Header targets not found.");
+        }
+
         // Mostrar preloader y cerrar modal
         showPreloader();
         closeModal();
@@ -221,12 +239,12 @@
         });
         document.dispatchEvent(ev);
         log("event dispatched: mt:accountSelected", selectedId);
-        if (typeof window.breachGuardCheck === 'function') window.breachGuardCheck(selectedId);
-
-
-
-        // Si otro script ya hace el fetch/$.ajax y actualiza .mt-account-performance,
-        // el observer/ ajaxComplete/fallback se encargan de ocultar el preloader.
+        try {
+          if (typeof window.breachGuardCheck === "function")
+            window.breachGuardCheck(selectedId);
+        } catch (e) {
+          showErr("Breach check failed", e);
+        }
       });
     }
 
