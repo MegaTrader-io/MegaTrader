@@ -80,10 +80,12 @@ function render_menu_link(array $item) {
     $badge = $item['badge'] ?? null;
     ?>
         <a class="mt-sidebar__menu__link <?= $class ?> <?= $is_disabled_class ?>" href="<?= $href ?>" target="<?= $target ?>">
-            <?php if ($icon): ?>
-                <i class="mt-icon mt-icon-sm <?= $icon ?>"></i>
-            <?php endif; ?>
-            <span><?= $text ?></span>
+            <span class="mt-sidebar__menu__link__content">
+                <?php if ($icon): ?>
+                    <i class="mt-sidebar__menu__link__icon mt-icon mt-icon-sm <?= $icon ?>"></i>
+                <?php endif; ?>
+                <span class="mt-sidebar__menu__link__text"><?= $text ?></span>
+            </span>
             <?php if ($badge): ?>
                 <div class="mt-badge mt-badge-<?= esc_attr($badge['style'] ?? 'light')?>">
                     <?= esc_html($badge['text'] ?? '') ?>

@@ -911,10 +911,16 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-sidebar__menu__link {
   padding: 12px;
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
   color: white;
   width: 100%;
+}
+
+.mt-sidebar__menu__link__content {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 .mt-sidebar__menu__link:hover {
@@ -925,6 +931,14 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-sidebar__menu__link.active {
     border-radius: var(--Border-Radius-md, 8px);
     background: rgba(255, 255, 255, 0.05);
+}
+
+.mt-sidebar__menu__link.disabled {
+    pointer-events: none;
+}
+
+.mt-sidebar__menu__link.disabled .mt-sidebar__menu__link__content {
+    opacity: 0.2;
 }
 
 @media (max-width: 1199.98px) {
