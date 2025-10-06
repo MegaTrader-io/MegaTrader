@@ -57,7 +57,7 @@
 <!-- MT Error Modal -->
 <div id="mt-error-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mt-error-title"
   aria-hidden="true" hidden>
-  <div class="modal-dialog modal-dialog-centered modal-sm">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mt-error-title" class="modal-title text-white heading-sm-medium">ERROR</span>
@@ -72,10 +72,10 @@
       <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
         <div aria-hidden="true">
           <div class="modal-body-image modal-image-warning">
-            <img id="mt-error-icon" decoding="async" src="/wp-content/uploads/2025/07/warning.svg" alt="Warning icon">
+            <img id="mt-error-icon" decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/error.svg" alt="Warning icon">
           </div>
         </div>
-        <span id="mt-error-headline" class="fw-medium text-white text-3xl text-uppercase">Ups!</span>
+        <span id="mt-error-headline" class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">Ups!</span>
         <span id="mt-error-message" class="fw-medium text-a8a29e text-base">
           Ocurrió un error inesperado.
         </span>

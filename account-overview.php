@@ -468,7 +468,7 @@ get_header();
       <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
         <div aria-hidden="true">
           <div class="modal-body-image modal-image-warning">
-            <img decoding="async" src="/wp-content/uploads/2025/07/warning.svg" alt="http://Warning%20icon">
+            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/warning.svg" alt="http://Warning%20icon">
           </div>
         </div>
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
@@ -507,7 +507,7 @@ get_header();
       <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
         <div aria-hidden="true">
           <div class="modal-body-image modal-image-warning">
-            <img decoding="async" src="/wp-content/uploads/2025/07/warning.svg" alt="http://Warning%20icon">
+            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/warning.svg" alt="http://Warning%20icon">
           </div>
         </div>
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
