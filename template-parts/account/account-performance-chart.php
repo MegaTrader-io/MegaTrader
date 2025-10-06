@@ -94,11 +94,6 @@ $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/gra
   const MIN_POINTS = <?php echo (int) $MIN_POINTS; ?>;
   const hasEnoughPoints = () => Array.isArray(RAW_SERIES) && RAW_SERIES.length >= MIN_POINTS;
 
-  console.log('[MT][Chart] title:', chartTitle);
-  console.log('[MT][Chart] raw points:', RAW_SERIES.length, RAW_SERIES);
-  console.log('[MT][Chart] hasEnoughPoints?', hasEnoughPoints());
-
-
     try {
       if (window.__mtChartInstance && typeof window.__mtChartInstance.destroy === 'function') {
         window.__mtChartInstance.destroy();
