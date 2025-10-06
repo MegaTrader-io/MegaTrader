@@ -14,9 +14,7 @@ if (!$prepared || empty($accounts)) {
   return;
 }
 
-if (!$current && !empty($accounts)) {
-  $current = $accounts[0];
-}
+if (!$current && !empty($accounts)) { $current = $accounts[0]; }
 
 $currentId    = (string)($current['id'] ?? '');
 $currentStat  = (string)($current['status'] ?? 'unknown');
@@ -35,10 +33,8 @@ $curProgClass = (string)($current['programTypeClass'] ?? '');
 <button type="button" class="mega-btn-md mega-btn-dark-md w-100 p-3" data-bs-toggle="modal" data-bs-target="#changeSubcriptionModal">
   <div class="d-flex align-items-center gap-2 justify-content-between w-100">
     <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-3 row-gap-2">
-
-      <!-- Logo de plataforma (30x30), dinámico -->
+      <!-- Platform logo -->
       <img id="mt-platform-logo" src="<?php echo esc_url($currentLogo); ?>" alt="Platform logo" width="30" height="30" style="width:30px;height:30px;object-fit:contain;border-radius:6px;" />
-
       <div class="d-flex gap-2 align-items-center flex-fill">
         <div class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md d-none d-md-block d-lg-block"></div>
         <div class="fw-medium plan-name text-uppercase text-white text-truncate mobile-max-width-100 text-2xl leading-7">
@@ -64,7 +60,7 @@ $curProgClass = (string)($current['programTypeClass'] ?? '');
       </div>
 
       <div class="modal-body">
-        <!-- Dropdown custom (mismo radius y w-100) + select oculto para compatibilidad -->
+        <!-- Filter dropdown -->
         <div class="mb-3">
           <div class="dropdown w-100">
             <button id="mt-acc-filter-btn" class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -78,7 +74,6 @@ $curProgClass = (string)($current['programTypeClass'] ?? '');
               $st = strtoupper(trim((string)($row['status'] ?? '')));
               if ($st === 'ACTIVE') $present['ACTIVE'] = true;
               if ($st === 'BREACHED') $present['BREACHED'] = true;
-              // PASSED agrupa PASSED y PENDING_ACTIVATION
               if ($st === 'PASSED' || $st === 'PENDING_ACTIVATION') $present['PASSED'] = true;
             }
             $firstOpt = $present['ACTIVE'] ? 'ACTIVE' : ($present['BREACHED'] ? 'BREACHED' : 'PASSED');
@@ -116,7 +111,6 @@ $curProgClass = (string)($current['programTypeClass'] ?? '');
               $aid        = (string)($a['id'] ?? '');
               $accPlatId  = (string)($a['accountId'] ?? '');
               $isCur      = ($aid === $currentId);
-              // IMPORTANTE: sin 'd-flex' por defecto; se añade si pasa el filtro
               $card_class = 'subscription-card position-relative flex-column gap-2';
               if ($isCur) $card_class .= ' active';
               $status_raw = (string)($a['status'] ?? '');
@@ -138,7 +132,7 @@ $curProgClass = (string)($current['programTypeClass'] ?? '');
                    data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>"
                    data-logo="<?php echo esc_url($logo_src); ?>"
                    data-order="<?php echo esc_attr($ord); ?>"
-                   style="display:none;"><!-- oculto inicial hasta aplicar filtro -->
+                   style="display:none;"><!-- hidden until filter applies -->
 
                 <div class="checkmark-icon position-absolute" style="top: 10px; right: 10px; <?php echo $isCur ? '' : 'display:none;'; ?>">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -203,8 +197,8 @@ $payload = [
   'selectors' => [
     'grid'         => '#mt-accounts-grid',
     'select'       => '#select-subscription-btn',
-    'badge'        => '#mt-badge',              // puede no existir
-    'platformLogo' => '#mt-platform-logo',      // actualizar logo dinámicamente
+    'badge'        => '#mt-badge',
+    'platformLogo' => '#mt-platform-logo',
     'size'         => '#mt-size',
     'name'         => '#mt-name',
     'modal'        => '#changeSubcriptionModal',
@@ -231,46 +225,15 @@ wp_add_inline_script($handle, <<<JS
   var perf  = document.querySelector(CFG.selectors.performance) || document.querySelector('.mt-account-performance');
   var modal = document.querySelector(CFG.selectors.modal);
 
-  // === Error modal alias ===
+  // Error modal alias
   var showErr = function(t, m, o){
     if (window.MEGATRADER && typeof MEGATRADER.showError === 'function')
       return MEGATRADER.showError(t, m, o||{});
     console.error('[MT][Error]', t, m);
   };
 
-  // === Helper: fetch JSON con diagnóstico útil (maneja HTML/404/500) ===
-  function fetchJSON(url, options){
-    return fetch(url, options).then(function(r){
-      return r.text().then(function(txt){
-        var ct = (r.headers.get('content-type') || '').toLowerCase();
-        var looksJSON = ct.indexOf('application/json') > -1;
-        var data = null;
-
-        if (looksJSON) {
-          try { data = JSON.parse(txt); } catch(e){}
-        }
-
-        if (!r.ok) {
-          var msg = 'HTTP ' + r.status + ' ' + (r.statusText || '') +
-                    '\\nURL: ' + url +
-                    '\\nBody: ' + txt.slice(0, 300);
-          throw new Error(msg);
-        }
-
-        if (!data) {
-          var msg2 = 'Respuesta no-JSON del servidor.' +
-                     '\\nURL: ' + url +
-                     '\\nPrimeros 300 chars:\\n' + txt.slice(0, 300);
-          throw new Error(msg2);
-        }
-
-        return data;
-      });
-    });
-  }
-
-  // Dropdown custom + select oculto
-  var filterSel  = document.getElementById('mt-acc-filter'); // oculto
+  // Dropdown custom + hidden select
+  var filterSel  = document.getElementById('mt-acc-filter');
   var filterBtn  = document.getElementById('mt-acc-filter-btn');
   var filterLbl  = document.getElementById('mt-acc-filter-label');
   var filterMenu = document.getElementById('mt-acc-filter-menu');
@@ -319,9 +282,9 @@ wp_add_inline_script($handle, <<<JS
 
   if (!grid) return;
 
-  // === Selección: mantener recordatorio aunque el filtro la oculte
+  // Selection memory even if hidden by filter
   var selectedId   = CFG.currentId || null;
-  var rememberedId = selectedId; // último id seleccionado aunque quede oculto
+  var rememberedId = selectedId;
 
   function selectCard(card){
     if (card.classList.contains('d-none')) return;
@@ -336,7 +299,7 @@ wp_add_inline_script($handle, <<<JS
     if (ch) ch.style.display = '';
 
     selectedId   = card.getAttribute('data-account-id');
-    rememberedId = selectedId; // persistimos la selección
+    rememberedId = selectedId;
     setBtnEnabled(true);
     updateResetButtons();
   }
@@ -378,19 +341,19 @@ wp_add_inline_script($handle, <<<JS
     selectCard(card);
   });
 
-  // === Wiring del dropdown custom ===
+  // Filter wiring
   if (filterMenu){
     filterMenu.addEventListener('click', function(e){
       var opt = e.target.closest('.mt-filter-option');
       if (!opt) return;
       var val = (opt.getAttribute('data-value') || '').toUpperCase();
       if (filterLbl) filterLbl.textContent = opt.textContent.trim();
-      if (filterSel) filterSel.value = val; // sincroniza hidden select
+      if (filterSel) filterSel.value = val;
       applyFilter(val);
     });
   }
 
-  // estado inicial
+  // Initial state
   if (filterSel) filterSel.value = filterSel.querySelector('option')?.value || 'ACTIVE';
   if (filterLbl) filterLbl.textContent = (filterSel.selectedOptions[0]?.textContent || 'Active');
   applyFilter(filterSel.value);
@@ -402,7 +365,7 @@ wp_add_inline_script($handle, <<<JS
     });
   }
 
-  // Selección inicial si coincide con filtro
+  // Initial selection if visible
   if (selectedId){
     var cur = grid.querySelector(CFG.selectors.card + '[data-account-id="'+CSS.escape(selectedId)+'"]');
     if (cur && !cur.classList.contains('d-none')) {
@@ -414,7 +377,7 @@ wp_add_inline_script($handle, <<<JS
     setBtnEnabled(false);
   }
 
-  // === AJAX performance + actualizar cabecera (size, name y logo) ===
+  // AJAX: update performance + header
   if (btn){
     btn.addEventListener('click', function(){
       if (!selectedId){
@@ -429,7 +392,7 @@ wp_add_inline_script($handle, <<<JS
 
       setBtnEnabled(false);
 
-      fetchJSON(CFG.ajax.url, { method:'POST', body: fd, credentials: 'same-origin' })
+      MEGATRADER.fetchJSON(CFG.ajax.url, { method:'POST', body: fd, credentials: 'same-origin' })
         .then(function(res){
           if (!res || !res.success) throw new Error(res && res.data && res.data.message || 'AJAX failed');
 
@@ -471,7 +434,7 @@ wp_add_inline_script($handle, <<<JS
           updateResetButtons();
         })
         .catch(function(err){
-          showErr('Account Performance Error', err, { headline: 'Ups!' });
+          showErr('Account Performance Error', err, { headline: 'Oops!' });
         })
         .finally(function(){
           setBtnEnabled(true);
