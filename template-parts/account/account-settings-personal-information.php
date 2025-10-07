@@ -62,15 +62,10 @@ $valid_states = WC()->countries->get_states($billing_country);
 
         <div class="row">
             <div class="col-lg-12">
-                <label class="mb-1" for="billing_email"><?php _e('Email', 'woocommerce'); ?></label>
-                <input type="email" readonly name="billing_email" id="billing_email"
-                       class="form-control <?= MT_WC_Error::has_error('billing_email') ? 'is-invalid' : '' ?>"
+                <label class="mb-1" for="personal_email"><?php _e('Email', 'woocommerce'); ?></label>
+                <input type="email" readonly name="personal_email" id="personal_email"
+                       class="form-control"
                        value="<?php echo $user_email; ?>"/>
-
-                <?php if (MT_WC_Error::has_error('billing_email')): ?>
-                    <span id="error-billing_email"
-                          class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_email') ?></span>
-                <?php endif; ?>
             </div>
         </div>
 
