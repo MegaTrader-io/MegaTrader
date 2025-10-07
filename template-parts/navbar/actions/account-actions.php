@@ -16,3 +16,8 @@
         <i class="mt-icon mt-icon-white mt-icon_menu"></i>
     </a>
 </div>
+
+
+<?php get_template_part('template-parts/main-menu', null, [
+    'is_overlay' => true
+]); ?>

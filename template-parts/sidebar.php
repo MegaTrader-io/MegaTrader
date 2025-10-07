@@ -46,10 +46,6 @@ $menu_links = [
     </div>
 </aside>
 
-<?php get_template_part('template-parts/main-menu', null, [
-    'is_overlay' => true
-]); ?>
-
 <script>
     let expanded = true;
 
@@ -83,6 +79,7 @@ $menu_links = [
         });
 
         document.addEventListener('MT_MENU_TOGGLE', function(e) {
+            console.log('MT_MENU_TOGGLE Event')
             toggleMainMenuOverlay();
         });
     }

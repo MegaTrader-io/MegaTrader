@@ -169,10 +169,6 @@ body.admin-bar {
     display: flex;
 }
 
-.mt-navbar__account .mt-navbar__logo-text {
-    display: block;
-}
-
 .mt-navbar__account .icon-btn {
     padding: 12px;
     border-radius: 12px;
@@ -207,11 +203,16 @@ body.admin-bar {
     padding-left: 12px;
     padding-right: 12px;
 }
+
+/* My Account Variant */
 .mt-navbar.mt-navbar--my-account {
     margin-bottom: 0;
 }
 
-/* My Account Variant */
+.mt-navbar.mt-navbar--my-account .mt-navbar__logo-text {
+    display: block;
+}
+
 @media (max-width: 1199.98px) {
     .mt-navbar.mt-navbar--my-account .mt-navbar__auth-link {
         display: block !important;
