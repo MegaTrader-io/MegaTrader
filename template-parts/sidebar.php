@@ -58,9 +58,7 @@ $menu_links = [
     }
 
     function toggleMainMenuOverlay(){
-        const hideClass = 'd-none';
-        const overlay = document.querySelector('.mt-sidebar-overlay');
-        overlay.classList.toggle(hideClass);
+        document.querySelector('.mt-sidebar-overlay')?.classList.toggle('show');
     }
 
     function updateDesktopContentVisibility(){

@@ -51,6 +51,9 @@ $defaults = [
     'maxLossLimitEquityLevel' => null,
     'target' => null,
     'maxDailyLossLimitPnLLevel' => null,
+    'label' => '',
+    'consistency' => null,
+    'targetAmount' => null,
 ];
 $performance = array_merge($defaults, (array) $performance);
 
@@ -63,8 +66,14 @@ $daysTraded = (int) $performance['activeTradingDays'];
 $dailyPnL = $performance['dailyTotalPnL'];
 $minDays = (int) $performance['minTradingDays'];
 $maxLossEq = $performance['maxLossLimitEquityLevel'];
-$profitTarget = $performance['target'];
 $maxDailyLoss = $performance['maxDailyLossLimitPnLLevel'];
+$targetAmount = $performance['targetAmount'];
+$stage = mt_program_stage($performance['label'] ?? '');
+$isFunded = mt_is_funded($performance['label'] ?? '');
+$isEvaluation = mt_is_evaluation($performance['label'] ?? '');
+$profitTarget = $isFunded
+  ? ($performance['targetAmount'] ?? null)
+  : ($performance['target'] ?? null);
 
 
 /* ========= Derivados (para barras / chips) ========= */
@@ -114,15 +123,72 @@ $profitText = mt_format_signed_money($profit);
 $profitIconClass = mt_value_compare_icon_classes($profit, $profitTarget);
 
 $daysFillPct = ($minDays > 0) ? max(0, min(100, ($daysTraded / $minDays) * 100)) : 0;
-$daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays); 
+$daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays);
 $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
 
 $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyLoss) : 0;
 
+/* Title Right Column */
+if ($isFunded) {
+    $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_funded'] ?? '';
+} elseif ($isEvaluation) {
+    $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_evaluation'] ?? '';
+} else {
+    $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_evaluation'] ?? '';
+}
 
 
 
 ?>
+
+<?php
+/* === DEBUG VISUAL (activar con ?mt_debug_perf=1 o si eres admin) === */
+$__mt_debug_perf = true;
+
+if ($__mt_debug_perf):
+  $now = function_exists('current_time') ? current_time('mysql') : date('Y-m-d H:i:s');
+  $rawTargetAmount = $performance['targetAmount'] ?? null;
+  $rawTarget       = $performance['target'] ?? null;
+?>
+  <div class="position-fixed bottom-0 end-0 m-3 p-3 rounded-2 bg-dark text-white"
+       style="max-width: 420px; z-index: 9999; opacity:.95">
+    <div class="fw-bold mb-2">Account Performance · Debug</div>
+    <div class="small text-a8a29e mb-2">Rendered: <?php echo esc_html($now); ?></div>
+
+    <div class="small"><b>AccountId:</b> <?php echo esc_html($meta['accountId'] ?? ''); ?></div>
+    <div class="small"><b>Label:</b> <?php echo esc_html($performance['label'] ?? ''); ?></div>
+    <div class="small"><b>Stage:</b> <?php echo esc_html($stage); ?></div>
+    <div class="small"><b>isFunded:</b> <?php echo $isFunded ? 'true' : 'false'; ?></div>
+    <div class="small"><b>isEvaluation:</b> <?php echo $isEvaluation ? 'true' : 'false'; ?></div>
+
+    <hr class="my-2" />
+
+    <div class="small"><b>targetAmount (raw):</b>
+      <?php echo esc_html(is_scalar($rawTargetAmount) ? (string)$rawTargetAmount : var_export($rawTargetAmount, true)); ?>
+    </div>
+    <div class="small"><b>targetAmount (fmt):</b>
+      <?php echo esc_html(mt_format_money($rawTargetAmount)); ?>
+    </div>
+
+    <div class="small mt-1"><b>target (raw):</b>
+      <?php echo esc_html(is_scalar($rawTarget) ? (string)$rawTarget : var_export($rawTarget, true)); ?>
+    </div>
+    <div class="small"><b>target (fmt):</b>
+      <?php echo esc_html(mt_format_money($rawTarget)); ?>
+    </div>
+
+    <hr class="my-2" />
+
+    <div class="small"><b>→ profitTarget usado:</b>
+      <?php echo esc_html(mt_format_money($profitTarget)); ?>
+    </div>
+    <div class="small"><b>currentProfit:</b>
+      <?php echo esc_html(mt_format_money($profit)); ?>
+    </div>
+    <div class="small"><b>progress %:</b> <?php echo (int) round($profitFillPct); ?>%</div>
+  </div>
+<?php endif; ?>
+
 
 <?php if ($has_data): ?>
     <div class="mt-card mt-card__row gap-32" data-component="account-performance">
@@ -134,12 +200,14 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
                 <div class="d-flex flex-column">
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">
-                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_account_balance']); ?></div>
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_account_balance']); ?>
+                        </div>
                         <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($balance)); ?></div>
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">
-                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_total_profit']); ?></div>
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_total_profit']); ?>
+                        </div>
                         <div class="mt-card__item-value d-flex align-items-center gap-2 justify-content-end"> <span
                                 class="<?php echo esc_attr($profitColorClass); ?>">
                                 <?php echo esc_html($profitText); ?>
@@ -157,7 +225,8 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">
-                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_trading_days']); ?></div>
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_trading_days']); ?>
+                        </div>
                         <div class="mt-card__item-value text-white">
                             <?php echo esc_html($daysTraded); ?>
                         </div>
@@ -167,14 +236,17 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
                     if ($maxDailyLossFormat > 0): ?>
                         <div class="mt-card__item">
                             <div class="mt-card__item-text">
-                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_loss_limit']); ?></div>
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_loss_limit']); ?>
+                            </div>
                             <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
                                 <?php echo esc_html(mt_format_money_no_cents($maxDailyLossFormat)); ?>
                                 <span class="mt-tooltip">
                                     <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
                                         aria-label="Daily Loss Limit information"></i>
                                     <span class="mt-tooltip__panel" role="tooltip">
-                                        <div class="mt-tooltip__title"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dll_tooltip_title']); ?></div>
+                                        <div class="mt-tooltip__title">
+                                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dll_tooltip_title']); ?>
+                                        </div>
                                         <div class="mt-tooltip__body">
                                             <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dll_tooltip_description']); ?>
                                         </div>
@@ -185,16 +257,21 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
                     <?php endif; ?>
 
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_current_equity']); ?></div>
+                        <div class="mt-card__item-text">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_current_equity']); ?>
+                        </div>
                         <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($equity)); ?></div>
                     </div>
                     <div class="mt-card__item">
-                        <div class="mt-card__item-text d-flex gap-1 align-items-center"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_net_pl']); ?>
+                        <div class="mt-card__item-text d-flex gap-1 align-items-center">
+                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_net_pl']); ?>
                             <span class="mt-tooltip">
                                 <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
                                     aria-label="Daily Loss Limit information"></i>
                                 <span class="mt-tooltip__panel" role="tooltip">
-                                    <div class="mt-tooltip__title"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dpl_tooltip_title']); ?></div>
+                                    <div class="mt-tooltip__title">
+                                        <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dpl_tooltip_title']); ?>
+                                    </div>
                                     <div class="mt-tooltip__body">
                                         <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dpl_tooltip_description']); ?>
                                     </div>
@@ -212,7 +289,9 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
         </div>
         <div class="w-100 d-flex flex-column gap-32">
             <div class="d-flex flex-column gap-3">
-                <div class="mt-card__title__text fw-medium text-uppercase"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_title_right']); ?></div>
+                <div class="mt-card__title__text fw-medium text-uppercase">
+                    <?php echo esc_html($titleRight); ?>
+                </div>
                 <div class="d-flex flex-column">
                     <div class="mt-card__item">
                         <div class="mt-card__item-text d-flex gap-1 align-items-center">
@@ -260,7 +339,9 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
                 </div>
             </div>
             <div class="d-flex flex-column gap-3">
-                <div class="mt-card__title__text fw-medium text-uppercase"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules']); ?></div>
+                <div class="mt-card__title__text fw-medium text-uppercase">
+                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules']); ?>
+                </div>
                 <div class="d-flex align-items-center gap-2">
                     <span class="mt-icon <?php
                     echo (is_numeric($balance) && is_numeric($maxLossEq))
@@ -271,9 +352,11 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
                         : 'mt-icon-error mt-icon_cancel';
                     ?>"></span>
                     <div class="text-white text-base fw-medium">
-                        <span class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description']); ?>
+                        <span
+                            class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description']); ?>
                             <?php echo esc_html(mt_format_money_no_cents($maxLossEq)); ?></span>
-                        <a class="text-primary text-14px-line-20px fw-medium text-decoration-underline"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?></a>
+                        <a
+                            class="text-primary text-14px-line-20px fw-medium text-decoration-underline"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?></a>
                     </div>
                 </div>
             </div>
@@ -287,4 +370,3 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
         </div>
     </div>
 <?php endif; ?>
-

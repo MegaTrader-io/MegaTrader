@@ -183,6 +183,7 @@ class Label
         "performance_daily_loss_limit" => "Daily Loss Limit",
         "performance_daily_net_pl" => "Daily Net P&L",
         "performance_profit_target" => "Profit Target",
+        "performance_payout_target" => "Payout Target",
         "performance_days_traded" => "Days Traded",
         "performance_rules" => "Rules",
         "performance_rules_description" => "Keep your Account Balance above",
