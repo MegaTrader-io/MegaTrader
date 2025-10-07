@@ -49,13 +49,12 @@
 
   /* ========= Progress genérico ========= */
   function initProgressBars(root = document) {
-  $$(".mt-progress-bar", root).forEach((el) => {
-    if (!el.hasAttribute("data-progress")) return; 
-    const v = clamp(el.dataset.progress, 0, 100);
-    el.style.setProperty("--mt-progress-value", v + "%");
-  });
-}
-
+    $$(".mt-progress-bar", root).forEach((el) => {
+      if (!el.hasAttribute("data-progress")) return;
+      const v = clamp(el.dataset.progress, 0, 100);
+      el.style.setProperty("--mt-progress-value", v + "%");
+    });
+  }
 
   /* ========= Tabs + carrusel + gradientes ========= */
   function setupTabsCarousel(root) {
@@ -1580,16 +1579,47 @@ function breachGuardCheck(accountId) {
         .toUpperCase();
 
       if (status === target) {
-        var modal = document.getElementById("mt-breach-alert-modal");
-        if (!modal || modal.classList.contains("show")) return;
+        try {
+          var grid = document.querySelector("#mt-accounts-grid");
+          var card =
+            grid &&
+            (grid.querySelector(".subscription-card.active") ||
+              grid.querySelector(
+                '.subscription-card[data-account-id="' +
+                  CSS.escape(String(accountId)) +
+                  '"]'
+              ));
+          var resetId = card ? card.getAttribute("data-reset-id") || "" : "";
+          var modal = document.getElementById("mt-breach-alert-modal");
+          var btn = modal
+            ? modal.querySelector(".mt-breach-reset-button")
+            : null;
+          var base =
+            (modal && modal.getAttribute("data-checkout-base")) ||
+            (window.MT_DATA && window.MT_DATA.checkoutBase) ||
+            "/checkout";
 
-        if (typeof modal.__open === "function") {
-          modal.__open();
-        } else {
-          modal.setAttribute("data-show", "1");
-          modal.removeAttribute("hidden");
-          modal.setAttribute("aria-hidden", "false");
-          modal.classList.add("show");
+          if (btn) {
+            if (resetId) {
+              btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId);
+              btn.classList.remove("disabled");
+              btn.removeAttribute("aria-disabled");
+            } else {
+              btn.href = "#";
+              btn.classList.add("disabled");
+              btn.setAttribute("aria-disabled", "true");
+            }
+          }
+        } catch (_) {}
+
+        var modalEl = document.getElementById("mt-breach-alert-modal");
+        if (!modalEl || modalEl.classList.contains("show")) return;
+        if (typeof modalEl.__open === "function") modalEl.__open();
+        else {
+          modalEl.setAttribute("data-show", "1");
+          modalEl.removeAttribute("hidden");
+          modalEl.setAttribute("aria-hidden", "false");
+          modalEl.classList.add("show");
         }
       }
     })
@@ -1943,11 +1973,12 @@ if (document.readyState === "loading") {
     return s === "" || s === "0" || sl === "null" ? "" : s;
   }
 
-  function buildActivationHref(modal, activationId) {
-    var base = (modal && modal.dataset.checkoutBase) || "";
-    var id = normalizeId(activationId);
-    return base && id ? base + encodeURIComponent(id) : "#";
-  }
+ function buildActivationHref(modal, activationId) {
+  var base = (modal && modal.dataset.checkoutBase) || "";
+  var id = normalizeId(activationId);
+  return (base && id) ? (base + '?add-to-cart=' + encodeURIComponent(id)) : '#';
+}
+
 
   function setNote(status, activationId, modal) {
     var noteEl = modal.querySelector("#mt-passed-note [data-note-text]");

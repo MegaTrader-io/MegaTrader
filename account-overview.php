@@ -494,42 +494,41 @@ get_header();
 <div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
   aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
-</div>
-<div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-  <div class="modal-content gap-32">
-    <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
-      <span id="mtbreach-title" class="modal-title text-white heading-sm-medium">
-        <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_title']; ?></span>
-      <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
-        aria-label="Close">
-        <span aria-hidden="true">
-          <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;">
-        </span>
-      </button>
-    </div>
-    <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
-      <div aria-hidden="true">
-        <div class="modal-body-image modal-image-warning">
-          <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/warning.svg"
-            alt="http://Warning%20icon">
-        </div>
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-content gap-32">
+      <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
+        <span id="mtbreach-title" class="modal-title text-white heading-sm-medium">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_title']; ?></span>
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;">
+          </span>
+        </button>
       </div>
-      <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
-        <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_title']; ?>
-      </span>
-      <span class="text-white fw-medium text-uppercase text-2xl leading-7">
-        <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description']; ?>
-      </span>
-      <span class="fw-medium text-a8a29e text-base">
-        <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
-      </span>
-      <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4"
-        href="<?php echo esc_url($__breach_reset_url); ?>">
-        <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?>
-      </a>
+      <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
+        <div aria-hidden="true">
+          <div class="modal-body-image modal-image-warning">
+            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/warning.svg"
+              alt="http://Warning%20icon">
+          </div>
+        </div>
+        <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_title']; ?>
+        </span>
+        <span class="text-white fw-medium text-uppercase text-2xl leading-7">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description']; ?>
+        </span>
+        <span class="fw-medium text-a8a29e text-base">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
+        </span>
+        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4"
+          href="<?php echo esc_url($__breach_reset_url); ?>">
+          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?>
+        </a>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <div id="mt-account-passed-modal" class="modal modal-subcription fade" tabindex="-1"

@@ -12,7 +12,7 @@ $activationId = (string) ($current['activationProductId'] ?? '');
 $hasActivation = $activationId !== '';
 $activation_url = $hasActivation ? ($checkout . '?add-to-cart=' . urlencode($activationId)) : '';
 $mainId = (string) ($current['mainProductId'] ?? '');
-$ord = (string) ($current['order'] ?? ''); 
+$ord = (string) ($current['order'] ?? '');
 
 if (!$prepared || empty($accounts)) {
   echo '<p class="text-a8a29e"><em>No accounts found for this user.</em></p>';
@@ -40,8 +40,7 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
 <button type="button" class="mega-btn-md mega-btn-dark-md w-100 p-3" data-bs-toggle="modal"
   data-bs-target="#changeSubcriptionModal" data-account-id="<?php echo esc_attr($currentId); ?>"
   data-current-main-id="<?php echo esc_attr($mainId); ?>" data-current-reset-id="<?php echo esc_attr($resetId); ?>"
-  data-order="<?php echo esc_attr($ord); ?>"
-  data-current-activation-id="<?php echo esc_attr($activationId); ?>">
+  data-order="<?php echo esc_attr($ord); ?>" data-current-activation-id="<?php echo esc_attr($activationId); ?>">
   <div class="d-flex align-items-center gap-2 justify-content-between w-100">
     <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-3 row-gap-2">
       <!-- Platform logo -->
@@ -106,6 +105,7 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
               $firstOpt = $present['ACTIVE'] ? 'ACTIVE' : ($present['BREACHED'] ? 'BREACHED' : 'PASSED');
             }
             ?>
+
             <ul class="dropdown-menu w-100 p-0 overflow-hidden rounded-12 mt-1" id="mt-acc-filter-menu">
               <?php if ($present['ACTIVE']): ?>
                 <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="ACTIVE">Active</button>
@@ -179,7 +179,7 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
                       alt="<?php echo esc_attr(($a['platform'] ?? '') ?: 'platform'); ?> logo" style="max-height:40px;">
                     <div class="dot-indicator <?php echo esc_attr($dot_class); ?>"
                       title="<?php echo esc_attr($a['status'] ?? ''); ?>"
-                      style="position:absolute; right:-2px; bottom:-2px;">
+                      style="position:absolute; right:-1px; bottom:-1px;">
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                         <circle cx="6" cy="6" r="6" fill="white" />
                         <circle cx="6" cy="6" r="4" fill="currentColor" />
@@ -232,7 +232,7 @@ $payload = [
   'selectors' => [
     'grid' => '#mt-accounts-grid',
     'select' => '#select-subscription-btn',
-    'badge' => '#mt-badge',
+    'badge' => '#mt-badge', // (si no existe no pasa nada, hay if (badgeEl))
     'platformLogo' => '#mt-platform-logo',
     'size' => '#mt-size',
     'name' => '#mt-name',
@@ -282,26 +282,55 @@ wp_add_inline_script($handle, <<<JS
     btn.classList.toggle('disabled', !on);
   }
 
-  function updateResetButtons(){
+  // === ACTUALIZA CTAs DE LOS MODALES (reset / activation) SEGÚN LA CARD ACTIVA ===
+  function updateAccountCTAs() {
     if (!grid) return;
+
     var active = grid.querySelector(CFG.selectors.card + '.' + CFG.selectionClass);
     var resetId = active ? (active.getAttribute('data-reset-id') || '') : '';
     var activationId = active ? (active.getAttribute('data-activation-id') || '') : '';
     var base = CFG.checkoutBase || (window.MT_DATA && window.MT_DATA.checkoutBase) || '/checkout';
-    var btns = document.querySelectorAll('.custom-reset-btn');
 
-    btns.forEach(function(a){
-      if (!a) return;
-      if (resetId) {
-        a.href = base + '?add-to-cart=' + encodeURIComponent(resetId);
-        a.classList.remove('d-none');
-        a.removeAttribute('aria-disabled');
-      } else {
-        a.href = '#';
-        a.classList.add('d-none');
-        a.setAttribute('aria-disabled', 'true');
+    // --- BREACHED: botón de reset ---
+    var breachModal = document.getElementById('mt-breach-alert-modal');
+    if (breachModal) {
+      var breachBtn  = breachModal.querySelector('.mt-breach-reset-button');
+      var baseBreach = breachModal.getAttribute('data-checkout-base') || base;
+
+      if (breachBtn) {
+        if (resetId) {
+          breachBtn.href = baseBreach + '?add-to-cart=' + encodeURIComponent(resetId);
+          breachBtn.classList.remove('disabled', 'd-none');
+          breachBtn.removeAttribute('aria-disabled');
+        } else {
+          breachBtn.href = '#';
+          breachBtn.classList.add('disabled');
+          breachBtn.setAttribute('aria-disabled', 'true');
+        }
       }
-    });
+    }
+
+    // --- PASSED / PENDING_ACTIVATION: botón de activación ---
+    var passedModal = document.getElementById('mt-account-passed-modal');
+    if (passedModal) {
+      // expone el id en dataset para los guards
+      passedModal.dataset.activationId = activationId || '';
+
+      var actBtn  = passedModal.querySelector('#mt-activation-btn');
+      var baseAct = passedModal.getAttribute('data-checkout-base') || base;
+
+      if (actBtn) {
+        if (activationId) {
+          actBtn.href = baseAct + '?add-to-cart=' + encodeURIComponent(activationId);
+          actBtn.classList.remove('disabled', 'd-none');
+          actBtn.removeAttribute('aria-disabled');
+        } else {
+          actBtn.href = '#';
+          actBtn.classList.add('disabled');
+          actBtn.setAttribute('aria-disabled','true');
+        }
+      }
+    }
   }
 
   function showCard(card){
@@ -336,7 +365,7 @@ wp_add_inline_script($handle, <<<JS
     selectedId   = card.getAttribute('data-account-id');
     rememberedId = selectedId;
     setBtnEnabled(true);
-    updateResetButtons();
+    updateAccountCTAs();
   }
 
   function applyFilter(val){
@@ -366,7 +395,7 @@ wp_add_inline_script($handle, <<<JS
       }
     }
 
-    updateResetButtons();
+    updateAccountCTAs();
   }
 
   grid.addEventListener('click', function(e){
@@ -392,11 +421,13 @@ wp_add_inline_script($handle, <<<JS
   if (filterSel) filterSel.value = filterSel.querySelector('option')?.value || 'ACTIVE';
   if (filterLbl) filterLbl.textContent = (filterSel.selectedOptions[0]?.textContent || 'Active');
   applyFilter(filterSel.value);
+  updateAccountCTAs(); // primera sincronización al cargar
 
   if (modal && window.bootstrap){
     modal.addEventListener('shown.bs.modal', function(){
       var val = (filterSel && filterSel.value) ? filterSel.value : 'ACTIVE';
       applyFilter(val);
+      updateAccountCTAs(); // asegurar CTAs al abrir modal
     });
   }
 
@@ -448,6 +479,7 @@ wp_add_inline_script($handle, <<<JS
             var sizeVal = active.getAttribute('data-size') || '';
             var nameVal = active.getAttribute('data-name') || 'Account';
             var logoVal = active.getAttribute('data-logo') || '';
+            var orderId = parseInt(active.getAttribute('data-order') || '0', 10) || 0;
 
             var sizeEl  = document.querySelector(CFG.selectors.size);
             var nameEl  = document.querySelector(CFG.selectors.name);
@@ -461,12 +493,20 @@ wp_add_inline_script($handle, <<<JS
             if (badgeEl) {
               var status = (active.getAttribute('data-status') || '').toLowerCase();
               badgeEl.textContent = status
-                ? status.replace(/-/g,' ').replace(/\b\w/g, function(m){ return m.toUpperCase(); })
+                ? status.replace(/-/g,' ').replace(/\\b\\w/g, function(m){ return m.toUpperCase(); })
                 : 'NoStatusDefine';
             }
+
+            // expone order activo al root y notifica globalmente
+            var root = document.getElementById('mt-account-overview');
+            if (root) root.setAttribute('data-order-id', orderId ? String(orderId) : '');
+
+            document.dispatchEvent(new CustomEvent('mt:accountSelected', {
+              detail: { accountId: selectedId, id: selectedId, order: orderId, orderId: orderId }
+            }));
           }
 
-          updateResetButtons();
+          updateAccountCTAs();
         })
         .catch(function(err){
           showErr('Account Performance Error', err, { headline: 'Oops!' });

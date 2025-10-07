@@ -1677,6 +1677,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   background: var(--light-color, #57534E);
   color: var(--surface-dark, #292524);
   border: transparent;
+  pointer-events: none;
 }
 
 /* Botón secundario (hereda de mega-btn-md) */
