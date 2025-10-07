@@ -12,6 +12,7 @@ $activationId = (string) ($current['activationProductId'] ?? '');
 $hasActivation = $activationId !== '';
 $activation_url = $hasActivation ? ($checkout . '?add-to-cart=' . urlencode($activationId)) : '';
 $mainId = (string) ($current['mainProductId'] ?? '');
+$ord = (string) ($current['order'] ?? ''); 
 
 if (!$prepared || empty($accounts)) {
   echo '<p class="text-a8a29e"><em>No accounts found for this user.</em></p>';
@@ -39,6 +40,7 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
 <button type="button" class="mega-btn-md mega-btn-dark-md w-100 p-3" data-bs-toggle="modal"
   data-bs-target="#changeSubcriptionModal" data-account-id="<?php echo esc_attr($currentId); ?>"
   data-current-main-id="<?php echo esc_attr($mainId); ?>" data-current-reset-id="<?php echo esc_attr($resetId); ?>"
+  data-order="<?php echo esc_attr($ord); ?>"
   data-current-activation-id="<?php echo esc_attr($activationId); ?>">
   <div class="d-flex align-items-center gap-2 justify-content-between w-100">
     <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-3 row-gap-2">

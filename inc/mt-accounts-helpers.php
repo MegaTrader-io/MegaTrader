@@ -146,9 +146,9 @@ class MT_Accounts
       }
 
       $sb = $acc['program']['startingBalance'] ?? null;
-      [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
+      [$size, $name] = self::parse_program_label($plabel, $sb);
 
-      // ---- Platform (texto/logo) preferido del listado; si falta, resolver byId SOLO para plataforma
+      // ---- Platform texto/logo (del listado si viene)
       $platformRaw = '';
       if (isset($acc['platform'])) {
         if (is_array($acc['platform'])) {
@@ -160,7 +160,7 @@ class MT_Accounts
       if ($platformRaw === '' && isset($acc['program']['platform'])) {
         $platformRaw = (string) $acc['program']['platform'];
       }
-      $platformKey = MT_Accounts::norm($platformRaw);
+      $platformKey = self::norm($platformRaw);
       $logo = $PLATFORM_LOGOS[$platformKey] ?? $DEFAULT_LOGO;
 
       // ---- Lo que trae el listado
@@ -168,48 +168,50 @@ class MT_Accounts
       $rules = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
       $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
       $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
+      $order = (string) ($acc['order'] ?? ''); 
 
-      // Tomar order del listado si existe (sin byId)
-      $order = (string) ($acc['order'] ?? '');
-
-      // Si faltan SOLO datos de plataforma, ir byId para completarlos (NO tocar rules aquí)
-      $needPlatTxt = ($platformRaw === '');
-      $needPlatId = ($platAccountId === '');
-      if (($needPlatTxt || $needPlatId) && $id !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
+      // === SIEMPRE: resolver byId para obtener 'order' (y plataforma si faltara)
+      if ($id !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
         try {
           $full = mt_accounts_resolve_account_by_id($id);
           if (is_array($full)) {
-            if ($needPlatTxt && isset($full['platform']) && is_array($full['platform'])) {
+            // order (siempre)
+            $order = (string) ($full['order'] ?? $order);
+
+            // completar plataforma solo si faltaba
+            if ($platformRaw === '' && isset($full['platform']) && is_array($full['platform'])) {
               $platformRaw = (string) ($full['platform']['platform'] ?? $full['platform']['name'] ?? $platformRaw);
-              $platformKey = MT_Accounts::norm($platformRaw);
+              $platformKey = self::norm($platformRaw);
               $logo = $PLATFORM_LOGOS[$platformKey] ?? $logo;
             }
-            if ($needPlatId) {
+            if ($platAccountId === '') {
               $platAccountId = (string) ($full['platform']['accountId'] ?? $full['accountId'] ?? $platAccountId);
             }
           }
-        } catch (\Throwable $e) { /* silent */
+        } catch (\Throwable $e) { /* silencio */
         }
       }
 
       return [
         'id' => $id,
         'status' => (string) $status,
-        'badgeClass' => MT_Accounts::badge_class($status),
+        'badgeClass' => self::badge_class($status),
         'size' => $size,
         'name' => $name ?: 'Account',
         'platform' => $platformRaw,
         'logo' => $logo,
         'createdAt' => (string) ($acc['createdAt'] ?? ''),
+        // rules vienen del listado (sin byId)
         'mainProductId' => (string) ($rules['mainProductId'] ?? ''),
         'resetProductId' => (string) ($rules['resetProductId'] ?? ''),
         'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
         'accountId' => (string) $platAccountId,
-        'order' => $order,
+        'order' => $order, // ← ya relleno desde byId
         'programTypeText' => $ptypeLabel,
         'programTypeClass' => $ptypeClass,
       ];
     };
+
 
 
     // ===== 4) Construir payload UI (conservar estructura) =====
