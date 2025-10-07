@@ -41,7 +41,7 @@ $fmt_int = function ($v) {
   return ($v === '-' || $v === null || $v === '') ? '-' : number_format((int)$v);
 };
 $fmt_pct = function ($v) {
-  return ($v === '-' || $v === null || $v === '') ? '-' : (number_format((float)$v, 2) . '%');
+  return ($v === '-' ? '-' : mt_format_percent_compact($v));
 };
 $fmt_maxwl = function ($v) {
   $s = trim((string)$v);
