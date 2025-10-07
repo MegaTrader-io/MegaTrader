@@ -2160,6 +2160,10 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
   display: none !important;
 }
 
+.mt-user-profile-card__avatar-container > .text-14px-line-20px {
+    font-size: 24px !important;
+}
+
 /* ------- Addons ------- */
 
 .available-info .addons-item:hover {
@@ -4385,7 +4389,6 @@ textarea.mtfb-note {
 
 .mt-user-profile-card__avatar-container {
   position: relative;
-  margin-right: 20px;
 }
 
 .mt-user-profile-card__edit-icon {
@@ -4405,10 +4408,8 @@ textarea.mtfb-note {
 }
 
 .mt-user-profile-card__member-since {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 16px;
+    font-size: 16px;
+    text-align: right;
 }
 
 .mt-user-profile-card__details>*+* {

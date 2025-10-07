@@ -2138,6 +2138,86 @@ if (!function_exists('profile_url')) {
     }
 }
 
+if (!function_exists('mt_get_current_user_profile_data')) {
+    /**
+     * Get current logged-in user profile data for avatar templates.
+     *
+     * @return array|null
+     */
+    function mt_get_current_user_profile_data($avatar_size = 64): ?array
+    {
+        if (!is_user_logged_in()) {
+            return null;
+        }
+
+        $current_user = wp_get_current_user();
+
+        $user_id = $current_user->ID;
+
+        // Basic info
+        $first_name = get_user_meta($user_id, 'first_name', true);
+        $last_name = get_user_meta($user_id, 'last_name', true);
+        $user_email = $current_user->user_email;
+        $display_name = trim($first_name . ' ' . $last_name) ?: $current_user->display_name;
+
+        // Initials
+        $initials = '';
+        if ($first_name) $initials .= mb_substr($first_name, 0, 1);
+        if ($last_name) $initials .= mb_substr($last_name, 0, 1);
+        $initials = mb_strtoupper($initials);
+
+        // Gravatar
+        $avatar_url = get_avatar_url($user_id, [
+                'size' => $avatar_size,
+                'default' => '404',
+        ]);
+
+        $has_real_avatar = false;
+        try {
+            $response = wp_safe_remote_head($avatar_url, ['timeout' => 2]);
+            if (!is_wp_error($response)) {
+                $code = wp_remote_retrieve_response_code($response);
+                if (200 === $code) {
+                    $has_real_avatar = true;
+                }
+            }
+        } catch (Exception $e) {
+            error_log('Gravatar check failed: ' . $e->getMessage());
+        }
+
+        // Billing country (WooCommerce)
+        $billing_country_code = get_user_meta($user_id, 'billing_country', true);
+        $billing_country = '';
+        if (function_exists('WC')) {
+            $countries = WC()->countries->countries ?? [];
+            if (isset($countries[$billing_country_code])) {
+                $billing_country = $countries[$billing_country_code];
+            }
+        }
+
+        // Verified flag (from query var)
+        $is_verified = get_query_var('mt_is_verified', false);
+
+        // Membership date
+        $member_since = $current_user->user_registered
+                ? date_i18n('m/d/Y', strtotime($current_user->user_registered))
+                : '—';
+
+        return [
+                'display_name' => $display_name,
+                'initials' => $initials,
+                'user_email' => $user_email,
+                'avatar_url' => $avatar_url,
+                'avatar_size' => $avatar_size,
+                'has_real_avatar' => $has_real_avatar,
+                'billing_country' => $billing_country,
+                'member_since' => $member_since,
+                'is_verified' => (bool)$is_verified,
+        ];
+    }
+}
+
+
 // Redirige /my-account -> /my-account/overview/ (solo usuarios logueados)
 add_action('template_redirect', function () {
     if (is_admin()) return;
