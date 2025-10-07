@@ -93,7 +93,6 @@ function mt_start_veriff_verification()
 
 function mt_veriff_callback_handler(WP_REST_Request $request)
 {
-    $raw_body = file_get_contents('php://input');
     $body = $request->get_body();
     $headers = $request->get_headers();
 
@@ -107,11 +106,7 @@ function mt_veriff_callback_handler(WP_REST_Request $request)
     }
 
     $secret = VERIFF_WEBHOOK_SECRET;
-    $expected_signature = hash_hmac('sha256', $raw_body, $secret);
-
-print_r([
-    $signature, $expected_signature
-]);exit;
+    $expected_signature = hash_hmac('sha256', $body, $secret);
 
     // ✅ Comparación segura
     if (!hash_equals($expected_signature, $signature)) {
@@ -120,11 +115,30 @@ print_r([
 
     // ✅ Si pasa la validación, procesas normalmente
     $data = json_decode($body, true);
+
+    if (isset($data['code']) && $data['code']) {
+        $user_id = intval($data['vendorData'] ?? 0);
+        $code = sanitize_text_field($data['code']);
+        $id = sanitize_text_field($data['id']);
+        $value = $id . '|' . $code;
+
+        update_user_meta($user_id, 'veriff_id_code', $value);
+        
+        delete_user_meta($user_id, 'veriff_status');
+
+        return new WP_REST_Response(['success' => true], 200);
+    }
+
     $status = sanitize_text_field($data['verification']['status']);
     $user_id = intval($data['verification']['vendorData'] ?? 0);
 
+    $code = sanitize_text_field($data['verification']['code']);
+    $id = sanitize_text_field($data['verification']['id']);
+
+    $value = $id . '|' . $code;
+
+    update_user_meta($user_id, 'veriff_id_code', $value);
     update_user_meta($user_id, 'veriff_status', $status);
-    update_user_meta($user_id, 'veriff_updated_at', current_time('mysql'));
 
     return new WP_REST_Response(['success' => true], 200);
 }
