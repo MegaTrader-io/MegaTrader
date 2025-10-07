@@ -96,8 +96,7 @@ function mt_veriff_callback_handler(WP_REST_Request $request)
     $body = $request->get_body();
     $headers = $request->get_headers();
 
-    error_log('Veriff callback headers: ' . print_r($headers, true));
-    error_log('Veriff callback received: ' . print_r($body, true));
+    error_log('Veriff callback received: ' . $body);
 
     $signature = $headers['x_hmac_signature'][0] ?? null;
 
