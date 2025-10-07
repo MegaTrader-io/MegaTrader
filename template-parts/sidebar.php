@@ -57,13 +57,38 @@ $menu_links = [
         }
     }
 
-    function toggleMainMenuOverlay(){
+    function toggleMainMenuDrawer(){
         document.querySelector('.mt-sidebar-overlay')?.classList.toggle('show');
+    }
+
+    function closeMainMenuDrawer(){
+        document.querySelector('.mt-sidebar-overlay')?.classList.remove('show');
     }
 
     function updateDesktopContentVisibility(){
         document.querySelector('.mt-sidebar')?.classList[expanded ? 'remove' : 'add']('mt-sidebar_collapsed');
     }
+
+    function onViewportWide(callback) {
+        if (typeof callback !== 'function') return;
+
+        const mediaQuery = window.matchMedia('(min-width: 1200px)');
+
+        if (mediaQuery.matches) {
+            callback(mediaQuery);
+        }
+
+        const handler = (event) => {
+            if (event.matches) {
+            callback(event);
+            }
+        };
+
+        mediaQuery.addEventListener('change', handler);
+
+        return () => mediaQuery.removeEventListener('change', handler);
+    }
+
 
     function sidebarInit(){
 
@@ -77,9 +102,10 @@ $menu_links = [
         });
 
         document.addEventListener('MT_MENU_TOGGLE', function(e) {
-            console.log('MT_MENU_TOGGLE Event')
-            toggleMainMenuOverlay();
+            toggleMainMenuDrawer();
         });
+
+        onViewportWide(closeMainMenuDrawer);
     }
 
     document.addEventListener('DOMContentLoaded', sidebarInit);

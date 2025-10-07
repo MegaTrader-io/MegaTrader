@@ -222,6 +222,9 @@ body.admin-bar {
         justify-content: flex-end;
         gap: 16px;
     }
+    .mt-navbar.mt-navbar--my-account .mt-navbar__logo-wordmark {
+        width: 167px
+    }
 }
 @media (min-width: 1200px) {
     .mt-navbar.mt-navbar--my-account .mt-navbar__links {

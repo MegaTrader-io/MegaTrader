@@ -955,19 +955,15 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 /* DRAWER */
 
-.mt-sidebar-overlay {
-    --drawer-slide-time: .5s;
-}
-
 @media (max-width: 767.98px) {
     .mt-sidebar-overlay {
-        --drawer-slide-time: .3s;
+        --drawer-slide-animation-time: .3s;
     }
 }
 
 @media (min-width: 768px) {
     .mt-sidebar-overlay {
-        --drawer-slide-time: .5s;
+        --drawer-slide-animation-time: .5s;
     }
 }
 
@@ -979,14 +975,15 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     position: fixed;
     inset: 0 auto 0 -100%;
     z-index: var(--z-modal);
-
+    overflow-y: auto;
+    
     min-width: 320px;
     width: calc(100% - 40px);
     max-width: 500px;
     padding: 16px;
     background-color: #1E1E1E;
     
-    transition: left var(--drawer-slide-time) ease-out;
+    transition: left var(--drawer-slide-animation-time) ease-out;
 }
 
 .mt-sidebar-overlay.show .mt-sidebar-overlay__dialog {
@@ -999,7 +996,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     z-index: var(--z-backdrop);
     background: rgba(19, 18, 16, 0.90);
     opacity: 0;
-    transition: opacity .5s ease-out;
+    transition: opacity var(--drawer-slide-animation-time) ease-out;
 }
 
 .mt-sidebar-overlay.show .mt-sidebar-overlay__backdrop {
