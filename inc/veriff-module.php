@@ -93,20 +93,25 @@ function mt_start_veriff_verification()
 
 function mt_veriff_callback_handler(WP_REST_Request $request)
 {
+    $raw_body = file_get_contents('php://input');
     $body = $request->get_body();
     $headers = $request->get_headers();
 
     error_log('Veriff callback headers: ' . print_r($headers, true));
     error_log('Veriff callback received: ' . print_r($body, true));
 
-    $signature = $headers['x_signature'][0] ?? null;
+    $signature = $headers['x_hmac_signature'][0] ?? null;
 
     if (!$signature) {
         return new WP_REST_Response(['error' => 'Missing signature'], 400);
     }
 
     $secret = VERIFF_WEBHOOK_SECRET;
-    $expected_signature = hash_hmac('sha256', $body, $secret);
+    $expected_signature = hash_hmac('sha256', $raw_body, $secret);
+
+print_r([
+    $signature, $expected_signature
+]);exit;
 
     // ✅ Comparación segura
     if (!hash_equals($expected_signature, $signature)) {
