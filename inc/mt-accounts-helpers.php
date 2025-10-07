@@ -315,6 +315,38 @@ if (!function_exists('mt_is_evaluation')) {
   }
 }
 
+/* ==== Helper: detectar plan (Funded|Elite|Growth) desde el label ==== */
+
+if (!function_exists('mt_program_plan')) {
+  function mt_program_plan($programOrLabel, $default = '')
+  {
+    $label = is_array($programOrLabel)
+      ? (string) ($programOrLabel['label'] ?? $programOrLabel['description'] ?? '')
+      : (string) $programOrLabel;
+    $label = trim(preg_replace('/\s+/', ' ', $label));
+    if ($label === '')
+      return $default;
+
+    if (stripos($label, 'Funded') !== false)
+      return 'Funded';
+    if (stripos($label, 'Elite') !== false)
+      return 'Elite';
+    if (stripos($label, 'Growth') !== false)
+      return 'Growth';
+    return $default;
+  }
+}
+
+if (!function_exists('mt_program_rules_url')) {
+  function mt_program_rules_url($programOrLabel)
+  {
+    $plan = mt_program_plan($programOrLabel, '');
+    $map = Label::PLAN_RULES_URLS ?? [];
+    return $map[$plan] ?? '';
+  }
+}
+
+
 
 if (!function_exists('mt__get')) {
   function mt__get($arr, array $path, $default = null)

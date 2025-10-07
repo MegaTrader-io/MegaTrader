@@ -68,7 +68,8 @@ $minDays = (int) $performance['minTradingDays'];
 $maxLossEq = $performance['maxLossLimitEquityLevel'];
 $maxDailyLoss = $performance['maxDailyLossLimitPnLLevel'];
 $targetAmount = $performance['targetAmount'];
-$stage = mt_program_stage($performance['label'] ?? '');
+$plan = mt_program_plan($performance['label'] ?? '');
+$rulesUrl = mt_program_rules_url($performance['label'] ?? '');
 $isFunded = mt_is_funded($performance['label'] ?? '');
 $isEvaluation = mt_is_evaluation($performance['label'] ?? '');
 $profitTarget = $isFunded
@@ -326,10 +327,48 @@ if ($isFunded) {
                         <span
                             class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description']); ?>
                             <?php echo esc_html(mt_format_money_no_cents($maxLossEq)); ?></span>
-                        <a
-                            class="text-primary text-14px-line-20px fw-medium text-decoration-underline"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?></a>
+                        <?php if ($rulesUrl): ?>
+                            <a href="<?php echo esc_url($rulesUrl); ?>" target="_blank" rel="noopener"
+                                class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                            </a>
+                        <?php else: ?>
+                            <span class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                            </span>
+                        <?php endif; ?>
+
                     </div>
                 </div>
+
+                <?php if ($isFunded): ?>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="mt-icon <?php
+                        echo (is_numeric($balance) && is_numeric($maxLossEq))
+                            ? (((float) $balance < (float) $maxLossEq)
+                                ? 'mt-icon-error mt-icon_cancel'
+                                : 'mt-icon-success mt-icon_checkmark-solid'
+                            )
+                            : 'mt-icon-error mt-icon_cancel';
+                        ?>"></span>
+                        <div class="text-white text-base fw-medium">
+                            <span
+                                class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description']); ?>
+                                <?php echo esc_html(mt_format_money_no_cents($maxLossEq)); ?></span>
+                            <?php if ($rulesUrl): ?>
+                                <a href="<?php echo esc_url($rulesUrl); ?>" target="_blank" rel="noopener"
+                                    class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
+                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                                </a>
+                            <?php else: ?>
+                                <span class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
+                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                                </span>
+                            <?php endif; ?>
+
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

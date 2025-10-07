@@ -15,6 +15,13 @@ class Label
     public const STATUS_PENDING_ACTIVATION = 'PENDING_ACTIVATION';
     public const STATUS_RESET = 'RESET';
 
+    public const PLAN_RULES_URLS = [
+        'Funded' => 'https://help.megatrader.io/en/articles/11372568-funded-plan-rules-risk-parameters',
+        'Growth' => 'https://help.megatrader.io/en/articles/10753687-growth-plan-rules-risk-parameters',
+        'Elite' => 'https://help.megatrader.io/en/articles/10753681-elite-plan-rules-risk-parameters',
+    ];
+
+
     public const ACCOUNT_STATUS_MAP = [
         'ACTIVE' => self::STATUS_ACTIVE,
         'BREACHED' => self::STATUS_BREACHED,
@@ -222,7 +229,7 @@ class Label
         'passed_modal_body_subtitle' => "Your account is under compliance review. Once approved, you’ll be able to pay the activation fee and unlock your funded account.",
         'passed_modal_button' => 'Activation Pending',
 
-        'passed_modal_note_pending' => 'Activation will open once review is complete.', 
+        'passed_modal_note_pending' => 'Activation will open once review is complete.',
         'passed_modal_note_pending_no_button' => 'Automatic Activation After Review',
     ];
 

@@ -956,7 +956,19 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 /* DRAWER */
 
 .mt-sidebar-overlay {
-    /* display: none; */
+    --drawer-slide-time: .5s;
+}
+
+@media (max-width: 767.98px) {
+    .mt-sidebar-overlay {
+        --drawer-slide-time: .3s;
+    }
+}
+
+@media (min-width: 768px) {
+    .mt-sidebar-overlay {
+        --drawer-slide-time: .5s;
+    }
 }
 
 .mt-sidebar-overlay.show {
@@ -974,7 +986,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     padding: 16px;
     background-color: #1E1E1E;
     
-    transition: left .5s ease-out;
+    transition: left var(--drawer-slide-time) ease-out;
 }
 
 .mt-sidebar-overlay.show .mt-sidebar-overlay__dialog {

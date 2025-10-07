@@ -134,7 +134,7 @@ $is_overlay = $args['is_overlay'] ?? false;
     <!-- DRAWER -->
     <div class="mt-sidebar-overlay">
         <div class="mt-sidebar-overlay__dialog">
-            <div class="mt-sidebar-overlay__content d-flex flex-column h-100 gap-32 overflow-hidden">
+            <div class="mt-sidebar-overlay__content d-flex flex-column gap-32 overflow-hidden">
                 <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
                     <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
                         <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="60" height="60" loading="eager">
