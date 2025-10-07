@@ -123,11 +123,7 @@ function mt_veriff_callback_handler(WP_REST_Request $request)
         $value = $id . '|' . $code;
 
         update_user_meta($user_id, 'veriff_id_code', $value);
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 7e4c044 (wip)
         delete_user_meta($user_id, 'veriff_status');
 
         return new WP_REST_Response(['success' => true], 200);
