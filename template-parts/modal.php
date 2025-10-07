@@ -19,7 +19,7 @@
 
 $map = [
 	'warning' => [
-		'imageSrc'   => '/wp-content/uploads/2025/07/warning.svg',
+		'imageSrc'   => '/wp-content/themes/megatrader-addons/assets/img/warning.svg',
 		'imageAlt'   => 'Warning icon',
 		'imageClass' => 'modal-image-warning',
 	]
