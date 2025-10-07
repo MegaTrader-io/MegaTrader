@@ -49,11 +49,13 @@
 
   /* ========= Progress genérico ========= */
   function initProgressBars(root = document) {
-    $$(".mt-progress-bar", root).forEach((el) => {
-      const v = clamp(el.dataset.progress, 0, 100);
-      el.style.setProperty("--mt-progress-value", v + "%");
-    });
-  }
+  $$(".mt-progress-bar", root).forEach((el) => {
+    if (!el.hasAttribute("data-progress")) return; 
+    const v = clamp(el.dataset.progress, 0, 100);
+    el.style.setProperty("--mt-progress-value", v + "%");
+  });
+}
+
 
   /* ========= Tabs + carrusel + gradientes ========= */
   function setupTabsCarousel(root) {

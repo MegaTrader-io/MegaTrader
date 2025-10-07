@@ -192,7 +192,7 @@ $is_overlay = $args['is_overlay'] ?? false;
                 </div>
             </div>
         </div>
-        <div class="mt-sidebar-overlay__backdrop bg-131210-90 position-fixed top-0 end-0 bottom-0 start-0 z-backdrop"
+        <div class="mt-sidebar-overlay__backdrop"
              title="Close Menu"
              onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
         </div>

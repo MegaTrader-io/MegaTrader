@@ -72,8 +72,8 @@ $stage = mt_program_stage($performance['label'] ?? '');
 $isFunded = mt_is_funded($performance['label'] ?? '');
 $isEvaluation = mt_is_evaluation($performance['label'] ?? '');
 $profitTarget = $isFunded
-  ? ($performance['targetAmount'] ?? null)
-  : ($performance['target'] ?? null);
+    ? ($performance['targetAmount'] ?? null)
+    : ($performance['target'] ?? null);
 
 
 /* ========= Derivados (para barras / chips) ========= */
@@ -102,9 +102,22 @@ $targetNum = (is_numeric($profitTarget) && $profitTarget > 0) ? (float) $profitT
 
 $profitFillPct = 0; // 0..100, nunca null
 if ($profitNum !== null && $targetNum !== null) {
-    // si profit es negativo o 0, se queda en 0%
     $profitFillPct = max(0, min(100, (max(0, $profitNum) / $targetNum) * 100));
 }
+// === Days Trade(compute once + guard) ===
+$hasDays = is_numeric($minDays) && (int) $minDays > 0;
+
+if ($hasDays) {
+    $daysFillPctInt = (int) round(
+        min(100, max(0, ((int) $daysTraded / (float) $minDays) * 100))
+    );
+    $daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays);
+    $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
+}
+
+$profitFillPctInt = (int) round((float) $profitFillPct);
+
+
 
 
 /* Formatted variables */
@@ -122,7 +135,6 @@ $profitText = mt_format_signed_money($profit);
 
 $profitIconClass = mt_value_compare_icon_classes($profit, $profitTarget);
 
-$daysFillPct = ($minDays > 0) ? max(0, min(100, ($daysTraded / $minDays) * 100)) : 0;
 $daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays);
 $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
 
@@ -260,37 +272,41 @@ if ($isFunded) {
                             /
                             <?php echo esc_html(mt_format_money($profitTarget)); ?>
 
-                            <!-- barra de progreso que ya tienes, si aplica -->
                             <div class="mt-progress-bar mt-progress-bar--md mt-progress-bar--success" role="progressbar"
-                                aria-valuemin="0" aria-valuemax="100"
-                                aria-valuenow="<?php echo (int) round($profitFillPct); ?>"
-                                style="--mt-progress-value: <?php echo esc_attr($profitFillPct); ?>%;">
+                                aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo $profitFillPctInt; ?>"
+                                data-progress="<?php echo $profitFillPctInt; ?>"
+                                style="--mt-progress-value: <?php echo $profitFillPctInt; ?>%;">
                                 <span class="mt-progress-bar__fill"></span>
                             </div>
+
                         </div>
                     </div>
 
-                    <div class="mt-card__item">
-                        <div class="mt-card__item-text d-flex gap-1 align-items-center">
-                            <span class="mt-icon <?php echo esc_attr($daysIconClass); ?>"></span>
-                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_days_traded']); ?>
-                        </div>
+                    <?php if ($hasDays): ?>
+                        <div class="mt-card__item">
+                            <div class="mt-card__item-text d-flex gap-1 align-items-center">
+                                <span class="mt-icon <?php echo esc_attr($daysIconClass); ?>"></span>
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_days_traded']); ?>
+                            </div>
 
-                        <div class="mt-card__item-value text-white">
-                            <span class="<?php echo esc_attr($daysColorClass); ?>">
-                                <?php echo esc_html($daysTraded); ?>
-                            </span>
-                            /
-                            <?php echo esc_html($minDays); ?>
+                            <div class="mt-card__item-value text-white">
+                                <span class="<?php echo esc_attr($daysColorClass); ?>">
+                                    <?php echo esc_html($daysTraded); ?>
+                                </span>
+                                /
+                                <?php echo esc_html($minDays); ?>
 
-                            <div class="mt-progress-bar mt-progress-bar--md mt-progress-bar--success" role="progressbar"
-                                aria-valuemin="0" aria-valuemax="100"
-                                aria-valuenow="<?php echo (int) round($daysFillPct); ?>"
-                                style="--mt-progress-value: <?php echo esc_attr($daysFillPct); ?>%;">
-                                <span class="mt-progress-bar__fill"></span>
+                                <div class="mt-progress-bar mt-progress-bar--md mt-progress-bar--success" role="progressbar"
+                                    aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo $daysFillPctInt; ?>"
+                                    data-progress="<?php echo $daysFillPctInt; ?>"
+                                    style="--mt-progress-value: <?php echo $daysFillPctInt; ?>%;">
+                                    <span class="mt-progress-bar__fill"></span>
+                                </div>
+
                             </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
+
                 </div>
             </div>
             <div class="d-flex flex-column gap-3">
