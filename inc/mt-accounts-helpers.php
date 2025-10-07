@@ -394,7 +394,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'label' => $program['label'] ?? $program['description'] ?? mt__get($metrics, ['label']),
       'consistency' => mt__get($account, ['rules', 'consistency']),
       'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
-       'consistencyCurrentBestWorstDayProfit' => $metrics['consistencyCurrentBestWorstDayProfit'] ?? null,
+      'consistencyCurrentBestWorstDayProfit' => $metrics['consistencyCurrentBestWorstDayProfit'] ?? null,
 
     ];
     foreach ($payload as $k => $v) {
@@ -696,6 +696,26 @@ if (!function_exists('mt_format_percent')) {
     return $sign . $formatted;
   }
 }
+
+if (!function_exists('mt_format_percent_compact')) {
+  /**
+   * Imprime porcentaje sin signo, sin separador de miles y recortando ceros:
+   * 20     -> "20%"
+   * 20.50  -> "20.5%"
+   * 20.00  -> "20%"
+   * -3.40  -> "-3.4%"
+   */
+  function mt_format_percent_compact($value, $empty = '—')
+  {
+    if ($value === null || $value === '' || !is_numeric($value))
+      return $empty;
+
+    $txt = number_format((float) $value, 2, '.', ''); // sin miles
+    $txt = rtrim(rtrim($txt, '0'), '.');              // quita ceros y el punto
+    return $txt . '%';
+  }
+}
+
 
 // Color para cualquier valor numérico: neg -> text-error, pos -> text-success, cero/NaN -> text-white
 if (!function_exists('mt_value_color_class')) {

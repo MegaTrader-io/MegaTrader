@@ -53,6 +53,7 @@ $defaults = [
     'maxDailyLossLimitPnLLevel' => null,
     'label' => '',
     'consistency' => null,
+    'consistencyCurrentBestWorstDayProfit' => null,
     'targetAmount' => null,
 ];
 $performance = array_merge($defaults, (array) $performance);
@@ -75,6 +76,9 @@ $isEvaluation = mt_is_evaluation($performance['label'] ?? '');
 $profitTarget = $isFunded
     ? ($performance['targetAmount'] ?? null)
     : ($performance['target'] ?? null);
+$consistencyBestWorst = $performance['consistencyCurrentBestWorstDayProfit'] ?? null;
+$consistency = $performance['consistency'] ?? null;
+$consistencyUrl = Label::PLAN_RULES_URLS['Consistency'] ?? '';
 
 
 /* ========= Derivados (para barras / chips) ========= */
@@ -152,6 +156,7 @@ if ($isFunded) {
     $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_evaluation'] ?? '';
     $titleTarget = Label::META_ACCOUNT_OVERVIEW['performance_profit_target'] ?? '';
 }
+
 
 
 
@@ -330,11 +335,11 @@ if ($isFunded) {
                         <?php if ($rulesUrl): ?>
                             <a href="<?php echo esc_url($rulesUrl); ?>" target="_blank" rel="noopener"
                                 class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
-                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_link_text']); ?>
                             </a>
                         <?php else: ?>
                             <span class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
-                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_link_text']); ?>
                             </span>
                         <?php endif; ?>
 
@@ -344,8 +349,8 @@ if ($isFunded) {
                 <?php if ($isFunded): ?>
                     <div class="d-flex align-items-center gap-2">
                         <span class="mt-icon <?php
-                        echo (is_numeric($balance) && is_numeric($maxLossEq))
-                            ? (((float) $balance < (float) $maxLossEq)
+                        echo (is_numeric($consistency) && is_numeric($consistencyBestWorst))
+                            ? (((float) $consistency <= (float) $consistencyBestWorst)
                                 ? 'mt-icon-error mt-icon_cancel'
                                 : 'mt-icon-success mt-icon_checkmark-solid'
                             )
@@ -353,16 +358,17 @@ if ($isFunded) {
                         ?>"></span>
                         <div class="text-white text-base fw-medium">
                             <span
-                                class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description']); ?>
-                                <?php echo esc_html(mt_format_money_no_cents($maxLossEq)); ?></span>
-                            <?php if ($rulesUrl): ?>
-                                <a href="<?php echo esc_url($rulesUrl); ?>" target="_blank" rel="noopener"
+                                class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description_funded_start']); ?>
+                                <?php echo esc_html(mt_format_percent_compact($consistency)); ?>
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description_funded_ended']); ?></span>
+                            <?php if ($consistencyUrl): ?>
+                                <a href="<?php echo esc_url($consistencyUrl); ?>" target="_blank" rel="noopener"
                                     class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
-                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_link_text']); ?>
                                 </a>
                             <?php else: ?>
                                 <span class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
-                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_max_loss_limit']); ?>
+                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_link_text']); ?>
                                 </span>
                             <?php endif; ?>
 
