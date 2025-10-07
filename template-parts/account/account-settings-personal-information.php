@@ -17,6 +17,9 @@ if (!$billing_country) {
     $billing_country = 'US';
 }
 
+$current_user = wp_get_current_user();
+$user_email = $current_user->user_email;
+
 $valid_states = WC()->countries->get_states($billing_country);
 
 ?>
@@ -62,7 +65,7 @@ $valid_states = WC()->countries->get_states($billing_country);
                 <label class="mb-1" for="billing_email"><?php _e('Email', 'woocommerce'); ?></label>
                 <input type="email" readonly name="billing_email" id="billing_email"
                        class="form-control <?= MT_WC_Error::has_error('billing_email') ? 'is-invalid' : '' ?>"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_email', true)); ?>"/>
+                       value="<?php echo $user_email; ?>"/>
 
                 <?php if (MT_WC_Error::has_error('billing_email')): ?>
                     <span id="error-billing_email"
