@@ -133,59 +133,61 @@ $is_overlay = $args['is_overlay'] ?? false;
 <?php if($is_overlay): ?>
     <!-- OVERLAY -->
     <div class="mt-sidebar-overlay d-none">
-        <div class="mt-sidebar-overlay__content position-fixed top-0 bottom-0 start-0 d-flex flex-column gap-32 overflow-hidden p-3 bg-1e1e1e z-modal">
-            <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
-                <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
-                    <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="60" height="60" loading="eager">
-                    <div class="mt-sidebar__logo-text">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg" alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
-                    </div>
-                </a>
-                <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
-                    <i class="mt-icon mt-icon-white mt-icon_caret-left-solid"></i>
-                </a>
+        <div class="mt-sidebar-overlay__dialog position-fixed top-0 bottom-0 start-0 p-3 bg-1e1e1e z-modal">
+            <div class="mt-sidebar-overlay__content d-flex flex-column gap-32 overflow-hidden">
+                <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
+                    <a href="<?php echo esc_url(home_url()); ?>" class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
+                        <img class="mt-sidebar__logo-icon" src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg" alt="MegaTrader"width="60" height="60" loading="eager">
+                        <div class="mt-sidebar__logo-text">
+                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg" alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
+                        </div>
+                    </a>
+                    <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
+                        <i class="mt-icon mt-icon-white mt-icon_caret-left-solid"></i>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="mt-card mt-card-dark h-auto">
-                <?php get_template_part('template-parts/my-profile'); ?>
-            </div>
+                <div class="mt-card mt-card-dark h-auto">
+                    <?php get_template_part('template-parts/my-profile'); ?>
+                </div>
 
-            <div class="mt-sidebar__menu flex-fill overflow-y-auto d-flex flex-column gap-32"">
-                <div class="mt-sidebar__menu__group">
-                    <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
-                    <div class="mt-sidebar__menu__group__options">
-                        <!-- Desktop -->
-                        <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                            <?php foreach ($menu_links as $item) {
-                                echo render_menu_link($item);
-                            }
-                            ?>
+                <div class="mt-sidebar__menu flex-fill overflow-y-auto d-flex flex-column gap-32"">
+                    <div class="mt-sidebar__menu__group">
+                        <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
+                        <div class="mt-sidebar__menu__group__options">
+                            <!-- Desktop -->
+                            <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
+                                <?php foreach ($menu_links as $item) {
+                                    echo render_menu_link($item);
+                                }
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="mt-card mt-card_bg-layer mt-card_radius-small gap-3 h-auto">
-                <div class="text-white text-size-20 fw-medium text-uppercase">
-                    <?php echo esc_html(Label::SIDEBAR_META['plan_title']); ?>
+                <div class="mt-card mt-card_bg-layer mt-card_radius-small gap-3 h-auto">
+                    <div class="text-white text-size-20 fw-medium text-uppercase">
+                        <?php echo esc_html(Label::SIDEBAR_META['plan_title']); ?>
+                    </div>
+                    <div class="text-16px fw-medium text-a8a29e text-wrap">
+                        <?php echo esc_html(Label::SIDEBAR_META['plan_description']); ?>
+                    </div>
+                    <div class="btn-challenge">
+                        <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
+                            <?php echo esc_html(Label::SIDEBAR_META['plan_button']); ?>
+                            <i class="mt-icon mt-icon_caret-right"></i>
+                        </a>
+                    </div>
+                    <script>
+                        document.querySelector('.btn-challenge a').addEventListener('click', function(){
+                            localStorage.removeItem('content-crypto-storage');
+                            localStorage.removeItem('content-forex-storage');
+                            localStorage.removeItem('content-futures-storage');
+                        });
+                    </script>
                 </div>
-                <div class="text-16px fw-medium text-a8a29e text-wrap">
-                    <?php echo esc_html(Label::SIDEBAR_META['plan_description']); ?>
-                </div>
-                <div class="btn-challenge">
-                    <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
-                        <?php echo esc_html(Label::SIDEBAR_META['plan_button']); ?>
-                        <i class="mt-icon mt-icon_caret-right"></i>
-                    </a>
-                </div>
-                <script>
-                    document.querySelector('.btn-challenge a').addEventListener('click', function(){
-                        localStorage.removeItem('content-crypto-storage');
-                        localStorage.removeItem('content-forex-storage');
-                        localStorage.removeItem('content-futures-storage');
-                    });
-                </script>
             </div>
         </div>
         <div class="mt-sidebar-overlay__backdrop bg-131210-90 position-fixed top-0 end-0 bottom-0 start-0 z-backdrop"></div>

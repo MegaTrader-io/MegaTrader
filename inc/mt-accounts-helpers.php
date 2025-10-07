@@ -305,6 +305,8 @@ if (!function_exists('mt_accounts_build_performance')) {
       'maxLossLimitEquityLevel' => $metrics['maxLossLimitEquityLevel'] ?? $metrics['maxLossLimit'] ?? null,
       'target' => $program['target'] ?? $program['profitTarget'] ?? mt__get($metrics, ['target']),
       'maxDailyLossLimitPnLLevel' => $metrics['maxDailyLossLimitPnLLevel'] ?? null,
+      'consistency'               => mt__get($account, ['rules', 'consistency']),
+      'targetAmount'              => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
 
     ];
     foreach ($payload as $k => $v) {
