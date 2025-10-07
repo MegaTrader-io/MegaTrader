@@ -347,7 +347,7 @@ if ($isFunded) {
                 </div>
 
                 <?php if ($isFunded): ?>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-2 border-top-gray pt-3">
                         <span class="mt-icon <?php
                         echo (is_numeric($consistency) && is_numeric($consistencyBestWorst))
                             ? (((float) $consistency <= (float) $consistencyBestWorst)
