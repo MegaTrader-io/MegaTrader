@@ -19,7 +19,7 @@ set_query_var('mt_is_verified', mt_is_user_verified());
         </div>
         <div class="mt-page__main">
             <div class="account-settings">
-                <div class="section-header mb-4">
+                <div class="section-header mb-32">
                     <div class="text-white text-size-20 fw-medium text-uppercase">ACCOUNT SETTINGS</div>
                     <span class="text-a8a29e text-14px-line-20px fw-medium">Manage your personal information, security and verification settings.</span>
                 </div>
