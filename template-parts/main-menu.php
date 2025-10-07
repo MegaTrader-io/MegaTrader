@@ -142,8 +142,10 @@ $is_overlay = $args['is_overlay'] ?? false;
                             <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg" alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager"/>
                         </div>
                     </a>
-                    <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_SIDEBAR_TOGGLE', { bubbles:true }));">
-                        <i class="mt-icon mt-icon-white mt-icon_caret-left-solid"></i>
+                    <a  id="mt-sidebar-overlay__close-btn" class="p-2" href="javascript:void(0);"
+                        title="Close Menu"
+                        onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
+                        <i class="mt-icon mt-icon-white mt-icon_close"></i>
                     </a>
 
                 </div>
@@ -190,7 +192,10 @@ $is_overlay = $args['is_overlay'] ?? false;
                 </div>
             </div>
         </div>
-        <div class="mt-sidebar-overlay__backdrop bg-131210-90 position-fixed top-0 end-0 bottom-0 start-0 z-backdrop"></div>
+        <div class="mt-sidebar-overlay__backdrop bg-131210-90 position-fixed top-0 end-0 bottom-0 start-0 z-backdrop"
+             title="Close Menu"
+             onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
+        </div>
     </div>
 
 <?php else: ?>
