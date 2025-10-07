@@ -35,9 +35,6 @@ async function checkVerificationStatus() {
         // showMessage('Checking verification status...', 'info');
         $.preloader.show();
 
-        // Esperar breve para asegurar que el webhook llegó
-        await new Promise((r) => setTimeout(r, 2000));
-
         const response = await fetch(wpAjax.ajaxUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -49,11 +46,12 @@ async function checkVerificationStatus() {
 
         const {verified, status} = result.data;
 
+        $.preloader.hide();
+
         if (verified) {
             // showMessage('✅ Your identity has been verified successfully!', 'success');
             changeIdentityToVerified();
         } else {
-            $.preloader.hide();
             console.info(`Verification status: ${status}`);
             // showMessage(`Verification status: ${status}`, 'warning');
         }

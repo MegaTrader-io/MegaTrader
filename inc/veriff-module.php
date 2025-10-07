@@ -21,11 +21,9 @@ function mt_get_veriff_status()
 
     $user = wp_get_current_user();
     $status = get_user_meta($user->ID, 'veriff_status', true);
-    $updated_at = get_user_meta($user->ID, 'veriff_updated_at', true);
 
     wp_send_json_success([
         'status' => $status,
-        'updated_at' => $updated_at,
         'verified' => ($status === 'approved'),
     ]);
 }
