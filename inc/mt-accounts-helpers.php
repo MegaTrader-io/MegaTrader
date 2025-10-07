@@ -394,6 +394,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'label' => $program['label'] ?? $program['description'] ?? mt__get($metrics, ['label']),
       'consistency' => mt__get($account, ['rules', 'consistency']),
       'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
+       'consistencyCurrentBestWorstDayProfit' => $metrics['consistencyCurrentBestWorstDayProfit'] ?? null,
 
     ];
     foreach ($payload as $k => $v) {

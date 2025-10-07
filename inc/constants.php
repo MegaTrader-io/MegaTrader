@@ -19,6 +19,7 @@ class Label
         'Funded' => 'https://help.megatrader.io/en/articles/11372568-funded-plan-rules-risk-parameters',
         'Growth' => 'https://help.megatrader.io/en/articles/10753687-growth-plan-rules-risk-parameters',
         'Elite' => 'https://help.megatrader.io/en/articles/10753681-elite-plan-rules-risk-parameters',
+        'Consistency' => 'https://help.megatrader.io/en/articles/10753780-consistency-rule-for-payouts',
     ];
 
 
@@ -194,6 +195,8 @@ class Label
         "performance_days_traded" => "Days Traded",
         "performance_rules" => "Rules",
         "performance_rules_description" => "Keep your Account Balance above",
+        "performance_rules_description_funded_start" => "No day may exceed",
+        "performance_rules_description_funded_ended" => "of total profits.",
         "performance_max_loss_limit" => "Maximum Loss Limit",
         "performance_dll_tooltip_title" => "Daily Loss Limit (DLL)",
         "performance_dll_tooltip_description" => "Reaching the DLL pauses trading for the day. It’s removed once a profit milestone is met.",
