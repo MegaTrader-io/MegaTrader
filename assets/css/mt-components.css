@@ -953,6 +953,49 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
   }
 }
 
+/* DRAWER */
+
+.mt-sidebar-overlay {
+    display: none;
+}
+
+.mt-sidebar-overlay.show {
+    display: block;
+}
+
+.mt-sidebar-overlay .mt-sidebar-overlay__dialog {
+    position: fixed;
+    inset: 0 auto 0 -100%;
+    padding: 16px;
+    width: 500px;
+    background-color: #1E1E1E;
+    z-index: var(--z-modal);
+    transition: left .5s ease-out;
+}
+
+.mt-sidebar-overlay.show .mt-sidebar-overlay__dialog {
+    left: 0;
+    padding: 16px;
+    width: 500px;
+    background-color: #1E1E1E;
+    z-index: var(--z-modal);
+}
+
+.mt-sidebar-overlay .mt-sidebar-overlay__backdrop {
+    position: fixed;
+    inset: 0 0 0 -100%;
+    z-index: var(--z-backdrop);
+    background: rgba(19, 18, 16, 0.90);
+    opacity: 0;
+    left: -100%;
+    transition: opacity .5s ease-out;
+}
+
+.mt-sidebar-overlay.show .mt-sidebar-overlay__backdrop {
+    left: 0;
+    opacity: 100;
+}
+
 /* Tooltip base */
 .mt-tooltip {
     position: relative;

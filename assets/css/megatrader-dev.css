@@ -431,6 +431,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   z-index: var(--z-loader);
 }
 
+.sticky-bottom {
+  z-index: var(--z-sticky);
+}
+
 /* ----- CUSTOM WIDHT------ */
 
 .w-0 {

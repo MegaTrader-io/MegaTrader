@@ -131,63 +131,18 @@ $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyL
 /* Title Right Column */
 if ($isFunded) {
     $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_funded'] ?? '';
+    $titleTarget = Label::META_ACCOUNT_OVERVIEW['performance_payout_target'] ?? '';
 } elseif ($isEvaluation) {
     $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_evaluation'] ?? '';
+    $titleTarget = Label::META_ACCOUNT_OVERVIEW['performance_profit_target'] ?? '';
 } else {
     $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_evaluation'] ?? '';
+    $titleTarget = Label::META_ACCOUNT_OVERVIEW['performance_profit_target'] ?? '';
 }
 
 
 
 ?>
-
-<?php
-/* === DEBUG VISUAL (activar con ?mt_debug_perf=1 o si eres admin) === */
-$__mt_debug_perf = true;
-
-if ($__mt_debug_perf):
-  $now = function_exists('current_time') ? current_time('mysql') : date('Y-m-d H:i:s');
-  $rawTargetAmount = $performance['targetAmount'] ?? null;
-  $rawTarget       = $performance['target'] ?? null;
-?>
-  <div class="position-fixed bottom-0 end-0 m-3 p-3 rounded-2 bg-dark text-white"
-       style="max-width: 420px; z-index: 9999; opacity:.95">
-    <div class="fw-bold mb-2">Account Performance · Debug</div>
-    <div class="small text-a8a29e mb-2">Rendered: <?php echo esc_html($now); ?></div>
-
-    <div class="small"><b>AccountId:</b> <?php echo esc_html($meta['accountId'] ?? ''); ?></div>
-    <div class="small"><b>Label:</b> <?php echo esc_html($performance['label'] ?? ''); ?></div>
-    <div class="small"><b>Stage:</b> <?php echo esc_html($stage); ?></div>
-    <div class="small"><b>isFunded:</b> <?php echo $isFunded ? 'true' : 'false'; ?></div>
-    <div class="small"><b>isEvaluation:</b> <?php echo $isEvaluation ? 'true' : 'false'; ?></div>
-
-    <hr class="my-2" />
-
-    <div class="small"><b>targetAmount (raw):</b>
-      <?php echo esc_html(is_scalar($rawTargetAmount) ? (string)$rawTargetAmount : var_export($rawTargetAmount, true)); ?>
-    </div>
-    <div class="small"><b>targetAmount (fmt):</b>
-      <?php echo esc_html(mt_format_money($rawTargetAmount)); ?>
-    </div>
-
-    <div class="small mt-1"><b>target (raw):</b>
-      <?php echo esc_html(is_scalar($rawTarget) ? (string)$rawTarget : var_export($rawTarget, true)); ?>
-    </div>
-    <div class="small"><b>target (fmt):</b>
-      <?php echo esc_html(mt_format_money($rawTarget)); ?>
-    </div>
-
-    <hr class="my-2" />
-
-    <div class="small"><b>→ profitTarget usado:</b>
-      <?php echo esc_html(mt_format_money($profitTarget)); ?>
-    </div>
-    <div class="small"><b>currentProfit:</b>
-      <?php echo esc_html(mt_format_money($profit)); ?>
-    </div>
-    <div class="small"><b>progress %:</b> <?php echo (int) round($profitFillPct); ?>%</div>
-  </div>
-<?php endif; ?>
 
 
 <?php if ($has_data): ?>
@@ -296,7 +251,7 @@ if ($__mt_debug_perf):
                     <div class="mt-card__item">
                         <div class="mt-card__item-text d-flex gap-1 align-items-center">
                             <span class="mt-icon <?php echo esc_attr($profitIconClass); ?>"></span>
-                            <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_profit_target']); ?>
+                            <?php echo esc_html($titleTarget); ?>
                         </div>
                         <div class="mt-card__item-value text-white">
                             <span class="<?php echo esc_attr($profitColorClass); ?>">
