@@ -88,7 +88,7 @@ class MT_Accounts
       $accounts = [$accounts];
     }
 
-   
+
     // Si viene asociativo (keyed por id), conviértelo a lista
     if (!empty($accounts) && array_keys($accounts) !== range(0, count($accounts) - 1)) {
       $accounts = array_values($accounts);
@@ -262,6 +262,60 @@ if (!function_exists('mt_accounts_find_active_account')) {
   }
 }
 
+/* ==== Helper: obtener etapa del programa (Funded|Evaluation) ==== */
+if (!function_exists('mt_program_stage')) {
+  /**
+   * @param array|string $programOrLabel  
+   * @param string $default 
+   * @return string 'Funded' | 'Evaluation' | '' (o $default)
+   */
+  function mt_program_stage($programOrLabel, $default = '')
+  {
+    $label = '';
+    if (is_array($programOrLabel)) {
+      $label = (string) ($programOrLabel['label'] ?? $programOrLabel['description'] ?? '');
+    } else {
+      $label = (string) $programOrLabel;
+    }
+    $label = trim(preg_replace('/\s+/', ' ', $label));
+
+    if ($label === '')
+      return $default;
+
+    // 1) Preferimos la última sección separada por '|'
+    $parts = array_map('trim', explode('|', $label));
+    $last = end($parts);
+    $key = strtolower(preg_replace('/[^a-z]/i', '', $last)); // deja solo letras
+
+    if ($key === 'funded')
+      return 'Funded';
+    if ($key === 'evaluation')
+      return 'Evaluation';
+
+    // 2) Fallback: buscar en todo el label
+    if (stripos($label, 'Funded') !== false)
+      return 'Funded';
+    if (stripos($label, 'Evaluation') !== false)
+      return 'Evaluation';
+
+    return $default;
+  }
+}
+
+if (!function_exists('mt_is_funded')) {
+  function mt_is_funded($programOrLabel)
+  {
+    return mt_program_stage($programOrLabel) === 'Funded';
+  }
+}
+if (!function_exists('mt_is_evaluation')) {
+  function mt_is_evaluation($programOrLabel)
+  {
+    return mt_program_stage($programOrLabel) === 'Evaluation';
+  }
+}
+
+
 if (!function_exists('mt__get')) {
   function mt__get($arr, array $path, $default = null)
   {
@@ -305,8 +359,9 @@ if (!function_exists('mt_accounts_build_performance')) {
       'maxLossLimitEquityLevel' => $metrics['maxLossLimitEquityLevel'] ?? $metrics['maxLossLimit'] ?? null,
       'target' => $program['target'] ?? $program['profitTarget'] ?? mt__get($metrics, ['target']),
       'maxDailyLossLimitPnLLevel' => $metrics['maxDailyLossLimitPnLLevel'] ?? null,
-      'consistency'               => mt__get($account, ['rules', 'consistency']),
-      'targetAmount'              => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
+      'label' => $program['label'] ?? $program['description'] ?? mt__get($metrics, ['label']),
+      'consistency' => mt__get($account, ['rules', 'consistency']),
+      'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
 
     ];
     foreach ($payload as $k => $v) {
