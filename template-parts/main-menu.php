@@ -55,14 +55,13 @@ $menu_links = [
         'href' => '/my-account/profile/',
     ],
     [
-        'class' => $mt_is_active('profile', 'active'),
         'text' => 'HELP CENTER',
         'icon' => 'mt-icon_help',
         'href' => 'https://help.megatrader.io/en/',
         'target' => '_blank'
     ],
     [
-        'class' => 'btn-logout ' . $mt_is_active('profile', 'active'),
+        'class' => 'btn-logout ',
         'text' => 'LOGOUT',
         'icon' => 'mt-icon_logout',
         'href' => add_query_arg('time', time(), wp_logout_url()),
