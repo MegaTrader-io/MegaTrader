@@ -48,7 +48,7 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseOne" class="toggle-panel__content collapse"
+                        <div id="collapseOne" class="toggle-panel__content collapse show"
                              data-bs-parent="#accordionExample">
                             <div class="toggle-panel__body">
                                 <?php get_template_part("template-parts/account/account-settings-personal-information"); ?>
@@ -93,7 +93,7 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseTwo" class="toggle-panel__content collapse show"
+                        <div id="collapseTwo" class="toggle-panel__content collapse"
                              data-bs-parent="#accordionExample">
                             <div class="toggle-panel__body">
                                 <?php get_template_part("template-parts/account/account-settings-verification"); ?>
