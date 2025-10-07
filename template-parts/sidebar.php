@@ -59,7 +59,7 @@ $menu_links = [
 
     function toggleMainMenuOverlay(){
         const hideClass = 'd-none';
-        const overlay = document.querySelector('.mt-sidebar__container--overlay');
+        const overlay = document.querySelector('.mt-sidebar-overlay');
         overlay.classList.toggle(hideClass);
     }
 
