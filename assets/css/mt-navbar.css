@@ -169,6 +169,10 @@ body.admin-bar {
     display: flex;
 }
 
+.mt-navbar__account .mt-navbar__logo-text {
+    display: block;
+}
+
 .mt-navbar__account .icon-btn {
     padding: 12px;
     border-radius: 12px;

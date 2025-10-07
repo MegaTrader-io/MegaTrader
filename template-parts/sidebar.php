@@ -61,6 +61,12 @@ $menu_links = [
         }
     }
 
+    function toggleMainMenuOverlay(){
+        const hideClass = 'd-none';
+        const overlay = document.querySelector('.mt-sidebar__container--overlay');
+        overlay.classList.toggle(hideClass);
+    }
+
     function updateDesktopContentVisibility(){
         document.querySelector('.mt-sidebar')?.classList[expanded ? 'remove' : 'add']('mt-sidebar_collapsed');
     }
@@ -74,6 +80,10 @@ $menu_links = [
             expanded = !expanded;
 
             updateDesktopContentVisibility(expanded);
+        });
+
+        document.addEventListener('MT_MENU_TOGGLE', function(e) {
+            toggleMainMenuOverlay();
         });
     }
 
