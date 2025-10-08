@@ -1126,6 +1126,9 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   outline: 1px solid #404040;
 }
 
+.outline-offset-1px {
+    outline-offset: -1px;
+}
 
 /* ----- CUSTOM BACKGROUND------ */
 
@@ -4391,23 +4394,6 @@ textarea.mtfb-note {
 }
 
 .mt-user-profile-card__avatar-container {
-  position: relative;
-}
-
-.mt-user-profile-card__edit-icon {
-  padding: 4px;
-  bottom: 0;
-  left: 34px;
-  position: absolute;
-  background: white;
-  overflow: hidden;
-  border-radius: 16px;
-  outline: 1px white solid;
-  outline-offset: -1px;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  display: inline-flex
 }
 
 .mt-user-profile-card__member-since {

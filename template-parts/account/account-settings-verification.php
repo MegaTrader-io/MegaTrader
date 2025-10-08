@@ -52,7 +52,7 @@ $is_verified = get_query_var('mt_is_verified');
 <div id="veriff-container"></div>
 
 <div class="space-y-3">
-    <div class="mt-card mt-card-dark gap-32 gap-md-3 mb-3">
+    <div class="mt-card mt-card-dark gap-32 gap-md-3 mb-3 outline-dark outline-offset-1px">
         <div class="features">
             <?php foreach ($features as $feature): ?>
                 <div class="features__item">
