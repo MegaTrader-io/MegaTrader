@@ -1976,7 +1976,7 @@ if (document.readyState === "loading") {
   function buildActivationHref(modal, activationId) {
     var base = (modal && modal.dataset.checkoutBase) || "";
     var id = normalizeId(activationId);
-    return (base && id) ? (base + "?add-to-cart=" + encodeURIComponent(id)) : "#";
+    return base && id ? base + "?add-to-cart=" + encodeURIComponent(id) : "#";
   }
 
   // --- NOTA: Solo se muestra en PASSED. En PENDING_ACTIVATION nunca se muestra.
@@ -1985,19 +1985,33 @@ if (document.readyState === "loading") {
     var text = wrap ? wrap.querySelector("[data-note-text]") : null;
     if (!wrap || !text) return;
 
-    var st = String(status || "").trim().toUpperCase();
+    var st = String(status || "")
+      .trim()
+      .toUpperCase();
     if (st === "ACTIVATION_PENDING") st = "PENDING_ACTIVATION";
-    var hasId = normalizeId(activationId) !== "";
+    var hasId =
+      (function (v) {
+        if (v == null) return "";
+        var s = String(v).trim().toLowerCase();
+        return s === "" || s === "0" || s === "null" ? "" : s;
+      })(activationId) !== "";
 
     var msgWithId = modal.dataset.notePassedWithId || "";
-    var msgNoId   = modal.dataset.notePassedNoId   || "";
+    var msgNoId = modal.dataset.notePassedNoId || "";
 
-    var show = (st === "PASSED");
+    // Solo mostrar nota cuando es PASSED
+    var show = st === "PASSED";
+
     if (show) {
       text.textContent = hasId ? msgWithId : msgNoId;
+      // mostrar
+      wrap.classList.remove("d-none");
       wrap.removeAttribute("hidden");
       wrap.setAttribute("aria-hidden", "false");
     } else {
+      // ocultar totalmente
+      text.textContent = "";
+      wrap.classList.add("d-none");
       wrap.setAttribute("hidden", "");
       wrap.setAttribute("aria-hidden", "true");
     }
@@ -2007,28 +2021,25 @@ if (document.readyState === "loading") {
     var btn = modal.querySelector("#mt-activation-btn");
     if (!btn) return;
 
-    var st = String(status || "").trim().toUpperCase();
+    var st = String(status || "")
+      .trim()
+      .toUpperCase();
     if (st === "ACTIVATION_PENDING") st = "PENDING_ACTIVATION";
     var hasId = normalizeId(activationId) !== "";
 
     btn.href = buildActivationHref(modal, activationId);
 
-    // reset
     btn.classList.remove("disabled", "d-none");
     btn.setAttribute("aria-disabled", "false");
 
     if (st === "PENDING_ACTIVATION" && hasId) {
-      // visible y clickable (por defecto tras reset)
     } else if (st === "PASSED" && hasId) {
-      // visible pero deshabilitado
       btn.classList.add("disabled");
       btn.setAttribute("aria-disabled", "true");
     } else if (st === "PASSED" && !hasId) {
-      // oculto
       btn.classList.add("d-none");
       btn.href = "#";
     } else {
-      // cualquier otro status => oculto
       btn.classList.add("d-none");
       btn.href = "#";
     }
@@ -2036,7 +2047,7 @@ if (document.readyState === "loading") {
 
   function syncUI(modal) {
     var status = modal.dataset.currentStatus || "";
-    var actId  = modal.dataset.activationId || "";
+    var actId = modal.dataset.activationId || "";
     setNote(status, actId, modal);
     setButton(status, actId, modal);
   }
@@ -2089,7 +2100,9 @@ if (document.readyState === "loading") {
       }
 
       document.body.classList.add("modal-open");
-      try { modal.focus(); } catch (_) {}
+      try {
+        modal.focus();
+      } catch (_) {}
     }
 
     function closeModal() {
@@ -2129,7 +2142,9 @@ if (document.readyState === "loading") {
 
     if (modal.getAttribute("data-show") === "1") {
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openModal, { once: true });
+        document.addEventListener("DOMContentLoaded", openModal, {
+          once: true,
+        });
       } else {
         openModal();
       }
@@ -2158,7 +2173,8 @@ if (document.readyState === "loading") {
     if (!accountId) return;
     var now = Date.now();
     if (__passedGuard.pending) return;
-    if (__passedGuard.lastId === accountId && now - __passedGuard.lastAt < 800) return;
+    if (__passedGuard.lastId === accountId && now - __passedGuard.lastAt < 800)
+      return;
 
     __passedGuard.pending = true;
     __passedGuard.lastId = accountId;
@@ -2168,7 +2184,8 @@ if (document.readyState === "loading") {
       .then(function (j) {
         if (!j || !j.success) return;
 
-        var statusRaw = j.data && j.data.status != null ? String(j.data.status) : "";
+        var statusRaw =
+          j.data && j.data.status != null ? String(j.data.status) : "";
         var status = statusRaw.trim().toUpperCase();
         if (status === "ACTIVATION_PENDING") status = "PENDING_ACTIVATION";
 
@@ -2214,9 +2231,13 @@ if (document.readyState === "loading") {
   (function () {
     var firstId = (window.mtAccounts && mtAccounts.selectedId) || "";
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", function () {
-        if (firstId) passedGuardCheck(firstId);
-      }, { once: true });
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          if (firstId) passedGuardCheck(firstId);
+        },
+        { once: true }
+      );
     } else {
       if (firstId) passedGuardCheck(firstId);
     }
@@ -2227,7 +2248,7 @@ if (document.readyState === "loading") {
     if (id) passedGuardCheck(id);
   });
 
-  window.__mtPassedSyncUI = function(modal) {
+  window.__mtPassedSyncUI = function (modal) {
     modal = modal || document.getElementById("mt-account-passed-modal");
     if (modal) syncUI(modal);
   };
