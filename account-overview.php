@@ -229,17 +229,8 @@ if (is_user_logged_in()) {
 
       $__mt_account_passed_show = (in_array($__status_norm, ['PENDING_ACTIVATION', 'PASSED'], true)) ? '1' : '0';
 
-      $__note_text = '';
-      if ($__status_norm === 'PASSED' && $__has_activation_id) {
-        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
-      } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
-        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
-      }
-
-         $__show_note = true;
-      if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
-        $__show_note = false;
-      }
+      $__note_passed_with_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
+      $__note_passed_no_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
 
 
       $__btn_classes = [];
@@ -253,7 +244,7 @@ if (is_user_logged_in()) {
       }
       $__btn_classes_attr = implode(' ', $__btn_classes);
 
-   
+
 
 
     } else {
@@ -535,6 +526,8 @@ get_header();
   aria-labelledby="mtactivation-title" aria-hidden="true" data-show="<?php echo $__mt_account_passed_show; ?>"
   data-note-pending="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending']); ?>"
   data-note-pending-no-button="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button']); ?>"
+  data-note-passed-with-id="<?php echo esc_attr($__note_passed_with_id); ?>"
+  data-note-passed-no-id="<?php echo esc_attr($__note_passed_no_id); ?>"
   data-current-status="<?php echo esc_attr($__status_norm); ?>"
   data-activation-id="<?php echo esc_attr($__activation_product_id); ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
@@ -571,14 +564,13 @@ get_header();
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle']; ?>
         </span>
 
-        <?php if ($__show_note): ?>
-          <div class="mt-note bg-1e1e1e d-flex gap-3 mt-4 p-3 rounded-3" id="mt-passed-note" data-status="info">
-            <span class="mt-icon mt-icon-info mt-icon_info-solid"></span>
-            <span class="text-60A5FA fw-medium text-base" data-note-text>
-              <?php echo esc_html($__note_text); ?>
-            </span>
-          </div>
-        <?php endif; ?>
+        <div class="mt-note bg-1e1e1e d-flex gap-3 mt-4 p-3 rounded-3" id="mt-passed-note" data-status="info" <?php echo $__show_note ? '' : 'hidden aria-hidden="true"'; ?>>
+          <span class="mt-icon mt-icon-info mt-icon_info-solid"></span>
+          <span class="text-60A5FA fw-medium text-base" data-note-text>
+            <?php echo esc_html($__note_text ?: $__note_passed_with_id); ?>
+          </span>
+        </div>
+
 
         <a id="mt-activation-btn"
           class="mega-btn-md mega-btn-primary-md mt-activation-button mt-4 <?php echo esc_attr($__btn_classes_attr); ?>"
