@@ -2,17 +2,20 @@
 defined('ABSPATH') || exit;
 
 $prepared = isset($args['prepared']) && is_array($args['prepared']) ? $args['prepared'] : null;
-$current = $prepared['current'] ?? null;
+$current  = $prepared['current']  ?? null;
 $accounts = $prepared['accounts'] ?? [];
-$resetId = (string) ($current['resetProductId'] ?? '');
-$hasReset = $resetId !== '';
-$checkout = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
-$reset_url = $hasReset ? ($checkout . '?add-to-cart=' . urlencode($resetId)) : '';
+
+$resetId      = (string) ($current['resetProductId']      ?? '');
 $activationId = (string) ($current['activationProductId'] ?? '');
-$hasActivation = $activationId !== '';
+$mainId       = (string) ($current['mainProductId']       ?? '');
+$ord          = (string) ($current['order']               ?? '');
+
+$hasReset      = ($resetId !== '');
+$hasActivation = ($activationId !== '');
+
+$checkout   = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
+$reset_url  = $hasReset      ? ($checkout . '?add-to-cart=' . urlencode($resetId))      : '';
 $activation_url = $hasActivation ? ($checkout . '?add-to-cart=' . urlencode($activationId)) : '';
-$mainId = (string) ($current['mainProductId'] ?? '');
-$ord = (string) ($current['order'] ?? '');
 
 if (!$prepared || empty($accounts)) {
   echo '<p class="text-a8a29e"><em>No accounts found for this user.</em></p>';
@@ -23,33 +26,35 @@ if (!$current && !empty($accounts)) {
   $current = $accounts[0];
 }
 
-$currentId = (string) ($current['id'] ?? '');
-$currentStat = (string) ($current['status'] ?? 'unknown');
-$sizeSlug = (string) ($current['size'] ?? '');
-$productName = (string) ($current['name'] ?? 'Account');
-$currentLogo = (string) ($current['logo'] ?? '');
+$currentId    = (string) ($current['id']     ?? '');
+$currentStat  = (string) ($current['status'] ?? 'unknown');
+$sizeSlug     = (string) ($current['size']   ?? '');
+$productName  = (string) ($current['name']   ?? 'Account');
+$currentLogo  = (string) ($current['logo']   ?? '');
+$curProgText  = (string) ($current['programTypeText']  ?? '');
+$curProgClass = (string) ($current['programTypeClass'] ?? '');
 
 $status_key = strtolower(trim($currentStat));
 $status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
-$badgeBase = class_exists('MT_Accounts') ? MT_Accounts::badge_class($currentStat) : 'badge-mega-default';
+$badgeBase  = class_exists('MT_Accounts') ? MT_Accounts::badge_class($currentStat) : 'badge-mega-default';
 $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
-$curProgText = (string) ($current['programTypeText'] ?? '');
-$curProgClass = (string) ($current['programTypeClass'] ?? '');
 ?>
 
-<button type="button" class="mega-btn-md mega-btn-dark-md w-100 p-3" data-bs-toggle="modal"
-  data-bs-target="#changeSubcriptionModal" data-account-id="<?php echo esc_attr($currentId); ?>"
-  data-current-main-id="<?php echo esc_attr($mainId); ?>" data-current-reset-id="<?php echo esc_attr($resetId); ?>"
-  data-order="<?php echo esc_attr($ord); ?>" data-current-activation-id="<?php echo esc_attr($activationId); ?>">
+<button type="button" class="mega-btn-md mega-btn-dark-md w-100 p-3"
+  data-bs-toggle="modal"
+  data-bs-target="#changeSubcriptionModal"
+  data-account-id="<?php echo esc_attr($currentId); ?>"
+  data-current-main-id="<?php echo esc_attr($mainId); ?>"
+  data-current-reset-id="<?php echo esc_attr($resetId); ?>"
+  data-order="<?php echo esc_attr($ord); ?>"
+  data-current-activation-id="<?php echo esc_attr($activationId); ?>">
   <div class="d-flex align-items-center gap-2 justify-content-between w-100">
     <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-3 row-gap-2">
-      <!-- Platform logo -->
-      <img id="mt-platform-logo" src="<?php echo esc_url($currentLogo); ?>" alt="Platform logo" width="30" height="30"
-        style="width:30px;height:30px;object-fit:contain;border-radius:6px;" />
+      <img id="mt-platform-logo" src="<?php echo esc_url($currentLogo); ?>" alt="Platform logo"
+           width="30" height="30" style="width:30px;height:30px;object-fit:contain;border-radius:6px;" />
       <div class="d-flex gap-2 align-items-center flex-fill">
         <div class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md d-none d-md-block d-lg-block"></div>
-        <div
-          class="fw-medium plan-name text-uppercase text-white text-truncate mobile-max-width-100 text-2xl leading-7">
+        <div class="fw-medium plan-name text-uppercase text-white text-truncate mobile-max-width-100 text-2xl leading-7">
           <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
           <span id="mt-name"><?php echo esc_html($productName); ?></span>
         </div>
@@ -65,38 +70,35 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
     <div class="modal-content gap-4">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <span class="modal-title text-white heading-sm-medium" id="changeSubcriptionModalLabel">Select account</span>
-        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
-          aria-label="Close">
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">
-            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width: 24px; height: 24px;" />
+            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;" />
           </span>
         </button>
       </div>
 
       <div class="modal-body">
-        <!-- Filter dropdown -->
+
+        <!-- Filter -->
         <div class="mb-3">
           <div class="dropdown w-100">
             <button id="mt-acc-filter-btn"
-              class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12" type="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+              class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12"
+              type="button" data-bs-toggle="dropdown" aria-expanded="false">
               <span id="mt-acc-filter-label">Active</span>
               <span class="mt-icon mt-icon_caret-down mt-icon-white"></span>
             </button>
 
             <?php
-            $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false];
+            $present = ['ACTIVE'=>false,'BREACHED'=>false,'PASSED'=>false];
             foreach ($accounts as $row) {
-              $st = strtoupper(trim((string) ($row['status'] ?? '')));
-              if ($st === 'ACTIVE')
-                $present['ACTIVE'] = true;
-              if ($st === 'BREACHED')
-                $present['BREACHED'] = true;
-              if ($st === 'PASSED' || $st === 'PENDING_ACTIVATION')
-                $present['PASSED'] = true;
+              $st = strtoupper(trim((string)($row['status'] ?? '')));
+              if ($st === 'ACTIVE') $present['ACTIVE'] = true;
+              if ($st === 'BREACHED') $present['BREACHED'] = true;
+              if ($st === 'PASSED' || $st === 'PENDING_ACTIVATION') $present['PASSED'] = true;
             }
 
-            $curStatus = strtoupper(trim((string) ($current['status'] ?? '')));
+            $curStatus = strtoupper(trim((string)($current['status'] ?? '')));
             $curFilter = ($curStatus === 'PENDING_ACTIVATION') ? 'PASSED' : $curStatus;
 
             if (!empty($present[$curFilter])) {
@@ -108,78 +110,77 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
 
             <ul class="dropdown-menu w-100 p-0 overflow-hidden rounded-12 mt-1" id="mt-acc-filter-menu">
               <?php if ($present['ACTIVE']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="ACTIVE">Active</button>
-                </li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="ACTIVE">Active</button></li>
               <?php endif; ?>
               <?php if ($present['BREACHED']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option"
-                    data-value="BREACHED">Breached</button></li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="BREACHED">Breached</button></li>
               <?php endif; ?>
               <?php if ($present['PASSED']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button>
-                </li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button></li>
               <?php endif; ?>
             </ul>
 
             <select id="mt-acc-filter" class="d-none" aria-hidden="true">
               <?php if ($present['ACTIVE']): ?>
-                <option value="ACTIVE" <?php selected($firstOpt, 'ACTIVE'); ?>>Active</option>
+                <option value="ACTIVE"   <?php selected($firstOpt,'ACTIVE'); ?>>Active</option>
               <?php endif; ?>
               <?php if ($present['BREACHED']): ?>
-                <option value="BREACHED" <?php selected($firstOpt, 'BREACHED'); ?>>Breached</option>
+                <option value="BREACHED" <?php selected($firstOpt,'BREACHED'); ?>>Breached</option>
               <?php endif; ?>
               <?php if ($present['PASSED']): ?>
-                <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option>
+                <option value="PASSED"   <?php selected($firstOpt,'PASSED'); ?>>Passed</option>
               <?php endif; ?>
             </select>
           </div>
         </div>
 
+        <!-- Grid -->
         <div class="subscription-scroll-area px-lg-3 p-0">
           <div class="subscription-grid" id="mt-accounts-grid">
             <?php foreach ($accounts as $a): ?>
               <?php
-              $aid = (string) ($a['id'] ?? '');
+              $aid       = (string) ($a['id']        ?? '');
               $accPlatId = (string) ($a['accountId'] ?? '');
-              $isCur = ($aid === $currentId);
+              $isCur     = ($aid === $currentId);
+
               $card_class = 'subscription-card position-relative flex-column gap-2';
-              if ($isCur)
-                $card_class .= ' active';
+              if ($isCur) $card_class .= ' active';
+
               $status_raw = (string) ($a['status'] ?? '');
-              $status_key = strtolower(trim($status_raw));
-              $status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
-              $dot_class = 'dot-status-' . $status_key;
+              $status_key = preg_replace('/[^a-z0-9]+/','-', strtolower(trim($status_raw)));
+              $dot_class  = 'dot-status-' . $status_key;
+
               $logo_src = (string) ($a['logo'] ?? '');
               $ord = (int) ($a['order'] ?? 0);
-              $progText = (string) ($a['programTypeText'] ?? '');
+              $progText  = (string) ($a['programTypeText']  ?? '');
               $progClass = (string) ($a['programTypeClass'] ?? '');
               ?>
               <div class="<?php echo esc_attr($card_class); ?>" role="button"
-                data-account-id="<?php echo esc_attr($aid); ?>" data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
-                data-platform-account-id="<?php echo esc_attr($accPlatId); ?>"
-                data-size="<?php echo esc_attr($a['size'] ?? ''); ?>"
-                data-reset-id="<?php echo esc_attr($a['resetProductId'] ?? ''); ?>"
-                data-activation-id="<?php echo esc_attr($a['activationProductId'] ?? ''); ?>"
-                data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>" data-logo="<?php echo esc_url($logo_src); ?>"
-                data-main-id="<?php echo esc_attr($a['mainProductId'] ?? ''); ?>"
-                data-order="<?php echo esc_attr($ord); ?>" style="display:none;">
+                   data-account-id="<?php echo esc_attr($aid); ?>"
+                   data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
+                   data-platform-account-id="<?php echo esc_attr($accPlatId); ?>"
+                   data-size="<?php echo esc_attr($a['size'] ?? ''); ?>"
+                   data-reset-id="<?php echo esc_attr($a['resetProductId'] ?? ''); ?>"
+                   data-activation-id="<?php echo esc_attr($a['activationProductId'] ?? ''); ?>"
+                   data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>"
+                   data-logo="<?php echo esc_url($logo_src); ?>"
+                   data-main-id="<?php echo esc_attr($a['mainProductId'] ?? ''); ?>"
+                   data-order="<?php echo esc_attr($ord); ?>"
+                   style="display:none;">
 
-                <div class="checkmark-icon position-absolute"
-                  style="top: 10px; right: 10px; <?php echo $isCur ? '' : 'display:none;'; ?>">
+                <div class="checkmark-icon position-absolute" style="top:10px;right:10px;<?php echo $isCur ? '' : 'display:none;'; ?>">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <circle cx="12" cy="12" r="10" fill="#FFB34A" />
                     <path d="M10.6 16.6L17.65 9.55L16.25 8.15L10.6 13.8L7.75 10.95L6.35 12.35L10.6 16.6Z" fill="black" />
                   </svg>
                 </div>
 
-                <div
-                  class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
+                <div class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
                   <div class="logo-container position-relative d-inline-block">
-                    <img src="<?php echo esc_url($logo_src); ?>"
-                      alt="<?php echo esc_attr(($a['platform'] ?? '') ?: 'platform'); ?> logo" style="max-height:40px;">
+                    <img src="<?php echo esc_url($logo_src); ?>" alt="<?php echo esc_attr(($a['platform'] ?? '') ?: 'platform'); ?> logo" style="max-height:40px;">
                     <div class="dot-indicator <?php echo esc_attr($dot_class); ?>"
-                      title="<?php echo esc_attr($a['status'] ?? ''); ?>"
-                      style="position:absolute; right:-1px; bottom:-1px;">
+                         title="<?php echo esc_attr($a['status'] ?? ''); ?>"
+                         style="position:absolute;right:-1px;bottom:-1px;">
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                         <circle cx="6" cy="6" r="6" fill="white" />
                         <circle cx="6" cy="6" r="4" fill="currentColor" />
@@ -205,6 +206,7 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
             <?php endforeach; ?>
           </div>
         </div>
+
       </div>
 
       <div class="modal-footer">
@@ -220,314 +222,109 @@ $curProgClass = (string) ($current['programTypeClass'] ?? '');
 </div>
 
 <?php
+// Carga del JS externo
 $handle = 'mt-account-picker';
 $js_path = get_stylesheet_directory() . '/assets/js/mt-account-picker.js';
-$js_url = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
+$js_url  = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
 wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_path) : null), true);
 
+// Payload para el picker
 $payload = [
-  'currentId' => $currentId,
-  'accounts' => $accounts,
+  'currentId'      => $currentId,
+  'accounts'       => $accounts,
   'selectionClass' => 'active',
-  'selectors' => [
-    'grid' => '#mt-accounts-grid',
-    'select' => '#select-subscription-btn',
-    'badge' => '#mt-badge', // (si no existe no pasa nada, hay if (badgeEl))
+  'selectors'      => [
+    'grid'         => '#mt-accounts-grid',
+    'select'       => '#select-subscription-btn',
+    'badge'        => '#mt-badge',
     'platformLogo' => '#mt-platform-logo',
-    'size' => '#mt-size',
-    'name' => '#mt-name',
-    'modal' => '#changeSubcriptionModal',
-    'card' => '.subscription-card',
-    'check' => '.checkmark-icon',
-    'performance' => '.mt-account-performance',
+    'size'         => '#mt-size',
+    'name'         => '#mt-name',
+    'modal'        => '#changeSubcriptionModal',
+    'card'         => '.subscription-card',
+    'check'        => '.checkmark-icon',
+    'performance'  => '.mt-account-performance',
   ],
   'ajax' => [
-    'url' => admin_url('admin-ajax.php'),
+    'url'   => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('mt-acc-nonce'),
-    'action' => 'mt_accounts_performance',
+    'action'=> 'mt_accounts_performance',
   ],
-  'checkoutBase' => function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout',
+  'checkoutBase' => $checkout,
   'debug' => true,
 ];
 
+// Exponer config
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
 
+// Script inline: SOLO filtro + estado del botón si la activa desaparece
 wp_add_inline_script(
   $handle,
-  <<<JS
+  <<<'JS'
 (function(){
   var CFG   = window.MT_DATA || {};
-  var grid  = document.querySelector(CFG.selectors.grid);
-  var btn   = document.querySelector(CFG.selectors.select);
-  var perf  = document.querySelector(CFG.selectors.performance) || document.querySelector('.mt-account-performance');
-  var modal = document.querySelector(CFG.selectors.modal);
+  var grid  = document.querySelector((CFG.selectors||{}).grid);
+  var btn   = document.querySelector((CFG.selectors||{}).select);
+  var modal = document.querySelector((CFG.selectors||{}).modal);
 
-  // Error modal alias
-  var showErr = function(t, m, o){
-    if (window.MEGATRADER && typeof MEGATRADER.showError === 'function')
-      return MEGATRADER.showError(t, m, o||{});
-    console.error('[MT][Error]', t, m);
-  };
-
-  // Dropdown custom + hidden select
   var filterSel  = document.getElementById('mt-acc-filter');
-  var filterBtn  = document.getElementById('mt-acc-filter-btn');
   var filterLbl  = document.getElementById('mt-acc-filter-label');
   var filterMenu = document.getElementById('mt-acc-filter-menu');
 
   function normalizeStatus(s){ return (s||'').toString().trim().toUpperCase(); }
-  function log(){ if (!CFG.debug) return; try { console.debug.apply(console, arguments); } catch(e){} }
-
-  function setBtnEnabled(on){
-    if (!btn) return;
-    btn.disabled = !on;
-    btn.classList.toggle('disabled', !on);
-  }
-
-  // === ACTUALIZA CTAs DE LOS MODALES (reset / activation) SEGÚN LA CARD ACTIVA ===
-function updateAccountCTAs() {
-  if (!grid) return;
-
-  var active = grid.querySelector(CFG.selectors.card + '.' + CFG.selectionClass);
-  var resetId      = active ? (active.getAttribute('data-reset-id') || '') : '';
-  var activationId = active ? (active.getAttribute('data-activation-id') || '') : '';
-  var statusRaw    = active ? (active.getAttribute('data-status') || '') : '';
-  var statusNorm   = (statusRaw || '').trim().toUpperCase();
-  if (statusNorm === 'ACTIVATION_PENDING') statusNorm = 'PENDING_ACTIVATION';
-
-  var base = CFG.checkoutBase || (window.MT_DATA && window.MT_DATA.checkoutBase) || '/checkout';
-
-  // --- BREACHED: botón de reset ---
-  var breachModal = document.getElementById('mt-breach-alert-modal');
-  if (breachModal) {
-    var breachBtn  = breachModal.querySelector('.mt-breach-reset-button');
-    var baseBreach = breachModal.getAttribute('data-checkout-base') || base;
-
-    if (breachBtn) {
-      if (resetId) {
-        breachBtn.href = baseBreach + '?add-to-cart=' + encodeURIComponent(resetId);
-        breachBtn.classList.remove('disabled', 'd-none');
-        breachBtn.removeAttribute('aria-disabled');
-      } else {
-        breachBtn.href = '#';
-        breachBtn.classList.add('disabled');
-        breachBtn.setAttribute('aria-disabled', 'true');
-      }
-    }
-  }
-
-  // --- PASSED / PENDING_ACTIVATION: botón de activación + datasets del modal ---
-  var passedModal = document.getElementById('mt-account-passed-modal');
-  if (passedModal) {
-    passedModal.dataset.currentStatus = statusNorm || '';
-    passedModal.dataset.activationId  = activationId || '';
-
-    var actBtn  = passedModal.querySelector('#mt-activation-btn');
-    var baseAct = passedModal.getAttribute('data-checkout-base') || base;
-
-    if (actBtn) {
-      if (activationId) {
-        actBtn.href = baseAct + '?add-to-cart=' + encodeURIComponent(activationId);
-        actBtn.classList.remove('disabled', 'd-none');
-        actBtn.removeAttribute('aria-disabled');
-      } else {
-        actBtn.href = '#';
-        actBtn.classList.add('disabled');
-        actBtn.setAttribute('aria-disabled','true');
-      }
-    }
-
-    // <<< PASO 4: sincroniza UI del modal si el helper está expuesto
-    if (typeof window.__mtPassedSyncUI === 'function') {
-      window.__mtPassedSyncUI(passedModal);
-    }
-  }
-}
-
-
-  function showCard(card){
-    card.classList.add('d-flex');
-    card.classList.remove('d-none');
-    card.style.removeProperty('display');
-  }
-  function hideCard(card){
-    card.classList.remove('d-flex');
-    card.classList.add('d-none');
-    card.style.setProperty('display','none');
-  }
-
-  if (!grid) return;
-
-  // Selection memory even if hidden by filter
-  var selectedId   = CFG.currentId || null;
-  var rememberedId = selectedId;
-
-  function selectCard(card){
-    if (card.classList.contains('d-none')) return;
-
-    grid.querySelectorAll(CFG.selectors.card + '.' + CFG.selectionClass).forEach(function(el){
-      el.classList.remove(CFG.selectionClass);
-      var c = el.querySelector(CFG.selectors.check);
-      if (c) c.style.display = 'none';
-    });
-    card.classList.add(CFG.selectionClass);
-    var ch = card.querySelector(CFG.selectors.check);
-    if (ch) ch.style.display = '';
-
-    selectedId   = card.getAttribute('data-account-id');
-    rememberedId = selectedId;
-    setBtnEnabled(true);
-    updateAccountCTAs();
-  }
+  function showCard(card){ card.classList.add('d-flex'); card.classList.remove('d-none'); card.style.removeProperty('display'); }
+  function hideCard(card){ card.classList.remove('d-flex'); card.classList.add('d-none');  card.style.setProperty('display','none'); }
+  function disableBtn(){ if (btn){ btn.disabled = true; btn.classList.add('disabled'); } }
+  function enableBtn(){ if (btn){ btn.disabled = false; btn.classList.remove('disabled'); } }
 
   function applyFilter(val){
     if (!grid) return;
     var want = normalizeStatus(val);
-    log('[MT][Filter] applying:', want);
 
-    grid.querySelectorAll(CFG.selectors.card).forEach(function(card){
+    grid.querySelectorAll('.subscription-card').forEach(function(card){
       var st = normalizeStatus(card.getAttribute('data-status'));
-      var match = (st === want);
-      if (want === 'PASSED' && (st === 'PENDING_ACTIVATION')) match = true;
+      var match = (st === want) || (want === 'PASSED' && st === 'PENDING_ACTIVATION');
       match ? showCard(card) : hideCard(card);
     });
 
-    var active = grid.querySelector(CFG.selectors.card + '.' + CFG.selectionClass);
+    // Si la activa queda oculta, quitar selección visual y deshabilitar botón.
+    var active = grid.querySelector('.subscription-card.active');
     if (active && active.classList.contains('d-none')) {
-      active.classList.remove(CFG.selectionClass);
-      var c = active.querySelector(CFG.selectors.check);
+      active.classList.remove('active');
+      var c = active.querySelector('.checkmark-icon');
       if (c) c.style.display = 'none';
-      setBtnEnabled(false);
+      disableBtn();
     }
-
-    if (rememberedId) {
-      var rememberedEl = grid.querySelector(CFG.selectors.card + '[data-account-id="'+CSS.escape(rememberedId)+'"]');
-      if (rememberedEl && !rememberedEl.classList.contains('d-none')) {
-        selectCard(rememberedEl);
-      }
-    }
-
-    updateAccountCTAs();
   }
 
-  grid.addEventListener('click', function(e){
-    var card = e.target.closest(CFG.selectors.card);
-    if (!card) return;
-    if (card.classList.contains('d-none')) return;
-    selectCard(card);
-  });
-
-  // Filter wiring
+  // Dropdown -> click
   if (filterMenu){
     filterMenu.addEventListener('click', function(e){
       var opt = e.target.closest('.mt-filter-option');
       if (!opt) return;
-      var val = (opt.getAttribute('data-value') || '').toUpperCase();
+      var val = (opt.getAttribute('data-value') || 'ACTIVE').toUpperCase();
       if (filterLbl) filterLbl.textContent = opt.textContent.trim();
       if (filterSel) filterSel.value = val;
       applyFilter(val);
     });
   }
 
-  // Initial state
-  if (filterSel) filterSel.value = filterSel.querySelector('option')?.value || 'ACTIVE';
-  if (filterLbl) filterLbl.textContent = (filterSel.selectedOptions[0]?.textContent || 'Active');
-  applyFilter(filterSel.value);
-  updateAccountCTAs(); // primera sincronización al cargar
-
+  // Al abrir modal, aplicar filtro actual
   if (modal && window.bootstrap){
     modal.addEventListener('shown.bs.modal', function(){
       var val = (filterSel && filterSel.value) ? filterSel.value : 'ACTIVE';
       applyFilter(val);
-      updateAccountCTAs(); // asegurar CTAs al abrir modal
     });
   }
 
-  // Initial selection if visible
-  if (selectedId){
-    var cur = grid.querySelector(CFG.selectors.card + '[data-account-id="'+CSS.escape(selectedId)+'"]');
-    if (cur && !cur.classList.contains('d-none')) {
-      selectCard(cur);
-    } else {
-      setBtnEnabled(false);
-    }
-  } else {
-    setBtnEnabled(false);
-  }
+  // Estado inicial
+  if (filterSel) filterSel.value = filterSel.querySelector('option')?.value || 'ACTIVE';
+  if (filterLbl) filterLbl.textContent = (filterSel.selectedOptions?.[0]?.textContent || 'Active');
+  applyFilter(filterSel ? filterSel.value : 'ACTIVE');
 
-  // AJAX: update performance + header
-  if (btn){
-    btn.addEventListener('click', function(){
-      if (!selectedId){
-        showErr('Select an account', 'Please choose an account to continue.');
-        return;
-      }
-
-      var fd = new FormData();
-      fd.append('action', CFG.ajax.action);
-      fd.append('nonce',  CFG.ajax.nonce);
-      fd.append('accountId', selectedId);
-
-      setBtnEnabled(false);
-
-      MEGATRADER.fetchJSON(CFG.ajax.url, { method:'POST', body: fd, credentials: 'same-origin' })
-        .then(function(res){
-          if (!res || !res.success) throw new Error(res && res.data && res.data.message || 'AJAX failed');
-
-          if (window.mtTooltips?.closeAll) mtTooltips.closeAll();
-          if (perf && res.data && typeof res.data.html === 'string') {
-            perf.innerHTML = res.data.html || '';
-            if (window.mtTooltips?.refresh) mtTooltips.refresh(perf);
-          }
-
-          var modalEl = document.querySelector(CFG.selectors.modal);
-          if (modalEl && window.bootstrap) {
-            var inst = window.bootstrap.Modal.getInstance(modalEl) || new window.bootstrap.Modal(modalEl);
-            inst.hide();
-          }
-
-          var active = grid.querySelector(CFG.selectors.card+'.'+CFG.selectionClass);
-          if (active) {
-            var sizeVal = active.getAttribute('data-size') || '';
-            var nameVal = active.getAttribute('data-name') || 'Account';
-            var logoVal = active.getAttribute('data-logo') || '';
-            var orderId = parseInt(active.getAttribute('data-order') || '0', 10) || 0;
-
-            var sizeEl  = document.querySelector(CFG.selectors.size);
-            var nameEl  = document.querySelector(CFG.selectors.name);
-            var logoEl  = document.querySelector(CFG.selectors.platformLogo);
-            var badgeEl = document.querySelector(CFG.selectors.badge);
-
-            if (sizeEl) sizeEl.textContent = sizeVal;
-            if (nameEl) nameEl.textContent = nameVal;
-            if (logoEl && logoVal) logoEl.src = logoVal;
-
-            if (badgeEl) {
-              var status = (active.getAttribute('data-status') || '').toLowerCase();
-              badgeEl.textContent = status
-                ? status.replace(/-/g,' ').replace(/\b\w/g, function(m){ return m.toUpperCase(); })
-                : 'NoStatusDefine';
-            }
-
-            // expone order activo al root y notifica globalmente
-            var root = document.getElementById('mt-account-overview');
-            if (root) root.setAttribute('data-order-id', orderId ? String(orderId) : '');
-
-            document.dispatchEvent(new CustomEvent('mt:accountSelected', {
-              detail: { accountId: selectedId, id: selectedId, order: orderId, orderId: orderId }
-            }));
-          }
-
-          updateAccountCTAs();
-        })
-        .catch(function(err){
-          showErr('Account Performance Error', err, { headline: 'Oops!' });
-        })
-        .finally(function(){
-          setBtnEnabled(true);
-        });
-    });
-  }
+  // Si al cargar no hay seleccion visible, deshabilitar botón
+  var active = grid && grid.querySelector('.subscription-card.active');
+  if (!active || active.classList.contains('d-none')) { disableBtn(); }
 })();
 JS
 );

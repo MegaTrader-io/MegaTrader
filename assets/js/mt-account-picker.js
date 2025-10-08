@@ -1,267 +1,239 @@
+/* mt-account-picker.js — selección de cuentas + AJAX + preloader robusto */
 (function () {
-  function onReady(fn) {
-    if (document.readyState !== "loading") fn();
-    else document.addEventListener("DOMContentLoaded", fn, { once: true });
+  'use strict';
+
+  var CFG = (window.MT_DATA || {});
+  var sel = (CFG.selectors || {});
+  var grid = document.querySelector(sel.grid);
+  var selectBtn = document.querySelector(sel.select);
+  var perf = document.querySelector(sel.performance) || document.querySelector('.mt-account-performance');
+  var modalEl = document.querySelector(sel.modal);
+
+  // ================ PRELOADER =================
+  function injectFallbackCSS() {
+    if (document.getElementById('mt-fallback-loader-style')) return;
+    var css = document.createElement('style');
+    css.id = 'mt-fallback-loader-style';
+    css.textContent =
+      '@keyframes mtSpin{to{transform:rotate(360deg)}}' +
+      '#mt-fallback-loader{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:200000;background:rgba(0,0,0,.35)}' +
+      '#mt-fallback-loader .mt-spinner{width:48px;height:48px;border-radius:50%;border:4px solid #fff;border-top-color:transparent;animation:mtSpin 1s linear infinite}';
+    document.head.appendChild(css);
+  }
+  function ensureFallbackOverlay() {
+    if (document.getElementById('mt-fallback-loader')) return;
+    injectFallbackCSS();
+    var el = document.createElement('div');
+    el.id = 'mt-fallback-loader';
+    el.innerHTML = '<div class="mt-spinner" role="status" aria-label="Loading"></div>';
+    document.body.appendChild(el);
+  }
+  function fallbackOn()  { ensureFallbackOverlay(); var el = document.getElementById('mt-fallback-loader'); if (el) el.style.display = 'flex'; document.documentElement.classList.add('mt-busy'); if (selectBtn) selectBtn.classList.add('is-loading'); }
+  function fallbackOff() { var el = document.getElementById('mt-fallback-loader'); if (el) el.style.display = 'none'; document.documentElement.classList.remove('mt-busy'); if (selectBtn) selectBtn.classList.remove('is-loading'); }
+
+  function fireLoadingEvents(on) {
+    try { document.dispatchEvent(new CustomEvent('mt:loading', { detail: { on: !!on } })); } catch (_) {}
+    try { window.dispatchEvent(new CustomEvent('mt:loading', { detail: { on: !!on } })); } catch (_) {}
+    // aliases
+    try { document.dispatchEvent(new Event(on ? 'loading:start' : 'loading:stop')); } catch (_) {}
+    try { window.dispatchEvent(new Event(on ? 'loading:start' : 'loading:stop')); } catch (_) {}
+    if (window.jQuery) {
+      try { window.jQuery(document).trigger('mt:loading', [{ on: !!on }]); } catch (_) {}
+      try { window.jQuery(document).trigger(on ? 'loading:start' : 'loading:stop'); } catch (_) {}
+    }
   }
 
-  onReady(function () {
-    if (!window.MT_DATA) return;
+  var Loader = {
+    start: function (p) {
+      // Si existe una API "withLoader(promise)" aprovechémosla
+      try {
+        if (window.MEGATRADER && typeof MEGATRADER.withLoader === 'function' && p && typeof p.finally === 'function') {
+          return MEGATRADER.withLoader(p);
+        }
+      } catch (_) {}
 
-    // === Error modal alias ===
-    var showErr = function (t, m, o) {
-      if (window.MEGATRADER && typeof MEGATRADER.showError === "function")
-        return MEGATRADER.showError(t, m, o || {});
-      console.error("[MT][Error]", t, m);
-    };
+      // Intentos directos
+      try {
+        if (window.MEGATRADER) {
+          if (typeof MEGATRADER.showLoader === 'function') return MEGATRADER.showLoader();
+          if (typeof MEGATRADER.showPreloader === 'function') return MEGATRADER.showPreloader();
+          if (typeof MEGATRADER.loading === 'function') return MEGATRADER.loading(true);
+          if (MEGATRADER.loader && typeof MEGATRADER.loader.show === 'function') return MEGATRADER.loader.show();
+          if (MEGATRADER.preloader && typeof MEGATRADER.preloader.show === 'function') return MEGATRADER.preloader.show();
+          if (typeof MEGATRADER.togglePreloader === 'function') return MEGATRADER.togglePreloader(true);
+        }
+      } catch (_) {}
 
-    var DEBUG = !!window.MT_DATA.debug;
-    var SEL = window.MT_DATA.selectors || {};
-    var ACCS = Array.isArray(window.MT_DATA.accounts)
-      ? window.MT_DATA.accounts
-      : [];
-    var selectedId = window.MT_DATA.currentId || "";
+      // Libs comunes
+      try { if (window.NProgress && typeof NProgress.start === 'function') return NProgress.start(); } catch (_) {}
 
-    // Selectores
-    var q = function (s) {
-      return typeof s === "string" && s ? document.querySelector(s) : null;
-    };
-    var qa = function (root, s) {
-      return root ? root.querySelectorAll(s) : [];
-    };
+      // Eventos + fallback visual
+      fireLoadingEvents(true);
+      fallbackOn();
+    },
+    stop: function () {
+      try {
+        if (window.MEGATRADER) {
+          if (typeof MEGATRADER.hideLoader === 'function') return MEGATRADER.hideLoader();
+          if (typeof MEGATRADER.hidePreloader === 'function') return MEGATRADER.hidePreloader();
+          if (typeof MEGATRADER.loading === 'function') return MEGATRADER.loading(false);
+          if (MEGATRADER.loader && typeof MEGATRADER.loader.hide === 'function') return MEGATRADER.loader.hide();
+          if (MEGATRADER.preloader && typeof MEGATRADER.preloader.hide === 'function') return MEGATRADER.preloader.hide();
+          if (typeof MEGATRADER.togglePreloader === 'function') return MEGATRADER.togglePreloader(false);
+        }
+      } catch (_) {}
 
-    var grid = q(SEL.grid || "#mt-accounts-grid");
-    var btnSel = q(SEL.select || "#select-subscription-btn");
-    var elBadge = q(SEL.badge || "#mt-badge");
-    var elSize = q(SEL.size || "#mt-size");
-    var elName = q(SEL.name || "#mt-name");
-    var modalSel = SEL.modal || "#changeSubcriptionModal";
-    var CARD = SEL.card || ".subscription-card";
-    var CHECK = SEL.check || ".checkmark-icon";
+      try { if (window.NProgress && typeof NProgress.done === 'function') return NProgress.done(); } catch (_) {}
 
-    // Contenedor donde se renderiza el performance (para detectar cambios)
-    var PERF_SEL = ".mt-account-performance";
-    var perfContainer = q(PERF_SEL);
-
-    var pendingPreloader = false; // solo ocultamos si nosotros lo mostramos
-    var preloaderFallbackTimer = null;
-
-    function log() {
-      if (DEBUG) {
-        try {
-          console.debug.apply(
-            console,
-            ["[MT]"].concat([].slice.call(arguments))
-          );
-        } catch (_) {}
-      }
+      fireLoadingEvents(false);
+      fallbackOff();
     }
+  };
+  // ============== FIN PRELOADER ==============
 
-    // Preloader helpers (usa tu global .preloader)
-    function showPreloader() {
-      if (
-        window.jQuery &&
-        window.jQuery.fn &&
-        window.jQuery(".preloader").length
-      ) {
-        pendingPreloader = true;
-        window.jQuery(".preloader").stop(true, true).fadeIn(150);
-        // Fallback por si algo falla y no hay cambios o no hay ajax
-        clearTimeout(preloaderFallbackTimer);
-        preloaderFallbackTimer = setTimeout(hidePreloader, 7000);
-        log("preloader: show");
-      } else {
-        showErr("Preloader not available", ".preloader or jQuery not found.");
-      }
-    }
-    function hidePreloader() {
-      if (!pendingPreloader) return; // no interrumpir si no lo activamos nosotros
-      if (
-        window.jQuery &&
-        window.jQuery.fn &&
-        window.jQuery(".preloader").length
-      ) {
-        window.jQuery(".preloader").stop(true, true).fadeOut(150);
-        pendingPreloader = false;
-        clearTimeout(preloaderFallbackTimer);
-        log("preloader: hide");
-      }
-    }
+  // Estado selección
+  var selectedId = CFG.currentId || null;
 
-    // Si no hay currentId válido, usa la primera cuenta disponible
-    function ensureSelectedId() {
-      if (
-        selectedId &&
-        ACCS.some(function (a) {
-          return a.id === selectedId;
-        })
-      )
+  // Util
+  function $(root, q) { return (root || document).querySelector(q); }
+  function $all(root, q) { return Array.prototype.slice.call((root || document).querySelectorAll(q)); }
+  function enableSelect(on) {
+    if (!selectBtn) return;
+    selectBtn.disabled = !on;
+    selectBtn.classList.toggle('disabled', !on);
+  }
+
+  function setActiveCard(card) {
+    if (!card || card.classList.contains('d-none')) return;
+    $all(grid, sel.card + '.' + CFG.selectionClass).forEach(function (el) {
+      el.classList.remove(CFG.selectionClass);
+      var chk = $(el, sel.check);
+      if (chk) chk.style.display = 'none';
+    });
+    card.classList.add(CFG.selectionClass);
+    var check = $(card, sel.check);
+    if (check) check.style.display = '';
+    selectedId = card.getAttribute('data-account-id') || null;
+
+    window.mtAccounts = window.mtAccounts || {};
+    window.mtAccounts.selectedId = selectedId;
+
+    enableSelect(true);
+  }
+
+  function preselectIfVisible() {
+    if (!selectedId) { enableSelect(false); return; }
+    var cur = grid && grid.querySelector(sel.card + '[data-account-id="' + CSS.escape(selectedId) + '"]');
+    if (cur && !cur.classList.contains('d-none')) setActiveCard(cur);
+    else enableSelect(false);
+  }
+
+  function updateHeaderFromCard(card) {
+    if (!card) return;
+    var sizeVal = card.getAttribute('data-size') || '';
+    var nameVal = card.getAttribute('data-name') || 'Account';
+    var logoVal = card.getAttribute('data-logo') || '';
+
+    var sizeEl = document.querySelector(sel.size);
+    var nameEl = document.querySelector(sel.name);
+    var logoEl = document.querySelector(sel.platformLogo);
+    var badgeEl = document.querySelector(sel.badge);
+
+    if (sizeEl) sizeEl.textContent = sizeVal;
+    if (nameEl) nameEl.textContent = nameVal;
+    if (logoEl && logoVal) logoEl.src = logoVal;
+
+    if (badgeEl) {
+      var status = (card.getAttribute('data-status') || '').toLowerCase();
+      badgeEl.textContent = status
+        ? status.replace(/-/g, ' ').replace(/\b\w/g, function (m) { return m.toUpperCase(); })
+        : 'NoStatusDefine';
+    }
+  }
+
+  function hideModal() {
+    if (!modalEl || !window.bootstrap) return;
+    var inst = window.bootstrap.Modal.getInstance(modalEl) || new window.bootstrap.Modal(modalEl);
+    inst.hide();
+  }
+
+  // Click en grid
+  if (grid) {
+    grid.addEventListener('click', function (e) {
+      var card = e.target.closest(sel.card);
+      if (!card || card.classList.contains('d-none')) return;
+      setActiveCard(card);
+    });
+  }
+
+  // Click en "Select"
+  if (selectBtn) {
+    selectBtn.addEventListener('click', function () {
+      if (!selectedId) {
+        if (window.MEGATRADER && typeof MEGATRADER.showError === 'function') {
+          MEGATRADER.showError('Select an account', 'Please choose an account to continue.', {});
+        } else {
+          console.error('[MT] No account selected');
+        }
         return;
-      if (ACCS.length > 0) {
-        selectedId = ACCS[0].id;
-        log("selectedId fallback ->", selectedId);
-      } else {
-        showErr("No accounts", "No accounts found for this user.");
       }
-    }
 
-    function titleCase(s) {
-      return (s || "")
-        .toString()
-        .replace(/-/g, " ")
-        .replace(/\b\w/g, function (m) {
-          return m.toUpperCase();
-        });
-    }
+      var fd = new FormData();
+      fd.append('action', CFG.ajax.action);
+      fd.append('nonce', CFG.ajax.nonce);
+      fd.append('accountId', selectedId);
 
-    function getAccountById(id) {
-      for (var i = 0; i < ACCS.length; i++)
-        if (ACCS[i].id === id) return ACCS[i];
-      return null;
-    }
+      enableSelect(false);
 
-    function markSelected() {
-      if (!grid) return;
-      var cards = qa(grid, CARD);
-      cards.forEach(function (card) {
-        var cid = card.getAttribute("data-account-id");
-        var check = card.querySelector(CHECK);
-        var isSel = cid === selectedId;
-        card.classList.toggle("active", isSel);
-        if (check) check.style.display = isSel ? "block" : "none";
-      });
-    }
+      var url = (CFG.ajax && CFG.ajax.url) || '';
+      var fetcher = (window.MEGATRADER && typeof MEGATRADER.fetchJSON === 'function')
+        ? window.MEGATRADER.fetchJSON
+        : function (u, opts) { return fetch(u, opts).then(function (r) { return r.json(); }); };
 
-    function toggleSelectBtn() {
-      if (!btnSel) return;
-      if (selectedId) {
-        btnSel.classList.remove("disabled");
-        btnSel.removeAttribute("disabled");
-      } else {
-        btnSel.classList.add("disabled");
-        btnSel.setAttribute("disabled", "disabled");
-      }
-    }
+      var req = fetcher(url, { method: 'POST', body: fd, credentials: 'same-origin' });
 
-    function closeModal() {
-      var modalEl = q(modalSel);
-      if (!modalEl) return;
-      if (window.bootstrap && window.bootstrap.Modal) {
-        var inst =
-          bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-        inst.hide();
-      } else {
-        modalEl.classList.remove("show");
-      }
-    }
+      // Arranca loader (si la app tiene withLoader, lo usará; si no, fallback)
+      try { Loader.start(req); } catch (_) { Loader.start(); }
 
-    // Delegación de clicks en el grid
-    if (grid) {
-      grid.addEventListener("click", function (e) {
-        var card = e.target.closest(CARD);
-        if (!card) return;
-        selectedId = card.getAttribute("data-account-id") || "";
-        log("clicked ->", selectedId);
-        markSelected();
-        toggleSelectBtn();
-      });
-    }
+      req.then(function (res) {
+        if (!res || !res.success) throw new Error(res && res.data && res.data.message || 'AJAX failed');
 
-    // === OBSERVER: cuando cambie el performance en el DOM, ocultamos el preloader
-    if (perfContainer) {
-      var perfObserver = new MutationObserver(function (mutations) {
-        // Si hubo cambios en hijos, asumimos que el nuevo HTML ya llegó
-        var hasChildChanges = mutations.some(function (m) {
-          return (
-            m.type === "childList" &&
-            (m.addedNodes.length || m.removedNodes.length)
-          );
-        });
-        if (hasChildChanges) {
-          log("performance DOM changed -> hide preloader");
-          hidePreloader();
-        }
-      });
-      perfObserver.observe(perfContainer, { childList: true, subtree: true });
-    }
-
-    // Si tu actualización usa jQuery.ajax, cuando termine cualquier ajax, ocultamos por si acaso
-    if (window.jQuery && window.jQuery(document)) {
-      window.jQuery(document).ajaxComplete(function () {
-        log("ajaxComplete -> hide preloader (safety)");
-        hidePreloader();
-      });
-    }
-
-    // Botón Select
-    if (btnSel) {
-      btnSel.addEventListener("click", function () {
-        if (!selectedId) {
-          showErr("Select an account", "Please choose an account to continue.");
-          return;
-        }
-        var obj = getAccountById(selectedId);
-        if (!obj) {
-          showErr("Invalid account", "The selected account is not available.");
-          return;
+        if (window.mtTooltips?.closeAll) window.mtTooltips.closeAll();
+        if (perf && res.data && typeof res.data.html === 'string') {
+          perf.innerHTML = res.data.html || '';
+          if (window.mtTooltips?.refresh) window.mtTooltips.refresh(perf);
         }
 
-        // Actualizar cabecera
-        if (elBadge) {
-          var statusKey =
-            (obj.status || "")
-              .toLowerCase()
-              .trim()
-              .replace(/[^a-z0-9]+/g, "-") || "default";
+        hideModal();
 
-          // Texto visible (Title Case)
-          elBadge.textContent = statusKey
-            .replace(/-/g, " ")
-            .replace(/\b\w/g, (m) => m.toUpperCase());
+        var active = grid && grid.querySelector(sel.card + '.' + CFG.selectionClass);
+        if (active) {
+          updateHeaderFromCard(active);
+          var orderId = parseInt(active.getAttribute('data-order') || '0', 10) || 0;
+          var root = document.getElementById('mt-account-overview');
+          if (root) root.setAttribute('data-order-id', orderId ? String(orderId) : '');
 
-          // Clase FINAL del badge del botón (sin mapas, solo por status):
-          elBadge.className =
-            "badge-mega badge-mega-sm badge-mega-" + statusKey;
-        }
-        if (elSize) elSize.textContent = obj.size || "";
-        if (elName) elName.textContent = obj.name || "Account";
-
-        if (!elBadge && !elSize && !elName) {
-          showErr("UI not ready", "Header targets not found.");
+          document.dispatchEvent(new CustomEvent('mt:accountSelected', {
+            detail: { accountId: selectedId, id: selectedId, order: orderId, orderId: orderId }
+          }));
         }
 
-        // Mostrar preloader y cerrar modal
-        showPreloader();
-        closeModal();
-
-        // Lanza un evento por si otro script hace el AJAX del performance
-        var ev = new CustomEvent("mt:accountSelected", {
-          detail: { accountId: selectedId },
-        });
-        document.dispatchEvent(ev);
-        log("event dispatched: mt:accountSelected", selectedId);
-        try {
-          if (typeof window.breachGuardCheck === "function")
-            window.breachGuardCheck(selectedId);
-        } catch (e) {
-          showErr("Breach check failed", e);
+        if (typeof window.passedGuardCheck === 'function') window.passedGuardCheck(selectedId);
+        if (typeof window.breachGuardCheck === 'function') window.breachGuardCheck(selectedId);
+      })
+      .catch(function (err) {
+        if (window.MEGATRADER && typeof MEGATRADER.showError === 'function') {
+          MEGATRADER.showError('Account Performance Error', err && (err.message || err), { headline: 'Oops!' });
+        } else {
+          console.error('[MT][Account Performance Error]', err);
         }
+      })
+      .finally(function () {
+        try { Loader.stop(); } catch (_) {}
+        enableSelect(true);
       });
-    }
+    });
+  }
 
-    // Re-sincronizar cuando el modal se abre
-    var modalEl = q(modalSel);
-    if (modalEl) {
-      modalEl.addEventListener("shown.bs.modal", function () {
-        markSelected();
-        toggleSelectBtn();
-      });
-    }
-
-    // INIT
-    ensureSelectedId();
-    markSelected();
-    toggleSelectBtn();
-
-    log("init ok", { selectedId: selectedId, total: ACCS.length });
-  });
+  if (grid) preselectIfVisible();
 })();
