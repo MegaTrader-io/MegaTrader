@@ -1,239 +1,288 @@
-/* mt-account-picker.js — selección de cuentas + AJAX + preloader robusto */
+/* mt-account-picker.js — usa solo $('.preloader') del theme */
 (function () {
   'use strict';
 
-  var CFG = (window.MT_DATA || {});
-  var sel = (CFG.selectors || {});
-  var grid = document.querySelector(sel.grid);
-  var selectBtn = document.querySelector(sel.select);
-  var perf = document.querySelector(sel.performance) || document.querySelector('.mt-account-performance');
-  var modalEl = document.querySelector(sel.modal);
-
-  // ================ PRELOADER =================
-  function injectFallbackCSS() {
-    if (document.getElementById('mt-fallback-loader-style')) return;
-    var css = document.createElement('style');
-    css.id = 'mt-fallback-loader-style';
-    css.textContent =
-      '@keyframes mtSpin{to{transform:rotate(360deg)}}' +
-      '#mt-fallback-loader{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:200000;background:rgba(0,0,0,.35)}' +
-      '#mt-fallback-loader .mt-spinner{width:48px;height:48px;border-radius:50%;border:4px solid #fff;border-top-color:transparent;animation:mtSpin 1s linear infinite}';
-    document.head.appendChild(css);
+  // Esperar DOM listo (soporta inline/defer)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
   }
-  function ensureFallbackOverlay() {
-    if (document.getElementById('mt-fallback-loader')) return;
-    injectFallbackCSS();
-    var el = document.createElement('div');
-    el.id = 'mt-fallback-loader';
-    el.innerHTML = '<div class="mt-spinner" role="status" aria-label="Loading"></div>';
-    document.body.appendChild(el);
-  }
-  function fallbackOn()  { ensureFallbackOverlay(); var el = document.getElementById('mt-fallback-loader'); if (el) el.style.display = 'flex'; document.documentElement.classList.add('mt-busy'); if (selectBtn) selectBtn.classList.add('is-loading'); }
-  function fallbackOff() { var el = document.getElementById('mt-fallback-loader'); if (el) el.style.display = 'none'; document.documentElement.classList.remove('mt-busy'); if (selectBtn) selectBtn.classList.remove('is-loading'); }
 
-  function fireLoadingEvents(on) {
-    try { document.dispatchEvent(new CustomEvent('mt:loading', { detail: { on: !!on } })); } catch (_) {}
-    try { window.dispatchEvent(new CustomEvent('mt:loading', { detail: { on: !!on } })); } catch (_) {}
-    // aliases
-    try { document.dispatchEvent(new Event(on ? 'loading:start' : 'loading:stop')); } catch (_) {}
-    try { window.dispatchEvent(new Event(on ? 'loading:start' : 'loading:stop')); } catch (_) {}
-    if (window.jQuery) {
-      try { window.jQuery(document).trigger('mt:loading', [{ on: !!on }]); } catch (_) {}
-      try { window.jQuery(document).trigger(on ? 'loading:start' : 'loading:stop'); } catch (_) {}
+  function init() {
+    if (!window.MT_DATA) return;
+
+    var CFG   = window.MT_DATA || {};
+    var SEL   = CFG.selectors || {};
+    var grid  = document.querySelector(SEL.grid || '#mt-accounts-grid');
+    var btn   = document.querySelector(SEL.select || '#select-subscription-btn');
+    var perf  = document.querySelector(SEL.performance || '.mt-account-performance') || document.querySelector('.mt-account-performance');
+    var modal = document.querySelector(SEL.modal || '#changeSubcriptionModal');
+
+    var selectedId = CFG.currentId || null;
+    var pendingPreloader = false;
+    var preloaderFallbackTimer = null;
+
+    // ========= Helpers =========
+    function q(root, sel){ return (root || document).querySelector(sel); }
+    function qAll(root, sel){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+    function log(){ if (CFG.debug) try{ console.debug.apply(console, ['[MT]'].concat([].slice.call(arguments))); }catch(_){} }
+
+    function showErr(t, m, o){
+      if (window.MEGATRADER && typeof MEGATRADER.showError === 'function') return MEGATRADER.showError(t, m, o||{});
+      console.error('[MT][Error]', t, m);
     }
-  }
 
-  var Loader = {
-    start: function (p) {
-      // Si existe una API "withLoader(promise)" aprovechémosla
-      try {
-        if (window.MEGATRADER && typeof MEGATRADER.withLoader === 'function' && p && typeof p.finally === 'function') {
-          return MEGATRADER.withLoader(p);
-        }
-      } catch (_) {}
-
-      // Intentos directos
-      try {
-        if (window.MEGATRADER) {
-          if (typeof MEGATRADER.showLoader === 'function') return MEGATRADER.showLoader();
-          if (typeof MEGATRADER.showPreloader === 'function') return MEGATRADER.showPreloader();
-          if (typeof MEGATRADER.loading === 'function') return MEGATRADER.loading(true);
-          if (MEGATRADER.loader && typeof MEGATRADER.loader.show === 'function') return MEGATRADER.loader.show();
-          if (MEGATRADER.preloader && typeof MEGATRADER.preloader.show === 'function') return MEGATRADER.preloader.show();
-          if (typeof MEGATRADER.togglePreloader === 'function') return MEGATRADER.togglePreloader(true);
-        }
-      } catch (_) {}
-
-      // Libs comunes
-      try { if (window.NProgress && typeof NProgress.start === 'function') return NProgress.start(); } catch (_) {}
-
-      // Eventos + fallback visual
-      fireLoadingEvents(true);
-      fallbackOn();
-    },
-    stop: function () {
-      try {
-        if (window.MEGATRADER) {
-          if (typeof MEGATRADER.hideLoader === 'function') return MEGATRADER.hideLoader();
-          if (typeof MEGATRADER.hidePreloader === 'function') return MEGATRADER.hidePreloader();
-          if (typeof MEGATRADER.loading === 'function') return MEGATRADER.loading(false);
-          if (MEGATRADER.loader && typeof MEGATRADER.loader.hide === 'function') return MEGATRADER.loader.hide();
-          if (MEGATRADER.preloader && typeof MEGATRADER.preloader.hide === 'function') return MEGATRADER.preloader.hide();
-          if (typeof MEGATRADER.togglePreloader === 'function') return MEGATRADER.togglePreloader(false);
-        }
-      } catch (_) {}
-
-      try { if (window.NProgress && typeof NProgress.done === 'function') return NProgress.done(); } catch (_) {}
-
-      fireLoadingEvents(false);
-      fallbackOff();
+    function normalizeStatus(s){
+      var st = (s||'').toString().trim().toUpperCase();
+      return (st === 'ACTIVATION_PENDING') ? 'PENDING_ACTIVATION' : st;
     }
-  };
-  // ============== FIN PRELOADER ==============
 
-  // Estado selección
-  var selectedId = CFG.currentId || null;
-
-  // Util
-  function $(root, q) { return (root || document).querySelector(q); }
-  function $all(root, q) { return Array.prototype.slice.call((root || document).querySelectorAll(q)); }
-  function enableSelect(on) {
-    if (!selectBtn) return;
-    selectBtn.disabled = !on;
-    selectBtn.classList.toggle('disabled', !on);
-  }
-
-  function setActiveCard(card) {
-    if (!card || card.classList.contains('d-none')) return;
-    $all(grid, sel.card + '.' + CFG.selectionClass).forEach(function (el) {
-      el.classList.remove(CFG.selectionClass);
-      var chk = $(el, sel.check);
-      if (chk) chk.style.display = 'none';
-    });
-    card.classList.add(CFG.selectionClass);
-    var check = $(card, sel.check);
-    if (check) check.style.display = '';
-    selectedId = card.getAttribute('data-account-id') || null;
-
-    window.mtAccounts = window.mtAccounts || {};
-    window.mtAccounts.selectedId = selectedId;
-
-    enableSelect(true);
-  }
-
-  function preselectIfVisible() {
-    if (!selectedId) { enableSelect(false); return; }
-    var cur = grid && grid.querySelector(sel.card + '[data-account-id="' + CSS.escape(selectedId) + '"]');
-    if (cur && !cur.classList.contains('d-none')) setActiveCard(cur);
-    else enableSelect(false);
-  }
-
-  function updateHeaderFromCard(card) {
-    if (!card) return;
-    var sizeVal = card.getAttribute('data-size') || '';
-    var nameVal = card.getAttribute('data-name') || 'Account';
-    var logoVal = card.getAttribute('data-logo') || '';
-
-    var sizeEl = document.querySelector(sel.size);
-    var nameEl = document.querySelector(sel.name);
-    var logoEl = document.querySelector(sel.platformLogo);
-    var badgeEl = document.querySelector(sel.badge);
-
-    if (sizeEl) sizeEl.textContent = sizeVal;
-    if (nameEl) nameEl.textContent = nameVal;
-    if (logoEl && logoVal) logoEl.src = logoVal;
-
-    if (badgeEl) {
-      var status = (card.getAttribute('data-status') || '').toLowerCase();
-      badgeEl.textContent = status
-        ? status.replace(/-/g, ' ').replace(/\b\w/g, function (m) { return m.toUpperCase(); })
-        : 'NoStatusDefine';
+    function enableBtn(on){
+      if (!btn) return;
+      btn.disabled = !on;
+      btn.classList.toggle('disabled', !on);
     }
-  }
 
-  function hideModal() {
-    if (!modalEl || !window.bootstrap) return;
-    var inst = window.bootstrap.Modal.getInstance(modalEl) || new window.bootstrap.Modal(modalEl);
-    inst.hide();
-  }
+    // ========= Preloader (tu .preloader con jQuery) =========
+    function showPreloader(){
+      if (window.jQuery && window.jQuery.fn && window.jQuery('.preloader').length){
+        pendingPreloader = true;
+        window.jQuery('.preloader').stop(true, true).fadeIn(150);
+        clearTimeout(preloaderFallbackTimer);
+        preloaderFallbackTimer = setTimeout(hidePreloader, 5000); // safety
+        log('preloader: show');
+      } else {
+        log('preloader no disponible (.preloader + jQuery)');
+      }
+    }
+    function hidePreloader(){
+      if (!pendingPreloader) return;
+      if (window.jQuery && window.jQuery.fn && window.jQuery('.preloader').length){
+        window.jQuery('.preloader').stop(true, true).fadeOut(150);
+        pendingPreloader = false;
+        clearTimeout(preloaderFallbackTimer);
+        log('preloader: hide');
+      }
+    }
 
-  // Click en grid
-  if (grid) {
-    grid.addEventListener('click', function (e) {
-      var card = e.target.closest(sel.card);
+    // Ocultar preloader cuando cambie el DOM del performance (cuando llega el HTML)
+    if (perf) {
+      var perfObserver = new MutationObserver(function(muts){
+        var changed = muts.some(function(m){ return m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length); });
+        if (changed) hidePreloader();
+      });
+      perfObserver.observe(perf, { childList: true, subtree: true });
+    }
+    // Por si algún otro script usa $.ajax
+    if (window.jQuery && window.jQuery(document)) {
+      window.jQuery(document).ajaxComplete(function(){ hidePreloader(); });
+    }
+
+    // ========= UI de selección =========
+    function setActiveCard(card){
       if (!card || card.classList.contains('d-none')) return;
-      setActiveCard(card);
-    });
-  }
 
-  // Click en "Select"
-  if (selectBtn) {
-    selectBtn.addEventListener('click', function () {
-      if (!selectedId) {
-        if (window.MEGATRADER && typeof MEGATRADER.showError === 'function') {
-          MEGATRADER.showError('Select an account', 'Please choose an account to continue.', {});
-        } else {
-          console.error('[MT] No account selected');
+      qAll(grid, (SEL.card || '.subscription-card') + '.active').forEach(function(el){
+        el.classList.remove('active');
+        var c = q(el, SEL.check || '.checkmark-icon');
+        if (c) c.style.display = 'none';
+      });
+
+      card.classList.add('active');
+      var ch = q(card, SEL.check || '.checkmark-icon');
+      if (ch) ch.style.display = 'block';
+
+      selectedId = card.getAttribute('data-account-id') || null;
+      window.mtAccounts = window.mtAccounts || {};
+      window.mtAccounts.selectedId = selectedId;
+
+      enableBtn(true);
+      updateAccountCTAs(); // sincroniza CTAs con la card activa
+    }
+
+    function preselectIfVisible(){
+      if (!grid || !selectedId) { enableBtn(false); return; }
+      var cur = grid.querySelector((SEL.card || '.subscription-card') + '[data-account-id="'+CSS.escape(selectedId)+'"]');
+      if (cur && !cur.classList.contains('d-none')) setActiveCard(cur);
+      else enableBtn(false);
+    }
+
+    function titleCase(s){
+      return (s||'').toString().replace(/-/g,' ').replace(/\b\w/g, function(m){ return m.toUpperCase(); });
+    }
+
+    function updateHeaderFromCard(card){
+      if (!card) return;
+      var sizeVal = card.getAttribute('data-size') || '';
+      var nameVal = card.getAttribute('data-name') || 'Account';
+      var logoVal = card.getAttribute('data-logo') || '';
+      var status  = (card.getAttribute('data-status') || '').toLowerCase();
+
+      var sizeEl  = document.querySelector(SEL.size || '#mt-size');
+      var nameEl  = document.querySelector(SEL.name || '#mt-name');
+      var logoEl  = document.querySelector(SEL.platformLogo || '#mt-platform-logo');
+      var badgeEl = document.querySelector(SEL.badge || '#mt-badge');
+
+      if (sizeEl) sizeEl.textContent = sizeVal;
+      if (nameEl) nameEl.textContent = nameVal;
+      if (logoEl && logoVal) logoEl.src = logoVal;
+      if (badgeEl) {
+        badgeEl.textContent = status ? titleCase(status) : 'NoStatusDefine';
+      }
+    }
+
+    function closeModal(){
+      if (!modal) return;
+      if (window.bootstrap && window.bootstrap.Modal) {
+        var inst = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+        inst.hide();
+      } else {
+        modal.classList.remove('show');
+      }
+    }
+
+    // ========= CTAs de modales (breach / passed) =========
+    function updateAccountCTAs(){
+      if (!grid) return;
+      var active = grid.querySelector((SEL.card || '.subscription-card') + '.active');
+      var resetId      = active ? (active.getAttribute('data-reset-id') || '') : '';
+      var activationId = active ? (active.getAttribute('data-activation-id') || '') : '';
+      var statusRaw    = active ? (active.getAttribute('data-status') || '') : '';
+      var statusNorm   = normalizeStatus(statusRaw);
+      var base         = CFG.checkoutBase || (window.MT_DATA && window.MT_DATA.checkoutBase) || '/checkout';
+
+      // BREACHED
+      var breachModal = document.getElementById('mt-breach-alert-modal');
+      if (breachModal) {
+        var breachBtn  = breachModal.querySelector('.mt-breach-reset-button');
+        var baseBreach = breachModal.getAttribute('data-checkout-base') || base;
+        if (breachBtn) {
+          if (resetId) {
+            breachBtn.href = baseBreach + '?add-to-cart=' + encodeURIComponent(resetId);
+            breachBtn.classList.remove('disabled', 'd-none');
+            breachBtn.removeAttribute('aria-disabled');
+          } else {
+            breachBtn.href = '#';
+            breachBtn.classList.add('disabled');
+            breachBtn.setAttribute('aria-disabled','true');
+          }
         }
-        return;
       }
 
-      var fd = new FormData();
-      fd.append('action', CFG.ajax.action);
-      fd.append('nonce', CFG.ajax.nonce);
-      fd.append('accountId', selectedId);
+      // PASSED / PENDING_ACTIVATION
+      var passedModal = document.getElementById('mt-account-passed-modal');
+      if (passedModal) {
+        passedModal.dataset.currentStatus = statusNorm || '';
+        passedModal.dataset.activationId  = activationId || '';
 
-      enableSelect(false);
+        var actBtn  = passedModal.querySelector('#mt-activation-btn');
+        var baseAct = passedModal.getAttribute('data-checkout-base') || base;
 
-      var url = (CFG.ajax && CFG.ajax.url) || '';
-      var fetcher = (window.MEGATRADER && typeof MEGATRADER.fetchJSON === 'function')
-        ? window.MEGATRADER.fetchJSON
-        : function (u, opts) { return fetch(u, opts).then(function (r) { return r.json(); }); };
-
-      var req = fetcher(url, { method: 'POST', body: fd, credentials: 'same-origin' });
-
-      // Arranca loader (si la app tiene withLoader, lo usará; si no, fallback)
-      try { Loader.start(req); } catch (_) { Loader.start(); }
-
-      req.then(function (res) {
-        if (!res || !res.success) throw new Error(res && res.data && res.data.message || 'AJAX failed');
-
-        if (window.mtTooltips?.closeAll) window.mtTooltips.closeAll();
-        if (perf && res.data && typeof res.data.html === 'string') {
-          perf.innerHTML = res.data.html || '';
-          if (window.mtTooltips?.refresh) window.mtTooltips.refresh(perf);
+        if (actBtn) {
+          if (activationId) {
+            actBtn.href = baseAct + '?add-to-cart=' + encodeURIComponent(activationId);
+            actBtn.classList.remove('disabled', 'd-none');
+            actBtn.removeAttribute('aria-disabled');
+          } else {
+            actBtn.href = '#';
+            actBtn.classList.add('disabled');
+            actBtn.setAttribute('aria-disabled','true');
+          }
         }
 
-        hideModal();
-
-        var active = grid && grid.querySelector(sel.card + '.' + CFG.selectionClass);
-        if (active) {
-          updateHeaderFromCard(active);
-          var orderId = parseInt(active.getAttribute('data-order') || '0', 10) || 0;
-          var root = document.getElementById('mt-account-overview');
-          if (root) root.setAttribute('data-order-id', orderId ? String(orderId) : '');
-
-          document.dispatchEvent(new CustomEvent('mt:accountSelected', {
-            detail: { accountId: selectedId, id: selectedId, order: orderId, orderId: orderId }
-          }));
+        // Si account-overview.js expone su sincronizador, úsalo
+        if (typeof window.__mtPassedSyncUI === 'function') {
+          window.__mtPassedSyncUI(passedModal);
         }
+      }
+    }
 
-        if (typeof window.passedGuardCheck === 'function') window.passedGuardCheck(selectedId);
-        if (typeof window.breachGuardCheck === 'function') window.breachGuardCheck(selectedId);
-      })
-      .catch(function (err) {
-        if (window.MEGATRADER && typeof MEGATRADER.showError === 'function') {
-          MEGATRADER.showError('Account Performance Error', err && (err.message || err), { headline: 'Oops!' });
-        } else {
-          console.error('[MT][Account Performance Error]', err);
-        }
-      })
-      .finally(function () {
-        try { Loader.stop(); } catch (_) {}
-        enableSelect(true);
+    // ========= Eventos UI =========
+    if (grid) {
+      grid.addEventListener('click', function(e){
+        var card = e.target.closest(SEL.card || '.subscription-card');
+        if (!card || card.classList.contains('d-none')) return;
+        setActiveCard(card);
       });
-    });
-  }
+    }
 
-  if (grid) preselectIfVisible();
+    if (btn) {
+      btn.addEventListener('click', function(){
+        if (!selectedId) {
+          showErr('Select an account', 'Please choose an account to continue.');
+          return;
+        }
+        var active = grid && grid.querySelector((SEL.card || '.subscription-card') + '.active');
+        if (!active) {
+          showErr('Invalid account', 'The selected account is not available.');
+          return;
+        }
+
+        // Actualiza cabecera inmediatamente y muestra preloader
+        updateHeaderFromCard(active);
+        updateAccountCTAs();
+        showPreloader();
+        closeModal();
+        enableBtn(false);
+
+        // AJAX performance
+        var fd = new FormData();
+        fd.append('action', CFG.ajax && CFG.ajax.action || 'mt_accounts_performance');
+        fd.append('nonce',  CFG.ajax && CFG.ajax.nonce  || '');
+        fd.append('accountId', selectedId);
+
+        var ajaxURL = (CFG.ajax && CFG.ajax.url) || '';
+        var fetcher = (window.MEGATRADER && typeof MEGATRADER.fetchJSON === 'function')
+          ? window.MEGATRADER.fetchJSON
+          : function(u, opts){ return fetch(u, opts).then(function(r){ return r.json(); }); };
+
+        fetcher(ajaxURL, { method:'POST', body: fd, credentials:'same-origin' })
+          .then(function(res){
+            if (!res || !res.success) throw new Error(res && res.data && res.data.message || 'AJAX failed');
+
+            if (window.mtTooltips && typeof window.mtTooltips.closeAll === 'function') window.mtTooltips.closeAll();
+            if (perf && res.data && typeof res.data.html === 'string') {
+              perf.innerHTML = res.data.html || '';
+              if (window.mtTooltips && typeof window.mtTooltips.refresh === 'function') window.mtTooltips.refresh(perf);
+            }
+
+            // Exponer orderId en el root y disparar eventos globales
+            var orderId = parseInt(active.getAttribute('data-order') || '0', 10) || 0;
+            var root = document.getElementById('mt-account-overview');
+            if (root) root.setAttribute('data-order-id', orderId ? String(orderId) : '');
+
+            document.dispatchEvent(new CustomEvent('mt:accountSelected', {
+              detail: { accountId: selectedId, id: selectedId, order: orderId, orderId: orderId }
+            }));
+
+            try {
+              if (typeof window.passedGuardCheck  === 'function') window.passedGuardCheck(selectedId);
+              if (typeof window.breachGuardCheck  === 'function') window.breachGuardCheck(selectedId);
+            } catch(e){ log('guards error', e); }
+          })
+          .catch(function(err){
+            showErr('Account Performance Error', err && (err.message || err), { headline: 'Oops!' });
+          })
+          .finally(function(){
+            hidePreloader();
+            enableBtn(true);
+          });
+      });
+    }
+
+    // Re-sincronizar cuando se abre el modal
+    if (modal) {
+      modal.addEventListener('shown.bs.modal', function(){
+        // Asegura que la card activa se marque y CTAs/btn queden bien
+        var active = grid && grid.querySelector((SEL.card || '.subscription-card') + '.active');
+        if (active) setActiveCard(active);
+        else enableBtn(false);
+      });
+    }
+
+    // Init
+    preselectIfVisible();
+    log('picker init', { selectedId: selectedId });
+  }
 })();

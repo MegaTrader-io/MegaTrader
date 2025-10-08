@@ -859,13 +859,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("action", "mt_account_performance_chart");
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
-
-    console.log("[MT][Chart][AJAX] request", {
-      url,
-      nonce,
-      accountId: String(accountId || ""),
-    });
-
+  
     return window.MEGATRADER.fetchJSON(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -881,11 +875,7 @@ document.addEventListener("mt:accountSelected", (e) => {
           j.data &&
           typeof j.data.html === "string"
         );
-        console.log("[MT][Chart][AJAX] response", {
-          ok,
-          htmlBytes: ok ? j.data.html.length : 0,
-          message: j?.data?.message || j?.data?.error || "",
-        });
+     
 
         if (!ok) {
           const msg =
