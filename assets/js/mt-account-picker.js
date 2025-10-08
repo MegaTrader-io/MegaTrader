@@ -50,7 +50,7 @@
         pendingPreloader = true;
         window.jQuery('.preloader').stop(true, true).fadeIn(150);
         clearTimeout(preloaderFallbackTimer);
-        preloaderFallbackTimer = setTimeout(hidePreloader, 5000); // safety
+        preloaderFallbackTimer = setTimeout(hidePreloader, 7000); 
         log('preloader: show');
       } else {
         log('preloader no disponible (.preloader + jQuery)');
