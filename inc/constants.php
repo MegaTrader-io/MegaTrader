@@ -195,7 +195,7 @@ class Label
         "performance_days_traded" => "Days Traded",
         "performance_rules" => "Rules",
         "performance_rules_description" => "Keep your Account Balance above",
-        "performance_rules_description_funded_start" => "No single day’s profit may exceed",
+        "performance_rules_description_funded_start" => "No day may exceed",
         "performance_rules_description_funded_ended" => "of total profits.",
         "performance_rules_link_text" => "Maximum Loss Limit",
         "performance_consistency_link_text" => "See Consistency Rule",
@@ -232,9 +232,8 @@ class Label
         'passed_modal_body_description' => 'Your account has passed the evaluation',
         'passed_modal_body_subtitle' => "Your account is under compliance review. Once approved, you’ll be able to pay the activation fee and unlock your funded account.",
         'passed_modal_button' => 'Activation Pending',
-
-        'passed_modal_note_pending' => 'Activation will open once review is complete.',
-        'passed_modal_note_pending_no_button' => 'Automatic Activation After Review',
+        'passed_modal_note_status_passed_w_activation_id' => 'Activation will open once review is complete.',
+        'passed_modal_note_status_passed_no_activation_id' => 'Automatic Activation After Review',
     ];
 
 }

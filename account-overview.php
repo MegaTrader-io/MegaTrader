@@ -230,14 +230,17 @@ if (is_user_logged_in()) {
       $__mt_account_passed_show = (in_array($__status_norm, ['PENDING_ACTIVATION', 'PASSED'], true)) ? '1' : '0';
 
       $__note_text = '';
-      if (
-        ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) ||
-        ($__status_norm === 'PASSED' && $__has_activation_id)
-      ) {
-        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending'];
+      if ($__status_norm === 'PASSED' && $__has_activation_id) {
+        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
       } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
-        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_pending_no_button'];
+        $__note_text = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
       }
+
+         $__show_note = true;
+      if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
+        $__show_note = false;
+      }
+
 
       $__btn_classes = [];
       if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
@@ -250,10 +253,7 @@ if (is_user_logged_in()) {
       }
       $__btn_classes_attr = implode(' ', $__btn_classes);
 
-      $__show_note = true;
-      if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
-        $__show_note = false;
-      }
+   
 
 
     } else {
