@@ -252,7 +252,9 @@ $payload = [
 
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
 
-wp_add_inline_script($handle, <<<JS
+wp_add_inline_script(
+  $handle,
+  <<<JS
 (function(){
   var CFG   = window.MT_DATA || {};
   var grid  = document.querySelector(CFG.selectors.grid);
@@ -283,55 +285,65 @@ wp_add_inline_script($handle, <<<JS
   }
 
   // === ACTUALIZA CTAs DE LOS MODALES (reset / activation) SEGÚN LA CARD ACTIVA ===
-  function updateAccountCTAs() {
-    if (!grid) return;
+function updateAccountCTAs() {
+  if (!grid) return;
 
-    var active = grid.querySelector(CFG.selectors.card + '.' + CFG.selectionClass);
-    var resetId = active ? (active.getAttribute('data-reset-id') || '') : '';
-    var activationId = active ? (active.getAttribute('data-activation-id') || '') : '';
-    var base = CFG.checkoutBase || (window.MT_DATA && window.MT_DATA.checkoutBase) || '/checkout';
+  var active = grid.querySelector(CFG.selectors.card + '.' + CFG.selectionClass);
+  var resetId      = active ? (active.getAttribute('data-reset-id') || '') : '';
+  var activationId = active ? (active.getAttribute('data-activation-id') || '') : '';
+  var statusRaw    = active ? (active.getAttribute('data-status') || '') : '';
+  var statusNorm   = (statusRaw || '').trim().toUpperCase();
+  if (statusNorm === 'ACTIVATION_PENDING') statusNorm = 'PENDING_ACTIVATION';
 
-    // --- BREACHED: botón de reset ---
-    var breachModal = document.getElementById('mt-breach-alert-modal');
-    if (breachModal) {
-      var breachBtn  = breachModal.querySelector('.mt-breach-reset-button');
-      var baseBreach = breachModal.getAttribute('data-checkout-base') || base;
+  var base = CFG.checkoutBase || (window.MT_DATA && window.MT_DATA.checkoutBase) || '/checkout';
 
-      if (breachBtn) {
-        if (resetId) {
-          breachBtn.href = baseBreach + '?add-to-cart=' + encodeURIComponent(resetId);
-          breachBtn.classList.remove('disabled', 'd-none');
-          breachBtn.removeAttribute('aria-disabled');
-        } else {
-          breachBtn.href = '#';
-          breachBtn.classList.add('disabled');
-          breachBtn.setAttribute('aria-disabled', 'true');
-        }
-      }
-    }
+  // --- BREACHED: botón de reset ---
+  var breachModal = document.getElementById('mt-breach-alert-modal');
+  if (breachModal) {
+    var breachBtn  = breachModal.querySelector('.mt-breach-reset-button');
+    var baseBreach = breachModal.getAttribute('data-checkout-base') || base;
 
-    // --- PASSED / PENDING_ACTIVATION: botón de activación ---
-    var passedModal = document.getElementById('mt-account-passed-modal');
-    if (passedModal) {
-      // expone el id en dataset para los guards
-      passedModal.dataset.activationId = activationId || '';
-
-      var actBtn  = passedModal.querySelector('#mt-activation-btn');
-      var baseAct = passedModal.getAttribute('data-checkout-base') || base;
-
-      if (actBtn) {
-        if (activationId) {
-          actBtn.href = baseAct + '?add-to-cart=' + encodeURIComponent(activationId);
-          actBtn.classList.remove('disabled', 'd-none');
-          actBtn.removeAttribute('aria-disabled');
-        } else {
-          actBtn.href = '#';
-          actBtn.classList.add('disabled');
-          actBtn.setAttribute('aria-disabled','true');
-        }
+    if (breachBtn) {
+      if (resetId) {
+        breachBtn.href = baseBreach + '?add-to-cart=' + encodeURIComponent(resetId);
+        breachBtn.classList.remove('disabled', 'd-none');
+        breachBtn.removeAttribute('aria-disabled');
+      } else {
+        breachBtn.href = '#';
+        breachBtn.classList.add('disabled');
+        breachBtn.setAttribute('aria-disabled', 'true');
       }
     }
   }
+
+  // --- PASSED / PENDING_ACTIVATION: botón de activación + datasets del modal ---
+  var passedModal = document.getElementById('mt-account-passed-modal');
+  if (passedModal) {
+    passedModal.dataset.currentStatus = statusNorm || '';
+    passedModal.dataset.activationId  = activationId || '';
+
+    var actBtn  = passedModal.querySelector('#mt-activation-btn');
+    var baseAct = passedModal.getAttribute('data-checkout-base') || base;
+
+    if (actBtn) {
+      if (activationId) {
+        actBtn.href = baseAct + '?add-to-cart=' + encodeURIComponent(activationId);
+        actBtn.classList.remove('disabled', 'd-none');
+        actBtn.removeAttribute('aria-disabled');
+      } else {
+        actBtn.href = '#';
+        actBtn.classList.add('disabled');
+        actBtn.setAttribute('aria-disabled','true');
+      }
+    }
+
+    // <<< PASO 4: sincroniza UI del modal si el helper está expuesto
+    if (typeof window.__mtPassedSyncUI === 'function') {
+      window.__mtPassedSyncUI(passedModal);
+    }
+  }
+}
+
 
   function showCard(card){
     card.classList.add('d-flex');
@@ -493,7 +505,7 @@ wp_add_inline_script($handle, <<<JS
             if (badgeEl) {
               var status = (active.getAttribute('data-status') || '').toLowerCase();
               badgeEl.textContent = status
-                ? status.replace(/-/g,' ').replace(/\\b\\w/g, function(m){ return m.toUpperCase(); })
+                ? status.replace(/-/g,' ').replace(/\b\w/g, function(m){ return m.toUpperCase(); })
                 : 'NoStatusDefine';
             }
 
@@ -517,4 +529,5 @@ wp_add_inline_script($handle, <<<JS
     });
   }
 })();
-JS);
+JS
+);
