@@ -1980,28 +1980,29 @@ if (document.readyState === "loading") {
 }
 
 
-  function setNote(status, activationId, modal) {
-    var noteEl = modal.querySelector("#mt-passed-note [data-note-text]");
-    if (!noteEl) return;
+  function setNote(status, activationId, modal) {function setNote(status, activationId, modal) {
+  var wrap = modal.querySelector('#mt-passed-note');
+  var text = wrap ? wrap.querySelector('[data-note-text]') : null;
+  if (!wrap || !text) return;
 
-    var st = String(status || "")
-      .trim()
-      .toUpperCase();
-    var hasId = normalizeId(activationId) !== "";
+  var st = String(status || '').trim().toUpperCase();
+  if (st === 'ACTIVATION_PENDING') st = 'PENDING_ACTIVATION';
+  var hasId = normalizeId(activationId) !== '';
 
-    var notePending =
-      modal.dataset.notePending ||
-      "Activation will open once review is complete.";
-    var noteNoBtn =
-      modal.dataset.notePendingNoButton || "Automatic Activation After Review";
+  var msgWithId = modal.dataset.notePassedWithId || '';
+  var msgNoId   = modal.dataset.notePassedNoId   || '';
 
-    if ((st === "PENDING_ACTIVATION" && hasId) || (st === "PASSED" && hasId)) {
-      noteEl.textContent = notePending;
-    } else if (st === "PASSED" && !hasId) {
-      noteEl.textContent = noteNoBtn;
-    } else {
-    }
+  var show = (st === 'PASSED');
+  if (show) {
+    text.textContent = hasId ? msgWithId : msgNoId;
+    wrap.removeAttribute('hidden');
+    wrap.setAttribute('aria-hidden', 'false');
+  } else {
+    wrap.setAttribute('hidden', '');
+    wrap.setAttribute('aria-hidden', 'true');
   }
+}
+
 
   function setButton(status, activationId, modal) {
     var btn = modal.querySelector("#mt-activation-btn");

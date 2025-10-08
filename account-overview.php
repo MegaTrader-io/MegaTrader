@@ -231,6 +231,29 @@ if (is_user_logged_in()) {
 
       $__note_passed_with_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
       $__note_passed_no_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
+      // Estado inicial de la NOTA del modal PASSED
+      $__note_text = '';
+      $__show_note = false;
+
+      // Normaliza alias
+      if ($__status_norm === 'ACTIVATION_PENDING') {
+        $__status_norm = 'PENDING_ACTIVATION';
+      }
+
+      // Reglas de visibilidad y texto:
+      // - PENDING_ACTIVATION + activationId => NO mostrar nota
+      // - PASSED + activationId             => mostrar nota "with id"
+      // - PASSED + sin activationId         => mostrar nota "no id"
+      if ($__status_norm === 'PASSED' && $__has_activation_id) {
+        $__show_note = true;
+        $__note_text = $__note_passed_with_id;
+      } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
+        $__show_note = true;
+        $__note_text = $__note_passed_no_id;
+      } else {
+        $__show_note = false;
+      }
+
 
 
       $__btn_classes = [];
