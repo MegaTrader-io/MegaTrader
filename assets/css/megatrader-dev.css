@@ -3847,6 +3847,11 @@ body.mt-placing .woocommerce-checkout {
   background: var(--Surface-Page, #1E1E1E);
   pointer-events: none;
 }
+.mt-dualbar--reward-full::after,
+.mt-dualbar--risk-full::after {
+  display: none;
+}
+
 
 .mt-dualbar__seg {
   position: absolute;

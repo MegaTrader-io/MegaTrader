@@ -13,9 +13,7 @@ $accountId = isset($args['meta']['accountId']) ? sanitize_text_field((string) $a
 $feature = isset($args['feature']) && is_array($args['feature']) ? $args['feature'] : [];
 $account = $feature['account'] ?? null;
 
-
 $apiData = isset($feature['apiData']) && is_array($feature['apiData']) ? $feature['apiData'] : null;
-
 
 /** 2) Fallback: construir apiData aquí si no vino desde el overview */
 if (!$apiData) {
@@ -44,14 +42,10 @@ if (!$apiData) {
     ];
 }
 
-
 /* ------- EJEMPLO DE TABS ------- */
 $tabs = [
     ['id' => 'overview', 'label' => 'Overview', 'active' => true],
 ];
-
-
-
 ?>
 
 <section class="mt-feature-tabs">
@@ -122,6 +116,11 @@ $tabs = [
             $rewardPct = 0;
             $riskPct = 0;
         }
+
+        // Clases extra para dualbar cuando uno es 100%
+        $dualbarMods = [];
+        if ($rewardPct === 100) $dualbarMods[] = 'mt-dualbar--reward-full';
+        if ($riskPct   === 100) $dualbarMods[] = 'mt-dualbar--risk-full';
 
         // Clases de barra (solo agregamos color si hay % > 0)
         $rewardBarClass = 'mt-progress-bar' . ($rewardPct > 0 ? ' mt-progress-bar--success' : '');
@@ -213,8 +212,9 @@ $tabs = [
 
                         <?php
                         $isEmptyBars = ($rewardPct === 0 && $riskPct === 0);
+                        $dualbarClass = 'mt-dualbar' . ($isEmptyBars ? ' is-empty' : '') . (!empty($dualbarMods) ? ' ' . implode(' ', $dualbarMods) : '');
                         ?>
-                        <div class="mt-dualbar <?php echo $isEmptyBars ? 'is-empty' : ''; ?>"
+                        <div class="<?php echo esc_attr($dualbarClass); ?>"
                             data-reward="<?php echo $rewardPct; ?>" data-risk="<?php echo $riskPct; ?>">
                             <span class="mt-dualbar__seg mt-dualbar__seg--reward"></span>
                             <span class="mt-dualbar__seg mt-dualbar__seg--risk"></span>
