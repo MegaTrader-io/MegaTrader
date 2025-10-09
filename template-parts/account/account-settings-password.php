@@ -6,14 +6,10 @@
                for="current_password"><?php esc_html_e('Current password', 'megatrader'); ?></label>
         <div class="mt-password-wrapper">
             <input type="password"
-                   class="mt-password-wrapper__password form-control <?= MT_WC_Error::has_error('current_password') ? 'is-invalid' : '' ?>"
+                   class="mt-password-wrapper__password form-control"
                    name="current_password" id="current_password"
                    value="">
         </div>
-        <?php if (MT_WC_Error::has_error('current_password')): ?>
-            <span id="error-current_password"
-                  class="invalid-feedback"> <?= MT_WC_Error::get_error('current_password') ?></span>
-        <?php endif; ?>
     </div>
 
     <div>
@@ -21,14 +17,10 @@
                for="new_password"><?php esc_html_e('New password', 'megatrader'); ?></label>
         <div class="mt-password-wrapper">
             <input type="password"
-                   class="mt-password-wrapper__password form-control <?= MT_WC_Error::has_error('new_password') ? 'is-invalid' : '' ?>"
+                   class="mt-password-wrapper__password form-control"
                    name="new_password" id="new_password"
                    value="">
         </div>
-        <?php if (MT_WC_Error::has_error('new_password')): ?>
-            <span id="error-new_password"
-                  class="invalid-feedback"> <?= MT_WC_Error::get_error('new_password') ?></span>
-        <?php endif; ?>
     </div>
 
     <div>
@@ -36,14 +28,10 @@
                for="confirm_password"><?php esc_html_e('Confirm password', 'megatrader'); ?></label>
         <div class="mt-password-wrapper">
             <input type="password"
-                   class="mt-password-wrapper__password form-control <?= MT_WC_Error::has_error('confirm_password') ? 'is-invalid' : '' ?>"
+                   class="mt-password-wrapper__password form-control"
                    name="confirm_password" id="confirm_password"
                    value="">
         </div>
-        <?php if (MT_WC_Error::has_error('confirm_password')): ?>
-            <span id="error-confirm_password"
-                  class="invalid-feedback"> <?= MT_WC_Error::get_error('confirm_password') ?></span>
-        <?php endif; ?>
     </div>
 
     <div>

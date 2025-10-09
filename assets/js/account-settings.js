@@ -1,32 +1,65 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const phoneInput = document.getElementById("billing_phone");
-    const form = phoneInput.closest("form");
+    const phoneInput = document.getElementById("personal_phone");
+    if (!phoneInput) return console.error("Phone input not found");
 
-    console.info('phoneInput', phoneInput.value);
-
-    window.iti = window.intlTelInput(phoneInput, {
-        initialCountry: 'us',
-        nationalMode: false,
-        separateDialCode: true,
-    });
-
-    function initPhoneInput(countryCode = "us") {
+    // Función para inicializar el input con un país
+    function initPhoneInput(countryCode = 'us') {
         if (window.iti) {
-            window.iti.destroy();
-            delete phoneInput.style.paddingLeft;
+            try {
+                window.iti.destroy();
+                delete phoneInput.style.paddingLeft;
+            } catch (err) {
+                console.warn("Error destroying intlTelInput:", err);
+            }
         }
 
         const iti = window.intlTelInput(phoneInput, {
             initialCountry: countryCode.toLowerCase(),
             nationalMode: false,
             separateDialCode: true,
+            autoPlaceholder: "polite",
         });
 
         window.iti = iti;
+        return iti;
     }
 
+    // Detección según el número existente
+    function initByPhoneNumber() {
+        const value = phoneInput.value.trim();
+
+        if (value && value.startsWith('+')) {
+            const iti = initPhoneInput('auto');
+            try {
+                iti.setNumber(value); // autodetecta el país a partir del número
+            } catch (err) {
+                console.warn("Error setting number:", err);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    // Fallback: detectar país por IP
+    function fallbackToIP() {
+        fetch("https://ipapi.co/json/")
+            .then((resp) => resp.json())
+            .then((data) => {
+                const countryCode = data.country || "us";
+                initPhoneInput(countryCode);
+            })
+            .catch((err) => {
+                console.error("IP detection failed:", err);
+                initPhoneInput("us");
+            });
+    }
+
+    // Validación en blur
     phoneInput.addEventListener("blur", function () {
-        const isValid = iti.isValidNumber();
+        if (!window.iti) return;
+
+        const isValid = window.iti.isValidNumber();
         let errorContainer = phoneInput
             .closest(".form-group")
             ?.querySelector(".invalid-feedback");
@@ -34,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!errorContainer) {
             errorContainer = document.createElement("div");
             errorContainer.className = "invalid-feedback";
-            errorContainer.textContent = "Invalid phone number.";
             phoneInput.parentNode.appendChild(errorContainer);
         }
 
@@ -42,39 +74,16 @@ document.addEventListener('DOMContentLoaded', function () {
             phoneInput.classList.remove("is-invalid");
             errorContainer.style.display = "none";
             phoneInput.setCustomValidity("");
-
         } else {
             phoneInput.classList.add("is-invalid");
             errorContainer.style.display = "block";
+            errorContainer.textContent = "Número de teléfono inválido.";
             phoneInput.setCustomValidity("Invalid");
         }
     });
 
-    function fallbackToIP() {
-        fetch("https://ipapi.co/json/")
-            .then((resp) => resp.json())
-            .then((resp) => {
-                const countryCode = resp.country || "us";
-                initPhoneInput(countryCode);
-            })
-            .catch(() => {
-                initPhoneInput("auto");
-            });
+    // Lógica principal
+    if (!initByPhoneNumber()) {
+        fallbackToIP();
     }
-
-    form.addEventListener("submit", function () {
-        if (window.iti) {
-            const fullNumber = window.iti.getNumber();
-            console.info("📞 Full number on submit:", fullNumber);
-
-            let hiddenInput = form.querySelector("input[name='billing_phone_full']");
-            if (!hiddenInput) {
-                hiddenInput = document.createElement("input");
-                hiddenInput.type = "hidden";
-                hiddenInput.name = "billing_phone_full";
-                form.appendChild(hiddenInput);
-            }
-            hiddenInput.value = fullNumber;
-        }
-    });
 });

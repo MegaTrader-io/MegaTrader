@@ -25,9 +25,9 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                 </div>
 
                 <div class="account-settings__sections-wrapper" id="accordionExample">
-                    <div class="mt-card account-settings__section toggle-panel">
+                    <form method="post" class="mt-card account-settings__section toggle-panel" id="personal-information-form">
                         <h2 class="toggle-panel__title-wrapper">
-                            <button class="toggle-panel__header" data-bs-toggle="collapse"
+                            <button type="button" class="toggle-panel__header" data-bs-toggle="collapse"
                                     data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 <div class="toggle-panel__icon">
                                     <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
@@ -53,7 +53,7 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                                 <?php get_template_part("template-parts/account/account-settings-personal-information"); ?>
                             </div>
                         </div>
-                    </div>
+                    </form>
 
                     <div class="mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">

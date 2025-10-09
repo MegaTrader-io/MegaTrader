@@ -72,6 +72,11 @@ function mt_account_settings_module()
     wp_localize_script('veriff-validation-module', 'wpAjax', $localize_data);
 }
 
+add_action('wp_enqueue_scripts', function () {
+    if (is_user_logged_in() && is_page_template('account-profile.php')) {
+        mt_account_settings_module();
+    }
+});
 
 if (!function_exists('mt_is_user_verified')) {
     /**
@@ -102,6 +107,7 @@ if (!function_exists('mt_is_user_verified')) {
 
 // ✅ Endpoint AJAX seguro
 add_action('wp_ajax_mt_update_password', 'mt_update_password_callback');
+add_action('wp_ajax_mt_update_personal_information', 'mt_update_personal_information_callback');
 
 function mt_update_password_callback()
 {
@@ -198,57 +204,55 @@ function mt_update_password_callback()
     }
 }
 
-add_action('wp_enqueue_scripts', function () {
-    if (is_user_logged_in() && is_page_template('account-profile.php')) {
-        mt_account_settings_module();
-    }
-});
-
-function mt_process_billing_form()
+function mt_update_personal_information_callback()
 {
-    if (!isset($_POST['mt_save_billing'])) {
-        return;
+    if (!is_user_logged_in()) {
+        wp_send_json_error([
+            'errors' => [
+                'global' => __('You must be logged in to change your personal information.', 'megatrader')
+            ]
+        ], 403);
     }
 
     if (!isset($_POST['mt_billing_nonce']) || !wp_verify_nonce($_POST['mt_billing_nonce'], 'mt_save_billing_address')) {
-        wc_add_notice(__('Security check failed. Please try again.', 'woocommerce'), 'error');
+        wp_send_json_error([
+            'errors' => [
+                'global' => __('Security check failed. Please try again.', 'megatrader')
+            ]
+        ], 403);
         return;
     }
 
     $user_id = get_current_user_id();
-    if (!$user_id) {
-        wc_add_notice(__('You must be logged in to update your information.', 'woocommerce'), 'error');
-        return;
-    }
+    $errors = [];
 
     $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'billing_city', 'billing_state', 'billing_postcode', 'billing_phone', 'billing_country'];
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
-            wc_add_notice(__("This field is required", 'your-td'), 'error', ['field' => $field]);;
+            $errors[$field] = __('This field is required', 'megatrader');
         }
     }
 
-    if (!wc_notice_count('error')) {
-        $customer = new WC_Customer($user_id);
-
-        $customer->set_billing_first_name(sanitize_text_field($_POST['billing_first_name']));
-        $customer->set_billing_last_name(sanitize_text_field($_POST['billing_last_name']));
-        $customer->set_billing_address_1(sanitize_text_field($_POST['billing_address_1']));
-        $customer->set_billing_city(sanitize_text_field($_POST['billing_city']));
-        $customer->set_billing_state(sanitize_text_field($_POST['billing_state']));
-        $customer->set_billing_postcode(sanitize_text_field($_POST['billing_postcode']));
-        $customer->set_billing_country(sanitize_text_field($_POST['billing_country']));
-        $customer->set_billing_phone(sanitize_text_field($_POST['billing_phone_full']));
-
-        $customer->save();
-
-        wc_add_notice(__('Great! Your personal information have been updated successfully', 'woocommerce'), 'success');
-
-        wp_safe_redirect(wc_get_account_endpoint_url('profile'));
-        exit;
+    if (count($errors) > 0) {
+        wp_send_json_error(['errors' => $errors], 422);
     }
-}
 
-add_action('wp', 'mt_process_billing_form');
+    $customer = new WC_Customer($user_id);
+
+    $customer->set_billing_first_name(sanitize_text_field($_POST['billing_first_name']));
+    $customer->set_billing_last_name(sanitize_text_field($_POST['billing_last_name']));
+    $customer->set_billing_address_1(sanitize_text_field($_POST['billing_address_1']));
+    $customer->set_billing_city(sanitize_text_field($_POST['billing_city']));
+    $customer->set_billing_state(sanitize_text_field($_POST['billing_state']));
+    $customer->set_billing_postcode(sanitize_text_field($_POST['billing_postcode']));
+    $customer->set_billing_country(sanitize_text_field($_POST['billing_country']));
+    $customer->set_billing_phone(sanitize_text_field($_POST['billing_phone_full']));
+
+    $customer->save();
+
+    wp_send_json_success([
+        'message' => __('Great! Your personal information have been updated successfully', 'megatrader'),
+    ]);
+}
 
 require_once 'veriff-module.php';

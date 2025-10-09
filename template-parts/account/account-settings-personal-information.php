@@ -2,8 +2,6 @@
 $success = wc_get_notices('success');
 $errors = wc_get_notices('error');
 
-
-
 foreach ($errors as $error) {
     if (!isset($error['data']['field'])) {
         continue;
@@ -23,10 +21,10 @@ $user_email = $current_user->user_email;
 $valid_states = WC()->countries->get_states($billing_country);
 
 ?>
-<div class="woocommerce-MyAccount-content">
+<div>
     <?php get_template_part("template-parts/user-profile-card"); ?>
 
-    <form method="post" class="space-y-3">
+    <div class="space-y-3">
         <?php wp_nonce_field('mt_save_billing_address', 'mt_billing_nonce'); ?>
 
         <div class="row">
@@ -34,29 +32,19 @@ $valid_states = WC()->countries->get_states($billing_country);
                 <label class="mb-1"
                        for="billing_first_name"><?php esc_html_e('First Name', 'megatrader'); ?></label>
                 <input type="text"
-                       class="form-control <?= MT_WC_Error::has_error('billing_first_name') ? 'is-invalid' : '' ?>"
+                       class="form-control"
                        name="billing_first_name" id="billing_first_name"
                        placeholder="<?php esc_attr_e('First Name', 'megatrader'); ?>"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_first_name', true)); ?>">
-
-                <?php if (MT_WC_Error::has_error('billing_first_name')): ?>
-                    <span id="error-billing_first_name"
-                          class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_first_name') ?></span>
-                <?php endif; ?>
             </div>
             <div class="col-lg-6">
                 <label class="mb-1"
                        for="billing_last_name"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
                 <input type="text"
-                       class="form-control <?= MT_WC_Error::has_error('billing_last_name') ? 'is-invalid' : '' ?>"
+                       class="form-control"
                        name="billing_last_name" id="billing_last_name"
                        placeholder="<?php esc_attr_e('Last Name', 'megatrader'); ?>"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_last_name', true)); ?>">
-
-                <?php if (MT_WC_Error::has_error('billing_last_name')): ?>
-                    <span id="error-billing_last_name"
-                          class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_last_name') ?></span>
-                <?php endif; ?>
             </div>
         </div>
 
@@ -73,22 +61,14 @@ $valid_states = WC()->countries->get_states($billing_country);
             <div class="col-lg-6">
                 <label class="mb-1" for="billing_address_1"><?php _e('Address', 'woocommerce'); ?></label>
                 <input type="text" name="billing_address_1" id="billing_address_1"
-                       class="form-control <?= MT_WC_Error::has_error('billing_address_1') ? 'is-invalid' : '' ?>"
+                       class="form-control"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_address_1', true)); ?>"/>
-                <?php if (MT_WC_Error::has_error('billing_address_1')): ?>
-                    <span id="error-billing_address_1"
-                          class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_address_1') ?></span>
-                <?php endif; ?>
             </div>
             <div class="col-lg-6">
                 <label class="mb-1" for="billing_city"><?php _e('City', 'woocommerce'); ?></label>
                 <input type="text" name="billing_city" id="billing_city"
-                       class="form-control <?= MT_WC_Error::has_error('billing_city') ? 'is-invalid' : '' ?>"
+                       class="form-control"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_city', true)); ?>"/>
-                <?php if (MT_WC_Error::has_error('billing_city')): ?>
-                    <span id="error-billing_city"
-                          class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_city') ?></span>
-                <?php endif; ?>
             </div>
         </div>
 
@@ -96,23 +76,14 @@ $valid_states = WC()->countries->get_states($billing_country);
             <div class="col-lg-6">
                 <label class="mb-1" for="billing_state"><?php _e('State', 'woocommerce'); ?></label>
                 <input type="text" name="billing_state" id="billing_state"
-                       class="form-control <?= MT_WC_Error::has_error('billing_state') ? 'is-invalid' : '' ?>"
+                       class="form-control"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_state', true)); ?>"/>
-                <?php if (MT_WC_Error::has_error('billing_state')): ?>
-                    <span id="error-billing_state"
-                          class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_state') ?></span>
-                <?php endif; ?>
             </div>
             <div class="col-lg-6">
                 <label class="mb-1" for="billing_postcode"><?php _e('ZIP Code', 'woocommerce'); ?></label>
                 <input type="text" name="billing_postcode" id="billing_postcode"
-                       class="form-control  <?= MT_WC_Error::has_error('billing_postcode') ? 'is-invalid' : '' ?>"
+                       class="form-control"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_postcode', true)); ?>"/>
-
-                <?php if (MT_WC_Error::has_error('billing_postcode')): ?>
-                    <span id="error-billing_postcode"
-                          class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_postcode') ?></span>
-                <?php endif; ?>
             </div>
         </div>
 
@@ -121,30 +92,22 @@ $valid_states = WC()->countries->get_states($billing_country);
                 <div class="col">
                     <label class="mb-1" for="billing_country"><?php esc_html_e('Country', 'megatrader'); ?></label>
                     <select name="billing_country" id="billing_country"
-                            class="form-select form-control woocommerce-select <?= MT_WC_Error::has_error('billing_country') ? 'is-invalid' : '' ?>">
+                            class="form-select form-control woocommerce-select">
                         <option value="" disabled>Country</option>
                         <?php foreach (WC()->countries->get_allowed_countries() as $key => $value): ?>
                             <option value="<?= esc_attr($key) ?>" <?= selected($billing_country, $key, false) ?> ><?= esc_html($value) ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <?php if (MT_WC_Error::has_error('billing_country')): ?>
-                        <span id="error-billing_country"
-                              class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_country') ?></span>
-                    <?php endif; ?>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="w-phone-full form-group mb-0">
-                    <label class="mb-1" for="billing_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
+                    <label class="mb-1" for="personal_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
                     <input type="tel"
-                           class="form-control <?= MT_WC_Error::has_error('billing_phone') ? 'is-invalid' : '' ?>"
-                           name="billing_phone" id="billing_phone"
+                           class="form-control"
+                           name="billing_phone" id="personal_phone"
                            placeholder="<?php esc_attr_e('Phone Number', 'megatrader'); ?>"
                            value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_phone', true)); ?>">
-                    <?php if (MT_WC_Error::has_error('billing_phone')): ?>
-                        <span id="error-billing_phone"
-                              class="invalid-feedback"> <?= MT_WC_Error::get_error('billing_phone') ?></span>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -154,5 +117,81 @@ $valid_states = WC()->countries->get_states($billing_country);
                 <?php _e('Save changes', 'woocommerce'); ?>
             </button>
         </div>
-    </form>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('personal-information-form');
+        const preloader = document.querySelector('.preloader');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        function setPhoneInput(form) {
+            if (window.iti) {
+                const fullNumber = window.iti.getNumber();
+                console.info("📞 Full number on submit:", fullNumber);
+
+                let hiddenInput = form.querySelector("input[name='billing_phone_full']");
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement("input");
+                    hiddenInput.type = "hidden";
+                    hiddenInput.name = "billing_phone_full";
+                    form.appendChild(hiddenInput);
+                }
+                hiddenInput.value = fullNumber;
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            setPhoneInput(form);
+
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            formData.append('action', 'mt_update_personal_information');
+
+            try {
+                const response = await fetch(window.wpAjax.ajaxUrl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+
+                const result = await response.json();
+
+                clearErrorBeforeSendRequest(form);
+
+                if (!result.success) {
+                    const errors = result.data?.errors || {};
+                    displayGlobalMessage(form, 'Something went wrong. Please try again later.', 'error');
+
+                    Object.entries(errors).forEach(([field, message]) => {
+                        const input = document.getElementById(field);
+                        if (input) {
+                            input.classList.add('is-invalid');
+
+                            const feedback = document.createElement('div');
+                            feedback.className = 'invalid-feedback';
+                            feedback.textContent = message;
+                            input.parentNode.appendChild(feedback);
+                        }
+                    });
+
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                displayGlobalMessage(form, result.data.message);
+            } catch (error) {
+                console.error('Password change failed:', error);
+                displayGlobalMessage(form, 'Unexpected error. Please try again later.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                preloader.style.display = 'none';
+            }
+        });
+    })
+</script>
