@@ -1739,6 +1739,8 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $awin = array_key_exists('averageWinningTrade', $m) ? (float) $m['averageWinningTrade'] : '-';
       $aloss = array_key_exists('averageLosingTrade', $m) ? (float) $m['averageLosingTrade'] : '-';
       $winPct = array_key_exists('winRate', $m) ? (float) $m['winRate'] : '-';
+      $lossPct = array_key_exists('lossRate', $m) ? (float) $m['lossRate'] : '-';
+
 
       // Día de los trades para streaks/duraciones
       $trades_day_iso = '';
@@ -1777,6 +1779,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
         'awin' => $awin,
         'aloss' => $aloss,
         'win' => $winPct,
+        'loss' => $lossPct,
         'max' => $max,
         'dur' => $dur,
       ];
@@ -1856,6 +1859,7 @@ if (!function_exists('mt_daily_journal_rows_html')) {
         <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
         <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
         <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['loss'] ?? '-')); ?></div>
         <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
         <div class="dj-cell is-right"><?php echo esc_html((string) ($r['dur'] ?? '-')); ?></div>
       </div>

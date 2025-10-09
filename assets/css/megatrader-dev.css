@@ -4003,8 +4003,8 @@ body.mt-placing .woocommerce-checkout {
 /* ===== Daily Journal (GRID) ===== */
 #mt-daily-journal {
   --dj-bg: var(--Surface-Page, #1E1E1E);
-  --cols: 13;
-  --cols-other: 12;
+  --cols: 14;
+  --cols-other: 13;
   --col-w: 95px;
   --dj-viewport: 784px;
   box-sizing: border-box;
