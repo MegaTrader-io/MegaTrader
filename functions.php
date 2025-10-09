@@ -1025,7 +1025,20 @@ function enqueue_thankyou_validation_script() {
         );
     }
 }
+
 add_action('wp_enqueue_scripts', 'enqueue_thankyou_validation_script');
+
+function enqueue_mt_helper_script() {
+    wp_enqueue_script(
+            'mt-helper-script',
+            get_stylesheet_directory_uri() . '/assets/js/mt-helper-script.js',
+            array(),
+            time(),
+            true
+    );
+}
+
+add_action('wp_enqueue_scripts', 'enqueue_mt_helper_script');
 
 
 function enqueue_coupon_message_script() {

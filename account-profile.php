@@ -25,7 +25,6 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                 </div>
 
                 <div class="account-settings__sections-wrapper" id="accordionExample">
-
                     <div class="mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">
                             <button class="toggle-panel__header" data-bs-toggle="collapse"
@@ -48,7 +47,7 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseOne" class="toggle-panel__content collapse show"
+                        <div id="collapseOne" class="toggle-panel__content mt-2 collapse show"
                              data-bs-parent="#accordionExample">
                             <div class="toggle-panel__body">
                                 <?php get_template_part("template-parts/account/account-settings-personal-information"); ?>
@@ -58,7 +57,7 @@ set_query_var('mt_is_verified', mt_is_user_verified());
 
                     <div class="mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">
-                            <button class="toggle-panel__header toggle-panel__header--collapsed" type="button"
+                            <button disabled class="toggle-panel__header toggle-panel__header--collapsed" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
                                     aria-controls="collapseTwo">
                                 <div class="toggle-panel__icon">
@@ -77,11 +76,8 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                                 <div class="toggle-panel__details">
                                     <div class="toggle-panel__title">
                                         <div class="d-flex gap-3 align-items-center">
-                                            Verification
-
-                                            <?php
-                                            get_template_part('template-parts/verified');
-                                            ?>
+                                            <span class="toggle-panel__text">Verification</span>
+                                            <?php get_template_part('template-parts/verified'); ?>
                                         </div>
                                     </div>
                                     <div class="toggle-panel__description">
@@ -100,8 +96,9 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                             </div>
                         </div>
                     </div>
-
-                    <div class="mt-card account-settings__section toggle-panel">
+                    <form class="mt-card account-settings__section toggle-panel"
+                          id="change-password-form"
+                          method="post">
                         <h2 class="toggle-panel__title-wrapper">
                             <button class="toggle-panel__header toggle-panel__header--collapsed" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
@@ -109,12 +106,12 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                                 <div class="toggle-panel__icon">
                                     <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
-                                        <mask id="mask0_15865_49307" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                        <mask id="mask0_15865_48895" style="mask-type:alpha" maskUnits="userSpaceOnUse"
                                               x="0" y="0" width="30" height="30">
                                             <rect width="30" height="30" fill="#D9D9D9"/>
                                         </mask>
-                                        <g mask="url(#mask0_15865_49307)">
-                                            <path d="M13.6875 19.4375L20.75 12.375L18.9688 10.5938L13.6875 15.875L11.0625 13.25L9.28125 15.0313L13.6875 19.4375ZM15 27.5C12.1042 26.7708 9.71354 25.1094 7.82812 22.5156C5.94271 19.9219 5 17.0417 5 13.875V6.25L15 2.5L25 6.25V13.875C25 17.0417 24.0573 19.9219 22.1719 22.5156C20.2865 25.1094 17.8958 26.7708 15 27.5Z"
+                                        <g mask="url(#mask0_15865_48895)">
+                                            <path d="M7.5 27.5C6.8125 27.5 6.22396 27.2552 5.73438 26.7656C5.24479 26.276 5 25.6875 5 25V12.5C5 11.8125 5.24479 11.224 5.73438 10.7344C6.22396 10.2448 6.8125 10 7.5 10H8.75V7.5C8.75 5.77083 9.35938 4.29688 10.5781 3.07812C11.7969 1.85937 13.2708 1.25 15 1.25C16.7292 1.25 18.2031 1.85937 19.4219 3.07812C20.6406 4.29688 21.25 5.77083 21.25 7.5V10H22.5C23.1875 10 23.776 10.2448 24.2656 10.7344C24.7552 11.224 25 11.8125 25 12.5V25C25 25.6875 24.7552 26.276 24.2656 26.7656C23.776 27.2552 23.1875 27.5 22.5 27.5H7.5ZM15 21.25C15.6875 21.25 16.276 21.0052 16.7656 20.5156C17.2552 20.026 17.5 19.4375 17.5 18.75C17.5 18.0625 17.2552 17.474 16.7656 16.9844C16.276 16.4948 15.6875 16.25 15 16.25C14.3125 16.25 13.724 16.4948 13.2344 16.9844C12.7448 17.474 12.5 18.0625 12.5 18.75C12.5 19.4375 12.7448 20.026 13.2344 20.5156C13.724 21.0052 14.3125 21.25 15 21.25ZM11.25 10H18.75V7.5C18.75 6.45833 18.3854 5.57292 17.6562 4.84375C16.9271 4.11458 16.0417 3.75 15 3.75C13.9583 3.75 13.0729 4.11458 12.3438 4.84375C11.6146 5.57292 11.25 6.45833 11.25 7.5V10Z"
                                                   fill="white"/>
                                         </g>
                                     </svg>
@@ -136,8 +133,7 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                                 <?php get_template_part("template-parts/account/account-settings-password"); ?>
                             </div>
                         </div>
-                    </div>
-
+                    </form>
                     <div class="mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">
                             <button class="toggle-panel__header toggle-panel__header--collapsed" type="button"
@@ -174,12 +170,47 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function clearErrorBeforeSendRequest(form) {
+        const globalMessage = document.querySelector('[data-form-ref="' + form.id + '"]');
+        if (globalMessage) {
+            globalMessage.remove();
+        }
+
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    }
+
+    function displayGlobalMessage(form, message, type = 'success') {
+        type = ['success', 'error'].includes(type) ? type : 'success';
+
+        const messageContainer = window.MTHelpers.showMessage({
+            message,
+            type
+        });
+
+        messageContainer.setAttribute('tabindex', '-1');
+        messageContainer.dataset.formRef = form.id;
+
+        const card = form.closest('.account-settings__section');
+        console.info(card.parentNode);
+        card.parentNode.insertBefore(messageContainer, card);
+
+        setTimeout(() => {
+            messageContainer.classList.add('woocommerce-message', type === 'error' ? 'woocommerce-error' : null);
+
+            setTimeout(() => {
+                messageContainer.remove();
+            }, 2000)
+        }, 0);
+    }
+</script>
 
 <?php get_footer(); ?>
 <?php

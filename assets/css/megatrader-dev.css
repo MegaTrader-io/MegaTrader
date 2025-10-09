@@ -4403,6 +4403,25 @@ textarea.mtfb-note {
   justify-content: space-between;
 }
 
+.toggle-panel__header[disabled] {
+    cursor: not-allowed;
+}
+
+.toggle-panel__header[disabled] .toggle-panel__text,
+.toggle-panel__header[disabled] .toggle-panel__icon,
+.toggle-panel__header[disabled] .toggle-panel__description,
+.toggle-panel__header[disabled] .toggle-panel__arrow {
+    opacity: .2;
+}
+
+.toggle-panel__header[disabled] .toggle-panel__text {
+    color: white;
+}
+
+.toggle-panel__header[disabled] .toggle-panel__description {
+    color: #A8A29E;
+}
+
 .toggle-panel__icon {
   display: flex;
   align-items: center;

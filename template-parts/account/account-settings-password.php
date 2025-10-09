@@ -1,4 +1,4 @@
-<form id="change-password-form" method="post" class="space-y-3">
+<div class="space-y-3">
     <?php wp_nonce_field('mt_save_password', 'mt_password_nonce'); ?>
 
     <div>
@@ -15,7 +15,6 @@
                   class="invalid-feedback"> <?= MT_WC_Error::get_error('current_password') ?></span>
         <?php endif; ?>
     </div>
-
 
     <div>
         <label class="mb-1"
@@ -52,7 +51,7 @@
             <?php _e('Save changes', 'woocommerce'); ?>
         </button>
     </div>
-</form>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -89,6 +88,7 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopPropagation();
 
             // Deshabilitar botón mientras se envía
             submitBtn.disabled = true;
@@ -107,21 +107,15 @@
 
                 const result = await response.json();
 
-                // Limpiar mensajes previos
-                document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
-                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                clearErrorBeforeSendRequest(form);
 
-                // Manejo de errores
                 if (!result.success) {
                     const errors = result.data?.errors || {};
 
+                    displayGlobalMessage(form, 'Something went wrong. Please try again later.', 'error');
+
                     // Si hay errores por campo
                     Object.entries(errors).forEach(([field, message]) => {
-                        if (field === 'global') {
-                            alert(message);
-                            return;
-                        }
-
                         const input = document.getElementById(field);
                         if (input) {
                             input.classList.add('is-invalid');
@@ -137,14 +131,11 @@
                     return;
                 }
 
-                // Éxito: mostrar mensaje y redirigir (si aplica)
-                alert(result.data.message);
-
-                // Si deseas forzar el logout o redirigir al login:
-                window.location.href = '/auth/login/';
+                form.reset();
+                displayGlobalMessage(form, result.data.message);
             } catch (error) {
                 console.error('Password change failed:', error);
-                alert('Unexpected error. Please try again later.');
+                displayGlobalMessage(form, 'Unexpected error. Please try again later.', 'error');
             } finally {
                 submitBtn.disabled = false;
                 preloader.style.display = 'none';
