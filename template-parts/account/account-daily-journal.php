@@ -17,6 +17,8 @@ $pager_id = 'mt-daily-journal-pager';
 $in       = (isset($args['data']) && is_array($args['data'])) ? $args['data'] : [];
 $rows     = (isset($in['rows']) && is_array($in['rows'])) ? $in['rows'] : [];
 $per_page = isset($in['per_page']) ? (int)$in['per_page'] : 7;
+//$has_rows = !empty($rows);
+$has_rows = empty($rows);
 
 /** ===== Contexto de cuenta (lee desde $args['meta']['accountId']) ===== */
 $user_id = get_current_user_id();
@@ -72,8 +74,10 @@ $fmt_durwl = function ($v) {
   data-account-id="<?php echo esc_attr($acc_id); ?>"
   data-nonce="<?php echo esc_attr( wp_create_nonce('mt-acc-nonce') ); ?>"
   class="mt-card"
+  style="position:relative"
+  data-has-rows="<?php echo $has_rows ? '1' : '0'; ?>"
 >
-  <div class="dj-viewport">
+  <div class="dj-viewport" aria-busy="<?php echo $has_rows ? 'false' : 'true'; ?>">
     <div class="dj-clip">
       <div class="dj-scroll">
 
@@ -81,9 +85,9 @@ $fmt_durwl = function ($v) {
         <div class="dj-grid dj-headrow">
           <div class="dj-head is-left">Daily<br>Journal</div>
           <div class="dj-head is-right">Date</div>
-          <div class="dj-head is-right">Net P&L</div>
-          <div class="dj-head is-right">P&L High</div>
-          <div class="dj-head is-right">P&L Low</div>
+          <div class="dj-head is-right">Net P&amp;L</div>
+          <div class="dj-head is-right">P&amp;L High</div>
+          <div class="dj-head is-right">P&amp;L Low</div>
           <div class="dj-head is-right">Total<br>Contracts</div>
           <div class="dj-head is-right">Total Fees<br>+Comm</div>
           <div class="dj-head is-right">Total Trades</div>
@@ -153,8 +157,37 @@ $fmt_durwl = function ($v) {
     </div>
   </div>
 
+  <?php if (!$has_rows): ?>
+    <!-- Overlay no-data -->
+    <div
+      class="mt-no-data-overlay"
+      aria-hidden="false"
+      style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:16px;
+        text-align:center;
+        background:rgba(0,0,0,0.35);
+        backdrop-filter:saturate(120%) blur(2px);
+        border-radius:12px;
+      "
+    >
+      <span class="text-a8a29e fw-medium">
+        There is not enough data to display this tablet.
+      </span>
+    </div>
+  <?php endif; ?>
+
   <!-- Paginación -->
-  <nav id="<?php echo esc_attr($pager_id); ?>" class="dj-pager" aria-label="Daily Journal pagination">
+  <nav
+    id="<?php echo esc_attr($pager_id); ?>"
+    class="dj-pager"
+    aria-label="Daily Journal pagination"
+    <?php echo $has_rows ? '' : 'hidden aria-hidden="true"'; ?>
+  >
     <button class="dj-btn mt-dj-prev" type="button" disabled>
       <span class="mt-icon mt-icon-white mt-icon_chevron-left"></span>
     </button>
