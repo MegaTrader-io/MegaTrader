@@ -859,7 +859,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("action", "mt_account_performance_chart");
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
-  
+
     return window.MEGATRADER.fetchJSON(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -875,7 +875,6 @@ document.addEventListener("mt:accountSelected", (e) => {
           j.data &&
           typeof j.data.html === "string"
         );
-     
 
         if (!ok) {
           const msg =
@@ -1478,6 +1477,12 @@ document.addEventListener("mt:accountSelected", (e) => {
       }
     }
 
+    // Sanea estado inicial si el HTML vino en estado inconsistente
+    (function sanitizeInitial() {
+      var ds = modal.getAttribute("data-show");
+      if (ds !== "1" && modal.classList.contains("show")) closeModal();
+    })();
+
     if (closeBtn) {
       closeBtn.addEventListener("click", function (e) {
         e.preventDefault();
@@ -1518,7 +1523,7 @@ document.addEventListener("mt:accountSelected", (e) => {
   }
 })();
 
-// === 1) fetchStatus: llama al AJAX y devuelve el JSON ===
+/* === fetchStatus (AJAX) — usado por breachGuard y otros === */
 function fetchStatus(accountId) {
   var url =
     (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
@@ -1539,6 +1544,7 @@ function fetchStatus(accountId) {
   });
 }
 
+/* === breachGuard: consulta estado y abre el modal si está BREACHED === */
 var __breachGuard = { pending: false, lastId: null, lastAt: 0 };
 
 function breachGuardCheck(accountId) {
@@ -1589,9 +1595,14 @@ function breachGuardCheck(accountId) {
             (window.MT_DATA && window.MT_DATA.checkoutBase) ||
             "/checkout";
 
+          // expone el account_id por si lo necesitas en el checkout
+          if (modal)
+            modal.setAttribute("data-account-id", String(accountId || ""));
+
           if (btn) {
             if (resetId) {
               btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId);
+              btn.setAttribute("data-account-id", String(accountId || ""));
               btn.classList.remove("disabled");
               btn.removeAttribute("aria-disabled");
             } else {
@@ -1618,12 +1629,14 @@ function breachGuardCheck(accountId) {
     });
 }
 
+/* === Registro en el bus de refresco y listeners === */
 if (window.mtRefresh && typeof window.mtRefresh.register === "function") {
   window.mtRefresh.register("breachGuard", breachGuardCheck);
 }
 
 window.breachGuardCheck = breachGuardCheck;
 
+// 1) primer chequeo al cargar, si hay selectedId
 (function () {
   var firstId = (window.mtAccounts && mtAccounts.selectedId) || "";
   if (document.readyState === "loading") {
@@ -1639,10 +1652,19 @@ window.breachGuardCheck = breachGuardCheck;
   }
 })();
 
+// 2) cuando el usuario cambia de cuenta
 document.addEventListener("mt:accountSelected", function (e) {
   var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
   if (id) breachGuardCheck(id);
 });
+// ===== ENd Breach Modal =====
+
+
+document.addEventListener("mt:accountSelected", function (e) {
+  var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
+  if (id) breachGuardCheck(id);
+});
+
 
 // == Main width var: --mt-main-width (+ --dj-viewport) ==
 (function () {
@@ -1969,7 +1991,7 @@ if (document.readyState === "loading") {
     return base && id ? base + "?add-to-cart=" + encodeURIComponent(id) : "#";
   }
 
-  // --- NOTA: Solo se muestra en PASSED. En PENDING_ACTIVATION nunca se muestra.
+  // --- NOTA: Solo se muestra en PASSED. En PENDING_ACTIVATION nunca se muestra nota.
   function setNote(status, activationId, modal) {
     var wrap = modal.querySelector("#mt-passed-note");
     var text = wrap ? wrap.querySelector("[data-note-text]") : null;
@@ -1979,12 +2001,7 @@ if (document.readyState === "loading") {
       .trim()
       .toUpperCase();
     if (st === "ACTIVATION_PENDING") st = "PENDING_ACTIVATION";
-    var hasId =
-      (function (v) {
-        if (v == null) return "";
-        var s = String(v).trim().toLowerCase();
-        return s === "" || s === "0" || s === "null" ? "" : s;
-      })(activationId) !== "";
+    var hasId = normalizeId(activationId) !== "";
 
     var msgWithId = modal.dataset.notePassedWithId || "";
     var msgNoId = modal.dataset.notePassedNoId || "";
@@ -1994,12 +2011,10 @@ if (document.readyState === "loading") {
 
     if (show) {
       text.textContent = hasId ? msgWithId : msgNoId;
-      // mostrar
       wrap.classList.remove("d-none");
       wrap.removeAttribute("hidden");
       wrap.setAttribute("aria-hidden", "false");
     } else {
-      // ocultar totalmente
       text.textContent = "";
       wrap.classList.add("d-none");
       wrap.setAttribute("hidden", "");
@@ -2017,19 +2032,25 @@ if (document.readyState === "loading") {
     if (st === "ACTIVATION_PENDING") st = "PENDING_ACTIVATION";
     var hasId = normalizeId(activationId) !== "";
 
+    var accountId = modal.getAttribute("data-account-id") || "";
+
     btn.href = buildActivationHref(modal, activationId);
 
     btn.classList.remove("disabled", "d-none");
     btn.setAttribute("aria-disabled", "false");
 
     if (st === "PENDING_ACTIVATION" && hasId) {
+      // botón visible y habilitado
     } else if (st === "PASSED" && hasId) {
+      // visible pero deshabilitado
       btn.classList.add("disabled");
       btn.setAttribute("aria-disabled", "true");
     } else if (st === "PASSED" && !hasId) {
+      // oculto
       btn.classList.add("d-none");
       btn.href = "#";
     } else {
+      // otro estado -> oculto
       btn.classList.add("d-none");
       btn.href = "#";
     }
@@ -2116,6 +2137,14 @@ if (document.readyState === "loading") {
       }
     }
 
+    // Saneamos estado inicial si llega mal
+    (function sanitizeInitial() {
+      var ds = modal.getAttribute("data-show");
+      if (ds !== "1" && modal.classList.contains("show")) {
+        closeModal();
+      }
+    })();
+
     if (closeBtn) {
       closeBtn.addEventListener("click", function (e) {
         e.preventDefault();
@@ -2188,8 +2217,10 @@ if (document.readyState === "loading") {
           var modal = document.getElementById("mt-account-passed-modal");
           if (!modal) return;
 
+          // Guardamos también el accountId en el modal para construir el href
           modal.dataset.currentStatus = status;
           modal.dataset.activationId = actId == null ? "" : String(actId);
+          modal.setAttribute("data-account-id", String(accountId || ""));
 
           if (typeof modal.__open === "function") {
             modal.__open();
@@ -2233,13 +2264,78 @@ if (document.readyState === "loading") {
     }
   })();
 
-  document.addEventListener("mt:accountSelected", function (e) {
-    var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
-    if (id) passedGuardCheck(id);
-  });
-
   window.__mtPassedSyncUI = function (modal) {
     modal = modal || document.getElementById("mt-account-passed-modal");
     if (modal) syncUI(modal);
   };
+})();
+
+// --- POST silencioso al checkout con account_id en el body (sin exponerlo en la URL)
+(function attachMtModalPostCheckout() {
+  if (window.__mtModalPostCheckoutBound) return;
+  window.__mtModalPostCheckoutBound = true;
+
+  function postTo(url, fields) {
+    // Enviamos a la ruta base sin query (?add-to-cart=...) y reinyectamos por POST
+    var form = document.createElement("form");
+    form.method = "post";
+    form.action = url.replace(/\?.*$/, ""); // ej: "/checkout"
+    form.className = "d-none";
+
+    // Si el href traía ?add-to-cart=, lo pasamos por POST (Woo lo entiende)
+    var m = (url.match(/[?&]add-to-cart=([^&#]+)/) || [])[1];
+    if (m) {
+      var inpATC = document.createElement("input");
+      inpATC.type = "hidden";
+      inpATC.name = "add-to-cart";
+      inpATC.value = decodeURIComponent(m);
+      form.appendChild(inpATC);
+    }
+
+    // account_id + extras
+    Object.keys(fields || {}).forEach(function (k) {
+      var inp = document.createElement("input");
+      inp.type = "hidden";
+      inp.name = k;
+      inp.value = String(fields[k]);
+      form.appendChild(inp);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  // Intercepta clicks en botones de los modales (breach + activation)
+  document.addEventListener(
+    "click",
+    function (ev) {
+      var el =
+        ev.target && ev.target.closest
+          ? ev.target.closest(".mt-breach-reset-button, #mt-activation-btn")
+          : null;
+      if (!el) return;
+
+      var href = el.getAttribute("href") || "";
+      if (!href || href === "#") return; // no hay destino válido
+
+      // Leemos el accountId del propio botón o del modal contenedor
+      var accountId =
+        el.getAttribute("data-account-id") ||
+        document
+          .getElementById("mt-breach-alert-modal")
+          ?.getAttribute("data-account-id") ||
+        document
+          .getElementById("mt-account-passed-modal")
+          ?.getAttribute("data-account-id") ||
+        "";
+
+      if (!accountId) return; // si no tenemos accountId, dejamos navegar normal
+
+      // POST silencioso: evitamos exponer account_id en la URL
+      ev.preventDefault();
+      ev.stopPropagation();
+      postTo(href, { account_id: accountId });
+    },
+    { capture: true }
+  );
 })();
