@@ -232,6 +232,10 @@ $__ids = function_exists('mtch_resolve_ids') ? mtch_resolve_ids() : ['account_id
 $mt_selected_id = (string) ($__ids['account_id'] ?? '');
 $mt_main_product_id = (string) ($__ids['main_product_id'] ?? '');
 
+if (function_exists('WC') && WC()->session) {
+    WC()->session->set('mt_account_id', $mt_selected_id ?: '');
+    WC()->session->set('mt_main_product_id', (int) ($mt_main_product_id ?: 0));
+}
 
 
 ?>
@@ -254,19 +258,8 @@ $mt_main_product_id = (string) ($__ids['main_product_id'] ?? '');
                         value="<?php echo esc_attr($mt_selected_id); ?>">
                     <input type="hidden" name="main_product_id" id="mt_main_product_id"
                         value="<?php echo esc_attr($mt_main_product_id); ?>">
-
-                    <?php /* DEBUG opcional: comenta/borra en producción si no lo necesitas */ ?>
-                    <div style="margin:12px 0;padding:10px;border:1px dashed #FFD78A;color:#fff;background:#1e1e1e">
-                        <strong>DEBUG</strong> account_id:
-                        <code style="color:#FFD78A"><?php echo esc_html($mt_selected_id); ?></code><br>
-                        <strong>DEBUG</strong> main_product_id:
-                        <code style="color:#FFD78A"><?php echo esc_html($mt_main_product_id); ?></code>
-                    </div>
                 <?php endif; ?>
-
-
-
-
+                
                 <div class="product-container">
                     <div class="mt-card">
                         <div class="mt-card-wrapper d-flex flex-column gap-4">

@@ -2251,146 +2251,102 @@ add_action('template_redirect', function () {
 });
 
 
-
-
 /**
- * MT — Guarda account_id y main_product_id en la orden (POST o SESSION)
- * y los incluye en el payload de webhooks.
- *
- * - Lee primero de $_POST['account_id'|'main_product_id'].
- * - Si no vienen, intenta desde WC()->session['mt_account_id'|'mt_main_product_id'].
- * - Graba order meta y lo expone en webhooks.
- * - Añade notas y logs para depurar.
+ * === Guardar metas en la orden ===
+ * - account_id: string (24 hex)
+ * - main_product_id: int (opcional; si lo envías también)
  */
 
-/** Sanitiza/valida account_id — 24 hex exactos */
 if (!function_exists('mt_sanitize_account_id')) {
-  function mt_sanitize_account_id($raw): string {
-    $raw = sanitize_text_field((string)$raw);
-    return preg_match('/^[a-f0-9]{24}$/i', $raw) ? $raw : '';
+  function mt_sanitize_account_id(string $raw): string {
+    $raw = sanitize_text_field($raw);
+    return (preg_match('/^[a-f0-9]{24}$/i', $raw)) ? $raw : '';
   }
 }
 
-/** Sanitiza main_product_id — entero (>0) */
 if (!function_exists('mt_sanitize_main_product_id')) {
   function mt_sanitize_main_product_id($raw): int {
-    $n = (int)preg_replace('/\D+/', '', (string)$raw);
+    $n = (int) preg_replace('/\D+/', '', (string) $raw);
     return ($n > 0) ? $n : 0;
   }
 }
 
-/** Core: toma account_id / main_product_id desde POST o SESSION */
-if (!function_exists('mt_read_ids_from_request_or_session')) {
-  function mt_read_ids_from_request_or_session(): array {
+if (!function_exists('mt_maybe_store_order_metas')) {
+  function mt_maybe_store_order_metas($order): void {
+    if (!($order instanceof WC_Order)) return;
+
     $acc  = isset($_POST['account_id'])      ? mt_sanitize_account_id(wp_unslash($_POST['account_id']))           : '';
     $main = isset($_POST['main_product_id']) ? mt_sanitize_main_product_id(wp_unslash($_POST['main_product_id'])) : 0;
 
-    if ($acc === '' && function_exists('WC') && WC()->session) {
-      $acc = mt_sanitize_account_id(WC()->session->get('mt_account_id'));
-    }
-    if ($main === 0 && function_exists('WC') && WC()->session) {
-      $main = mt_sanitize_main_product_id(WC()->session->get('mt_main_product_id'));
-    }
-    return [$acc, $main];
-  }
-}
-
-/** Grabar metas en la orden (se llama desde ambos hooks) */
-if (!function_exists('mt_store_order_metas')) {
-  function mt_store_order_metas(WC_Order $order): void {
-    list($acc, $main) = mt_read_ids_from_request_or_session();
-
-    $changed = false;
-
     if ($acc !== '' && (string)$order->get_meta('account_id') === '') {
       $order->update_meta_data('account_id', $acc);
-      $order->add_order_note('MT: account_id=' . $acc);
-      $changed = true;
     }
     if ($main > 0 && (string)$order->get_meta('main_product_id') === '') {
       $order->update_meta_data('main_product_id', $main);
-      $order->add_order_note('MT: main_product_id=' . $main);
-      $changed = true;
-    }
-
-    if ($changed) {
-      // no es estrictamente necesario en create_order (Woo guarda al final),
-      // pero de cara a gateways raros no estorba:
-      $order->save();
-    }
-
-    // Log de depuración
-    if (function_exists('wc_get_logger')) {
-      $src = 'one_time_fee';
-      wc_get_logger()->info(
-        sprintf('mt_store_order_metas: order=%d account_id=%s main_product_id=%s (fuente: %s)',
-          $order->get_id(),
-          $acc ?: '(vacío)',
-          $main ?: 0,
-          isset($_POST['account_id']) || isset($_POST['main_product_id']) ? 'POST' : 'SESSION'
-        ),
-        ['source' => $src]
-      );
     }
   }
 }
 
-/** Hook principal: al crear la orden */
 add_action('woocommerce_checkout_create_order', function($order, $data) {
-  if ($order instanceof WC_Order) {
-    mt_store_order_metas($order);
-  }
+  mt_maybe_store_order_metas($order);
 }, 10, 2);
 
-/** Fallback: por si algún gateway se salta el anterior */
-add_action('woocommerce_checkout_update_order_meta', function($order_id){
+// Fallback por si algún gateway no pasa por el hook anterior
+add_action('woocommerce_checkout_update_order_meta', function($order_id) {
   $order = wc_get_order($order_id);
-  if ($order) {
-    mt_store_order_metas($order);
-  }
+  if ($order) mt_maybe_store_order_metas($order);
 }, 10);
 
-/** Incluir metas en payload de webhooks (lo que piden explícitamente) */
+
+/**
+ * === Webhook Payload Structure ===
+ * Formatea meta_data como array de objetos (id/key/value/...) y añade account_id.
+ * Cumple con lo que solicita el partner.
+ */
 add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resource_id, $event) {
   if ($resource !== 'order') return $payload;
-  $order = wc_get_order($resource_id);
-  if (!$order) return $payload;
 
-  $acc  = (string)$order->get_meta('account_id');
-  $main = (string)$order->get_meta('main_product_id');
-
+  // Aseguramos que meta_data sea un array
   if (!isset($payload['meta_data']) || !is_array($payload['meta_data'])) {
     $payload['meta_data'] = [];
   }
-  if ($acc !== '')  $payload['meta_data']['account_id']      = $acc;
-  if ($main !== '') $payload['meta_data']['main_product_id'] = $main;
 
-  // Log de webhook
-  if (function_exists('wc_get_logger')) {
-    wc_get_logger()->info(
-      "Webhook {$event} order {$resource_id} :: account_id={$acc} main_product_id={$main}",
-      ['source' => 'one_time_fee']
-    );
+  $clean_meta = [];
+
+  // Normaliza meta_data si ya vino como array de objetos/arrays
+  foreach ($payload['meta_data'] as $meta) {
+    if (is_array($meta) && isset($meta['id'], $meta['key'])) {
+      $clean_meta[] = [
+        'id'             => $meta['id'],
+        'key'            => $meta['key'],
+        'value'          => maybe_unserialize($meta['value'] ?? ''),
+        'display_key'    => $meta['display_key']   ?? '',
+        'display_value'  => $meta['display_value'] ?? '',
+      ];
+    }
   }
+
+  // Asegúrate de incluir account_id desde la orden (requisito del partner)
+  $order = wc_get_order($resource_id);
+  if ($order) {
+    $account_id = (string) $order->get_meta('account_id');
+
+    // Si no está ya en meta_data, lo agregamos
+    $already = false;
+    foreach ($clean_meta as $m) {
+      if (isset($m['key']) && $m['key'] === 'account_id') { $already = true; break; }
+    }
+    if ($account_id !== '' && !$already) {
+      $clean_meta[] = [
+        'id'            => 0,               // 0/Null está bien para webhooks
+        'key'           => 'account_id',
+        'value'         => $account_id,
+        'display_key'   => '',
+        'display_value' => '',
+      ];
+    }
+  }
+
+  $payload['meta_data'] = $clean_meta;
   return $payload;
 }, 10, 4);
-
-/** (Opcional) Log cuando Woo finaliza la creación desde checkout */
-add_action('woocommerce_checkout_order_processed', function($order_id){
-  $order = wc_get_order($order_id);
-  if (!$order) return;
-  $acc  = (string)$order->get_meta('account_id');
-  $main = (string)$order->get_meta('main_product_id');
-  if (function_exists('wc_get_logger')) {
-    wc_get_logger()->info(
-      "Order processed {$order_id} :: account_id={$acc} main_product_id={$main}",
-      ['source' => 'one_time_fee']
-    );
-  }
-}, 10, 1);
-
-
-
-
-
-
