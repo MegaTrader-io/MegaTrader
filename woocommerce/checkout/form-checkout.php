@@ -20,11 +20,6 @@ remove_action('woocommerce_before_checkout_form', 'woocommerce_output_all_notice
 /* ================== Helper externo centralizado ================== */
 require_once get_stylesheet_directory() . '/inc/mt-checkout-helper.php';
 
-/* === Helpers de cuentas (igual que en account-overview) === */
-if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
-    require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
-}
-
 
 /* ================== Helpers locales mínimos ================== */
 if (!function_exists('mt_get_param')) {
@@ -232,53 +227,8 @@ if ($mt_is_activation) {
 }
 
 
-$mt_selected_id = '';
-
-// 1) Priorizar account_id desde la URL (viene del botón de breach/activation)
-//    Ej: ...?add-to-cart=12345&account_id=67890
-$mt_account_id_qs = isset($_GET['account_id']) ? wc_clean(wp_unslash($_GET['account_id'])) : '';
-$mt_account_id_qs = preg_replace('/\D+/', '', (string) $mt_account_id_qs); // solo dígitos
-
-if (!empty($mt_account_id_qs)) {
-    $mt_selected_id = (string) $mt_account_id_qs;
-} else {
-    // 2) Fallback: mismo flujo que ya tenías (usuario logueado -> cuentas -> current)
-    if (is_user_logged_in()) {
-        $u = wp_get_current_user();
-        if ($u && $u->exists()) {
-            $raw_email = (string) ($u->user_email ?? '');
-
-            // Igual que en overview: sanea y prueba plain vs encoded
-            $san = function_exists('mt_sanitize_email')
-                ? mt_sanitize_email($raw_email)
-                : [
-                    'ok' => true,
-                    'email' => strtolower(trim($raw_email)),
-                    'api' => rawurlencode(strtolower(trim($raw_email)))
-                ];
-
-            $accounts_plain = [];
-            $accounts_enc = [];
-
-            try {
-                $accounts_plain = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email((string) $san['email'], 1, 50) : [];
-            } catch (\Throwable $e) {
-            }
-
-            try {
-                $accounts_enc = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email((string) $san['api'], 1, 50) : [];
-            } catch (\Throwable $e) {
-            }
-
-            $accounts = (count((array) $accounts_plain) >= count((array) $accounts_enc)) ? $accounts_plain : $accounts_enc;
-
-            if (class_exists('MT_Accounts')) {
-                $ui = MT_Accounts::prepare_ui((array) $accounts);
-                $mt_selected_id = (string) ($ui['current']['id'] ?? '');
-            }
-        }
-    }
-}
+// Account ID seleccionado (si hay)
+$mt_selected_id = mtch_resolve_account_id();
 
 
 ?>
@@ -296,15 +246,15 @@ if (!empty($mt_account_id_qs)) {
                 class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
                 action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
 
-               <?php if (!empty($mt_selected_id)): ?>
-  <input type="hidden" name="account_id" id="mt_account_id"
-         value="<?php echo esc_attr($mt_selected_id); ?>">
-  <?php /* DEBUG opcional: comenta/borra en producción si no lo necesitas */ ?>
-  <div style="margin:12px 0;padding:10px;border:1px dashed #FFD78A;color:#fff;background:#1e1e1e">
-    <strong>DEBUG</strong> account_id:
-    <code style="color:#FFD78A"><?php echo esc_html($mt_selected_id); ?></code>
-  </div>
-<?php endif; ?>
+                <?php if (!empty($mt_selected_id)): ?>
+                    <input type="hidden" name="account_id" id="mt_account_id"
+                        value="<?php echo esc_attr($mt_selected_id); ?>">
+                    <?php /* DEBUG opcional: comenta/borra en producción si no lo necesitas */ ?>
+                    <div style="margin:12px 0;padding:10px;border:1px dashed #FFD78A;color:#fff;background:#1e1e1e">
+                        <strong>DEBUG</strong> account_id:
+                        <code style="color:#FFD78A"><?php echo esc_html($mt_selected_id); ?></code>
+                    </div>
+                <?php endif; ?>
 
 
 
