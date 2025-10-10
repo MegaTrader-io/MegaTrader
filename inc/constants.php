@@ -234,6 +234,9 @@ class Label
         'passed_modal_button' => 'Activation Pending',
         'passed_modal_note_status_passed_w_activation_id' => 'Activation will open once review is complete.',
         'passed_modal_note_status_passed_no_activation_id' => 'Automatic Activation After Review',
+        'account_chart_overlay_no_data' => 'There is not enough data to generate the graph.',
+        'account_daily_journal_overlay_no_data' => 'Sorry. There is no data is available.',
+
     ];
 
 }

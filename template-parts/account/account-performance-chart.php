@@ -44,7 +44,7 @@ $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/gra
 <!-- HTML / PHP -->
 <div class="account-performance-chart mt-card <?= esc_attr($card_class) ?>">
   <div class="account-performance-chart__overlay" <?= $has_enough_points ? 'hidden' : '' ?>>
-    <span class="apc-overlay__text">There is not enough data to generate the graph.</span>
+    <span class="apc-overlay__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_chart_overlay_no_data']); ?></span>
   </div>
 
   <div class="account-performance-chart__header">
@@ -163,7 +163,7 @@ $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/gra
           }
         },
         dataLabels: { enabled: false },
-        colors: ["#FFE7B8", "#24b8a6", "#FF4D4D"], // Current, Profit Target, Max Drawdown
+        colors: ["#FFE7B8", "#24b8a6", "#FF4D4D"], 
         stroke: { lineCap: "round", curve: "smooth", width: [2, 2, 2] },
         markers: { size: [0, 5, 5], colors: ["#FF4D4D", "#24b8a6"], strokeColors: 'transparent', strokeWidth: 0 },
         legend: { show: false },

@@ -40,21 +40,21 @@ $link_playstore = '#';
       <div class="text-16 fw-500"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_platform_description']); ?></div>
 
       <div class="d-flex gap-2 pt-3 flex-wrap">
-        <a href="<?php echo esc_url($link_web); ?>" target="_self" class="text-decoration-none" rel="noopener">
+        <a href="<?php echo esc_url($link_web); ?>" target="_blank" class="text-decoration-none" rel="noopener">
           <div class="mt-badge mt-badge-apps">
             <i class="mt-icon mt-icon-sm mt-icon_globe"></i>
             <span class="mt-card__links__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['web_app']); ?></span>
           </div>
         </a>
 
-        <a href="<?php echo esc_url($link_appstore); ?>" target="_self" class="text-decoration-none" rel="noopener">
+        <a href="<?php echo esc_url($link_appstore); ?>" target="_blank" class="text-decoration-none" rel="noopener">
           <div class="mt-badge mt-badge-apps">
             <i class="mt-icon mt-icon-sm mt-icon_app-store"></i>
             <span class="mt-card__links__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['app_store']); ?></span>
           </div>
         </a>
 
-        <a href="<?php echo esc_url($link_playstore); ?>" target="_self" class="text-decoration-none" rel="noopener">
+        <a href="<?php echo esc_url($link_playstore); ?>" target="_blank" class="text-decoration-none" rel="noopener">
           <div class="mt-badge mt-badge-apps">
             <i class="mt-icon mt-icon-sm mt-icon_google-play"></i>
             <span class="mt-card__links__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['play_store']); ?></span>

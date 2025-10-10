@@ -168,7 +168,7 @@ class MT_Accounts
       $rules = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
       $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
       $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
-      $order = (string) ($acc['order'] ?? ''); 
+      $order = (string) ($acc['order'] ?? '');
 
       // === SIEMPRE: resolver byId para obtener 'order' (y plataforma si faltara)
       if ($id !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
@@ -1707,8 +1707,122 @@ if (!function_exists('mt_trades_day_stats')) {
   }
 }
 
+/* === UTC -> Eastern (US/Eastern) a 'YYYY-MM-DD' === */
+if (!function_exists('mt_utc_to_eastern_ymd')) {
+  /**
+   * Convierte una fecha/hora UTC (string) al día 'YYYY-MM-DD' en America/New_York.
+   * Admite 'YYYY-MM-DD' o timestamps ISO (con o sin 'Z').
+   * Devuelve '' si no puede parsear.
+   */
+  function mt_utc_to_eastern_ymd($utcString)
+  {
+    $src = is_string($utcString) ? trim($utcString) : '';
+    if ($src === '')
+      return '';
+    try {
+      // Si viene solo YYYY-MM-DD, asumir 00:00:00 UTC de ese día
+      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src)) {
+        $src .= ' 00:00:00';
+      }
+      $utc = new DateTimeZone('UTC');
+      $ny = new DateTimeZone('America/New_York');
+      $dt = new DateTime($src, $utc);
+      $dt->setTimezone($ny);
+      return $dt->format('Y-m-d');
+    } catch (\Throwable $e) {
+      return '';
+    }
+  }
+}
 
-/* === DAILY JOURNAL: construir payload (SIN fallbacks → '-') === */
+/* === Sumatoria de commission por día (Eastern) === */
+if (!function_exists('mt_sum_commissions_for_day')) {
+  /**
+   * Suma 'commission' de todos los trades CERRADOS cuyo openTime y closeTime,
+   * ambos convertidos a Eastern (US/Eastern), caen en el MISMO día y coinciden
+   * con $day_iso_eastern (YYYY-MM-DD).
+   * Retorna float (negativo generalmente) o '-' si no hay ningún trade que cumpla.
+   */
+  function mt_sum_commissions_for_day(string $accountId, string $day_iso_eastern)
+  {
+    static $cache = [];
+    $accountId = trim((string) $accountId);
+    $day_iso_eastern = substr((string) $day_iso_eastern, 0, 10);
+    if ($accountId === '' || $day_iso_eastern === '')
+      return '-';
+
+    if (!isset($cache[$accountId])) {
+      $trades = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500);
+      $cache[$accountId] = is_array($trades) ? $trades : [];
+    }
+    $trades = $cache[$accountId];
+    if (empty($trades))
+      return '-';
+
+    $sum = 0.0;
+    $found = false;
+    foreach ($trades as $t) {
+      $ot = isset($t['openTime']) ? (string) $t['openTime'] : '';
+      $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
+      if ($ot === '' || $ct === '')
+        continue;
+
+      $ot_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ot) : substr($ot, 0, 10);
+      $ct_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10);
+
+      if ($ot_ymd === $day_iso_eastern && $ct_ymd === $day_iso_eastern) {
+        if (isset($t['commission']) && is_numeric($t['commission'])) {
+          $sum += (float) $t['commission'];
+          $found = true;
+        }
+      }
+    }
+    return $found ? $sum : '-';
+  }
+}
+
+/* === Conteo de trades por día (Eastern) === */
+if (!function_exists('mt_count_trades_for_day')) {
+  /**
+   * Cuenta trades CERRADOS cuyo openTime y closeTime, convertidos a Eastern,
+   * caen el mismo día y coinciden con $day_iso_eastern (YYYY-MM-DD).
+   */
+  function mt_count_trades_for_day(string $accountId, string $day_iso_eastern): int
+  {
+    static $cache = [];
+    $accountId = trim((string) $accountId);
+    $day_iso_eastern = substr((string) $day_iso_eastern, 0, 10);
+    if ($accountId === '' || $day_iso_eastern === '')
+      return 0;
+
+    if (!isset($cache[$accountId])) {
+      $trades = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500);
+      $cache[$accountId] = is_array($trades) ? $trades : [];
+    }
+    $trades = $cache[$accountId];
+    if (empty($trades))
+      return 0;
+
+    $cnt = 0;
+    foreach ($trades as $t) {
+      $ot = isset($t['openTime']) ? (string) $t['openTime'] : '';
+      $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
+      if ($ot === '' || $ct === '')
+        continue;
+
+      $ot_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ot) : substr($ot, 0, 10);
+      $ct_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10);
+
+      if ($ot_ymd === $day_iso_eastern && $ct_ymd === $day_iso_eastern) {
+        $cnt++;
+      }
+    }
+    return $cnt;
+  }
+}
+
+
+/* === DAILY JOURNAL: construir payload (con mapeos nuevos y fees desde trades) === */
 if (!function_exists('mt_accounts_build_daily_journal')) {
   function mt_accounts_build_daily_journal($accountId, $page = 1, $perPage = 30)
   {
@@ -1725,37 +1839,48 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     foreach ($items as $it) {
       $m = (isset($it['metrics']) && is_array($it['metrics'])) ? $it['metrics'] : [];
 
-      $openTime = $m['tradeDateTimeUTC'] ?? null;
-      $day_iso = $openTime ? substr($openTime, 0, 10) : '';
+      // Día base desde metrics (UTC) → Eastern (solo día)
+      $tradeDateRaw = $m['tradeDate'] ?? ($m['tradeDateTimeUTC'] ?? null);
+      $day_iso_eastern = function_exists('mt_utc_to_eastern_ymd')
+        ? mt_utc_to_eastern_ymd($tradeDateRaw)
+        : (is_string($tradeDateRaw) ? substr($tradeDateRaw, 0, 10) : '');
 
-      $net = array_key_exists('dailyTotalRealizedPnL', $m) ? (float) $m['dailyTotalRealizedPnL'] : '-';
-      $hi = (isset($m['dailyHighestBalance'], $m['startingBalance']) && is_numeric($m['dailyHighestBalance']) && is_numeric($m['startingBalance']))
-        ? ((float) $m['dailyHighestBalance'] - (float) $m['startingBalance']) : '-';
-      $lo = (isset($m['dailyLowestBalance'], $m['startingBalance']) && is_numeric($m['dailyLowestBalance']) && is_numeric($m['startingBalance']))
-        ? ((float) $m['dailyLowestBalance'] - (float) $m['startingBalance']) : '-';
+      // 1) Si NO pudimos determinar el día Eastern → NO pintes fila
+      if ($day_iso_eastern === '')
+        continue;
+
+      // 2) Si NO hubo trades ese día en Eastern → NO pintes fila
+      if (function_exists('mt_count_trades_for_day')) {
+        $countTrades = mt_count_trades_for_day((string) $accountId, $day_iso_eastern);
+        if ($countTrades <= 0)
+          continue;
+      }
+
+      // openTime será siempre el día Eastern (evitamos fallback a 'now' en mt_parse_open_time)
+      $openTime = $day_iso_eastern;
+
+      // === Mapeos nuevos ===
+      $net = array_key_exists('netPnL', $m) ? (float) $m['netPnL']
+        : (array_key_exists('dailyTotalRealizedPnL', $m) ? (float) $m['dailyTotalRealizedPnL'] : '-');
+
+      $hi = array_key_exists('bestTrade', $m) ? (float) $m['bestTrade'] : '-';
+      $lo = array_key_exists('worstTrade', $m) ? (float) $m['worstTrade'] : '-';
       $ct = array_key_exists('totalClosedVolume', $m) ? (int) $m['totalClosedVolume'] : '-';
-      $fees = array_key_exists('dailyTotalFees', $m) ? (float) $m['dailyTotalFees'] : '-';
       $trades = array_key_exists('tradesPlaced', $m) ? (int) $m['tradesPlaced'] : '-';
       $awin = array_key_exists('averageWinningTrade', $m) ? (float) $m['averageWinningTrade'] : '-';
       $aloss = array_key_exists('averageLosingTrade', $m) ? (float) $m['averageLosingTrade'] : '-';
       $winPct = array_key_exists('winRate', $m) ? (float) $m['winRate'] : '-';
       $lossPct = array_key_exists('lossRate', $m) ? (float) $m['lossRate'] : '-';
 
-
-      // Día de los trades para streaks/duraciones
-      $trades_day_iso = '';
-      if (!empty($m['lastTradeDate'])) {
-        $trades_day_iso = substr((string) $m['lastTradeDate'], 0, 10);
-      } elseif ($openTime) {
-        $ts = strtotime((string) $openTime);
-        if ($ts) {
-          $hhmmss = gmdate('H:i:s', $ts);
-          $trades_day_iso = ($hhmmss === '00:00:00') ? gmdate('Y-m-d', $ts - 86400) : gmdate('Y-m-d', $ts);
-        }
+      // Comisiones: si no hay trades ni comisiones, ya filtramos arriba; aquí calculamos monto
+      $fees = '-';
+      if ((string) $accountId !== '' && function_exists('mt_sum_commissions_for_day')) {
+        $fees = mt_sum_commissions_for_day((string) $accountId, $day_iso_eastern);
       }
 
-      $stats = ($accountId && $trades_day_iso !== '')
-        ? mt_trades_day_stats((string) $accountId, $trades_day_iso)
+      // Streaks/duraciones (usando el mismo día Eastern)
+      $stats = ($accountId && function_exists('mt_trades_day_stats'))
+        ? mt_trades_day_stats((string) $accountId, $day_iso_eastern)
         : ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
 
       $maxW = $stats['maxConsecWins'] ?? '-';
@@ -1763,13 +1888,11 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $dWin = $stats['avgWinDuration'] ?? '-';
       $dLos = $stats['avgLossDuration'] ?? '-';
 
-      // Si hubo trades ese día, mt_trades_day_stats ya devuelve 0/00:00:00 en el lado ausente
-      // Construimos las cadenas finales:
       $max = ($maxW === '-' && $maxL === '-') ? '-' : ($maxW . '/' . $maxL);
       $dur = ($dWin === '-' && $dLos === '-') ? '-' : ($dWin . ' / ' . $dLos);
 
       $rows[] = [
-        'openTime' => $openTime ?: '',
+        'openTime' => $openTime,   // ← SIEMPRE Eastern YYYY-MM-DD
         'net' => $net,
         'hi' => $hi,
         'lo' => $lo,
@@ -1785,6 +1908,8 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       ];
     }
 
+
+    // Orden descendente por fecha (usa 'openTime', que ahora es YYYY-MM-DD (Eastern) o string)
     usort($rows, function ($a, $b) {
       $ta = strtotime((string) ($a['openTime'] ?? '')) ?: 0;
       $tb = strtotime((string) ($b['openTime'] ?? '')) ?: 0;
@@ -1794,6 +1919,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     return ['rows' => $rows, 'per_page' => (int) $perPage];
   }
 }
+
 
 
 /* === DAILY JOURNAL: render SOLO filas (para AJAX) === */
