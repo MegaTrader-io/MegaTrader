@@ -15,13 +15,13 @@ if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
 $mt_user_email = '';
 $mt_user_email_api = '';
 $mt_account_ui = ['current' => null, 'accounts' => []];
-$mt_selected_id = ''; // ID de cuenta seleccionada (query o por defecto)
+$mt_selected_id = '';
 $mt_performance = [];
-$mt_fetch_variant = ''; // plain|encoded según el que gane
+$mt_fetch_variant = '';
 $mt_cnt_plain = 0;
 $mt_cnt_encoded = 0;
-$mt_feature_content = []; // payload para account-feature-content
-$mt_account_data = []; // payload para account-data
+$mt_feature_content = [];
+$mt_account_data = [];
 $mt_daily_journal = [];
 $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
 
@@ -231,9 +231,20 @@ if (is_user_logged_in()) {
 
       $__note_passed_with_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
       $__note_passed_no_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
+
+
+      // Texto del body del modal
+      $__body_subtitle = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle'];
+      $__body_subtitle_w_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_w_activation_id'];
+      $__body_subtitle_no_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
+
+
+
       // Estado inicial de la NOTA del modal PASSED
       $__note_text = '';
       $__show_note = false;
+
+      $__body_text = $__body_subtitle;
 
       // Normaliza alias
       if ($__status_norm === 'ACTIVATION_PENDING') {
@@ -253,6 +264,14 @@ if (is_user_logged_in()) {
       } else {
         $__show_note = false;
       }
+
+      $__body_text = ($__status_norm === 'PASSED')
+        // Si PASSED es TRUE, verifica la ID de activación:
+        ? ($__has_activation_id
+          ? $__body_subtitle_w_activation_id
+          : $__body_subtitle_no_activation_id)
+        // Si PASSED es FALSE, usa el subtítulo por defecto:
+        : $__body_subtitle;
 
 
 
@@ -507,6 +526,7 @@ get_header();
 
 <div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
   aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>"
+  data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
@@ -553,6 +573,7 @@ get_header();
   data-note-passed-no-id="<?php echo esc_attr($__note_passed_no_id); ?>"
   data-current-status="<?php echo esc_attr($__status_norm); ?>"
   data-activation-id="<?php echo esc_attr($__activation_product_id); ?>"
+  data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
 
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
@@ -584,7 +605,7 @@ get_header();
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_description']; ?>
         </span>
         <span class="fw-medium text-a8a29e text-base">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle']; ?>
+          <?php echo esc_html($__body_text); ?>
         </span>
 
         <div class="mt-note bg-1e1e1e d-flex gap-3 mt-4 p-3 rounded-3" id="mt-passed-note" data-status="info" <?php echo $__show_note ? '' : 'hidden aria-hidden="true"'; ?>>
