@@ -19,6 +19,7 @@ $current_user = wp_get_current_user();
 $user_email = $current_user->user_email;
 
 $valid_states = WC()->countries->get_states($billing_country);
+$billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', true));
 
 ?>
 <div>
@@ -63,6 +64,8 @@ $valid_states = WC()->countries->get_states($billing_country);
                 <input type="text" name="billing_address_1" id="billing_address_1"
                        class="form-control"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_address_1', true)); ?>"/>
+                <input type="hidden" name="billing_address_2" id="billing_address_2"
+                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_address_2', true)); ?>"/>
             </div>
             <div class="col-lg-6">
                 <label class="mb-1" for="billing_city"><?php _e('City', 'woocommerce'); ?></label>
@@ -75,9 +78,24 @@ $valid_states = WC()->countries->get_states($billing_country);
         <div class="row">
             <div class="col-lg-6">
                 <label class="mb-1" for="billing_state"><?php _e('State', 'woocommerce'); ?></label>
-                <input type="text" name="billing_state" id="billing_state"
-                       class="form-control"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_state', true)); ?>"/>
+                <div id="billing_state_wrapper">
+                    <?php if (!empty($valid_states)): ?>
+                        <select name="billing_state" id="billing_state"
+                                class="form-select form-control woocommerce-select">
+                            <option value=""
+                                    disabled <?php echo (!empty($_POST['billing_state']) && is_string($_POST['billing_state'])) ? '' : 'selected'; ?>>
+                                State
+                            </option>
+                            <?php foreach ($valid_states as $key => $value): ?>
+                                <option value="<?= esc_attr($key) ?>" <?php echo (!empty($billing_state) && is_string($billing_state)) ? 'selected' : ''; ?> ><?= esc_html($value) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php elseif (is_string($billing_state)): ?>
+                        <input type="text" name="billing_state" id="billing_state"
+                               class="form-control"
+                               value="<?php echo esc_attr($billing_state); ?>"/>
+                    <?php endif; ?>
+                </div>
             </div>
             <div class="col-lg-6">
                 <label class="mb-1" for="billing_postcode"><?php _e('ZIP Code', 'woocommerce'); ?></label>
@@ -194,4 +212,21 @@ $valid_states = WC()->countries->get_states($billing_country);
             }
         });
     })
+</script>
+
+<script>
+    jQuery(document).ready(function ($) {
+        $('#billing_country').on('input', function () {
+            var country = $(this).val();
+            var data = {
+                action: 'get_cities',
+                country: country,
+                state: '<?php echo $billing_state; ?>'
+            };
+
+            $.post(woocommerce_params.ajax_url, data, function (response) {
+                $('#billing_state_wrapper').html(response);
+            });
+        });
+    });
 </script>
