@@ -360,6 +360,30 @@ document.addEventListener("mt:accountSelected", (e) => {
   window.mtRefresh.refreshAll(id);
 });
 
+// ===== Overlay utils (genérico) =====
+window.mtOverlay = (function () {
+  // Encuentra overlays dentro de un root (varios nombres compatibles)
+  function find(root) {
+    return Array.from(
+      (root || document).querySelectorAll(
+        ".account-performance-chart__overlay, .daily-journal__overlay"
+      )
+    );
+  }
+  function toggle(root, show) {
+    find(root).forEach((el) => {
+      if (show) {
+        el.removeAttribute("hidden");
+        el.setAttribute("aria-hidden", "false");
+      } else {
+        el.setAttribute("hidden", "");
+        el.setAttribute("aria-hidden", "true");
+      }
+    });
+  }
+  return { toggle };
+})();
+
 /* ===== Daily Journal (GRID + AJAX + paginación dinámica) ===== */
 (function () {
   const qs = (s, r = document) => r.querySelector(s);
@@ -388,7 +412,7 @@ document.addEventListener("mt:accountSelected", (e) => {
       holder.className = "dj-pages";
       next ? pager.insertBefore(holder, next) : pager.appendChild(holder);
     }
-    holder.innerHTML = ""; // limpia números
+    holder.innerHTML = "";
 
     for (let i = 1; i <= st.totalPages; i++) {
       const b = document.createElement("button");
@@ -430,10 +454,37 @@ document.addEventListener("mt:accountSelected", (e) => {
     if (visibles.length) visibles[visibles.length - 1].classList.add("is-last"); // sin borde
   }
 
+  function applyEmptyState(root, st) {
+    const has = (st.totalRows || 0) > 0;
+
+    // marca visual para estilos
+    root.classList.toggle("is-empty", !has);
+
+    // aria-busy del viewport
+    const vp = root.querySelector(".dj-viewport");
+    if (vp) vp.setAttribute("aria-busy", has ? "false" : "true");
+
+    // pager visible solo si hay filas
+    const pager = root.querySelector(".dj-pager");
+    if (pager) {
+      if (has) {
+        pager.removeAttribute("hidden");
+        pager.removeAttribute("aria-hidden");
+      } else {
+        pager.setAttribute("hidden", "");
+        pager.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    // overlay genérico ON si no hay filas
+    if (window.mtOverlay) window.mtOverlay.toggle(root, !has);
+  }
+
   function goTo(root, st, page) {
     st.currentPage = Math.max(1, Math.min(st.totalPages, page));
     applyPageVisibility(root, st);
     updatePagerUI(root, st);
+    applyEmptyState(root, st);
   }
 
   function recalcAndRender(root, st) {
@@ -444,6 +495,7 @@ document.addEventListener("mt:accountSelected", (e) => {
     rebuildNumericPager(root, st);
     applyPageVisibility(root, st);
     updatePagerUI(root, st);
+    applyEmptyState(root, st);
   }
 
   function fetchDailyJournal(root, accountId) {
@@ -459,6 +511,8 @@ document.addEventListener("mt:accountSelected", (e) => {
     body.set("account_id", String(accountId || ""));
 
     const scroll = qs(".dj-scroll", root);
+    const vp = qs(".dj-viewport", root);
+    if (vp) vp.setAttribute("aria-busy", "true");
 
     return window.MEGATRADER.fetchJSON(url, {
       method: "POST",
@@ -491,6 +545,7 @@ document.addEventListener("mt:accountSelected", (e) => {
         st.currentPage = 1;
 
         recalcAndRender(root, st);
+        applyEmptyState(root, st);
         root.__djState = st;
       })
       .catch((err) => {
@@ -517,6 +572,7 @@ document.addEventListener("mt:accountSelected", (e) => {
 
     recalcAndRender(root, st);
     root.__djState = st;
+    applyEmptyState(root, st);
   }
 
   function initDJ() {
@@ -650,7 +706,6 @@ document.addEventListener("mt:accountSelected", (e) => {
       document.body.appendChild(s);
       document.body.removeChild(s);
     });
-    // Degradado: si sólo hay 1 opción, deshabilitamos el select
     var sel = container.querySelector("#lastDaysSelect");
     if (sel && sel.options.length === 1) sel.disabled = true;
   }
@@ -692,6 +747,55 @@ document.addEventListener("mt:accountSelected", (e) => {
     document.head.appendChild(style);
     window.__mtTipFollowerCSS = true;
   }
+
+// === REEMPLAZO: lógica de datos del chart con regla de mínimos ===
+function chartDataInfo(wrap){
+
+  const carrier = wrap.querySelector('[data-has-series],[data-has-data],[data-points],[data-min-points]') || wrap;
+  const rawHas = carrier.getAttribute('data-has-series') ?? carrier.getAttribute('data-has-data');
+  const rawPts = carrier.getAttribute('data-points');
+  const rawMin = carrier.getAttribute('data-min-points');
+
+  let hasSeries = null;
+  if (rawHas != null){
+    const v = String(rawHas).trim().toLowerCase();
+    if (v === 'true' || v === '1') hasSeries = true;
+    else if (v === 'false' || v === '0') hasSeries = false;
+  }
+
+  let points = Number.isFinite(parseInt(rawPts,10)) ? parseInt(rawPts,10) : null;
+
+
+  if (points == null && window.__mtChartInstance && window.__mtChartInstance.w && window.__mtChartInstance.w.globals){
+    const g = window.__mtChartInstance.w.globals;
+    try {
+      const series0 = (g.seriesXvalues && g.seriesXvalues[0]) || (g.series && g.series[0]) || [];
+      points = Array.isArray(series0) ? series0.length : (Number.isFinite(series0) ? series0 : 0);
+      if (hasSeries == null) hasSeries = points > 0;
+    } catch(_) {}
+  }
+
+  if (hasSeries == null){
+    hasSeries = !!wrap.querySelector('.apexcharts-series path, .apexcharts-series rect, .apexcharts-series circle');
+  }
+
+  let minPoints = Number.isFinite(parseInt(rawMin,10)) ? parseInt(rawMin,10) : 7;
+
+  return { hasSeries:Boolean(hasSeries), points:(points==null?null:Math.max(0,points)), minPoints };
+}
+
+function applyChartOverlay(wrap){
+  const overlay = wrap.querySelector('.account-performance-chart__overlay');
+  if (overlay && overlay.getAttribute('data-autotoggle') === 'off') return;
+
+  const info = chartDataInfo(wrap);
+
+  const enoughPoints = (info.points == null) ? true : (info.points >= info.minPoints);
+  const shouldShow = !(info.hasSeries && enoughPoints);
+
+  if (window.mtOverlay) window.mtOverlay.toggle(wrap, shouldShow);
+}
+
 
   // ---------- TIP FOLLOWER ----------
   function makeTipFollower(root) {
@@ -921,9 +1025,14 @@ document.addEventListener("mt:accountSelected", (e) => {
           });
 
         wrap.innerHTML = j.data.html;
+        applyChartOverlay(wrap);
 
         ensureApexThen(wrap, function () {
           runInlineScripts(wrap);
+          applyChartOverlay(wrap);
+          setTimeout(function () {
+            applyChartOverlay(wrap);
+          }, 150);
           const root =
             wrap.querySelector("#account-performance-chart")?.parentElement ||
             wrap;
