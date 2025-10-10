@@ -229,16 +229,13 @@ class Label
         "breach_modal_button" => "Reset account",
         'passed_modal_body_title' => 'Congrats!',
         'passed_modal_body_description' => 'Your account has passed the evaluation',
-        'passed_modal_button' => 'Activation Pending',
-        'passed_modal_title' => 'Account Passed',
-        
+        'passed_modal_button' => 'Activate Account',
+        'passed_modal_title' => 'Account Passed',        
         'passed_modal_note_status_passed_w_activation_id' => 'Activation will open once your account is ready.',
-        'passed_modal_note_status_passed_no_activation_id' => 'Your account activates automatically once it’s ready.',
-        
+        'passed_modal_note_status_passed_no_activation_id' => 'Your account activates automatically once it’s ready.',        
         'passed_modal_body_subtitle_default' => "Pay the activation fee below to activate your funded account.",
         'passed_modal_body_subtitle_w_activation_id' => "Your account is being prepared. You’ll be able to activate it soon.",
-        'passed_modal_body_subtitle_no_activation_id' => "Your account is being prepared and will unlock automatically once ready.",
-
+        'passed_modal_body_subtitle_no_activation_id' => "Your account is being prepared and will unlock automatically.",
         'account_chart_overlay_no_data' => 'There is not enough data to generate the graph.',
         'account_daily_journal_overlay_no_data' => 'There is not enough data to display this tablet.',
 

@@ -84,7 +84,7 @@ $fmt_durwl = function ($v) {
   class="daily-journal mt-card<?php echo $has_rows ? '' : ' is-empty'; ?>" data-has-rows="<?php echo $has_rows ? '1' : '0'; ?>">
   <!-- Overlay (mismo look & feel que el chart, con clases propias) -->
   <div class="daily-journal__overlay" <?php echo $has_rows ? 'hidden' : ''; ?>>
-    <span class="dj-overlay__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['daily_journal_overlay_no_data']); ?></span>
+    <span class="dj-overlay__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_daily_journal_overlay_no_data']); ?></span>
   </div>
 
   <div class="dj-viewport" aria-busy="<?php echo $has_rows ? 'false' : 'true'; ?>">

@@ -2004,7 +2004,6 @@ if (document.readyState === "loading") {
     var msgWithId = modal.dataset.notePassedWithId || "";
     var msgNoId = modal.dataset.notePassedNoId || "";
 
-    // Solo mostrar nota cuando es PASSED
     var show = st === "PASSED";
 
     if (show) {
@@ -2038,20 +2037,42 @@ if (document.readyState === "loading") {
     btn.setAttribute("aria-disabled", "false");
 
     if (st === "PENDING_ACTIVATION" && hasId) {
-      // botón visible y habilitado
     } else if (st === "PASSED" && hasId) {
-      // visible pero deshabilitado
       btn.classList.add("disabled");
       btn.setAttribute("aria-disabled", "true");
     } else if (st === "PASSED" && !hasId) {
-      // oculto
       btn.classList.add("d-none");
       btn.href = "#";
     } else {
-      // otro estado -> oculto
       btn.classList.add("d-none");
       btn.href = "#";
     }
+  }
+
+  // === Body text según status/activationId ===
+  function setBodyText(status, activationId, modal) {
+    var bodyEl = modal.querySelector("[data-body-text]");
+    if (!bodyEl) return;
+
+    var st = String(status || "")
+      .trim()
+      .toUpperCase();
+    if (st === "ACTIVATION_PENDING") st = "PENDING_ACTIVATION";
+    var hasId = normalizeId(activationId) !== "";
+
+    var tDefault = modal.dataset.bodyDefault || "";
+    var tWithId = modal.dataset.bodyWId || "";
+    var tNoId = modal.dataset.bodyNoId || "";
+
+    var next = tDefault;
+    if (st === "PENDING_ACTIVATION" && hasId) {
+      next = tDefault;
+    } else if (st === "PASSED" && hasId) {
+      next = tWithId || tDefault;
+    } else if (st === "PASSED" && !hasId) {
+      next = tNoId || tDefault;
+    }
+    bodyEl.textContent = next;
   }
 
   function syncUI(modal) {
@@ -2059,6 +2080,7 @@ if (document.readyState === "loading") {
     var actId = modal.dataset.activationId || "";
     setNote(status, actId, modal);
     setButton(status, actId, modal);
+    setBodyText(status, actId, modal);
   }
 
   function initModal() {
@@ -2315,18 +2337,16 @@ if (document.readyState === "loading") {
       if (!el) return;
 
       var href = el.getAttribute("href") || "";
-      if (!href || href === "#") return; // no hay destino válido
+      if (!href || href === "#") return;
 
-      // ⬇︎ TOMAR SIEMPRE DEL CONTENEDOR DEL MODAL
       var host = el.closest("#mt-breach-alert-modal, #mt-account-passed-modal");
       if (!host) return;
 
       var accountId = host.getAttribute("data-account-id") || "";
       var mainProductId = host.getAttribute("data-main-product-id") || "";
 
-      if (!accountId) return; // sin account_id no posteamos
+      if (!accountId) return;
 
-      // POST silencioso (sin exponer params en URL)
       ev.preventDefault();
       ev.stopPropagation();
 

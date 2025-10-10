@@ -266,13 +266,13 @@ if (is_user_logged_in()) {
       }
 
       if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
-        $__body_text = $__body_subtitle; 
+        $__body_text = $__body_subtitle;
       } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
         $__body_text = $__body_subtitle_w_activation_id;
       } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
         $__body_text = $__body_subtitle_no_activation_id;
       } else {
-        $__body_text = $__body_subtitle; 
+        $__body_text = $__body_subtitle;
       }
 
 
@@ -584,7 +584,11 @@ get_header();
   data-current-status="<?php echo esc_attr($__status_norm); ?>"
   data-activation-id="<?php echo esc_attr($__activation_product_id); ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
-  data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
+  data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>"
+  data-body-default="<?php echo esc_attr($__body_subtitle); ?>"
+  data-body-w-id="<?php echo esc_attr($__body_subtitle_w_activation_id); ?>"
+  data-body-no-id="<?php echo esc_attr($__body_subtitle_no_activation_id); ?>">
+
 
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
@@ -614,9 +618,10 @@ get_header();
         <span class="text-white fw-medium text-uppercase text-2xl leading-7 py-1">
           <?php echo Label::META_ACCOUNT_OVERVIEW['passed_modal_body_description']; ?>
         </span>
-        <span class="fw-medium text-a8a29e text-base">
+        <span class="fw-medium text-a8a29e text-base" data-body-text>
           <?php echo esc_html($__body_text); ?>
         </span>
+
 
         <div class="mt-note bg-1e1e1e d-flex gap-3 mt-4 p-3 rounded-3" id="mt-passed-note" data-status="info" <?php echo $__show_note ? '' : 'hidden aria-hidden="true"'; ?>>
           <span class="mt-icon mt-icon-info mt-icon_info-solid"></span>
