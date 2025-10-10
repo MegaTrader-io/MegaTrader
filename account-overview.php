@@ -234,7 +234,7 @@ if (is_user_logged_in()) {
 
 
       // Texto del body del modal
-      $__body_subtitle = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle'];
+      $__body_subtitle = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_default'];
       $__body_subtitle_w_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_w_activation_id'];
       $__body_subtitle_no_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
 
@@ -265,13 +265,15 @@ if (is_user_logged_in()) {
         $__show_note = false;
       }
 
-      $__body_text = ($__status_norm === 'PASSED')
-        // Si PASSED es TRUE, verifica la ID de activación:
-        ? ($__has_activation_id
-          ? $__body_subtitle_w_activation_id
-          : $__body_subtitle_no_activation_id)
-        // Si PASSED es FALSE, usa el subtítulo por defecto:
-        : $__body_subtitle;
+      if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
+        $__body_text = $__body_subtitle; 
+      } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
+        $__body_text = $__body_subtitle_w_activation_id;
+      } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
+        $__body_text = $__body_subtitle_no_activation_id;
+      } else {
+        $__body_text = $__body_subtitle; 
+      }
 
 
 
@@ -582,7 +584,6 @@ get_header();
   data-current-status="<?php echo esc_attr($__status_norm); ?>"
   data-activation-id="<?php echo esc_attr($__activation_product_id); ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
-  data-main-product-id="<?php echo esc_attr($__main_product_id); ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
 
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
