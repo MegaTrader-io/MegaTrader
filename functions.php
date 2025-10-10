@@ -2250,5 +2250,75 @@ add_action('template_redirect', function () {
     }
 });
 
+// Metadata One time fee
 
+if (!function_exists('mt_cart_has_one_time_fee')) {
+  function mt_cart_has_one_time_fee(): bool {
+    if (!function_exists('WC') || !WC()->cart) return false;
+    $cats = ['activation-fee','reset-fee']; // slugs de categorías de tus productos one-time
+    foreach (WC()->cart->get_cart() as $ci) {
+      $pid = !empty($ci['variation_id']) ? (int)$ci['variation_id'] : (int)$ci['product_id'];
+      if ($pid > 0) {
+        $terms = get_the_terms($pid, 'product_cat');
+        if ($terms && !is_wp_error($terms)) {
+          foreach ($terms as $t) {
+            if (in_array($t->slug, $cats, true)) return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+}
+add_action('woocommerce_checkout_update_order_meta', function($order_id){
+  $order = wc_get_order($order_id);
+  if (!$order) return;
+
+  if (!function_exists('mt_cart_has_one_time_fee') || !mt_cart_has_one_time_fee()) return;
+
+  $posted = isset($_POST['account_id']) ? sanitize_text_field(wp_unslash($_POST['account_id'])) : '';
+  if ($posted === '') return;
+
+  if ((string)$order->get_meta('account_id') === '') {
+    $order->update_meta_data('account_id', $posted);
+    $order->save();
+  }
+}, 10);
+
+add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resource_id, $event) {
+  if ($resource === 'order') {
+    $order = wc_get_order($resource_id);
+    if ($order) {
+      $acc = (string) $order->get_meta('account_id');
+      if ($acc !== '') {
+        if (!isset($payload['meta_data']) || !is_array($payload['meta_data'])) {
+          $payload['meta_data'] = [];
+        }
+        $payload['meta_data']['account_id'] = $acc;
+      }
+    }
+  }
+  return $payload;
+}, 10, 4);
+
+add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resource_id, $event) {
+  if ($resource === 'order') {
+    $order = wc_get_order($resource_id);
+    if ($order) {
+      $acc = (string) $order->get_meta('account_id');
+      if ($acc !== '') {
+        wc_get_logger()->info("Webhook {$event} order {$resource_id} account_id={$acc}", ['source'=>'one_time_fee']);
+      }
+    }
+  }
+  return $payload;
+}, 10, 4);
+add_action('woocommerce_thankyou', function($order_id){
+  $order = wc_get_order($order_id);
+  if (!$order) return;
+  $acc = $order->get_meta('account_id');
+  echo '<div style="margin:16px 0;padding:10px;background:#1e1e1e;color:#fff;border:1px solid #FFD78A">';
+  echo '<strong>DEBUG:</strong> account_id en la orden = <code style="color:#FFD78A">'.esc_html($acc).'</code>';
+  echo '</div>';
+});
 
