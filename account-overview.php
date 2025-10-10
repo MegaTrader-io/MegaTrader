@@ -105,11 +105,45 @@ if (is_user_logged_in()) {
         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
       }
 
-      /* === 3) Resolver cuenta seleccionada === */
-      $mt_selected_id = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
-      if ($mt_selected_id === '') {
-        $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
+      /* === 3) Resolver cuenta seleccionada (PRIORIDAD: cookie -> ?acc -> current) === */
+
+      // 3.0 — armar lista de IDs válidos del usuario
+      $__valid_ids = [];
+      if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
+        foreach ($mt_account_ui['accounts'] as $row) {
+          if (!empty($row['id']))
+            $__valid_ids[] = (string) $row['id'];
+        }
       }
+      if (!empty($mt_account_ui['current']['id'])) {
+        $__valid_ids[] = (string) $mt_account_ui['current']['id'];
+      }
+      $__valid_ids = array_values(array_unique($__valid_ids, SORT_REGULAR));
+
+      // 3.1 — intentar por cookie/localStorage primero
+      $mt_selected_id = '';
+      $wp_user_id = get_current_user_id();
+      $cookie_key = 'mt:lastAccountId' . ($wp_user_id ? (':' . $wp_user_id) : '');
+      if (!empty($_COOKIE[$cookie_key])) {
+        $candidate = sanitize_text_field((string) $_COOKIE[$cookie_key]);
+        if ($candidate !== '' && in_array($candidate, $__valid_ids, true)) {
+          $mt_selected_id = $candidate;
+        }
+      }
+
+      // 3.2 — si no hay cookie válida, probar ?acc=
+      if ($mt_selected_id === '') {
+        $candidate = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
+        if ($candidate !== '' && in_array($candidate, $__valid_ids, true)) {
+          $mt_selected_id = $candidate;
+        }
+      }
+
+      // 3.3 — si sigue vacío, usar la “current” de la API
+      if ($mt_selected_id === '' && !empty($mt_account_ui['current']['id'])) {
+        $mt_selected_id = (string) $mt_account_ui['current']['id'];
+      }
+
 
 
       // === Resolver la cuenta una sola vez y construir payloads ===

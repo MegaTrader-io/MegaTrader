@@ -2,6 +2,47 @@
 (function () {
   "use strict";
 
+  function getLastAccountKey() {
+    try {
+      var uid =
+        (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
+        "";
+      return "mt:lastAccountId" + (uid ? ":" + String(uid) : "");
+    } catch (_) {
+      return "mt:lastAccountId";
+    }
+  }
+  function loadLastAccountId() {
+    var key = getLastAccountKey();
+    try {
+      var v = localStorage.getItem(key);
+      if (v) return v;
+    } catch (_) {}
+    try {
+      var m = document.cookie.match(
+        new RegExp(
+          "(?:^|;)\\s*" +
+            key.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") +
+            "=([^;]+)"
+        )
+      );
+      return m ? decodeURIComponent(m[1]) : "";
+    } catch (_) {
+      return "";
+    }
+  }
+  function saveLastAccountId(id) {
+    var key = getLastAccountKey();
+    var val = String(id || "");
+    try {
+      localStorage.setItem(key, val);
+    } catch (_) {}
+    try {
+      document.cookie =
+        key + "=" + encodeURIComponent(val) + ";path=/;max-age=31536000";
+    } catch (_) {}
+  }
+
   // Esperar DOM listo (soporta inline/defer)
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init, { once: true });
@@ -21,7 +62,7 @@
       document.querySelector(".mt-account-performance");
     var modal = document.querySelector(SEL.modal || "#changeSubcriptionModal");
 
-    var selectedId = CFG.currentId || null;
+    var selectedId = loadLastAccountId() || CFG.currentId || null;
     var pendingPreloader = false;
     var preloaderFallbackTimer = null;
 
@@ -130,9 +171,10 @@
       selectedId = card.getAttribute("data-account-id") || null;
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
+      saveLastAccountId(selectedId);
 
       enableBtn(true);
-      updateAccountCTAs(); // sincroniza CTAs con la card activa
+      updateAccountCTAs(); 
     }
 
     function preselectIfVisible() {
@@ -393,7 +435,6 @@
     // Re-sincronizar cuando se abre el modal
     if (modal) {
       modal.addEventListener("shown.bs.modal", function () {
-        // Asegura que la card activa se marque y CTAs/btn queden bien
         var active =
           grid &&
           grid.querySelector((SEL.card || ".subscription-card") + ".active");
