@@ -227,8 +227,11 @@ if ($mt_is_activation) {
 }
 
 
-// Account ID seleccionado (si hay)
-$mt_selected_id = mtch_resolve_account_id();
+// Account + Main product (desde POST>GET)
+$__ids = function_exists('mtch_resolve_ids') ? mtch_resolve_ids() : ['account_id' => '', 'main_product_id' => ''];
+$mt_selected_id = (string) ($__ids['account_id'] ?? '');
+$mt_main_product_id = (string) ($__ids['main_product_id'] ?? '');
+
 
 
 ?>
@@ -246,15 +249,21 @@ $mt_selected_id = mtch_resolve_account_id();
                 class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
                 action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
 
-                <?php if (!empty($mt_selected_id)): ?>
+                <?php if (!empty($mt_selected_id) && !empty($mt_main_product_id)): ?>
                     <input type="hidden" name="account_id" id="mt_account_id"
                         value="<?php echo esc_attr($mt_selected_id); ?>">
+                    <input type="hidden" name="main_product_id" id="mt_main_product_id"
+                        value="<?php echo esc_attr($mt_main_product_id); ?>">
+
                     <?php /* DEBUG opcional: comenta/borra en producción si no lo necesitas */ ?>
                     <div style="margin:12px 0;padding:10px;border:1px dashed #FFD78A;color:#fff;background:#1e1e1e">
                         <strong>DEBUG</strong> account_id:
-                        <code style="color:#FFD78A"><?php echo esc_html($mt_selected_id); ?></code>
+                        <code style="color:#FFD78A"><?php echo esc_html($mt_selected_id); ?></code><br>
+                        <strong>DEBUG</strong> main_product_id:
+                        <code style="color:#FFD78A"><?php echo esc_html($mt_main_product_id); ?></code>
                     </div>
                 <?php endif; ?>
+
 
 
 

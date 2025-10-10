@@ -144,51 +144,45 @@ function mtch_enforce_no_addons_on_activation() {
 }}
 
 // === Resolver el account_id para el checkout (POST silencioso -> GET -> fallback UI) ===
-if (!function_exists('mtch_resolve_account_id')) {
-function mtch_resolve_account_id(): string {
-    // 1) Prioridad: POST (desde los modales con submit silencioso)
-    $post_id = isset($_POST['account_id']) ? sanitize_text_field( wp_unslash($_POST['account_id']) ) : '';
-    if ($post_id !== '') return (string) $post_id;
 
-    // 2) Compat: GET (por si en algún flujo legacy aún llega por querystring)
-    $get_id  = isset($_GET['account_id'])  ? sanitize_text_field( wp_unslash($_GET['account_id']) )  : '';
-    if ($get_id !== '') return (string) $get_id;
+if (!function_exists('mtch_resolve_ids')) {
+function mtch_resolve_ids(): array {
+    // 1) POST (desde los modales con submit silencioso)
+    $acc_post  = isset($_POST['account_id'])       ? sanitize_text_field( wp_unslash($_POST['account_id']) )       : '';
+    $main_post = isset($_POST['main_product_id'])  ? sanitize_text_field( wp_unslash($_POST['main_product_id']) )  : '';
 
-    // 3) Fallback: misma lógica de "current account" que usas en overview
-    if (!is_user_logged_in()) return '';
-
-    $u = wp_get_current_user();
-    if (!$u || !$u->exists()) return '';
-
-    $raw_email = (string) ($u->user_email ?? '');
-    $san = function_exists('mt_sanitize_email')
-        ? mt_sanitize_email($raw_email)
-        : [
-            'ok'    => true,
-            'email' => strtolower(trim($raw_email)),
-            'api'   => rawurlencode(strtolower(trim($raw_email))),
+    if ($acc_post !== '' && $main_post !== '') {
+        return [
+            'account_id'      => (string) $acc_post,
+            'main_product_id' => (string) $main_post,
         ];
-
-    $accounts_plain = [];
-    $accounts_enc   = [];
-
-    try {
-        $accounts_plain = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email((string) $san['email'], 1, 50) : [];
-    } catch (Throwable $e) {}
-
-    try {
-        $accounts_enc = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email((string) $san['api'], 1, 50) : [];
-    } catch (Throwable $e) {}
-
-    $accounts = (count((array) $accounts_plain) >= count((array) $accounts_enc)) ? $accounts_plain : $accounts_enc;
-
-    if (class_exists('MT_Accounts')) {
-        $ui = MT_Accounts::prepare_ui((array) $accounts);
-        return (string) ($ui['current']['id'] ?? '');
     }
 
-    return '';
+    // 2) GET (compatibilidad legacy)
+    $acc_get  = isset($_GET['account_id'])       ? sanitize_text_field( wp_unslash($_GET['account_id']) )       : '';
+    $main_get = isset($_GET['main_product_id'])  ? sanitize_text_field( wp_unslash($_GET['main_product_id']) )  : '';
+
+    if ($acc_get !== '' && $main_get !== '') {
+        return [
+            'account_id'      => (string) $acc_get,
+            'main_product_id' => (string) $main_get,
+        ];
+    }
+
+    // 3) Fallback plano (si faltara algo, devolvemos string vacío)
+    return [
+        'account_id'      => '',
+        'main_product_id' => '',
+    ];
 }}
+
+// (opcional) compatibilidad con el nombre que ya usabas:
+if (!function_exists('mtch_resolve_account_id')) {
+function mtch_resolve_account_id(): string {
+    $ids = mtch_resolve_ids();
+    return (string) ($ids['account_id'] ?? '');
+}}
+
 
 
 // === Debug visual opcional (?mtdebug=1 o WP_DEBUG) ===

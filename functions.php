@@ -2254,19 +2254,15 @@ add_action('template_redirect', function () {
 /**
  * =========================
  *  MT — Checkout hooks
- *  (account_id de 24 hex)
+ *  (account_id = 24 hex, main_product_id = int)
  * =========================
  */
 
-/**
- * ¿El carrito incluye un producto one-time? (reset/activation)
- * - Úsalo para limitar cuándo guardamos account_id.
- * - Si quieres guardarlo SIEMPRE, elimina las líneas que llaman a esta función en los hooks.
- */
+/** ¿Carrito con producto one-time? (reset/activation) */
 if (!function_exists('mt_cart_has_one_time_fee')) {
   function mt_cart_has_one_time_fee(): bool {
     if (!function_exists('WC') || !WC()->cart) return false;
-    $cats = ['activation-fee','reset-fee']; // slugs de categorías one-time
+    $cats = ['activation-fee','reset-fee']; // slugs categorías one-time
     foreach (WC()->cart->get_cart() as $ci) {
       $pid = !empty($ci['variation_id']) ? (int)$ci['variation_id'] : (int)$ci['product_id'];
       if ($pid > 0) {
@@ -2282,9 +2278,7 @@ if (!function_exists('mt_cart_has_one_time_fee')) {
   }
 }
 
-/**
- * Sanitiza/valida account_id — exactamente 24 caracteres hex.
- */
+/** Sanitiza/valida account_id — 24 hex exactos */
 if (!function_exists('mt_sanitize_account_id')) {
   function mt_sanitize_account_id(string $raw): string {
     $raw = sanitize_text_field($raw);
@@ -2292,81 +2286,104 @@ if (!function_exists('mt_sanitize_account_id')) {
   }
 }
 
-/**
- * Guarda account_id al crear la orden
- * (si quieres guardarlo SIEMPRE, comenta/elimina la comprobación mt_cart_has_one_time_fee()).
- */
+/** Sanitiza main_product_id — entero (>0) */
+if (!function_exists('mt_sanitize_main_product_id')) {
+  function mt_sanitize_main_product_id($raw): int {
+    $n = (int) preg_replace('/\D+/', '', (string) $raw);
+    return ($n > 0) ? $n : 0;
+  }
+}
+
+/** Helper: guarda metas si vienen en $_POST */
+if (!function_exists('mt_maybe_store_order_metas')) {
+  function mt_maybe_store_order_metas(WC_Order $order): void {
+    // 🔒 Comenta la línea siguiente si quieres guardarlo SIEMPRE (no solo en reset/activation):
+    if (!mt_cart_has_one_time_fee()) return;
+
+    $acc = isset($_POST['account_id']) ? mt_sanitize_account_id(wp_unslash($_POST['account_id'])) : '';
+    $main = isset($_POST['main_product_id']) ? mt_sanitize_main_product_id(wp_unslash($_POST['main_product_id'])) : 0;
+
+    if ($acc !== '' && (string)$order->get_meta('account_id') === '') {
+      $order->update_meta_data('account_id', $acc);
+      // opcional: nota interna visible en el pedido
+      $order->add_order_note('MT: account_id=' . $acc);
+    }
+    if ($main > 0 && (string)$order->get_meta('main_product_id') === '') {
+      $order->update_meta_data('main_product_id', $main);
+      $order->add_order_note('MT: main_product_id=' . $main);
+    }
+    // Woo guardará al final; no hace falta save() aquí
+  }
+}
+
+/** Guarda metas al crear la orden (camino principal) */
 add_action('woocommerce_checkout_create_order', function($order, $data) {
-  if (!is_a($order, 'WC_Order')) return;
-
-  // Limitar a reset/activation. Quita esta línea para guardarlo en todos los pedidos:
-  if (!mt_cart_has_one_time_fee()) return;
-
-  $posted = isset($_POST['account_id']) ? mt_sanitize_account_id(wp_unslash($_POST['account_id'])) : '';
-  if ($posted === '') return;
-
-  if ((string)$order->get_meta('account_id') === '') {
-    $order->update_meta_data('account_id', $posted);
-    // No hace falta save() aquí; Woo guarda al final del proceso.
+  if ($order instanceof WC_Order) {
+    mt_maybe_store_order_metas($order);
   }
 }, 10, 2);
 
-/**
- * Fallback post-creación (por si algún gateway no pasa por el hook anterior).
- */
+/** Fallback post-creación (por si algún gateway se salta el hook anterior) */
 add_action('woocommerce_checkout_update_order_meta', function($order_id){
   $order = wc_get_order($order_id);
   if (!$order) return;
-
-  // Limitar a reset/activation. Quita esta línea para guardarlo en todos los pedidos:
+  // 🔒 comenta si quieres guardarlo SIEMPRE:
   if (!mt_cart_has_one_time_fee()) return;
 
-  $posted = isset($_POST['account_id']) ? mt_sanitize_account_id(wp_unslash($_POST['account_id'])) : '';
-  if ($posted === '') return;
+  $acc  = isset($_POST['account_id']) ? mt_sanitize_account_id(wp_unslash($_POST['account_id'])) : '';
+  $main = isset($_POST['main_product_id']) ? mt_sanitize_main_product_id(wp_unslash($_POST['main_product_id'])) : 0;
 
-  if ((string)$order->get_meta('account_id') === '') {
-    $order->update_meta_data('account_id', $posted);
-    $order->save();
+  $changed = false;
+  if ($acc !== '' && (string)$order->get_meta('account_id') === '') {
+    $order->update_meta_data('account_id', $acc);
+    $order->add_order_note('MT: account_id=' . $acc);
+    $changed = true;
   }
+  if ($main > 0 && (string)$order->get_meta('main_product_id') === '') {
+    $order->update_meta_data('main_product_id', $main);
+    $order->add_order_note('MT: main_product_id=' . $main);
+    $changed = true;
+  }
+  if ($changed) $order->save();
 }, 10);
 
-/**
- * Incluye account_id en el payload de los webhooks de orden + log opcional.
- */
+/** Añade metas al payload de webhooks de pedido + LOG */
 add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resource_id, $event) {
   if ($resource !== 'order') return $payload;
-
   $order = wc_get_order($resource_id);
   if (!$order) return $payload;
 
-  $acc = (string) $order->get_meta('account_id');
-  if ($acc === '') return $payload;
+  $acc  = (string) $order->get_meta('account_id');
+  $main = (string) $order->get_meta('main_product_id');
 
   if (!isset($payload['meta_data']) || !is_array($payload['meta_data'])) {
     $payload['meta_data'] = [];
   }
-  $payload['meta_data']['account_id'] = $acc;
+  if ($acc !== '')  $payload['meta_data']['account_id']     = $acc;
+  if ($main !== '') $payload['meta_data']['main_product_id'] = $main;
 
-  // Log opcional (WooCommerce > Estado > Logs, source: one_time_fee)
   if (function_exists('wc_get_logger')) {
-    wc_get_logger()->info("Webhook {$event} order {$resource_id} account_id={$acc}", ['source' => 'one_time_fee']);
+    wc_get_logger()->info(
+      "Webhook {$event} order {$resource_id} account_id={$acc} main_product_id={$main}",
+      ['source' => 'one_time_fee']
+    );
   }
-
   return $payload;
 }, 10, 4);
 
-/**
- * DEBUG visible en la página de “gracias” (quitar en producción si no lo necesitas).
- */
-add_action('woocommerce_thankyou', function($order_id){
+/** DEBUG: log al procesar el pedido (no hay página thankyou) */
+add_action('woocommerce_checkout_order_processed', function($order_id){
   $order = wc_get_order($order_id);
   if (!$order) return;
-  $acc = (string) $order->get_meta('account_id');
-  if ($acc === '') return;
+  $acc  = (string) $order->get_meta('account_id');
+  $main = (string) $order->get_meta('main_product_id');
+  if (function_exists('wc_get_logger')) {
+    wc_get_logger()->info(
+      "Order processed {$order_id} :: account_id={$acc} main_product_id={$main}",
+      ['source' => 'one_time_fee']
+    );
+  }
+}, 10, 1);
 
-  echo '<div style="margin:16px 0;padding:10px;background:#1e1e1e;color:#fff;border:1px solid #FFD78A">';
-  echo '<strong>DEBUG:</strong> account_id en la orden = <code style="color:#FFD78A">'.esc_html($acc).'</code>';
-  echo '</div>';
-});
 
 
