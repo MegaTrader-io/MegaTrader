@@ -230,12 +230,15 @@ class Label
         'passed_modal_title' => 'Account Passed – Under Review',
         'passed_modal_body_title' => 'Congrats!',
         'passed_modal_body_description' => 'Your account has passed the evaluation',
-        'passed_modal_body_subtitle' => "Your account is under compliance review. Once approved, you’ll be able to pay the activation fee and unlock your funded account.",
         'passed_modal_button' => 'Activation Pending',
         'passed_modal_note_status_passed_w_activation_id' => 'Activation will open once review is complete.',
         'passed_modal_note_status_passed_no_activation_id' => 'Automatic Activation After Review',
+        
+        'passed_modal_body_subtitle_default' => "Your account has successfully passed compliance review. Pay the activation fee below to activate your funded account and begin trading.",
+        'passed_modal_body_subtitle_w_activation_id' => "Your account is under compliance review. Once approved, you’ll be able to pay the activation fee and unlock your funded account.",
+        'passed_modal_body_subtitle_no_activation_id' => "Your account is under compliance review. Once approved, your funded account will be automatically unlocked.",
         'account_chart_overlay_no_data' => 'There is not enough data to generate the graph.',
-        'account_daily_journal_overlay_no_data' => 'Sorry. There is no data is available.',
+        'account_daily_journal_overlay_no_data' => 'There is not enough data to display this tablet.',
 
     ];
 
