@@ -287,6 +287,13 @@ if (is_user_logged_in()) {
       $__btn_classes_attr = implode(' ', $__btn_classes);
 
 
+      // Get Main Product ID "Current"
+      $__main_product_id = (string) (
+        $resolved['rules']['mainProductId']
+        ?? ($mt_account_ui['current']['mainProductId'] ?? '')
+      );
+
+
 
 
     } else {
@@ -527,6 +534,7 @@ get_header();
 <div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
   aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
+  data-main-product-id="<?php echo esc_attr($__main_product_id); ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
@@ -574,6 +582,7 @@ get_header();
   data-current-status="<?php echo esc_attr($__status_norm); ?>"
   data-activation-id="<?php echo esc_attr($__activation_product_id); ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
+  data-main-product-id="<?php echo esc_attr($__main_product_id); ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
 
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">

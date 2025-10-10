@@ -1659,12 +1659,10 @@ document.addEventListener("mt:accountSelected", function (e) {
 });
 // ===== ENd Breach Modal =====
 
-
 document.addEventListener("mt:accountSelected", function (e) {
   var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
   if (id) breachGuardCheck(id);
 });
-
 
 // == Main width var: --mt-main-width (+ --dj-viewport) ==
 (function () {
@@ -2276,13 +2274,12 @@ if (document.readyState === "loading") {
   window.__mtModalPostCheckoutBound = true;
 
   function postTo(url, fields) {
-    // Enviamos a la ruta base sin query (?add-to-cart=...) y reinyectamos por POST
     var form = document.createElement("form");
     form.method = "post";
     form.action = url.replace(/\?.*$/, ""); // ej: "/checkout"
     form.className = "d-none";
 
-    // Si el href traía ?add-to-cart=, lo pasamos por POST (Woo lo entiende)
+    // Si el href traía ?add-to-cart=, reenviarlo por POST (Woo lo entiende)
     var m = (url.match(/[?&]add-to-cart=([^&#]+)/) || [])[1];
     if (m) {
       var inpATC = document.createElement("input");
@@ -2292,12 +2289,14 @@ if (document.readyState === "loading") {
       form.appendChild(inpATC);
     }
 
-    // account_id + extras
+    // Campos extra
     Object.keys(fields || {}).forEach(function (k) {
+      var v = fields[k];
+      if (v == null || v === "") return; // sólo si hay valor
       var inp = document.createElement("input");
       inp.type = "hidden";
       inp.name = k;
-      inp.value = String(fields[k]);
+      inp.value = String(v);
       form.appendChild(inp);
     });
 
@@ -2318,23 +2317,23 @@ if (document.readyState === "loading") {
       var href = el.getAttribute("href") || "";
       if (!href || href === "#") return; // no hay destino válido
 
-      // Leemos el accountId del propio botón o del modal contenedor
-      var accountId =
-        el.getAttribute("data-account-id") ||
-        document
-          .getElementById("mt-breach-alert-modal")
-          ?.getAttribute("data-account-id") ||
-        document
-          .getElementById("mt-account-passed-modal")
-          ?.getAttribute("data-account-id") ||
-        "";
+      // ⬇︎ TOMAR SIEMPRE DEL CONTENEDOR DEL MODAL
+      var host = el.closest("#mt-breach-alert-modal, #mt-account-passed-modal");
+      if (!host) return;
 
-      if (!accountId) return; // si no tenemos accountId, dejamos navegar normal
+      var accountId = host.getAttribute("data-account-id") || "";
+      var mainProductId = host.getAttribute("data-main-product-id") || "";
 
-      // POST silencioso: evitamos exponer account_id en la URL
+      if (!accountId) return; // sin account_id no posteamos
+
+      // POST silencioso (sin exponer params en URL)
       ev.preventDefault();
       ev.stopPropagation();
-      postTo(href, { account_id: accountId });
+
+      var fields = { account_id: accountId };
+      if (mainProductId) fields.main_product_id = mainProductId;
+
+      postTo(href, fields);
     },
     { capture: true }
   );
