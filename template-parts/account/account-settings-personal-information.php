@@ -33,6 +33,7 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
                 <label class="mb-1"
                        for="billing_first_name"><?php esc_html_e('First Name', 'megatrader'); ?></label>
                 <input type="text"
+                       disabled
                        class="form-control"
                        name="billing_first_name" id="billing_first_name"
                        placeholder="<?php esc_attr_e('First Name', 'megatrader'); ?>"
@@ -43,6 +44,7 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
                        for="billing_last_name"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
                 <input type="text"
                        class="form-control"
+                       disabled
                        name="billing_last_name" id="billing_last_name"
                        placeholder="<?php esc_attr_e('Last Name', 'megatrader'); ?>"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_last_name', true)); ?>">
@@ -52,7 +54,7 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
         <div class="row">
             <div class="col-lg-12">
                 <label class="mb-1" for="personal_email"><?php _e('Email', 'woocommerce'); ?></label>
-                <input type="email" readonly name="personal_email" id="personal_email"
+                <input type="email" disabled name="personal_email" id="personal_email"
                        class="form-control"
                        value="<?php echo $user_email; ?>"/>
             </div>

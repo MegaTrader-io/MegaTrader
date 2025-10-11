@@ -297,7 +297,7 @@ function mt_update_personal_information_callback()
     $user_id = get_current_user_id();
     $errors = [];
 
-    $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'billing_city', 'billing_state', 'billing_postcode', 'billing_phone', 'billing_country'];
+    $required = ['billing_address_1', 'billing_city', 'billing_state', 'billing_postcode', 'billing_phone', 'billing_country'];
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
             $errors[$field] = __('This field is required', 'megatrader');
@@ -310,8 +310,6 @@ function mt_update_personal_information_callback()
 
     $customer = new WC_Customer($user_id);
 
-    $customer->set_billing_first_name(sanitize_text_field($_POST['billing_first_name']));
-    $customer->set_billing_last_name(sanitize_text_field($_POST['billing_last_name']));
     $customer->set_billing_address_1(sanitize_text_field($_POST['billing_address_1']));
     $customer->set_billing_city(sanitize_text_field($_POST['billing_city']));
     $customer->set_billing_state(sanitize_text_field($_POST['billing_state']));
