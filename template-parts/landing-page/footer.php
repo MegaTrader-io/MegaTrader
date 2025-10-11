@@ -4,25 +4,10 @@ $buttons = [];
 foreach (mgt_footer_links() as $index => $link) {
     $modalId = $link['id'];
     $title = $link['title'];
-
-    if ($modalId == 'privacy_policy-modal-id' || $modalId == 'terms_of_service-modal-id') {
-        $url = [
-                'privacy_policy-modal-id' => '/privacy-policy/',
-                'terms_of_service-modal-id' => '/terms-of-service/',
-        ][$modalId];
-
-        $buttons[] = <<<HTML
-<a href="{$url}" class="hover:tw-underline hover:tw-text-stone-400 tw-text-stone-400 tw-bg-transparent tw-text-sm tw-font-medium tw-underline tw-leading-tight">
-    {$title}
-</a>
-HTML;
-        continue;
-    }
-
     $buttons[] = <<<HTML
-<a data-dialog-id="{$modalId}" href="#" class="btn-dialog hover:tw-underline hover:tw-text-stone-400 tw-text-stone-400 tw-bg-transparent tw-text-sm tw-font-medium tw-underline tw-leading-tight">
+<button data-dialog-id="{$modalId}" class="btn-dialog tw-text-stone-400 tw-bg-transparent tw-text-sm tw-font-medium tw-underline tw-leading-tight">
     {$title}
-</a>
+</button>
 HTML;
 }
 
