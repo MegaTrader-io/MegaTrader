@@ -52,7 +52,7 @@
                     </div>
                 </a>
 
-                <a href="https://megatrader.io" target="_blank"
+                <a href="https://play.google.com/store/apps/details?id=com.megatraderxt.mobile" target="_blank"
                    class="tw-pl-3 tw-pr-4 tw-py-3 tw-rounded-xl tw-border-2 tw-border-neutral-700 tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/try-on-google-play.svg"
                          width="30" height="30" alt="play icon"/>
