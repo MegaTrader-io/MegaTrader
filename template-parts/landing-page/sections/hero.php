@@ -76,9 +76,9 @@
                         <div class="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">ID: demo@megatrader.io</div>
                         <div class="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">Password: MegaTraderDemo</div>
                     </div>
-                    <button type="button" class="btn-dark-link tw-rounded-xl tw-w-full tw-h-12 tw-px-4 tw-py-3">
+                    <a href="https://trade.megatrader.io" target="_blank" class="btn-dark-link tw-rounded-xl tw-w-full tw-h-12 tw-px-4 tw-py-3">
                         Open Platform
-                    </button>
+                    </a>
                 </div>
             </div>
 
