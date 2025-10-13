@@ -45,7 +45,7 @@ class MT_Api {
 
     if (!is_array($data)) $data = null;
     if (isset($data['error'])) {
-      error_log('Error fetching user from fetch_user_by_email: ' . $data['error']);
+      error_log('[MT][fetch_user_by_email] : ' . $data['error'] . ' - ' . $sc);
       $data = null;
     };
 
