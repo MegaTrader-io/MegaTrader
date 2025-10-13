@@ -2,46 +2,42 @@
 (function () {
   "use strict";
 
-  function getLastAccountKey() {
-    try {
-      var uid =
-        (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
-        "";
-      return "mt:lastAccountId" + (uid ? ":" + String(uid) : "");
-    } catch (_) {
-      return "mt:lastAccountId";
-    }
+ function getLastAccountKey() {
+  try {
+    var uid =
+      (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) || "";
+    return "mt:lastAccountId" + (uid ? ":" + String(uid) : "");
+  } catch (_) {
+    return "mt:lastAccountId";
   }
-  function loadLastAccountId() {
-    var key = getLastAccountKey();
-    try {
-      var v = localStorage.getItem(key);
-      if (v) return v;
-    } catch (_) {}
-    try {
-      var m = document.cookie.match(
-        new RegExp(
-          "(?:^|;)\\s*" +
-            key.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") +
-            "=([^;]+)"
-        )
-      );
-      return m ? decodeURIComponent(m[1]) : "";
-    } catch (_) {
-      return "";
-    }
+}
+
+function loadLastAccountId() {
+  var key = getLastAccountKey();
+  try {
+    // cookie only
+    var m = document.cookie.match(
+      new RegExp("(?:^|;)\\s*" + key.replace(/[-[\\]/{}()*+?.\\^$|]/g, "\\$&") + "=([^;]+)")
+    );
+    return m ? decodeURIComponent(m[1]) : "";
+  } catch (_) {
+    return "";
   }
-  function saveLastAccountId(id) {
-    var key = getLastAccountKey();
-    var val = String(id || "");
-    try {
-      localStorage.setItem(key, val);
-    } catch (_) {}
-    try {
-      document.cookie =
-        key + "=" + encodeURIComponent(val) + ";path=/;max-age=31536000";
-    } catch (_) {}
-  }
+}
+
+function saveLastAccountId(id) {
+  var key = getLastAccountKey();
+  var val = String(id || "");
+
+  // cookie only
+  try {
+    document.cookie = key + "=" + encodeURIComponent(val) + ";path=/;max-age=31536000";
+  } catch (_) {}
+
+  // limpieza legacy (por si algo viejo quedó guardado)
+  try { localStorage.removeItem(key); } catch (_) {}
+}
+
 
   // Esperar DOM listo (soporta inline/defer)
   if (document.readyState === "loading") {
