@@ -44,7 +44,10 @@ class MT_Api {
     $data = json_decode($raw, true);
 
     if (!is_array($data)) $data = null;
-    if (isset($data['error'])) $data = null;
+    if (isset($data['error'])) {
+      error_log('Error fetching user from fetch_user_by_email: ' . $data['error']);
+      $data = null;
+    };
 
     if ($data) {
       set_transient($key, $data, 60); // Cache 1 minuto
