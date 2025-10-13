@@ -1127,7 +1127,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 }
 
 .outline-offset-1px {
-    outline-offset: -1px;
+  outline-offset: -1px;
 }
 
 /* ----- CUSTOM BACKGROUND------ */
@@ -2166,7 +2166,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 }
 
 .mt-user-profile-card__avatar-container .text-14px-line-20px {
-    font-size: 16px !important;
+  font-size: 16px !important;
 }
 
 /* ------- Addons ------- */
@@ -2594,8 +2594,15 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 .dot-status-breached {
   color: var(--error-color);
 }
+.dot-status-reset {
+  color: var(--error-color);
+}
 
 .dot-status-passed {
+  color: var(--Colors-Gray-200);
+}
+
+.dot-status-upgraded {
   color: var(--Colors-Gray-200);
 }
 
@@ -3847,6 +3854,7 @@ body.mt-placing .woocommerce-checkout {
   background: var(--Surface-Page, #1E1E1E);
   pointer-events: none;
 }
+
 .mt-dualbar--reward-full::after,
 .mt-dualbar--risk-full::after {
   display: none;
@@ -4174,6 +4182,7 @@ body.mt-placing .woocommerce-checkout {
   pointer-events: all;
   cursor: not-allowed;
 }
+
 .daily-journal__overlay::after {
   content: "";
   position: absolute;
@@ -4404,22 +4413,22 @@ textarea.mtfb-note {
 }
 
 .toggle-panel__header[disabled] {
-    cursor: not-allowed;
+  cursor: not-allowed;
 }
 
 .toggle-panel__header[disabled] .toggle-panel__text,
 .toggle-panel__header[disabled] .toggle-panel__icon,
 .toggle-panel__header[disabled] .toggle-panel__description,
 .toggle-panel__header[disabled] .toggle-panel__arrow {
-    opacity: .2;
+  opacity: .2;
 }
 
 .toggle-panel__header[disabled] .toggle-panel__text {
-    color: white;
+  color: white;
 }
 
 .toggle-panel__header[disabled] .toggle-panel__description {
-    color: #A8A29E;
+  color: #A8A29E;
 }
 
 .toggle-panel__icon {
@@ -4439,7 +4448,7 @@ textarea.mtfb-note {
 }
 
 .toggle-panel .toggle-panel__header[aria-expanded="true"] .toggle-panel__arrow {
-    transform: rotate(0deg);
+  transform: rotate(0deg);
 }
 
 .toggle-panel__arrow {
@@ -4464,12 +4473,11 @@ textarea.mtfb-note {
   margin-bottom: 32px;
 }
 
-.mt-user-profile-card__avatar-container {
-}
+.mt-user-profile-card__avatar-container {}
 
 .mt-user-profile-card__member-since {
-    font-size: 16px;
-    text-align: right;
+  font-size: 16px;
+  text-align: right;
 }
 
 .mt-user-profile-card__details>*+* {

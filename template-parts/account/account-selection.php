@@ -77,7 +77,7 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 
       <div class="modal-body">
 
-        <div class="mb-3">
+        <div class="mb-4">
           <div class="dropdown w-100">
             <button id="mt-acc-filter-btn"
               class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12" type="button"
