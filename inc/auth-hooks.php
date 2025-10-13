@@ -199,10 +199,12 @@ function mt_process_login(): void
         return;
     }
 
+    $url = profile_url(
+        user_email: $user->user_email
+    );
+
     wp_safe_redirect(
-        profile_url(
-            user_email: $user->user_email
-        )
+        $url
     );
     exit;
 }

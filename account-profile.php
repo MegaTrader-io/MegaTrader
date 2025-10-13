@@ -7,7 +7,10 @@ defined('ABSPATH') || exit;
 
 get_header();
 
-set_query_var('mt_is_verified', mt_is_user_verified());
+$is_verified = mt_is_user_verified();
+
+set_query_var('mt_is_verified', $is_verified);
+
 ?>
 
 <div class="container">
@@ -25,7 +28,8 @@ set_query_var('mt_is_verified', mt_is_user_verified());
                 </div>
 
                 <div class="account-settings__sections-wrapper" id="accordionExample">
-                    <form method="post" class="mt-card account-settings__section toggle-panel" id="personal-information-form">
+                    <form method="post" class="mt-card account-settings__section toggle-panel"
+                          id="personal-information-form">
                         <h2 class="toggle-panel__title-wrapper">
                             <button type="button" class="toggle-panel__header" data-bs-toggle="collapse"
                                     data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -57,7 +61,8 @@ set_query_var('mt_is_verified', mt_is_user_verified());
 
                     <div class="mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">
-                            <button disabled class="toggle-panel__header toggle-panel__header--collapsed" type="button"
+                            <button <?= is_null($is_verified) ? 'disabled' : '' ?>
+                                    class="toggle-panel__header toggle-panel__header--collapsed" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
                                     aria-controls="collapseTwo">
                                 <div class="toggle-panel__icon">
