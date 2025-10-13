@@ -567,3 +567,48 @@
     log("picker init", { selectedId: selectedId });
   }
 })();
+
+// ==== Focus + inert guard extra para el botón "Select" del picker ====
+(function () {
+  var modal = document.getElementById("changeSubcriptionModal");
+  if (!modal) return;
+
+  // reusar el opener que ya guardás en el bloque anterior (o volvemos a guardarlo)
+  var opener = null;
+  document.addEventListener("click", function (e) {
+    var t = e.target && e.target.closest
+      ? e.target.closest('[data-bs-target="#changeSubcriptionModal"]')
+      : null;
+    if (t) opener = t;
+  }, true);
+
+  // ⚠️ Antes de que se ejecute el click handler del botón Select (captura)
+  document.addEventListener("click", function (e) {
+    var selBtn = e.target && e.target.closest
+      ? e.target.closest('#changeSubcriptionModal #select-subscription-btn')
+      : null;
+    if (!selBtn) return;
+    // sacamos el foco del modal ANTES de que tu handler llame a closeModal()
+    (opener || document.body).focus({ preventScroll: true });
+  }, true);
+
+  // fallback por si el cierre es programático
+  modal.addEventListener("hide.bs.modal", function () {
+    var ae = document.activeElement;
+    if (ae && modal.contains(ae)) {
+      (opener || document.body).focus({ preventScroll: true });
+    }
+  });
+
+  // aplicar/quitar inert como antes
+  modal.addEventListener("show.bs.modal", function () {
+    modal.removeAttribute("inert");
+    modal.setAttribute("aria-hidden", "false");
+  });
+  modal.addEventListener("hidden.bs.modal", function () {
+    modal.setAttribute("inert", "");
+  });
+})();
+
+
+
