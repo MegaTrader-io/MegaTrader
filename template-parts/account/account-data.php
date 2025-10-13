@@ -33,7 +33,7 @@ $link_appstore = '#';
 $link_playstore = '#';
 ?>
 
-<div class="mt-card">
+<div class="mt-card" data-account-id="<?php echo esc_attr($account_id); ?>">
   <div class="d-flex align-items-center gap-3 w-100 justify-content-between flex-column flex-lg-row flex-md-row">
     <div class="d-flex flex-column gap-1 flex-wrap flex-shrink-0">
       <div class="text-white fw-500 text-2xl text-uppercase"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_data_title']); ?></div>

@@ -147,7 +147,8 @@ if (is_user_logged_in()) {
 
 
       /* === 3) Resolver cuenta seleccionada === */
-      $mt_selected_id = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
+      /* Mantener la decisión previa (?acc → cookie → current).
+         Solo si por alguna razón sigue vacío, caer a 'current'. */
       if ($mt_selected_id === '') {
         $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
       }

@@ -164,7 +164,7 @@ if ($isFunded) {
 
 
 <?php if ($has_data): ?>
-    <div class="mt-card mt-card__row gap-32" data-component="account-performance">
+    <div class="mt-card mt-card__row gap-32" data-component="account-performance" data-account-id="<?php echo esc_attr($account_id); ?>">
         <div class="w-100 d-flex flex-column gap-32">
             <div class="d-flex flex-column gap-3">
                 <div class="mt-card__title__text fw-medium text-uppercase">
