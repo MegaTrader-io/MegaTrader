@@ -4,7 +4,7 @@
 
   function getLastAccountKey() {
     try {
-      // compat con payload: si no hay uid, se usa la key simple
+      // mantenemos compatibilidad con tu payload (si no hay uid, se usa la key simple)
       var uid =
         (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
         "";
@@ -20,7 +20,7 @@
       var m = document.cookie.match(
         new RegExp(
           "(?:^|;)\\s*" +
-            key.replace(/[-[\\]/{}()*+?.\\\\^$|]/g, "\\$&") +
+            key.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") +
             "=([^;]+)"
         )
       );
@@ -58,10 +58,6 @@
       document.querySelector(SEL.performance || ".mt-account-performance") ||
       document.querySelector(".mt-account-performance");
     var modal = document.querySelector(SEL.modal || "#changeSubcriptionModal");
-
-    var filterSel = document.getElementById("mt-acc-filter");
-    var filterLbl = document.getElementById("mt-acc-filter-label");
-    var filterMenu = document.getElementById("mt-acc-filter-menu");
 
     var selectedId = loadLastAccountId() || CFG.currentId || null;
     var pendingPreloader = false;
@@ -264,6 +260,7 @@
       // === BREACHED ===
       var breachModal = document.getElementById("mt-breach-alert-modal");
       if (breachModal) {
+        // refresca data-* en el contenedor del modal
         breachModal.setAttribute("data-account-id", accId);
         breachModal.setAttribute("data-main-product-id", mainId);
 
@@ -287,6 +284,7 @@
       // === PASSED / ACTIVATION ===
       var passedModal = document.getElementById("mt-account-passed-modal");
       if (passedModal) {
+        // refresca data-* en el contenedor del modal
         passedModal.setAttribute("data-account-id", accId);
         passedModal.setAttribute("data-main-product-id", mainId);
         passedModal.setAttribute("data-current-status", status);
@@ -308,127 +306,14 @@
           }
         }
 
+        // si tu overview expone sincronizador extra, respétalo
         if (typeof window.__mtPassedSyncUI === "function") {
           window.__mtPassedSyncUI(passedModal);
         }
       }
     }
 
-    // ========= Filtro (helpers) =========
-    function statusToBucket(st) {
-      st = normalizeStatus(st);
-      if (st === "ACTIVE") return "ACTIVE";
-      if (st === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
-      if (st === "PASSED" || st === "UPGRADED") return "PASSED";
-      if (st === "BREACHED" || st === "RESET") return "BREACHED";
-      return "ACTIVE";
-    }
-
-    function applyFilter(val) {
-      if (!grid) return;
-      var want = (val || "").toString().trim().toUpperCase();
-
-      grid.querySelectorAll(".subscription-card").forEach(function (card) {
-        var st = normalizeStatus(card.getAttribute("data-status"));
-        var match = false;
-
-        if (want === "ACTIVE") {
-          match = st === "ACTIVE";
-        } else if (want === "BREACHED") {
-          match = st === "BREACHED" || st === "RESET";
-        } else if (want === "PASSED") {
-          match = st === "PASSED" || st === "UPGRADED";
-        } else if (want === "PENDING_ACTIVATION") {
-          match = st === "PENDING_ACTIVATION";
-        }
-
-        if (match) {
-          card.classList.add("d-flex");
-          card.classList.remove("d-none");
-          card.style.removeProperty("display");
-        } else {
-          card.classList.remove("d-flex");
-          card.classList.add("d-none");
-          card.style.setProperty("display", "none");
-        }
-      });
-
-      var active = grid.querySelector(".subscription-card.active");
-      if (active && active.classList.contains("d-none")) {
-        active.classList.remove("active");
-        var c = active.querySelector(".checkmark-icon");
-        if (c) c.style.display = "none";
-        enableBtn(false);
-      }
-    }
-
-    function forceFilter(bucket) {
-      if (filterSel) filterSel.value = bucket;
-      if (filterLbl) {
-        var txt = "Active";
-        if (bucket === "BREACHED") txt = "Breached";
-        else if (bucket === "PASSED") txt = "Passed";
-        else if (bucket === "PENDING_ACTIVATION") txt = "Pending activation";
-        filterLbl.textContent = txt;
-      }
-      applyFilter(bucket);
-    }
-
-    function selectByIdAndSync(id) {
-      if (!grid || !id) return false;
-      var cardSel = SEL.card || ".subscription-card";
-      var card = grid.querySelector(
-        cardSel + '[data-account-id="' + CSS.escape(id) + '"]'
-      );
-      if (!card) return false;
-
-      // asegurar filtro correcto según status de esa card
-      var bucket = statusToBucket(card.getAttribute("data-status") || "");
-      forceFilter(bucket);
-
-      // marcarla activa (ya visible)
-      if (!card.classList.contains("d-none")) {
-        setActiveCard(card);
-        return true;
-      }
-      return false;
-    }
-
     // ========= Eventos UI =========
-    if (filterMenu) {
-      filterMenu.addEventListener("click", function (e) {
-        var opt = e.target.closest(".mt-filter-option");
-        if (!opt) return;
-        var val = (opt.getAttribute("data-value") || "ACTIVE").toUpperCase();
-        if (filterLbl) filterLbl.textContent = opt.textContent.trim();
-        if (filterSel) filterSel.value = val;
-        applyFilter(val);
-      });
-    }
-
-    if (modal && window.bootstrap) {
-      modal.addEventListener("shown.bs.modal", function () {
-        // preferencia: cookie → runtime selectedId → CFG.currentId
-        var wantId = loadLastAccountId() || selectedId || CFG.currentId || null;
-
-        if (wantId && selectByIdAndSync(wantId)) {
-          enableBtn(true);
-          return;
-        }
-
-        // fallback: si ya había una active visible, manténla
-        var active =
-          grid &&
-          grid.querySelector((SEL.card || ".subscription-card") + ".active");
-        if (active && !active.classList.contains("d-none")) {
-          setActiveCard(active);
-          enableBtn(true);
-        } else {
-          enableBtn(false);
-        }
-      });
-    }
-
     if (grid) {
       grid.addEventListener("click", function (e) {
         var card = e.target.closest(SEL.card || ".subscription-card");
@@ -544,15 +429,27 @@
       });
     }
 
-    // ====== Estado inicial de filtro (lo que haya pintado el server) ======
-    if (filterSel)
-      filterSel.value = filterSel.querySelector("option")?.value || "ACTIVE";
-    if (filterLbl)
-      filterLbl.textContent =
-        (filterSel && filterSel.selectedOptions?.[0]?.textContent) ||
-        "Active";
+    // Re-sincronizar cuando se abre el modal
+    if (modal) {
+      modal.addEventListener("shown.bs.modal", function () {
+        var active =
+          grid &&
+          grid.querySelector((SEL.card || ".subscription-card") + ".active");
+        if (active) setActiveCard(active);
+        else enableBtn(false);
+      });
+    }
 
-    // No forzamos filtro aquí; lo ajustamos al abrir el modal según la cuenta preferida.
+    ["mt-breach-alert-modal", "mt-account-passed-modal"].forEach(function (id) {
+      var m = document.getElementById(id);
+      if (m) {
+        m.addEventListener("show.bs.modal", function () {
+          updateAccountCTAs();
+        });
+      }
+    });
+
+    // Init
     preselectIfVisible();
     log("picker init", { selectedId: selectedId });
   }

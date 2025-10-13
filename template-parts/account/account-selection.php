@@ -275,7 +275,6 @@ $js_path = get_stylesheet_directory() . '/assets/js/mt-account-picker.js';
 $js_url = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
 wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_path) : null), true);
 
-
 $payload = [
   'currentId' => $currentId,
   'accounts' => $accounts,
@@ -316,66 +315,164 @@ wp_add_inline_script(
   var filterLbl  = document.getElementById('mt-acc-filter-label');
   var filterMenu = document.getElementById('mt-acc-filter-menu');
 
-  function normalizeStatus(s){ return (s||'').toString().trim().toUpperCase(); }
-  function showCard(card){ card.classList.add('d-flex'); card.classList.remove('d-none'); card.style.removeProperty('display'); }
-  function hideCard(card){ card.classList.remove('d-flex'); card.classList.add('d-none');  card.style.setProperty('display','none'); }
-  function disableBtn(){ if (btn){ btn.disabled = true; btn.classList.add('disabled'); } }
-  function enableBtn(){ if (btn){ btn.disabled = false; btn.classList.remove('disabled'); } }
-
-function applyFilter(val){
-  if (!grid) return;
-  var want = normalizeStatus(val);
-
-  grid.querySelectorAll('.subscription-card').forEach(function(card){
-    var st = normalizeStatus(card.getAttribute('data-status'));
-    var match = false;
-
-    if (want === 'ACTIVE') {
-      match = (st === 'ACTIVE');
-    } else if (want === 'BREACHED') {
-      match = (st === 'BREACHED' || st === 'RESET');
-    } else if (want === 'PASSED') {
-      match = (st === 'PASSED' || st === 'UPGRADED');
-    } else if (want === 'PENDING_ACTIVATION') {
-      match = (st === 'PENDING_ACTIVATION');
-    }
-
-    match ? showCard(card) : hideCard(card);
-  });
-
-  var active = grid.querySelector('.subscription-card.active');
-  if (active && active.classList.contains('d-none')) {
-    active.classList.remove('active');
-    var c = active.querySelector('.checkmark-icon');
-    if (c) c.style.display = 'none';
-    disableBtn();
+  // helpers
+  function q(root, sel){ return (root||document).querySelector(sel); }
+  function qAll(root, sel){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+  function normalizeStatus(s){ s=(s||'').toString().trim().toUpperCase(); return (s==='ACTIVATION_PENDING'?'PENDING_ACTIVATION':s); }
+  function statusToBucket(st){
+    st = normalizeStatus(st);
+    if (st==='ACTIVE') return 'ACTIVE';
+    if (st==='PENDING_ACTIVATION') return 'PENDING_ACTIVATION';
+    if (st==='PASSED' || st==='UPGRADED') return 'PASSED';
+    if (st==='BREACHED' || st==='RESET') return 'BREACHED';
+    return 'ACTIVE';
   }
-}
+  function enableBtn(on){ if(btn){ btn.disabled=!on; btn.classList.toggle('disabled', !on); } }
 
+  function getLastAccountKey(){
+    try {
+      var uid=(window.MT_DATA&&(MT_DATA.userId||MT_DATA.user||MT_DATA.uid))||'';
+      return 'mt:lastAccountId' + (uid?(':'+String(uid)):'' );
+    } catch(_){ return 'mt:lastAccountId'; }
+  }
+  function loadLastAccountId(){
+    var key=getLastAccountKey();
+    try{
+      var m=document.cookie.match(new RegExp('(?:^|;)\\s*'+key.replace(/[-[\\]/{}()*+?.\\\\^$|]/g,'\\$&')+'=([^;]+)'));
+      return m?decodeURIComponent(m[1]):'';
+    }catch(_){ return ''; }
+  }
+
+  function applyFilter(val){
+    if(!grid) return;
+    var want = (val||'').toString().trim().toUpperCase();
+
+    grid.querySelectorAll('.subscription-card').forEach(function(card){
+      var st = normalizeStatus(card.getAttribute('data-status'));
+      var match=false;
+      if(want==='ACTIVE') match=(st==='ACTIVE');
+      else if(want==='BREACHED') match=(st==='BREACHED'||st==='RESET');
+      else if(want==='PASSED') match=(st==='PASSED'||st==='UPGRADED');
+      else if(want==='PENDING_ACTIVATION') match=(st==='PENDING_ACTIVATION');
+
+      if(match){
+        card.classList.add('d-flex'); card.classList.remove('d-none'); card.style.removeProperty('display');
+      }else{
+        card.classList.remove('d-flex'); card.classList.add('d-none'); card.style.setProperty('display','none');
+      }
+    });
+
+    var active = grid.querySelector('.subscription-card.active');
+    if (active && active.classList.contains('d-none')){
+      active.classList.remove('active');
+      var c = active.querySelector('.checkmark-icon'); if(c) c.style.display='none';
+      enableBtn(false);
+    }
+  }
+
+  function forceFilter(bucket){
+    if (filterSel) filterSel.value = bucket;
+    if (filterLbl){
+      var txt='Active';
+      if(bucket==='BREACHED') txt='Breached';
+      else if(bucket==='PASSED') txt='Passed';
+      else if(bucket==='PENDING_ACTIVATION') txt='Pending activation';
+      filterLbl.textContent = txt;
+    }
+    applyFilter(bucket);
+  }
+
+  function setActiveCard(card){
+    if(!card || card.classList.contains('d-none')) return;
+    qAll(grid, '.subscription-card.active').forEach(function(el){
+      el.classList.remove('active');
+      var c=el.querySelector('.checkmark-icon'); if(c) c.style.display='none';
+    });
+    card.classList.add('active');
+    var ch = card.querySelector('.checkmark-icon'); if(ch) ch.style.display='block';
+    enableBtn(true);
+  }
+
+  // dropdown
   if (filterMenu){
     filterMenu.addEventListener('click', function(e){
-      var opt = e.target.closest('.mt-filter-option');
-      if (!opt) return;
-      var val = (opt.getAttribute('data-value') || 'ACTIVE').toUpperCase();
+      var opt = e.target.closest('.mt-filter-option'); if(!opt) return;
+      var val = (opt.getAttribute('data-value')||'ACTIVE').toUpperCase();
       if (filterLbl) filterLbl.textContent = opt.textContent.trim();
       if (filterSel) filterSel.value = val;
       applyFilter(val);
     });
   }
 
+  // *** Estado inicial: mostrar algo aunque aún no se abra el modal ***
+  (function initialSync(){
+    if(!grid) return;
+    var wantId = (function(){
+      // probar cookie (mismo algoritmo que el picker)
+      var key = (function(){
+        try{
+          var uid=(window.MT_DATA&&(MT_DATA.userId||MT_DATA.user||MT_DATA.uid))||'';
+          return 'mt:lastAccountId' + (uid?(':'+String(uid)):'');
+        }catch(_){ return 'mt:lastAccountId'; }
+      })();
+      try{
+        var m=document.cookie.match(new RegExp('(?:^|;)\\s*'+key.replace(/[-[\\]/{}()*+?.\\\\^$|]/g,'\\$&')+'=([^;]+)'));
+        return m?decodeURIComponent(m[1]):'';
+      }catch(_){ return ''; }
+    })() || (document.querySelector('[data-bs-target="#changeSubcriptionModal"][data-account-id]')?.getAttribute('data-account-id')||'')
+      || (CFG.currentId||'');
+
+    var card = wantId ? grid.querySelector('.subscription-card[data-account-id="'+wantId.replace(/[^a-zA-Z0-9_\\-]/g,'\\$&')+'"]') : null;
+    if (card){
+      var bucket = statusToBucket(card.getAttribute('data-status')||'');
+      forceFilter(bucket);
+      setActiveCard(card);
+    } else {
+      // si no hay preferida, usa el primer option del select (servidor decide)
+      var first = (filterSel && filterSel.querySelector('option')?.value) || 'ACTIVE';
+      if (filterSel) filterSel.value = first;
+      if (filterLbl) {
+        var map = {ACTIVE:'Active',BREACHED:'Breached',PASSED:'Passed',PENDING_ACTIVATION:'Pending activation'};
+        filterLbl.textContent = map[first] || 'Active';
+      }
+      applyFilter(first);
+      // mantener activa si el server marcó alguna
+      var active = grid.querySelector('.subscription-card.active');
+      if (active && !active.classList.contains('d-none')) setActiveCard(active); else enableBtn(false);
+    }
+  })();
+
+  // Al abrir el modal (refuerza sincronización y por si cambió la cookie)
   if (modal && window.bootstrap){
     modal.addEventListener('shown.bs.modal', function(){
-      var val = (filterSel && filterSel.value) ? filterSel.value : 'ACTIVE';
-      applyFilter(val);
+      if(!grid) { enableBtn(false); return; }
+      var wantId = (function(){
+        var key = (function(){
+          try{
+            var uid=(window.MT_DATA&&(MT_DATA.userId||MT_DATA.user||MT_DATA.uid))||'';
+            return 'mt:lastAccountId' + (uid?(':'+String(uid)):'');
+          }catch(_){ return 'mt:lastAccountId'; }
+        })();
+        try{
+          var m=document.cookie.match(new RegExp('(?:^|;)\\s*'+key.replace(/[-[\\]/{}()*+?.\\\\^$|]/g,'\\$&')+'=([^;]+)'));
+          return m?decodeURIComponent(m[1]):'';
+        }catch(_){ return ''; }
+      })() || (document.querySelector('[data-bs-target="#changeSubcriptionModal"][data-account-id]')?.getAttribute('data-account-id')||'')
+        || (CFG.currentId||'');
+
+      var card = wantId ? grid.querySelector('.subscription-card[data-account-id="'+wantId.replace(/[^a-zA-Z0-9_\\-]/g,'\\$&')+'"]') : null;
+      if (card){
+        var bucket = statusToBucket(card.getAttribute('data-status')||'');
+        forceFilter(bucket);
+        setActiveCard(card);
+        return;
+      }
+
+      var active = grid.querySelector('.subscription-card.active');
+      if (active && !active.classList.contains('d-none')) { setActiveCard(active); }
+      else { enableBtn(false); }
     });
   }
-
-  if (filterSel) filterSel.value = filterSel.querySelector('option')?.value || 'ACTIVE';
-  if (filterLbl) filterLbl.textContent = (filterSel.selectedOptions?.[0]?.textContent || 'Active');
-  applyFilter(filterSel ? filterSel.value : 'ACTIVE');
-
-  var active = grid && grid.querySelector('.subscription-card.active');
-  if (!active || active.classList.contains('d-none')) { disableBtn(); }
 })();
 JS
 );
