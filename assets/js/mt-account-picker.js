@@ -2,9 +2,17 @@
 (function () {
   "use strict";
 
+  // Polyfill súper simple por si falta CSS.escape en algún browser
+  if (!window.CSS || typeof CSS.escape !== "function") {
+    window.CSS = window.CSS || {};
+    CSS.escape = function (s) {
+      return String(s).replace(/[^a-zA-Z0-9_\-]/g, "\\$&");
+    };
+  }
+
   function getLastAccountKey() {
     try {
-      // mantenemos compatibilidad con tu payload (si no hay uid, se usa la key simple)
+      // compat con payload: si no hay uid, se usa la key simple
       var uid =
         (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
         "";
@@ -58,6 +66,10 @@
       document.querySelector(SEL.performance || ".mt-account-performance") ||
       document.querySelector(".mt-account-performance");
     var modal = document.querySelector(SEL.modal || "#changeSubcriptionModal");
+
+    var filterSel = document.getElementById("mt-acc-filter");
+    var filterLbl = document.getElementById("mt-acc-filter-label");
+    var filterMenu = document.getElementById("mt-acc-filter-menu");
 
     var selectedId = loadLastAccountId() || CFG.currentId || null;
     var pendingPreloader = false;
@@ -147,6 +159,66 @@
       window.jQuery(document).ajaxComplete(function () {
         hidePreloader();
       });
+    }
+
+    // ========= Filtro (helpers) =========
+    function statusToBucket(st) {
+      st = normalizeStatus(st);
+      if (st === "ACTIVE") return "ACTIVE";
+      if (st === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
+      if (st === "PASSED" || st === "UPGRADED") return "PASSED";
+      if (st === "BREACHED" || st === "RESET") return "BREACHED";
+      return "ACTIVE";
+    }
+
+    function applyFilter(val) {
+      if (!grid) return;
+      var want = (val || "").toString().trim().toUpperCase();
+
+      grid.querySelectorAll(".subscription-card").forEach(function (card) {
+        var st = normalizeStatus(card.getAttribute("data-status"));
+        var match = false;
+
+        if (want === "ACTIVE") {
+          match = st === "ACTIVE";
+        } else if (want === "BREACHED") {
+          match = st === "BREACHED" || st === "RESET";
+        } else if (want === "PASSED") {
+          match = st === "PASSED" || st === "UPGRADED";
+        } else if (want === "PENDING_ACTIVATION") {
+          match = st === "PENDING_ACTIVATION";
+        }
+
+        if (match) {
+          card.classList.add("d-flex");
+          card.classList.remove("d-none");
+          card.style.removeProperty("display");
+        } else {
+          card.classList.remove("d-flex");
+          card.classList.add("d-none");
+          card.style.setProperty("display", "none");
+        }
+      });
+
+      var active = grid.querySelector(".subscription-card.active");
+      if (active && active.classList.contains("d-none")) {
+        active.classList.remove("active");
+        var c = active.querySelector(".checkmark-icon");
+        if (c) c.style.display = "none";
+        enableBtn(false);
+      }
+    }
+
+    function forceFilter(bucket) {
+      if (filterSel) filterSel.value = bucket;
+      if (filterLbl) {
+        var txt = "Active";
+        if (bucket === "BREACHED") txt = "Breached";
+        else if (bucket === "PASSED") txt = "Passed";
+        else if (bucket === "PENDING_ACTIVATION") txt = "Pending activation";
+        filterLbl.textContent = txt;
+      }
+      applyFilter(bucket);
     }
 
     // ========= UI de selección =========
@@ -260,7 +332,6 @@
       // === BREACHED ===
       var breachModal = document.getElementById("mt-breach-alert-modal");
       if (breachModal) {
-        // refresca data-* en el contenedor del modal
         breachModal.setAttribute("data-account-id", accId);
         breachModal.setAttribute("data-main-product-id", mainId);
 
@@ -284,7 +355,6 @@
       // === PASSED / ACTIVATION ===
       var passedModal = document.getElementById("mt-account-passed-modal");
       if (passedModal) {
-        // refresca data-* en el contenedor del modal
         passedModal.setAttribute("data-account-id", accId);
         passedModal.setAttribute("data-main-product-id", mainId);
         passedModal.setAttribute("data-current-status", status);
@@ -306,14 +376,181 @@
           }
         }
 
-        // si tu overview expone sincronizador extra, respétalo
         if (typeof window.__mtPassedSyncUI === "function") {
           window.__mtPassedSyncUI(passedModal);
         }
       }
     }
 
-    // ========= Eventos UI =========
+    // ========= Selección por filtro =========
+    if (filterMenu) {
+      filterMenu.addEventListener("click", function (e) {
+        var opt = e.target.closest(".mt-filter-option");
+        if (!opt) return;
+        var val = (opt.getAttribute("data-value") || "ACTIVE").toUpperCase();
+        if (filterLbl) filterLbl.textContent = opt.textContent.trim();
+        if (filterSel) filterSel.value = val;
+        applyFilter(val);
+      });
+    }
+
+    // ========= Al abrir modal: forzar filtro/selección según cookie/actual =========
+    // ========= Al abrir modal: forzar filtro/selección según cookie/actual =========
+if (modal && window.bootstrap) {
+  modal.addEventListener("show.bs.modal", function () {
+    // Evita doble-sync si hay otro listener
+    if (modal.__mtSyncing) return;
+    modal.__mtSyncing = true;
+
+    // Oculta la grilla momentáneamente para evitar parpadeo
+    var gridWrap = document.getElementById("mt-accounts-grid");
+    if (gridWrap) gridWrap.style.visibility = "hidden";
+
+    var wantId =
+      loadLastAccountId() ||
+      selectedId ||
+      (window.MT_DATA && MT_DATA.currentId) ||
+      null;
+
+    // función para visibilizar al final
+    function reveal() {
+      requestAnimationFrame(function () {
+        if (gridWrap) gridWrap.style.visibility = "visible";
+        modal.__mtSyncing = false;
+      });
+    }
+
+    if (!grid) {
+      reveal();
+      return;
+    }
+
+    var cardSel = (SEL.card || ".subscription-card");
+    var card =
+      wantId &&
+      grid.querySelector(cardSel + '[data-account-id="' + CSS.escape(wantId) + '"]');
+
+    if (card) {
+      // Ajusta filtro al bucket de esa cuenta y márcala active
+      var st = (card.getAttribute("data-status") || "").toUpperCase();
+      var bucket = (function (s) {
+        if (s === "ACTIVATION_PENDING") s = "PENDING_ACTIVATION";
+        if (s === "ACTIVE") return "ACTIVE";
+        if (s === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
+        if (s === "PASSED" || s === "UPGRADED") return "PASSED";
+        if (s === "BREACHED" || s === "RESET") return "BREACHED";
+        return "ACTIVE";
+      })(st);
+
+      // Actualiza label/selector del filtro ANTES de mostrar
+      if (filterSel) filterSel.value = bucket;
+      if (filterLbl) {
+        filterLbl.textContent =
+          bucket === "BREACHED" ? "Breached" :
+          bucket === "PASSED" ? "Passed" :
+          bucket === "PENDING_ACTIVATION" ? "Pending activation" :
+          "Active";
+      }
+
+      // Aplica filtro y selección
+      (function applyFilter(val){
+        var want = String(val || "").trim().toUpperCase();
+        grid.querySelectorAll(".subscription-card").forEach(function (c) {
+          var s = (c.getAttribute("data-status") || "").toUpperCase();
+          if (s === "ACTIVATION_PENDING") s = "PENDING_ACTIVATION";
+          var match =
+            (want === "ACTIVE" && s === "ACTIVE") ||
+            (want === "BREACHED" && (s === "BREACHED" || s === "RESET")) ||
+            (want === "PASSED" && (s === "PASSED" || s === "UPGRADED")) ||
+            (want === "PENDING_ACTIVATION" && s === "PENDING_ACTIVATION");
+
+          if (match) {
+            c.classList.add("d-flex");
+            c.classList.remove("d-none");
+            c.style.removeProperty("display");
+          } else {
+            c.classList.remove("d-flex");
+            c.classList.add("d-none");
+            c.style.setProperty("display", "none");
+          }
+        });
+      })(bucket);
+
+      // Marca active (no tocar header ni AJAX aquí)
+      grid.querySelectorAll(cardSel + ".active").forEach(function (el) {
+        el.classList.remove("active");
+        var ck = el.querySelector(".checkmark-icon");
+        if (ck) ck.style.display = "none";
+      });
+      card.classList.add("active");
+      var ch = card.querySelector(".checkmark-icon");
+      if (ch) ch.style.display = "block";
+
+      // Habilita el botón
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove("disabled");
+      }
+
+      reveal();
+      return;
+    }
+
+    // Fallback: si no hay preferida o no se encuentra la card
+    var first =
+      (filterSel && filterSel.querySelector("option")?.value) || "ACTIVE";
+    if (filterSel) filterSel.value = first;
+    if (filterLbl) {
+      filterLbl.textContent =
+        first === "BREACHED" ? "Breached" :
+        first === "PASSED" ? "Passed" :
+        first === "PENDING_ACTIVATION" ? "Pending activation" : "Active";
+    }
+
+    // Muestra algo del bucket por defecto y respeta .active si ya hay
+    (function applyFilter(val){
+      var want = String(val || "").trim().toUpperCase();
+      grid.querySelectorAll(".subscription-card").forEach(function (c) {
+        var s = (c.getAttribute("data-status") || "").toUpperCase();
+        if (s === "ACTIVATION_PENDING") s = "PENDING_ACTIVATION";
+        var match =
+          (want === "ACTIVE" && s === "ACTIVE") ||
+          (want === "BREACHED" && (s === "BREACHED" || s === "RESET")) ||
+          (want === "PASSED" && (s === "PASSED" || s === "UPGRADED")) ||
+          (want === "PENDING_ACTIVATION" && s === "PENDING_ACTIVATION");
+
+        if (match) {
+          c.classList.add("d-flex");
+          c.classList.remove("d-none");
+          c.style.removeProperty("display");
+        } else {
+          c.classList.remove("d-flex");
+          c.classList.add("d-none");
+          c.style.setProperty("display", "none");
+        }
+      });
+    })(first);
+
+    var active =
+      grid && grid.querySelector((SEL.card || ".subscription-card") + ".active");
+    if (active && !active.classList.contains("d-none")) {
+      // ya está visible, deja habilitado
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove("disabled");
+      }
+    } else {
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add("disabled");
+      }
+    }
+
+    reveal();
+  });
+}
+
+
     if (grid) {
       grid.addEventListener("click", function (e) {
         var card = e.target.closest(SEL.card || ".subscription-card");
@@ -429,27 +666,16 @@
       });
     }
 
-    // Re-sincronizar cuando se abre el modal
-    if (modal) {
-      modal.addEventListener("shown.bs.modal", function () {
-        var active =
-          grid &&
-          grid.querySelector((SEL.card || ".subscription-card") + ".active");
-        if (active) setActiveCard(active);
-        else enableBtn(false);
-      });
-    }
+    // Estado básico del label del filtro (no filtra aún)
+    if (filterSel)
+      filterSel.value = filterSel.querySelector("option")?.value || "ACTIVE";
+    if (filterLbl)
+      filterLbl.textContent =
+        (filterSel && filterSel.selectedOptions?.[0]?.textContent) ||
+        "Active";
 
-    ["mt-breach-alert-modal", "mt-account-passed-modal"].forEach(function (id) {
-      var m = document.getElementById(id);
-      if (m) {
-        m.addEventListener("show.bs.modal", function () {
-          updateAccountCTAs();
-        });
-      }
-    });
-
-    // Init
+    // NO forzamos filtro aquí; lo hace el inline de account-selection al cargar
+    // y/o este archivo al abrir el modal.
     preselectIfVisible();
     log("picker init", { selectedId: selectedId });
   }
