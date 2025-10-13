@@ -105,6 +105,47 @@ if (is_user_logged_in()) {
         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
       }
 
+      /* === Preferencia de cookie para cuenta seleccionada (si existe y es válida) === */
+      $cookie_selected_id = '';
+      if (is_user_logged_in()) {
+        $uid = get_current_user_id();
+        $cookie_keys = array(
+          'mt:lastAccountId' . ($uid ? (':' . $uid) : ''), // nombre con sufijo uid
+          'mt:lastAccountId',                               // fallback (nombre simple)
+        );
+        foreach ($cookie_keys as $ck) {
+          if (!empty($_COOKIE[$ck])) {
+            $cookie_selected_id = sanitize_text_field(wp_unslash($_COOKIE[$ck]));
+            break;
+          }
+        }
+      }
+
+      /* IDs válidos (de prepare_ui) */
+      $__valid_ids = array();
+      if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
+        foreach ($mt_account_ui['accounts'] as $row) {
+          if (!empty($row['id']))
+            $__valid_ids[(string) $row['id']] = true;
+        }
+      }
+      if (!empty($mt_account_ui['current']['id'])) {
+        $__valid_ids[(string) $mt_account_ui['current']['id']] = true;
+      }
+
+      /* Resolver seleccionado con prioridad: ?acc → cookie → current */
+      $mt_selected_id = '';
+      $param_acc = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
+
+      if ($param_acc && isset($__valid_ids[$param_acc])) {
+        $mt_selected_id = $param_acc;
+      } elseif ($cookie_selected_id && isset($__valid_ids[$cookie_selected_id])) {
+        $mt_selected_id = $cookie_selected_id;
+      } else {
+        $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
+      }
+
+
       /* === 3) Resolver cuenta seleccionada === */
       $mt_selected_id = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
       if ($mt_selected_id === '') {

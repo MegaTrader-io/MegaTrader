@@ -4,6 +4,7 @@
 
   function getLastAccountKey() {
     try {
+      // mantenemos compatibilidad con tu payload (si no hay uid, se usa la key simple)
       var uid =
         (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
         "";
@@ -13,7 +14,6 @@
     }
   }
 
-  // --- COOKIE-ONLY ---
   function loadLastAccountId() {
     var key = getLastAccountKey();
     try {
@@ -30,11 +30,11 @@
     }
   }
 
-  // --- COOKIE-ONLY ---
   function saveLastAccountId(id) {
     var key = getLastAccountKey();
     var val = String(id || "");
     try {
+      // solo cookie (1 año)
       document.cookie =
         key + "=" + encodeURIComponent(val) + ";path=/;max-age=31536000";
     } catch (_) {}
@@ -59,7 +59,6 @@
       document.querySelector(".mt-account-performance");
     var modal = document.querySelector(SEL.modal || "#changeSubcriptionModal");
 
-    // Lee SOLO de cookie (o cae a currentId)
     var selectedId = loadLastAccountId() || CFG.currentId || null;
     var pendingPreloader = false;
     var preloaderFallbackTimer = null;
@@ -169,8 +168,6 @@
       selectedId = card.getAttribute("data-account-id") || null;
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
-
-      // Guarda SOLO en cookie
       saveLastAccountId(selectedId);
 
       enableBtn(true);
@@ -263,6 +260,7 @@
       // === BREACHED ===
       var breachModal = document.getElementById("mt-breach-alert-modal");
       if (breachModal) {
+        // refresca data-* en el contenedor del modal
         breachModal.setAttribute("data-account-id", accId);
         breachModal.setAttribute("data-main-product-id", mainId);
 
@@ -286,6 +284,7 @@
       // === PASSED / ACTIVATION ===
       var passedModal = document.getElementById("mt-account-passed-modal");
       if (passedModal) {
+        // refresca data-* en el contenedor del modal
         passedModal.setAttribute("data-account-id", accId);
         passedModal.setAttribute("data-main-product-id", mainId);
         passedModal.setAttribute("data-current-status", status);
@@ -307,6 +306,7 @@
           }
         }
 
+        // si tu overview expone sincronizador extra, respétalo
         if (typeof window.__mtPassedSyncUI === "function") {
           window.__mtPassedSyncUI(passedModal);
         }
@@ -336,12 +336,14 @@
           return;
         }
 
+        // Actualiza cabecera inmediatamente y muestra preloader
         updateHeaderFromCard(active);
         updateAccountCTAs();
         showPreloader();
         closeModal();
         enableBtn(false);
 
+        // AJAX performance
         var fd = new FormData();
         fd.append(
           "action",
@@ -385,6 +387,7 @@
                 window.mtTooltips.refresh(perf);
             }
 
+            // Exponer orderId en el root y disparar eventos globales
             var orderId =
               parseInt(active.getAttribute("data-order") || "0", 10) || 0;
             var root = document.getElementById("mt-account-overview");
@@ -426,6 +429,7 @@
       });
     }
 
+    // Re-sincronizar cuando se abre el modal
     if (modal) {
       modal.addEventListener("shown.bs.modal", function () {
         var active =
@@ -445,6 +449,7 @@
       }
     });
 
+    // Init
     preselectIfVisible();
     log("picker init", { selectedId: selectedId });
   }

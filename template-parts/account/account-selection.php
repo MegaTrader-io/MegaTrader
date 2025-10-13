@@ -261,6 +261,10 @@ $js_path = get_stylesheet_directory() . '/assets/js/mt-account-picker.js';
 $js_url = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
 wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_path) : null), true);
 
+$selectedIdArg = isset($args['selectedId']) ? (string) $args['selectedId'] : '';
+if ($selectedIdArg !== '') {
+  $currentId = $selectedIdArg; // override visual del picker
+}
 $payload = [
   'currentId' => $currentId,
   'accounts' => $accounts,
