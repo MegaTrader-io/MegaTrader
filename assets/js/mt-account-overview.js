@@ -748,54 +748,79 @@ window.mtOverlay = (function () {
     window.__mtTipFollowerCSS = true;
   }
 
-// === REEMPLAZO: lógica de datos del chart con regla de mínimos ===
-function chartDataInfo(wrap){
+  // === REEMPLAZO: lógica de datos del chart con regla de mínimos ===
+  function chartDataInfo(wrap) {
+    const carrier =
+      wrap.querySelector(
+        "[data-has-series],[data-has-data],[data-points],[data-min-points]"
+      ) || wrap;
+    const rawHas =
+      carrier.getAttribute("data-has-series") ??
+      carrier.getAttribute("data-has-data");
+    const rawPts = carrier.getAttribute("data-points");
+    const rawMin = carrier.getAttribute("data-min-points");
 
-  const carrier = wrap.querySelector('[data-has-series],[data-has-data],[data-points],[data-min-points]') || wrap;
-  const rawHas = carrier.getAttribute('data-has-series') ?? carrier.getAttribute('data-has-data');
-  const rawPts = carrier.getAttribute('data-points');
-  const rawMin = carrier.getAttribute('data-min-points');
+    let hasSeries = null;
+    if (rawHas != null) {
+      const v = String(rawHas).trim().toLowerCase();
+      if (v === "true" || v === "1") hasSeries = true;
+      else if (v === "false" || v === "0") hasSeries = false;
+    }
 
-  let hasSeries = null;
-  if (rawHas != null){
-    const v = String(rawHas).trim().toLowerCase();
-    if (v === 'true' || v === '1') hasSeries = true;
-    else if (v === 'false' || v === '0') hasSeries = false;
+    let points = Number.isFinite(parseInt(rawPts, 10))
+      ? parseInt(rawPts, 10)
+      : null;
+
+    if (
+      points == null &&
+      window.__mtChartInstance &&
+      window.__mtChartInstance.w &&
+      window.__mtChartInstance.w.globals
+    ) {
+      const g = window.__mtChartInstance.w.globals;
+      try {
+        const series0 =
+          (g.seriesXvalues && g.seriesXvalues[0]) ||
+          (g.series && g.series[0]) ||
+          [];
+        points = Array.isArray(series0)
+          ? series0.length
+          : Number.isFinite(series0)
+          ? series0
+          : 0;
+        if (hasSeries == null) hasSeries = points > 0;
+      } catch (_) {}
+    }
+
+    if (hasSeries == null) {
+      hasSeries = !!wrap.querySelector(
+        ".apexcharts-series path, .apexcharts-series rect, .apexcharts-series circle"
+      );
+    }
+
+    let minPoints = Number.isFinite(parseInt(rawMin, 10))
+      ? parseInt(rawMin, 10)
+      : 7;
+
+    return {
+      hasSeries: Boolean(hasSeries),
+      points: points == null ? null : Math.max(0, points),
+      minPoints,
+    };
   }
 
-  let points = Number.isFinite(parseInt(rawPts,10)) ? parseInt(rawPts,10) : null;
+  function applyChartOverlay(wrap) {
+    const overlay = wrap.querySelector(".account-performance-chart__overlay");
+    if (overlay && overlay.getAttribute("data-autotoggle") === "off") return;
 
+    const info = chartDataInfo(wrap);
 
-  if (points == null && window.__mtChartInstance && window.__mtChartInstance.w && window.__mtChartInstance.w.globals){
-    const g = window.__mtChartInstance.w.globals;
-    try {
-      const series0 = (g.seriesXvalues && g.seriesXvalues[0]) || (g.series && g.series[0]) || [];
-      points = Array.isArray(series0) ? series0.length : (Number.isFinite(series0) ? series0 : 0);
-      if (hasSeries == null) hasSeries = points > 0;
-    } catch(_) {}
+    const enoughPoints =
+      info.points == null ? true : info.points >= info.minPoints;
+    const shouldShow = !(info.hasSeries && enoughPoints);
+
+    if (window.mtOverlay) window.mtOverlay.toggle(wrap, shouldShow);
   }
-
-  if (hasSeries == null){
-    hasSeries = !!wrap.querySelector('.apexcharts-series path, .apexcharts-series rect, .apexcharts-series circle');
-  }
-
-  let minPoints = Number.isFinite(parseInt(rawMin,10)) ? parseInt(rawMin,10) : 7;
-
-  return { hasSeries:Boolean(hasSeries), points:(points==null?null:Math.max(0,points)), minPoints };
-}
-
-function applyChartOverlay(wrap){
-  const overlay = wrap.querySelector('.account-performance-chart__overlay');
-  if (overlay && overlay.getAttribute('data-autotoggle') === 'off') return;
-
-  const info = chartDataInfo(wrap);
-
-  const enoughPoints = (info.points == null) ? true : (info.points >= info.minPoints);
-  const shouldShow = !(info.hasSeries && enoughPoints);
-
-  if (window.mtOverlay) window.mtOverlay.toggle(wrap, shouldShow);
-}
-
 
   // ---------- TIP FOLLOWER ----------
   function makeTipFollower(root) {
@@ -1542,6 +1567,8 @@ function applyChartOverlay(wrap){
     function openModal() {
       if (modal.classList.contains("show")) return;
 
+      modal.removeAttribute("inert");
+
       modal.removeAttribute("hidden");
       modal.setAttribute("aria-hidden", "false");
       modal.classList.add("show");
@@ -1567,9 +1594,31 @@ function applyChartOverlay(wrap){
     }
 
     function closeModal() {
+      try {
+        const active = document.activeElement;
+        if (active && modal.contains(active)) {
+          let fallback =
+            modal.__opener ||
+            document.querySelector(
+              '[data-bs-target="#changeSubcriptionModal"]'
+            ) ||
+            document.querySelector(
+              ".mega-navigation a, .mega-navigation select"
+            ) ||
+            document.getElementById("mt-account-overview") ||
+            document.body;
+          const needsTab = fallback && fallback.tabIndex < 0;
+          if (needsTab) fallback.setAttribute("tabindex", "-1");
+          fallback && fallback.focus({ preventScroll: true });
+          if (needsTab) fallback.removeAttribute("tabindex");
+        }
+      } catch (_) {}
+
       modal.classList.remove("show");
       modal.setAttribute("aria-hidden", "true");
       modal.setAttribute("hidden", "");
+      modal.setAttribute("inert", "");
+
       modal.style.display = "";
       modal.style.position = "";
       modal.style.inset = "";
@@ -2219,18 +2268,21 @@ if (document.readyState === "loading") {
       if (modal.classList.contains("show")) return;
 
       syncUI(modal);
-
+ 
       modal.removeAttribute("hidden");
       modal.setAttribute("aria-hidden", "false");
       modal.classList.add("show");
       modal.setAttribute("data-show", "1");
-
+ 
       modal.style.position = "fixed";
       modal.style.inset = "0";
       modal.style.display = "flex";
       modal.style.alignItems = "center";
       modal.style.justifyContent = "center";
       modal.style.zIndex = "1055";
+
+      modal.removeAttribute("inert");
+
 
       if (!withBackdrop && !document.querySelector(".modal-backdrop.show")) {
         withBackdrop = document.createElement("div");
@@ -2246,25 +2298,44 @@ if (document.readyState === "loading") {
     }
 
     function closeModal() {
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      modal.setAttribute("hidden", "");
-      modal.style.display = "";
-      modal.style.position = "";
-      modal.style.inset = "";
-      modal.style.alignItems = "";
-      modal.style.justifyContent = "";
-      modal.style.zIndex = "";
-      modal.setAttribute("data-show", "0");
-
-      if (withBackdrop && withBackdrop.parentNode) {
-        withBackdrop.parentNode.removeChild(withBackdrop);
-        withBackdrop = null;
-      }
-      if (!document.querySelector(".modal.show")) {
-        document.body.classList.remove("modal-open");
-      }
+  try {
+    const active = document.activeElement;
+    if (active && modal.contains(active)) {
+      let fallback =
+        modal.__opener ||
+        document.querySelector('[data-bs-target="#changeSubcriptionModal"]') ||
+        document.querySelector(".mega-navigation a, .mega-navigation select") ||
+        document.getElementById("mt-account-overview") ||
+        document.body;
+      const needsTab = fallback && fallback.tabIndex < 0;
+      if (needsTab) fallback.setAttribute("tabindex", "-1");
+      fallback && fallback.focus({ preventScroll: true });
+      if (needsTab) fallback.removeAttribute("tabindex");
     }
+  } catch (_) {}
+
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden", "true");
+  modal.setAttribute("hidden", "");
+  modal.setAttribute("inert", "");
+  modal.setAttribute("data-show", "0");
+
+  modal.style.display = "";
+  modal.style.position = "";
+  modal.style.inset = "";
+  modal.style.alignItems = "";
+  modal.style.justifyContent = "";
+  modal.style.zIndex = "";
+
+  if (withBackdrop && withBackdrop.parentNode) {
+    withBackdrop.parentNode.removeChild(withBackdrop);
+    withBackdrop = null;
+  }
+  if (!document.querySelector(".modal.show")) {
+    document.body.classList.remove("modal-open");
+  }
+}
+
 
     // Saneamos estado inicial si llega mal
     (function sanitizeInitial() {
