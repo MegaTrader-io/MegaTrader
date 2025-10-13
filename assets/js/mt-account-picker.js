@@ -568,31 +568,48 @@
   }
 })();
 
-// ==== Focus + inert guard extra para el botón "Select" del picker ====
+// ==== Focus + inert guard para el modal del picker (sin romper lógica) ====
 (function () {
   var modal = document.getElementById("changeSubcriptionModal");
   if (!modal) return;
 
-  // reusar el opener que ya guardás en el bloque anterior (o volvemos a guardarlo)
+  // recordamos el botón que abre el modal para devolverle el foco al cerrar
   var opener = null;
-  document.addEventListener("click", function (e) {
-    var t = e.target && e.target.closest
-      ? e.target.closest('[data-bs-target="#changeSubcriptionModal"]')
-      : null;
-    if (t) opener = t;
-  }, true);
+  document.addEventListener(
+    "click",
+    function (e) {
+      var t = e.target && e.target.closest
+        ? e.target.closest('[data-bs-target="#changeSubcriptionModal"]')
+        : null;
+      if (t) opener = t;
+    },
+    true
+  );
 
-  // ⚠️ Antes de que se ejecute el click handler del botón Select (captura)
+  // Al abrir: habilitamos interacción y nos aseguramos de no quedar aria-hidden
+  modal.addEventListener("show.bs.modal", function () {
+    modal.removeAttribute("inert");
+    modal.setAttribute("aria-hidden", "false");
+  });
+
+  // ✨ Capturamos el click del botón de cerrar ANTES de que Bootstrap oculte el modal
   document.addEventListener("click", function (e) {
-    var selBtn = e.target && e.target.closest
-      ? e.target.closest('#changeSubcriptionModal #select-subscription-btn')
+    var closeBtn = e.target && e.target.closest
+      ? e.target.closest('#changeSubcriptionModal [data-bs-dismiss="modal"], #changeSubcriptionModal .mt-modal__close')
       : null;
-    if (!selBtn) return;
-    // sacamos el foco del modal ANTES de que tu handler llame a closeModal()
+    if (!closeBtn) return;
+    // mover foco fuera inmediatamente (previene el warning de Chrome)
     (opener || document.body).focus({ preventScroll: true });
   }, true);
 
-  // fallback por si el cierre es programático
+  // ✨ También capturamos Escape para sacar el foco antes del hide
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!modal.classList.contains("show")) return;
+    (opener || document.body).focus({ preventScroll: true });
+  }, true);
+
+  // fallback por si algo más disparó el hide: blur en hide.bs.modal
   modal.addEventListener("hide.bs.modal", function () {
     var ae = document.activeElement;
     if (ae && modal.contains(ae)) {
@@ -600,15 +617,11 @@
     }
   });
 
-  // aplicar/quitar inert como antes
-  modal.addEventListener("show.bs.modal", function () {
-    modal.removeAttribute("inert");
-    modal.setAttribute("aria-hidden", "false");
-  });
+  // Ya oculto: bloquear interacción y prevenir focos “fantasma”
   modal.addEventListener("hidden.bs.modal", function () {
     modal.setAttribute("inert", "");
+    // Bootstrap ya habrá puesto aria-hidden="true"
   });
 })();
-
 
 
