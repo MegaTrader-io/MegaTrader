@@ -27,7 +27,9 @@
     try {
       var m = document.cookie.match(
         new RegExp(
-          "(?:^|;)\\s*" + key.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") + "=([^;]+)"
+          "(?:^|;)\\s*" +
+            key.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") +
+            "=([^;]+)"
         )
       );
       return m ? decodeURIComponent(m[1]) : "";
@@ -384,14 +386,18 @@
 
       var wantId =
         loadLastAccountId() ||
-        (document.querySelector(
-          '[data-bs-target="#changeSubcriptionModal"][data-account-id]'
-        )?.getAttribute("data-account-id") || "") ||
-        (CFG.currentId || "");
+        document
+          .querySelector(
+            '[data-bs-target="#changeSubcriptionModal"][data-account-id]'
+          )
+          ?.getAttribute("data-account-id") ||
+        "" ||
+        CFG.currentId ||
+        "";
 
       var card = wantId
         ? grid.querySelector(
-            ".subscription-card[data-account-id=\"" + CSS.escape(wantId) + "\"]"
+            '.subscription-card[data-account-id="' + CSS.escape(wantId) + '"]'
           )
         : null;
 
@@ -408,7 +414,9 @@
         var active = grid.querySelector(
           ".subscription-card.active:not(.d-none)"
         );
-        enableBtn(!!active || !!grid.querySelector(".subscription-card:not(.d-none)"));
+        enableBtn(
+          !!active || !!grid.querySelector(".subscription-card:not(.d-none)")
+        );
       }
     })();
 
@@ -420,10 +428,14 @@
           enableBtn(true);
           return;
         }
-        var active = grid && grid.querySelector(
-          (SEL.card || ".subscription-card") + ".active:not(.d-none)"
+        var active =
+          grid &&
+          grid.querySelector(
+            (SEL.card || ".subscription-card") + ".active:not(.d-none)"
+          );
+        enableBtn(
+          !!active || !!grid.querySelector(".subscription-card:not(.d-none)")
         );
-        enableBtn(!!active || !!grid.querySelector(".subscription-card:not(.d-none)"));
       });
     }
     // Fallback si no hay bootstrap (al hacer click en el botón que abre el modal)
@@ -434,10 +446,14 @@
           enableBtn(true);
           return;
         }
-        var active = grid && grid.querySelector(
-          (SEL.card || ".subscription-card") + ".active:not(.d-none)"
+        var active =
+          grid &&
+          grid.querySelector(
+            (SEL.card || ".subscription-card") + ".active:not(.d-none)"
+          );
+        enableBtn(
+          !!active || !!grid.querySelector(".subscription-card:not(.d-none)")
         );
-        enableBtn(!!active || !!grid.querySelector(".subscription-card:not(.d-none)"));
       });
     }
 
@@ -468,7 +484,19 @@
         updateHeaderFromCard(active);
         updateAccountCTAs();
         showPreloader();
-        closeModal();
+        if (modal) {
+          const ae = document.activeElement;
+          if (ae && modal.contains(ae)) {
+            const opener = document.querySelector(
+              '[data-bs-target="#changeSubcriptionModal"]'
+            );
+            (opener || document.body).focus({ preventScroll: true }); // saca el foco del modal
+            if (ae.blur) ae.blur(); // quita el foco del botón Select
+            modal.setAttribute("inert", ""); // bloquea interacción durante el cierre
+          }
+        }
+        // cierra en el próximo tick para asegurar que el cambio de foco se aplique
+        setTimeout(closeModal, 0);
         enableBtn(false);
 
         var fd = new FormData();
@@ -586,30 +614,25 @@
     true
   );
 
-  // Al abrir: habilitamos interacción y nos aseguramos de no quedar aria-hidden
   modal.addEventListener("show.bs.modal", function () {
     modal.removeAttribute("inert");
     modal.setAttribute("aria-hidden", "false");
   });
 
-  // ✨ Capturamos el click del botón de cerrar ANTES de que Bootstrap oculte el modal
   document.addEventListener("click", function (e) {
     var closeBtn = e.target && e.target.closest
       ? e.target.closest('#changeSubcriptionModal [data-bs-dismiss="modal"], #changeSubcriptionModal .mt-modal__close')
       : null;
     if (!closeBtn) return;
-    // mover foco fuera inmediatamente (previene el warning de Chrome)
     (opener || document.body).focus({ preventScroll: true });
   }, true);
 
-  // ✨ También capturamos Escape para sacar el foco antes del hide
   document.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
     if (!modal.classList.contains("show")) return;
     (opener || document.body).focus({ preventScroll: true });
   }, true);
 
-  // fallback por si algo más disparó el hide: blur en hide.bs.modal
   modal.addEventListener("hide.bs.modal", function () {
     var ae = document.activeElement;
     if (ae && modal.contains(ae)) {
@@ -617,11 +640,7 @@
     }
   });
 
-  // Ya oculto: bloquear interacción y prevenir focos “fantasma”
   modal.addEventListener("hidden.bs.modal", function () {
     modal.setAttribute("inert", "");
-    // Bootstrap ya habrá puesto aria-hidden="true"
   });
 })();
-
-
