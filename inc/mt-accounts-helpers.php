@@ -365,6 +365,7 @@ if (!function_exists('mt_accounts_build_performance')) {
         $program = $account['programs'][0] ?? null;
     }
     $payload = [
+      'accountId' => (string) ($account['id'] ?? ''),
       'currentBalance' => $metrics['currentBalance'] ?? mt__get($metrics, ['balance']),
       'currentEquity' => $metrics['currentEquity'] ?? null,
       'currentProfit' => $metrics['currentProfit'] ?? $metrics['profit'] ?? null,
@@ -407,6 +408,7 @@ if (!function_exists('mt_accounts_build_feature_content')) {
     $m = $account['metrics'] ?? $account['metric'] ?? [];
 
     // Crudos (API: win/loss en 0..100)
+    $accountId = $m['accountId'];
     $avgWin = $m['averageWin'] ?? 0;
     $avgLoss = $m['averageLoss'] ?? 0;
     $winRate = $m['winRate'] ?? 0; // 66.67
@@ -428,6 +430,7 @@ if (!function_exists('mt_accounts_build_feature_content')) {
 
     $payload = [
       'overview' => [
+        'accountId' => (string) $accountId,
         'averageWin' => $avgWin,
         'averageLoss' => $avgLoss,
         'winRate' => $winRate,   // 0..1
@@ -1249,6 +1252,7 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
     $title = trim(($size ? $size . ' ' : '') . $name);
 
     return [
+      'accountId' => $accountId,
       'title' => $title,
       'plan_revenue' => $series,   // [{date, value}]
       'series' => $series,

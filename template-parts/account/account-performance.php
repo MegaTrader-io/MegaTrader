@@ -41,6 +41,7 @@ if (empty($meta)) {
 
 /* ========= Normaliza con defaults ========= */
 $defaults = [
+    'accountId' => null,
     'currentBalance' => null,
     'currentEquity' => null,
     'currentProfit' => null,
@@ -59,6 +60,7 @@ $defaults = [
 $performance = array_merge($defaults, (array) $performance);
 
 /* ========= Aliases de uso en HTML ========= */
+$account_id = isset($meta['accountId']) ? (string) $meta['accountId'] : ($performance['accountId'] ?? '');
 $balance = $performance['currentBalance'];
 $equity = $performance['currentEquity'];
 $profit = $performance['currentProfit'];

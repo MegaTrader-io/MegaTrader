@@ -176,6 +176,7 @@ if (is_user_logged_in()) {
           $mt_daily_journal = mt_accounts_build_daily_journal($mt_selected_id, 1, 30);
         }
 
+        // === Account Performance Chart (helper → payload) ===
 
         if (!empty($resolved) && function_exists('mt_accounts_build_performance_chart')) {
           $mt_chart = mt_accounts_build_performance_chart($resolved);
@@ -368,6 +369,7 @@ get_header();
 
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
   data-email-api="<?php echo esc_attr($mt_user_email_api); ?>"
+  data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
   data-order-id="<?php echo esc_attr($__active_order_id); ?>">
 
   <div class="mt-page">

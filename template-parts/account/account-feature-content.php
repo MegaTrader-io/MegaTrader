@@ -34,6 +34,7 @@ if (!$apiData) {
 
     $apiData = [
         'overview' => [
+            'accountId' => $accountId,
             'averageWin' => $avgWin,
             'averageLoss' => $avgLoss,
             'winRate' => $winRate,   // 0..1
@@ -48,7 +49,7 @@ $tabs = [
 ];
 ?>
 
-<section class="mt-feature-tabs">
+<section class="mt-feature-tabs" data-account-id="<?php echo esc_attr($accountId); ?>">
     <div class="mt-tabs-row d-none">
         <!-- Flecha izquierda -->
         <button type="button" class="mt-btn mt-btn--sm mt-btn--secondary js-tabs-prev" aria-label="Previous">

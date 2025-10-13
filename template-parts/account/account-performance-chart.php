@@ -6,7 +6,11 @@ if (!isset($args) || !is_array($args) || empty($args)) {
   return;
 }
 
+
+
+
 $chart = isset($args['chart']) && is_array($args['chart']) ? $args['chart'] : [];
+$accountId = $chart['accountId'] ?? (isset($args['meta']['accountId']) ? (string) $args['meta']['accountId'] : '');
 $chart_title = $chart['title'] ?? (($args['title'] ?? '') ?: 'Account');
 $plan_revenue = $chart['plan_revenue'] ?? ($chart['series'] ?? []); // [{date,value}] o [{x,y}]
 $upper_bound = $chart['upper_bound'] ?? null; // Profit Target
@@ -42,7 +46,7 @@ $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/gra
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <!-- HTML / PHP -->
-<div class="account-performance-chart mt-card <?= esc_attr($card_class) ?>">
+<div class="account-performance-chart mt-card <?= esc_attr($card_class) ?>" data-account-id="<?php echo esc_attr($accountId); ?>">
   <div class="account-performance-chart__overlay" <?= $has_enough_points ? 'hidden' : '' ?>>
     <span class="apc-overlay__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_chart_overlay_no_data']); ?></span>
   </div>
