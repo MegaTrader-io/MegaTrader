@@ -2,42 +2,43 @@
 (function () {
   "use strict";
 
- function getLastAccountKey() {
-  try {
-    var uid =
-      (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) || "";
-    return "mt:lastAccountId" + (uid ? ":" + String(uid) : "");
-  } catch (_) {
-    return "mt:lastAccountId";
+  function getLastAccountKey() {
+    try {
+      var uid =
+        (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
+        "";
+      return "mt:lastAccountId" + (uid ? ":" + String(uid) : "");
+    } catch (_) {
+      return "mt:lastAccountId";
+    }
   }
-}
 
-function loadLastAccountId() {
-  var key = getLastAccountKey();
-  try {
-    // cookie only
-    var m = document.cookie.match(
-      new RegExp("(?:^|;)\\s*" + key.replace(/[-[\\]/{}()*+?.\\^$|]/g, "\\$&") + "=([^;]+)")
-    );
-    return m ? decodeURIComponent(m[1]) : "";
-  } catch (_) {
-    return "";
+  // --- COOKIE-ONLY ---
+  function loadLastAccountId() {
+    var key = getLastAccountKey();
+    try {
+      var m = document.cookie.match(
+        new RegExp(
+          "(?:^|;)\\s*" +
+            key.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&") +
+            "=([^;]+)"
+        )
+      );
+      return m ? decodeURIComponent(m[1]) : "";
+    } catch (_) {
+      return "";
+    }
   }
-}
 
-function saveLastAccountId(id) {
-  var key = getLastAccountKey();
-  var val = String(id || "");
-
-  // cookie only
-  try {
-    document.cookie = key + "=" + encodeURIComponent(val) + ";path=/;max-age=31536000";
-  } catch (_) {}
-
-  // limpieza legacy (por si algo viejo quedó guardado)
-  try { localStorage.removeItem(key); } catch (_) {}
-}
-
+  // --- COOKIE-ONLY ---
+  function saveLastAccountId(id) {
+    var key = getLastAccountKey();
+    var val = String(id || "");
+    try {
+      document.cookie =
+        key + "=" + encodeURIComponent(val) + ";path=/;max-age=31536000";
+    } catch (_) {}
+  }
 
   // Esperar DOM listo (soporta inline/defer)
   if (document.readyState === "loading") {
@@ -58,6 +59,7 @@ function saveLastAccountId(id) {
       document.querySelector(".mt-account-performance");
     var modal = document.querySelector(SEL.modal || "#changeSubcriptionModal");
 
+    // Lee SOLO de cookie (o cae a currentId)
     var selectedId = loadLastAccountId() || CFG.currentId || null;
     var pendingPreloader = false;
     var preloaderFallbackTimer = null;
@@ -167,10 +169,12 @@ function saveLastAccountId(id) {
       selectedId = card.getAttribute("data-account-id") || null;
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
+
+      // Guarda SOLO en cookie
       saveLastAccountId(selectedId);
 
       enableBtn(true);
-      updateAccountCTAs(); 
+      updateAccountCTAs();
     }
 
     function preselectIfVisible() {
@@ -259,7 +263,6 @@ function saveLastAccountId(id) {
       // === BREACHED ===
       var breachModal = document.getElementById("mt-breach-alert-modal");
       if (breachModal) {
-        // refresca data-* en el contenedor del modal
         breachModal.setAttribute("data-account-id", accId);
         breachModal.setAttribute("data-main-product-id", mainId);
 
@@ -283,7 +286,6 @@ function saveLastAccountId(id) {
       // === PASSED / ACTIVATION ===
       var passedModal = document.getElementById("mt-account-passed-modal");
       if (passedModal) {
-        // refresca data-* en el contenedor del modal
         passedModal.setAttribute("data-account-id", accId);
         passedModal.setAttribute("data-main-product-id", mainId);
         passedModal.setAttribute("data-current-status", status);
@@ -305,7 +307,6 @@ function saveLastAccountId(id) {
           }
         }
 
-        // si tu overview expone sincronizador extra, respétalo
         if (typeof window.__mtPassedSyncUI === "function") {
           window.__mtPassedSyncUI(passedModal);
         }
@@ -335,14 +336,12 @@ function saveLastAccountId(id) {
           return;
         }
 
-        // Actualiza cabecera inmediatamente y muestra preloader
         updateHeaderFromCard(active);
         updateAccountCTAs();
         showPreloader();
         closeModal();
         enableBtn(false);
 
-        // AJAX performance
         var fd = new FormData();
         fd.append(
           "action",
@@ -386,7 +385,6 @@ function saveLastAccountId(id) {
                 window.mtTooltips.refresh(perf);
             }
 
-            // Exponer orderId en el root y disparar eventos globales
             var orderId =
               parseInt(active.getAttribute("data-order") || "0", 10) || 0;
             var root = document.getElementById("mt-account-overview");
@@ -428,7 +426,6 @@ function saveLastAccountId(id) {
       });
     }
 
-    // Re-sincronizar cuando se abre el modal
     if (modal) {
       modal.addEventListener("shown.bs.modal", function () {
         var active =
@@ -448,7 +445,6 @@ function saveLastAccountId(id) {
       }
     });
 
-    // Init
     preselectIfVisible();
     log("picker init", { selectedId: selectedId });
   }

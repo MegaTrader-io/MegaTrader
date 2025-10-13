@@ -77,7 +77,6 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 
       <div class="modal-body">
 
-        <!-- Filter -->
         <div class="mb-3">
           <div class="dropdown w-100">
             <button id="mt-acc-filter-btn"
@@ -88,25 +87,47 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
             </button>
 
             <?php
-            $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false];
+            $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false, 'PENDING_ACTIVATION' => false];
             foreach ($accounts as $row) {
               $st = strtoupper(trim((string) ($row['status'] ?? '')));
               if ($st === 'ACTIVE')
                 $present['ACTIVE'] = true;
-              if ($st === 'BREACHED')
+              if ($st === 'BREACHED' || $st === 'RESET')
                 $present['BREACHED'] = true;
-              if ($st === 'PASSED' || $st === 'PENDING_ACTIVATION')
+              if ($st === 'PASSED' || $st === 'UPGRADED')
                 $present['PASSED'] = true;
+              if ($st === 'PENDING_ACTIVATION')
+                $present['PENDING_ACTIVATION'] = true;
             }
 
             $curStatus = strtoupper(trim((string) ($current['status'] ?? '')));
-            $curFilter = ($curStatus === 'PENDING_ACTIVATION') ? 'PASSED' : $curStatus;
-
-            if (!empty($present[$curFilter])) {
-              $firstOpt = $curFilter;
-            } else {
-              $firstOpt = $present['ACTIVE'] ? 'ACTIVE' : ($present['BREACHED'] ? 'BREACHED' : 'PASSED');
+            switch ($curStatus) {
+              case 'ACTIVE':
+                $curFilter = 'ACTIVE';
+                break;
+              case 'BREACHED':
+              case 'RESET':
+                $curFilter = 'BREACHED';
+                break;
+              case 'PASSED':
+              case 'UPGRADED':
+                $curFilter = 'PASSED';
+                break;
+              case 'PENDING_ACTIVATION':
+                $curFilter = 'PENDING_ACTIVATION';
+                break;
+              default:
+                $curFilter = $present['ACTIVE'] ? 'ACTIVE'
+                  : ($present['BREACHED'] ? 'BREACHED'
+                    : ($present['PASSED'] ? 'PASSED'
+                      : ($present['PENDING_ACTIVATION'] ? 'PENDING_ACTIVATION' : 'ACTIVE')));
             }
+
+            $firstOpt = !empty($present[$curFilter]) ? $curFilter
+              : ($present['ACTIVE'] ? 'ACTIVE'
+                : ($present['BREACHED'] ? 'BREACHED'
+                  : ($present['PASSED'] ? 'PASSED'
+                    : ($present['PENDING_ACTIVATION'] ? 'PENDING_ACTIVATION' : 'ACTIVE'))));
             ?>
 
             <ul class="dropdown-menu w-100 p-0 overflow-hidden rounded-12 mt-1" id="mt-acc-filter-menu">
@@ -122,6 +143,10 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                 <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button>
                 </li>
               <?php endif; ?>
+              <?php if ($present['PENDING_ACTIVATION']): ?>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option"
+                    data-value="PENDING_ACTIVATION">Pending activation</button></li>
+              <?php endif; ?>
             </ul>
 
             <select id="mt-acc-filter" class="d-none" aria-hidden="true">
@@ -133,6 +158,10 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
               <?php endif; ?>
               <?php if ($present['PASSED']): ?>
                 <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option>
+              <?php endif; ?>
+              <?php if ($present['PENDING_ACTIVATION']): ?>
+                <option value="PENDING_ACTIVATION" <?php selected($firstOpt, 'PENDING_ACTIVATION'); ?>>Pending activation
+                </option>
               <?php endif; ?>
             </select>
           </div>
@@ -227,13 +256,11 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 </div>
 
 <?php
-// Carga del JS externo
 $handle = 'mt-account-picker';
 $js_path = get_stylesheet_directory() . '/assets/js/mt-account-picker.js';
 $js_url = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
 wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_path) : null), true);
 
-// Payload para el picker
 $payload = [
   'currentId' => $currentId,
   'accounts' => $accounts,
@@ -259,10 +286,8 @@ $payload = [
   'debug' => true,
 ];
 
-// Exponer config
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
 
-// Script inline: SOLO filtro + estado del botón si la activa desaparece
 wp_add_inline_script(
   $handle,
   <<<'JS'
@@ -282,27 +307,36 @@ wp_add_inline_script(
   function disableBtn(){ if (btn){ btn.disabled = true; btn.classList.add('disabled'); } }
   function enableBtn(){ if (btn){ btn.disabled = false; btn.classList.remove('disabled'); } }
 
-  function applyFilter(val){
-    if (!grid) return;
-    var want = normalizeStatus(val);
+function applyFilter(val){
+  if (!grid) return;
+  var want = normalizeStatus(val);
 
-    grid.querySelectorAll('.subscription-card').forEach(function(card){
-      var st = normalizeStatus(card.getAttribute('data-status'));
-      var match = (st === want) || (want === 'PASSED' && st === 'PENDING_ACTIVATION');
-      match ? showCard(card) : hideCard(card);
-    });
+  grid.querySelectorAll('.subscription-card').forEach(function(card){
+    var st = normalizeStatus(card.getAttribute('data-status'));
+    var match = false;
 
-    // Si la activa queda oculta, quitar selección visual y deshabilitar botón.
-    var active = grid.querySelector('.subscription-card.active');
-    if (active && active.classList.contains('d-none')) {
-      active.classList.remove('active');
-      var c = active.querySelector('.checkmark-icon');
-      if (c) c.style.display = 'none';
-      disableBtn();
+    if (want === 'ACTIVE') {
+      match = (st === 'ACTIVE');
+    } else if (want === 'BREACHED') {
+      match = (st === 'BREACHED' || st === 'RESET');
+    } else if (want === 'PASSED') {
+      match = (st === 'PASSED' || st === 'UPGRADED');
+    } else if (want === 'PENDING_ACTIVATION') {
+      match = (st === 'PENDING_ACTIVATION');
     }
-  }
 
-  // Dropdown -> click
+    match ? showCard(card) : hideCard(card);
+  });
+
+  var active = grid.querySelector('.subscription-card.active');
+  if (active && active.classList.contains('d-none')) {
+    active.classList.remove('active');
+    var c = active.querySelector('.checkmark-icon');
+    if (c) c.style.display = 'none';
+    disableBtn();
+  }
+}
+
   if (filterMenu){
     filterMenu.addEventListener('click', function(e){
       var opt = e.target.closest('.mt-filter-option');
@@ -314,7 +348,6 @@ wp_add_inline_script(
     });
   }
 
-  // Al abrir modal, aplicar filtro actual
   if (modal && window.bootstrap){
     modal.addEventListener('shown.bs.modal', function(){
       var val = (filterSel && filterSel.value) ? filterSel.value : 'ACTIVE';
@@ -322,12 +355,10 @@ wp_add_inline_script(
     });
   }
 
-  // Estado inicial
   if (filterSel) filterSel.value = filterSel.querySelector('option')?.value || 'ACTIVE';
   if (filterLbl) filterLbl.textContent = (filterSel.selectedOptions?.[0]?.textContent || 'Active');
   applyFilter(filterSel ? filterSel.value : 'ACTIVE');
 
-  // Si al cargar no hay seleccion visible, deshabilitar botón
   var active = grid && grid.querySelector('.subscription-card.active');
   if (!active || active.classList.contains('d-none')) { disableBtn(); }
 })();
