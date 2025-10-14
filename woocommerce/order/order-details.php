@@ -164,6 +164,8 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 ?>
 
 <!-- Trigger Button for Subscription-Style Modal -->
+
+<!--
 <button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
 	data-bs-target="#changeSubcriptionModal">
 	<div class="border-gray d-flex flex-wrap align-items-center gap-2 mb-3 p-3 rounded-2xl">
@@ -200,6 +202,8 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 		</span>
 	</div>
 </button>
+
+-->
 
 <?php if ($product_id): ?>
 	<div class="mb-32 mt-card">
@@ -309,7 +313,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 </div>
 
 <div class="d-flex gap-3 d-flex flex-column flex-lg-row flex-md-row gap-3 mb-32">
-	<div class="account-box w-100 border-mg-buttton-secondary">
+	<div class="mt-card h-auto">
 		<div class="text-white text-size-20 fw-medium text-uppercase">Objectives</div>
 		<div class="d-flex flex-column">
 			<?php foreach ($objectives_meta as $key => $value): ?>
@@ -325,7 +329,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 		</div>
 	</div>
 
-	<div class="account-box w-100 border-mg-buttton-secondary">
+	<div class="mt-card h-auto">
 		<div class="text-white text-size-20 fw-medium text-uppercase">Rules</div>
 		<div class="d-flex flex-column">
 			<?php foreach ($rules_meta as $key => $value): ?>
@@ -346,7 +350,7 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 
 <?php if ( ! empty( $orders_to_show ) ): ?>
     <div class="mb-32">
-        <div class="border-mg-buttton-secondary mb-4 overflow-hidden rounded-2xl">
+        <div class="border-0 mb-4 mt-card overflow-hidden p-0">
             <div class="fw-medium text-size-20 text-uppercase text-white p-3 bg-1e1e1e">
                 Related Orders
             </div>
