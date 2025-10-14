@@ -4,16 +4,9 @@ defined('ABSPATH') || exit;
 $prepared = isset($args['prepared']) && is_array($args['prepared']) ? $args['prepared'] : null;
 $current = $prepared['current'] ?? null;
 $accounts = $prepared['accounts'] ?? [];
-
 $resetId = (string) ($current['resetProductId'] ?? '');
 $activationId = (string) ($current['activationProductId'] ?? '');
 $mainId = (string) ($current['mainProductId'] ?? '');
-$ord = (string) ($current['order'] ?? '');
-$subscriptionIdCurrent = (string) ($current['subscriptionId'] ?? '');
-
-
-$hasReset = ($resetId !== '');
-$hasActivation = ($activationId !== '');
 
 $checkout = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
 $reset_url = $hasReset ? ($checkout . '?add-to-cart=' . urlencode($resetId)) : '';
@@ -40,6 +33,13 @@ if ($selectedIdArg !== '') {
     }
   }
 }
+
+
+$ord = (string) ($current['order'] ?? '');
+$subscriptionIdCurrent = (string) ($current['subscriptionId'] ?? '');
+
+$hasReset = ($resetId !== '');
+$hasActivation = ($activationId !== '');
 
 $currentId = (string) ($current['id'] ?? '');
 $currentStat = (string) ($current['status'] ?? 'unknown');

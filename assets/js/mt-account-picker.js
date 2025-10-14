@@ -224,6 +224,7 @@
       var hasSub = (card.getAttribute("data-has-subscription") || "") === "1";
 
       var subId = card.getAttribute("data-subscription-id") || "";
+      var orderId = card.getAttribute("data-order") || "";
 
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
@@ -237,12 +238,14 @@
         openerBtn.setAttribute("data-account-id", selectedId);
         openerBtn.setAttribute("data-has-subscription", hasSub ? "1" : "0");
         openerBtn.setAttribute("data-subscription-id", subId);
+        openerBtn.setAttribute("data-order", orderId);
       }
       var root = document.getElementById("mt-account-overview");
       if (root) {
         root.setAttribute("data-account-id", selectedId);
         root.setAttribute("data-has-subscription", hasSub ? "1" : "0");
         root.setAttribute("data-subscription-id", subId);
+        root.setAttribute("data-order-id", orderId);
       }
 
       enableBtn(true);
@@ -433,12 +436,16 @@
 
         // NUEVO: inicializar data-subscription-id en opener/root
         var subId0 = card.getAttribute("data-subscription-id") || "";
+        var order0 = card.getAttribute("data-order") || "";
+
         if (openerBtn && (loadLastAccountId() || CFG.currentId)) {
           openerBtn.setAttribute("data-subscription-id", subId0);
+          openerBtn.setAttribute("data-order", order0);
         }
         var root0 = document.getElementById("mt-account-overview");
         if (root0 && (loadLastAccountId() || CFG.currentId)) {
           root0.setAttribute("data-subscription-id", subId0);
+          root0.setAttribute("data-order", order0);
         }
 
         if (openerBtn && selectedId)
@@ -518,18 +525,21 @@
           grid.querySelector((SEL.card || ".subscription-card") + ".active");
 
         if (active) {
+          var orderId =
+            parseInt(active.getAttribute("data-order") || "0", 10) || 0;
+
           var hasSub =
             (active.getAttribute("data-has-subscription") || "") === "1";
           var subId = active.getAttribute("data-subscription-id") || "";
           var root = document.getElementById("mt-account-overview");
           if (root) {
             root.setAttribute("data-has-subscription", hasSub ? "1" : "0");
-            // NUEVO:
             root.setAttribute("data-subscription-id", subId);
+            root.setAttribute("data-order-id", orderId);
           }
           if (openerBtn) {
-            // NUEVO:
             openerBtn.setAttribute("data-subscription-id", subId);
+            openerBtn.setAttribute("data-order-id", orderId);
           }
         }
         if (!active) {
@@ -624,7 +634,8 @@
                   hasSubscription:
                     (active.getAttribute("data-has-subscription") || "") ===
                     "1",
-                    subscriptionId: active.getAttribute("data-subscription-id") || "",
+                  subscriptionId:
+                    active.getAttribute("data-subscription-id") || "",
                 },
               })
             );
