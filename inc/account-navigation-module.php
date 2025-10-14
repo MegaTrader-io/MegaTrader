@@ -7,9 +7,17 @@ if (!defined('ABSPATH')) exit;
 add_filter('woocommerce_account_menu_items', function ($items) {
     $new_items = [];
 
-    $new_items['trade-area']    = __('Account Metrics', 'woocommerce');
-    $new_items['subscriptions'] = __('Manage Subscription', 'woocommerce');
+    $new_items['trade-area'] = __('Account Metrics', 'woocommerce');
 
+<<<<<<< HEAD
+=======
+    // Mostrar u ocultar "Manage Subscription" según el flag global (si no existe, mostramos)
+    $can_manage = $GLOBALS['mt_can_manage_subscription'] ?? null;
+    if ($can_manage === null || $can_manage === true) {
+        $new_items['subscriptions'] = __('Manage Subscription', 'woocommerce');
+    }
+
+>>>>>>> 17eba48 (saving changes)
     /*
     if (isset($items['payment-methods'])) {
         $new_items['payment-methods'] = $items['payment-methods'];
@@ -18,6 +26,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 
     return $new_items;
 }, 20);
+
 
 /**
  * URLs de endpoints del menú
