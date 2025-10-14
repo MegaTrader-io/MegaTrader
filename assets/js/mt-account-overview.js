@@ -2544,105 +2544,35 @@ if (document.readyState === "loading") {
   function readHasSubscription() {
     var root = document.getElementById('mt-account-overview');
     if (!root) return null;
+
+    // hasSubscription original
     var v = (root.getAttribute('data-has-subscription') || '').trim().toLowerCase();
-    return v === '1' || v === 'true' ? true : v === '0' || v === 'false' ? false : null;
-  }
+    var has = v === '1' || v === 'true' ? true : v === '0' || v === 'false' ? false : null;
 
-  function getManageSubsNodes() {
-    var li = document.getElementById('mt-nav-manage-subscription');
-    var a  = li ? li.querySelector('a') : null;
-    var sel = document.getElementById('mega-navigation-select');
-    // Opción del select móvil que apunta a /my-account/orders
-    var opt = null;
-    if (sel) {
-      Array.prototype.some.call(sel.options || [], function (o) {
-        if ((o.value || '').indexOf('/my-account/orders') !== -1) { opt = o; return true; }
-        return false;
-      });
+    // NUEVO: si hay subscriptionId no vacío, consideramos que puede gestionar
+    var subId = (root.getAttribute('data-subscription-id') || '').trim();
+
+    if (has === null) {
+      // si no pudimos resolver 'has', usa subId como fallback
+      return subId !== '' ? true : null;
     }
-    return { li, a, sel, opt };
+    // si 'has' es false pero tenemos subId, elevamos a true
+    return has || subId !== '';
   }
 
-  function blockClick(e) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    return false;
-  }
-  function blockContext(e){ e.preventDefault(); e.stopPropagation(); }
-  function blockDrag(e){ e.preventDefault(); e.stopPropagation(); }
-
-  function neutralizeAnchor(a, hide) {
-    if (!a) return;
-
-    if (hide) {
-      if (!a.dataset.href) a.dataset.href = a.getAttribute('href') || '';
-      a.setAttribute('href', '#');
-      a.setAttribute('aria-disabled', 'true');
-      a.setAttribute('tabindex', '-1');
-      a.style.pointerEvents = 'none';
-
-      // 🔒 extras de protección cuando está oculto/neutralizado
-      a.style.userSelect = 'none';
-      a.style.webkitUserSelect = 'none';
-      a.style.msUserSelect = 'none';
-      a.style.MozUserSelect = 'none';
-      a.setAttribute('draggable', 'false');
-
-      // bloquear interacciones adicionales
-      a.addEventListener('click', blockClick, { passive: false });
-      a.addEventListener('contextmenu', blockContext, { passive: false });
-      a.addEventListener('dragstart', blockDrag, { passive: false });
-    } else {
-      // restore
-      var orig = a.dataset.href || '';
-      if (orig) a.setAttribute('href', orig);
-      a.removeAttribute('aria-disabled');
-      a.removeAttribute('tabindex');
-      a.style.pointerEvents = '';
-
-      // 🔓 restaurar selección/drag y quitar handlers
-      a.style.userSelect = '';
-      a.style.webkitUserSelect = '';
-      a.style.msUserSelect = '';
-      a.style.MozUserSelect = '';
-      a.removeAttribute('draggable');
-
-      a.removeEventListener('click', blockClick);
-      a.removeEventListener('contextmenu', blockContext);
-      a.removeEventListener('dragstart', blockDrag);
-    }
-  }
-
-  function hideSelectOption(opt, hide) {
-    if (!opt) return;
-    if (hide) {
-      if (!opt.dataset._origDisabled) opt.dataset._origDisabled = opt.disabled ? '1' : '0';
-      opt.disabled = true;
-      opt.hidden = true;
-      // si la opción estaba seleccionada, muévete a la primera válida
-      var sel = opt.parentElement;
-      if (sel && sel.value === opt.value) {
-        var next = Array.prototype.find.call(sel.options, function (o) { return !o.disabled && !o.hidden; });
-        if (next) sel.value = next.value;
-      }
-    } else {
-      opt.disabled = (opt.dataset._origDisabled === '1');
-      opt.hidden = false;
-    }
-  }
+  // ... (no cambies getManageSubsNodes / neutralizeAnchor / hideSelectOption)
 
   function syncManageSubsVisibility() {
-    var has = readHasSubscription();
-    if (has === null) return;
+    var can = readHasSubscription();
+    if (can === null) return;
 
     var nodes = getManageSubsNodes();
     var li = nodes.li, a = nodes.a, opt = nodes.opt;
 
     if (!li) return;
 
-    // toggle visual + a11y/inert
-    li.classList.toggle('d-none', !has);
-    if (!has) {
+    li.classList.toggle('d-none', !can);
+    if (!can) {
       li.setAttribute('hidden', '');
       li.setAttribute('aria-hidden', 'true');
       li.setAttribute('inert', '');
@@ -2652,11 +2582,8 @@ if (document.readyState === "loading") {
       li.removeAttribute('inert');
     }
 
-    // neutralizar/restaurar href + extras
-    neutralizeAnchor(a, !has);
-
-    // quitar/restaurar opción del select móvil
-    hideSelectOption(opt, !has);
+    neutralizeAnchor(a, !can);
+    hideSelectOption(opt, !can);
   }
 
   // 1) Al cargar
@@ -2676,24 +2603,31 @@ if (document.readyState === "loading") {
     syncManageSubsVisibility();
   });
 
-  // 4) Observar cambios del atributo
+  // 4) Observar cambios de atributos (AHORA incluye subscription-id)
   (function observeAttr() {
     var root = document.getElementById('mt-account-overview');
     if (!root || typeof MutationObserver === 'undefined') return;
     var obs = new MutationObserver(function (mutList) {
       for (var m of mutList) {
-        if (m.type === 'attributes' && m.attributeName === 'data-has-subscription') {
+        if (m.type === 'attributes' &&
+            (m.attributeName === 'data-has-subscription' ||
+             m.attributeName === 'data-subscription-id')) {
           syncManageSubsVisibility();
           break;
         }
       }
     });
-    obs.observe(root, { attributes: true, attributeFilter: ['data-has-subscription'] });
+    obs.observe(root, { attributes: true, attributeFilter: ['data-has-subscription','data-subscription-id'] });
   })();
 
-  // Exponer por si se quiere forzar desde otros scripts
   window.mtSyncManageSubsVisibility = syncManageSubsVisibility;
 })();
+
+
+
+
+
+
 
 
 

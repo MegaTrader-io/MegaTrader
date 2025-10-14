@@ -356,11 +356,19 @@ if (is_user_logged_in()) {
           $selRow = $mt_account_ui['current'];
         }
 
+        // === NUEVO: decidir visibilidad de "Manage Subscription" usando subscriptionId como fuente principal
+        $__selected_subscription_id = '';
         if (is_array($selRow)) {
-          $hasSub = !empty($selRow['hasSubscription']);
-          $__can_manage_subscription = $hasSub ? true : false;
+          // subscriptionId directo de la fila seleccionada
+          $__selected_subscription_id = (string) ($selRow['subscriptionId'] ?? '');
+          // compat: hasSubscription legacy (por si aún llega desde la API)
+          $hasSubLegacy = !empty($selRow['hasSubscription']);
+
+          // regla: si hay subscriptionId => true; si no, cae a hasSubscription legacy
+          $__can_manage_subscription = ($__selected_subscription_id !== '' || $hasSubLegacy) ? true : false;
         }
       }
+
 
 
 
@@ -396,6 +404,7 @@ get_header();
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
   data-email-api="<?php echo esc_attr($mt_user_email_api); ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
+  data-subscription-id="<?php echo esc_attr($__selected_subscription_id ?? ''); ?>"
   data-has-subscription="<?php echo $__can_manage_subscription ? '1' : '0'; ?>"
   data-order-id="<?php echo esc_attr($__active_order_id); ?>">
 
