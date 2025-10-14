@@ -58,6 +58,7 @@ class MT_Accounts
     return self::normalize_subscription_value($raw) !== '';
   }
 
+
   private static function norm($s): string
   {
     return preg_replace('/[^a-z0-9]+/', '', strtolower((string) $s));
@@ -112,12 +113,10 @@ class MT_Accounts
     } elseif (isset($accounts['items']) && is_array($accounts['items'])) {
       $accounts = $accounts['items'];
     } elseif (isset($accounts['id'])) {
-      // Caso objeto único tipo ['id'=>...]
       $accounts = [$accounts];
     }
 
 
-    // Si viene asociativo (keyed por id), conviértelo a lista
     if (!empty($accounts) && array_keys($accounts) !== range(0, count($accounts) - 1)) {
       $accounts = array_values($accounts);
     }
@@ -197,7 +196,6 @@ class MT_Accounts
       $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
       $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
       $order = (string) ($acc['order'] ?? '');
-      $subscription = $acc['subscription'] ?? null;
 
 
       // === SIEMPRE: resolver byId para obtener 'order' (y plataforma si faltara)
@@ -207,9 +205,7 @@ class MT_Accounts
           if (is_array($full)) {
 
             $order = (string) ($full['order'] ?? $order);
-            if ($subscription === null && array_key_exists('subscription', $full)) {
-              $subscription = $full['subscription'];
-            }
+
 
             // completar plataforma solo si faltaba
             if ($platformRaw === '' && isset($full['platform']) && is_array($full['platform'])) {
@@ -224,9 +220,13 @@ class MT_Accounts
         } catch (\Throwable $e) { /* silencio */
         }
       }
+      $subscriptionId = '';
+      $user_id = get_current_user_id();
+      if (is_numeric($order) && (int) $order > 0 && function_exists('mt_subscription_id_for_order')) {
+        $subscriptionId = (string) mt_subscription_id_for_order((int) $order, (int) $user_id);
+      }
+      $hasSubscription = ($subscriptionId !== '');
 
-      $subscriptionNorm = self::normalize_subscription_value($subscription);
-      $hasSubscription = ($subscriptionNorm !== '');
 
       return [
         'id' => $id,
@@ -243,7 +243,7 @@ class MT_Accounts
         'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
         'accountId' => (string) $platAccountId,
         'order' => $order,
-        'subscription' => $subscriptionNorm,
+        'subscriptionId' => $subscriptionId,
         'hasSubscription' => $hasSubscription,
         'programTypeText' => $ptypeLabel,
         'programTypeClass' => $ptypeClass,
@@ -2152,5 +2152,53 @@ if (!function_exists('mt_parse_open_time')) {
       'iso' => $dt->format('Y-m-d'),
       'label' => $dt->format('m/d/Y'),
     ];
+  }
+}
+
+// --- Dada una orden y el usuario actual, devuelve el ID de suscripción asociada (o '' si no hay)
+if (!function_exists('mt_subscription_id_for_order')) {
+  function mt_subscription_id_for_order(int $order_id, int $user_id = 0): string
+  {
+    if ($order_id <= 0)
+      return '';
+
+    // Preferir validar que la orden sea del usuario si $user_id viene
+    if ($user_id > 0) {
+      $order = function_exists('wc_get_order') ? wc_get_order($order_id) : null;
+      if (!$order)
+        return '';
+      $belongs = ((int) $order->get_user_id() === (int) $user_id);
+      if (!$belongs)
+        return '';
+    }
+
+    // WooCommerce Subscriptions disponible
+    if (function_exists('wcs_get_subscriptions_for_order')) {
+      $subs = wcs_get_subscriptions_for_order($order_id, array('order_type' => array('parent', 'renewal', 'switch')));
+      if (is_array($subs) && !empty($subs)) {
+        // Elige primero activo si existe, si no, el primero
+        $pick = null;
+        foreach ($subs as $sub) {
+          if (is_object($sub) && method_exists($sub, 'get_id')) {
+            $status = method_exists($sub, 'get_status') ? (string) $sub->get_status() : '';
+            if (in_array($status, array('active', 'on-hold', 'pending-cancel'), true)) {
+              $pick = $sub;
+              break;
+            }
+            if ($pick === null)
+              $pick = $sub;
+          }
+        }
+        if ($pick)
+          return (string) $pick->get_id();
+      }
+    }
+
+    // Fallback: intenta por meta (algunos plugins guardan _subscription_renewal o similares)
+    $maybe = get_post_meta($order_id, '_subscription_id', true);
+    if (is_scalar($maybe) && (string) $maybe !== '')
+      return (string) $maybe;
+
+    return '';
   }
 }
