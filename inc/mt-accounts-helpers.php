@@ -2155,50 +2155,134 @@ if (!function_exists('mt_parse_open_time')) {
   }
 }
 
-// --- Dada una orden y el usuario actual, devuelve el ID de suscripción asociada (o '' si no hay)
+// Devuelve el ID de suscripción relacionado a una orden (o '' si no hay).
+// Con LOGS detallados para depurar qué llega y qué se decide.
 if (!function_exists('mt_subscription_id_for_order')) {
   function mt_subscription_id_for_order(int $order_id, int $user_id = 0): string
   {
-    if ($order_id <= 0)
-      return '';
+    // ===== DEBUG: contexto de entrada =====
+    $cur_uid   = function_exists('get_current_user_id') ? (int) get_current_user_id() : 0;
+    $cur_email = '';
+    if ($cur_uid && function_exists('wp_get_current_user')) {
+      $u = wp_get_current_user();
+      if ($u && $u->exists()) {
+        $cur_email = (string) $u->user_email;
+      }
+    }
+    error_log(sprintf('[MT][subid][IN] order_id=%d | user_param=%d | current_uid=%d | current_email=%s',
+      $order_id, $user_id, $cur_uid, $cur_email !== '' ? $cur_email : '(none)'
+    ));
 
-    // Preferir validar que la orden sea del usuario si $user_id viene
-    if ($user_id > 0) {
-      $order = function_exists('wc_get_order') ? wc_get_order($order_id) : null;
-      if (!$order)
-        return '';
-      $belongs = ((int) $order->get_user_id() === (int) $user_id);
-      if (!$belongs)
-        return '';
+    if ($order_id <= 0) {
+      error_log('[MT][subid][EXIT] order_id inválido.');
+      return '';
     }
 
-    // WooCommerce Subscriptions disponible
+    // Por si nos pasan directamente un ID de suscripción
+    if (function_exists('wcs_is_subscription') && wcs_is_subscription($order_id)) {
+      error_log('[MT][subid] order_id es una SUSCRIPCIÓN. Devolviendo tal cual: ' . $order_id);
+      return (string) $order_id;
+    }
+
+    // ===== 1) Woo Subscriptions API =====
     if (function_exists('wcs_get_subscriptions_for_order')) {
-      $subs = wcs_get_subscriptions_for_order($order_id, array('order_type' => array('parent', 'renewal', 'switch')));
-      if (is_array($subs) && !empty($subs)) {
-        // Elige primero activo si existe, si no, el primero
-        $pick = null;
-        foreach ($subs as $sub) {
-          if (is_object($sub) && method_exists($sub, 'get_id')) {
+      try {
+        $subs = wcs_get_subscriptions_for_order($order_id, array('order_type' => 'any'));
+        $cnt  = is_array($subs) ? count($subs) : 0;
+        error_log(sprintf('[MT][subid] wcs_get_subscriptions_for_order -> %d resultado(s) para order_id=%d', $cnt, $order_id));
+
+        if ($cnt > 0) {
+          foreach ($subs as $idx => $sub) {
+            if (!is_object($sub) || !method_exists($sub, 'get_id')) continue;
+            $sid = (string) $sub->get_id();
+            $st  = method_exists($sub, 'get_status') ? (string) $sub->get_status() : '(no-status)';
+            error_log(sprintf('[MT][subid]  - sub[%d] id=%s status=%s', $idx, $sid, $st));
+          }
+          // Elegir "viva" primero
+          foreach ($subs as $sub) {
+            if (!is_object($sub) || !method_exists($sub, 'get_id')) continue;
             $status = method_exists($sub, 'get_status') ? (string) $sub->get_status() : '';
-            if (in_array($status, array('active', 'on-hold', 'pending-cancel'), true)) {
-              $pick = $sub;
-              break;
+            if (in_array($status, array('active','on-hold','pending-cancel'), true)) {
+              $pick = (string) $sub->get_id();
+              error_log('[MT][subid][OK] elegida por estado vivo: ' . $pick);
+              return $pick;
             }
-            if ($pick === null)
-              $pick = $sub;
+          }
+          // Si no hay vivas, devolver la primera
+          $first = reset($subs);
+          if (is_object($first) && method_exists($first, 'get_id')) {
+            $pick = (string) $first->get_id();
+            error_log('[MT][subid][OK] elegida primera (sin vivas): ' . $pick);
+            return $pick;
           }
         }
-        if ($pick)
-          return (string) $pick->get_id();
+      } catch (\Throwable $e) {
+        error_log('[MT][subid][ERR] wcs_get_subscriptions_for_order: ' . $e->getMessage());
+      }
+    } else {
+      error_log('[MT][subid] Woo Subscriptions no disponible (wcs_get_subscriptions_for_order no existe).');
+    }
+
+    // ===== 2) Fallbacks por metadatos comunes =====
+    $meta_keys = array(
+      '_wcs_related_subscription_ids', // array de IDs
+      '_wcs_subscription_ids',         // variantes de plugins/extensiones
+      '_subscription_id',              // único ID
+      '_subscription_renewal',         // renovación -> sub original
+    );
+
+    foreach ($meta_keys as $mk) {
+      $val = get_post_meta($order_id, $mk, true);
+      if (!empty($val)) {
+        if (is_array($val)) {
+          error_log(sprintf('[MT][subid] meta %s encontrado (array) count=%d', $mk, count($val)));
+          foreach ($val as $maybe) {
+            if (is_scalar($maybe) && (string)$maybe !== '' && ctype_digit((string)$maybe)) {
+              error_log(sprintf('[MT][subid][OK] meta %s -> %s', $mk, (string)$maybe));
+              return (string) $maybe;
+            }
+          }
+        } else {
+          error_log(sprintf('[MT][subid] meta %s encontrado (scalar) value=%s', $mk, is_scalar($val) ? (string)$val : '(non-scalar)'));
+          if (is_scalar($val) && (string)$val !== '' && ctype_digit((string)$val)) {
+            error_log(sprintf('[MT][subid][OK] meta %s -> %s', $mk, (string)$val));
+            return (string) $val;
+          }
+        }
+      } else {
+        error_log(sprintf('[MT][subid] meta %s vacío/no existe', $mk));
       }
     }
 
-    // Fallback: intenta por meta (algunos plugins guardan _subscription_renewal o similares)
-    $maybe = get_post_meta($order_id, '_subscription_id', true);
-    if (is_scalar($maybe) && (string) $maybe !== '')
-      return (string) $maybe;
+    // ===== 3) Barrido final de metas que contengan "subscr" en la clave =====
+    $all_meta = get_post_meta($order_id);
+    $scanned  = is_array($all_meta) ? count($all_meta) : 0;
+    error_log(sprintf('[MT][subid] Escaneo metas genérico: total_metas=%d', $scanned));
 
+    if (is_array($all_meta)) {
+      foreach ($all_meta as $k => $vals) {
+        if (stripos($k, 'subscr') === false) continue;
+        $vals_arr = (array) $vals;
+        error_log(sprintf('[MT][subid]  meta match key=%s (count=%d)', $k, count($vals_arr)));
+        foreach ($vals_arr as $v) {
+          if (is_array($v)) {
+            foreach ($v as $vv) {
+              if (is_scalar($vv) && ctype_digit((string)$vv)) {
+                error_log(sprintf('[MT][subid][OK] meta-scan %s -> %s', $k, (string)$vv));
+                return (string) $vv;
+              }
+            }
+          } elseif (is_scalar($v) && ctype_digit((string)$v)) {
+            error_log(sprintf('[MT][subid][OK] meta-scan %s -> %s', $k, (string)$v));
+            return (string) $v;
+          }
+        }
+      }
+    }
+
+    error_log('[MT][subid][EXIT] No se encontró suscripción para order_id=' . $order_id);
     return '';
   }
 }
+
+

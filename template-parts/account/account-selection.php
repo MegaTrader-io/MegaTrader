@@ -204,6 +204,9 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 
               $logo_src = (string) ($a['logo'] ?? '');
               $ord = (int) ($a['order'] ?? 0);
+              $subIdCard = (string) ($a['subscriptionId'] ?? '');
+              $hasSubCard = ($subIdCard !== '') || !empty($a['hasSubscription']);
+
               $progText = (string) ($a['programTypeText'] ?? '');
               $progClass = (string) ($a['programTypeClass'] ?? '');
               ?>
@@ -215,9 +218,9 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                 data-activation-id="<?php echo esc_attr($a['activationProductId'] ?? ''); ?>"
                 data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>" data-logo="<?php echo esc_url($logo_src); ?>"
                 data-main-id="<?php echo esc_attr($a['mainProductId'] ?? ''); ?>"
-                data-order="<?php echo esc_attr($ord); ?>"
-                data-has-subscription="<?php echo !empty($a['hasSubscription']) ? '1' : '0'; ?>"
-                data-subscription-id="<?php echo esc_attr($subId); ?>" style="display:none;">
+                data-order="<?php echo esc_attr($ord); ?>" data-has-subscription="<?php echo $hasSubCard ? '1' : '0'; ?>"
+                data-subscription-id="<?php echo esc_attr($subIdCard); ?>"
+                style="display:none;">
 
                 <div class="checkmark-icon position-absolute"
                   style="top:10px;right:10px;<?php echo $isCur ? '' : 'display:none;'; ?>">
