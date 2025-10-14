@@ -10,7 +10,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     $new_items['trade-area']    = __('Account Metrics', 'woocommerce');
     $new_items['subscriptions'] = __('Manage Subscription', 'woocommerce');
 
-/*
+    /*
     if (isset($items['payment-methods'])) {
         $new_items['payment-methods'] = $items['payment-methods'];
     }
@@ -84,11 +84,18 @@ function items_navigation_get_args($menu_items = [], $aria_label = '', $select_i
                       || strpos($req_path, '/my-account/orders') !== false;
         }
 
-        $items[] = [
+        $item = [
             'label'  => $label,
             'url'    => $url,
             'active' => (bool) $is_active,
         ];
+
+        // >>> ÚNICO EXTRA: pasar item_id para el li de "Manage Subscription"
+        if ($endpoint === 'subscriptions') {
+            $item['item_id'] = 'mt-nav-manage-subscription';
+        }
+
+        $items[] = $item;
     }
 
     // Fallback: si ninguno quedó activo, activa el primero

@@ -31,6 +31,33 @@ class MT_Accounts
       return 'dot-status-danger';
     return 'dot-status-default';
   }
+
+  private static function normalize_subscription_value($raw): string
+  {
+    if ($raw === null)
+      return '';
+    if (is_string($raw)) {
+      $s = trim($raw);
+      return ($s === '' || strtolower($s) === 'null') ? '' : $s;
+    }
+    if (is_array($raw) && isset($raw['data']) && is_array($raw['data'])) {
+      $hex = '';
+      foreach ($raw['data'] as $b) {
+        $b = intval($b);
+        if ($b < 0)
+          $b = 256 + ($b % 256);
+        $hex .= str_pad(dechex($b & 0xff), 2, '0', STR_PAD_LEFT);
+      }
+      return $hex;
+    }
+    return '';
+  }
+
+  private static function has_subscription($raw): bool
+  {
+    return self::normalize_subscription_value($raw) !== '';
+  }
+
   private static function norm($s): string
   {
     return preg_replace('/[^a-z0-9]+/', '', strtolower((string) $s));
@@ -65,6 +92,7 @@ class MT_Accounts
     $parts = array_map('trim', explode('|', $label));
     return $parts[1] ?? '';
   }
+
   public static function prepare_ui(array $accounts): array
   {
     // ===== Config logos (mantener/ajustar según tu código actual) =====
@@ -169,14 +197,19 @@ class MT_Accounts
       $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
       $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
       $order = (string) ($acc['order'] ?? '');
+      $subscription = $acc['subscription'] ?? null;
+
 
       // === SIEMPRE: resolver byId para obtener 'order' (y plataforma si faltara)
       if ($id !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
         try {
           $full = mt_accounts_resolve_account_by_id($id);
           if (is_array($full)) {
-            // order (siempre)
+
             $order = (string) ($full['order'] ?? $order);
+            if ($subscription === null && array_key_exists('subscription', $full)) {
+              $subscription = $full['subscription'];
+            }
 
             // completar plataforma solo si faltaba
             if ($platformRaw === '' && isset($full['platform']) && is_array($full['platform'])) {
@@ -192,6 +225,9 @@ class MT_Accounts
         }
       }
 
+      $subscriptionNorm = self::normalize_subscription_value($subscription);
+      $hasSubscription = ($subscriptionNorm !== '');
+
       return [
         'id' => $id,
         'status' => (string) $status,
@@ -206,7 +242,9 @@ class MT_Accounts
         'resetProductId' => (string) ($rules['resetProductId'] ?? ''),
         'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
         'accountId' => (string) $platAccountId,
-        'order' => $order, // ← ya relleno desde byId
+        'order' => $order,
+        'subscription' => $subscriptionNorm,
+        'hasSubscription' => $hasSubscription,
         'programTypeText' => $ptypeLabel,
         'programTypeClass' => $ptypeClass,
       ];

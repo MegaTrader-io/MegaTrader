@@ -221,12 +221,33 @@
       if (ch) ch.style.display = "block";
 
       selectedId = card.getAttribute("data-account-id") || null;
+      var hasSub = (card.getAttribute("data-has-subscription") || "") === "1";
+
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
+      window.mtAccounts.hasSubscription = hasSub;
+
       saveLastAccountId(selectedId);
+
+      // Sincroniza el botón opener y el root con el ID activo
+      if (openerBtn) {
+        openerBtn.setAttribute("data-account-id", selectedId);
+        openerBtn.setAttribute("data-has-subscription", hasSub ? "1" : "0");
+      }
+      var root = document.getElementById("mt-account-overview");
+      if (root) {
+        root.setAttribute("data-account-id", selectedId);
+        root.setAttribute("data-has-subscription", hasSub ? "1" : "0");
+      }
 
       enableBtn(true);
       updateAccountCTAs();
+
+      document.dispatchEvent(
+        new CustomEvent("mt:hasSubscriptionChanged", {
+          detail: { accountId: selectedId, hasSubscription: hasSub },
+        })
+      );
     }
 
     function selectByIdAndSync(id) {
@@ -391,7 +412,6 @@
             '[data-bs-target="#changeSubcriptionModal"][data-account-id]'
           )
           ?.getAttribute("data-account-id") ||
-        "" ||
         CFG.currentId ||
         "";
 
@@ -405,6 +425,11 @@
         var bucket = statusToBucket(card.getAttribute("data-status") || "");
         forceFilter(bucket);
         setActiveCard(card);
+        if (openerBtn && selectedId)
+          openerBtn.setAttribute("data-account-id", selectedId);
+        var root = document.getElementById("mt-account-overview");
+        if (root && selectedId)
+          root.setAttribute("data-account-id", selectedId);
       } else {
         // usa la primera opción válida del select (render del server)
         var first =
@@ -476,6 +501,14 @@
         var active =
           grid &&
           grid.querySelector((SEL.card || ".subscription-card") + ".active");
+
+        if (active) {
+          var hasSub =
+            (active.getAttribute("data-has-subscription") || "") === "1";
+          var root = document.getElementById("mt-account-overview");
+          if (root)
+            root.setAttribute("data-has-subscription", hasSub ? "1" : "0");
+        }
         if (!active) {
           showErr("Invalid account", "The selected account is not available.");
           return;
@@ -508,6 +541,13 @@
         fd.append("accountId", selectedId);
 
         var ajaxURL = (CFG.ajax && CFG.ajax.url) || "";
+        // Refuerza sincronización al confirmar selección
+        if (openerBtn && selectedId)
+          openerBtn.setAttribute("data-account-id", selectedId);
+        var root = document.getElementById("mt-account-overview");
+        if (root && selectedId)
+          root.setAttribute("data-account-id", selectedId);
+
         var fetcher =
           window.MEGATRADER && typeof MEGATRADER.fetchJSON === "function"
             ? window.MEGATRADER.fetchJSON
@@ -558,6 +598,7 @@
                   id: selectedId,
                   order: orderId,
                   orderId: orderId,
+                  hasSubscription: (active.getAttribute("data-has-subscription") || "") === "1",
                 },
               })
             );
@@ -606,9 +647,10 @@
   document.addEventListener(
     "click",
     function (e) {
-      var t = e.target && e.target.closest
-        ? e.target.closest('[data-bs-target="#changeSubcriptionModal"]')
-        : null;
+      var t =
+        e.target && e.target.closest
+          ? e.target.closest('[data-bs-target="#changeSubcriptionModal"]')
+          : null;
       if (t) opener = t;
     },
     true
@@ -619,19 +661,30 @@
     modal.setAttribute("aria-hidden", "false");
   });
 
-  document.addEventListener("click", function (e) {
-    var closeBtn = e.target && e.target.closest
-      ? e.target.closest('#changeSubcriptionModal [data-bs-dismiss="modal"], #changeSubcriptionModal .mt-modal__close')
-      : null;
-    if (!closeBtn) return;
-    (opener || document.body).focus({ preventScroll: true });
-  }, true);
+  document.addEventListener(
+    "click",
+    function (e) {
+      var closeBtn =
+        e.target && e.target.closest
+          ? e.target.closest(
+              '#changeSubcriptionModal [data-bs-dismiss="modal"], #changeSubcriptionModal .mt-modal__close'
+            )
+          : null;
+      if (!closeBtn) return;
+      (opener || document.body).focus({ preventScroll: true });
+    },
+    true
+  );
 
-  document.addEventListener("keydown", function (e) {
-    if (e.key !== "Escape") return;
-    if (!modal.classList.contains("show")) return;
-    (opener || document.body).focus({ preventScroll: true });
-  }, true);
+  document.addEventListener(
+    "keydown",
+    function (e) {
+      if (e.key !== "Escape") return;
+      if (!modal.classList.contains("show")) return;
+      (opener || document.body).focus({ preventScroll: true });
+    },
+    true
+  );
 
   modal.addEventListener("hide.bs.modal", function () {
     var ae = document.activeElement;

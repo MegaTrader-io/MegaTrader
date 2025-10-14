@@ -10,11 +10,13 @@
  *        'label'   => 'Trade Area',
  *        'url'     => '/my-account/overview',
  *        'active'  => true,
+ *        'item_id' => 'opcional-id-li', // (opcional) NUEVO
  *      ],
  *      [
  *        'label'   => 'Manage Subscription',
  *        'url'     => '/my-account/subscriptions',
  *        'active'  => false,
+ *        'item_id' => 'mt-nav-manage-subscription', // (opcional) NUEVO
  *      ],
  *      [
  *        'label'   => 'Payment Method',
@@ -42,7 +44,12 @@ $select_id  = $args['select_id'] ?? 'account-navigation-select';
   <nav class="woocommerce-MyAccount-navigation d-none d-md-block" aria-label="<?php echo esc_attr($aria_label); ?>">
       <ul class="mega-navigation-list text-capitalize">
         <?php foreach ( $items as $item ) : ?>
-          <li class="<?php echo !empty($item['active']) ? 'is-active' : ''; ?>">
+          <li
+            class="<?php echo !empty($item['active']) ? 'is-active' : ''; ?>"
+            <?php if ( !empty($item['item_id']) ) : ?>
+              id="<?php echo esc_attr($item['item_id']); ?>"
+            <?php endif; ?>
+          >
             <a
               href="<?php echo esc_url($item['url']); ?>"
               <?php echo !empty($item['active']) ? 'aria-current="page"' : ''; ?>

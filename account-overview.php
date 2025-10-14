@@ -24,6 +24,8 @@ $mt_feature_content = [];
 $mt_account_data = [];
 $mt_daily_journal = [];
 $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
+$__can_manage_subscription = true;
+
 
 
 
@@ -283,21 +285,15 @@ if (is_user_logged_in()) {
 
 
 
-      // Estado inicial de la NOTA del modal PASSED
       $__note_text = '';
       $__show_note = false;
 
       $__body_text = $__body_subtitle;
 
-      // Normaliza alias
       if ($__status_norm === 'ACTIVATION_PENDING') {
         $__status_norm = 'PENDING_ACTIVATION';
       }
 
-      // Reglas de visibilidad y texto:
-      // - PENDING_ACTIVATION + activationId => NO mostrar nota
-      // - PASSED + activationId             => mostrar nota "with id"
-      // - PASSED + sin activationId         => mostrar nota "no id"
       if ($__status_norm === 'PASSED' && $__has_activation_id) {
         $__show_note = true;
         $__note_text = $__note_passed_with_id;
@@ -338,6 +334,33 @@ if (is_user_logged_in()) {
         ?? ($mt_account_ui['current']['mainProductId'] ?? '')
       );
 
+      // === Flag: ¿mostrar "Manage Subscription"? ===
+      $__can_manage_subscription = true; // default visible
+
+      if (!empty($mt_account_ui['accounts']) || !empty($mt_account_ui['current'])) {
+        // Buscar la fila seleccionada en el payload de prepare_ui
+        $selRow = null;
+
+        if (!empty($mt_selected_id) && !empty($mt_account_ui['accounts'])) {
+          foreach ($mt_account_ui['accounts'] as $row) {
+            if ((string) ($row['id'] ?? '') === (string) $mt_selected_id) {
+              $selRow = $row;
+              break;
+            }
+          }
+        }
+        if (
+          !$selRow && !empty($mt_account_ui['current']) &&
+          (empty($mt_selected_id) || (string) $mt_account_ui['current']['id'] === (string) $mt_selected_id)
+        ) {
+          $selRow = $mt_account_ui['current'];
+        }
+
+        if (is_array($selRow)) {
+          $hasSub = !empty($selRow['hasSubscription']);
+          $__can_manage_subscription = $hasSub ? true : false;
+        }
+      }
 
 
 
@@ -347,7 +370,10 @@ if (is_user_logged_in()) {
   }
 }
 
+
 /* === Exponer opcionalmente en $GLOBALS === */
+$GLOBALS['mt_can_manage_subscription'] = $__can_manage_subscription;
+
 $GLOBALS['mt_user_email'] = $mt_user_email;
 $GLOBALS['mt_account_ui'] = $mt_account_ui;
 $GLOBALS['mt_selected_id'] = $mt_selected_id;
@@ -370,6 +396,7 @@ get_header();
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
   data-email-api="<?php echo esc_attr($mt_user_email_api); ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
+  data-has-subscription="<?php echo $__can_manage_subscription ? '1' : '0'; ?>"
   data-order-id="<?php echo esc_attr($__active_order_id); ?>">
 
   <div class="mt-page">

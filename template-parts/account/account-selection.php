@@ -2,20 +2,22 @@
 defined('ABSPATH') || exit;
 
 $prepared = isset($args['prepared']) && is_array($args['prepared']) ? $args['prepared'] : null;
-$current  = $prepared['current'] ?? null;
+$current = $prepared['current'] ?? null;
 $accounts = $prepared['accounts'] ?? [];
 
-$resetId      = (string) ($current['resetProductId'] ?? '');
+$resetId = (string) ($current['resetProductId'] ?? '');
 $activationId = (string) ($current['activationProductId'] ?? '');
-$mainId       = (string) ($current['mainProductId'] ?? '');
-$ord          = (string) ($current['order'] ?? '');
+$mainId = (string) ($current['mainProductId'] ?? '');
+$ord = (string) ($current['order'] ?? '');
 
-$hasReset      = ($resetId !== '');
+$hasReset = ($resetId !== '');
 $hasActivation = ($activationId !== '');
 
-$checkout    = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
-$reset_url   = $hasReset      ? ($checkout . '?add-to-cart=' . urlencode($resetId)) : '';
+$checkout = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
+$reset_url = $hasReset ? ($checkout . '?add-to-cart=' . urlencode($resetId)) : '';
 $activation_url = $hasActivation ? ($checkout . '?add-to-cart=' . urlencode($activationId)) : '';
+
+
 
 if (!$prepared || empty($accounts)) {
   echo '<p class="text-a8a29e"><em>No accounts found for this user.</em></p>';
@@ -30,42 +32,42 @@ if (!$current && !empty($accounts)) {
 $selectedIdArg = isset($args['selectedId']) ? (string) $args['selectedId'] : '';
 if ($selectedIdArg !== '') {
   foreach ($accounts as $row) {
-    if ((string)($row['id'] ?? '') === $selectedIdArg) {
+    if ((string) ($row['id'] ?? '') === $selectedIdArg) {
       $current = $row;
       break;
     }
   }
 }
 
-$currentId     = (string) ($current['id'] ?? '');
-$currentStat   = (string) ($current['status'] ?? 'unknown');
-$sizeSlug      = (string) ($current['size'] ?? '');
-$productName   = (string) ($current['name'] ?? 'Account');
-$currentLogo   = (string) ($current['logo'] ?? '');
-$curProgText   = (string) ($current['programTypeText'] ?? '');
-$curProgClass  = (string) ($current['programTypeClass'] ?? '');
+$currentId = (string) ($current['id'] ?? '');
+$currentStat = (string) ($current['status'] ?? 'unknown');
+$sizeSlug = (string) ($current['size'] ?? '');
+$productName = (string) ($current['name'] ?? 'Account');
+$currentLogo = (string) ($current['logo'] ?? '');
+$curProgText = (string) ($current['programTypeText'] ?? '');
+$curProgClass = (string) ($current['programTypeClass'] ?? '');
 
-$status_key  = strtolower(trim($currentStat));
-$status_key  = preg_replace('/[^a-z0-9]+/', '-', $status_key);
-$badgeBase   = class_exists('MT_Accounts') ? MT_Accounts::badge_class($currentStat) : 'badge-mega-default';
-$badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
+$account_id = $selectedIdArg !== '' ? $selectedIdArg : $currentId;
+
+
+$status_key = strtolower(trim($currentStat));
+$status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
+$badgeBase = class_exists('MT_Accounts') ? MT_Accounts::badge_class($currentStat) : 'badge-mega-default';
+$badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 ?>
 
-<button type="button" class="mega-btn-md mega-btn-dark-md w-100 p-3"
-  data-bs-toggle="modal"
-  data-bs-target="#changeSubcriptionModal"
-  data-account-id="<?php echo esc_attr($currentId); ?>"
-  data-current-main-id="<?php echo esc_attr($mainId); ?>"
-  data-current-reset-id="<?php echo esc_attr($resetId); ?>"
-  data-order="<?php echo esc_attr($ord); ?>"
-  data-current-activation-id="<?php echo esc_attr($activationId); ?>">
+<button type="button" class="mega-btn-md mega-btn-dark-md w-100 p-3" data-bs-toggle="modal"
+  data-bs-target="#changeSubcriptionModal" data-account-id="<?php echo esc_attr($account_id); ?>"
+  data-current-main-id="<?php echo esc_attr($mainId); ?>" data-current-reset-id="<?php echo esc_attr($resetId); ?>"
+  data-order="<?php echo esc_attr($ord); ?>" data-current-activation-id="<?php echo esc_attr($activationId); ?>">
   <div class="d-flex align-items-center gap-2 justify-content-between w-100">
     <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-2 row-gap-2">
       <div class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md d-none d-md-block d-lg-block"></div>
       <div class="d-flex gap-2 align-items-center flex-fill">
         <img id="mt-platform-logo" src="<?php echo esc_url($currentLogo); ?>" alt="Platform logo" width="30" height="30"
           style="width:30px;height:30px;object-fit:contain;border-radius:6px;" />
-        <div class="fw-medium plan-name text-uppercase text-white text-truncate mobile-max-width-100 text-2xl leading-7">
+        <div
+          class="fw-medium plan-name text-uppercase text-white text-truncate mobile-max-width-100 text-2xl leading-7">
           <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
           <span id="mt-name"><?php echo esc_html($productName); ?></span>
         </div>
@@ -81,7 +83,8 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
     <div class="modal-content gap-4">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <span class="modal-title text-white heading-sm-medium" id="changeSubcriptionModalLabel">Select account</span>
-        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal" aria-label="Close">
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
+          aria-label="Close">
           <span aria-hidden="true">
             <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;" />
           </span>
@@ -92,8 +95,8 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
         <div class="mb-4">
           <div class="dropdown w-100">
             <button id="mt-acc-filter-btn"
-              class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12"
-              type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12" type="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
               <span id="mt-acc-filter-label">Active</span>
               <span class="mt-icon mt-icon_caret-down mt-icon-white"></span>
             </button>
@@ -102,20 +105,32 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
             $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false, 'PENDING_ACTIVATION' => false];
             foreach ($accounts as $row) {
               $st = strtoupper(trim((string) ($row['status'] ?? '')));
-              if ($st === 'ACTIVE') $present['ACTIVE'] = true;
-              if ($st === 'BREACHED' || $st === 'RESET') $present['BREACHED'] = true;
-              if ($st === 'PASSED' || $st === 'UPGRADED') $present['PASSED'] = true;
-              if ($st === 'PENDING_ACTIVATION') $present['PENDING_ACTIVATION'] = true;
+              if ($st === 'ACTIVE')
+                $present['ACTIVE'] = true;
+              if ($st === 'BREACHED' || $st === 'RESET')
+                $present['BREACHED'] = true;
+              if ($st === 'PASSED' || $st === 'UPGRADED')
+                $present['PASSED'] = true;
+              if ($st === 'PENDING_ACTIVATION')
+                $present['PENDING_ACTIVATION'] = true;
             }
 
             $curStatus = strtoupper(trim((string) ($current['status'] ?? '')));
             switch ($curStatus) {
-              case 'ACTIVE':              $curFilter = 'ACTIVE'; break;
+              case 'ACTIVE':
+                $curFilter = 'ACTIVE';
+                break;
               case 'BREACHED':
-              case 'RESET':               $curFilter = 'BREACHED'; break;
+              case 'RESET':
+                $curFilter = 'BREACHED';
+                break;
               case 'PASSED':
-              case 'UPGRADED':            $curFilter = 'PASSED'; break;
-              case 'PENDING_ACTIVATION':  $curFilter = 'PENDING_ACTIVATION'; break;
+              case 'UPGRADED':
+                $curFilter = 'PASSED';
+                break;
+              case 'PENDING_ACTIVATION':
+                $curFilter = 'PENDING_ACTIVATION';
+                break;
               default:
                 $curFilter = $present['ACTIVE'] ? 'ACTIVE'
                   : ($present['BREACHED'] ? 'BREACHED'
@@ -132,16 +147,20 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 
             <ul class="dropdown-menu w-100 p-0 overflow-hidden rounded-12 mt-1" id="mt-acc-filter-menu">
               <?php if ($present['ACTIVE']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="ACTIVE">Active</button></li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="ACTIVE">Active</button>
+                </li>
               <?php endif; ?>
               <?php if ($present['BREACHED']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="BREACHED">Breached</button></li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option"
+                    data-value="BREACHED">Breached</button></li>
               <?php endif; ?>
               <?php if ($present['PASSED']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button></li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button>
+                </li>
               <?php endif; ?>
               <?php if ($present['PENDING_ACTIVATION']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PENDING_ACTIVATION">Pending activation</button></li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option"
+                    data-value="PENDING_ACTIVATION">Pending activation</button></li>
               <?php endif; ?>
             </ul>
 
@@ -156,7 +175,8 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                 <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option>
               <?php endif; ?>
               <?php if ($present['PENDING_ACTIVATION']): ?>
-                <option value="PENDING_ACTIVATION" <?php selected($firstOpt, 'PENDING_ACTIVATION'); ?>>Pending activation</option>
+                <option value="PENDING_ACTIVATION" <?php selected($firstOpt, 'PENDING_ACTIVATION'); ?>>Pending activation
+                </option>
               <?php endif; ?>
             </select>
           </div>
@@ -167,34 +187,33 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
           <div class="subscription-grid" id="mt-accounts-grid">
             <?php foreach ($accounts as $a): ?>
               <?php
-              $aid       = (string) ($a['id'] ?? '');
+              $aid = (string) ($a['id'] ?? '');
               $accPlatId = (string) ($a['accountId'] ?? '');
-              $isCur     = ($aid === $currentId);
+              $isCur = ($aid === $currentId);
 
               $card_class = 'subscription-card position-relative flex-column gap-2';
-              if ($isCur) $card_class .= ' active';
+              if ($isCur)
+                $card_class .= ' active';
 
               $status_raw = (string) ($a['status'] ?? '');
               $status_key = preg_replace('/[^a-z0-9]+/', '-', strtolower(trim($status_raw)));
-              $dot_class  = 'dot-status-' . $status_key;
+              $dot_class = 'dot-status-' . $status_key;
 
               $logo_src = (string) ($a['logo'] ?? '');
-              $ord      = (int) ($a['order'] ?? 0);
+              $ord = (int) ($a['order'] ?? 0);
               $progText = (string) ($a['programTypeText'] ?? '');
-              $progClass= (string) ($a['programTypeClass'] ?? '');
+              $progClass = (string) ($a['programTypeClass'] ?? '');
               ?>
               <div class="<?php echo esc_attr($card_class); ?>" role="button"
-                data-account-id="<?php echo esc_attr($aid); ?>"
-                data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
+                data-account-id="<?php echo esc_attr($aid); ?>" data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
                 data-platform-account-id="<?php echo esc_attr($accPlatId); ?>"
                 data-size="<?php echo esc_attr($a['size'] ?? ''); ?>"
                 data-reset-id="<?php echo esc_attr($a['resetProductId'] ?? ''); ?>"
                 data-activation-id="<?php echo esc_attr($a['activationProductId'] ?? ''); ?>"
-                data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>"
-                data-logo="<?php echo esc_url($logo_src); ?>"
+                data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>" data-logo="<?php echo esc_url($logo_src); ?>"
                 data-main-id="<?php echo esc_attr($a['mainProductId'] ?? ''); ?>"
                 data-order="<?php echo esc_attr($ord); ?>"
-                style="display:none;">
+                data-has-subscription="<?php echo !empty($a['hasSubscription']) ? '1' : '0'; ?>" style="display:none;">
 
                 <div class="checkmark-icon position-absolute"
                   style="top:10px;right:10px;<?php echo $isCur ? '' : 'display:none;'; ?>">
@@ -204,7 +223,8 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                   </svg>
                 </div>
 
-                <div class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
+                <div
+                  class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
                   <div class="logo-container position-relative d-inline-block">
                     <img src="<?php echo esc_url($logo_src); ?>"
                       alt="<?php echo esc_attr(($a['platform'] ?? '') ?: 'platform'); ?> logo" style="max-height:40px;">
@@ -252,31 +272,31 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 </div>
 
 <?php
-$handle  = 'mt-account-picker';
+$handle = 'mt-account-picker';
 $js_path = get_stylesheet_directory() . '/assets/js/mt-account-picker.js';
-$js_url  = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
+$js_url = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
 wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_path) : null), true);
 
 $payload = [
   'currentId' => $currentId,
-  'accounts'  => $accounts,
+  'accounts' => $accounts,
   'selectionClass' => 'active',
   'selectors' => [
-    'grid'       => '#mt-accounts-grid',
-    'select'     => '#select-subscription-btn',
-    'badge'      => '#mt-badge',
+    'grid' => '#mt-accounts-grid',
+    'select' => '#select-subscription-btn',
+    'badge' => '#mt-badge',
     'platformLogo' => '#mt-platform-logo',
-    'size'       => '#mt-size',
-    'name'       => '#mt-name',
-    'modal'      => '#changeSubcriptionModal',
-    'card'       => '.subscription-card',
-    'check'      => '.checkmark-icon',
-    'performance'=> '.mt-account-performance',
+    'size' => '#mt-size',
+    'name' => '#mt-name',
+    'modal' => '#changeSubcriptionModal',
+    'card' => '.subscription-card',
+    'check' => '.checkmark-icon',
+    'performance' => '.mt-account-performance',
   ],
   'ajax' => [
-    'url'   => admin_url('admin-ajax.php'),
+    'url' => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('mt-acc-nonce'),
-    'action'=> 'mt_accounts_performance',
+    'action' => 'mt_accounts_performance',
   ],
   'checkoutBase' => $checkout,
   'debug' => true,
@@ -284,11 +304,7 @@ $payload = [
 
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
 
-/**
- * Inline mínimo (sin lógica duplicada):
- * - Asegura que el label del filtro muestre el texto correcto si el picker
- *   tarda unas décimas en inicializar (no hace filtrado ni selección).
- */
+
 wp_add_inline_script(
   $handle,
   <<<'JS'
