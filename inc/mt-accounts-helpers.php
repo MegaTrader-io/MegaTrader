@@ -58,7 +58,10 @@ class MT_Accounts
     return self::normalize_subscription_value($raw) !== '';
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7c3ec87 (saving changes)
   private static function norm($s): string
   {
     return preg_replace('/[^a-z0-9]+/', '', strtolower((string) $s));
@@ -196,6 +199,8 @@ class MT_Accounts
       $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
       $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
       $order = (string) ($acc['order'] ?? '');
+      $subscription = $acc['subscription'] ?? null;
+
 
 
       // === SIEMPRE: resolver byId para obtener 'order' (y plataforma si faltara)
@@ -205,6 +210,9 @@ class MT_Accounts
           if (is_array($full)) {
 
             $order = (string) ($full['order'] ?? $order);
+            if ($subscription === null && array_key_exists('subscription', $full)) {
+              $subscription = $full['subscription'];
+            }
 
 
             // completar plataforma solo si faltaba
@@ -228,6 +236,9 @@ class MT_Accounts
       $hasSubscription = ($subscriptionId !== '');
 
 
+      $subscriptionNorm = self::normalize_subscription_value($subscription);
+      $hasSubscription = ($subscriptionNorm !== '');
+
       return [
         'id' => $id,
         'status' => (string) $status,
@@ -243,7 +254,11 @@ class MT_Accounts
         'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
         'accountId' => (string) $platAccountId,
         'order' => $order,
+<<<<<<< HEAD
         'subscriptionId' => $subscriptionId,
+=======
+        'subscription' => $subscriptionNorm,
+>>>>>>> 7c3ec87 (saving changes)
         'hasSubscription' => $hasSubscription,
         'programTypeText' => $ptypeLabel,
         'programTypeClass' => $ptypeClass,
