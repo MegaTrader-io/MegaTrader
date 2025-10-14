@@ -224,7 +224,7 @@
       var hasSub = (card.getAttribute("data-has-subscription") || "") === "1";
 
       var subId = card.getAttribute("data-subscription-id") || "";
-      var orderId = card.getAttribute("data-order") || "";
+      var orderId = card.getAttribute("data-order-id") || "";
 
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
@@ -238,7 +238,7 @@
         openerBtn.setAttribute("data-account-id", selectedId);
         openerBtn.setAttribute("data-has-subscription", hasSub ? "1" : "0");
         openerBtn.setAttribute("data-subscription-id", subId);
-        openerBtn.setAttribute("data-order", orderId);
+        openerBtn.setAttribute("data-order-id", orderId);
       }
       var root = document.getElementById("mt-account-overview");
       if (root) {
@@ -436,16 +436,16 @@
 
         // NUEVO: inicializar data-subscription-id en opener/root
         var subId0 = card.getAttribute("data-subscription-id") || "";
-        var order0 = card.getAttribute("data-order") || "";
+        var order0 = card.getAttribute("data-order-id") || "";
 
         if (openerBtn && (loadLastAccountId() || CFG.currentId)) {
           openerBtn.setAttribute("data-subscription-id", subId0);
-          openerBtn.setAttribute("data-order", order0);
+          openerBtn.setAttribute("data-order-id", order0);
         }
         var root0 = document.getElementById("mt-account-overview");
         if (root0 && (loadLastAccountId() || CFG.currentId)) {
           root0.setAttribute("data-subscription-id", subId0);
-          root0.setAttribute("data-order", order0);
+          root0.setAttribute("data-order-id", order0);
         }
 
         if (openerBtn && selectedId)
@@ -526,7 +526,7 @@
 
         if (active) {
           var orderId =
-            parseInt(active.getAttribute("data-order") || "0", 10) || 0;
+            parseInt(active.getAttribute("data-order-id") || "0", 10) || 0;
 
           var hasSub =
             (active.getAttribute("data-has-subscription") || "") === "1";
@@ -616,7 +616,7 @@
             }
 
             var orderId =
-              parseInt(active.getAttribute("data-order") || "0", 10) || 0;
+              parseInt(active.getAttribute("data-order-id") || "0", 10) || 0;
             var root = document.getElementById("mt-account-overview");
             if (root)
               root.setAttribute(

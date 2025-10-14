@@ -1995,270 +1995,90 @@ function mtBindManageSubsNav() {
   }
 }
 
-// === Sync de "Manage Subscription" con la cuenta activa (sin inline PHP) ===
-// === Sync de Orders + Manage Subscription con la cuenta activa (sin inline PHP) ===
+// === Manage Subscription (show/hide + URL) según data-subscription-id del ROOT ===
 (function () {
-  var ORDERS_BASE = (window.location.origin || "") + "/my-account/orders/";
-  var VIEW_SUB_BASE = (window.location.origin || "") + "/my-account/view-subscription/";
-
-  function int(v) {
-    v = parseInt(v, 10);
-    return isNaN(v) ? 0 : v;
+  function getRoot() {
+    return document.getElementById("mt-account-overview");
   }
 
-  function getRootOrderId() {
-    var root = document.getElementById("mt-account-overview");
-    var raw =
-      (root && (root.getAttribute("data-order-id") || root.dataset.orderId)) ||
+  function readSubscriptionId() {
+    // 1) root (lo setea PHP y el picker)
+    var root = getRoot();
+    var sid =
+      (root &&
+        (root.getAttribute("data-subscription-id") || root.dataset.subscriptionId)) ||
       "";
-    return int(String(raw).replace(/[^\d]/g, ""));
-  }
 
-  function getRootSubscriptionId() {
-    var root = document.getElementById("mt-account-overview");
-    var raw =
-      (root && (root.getAttribute("data-subscription-id") || root.dataset.subscriptionId)) ||
-      (window.mtAccounts && window.mtAccounts.subscriptionId) ||
-      "";
-    return String(raw || "").trim();
-  }
-
-  function readOrderFromActiveCard() {
-    var active = document.querySelector(
-      "#mt-accounts-grid .subscription-card.active"
-    );
-    if (!active) return 0;
-    return int(active.getAttribute("data-order") || active.dataset.order);
-  }
-
-  function readSubFromActiveCard() {
-    var active = document.querySelector(
-      "#mt-accounts-grid .subscription-card.active"
-    );
-    if (!active) return "";
-    return String(active.getAttribute("data-subscription-id") || active.dataset.subscriptionId || "").trim();
-  }
-
-  function buildOrdersMap() {
-    var map = Object.create(null);
-    document
-      .querySelectorAll("#mt-accounts-grid .subscription-card")
-      .forEach(function (card) {
-        var id = card.getAttribute("data-account-id") || "";
-        var ord = int(card.getAttribute("data-order") || card.dataset.order);
-        if (id) map[id] = ord;
-      });
-    return map;
-  }
-
-  function setA11yHidden(el, hidden) {
-    if (!el) return;
-    if (hidden) {
-      el.setAttribute("aria-hidden", "true");
-      el.setAttribute("tabindex", "-1");
-      el.setAttribute("inert", "");
-      el.style.display = "none";
-      if (el.tagName === "A") {
-        el.dataset.__origHref = el.dataset.__origHref || el.getAttribute("href") || "";
-        el.setAttribute("href", "#");
-      }
-      if (!el.__mtGuarded) {
-        el.addEventListener(
-          "click",
-          function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
-          },
-          { capture: true, passive: false }
-        );
-        el.__mtGuarded = true;
-      }
-    } else {
-      el.removeAttribute("aria-hidden");
-      el.removeAttribute("tabindex");
-      el.removeAttribute("inert");
-      el.style.display = "";
-      if (el.tagName === "A" && el.dataset.__origHref) {
-        el.setAttribute("href", el.dataset.__origHref);
-      }
+    // 2) fallback: card activa en el grid
+    if (!sid) {
+      var card = document.querySelector(
+        "#mt-accounts-grid .subscription-card.active"
+      );
+      sid =
+        (card &&
+          (card.getAttribute("data-subscription-id") ||
+            card.dataset.subscriptionId)) ||
+        "";
     }
+    return String(sid).trim();
   }
 
-  // ---- reescribe /my-account/orders?orderId=... (lo que ya hacía)
-  function rewriteManageOrdersURLs(orderId) {
-    var url =
-      ORDERS_BASE + (orderId ? "?orderId=" + encodeURIComponent(orderId) : "");
-    var nav = document.querySelector(".mega-navigation");
+  function syncManageSubscription() {
+    var li = document.getElementById("mt-nav-manage-subscription");
+    if (!li) return;
+    var a = li.querySelector("a");
+    var sid = readSubscriptionId();
 
-    var a = nav && nav.querySelector('a[href*="/my-account/orders"]');
-    if (a) a.href = url;
-
-    var sel = document.getElementById("mega-navigation-select");
-    if (sel) {
-      Array.prototype.forEach.call(sel.options || [], function (opt) {
-        if ((opt.value || "").indexOf("/my-account/orders") !== -1) {
-          opt.value = url;
-        }
-      });
-    }
-
-    var form = document.getElementById("mt-manage-subs-form");
-    if (form) {
-      var i1 = form.querySelector('input[name="orderId"]');
-      var i2 = form.querySelector('input[name="optionalOrderId"]');
-      if (i1) i1.value = orderId ? String(orderId) : "";
-      if (i2) i2.value = orderId ? String(orderId) : "";
-      form.action = ORDERS_BASE;
-    }
-  }
-
-  // ---- NUEVO: link de Manage Subscription (view-subscription/{id}/) u ocultar
-  function findManageSubLink() {
-    var nav = document.querySelector(".mega-navigation");
-    if (!nav) return null;
-    return (
-      nav.querySelector('[data-nav="manage-subscription"], [data-role="manage-subscription"]') ||
-      nav.querySelector('a[href*="/view-subscription"]') ||
-      nav.querySelector('a[href*="subscriptions"]')
-    );
-  }
-
-  function findManageSubOption() {
-    var sel = document.getElementById("mega-navigation-select");
-    if (!sel) return null;
-    return Array.prototype.find.call(sel.options || [], function (o) {
-      return /view-subscription/.test(o.value || "");
-    }) || null;
-  }
-
-  function rewriteManageSubscriptionURL(subscriptionId) {
-    var link = findManageSubLink();
-    var opt = findManageSubOption();
-
-    if (subscriptionId) {
+    if (sid) {
       var url =
-        VIEW_SUB_BASE + encodeURIComponent(subscriptionId) + "/";
-      if (link) {
-        link.href = url;
-        link.dataset.__origHref = url;
-        setA11yHidden(link, false);
-      }
-      if (opt) {
-        opt.value = url;
-        opt.disabled = false;
-        opt.hidden = false;
+        (window.location.origin || "") +
+        "/my-account/view-subscription/" +
+        encodeURIComponent(sid) +
+        "/";
+      if (a) a.href = url;
+
+      // visible
+      li.classList.remove("d-none");
+      li.removeAttribute("aria-hidden");
+      li.removeAttribute("inert");
+      if (a) {
+        a.removeAttribute("aria-disabled");
       }
     } else {
-      if (link) setA11yHidden(link, true);
-      if (opt) {
-        opt.disabled = true;
-        opt.hidden = true;
-        var sel = opt.parentElement;
-        if (sel && sel.value === opt.value) {
-          var first = Array.prototype.find.call(sel.options || [], function (o) {
-            return !o.disabled && !o.hidden;
-          });
-          if (first) sel.value = first.value;
-        }
+      // oculto + guard UI
+      li.classList.add("d-none");
+      li.setAttribute("aria-hidden", "true");
+      li.setAttribute("inert", "");
+      if (a) {
+        a.setAttribute("href", "#");
+        a.setAttribute("aria-disabled", "true");
       }
     }
   }
 
-  function setActiveOrder(orderId) {
-    var root = document.getElementById("mt-account-overview");
-    if (root)
-      root.setAttribute("data-order-id", orderId ? String(orderId) : "");
-
-    window.mtOrders = window.mtOrders || {};
-    window.mtOrders.activeOrderId = orderId || 0;
-
-    rewriteManageOrdersURLs(orderId);
+  // boot
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncManageSubscription, {
+      once: true,
+    });
+  } else {
+    syncManageSubscription();
   }
 
-  function setActiveSubscription(subscriptionId) {
-    var root = document.getElementById("mt-account-overview");
-    if (root)
-      root.setAttribute(
-        "data-subscription-id",
-        subscriptionId ? String(subscriptionId) : ""
-      );
-    window.mtAccounts = window.mtAccounts || {};
-    window.mtAccounts.subscriptionId = subscriptionId || "";
-    rewriteManageSubscriptionURL(subscriptionId);
-  }
-
-  // init (orders + subscription)
-  (function init() {
-    var initialOrder = getRootOrderId();
-    if (initialOrder) rewriteManageOrdersURLs(initialOrder);
-
-    var initialSub = getRootSubscriptionId();
-    rewriteManageSubscriptionURL(initialSub);
-  })();
-
-  // reaccionar al cambio de cuenta
-  document.addEventListener("mt:accountSelected", function (ev) {
-    var d = (ev && ev.detail) || {};
-    var id = d.accountId || d.id || "";
-
-    // --- order
-    var ord = int(d.orderId || d.order || 0);
-    if (!ord && id) {
-      var map = buildOrdersMap();
-      ord = map[id] || 0;
-    }
-    if (!ord) ord = readOrderFromActiveCard();
-    setActiveOrder(ord);
-
-    // --- subscription
-    var sub =
-      String(d.subscriptionId || d.subscription_id || "").trim() ||
-      getRootSubscriptionId() ||
-      readSubFromActiveCard();
-    setActiveSubscription(sub);
+  // reactiva cuando cambias de cuenta
+  document.addEventListener("mt:accountSelected", function () {
+    syncManageSubscription();
   });
 
-  // también cuando se pulsa el botón Select del picker
+  // y cuando confirmas con el botón "Select" del picker (por si el root se actualiza ahí)
   document.addEventListener("click", function (e) {
-    var btn = e.target.closest("#select-subscription-btn");
-    if (!btn) return;
-    setTimeout(function () {
-      var ord = readOrderFromActiveCard();
-      if (ord) setActiveOrder(ord);
-      var sub = readSubFromActiveCard();
-      setActiveSubscription(sub);
-    }, 0);
+    if (e.target && e.target.closest("#select-subscription-btn")) {
+      setTimeout(syncManageSubscription, 0);
+    }
   });
-
-  // suaviza el binder de Orders (mantener comportamiento previo)
-  (function softenBinder() {
-    try {
-      var nav = document.querySelector(".mega-navigation");
-      if (!nav) return;
-      var link = nav.querySelector('a[href*="/my-account/orders"]');
-      if (!link) return;
-      link.addEventListener(
-        "click",
-        function (e) {
-          if (/\borderId=\d+/.test(this.href)) return;
-          var orderId = getRootOrderId() || readOrderFromActiveCard();
-          if (!orderId) return;
-          e.preventDefault();
-          var form = document.getElementById("mt-manage-subs-form");
-          if (!form) return (window.location.href = this.href);
-          var i1 = form.querySelector('input[name="orderId"]');
-          var i2 = form.querySelector('input[name="optionalOrderId"]');
-          if (i1) i1.value = String(orderId);
-          if (i2) i2.value = String(orderId);
-          form.action = this.href.replace(/\?.*$/, "");
-          form.submit();
-        },
-        { passive: false }
-      );
-    } catch (_) {}
-  })();
 })();
+
+
 
 
 if (document.readyState === "loading") {
