@@ -234,6 +234,7 @@
       saveLastAccountId(selectedId);
 
       // Sincroniza el botón opener y el root con el ID activo
+<<<<<<< HEAD
       if (openerBtn) {
         openerBtn.setAttribute("data-account-id", selectedId);
         openerBtn.setAttribute("data-has-subscription", hasSub ? "1" : "0");
@@ -247,6 +248,11 @@
         root.setAttribute("data-subscription-id", subId);
         root.setAttribute("data-order-id", orderId);
       }
+=======
+      if (openerBtn) openerBtn.setAttribute("data-account-id", selectedId);
+      var root = document.getElementById("mt-account-overview");
+      if (root) root.setAttribute("data-account-id", selectedId);
+>>>>>>> dce8f2a (saving changes)
 
       enableBtn(true);
       updateAccountCTAs();
@@ -433,6 +439,7 @@
         var bucket = statusToBucket(card.getAttribute("data-status") || "");
         forceFilter(bucket);
         setActiveCard(card);
+<<<<<<< HEAD
 
         // NUEVO: inicializar data-subscription-id en opener/root
         var subId0 = card.getAttribute("data-subscription-id") || "";
@@ -448,6 +455,8 @@
           root0.setAttribute("data-order-id", order0);
         }
 
+=======
+>>>>>>> dce8f2a (saving changes)
         if (openerBtn && selectedId)
           openerBtn.setAttribute("data-account-id", selectedId);
         var root = document.getElementById("mt-account-overview");
