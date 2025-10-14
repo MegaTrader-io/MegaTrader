@@ -223,9 +223,12 @@
       selectedId = card.getAttribute("data-account-id") || null;
       var hasSub = (card.getAttribute("data-has-subscription") || "") === "1";
 
+      var subId = card.getAttribute("data-subscription-id") || "";
+
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
       window.mtAccounts.hasSubscription = hasSub;
+      window.mtAccounts.subscriptionId = subId;
 
       saveLastAccountId(selectedId);
 
@@ -233,11 +236,13 @@
       if (openerBtn) {
         openerBtn.setAttribute("data-account-id", selectedId);
         openerBtn.setAttribute("data-has-subscription", hasSub ? "1" : "0");
+        openerBtn.setAttribute("data-subscription-id", subId);
       }
       var root = document.getElementById("mt-account-overview");
       if (root) {
         root.setAttribute("data-account-id", selectedId);
         root.setAttribute("data-has-subscription", hasSub ? "1" : "0");
+        root.setAttribute("data-subscription-id", subId);
       }
 
       enableBtn(true);
@@ -425,13 +430,23 @@
         var bucket = statusToBucket(card.getAttribute("data-status") || "");
         forceFilter(bucket);
         setActiveCard(card);
+
+        // NUEVO: inicializar data-subscription-id en opener/root
+        var subId0 = card.getAttribute("data-subscription-id") || "";
+        if (openerBtn && (loadLastAccountId() || CFG.currentId)) {
+          openerBtn.setAttribute("data-subscription-id", subId0);
+        }
+        var root0 = document.getElementById("mt-account-overview");
+        if (root0 && (loadLastAccountId() || CFG.currentId)) {
+          root0.setAttribute("data-subscription-id", subId0);
+        }
+
         if (openerBtn && selectedId)
           openerBtn.setAttribute("data-account-id", selectedId);
         var root = document.getElementById("mt-account-overview");
         if (root && selectedId)
           root.setAttribute("data-account-id", selectedId);
       } else {
-        // usa la primera opción válida del select (render del server)
         var first =
           (filterSel && filterSel.querySelector("option")?.value) || "ACTIVE";
         setFilterUI(first);
@@ -505,9 +520,17 @@
         if (active) {
           var hasSub =
             (active.getAttribute("data-has-subscription") || "") === "1";
+          var subId = active.getAttribute("data-subscription-id") || "";
           var root = document.getElementById("mt-account-overview");
-          if (root)
+          if (root) {
             root.setAttribute("data-has-subscription", hasSub ? "1" : "0");
+            // NUEVO:
+            root.setAttribute("data-subscription-id", subId);
+          }
+          if (openerBtn) {
+            // NUEVO:
+            openerBtn.setAttribute("data-subscription-id", subId);
+          }
         }
         if (!active) {
           showErr("Invalid account", "The selected account is not available.");
@@ -598,7 +621,10 @@
                   id: selectedId,
                   order: orderId,
                   orderId: orderId,
-                  hasSubscription: (active.getAttribute("data-has-subscription") || "") === "1",
+                  hasSubscription:
+                    (active.getAttribute("data-has-subscription") || "") ===
+                    "1",
+                    subscriptionId: active.getAttribute("data-subscription-id") || "",
                 },
               })
             );
