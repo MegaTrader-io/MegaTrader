@@ -46,7 +46,7 @@ $btnRows = array_chunk($buttons, 2);
                     class="tw-grid tw-grid-cols-4 tw-gap-4 lg:tw-inline-flex lg:tw-justify-start lg:tw-items-start lg:tw-gap-8 lg:tw-w-full">
                 <div
                         class="tw-col-span-full tw-text-center lg:tw-text-left lg:tw-flex-1 tw-text-stone-400 tw-text-sm tw-font-medium tw-leading-tight">
-                    © <?= date('Y') ?> MegaTraderX
+                    © <?= date('Y') ?> MegaTraderX.
                 </div>
                 <nav
                         class="tw-col-span-full tw-flex-col tw-space-y-4 sm:tw-space-y-0 sm:tw-text-center sm:tw-flex-none sm:tw-justify-center sm:tw-gap-4 lg:tw-contents">
