@@ -94,7 +94,7 @@
                     </a>
                 </div>
             </div>
-            <div class="tw-absolute tw-hidden lg:tw-block lg:tw-bottom-[435px] lg:tw-right-0 xl:-tw-right-[30px]">
+            <div class="tw-absolute tw-hidden lg:tw-block lg:tw-bottom-[436px] lg:tw-right-0 xl:-tw-right-[30px]">
                 <svg width="121" height="148" viewBox="0 0 121 148" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M67.6348 79.8939C76.6349 86.8943 91.6348 116.895 66.2839 139.668M64.7825 130.918C59.3523 139.841 53.6048 154.467 74.0557 141.584"
                           stroke="#FFB34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
