@@ -2594,6 +2594,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 .dot-status-breached {
   color: var(--error-color);
 }
+
 .dot-status-reset {
   color: var(--error-color);
 }
@@ -4692,32 +4693,107 @@ textarea.mtfb-note {
 /**** Account Notifications ****/
 
 .mt-account-notifications{
-  position:absolute; right:0; top:calc(100% + 8px);
-  width:360px; max-height:70vh; overflow:auto;
-  background:#fff; border-radius:8px; box-shadow:0 20px 20px rgba(0,0,0,.10);
-  padding:8px; z-index:1055;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: auto;
+  max-height: 70vh;           /* puede quedarse, pero ya no usamos su overflow */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 20px 20px rgba(0,0,0,.10);
+  padding: 8px;
+  z-index: 1055;
+  overflow: visible;           /* ← clave: permitir que la flecha sobresalga */
 }
+
+/* flecha en desktop: absoluta al panel, afuera del borde superior */
 .mt-notifications__arrow{
-  width:26px; height:14px; background:#fff; margin-left:auto; margin-right:8px;
+  position: absolute;          /* ← clave */
+  top: -13px;                  /* la altura de la flecha */
+  right: 26px;                 /* ajústalo si quieres */
+  width: 26px;
+  height: 14px;
+  background: #fff;
   clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  pointer-events: none;        /* no captura clics */
 }
-.mt-notifications__header{ padding:16px 8px 8px; }
-.mt-notifications__body{ padding:0 8px 8px; }
+
+.mt-notifications__header {
+  padding: 16px 8px 8px;
+}
+
+/* Body: ocupa 100% del ancho visual + scroll fino */
+.mt-notifications__body{
+  /* ocupa ancho completo visual que ya tienes */
+  padding: 0 0 8px;
+
+  /* scroll interno */
+  max-height: calc(70vh - 30px);
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* pinta su propio fondo y bordes de abajo, así el redondeo se ve */
+  background: #fff;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background-clip: padding-box;    /* evita que el scroll tape el redondeo */
+}
+
+/* Firefox: thumb claro sobre track oscuro */
+.mt-notifications__body{
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    scrollbar-width: thin;
+}
+
+/* WebKit (Chrome/Edge/Safari) */
+
+
+
+/* Hover de cada notificación */
+.mt-notification-account{
+  transition: background-color .15s ease, border-radius .15s ease;
+}
+.mt-notification-account:hover{
+  border-radius: var(--Border-Radius-md, 8px);
+  background: var(--Colors-Gray-100, #F5F5F5);
+}
 
 /* Mobile = modal fullscreen */
 @media (max-width: 767.98px){
   .mt-account-notifications{
-    position:fixed; inset:0; width:100%; height:100%;
-    border-radius:0; box-shadow:none; padding:16px 8px; top:0; right:0;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 16px 8px;
+    top: 0; right: 0;
+    overflow: auto;              /* en mobile sí puede scrollear el panel entero */
   }
-  .mt-notifications__arrow{ display:none!important; }
-  .mt-notifications__body{ padding:0 0 8px; }
+  .mt-notifications__arrow{ display: none !important; }
+  .mt-notifications__body{
+    padding: 0 0 8px;
+    max-height: none;
+    overflow: visible;           /* el panel completo hace scroll */
+    scrollbar-color: auto;
+    scrollbar-width: auto;
+    padding-right: 0;
+  }
 }
 
 /* Paleta mínima (ajústala si usas utilidades propias) */
-.bg-success-100{ background:#CCFBF1!important; } .bg-success-600{ background:#0D9488!important; } .text-success-600{ color:#0D9488!important; }
-.bg-error-100{ background:#FFE4E6!important; }   .bg-error-600{ background:#E11D48!important; }   .text-error-600{ color:#E11D48!important; }
-.bg-warning-100{ background:#FFEDD5!important; } .bg-warning-600{ background:#EA580C!important; } .text-warning-600{ color:#EA580C!important; }
-.bg-gray-100{ background:#F5F5F5!important; } .bg-gray-200{ background:#E5E5E5!important; }
+.bg-success-100 { background: #CCFBF1 !important; }
+.bg-success-600 { background: #0D9488 !important; }
+.text-success-600 { color: #0D9488 !important; }
+.bg-error-100   { background: #FFE4E6 !important; }
+.bg-error-600   { background: #E11D48 !important; }
+.text-error-600 { color: #E11D48 !important; }
+.bg-warning-100 { background: #FFEDD5 !important; }
+.bg-warning-600 { background: #EA580C !important; }
+.text-warning-600 { color: #EA580C !important; }
+.bg-gray-100    { background: #F5F5F5 !important; }
+.bg-gray-200    { background: #E5E5E5 !important; }
+
 
 /***** End Account Notifications **/

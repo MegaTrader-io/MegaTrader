@@ -2250,6 +2250,7 @@ if (!function_exists('mt_user_fetch_by_email_sc')) {
  * NOTIFICATIONS BY USER ID (via [mega_notifications_data ...]).
  * Asume que el shortcode acepta userId, page, perpage, output="json"
  */
+// NOTIFICATIONS BY USER ID (via [mega_notifications_data ...]) + sort desc by time
 if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
   function mt_notifications_fetch_by_userid_sc(string $userId, int $page = 1, int $perPage = 10) {
     $userId = trim($userId);
@@ -2264,7 +2265,7 @@ if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
     $json = mt__json_from_shortcode($shortcode);
     if (!is_array($json)) return [];
 
-    // normalizamos fuentes: data | items | array directo
+    // normaliza fuentes: data | items | array directo
     $rows = [];
     if (isset($json['data']) && is_array($json['data'])) {
       $rows = $json['data'];
@@ -2274,36 +2275,86 @@ if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
       $rows = $json;
     }
 
+    // === sort: más recientes primero (updatedAt > createdAt) ===
+    if (!empty($rows)) {
+      usort($rows, function($a, $b) {
+        $ta = strtotime((string)($a['updatedAt'] ?? $a['createdAt'] ?? '')) ?: 0;
+        $tb = strtotime((string)($b['updatedAt'] ?? $b['createdAt'] ?? '')) ?: 0;
+        // desc
+        return $tb <=> $ta;
+      });
+      $rows = array_values($rows);
+    }
+
     return array_values(array_filter($rows, 'is_array'));
   }
 }
+
 
 /**
  * Normaliza una notificación a la forma que usamos en el template.
  * type limitado a: success | error | warning (fallback: warning)
  */
+// Reemplaza la función por esta (sin inventar campos que no existen en tu API)
 if (!function_exists('mt_notifications_normalize_row')) {
   function mt_notifications_normalize_row(array $r): array {
-    $id    = (string)($r['id'] ?? $r['code'] ?? '');
-    $type  = strtolower((string)($r['type'] ?? 'warning'));
-    if (!in_array($type, ['success','error','warning'], true)) $type = 'warning';
+    // Campos nativos del payload
+    $apiType    = isset($r['type']) ? (string)$r['type'] : '';
+    $userId     = isset($r['userId']) ? (string)$r['userId'] : '';
+    $accountKey = isset($r['accountId']) ? (string)$r['accountId'] : '';
+    $message    = isset($r['message']) ? (string)$r['message'] : '';
+    $reason     = isset($r['reason']) ? (string)$r['reason'] : '';
 
-    // intenta mapear campos comunes
-    $title = (string)($r['title'] ?? $r['heading'] ?? $r['subject'] ?? '');
-    $msg   = (string)($r['message'] ?? $r['description'] ?? $r['body'] ?? '');
-    $read  = (bool)  ($r['read'] ?? $r['isRead'] ?? false);
-    $right = (string)($r['right_label'] ?? $r['actionLabel'] ?? '');
+    // Normaliza tipo a nuestra paleta (success|error|warning)
+    $type = strtolower($apiType);
+    if (!in_array($type, ['success','error','warning'], true)) {
+      // Si quieres colorear ciertos tipos, haz el mapping aquí:
+      // ej: if ($type === 'createdfrompurchase') $type = 'success';
+      $type = 'warning';
+    }
 
+    // Default: mostrar el accountId crudo si no logramos resolver la cuenta
+    $displayId = $accountKey;
+
+    // Resolver la cuenta para obtener platform.accountId (MT-XXXX)
+    if ($accountKey !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
+      static $accCache = [];
+      if (!array_key_exists($accountKey, $accCache)) {
+        try {
+          $accCache[$accountKey] = mt_accounts_resolve_account_by_id($accountKey) ?: [];
+        } catch (\Throwable $e) {
+          $accCache[$accountKey] = [];
+        }
+      }
+      $acc = $accCache[$accountKey];
+
+      if (is_array($acc)) {
+        $plat = (isset($acc['platform']) && is_array($acc['platform'])) ? $acc['platform'] : [];
+        $platAccountId = (string)($plat['accountId'] ?? $acc['accountId'] ?? '');
+        if ($platAccountId !== '') {
+          $displayId = $platAccountId; // ← lo que pintamos en el chip
+        }
+      }
+    }
+
+    // La UI espera estas claves. 'title' NO se usa: lo dejamos vacío sin generarlo.
     return [
-      'id'          => $id,
-      'type'        => $type,
-      'title'       => $title,
-      'message'     => $msg,
-      'read'        => $read,
-      'right_label' => $right,
+      'id'          => $displayId,  // MT-XXXX si se pudo; si no, el mongo id
+      'type'        => $type,       // success|error|warning
+      'message'     => $message,    // texto de la API
+      'read'        => (bool)($r['read'] ?? false),
+      'right_label' => $reason,     // ej. número de orden
+      // meta opcional por si luego te sirve en JS (no afecta la UI actual)
+      'meta' => [
+        'userId'         => $userId,
+        'accountId_raw'  => $accountKey,
+        'accountId_disp' => $displayId,
+        'apiType'        => $apiType,
+      ],
     ];
   }
 }
+
 
 /**
  * Atajo: EMAIL → PAYLOAD de notificaciones listo para el template.

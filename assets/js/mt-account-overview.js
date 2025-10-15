@@ -2498,83 +2498,129 @@ if (document.readyState === "loading") {
 
 /* === Notifications toggle (bell) — HARDENED + LOGS === */
 
+/* === Notifications toggle (bell) — anchor to .mt-card.mt-card-dark.h-auto === */
 (function () {
-  function forEachNotifContainer(cb) {
-    document.querySelectorAll(".mt-my-profile__notifications").forEach(cb);
+  const CONTAINER_SEL = ".mt-my-profile__notifications";
+  const PANEL_SEL = ".mt-account-notifications";
+  const TOGGLE_ID = "#mt-notifications-toggle";
+  const ANCHOR_SEL = ".mt-card.mt-card-dark.h-auto"; // ancestro que define ancho
+
+  function eachContainer(cb) {
+    document.querySelectorAll(CONTAINER_SEL).forEach(cb);
+  }
+
+  function getAnchor(container) {
+    // ancla al .mt-card.mt-card-dark.h-auto más cercano
+    const anchor = container.closest(ANCHOR_SEL);
+    return anchor || container; // fallback
+  }
+
+  function layoutToAnchor(container) {
+    const panel = container.querySelector(PANEL_SEL);
+    if (!panel) return;
+
+    const anchor = getAnchor(container);
+
+    // el ancho del panel = ancho del ancestro
+    const w = anchor.clientWidth || anchor.getBoundingClientRect().width || 360;
+    panel.style.width = w + "px";
+
+    // el panel es absoluto respecto al ANCHOR (no al container)
+    // aseguramos el ancla posicionado, NO el container
+    const acs = getComputedStyle(anchor);
+    if (acs.position === "static") {
+      anchor.style.position = "relative";
+    }
+
+    // que el anchor no recorte (por la flecha)
+    if (acs.overflow !== "visible") {
+      anchor.style.overflow = "visible";
+    }
+
+    // posicionamiento: top bajo la campanita y pegado a la derecha del anchor
+    panel.style.position = "absolute";
+    panel.style.right = "0";
+    panel.style.top = "100%";
+
+    // asegurar z-index por encima de la tarjeta
+    panel.style.zIndex = "1060";
   }
 
   function openPanel(container) {
-    const toggle = container.querySelector("#mt-notifications-toggle");
-    const panel = container.querySelector(".mt-account-notifications");
-    if (!toggle || !panel) return;
+  const toggle = container.querySelector("#mt-notifications-toggle");
+  const panel  = container.querySelector(".mt-account-notifications");
+  if (!toggle || !panel) return;
 
-    // anclaje + no recorte
-    const cs = getComputedStyle(container);
-    if (cs.position === "static") container.style.position = "relative";
-    if (cs.overflow !== "visible") container.style.overflow = "visible";
-    container.style.zIndex = "1060";
+  // coords del contenedor (el card que define el ancho)
+  const host = container.closest(".mt-card") || container;
+  const rect = host.getBoundingClientRect();
 
-    // mostrar (sin depender de clases globales)
-    panel.hidden = false;
-    panel.classList.add("is-open");
-    panel.style.setProperty("display", "block", "important");
-    panel.style.setProperty("visibility", "visible", "important");
-    panel.style.setProperty("opacity", "1", "important");
+  // fijar y posicionar
+  panel.style.position = "fixed";
+  panel.style.width = rect.width + "px";
+  panel.style.left  = Math.round(rect.right - rect.width) + "px";
+  panel.style.top   = Math.round(rect.bottom + 8) + "px"; // 8px gap
 
-    toggle.setAttribute("aria-expanded", "true");
+  panel.style.zIndex = "2000";
+  panel.hidden = false;
+  panel.classList.add("is-open");
+  panel.style.setProperty("display","block","important");
+  panel.style.setProperty("visibility","visible","important");
+  panel.style.setProperty("opacity","1","important");
 
-    try {
-      panel.focus({ preventScroll: true });
-    } catch (_) {}
-    document.addEventListener("click", onDocClick, true);
-    document.addEventListener("keydown", onKey, true);
+  toggle.setAttribute("aria-expanded","true");
+  try { panel.focus({ preventScroll:true }); } catch(_) {}
 
-    console.log("[mt-notif] OPEN", {
-      panel,
-      display: getComputedStyle(panel).display,
-    });
-  }
+  document.addEventListener("click", onDocClick, true);
+  document.addEventListener("keydown", onKey, true);
+}
 
-  function closePanel(container) {
-    const toggle = container.querySelector("#mt-notifications-toggle");
-    const panel = container.querySelector(".mt-account-notifications");
-    if (!toggle || !panel) return;
+function closePanel(container) {
+  const toggle = container.querySelector("#mt-notifications-toggle");
+  const panel  = container.querySelector(".mt-account-notifications");
+  if (!toggle || !panel) return;
 
-    panel.classList.remove("is-open");
-    panel.hidden = true;
-    panel.style.removeProperty("display");
-    panel.style.removeProperty("visibility");
-    panel.style.removeProperty("opacity");
+  panel.classList.remove("is-open");
+  panel.hidden = true;
 
-    toggle.setAttribute("aria-expanded", "false");
+  // limpiar estilos inline
+  ["position","width","left","top","zIndex","display","visibility","opacity"]
+    .forEach(p => panel.style.removeProperty(p));
 
-    document.removeEventListener("click", onDocClick, true);
-    document.removeEventListener("keydown", onKey, true);
+  toggle.setAttribute("aria-expanded","false");
+  document.removeEventListener("click", onDocClick, true);
+  document.removeEventListener("keydown", onKey, true);
+}
 
-    console.log("[mt-notif] CLOSE", { panel });
-  }
 
   function onDocClick(ev) {
-    // si el click cae fuera de cualquier container + panel, se cierra el que esté abierto
-    const inPanelOrToggle =
-      ev.target.closest(".mt-my-profile__notifications") &&
-      (ev.target.closest("#mt-notifications-toggle") ||
-        ev.target.closest(".mt-account-notifications"));
-    if (!inPanelOrToggle) {
-      forEachNotifContainer(closePanel);
+    // si clic fuera de cualquier container/panel, cerrar todos
+    const inScope =
+      ev.target.closest(CONTAINER_SEL) &&
+      (ev.target.closest(TOGGLE_ID) || ev.target.closest(PANEL_SEL));
+    if (!inScope) {
+      eachContainer(closePanel);
     }
   }
 
   function onKey(ev) {
-    if (ev.key === "Escape") forEachNotifContainer(closePanel);
+    if (ev.key === "Escape") eachContainer(closePanel);
   }
 
   function initContainer(container) {
-    const toggle = container.querySelector("#mt-notifications-toggle");
-    const panel = container.querySelector(".mt-account-notifications");
+    const toggle = container.querySelector(TOGGLE_ID);
+    const panel = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
-    // Delegación: si clican en el <i>, funciona igual
+    // quitar cualquier posicionamiento previo en el container
+    container.style.position = "";
+    container.style.overflow = "";
+
+    // (re)layout por si cambia el tamaño del ancestro
+    const relayout = () => layoutToAnchor(container);
+    window.addEventListener("resize", relayout);
+    window.addEventListener("orientationchange", relayout);
+
     toggle.addEventListener(
       "click",
       function (e) {
@@ -2587,7 +2633,7 @@ if (document.readyState === "loading") {
       true
     );
 
-    // Cerrar desde el botón en mobile
+    // botón cerrar (mobile)
     panel.querySelectorAll("[data-mt-notif-close]").forEach((btn) => {
       btn.addEventListener(
         "click",
@@ -2595,19 +2641,17 @@ if (document.readyState === "loading") {
           e.preventDefault();
           e.stopPropagation();
           closePanel(container);
-          try {
-            toggle.focus({ preventScroll: true });
-          } catch (_) {}
+          try { toggle.focus({ preventScroll: true }); } catch (_) {}
         },
         { capture: true }
       );
     });
 
-    console.log("[mt-notif] READY container", container);
+    console.log("[mt-notif] READY", { container, anchor: getAnchor(container) });
   }
 
   function init() {
-    forEachNotifContainer(initContainer);
+    eachContainer(initContainer);
   }
 
   if (document.readyState !== "loading") init();
@@ -2615,20 +2659,21 @@ if (document.readyState === "loading") {
 
   // util debug
   window.mtNotif = {
-    openAll: () => forEachNotifContainer(openPanel),
-    closeAll: () => forEachNotifContainer(closePanel),
+    openAll: () => eachContainer(openPanel),
+    closeAll: () => eachContainer(closePanel),
+    relayout: () => eachContainer(layoutToAnchor),
     debug: () => {
-      const all = document.querySelectorAll(".mt-my-profile__notifications");
-      console.log("[mt-notif] containers:", all.length, all);
+      const all = document.querySelectorAll(CONTAINER_SEL);
       all.forEach((c, i) => {
-        const t = c.querySelector("#mt-notifications-toggle");
-        const p = c.querySelector(".mt-account-notifications");
+        const a = getAnchor(c);
+        const p = c.querySelector(PANEL_SEL);
         console.log(`[#${i}]`, {
-          toggle: !!t,
-          panel: !!p,
+          anchor: a,
+          anchorWidth: a ? a.clientWidth : null,
+          panel: p,
+          panelWidth: p ? getComputedStyle(p).width : null,
           hidden: p ? p.hidden : null,
-          classes: p ? p.className : null,
-          display: p ? getComputedStyle(p).display : null,
+          classes: p ? p.className : null
         });
       });
     },
