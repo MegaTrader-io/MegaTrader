@@ -356,7 +356,6 @@ if (is_user_logged_in()) {
           $selRow = $mt_account_ui['current'];
         }
 
-<<<<<<< HEAD
         // === NUEVO: decidir visibilidad de "Manage Subscription" usando subscriptionId como fuente principal
         $__selected_subscription_id = '';
         if (is_array($selRow)) {
@@ -370,13 +369,6 @@ if (is_user_logged_in()) {
         }
       }
 
-=======
-        if (is_array($selRow)) {
-          $hasSub = !empty($selRow['hasSubscription']);
-          $__can_manage_subscription = $hasSub ? true : false;
-        }
-      }
->>>>>>> 17eba48 (saving changes)
 
 
 
