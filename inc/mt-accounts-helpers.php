@@ -217,7 +217,7 @@ class MT_Accounts
               $platAccountId = (string) ($full['platform']['accountId'] ?? $full['accountId'] ?? $platAccountId);
             }
           }
-        } catch (\Throwable $e) { /* silencio */
+        } catch (\Throwable $e) {
         }
       }
       $subscriptionId = '';
@@ -2155,134 +2155,171 @@ if (!function_exists('mt_parse_open_time')) {
   }
 }
 
-// Devuelve el ID de suscripción relacionado a una orden (o '' si no hay).
-// Con LOGS detallados para depurar qué llega y qué se decide.
+// --- Dada una orden y el usuario actual, devuelve el ID de suscripción asociada (o '' si no hay)
 if (!function_exists('mt_subscription_id_for_order')) {
   function mt_subscription_id_for_order(int $order_id, int $user_id = 0): string
   {
-    // ===== DEBUG: contexto de entrada =====
-    $cur_uid   = function_exists('get_current_user_id') ? (int) get_current_user_id() : 0;
-    $cur_email = '';
-    if ($cur_uid && function_exists('wp_get_current_user')) {
-      $u = wp_get_current_user();
-      if ($u && $u->exists()) {
-        $cur_email = (string) $u->user_email;
-      }
-    }
-    error_log(sprintf('[MT][subid][IN] order_id=%d | user_param=%d | current_uid=%d | current_email=%s',
-      $order_id, $user_id, $cur_uid, $cur_email !== '' ? $cur_email : '(none)'
-    ));
-
-    if ($order_id <= 0) {
-      error_log('[MT][subid][EXIT] order_id inválido.');
+    if ($order_id <= 0)
       return '';
+
+    // Preferir validar que la orden sea del usuario si $user_id viene
+    if ($user_id > 0) {
+      $order = function_exists('wc_get_order') ? wc_get_order($order_id) : null;
+      if (!$order)
+        return '';
+      $belongs = ((int) $order->get_user_id() === (int) $user_id);
+      if (!$belongs)
+        return '';
     }
 
-    // Por si nos pasan directamente un ID de suscripción
-    if (function_exists('wcs_is_subscription') && wcs_is_subscription($order_id)) {
-      error_log('[MT][subid] order_id es una SUSCRIPCIÓN. Devolviendo tal cual: ' . $order_id);
-      return (string) $order_id;
-    }
-
-    // ===== 1) Woo Subscriptions API =====
+    // WooCommerce Subscriptions disponible
     if (function_exists('wcs_get_subscriptions_for_order')) {
-      try {
-        $subs = wcs_get_subscriptions_for_order($order_id, array('order_type' => 'any'));
-        $cnt  = is_array($subs) ? count($subs) : 0;
-        error_log(sprintf('[MT][subid] wcs_get_subscriptions_for_order -> %d resultado(s) para order_id=%d', $cnt, $order_id));
-
-        if ($cnt > 0) {
-          foreach ($subs as $idx => $sub) {
-            if (!is_object($sub) || !method_exists($sub, 'get_id')) continue;
-            $sid = (string) $sub->get_id();
-            $st  = method_exists($sub, 'get_status') ? (string) $sub->get_status() : '(no-status)';
-            error_log(sprintf('[MT][subid]  - sub[%d] id=%s status=%s', $idx, $sid, $st));
-          }
-          // Elegir "viva" primero
-          foreach ($subs as $sub) {
-            if (!is_object($sub) || !method_exists($sub, 'get_id')) continue;
+      $subs = wcs_get_subscriptions_for_order($order_id, array('order_type' => array('parent', 'renewal', 'switch')));
+      if (is_array($subs) && !empty($subs)) {
+        // Elige primero activo si existe, si no, el primero
+        $pick = null;
+        foreach ($subs as $sub) {
+          if (is_object($sub) && method_exists($sub, 'get_id')) {
             $status = method_exists($sub, 'get_status') ? (string) $sub->get_status() : '';
-            if (in_array($status, array('active','on-hold','pending-cancel'), true)) {
-              $pick = (string) $sub->get_id();
-              error_log('[MT][subid][OK] elegida por estado vivo: ' . $pick);
-              return $pick;
+            if (in_array($status, array('active', 'on-hold', 'pending-cancel'), true)) {
+              $pick = $sub;
+              break;
             }
-          }
-          // Si no hay vivas, devolver la primera
-          $first = reset($subs);
-          if (is_object($first) && method_exists($first, 'get_id')) {
-            $pick = (string) $first->get_id();
-            error_log('[MT][subid][OK] elegida primera (sin vivas): ' . $pick);
-            return $pick;
+            if ($pick === null)
+              $pick = $sub;
           }
         }
-      } catch (\Throwable $e) {
-        error_log('[MT][subid][ERR] wcs_get_subscriptions_for_order: ' . $e->getMessage());
-      }
-    } else {
-      error_log('[MT][subid] Woo Subscriptions no disponible (wcs_get_subscriptions_for_order no existe).');
-    }
-
-    // ===== 2) Fallbacks por metadatos comunes =====
-    $meta_keys = array(
-      '_wcs_related_subscription_ids', // array de IDs
-      '_wcs_subscription_ids',         // variantes de plugins/extensiones
-      '_subscription_id',              // único ID
-      '_subscription_renewal',         // renovación -> sub original
-    );
-
-    foreach ($meta_keys as $mk) {
-      $val = get_post_meta($order_id, $mk, true);
-      if (!empty($val)) {
-        if (is_array($val)) {
-          error_log(sprintf('[MT][subid] meta %s encontrado (array) count=%d', $mk, count($val)));
-          foreach ($val as $maybe) {
-            if (is_scalar($maybe) && (string)$maybe !== '' && ctype_digit((string)$maybe)) {
-              error_log(sprintf('[MT][subid][OK] meta %s -> %s', $mk, (string)$maybe));
-              return (string) $maybe;
-            }
-          }
-        } else {
-          error_log(sprintf('[MT][subid] meta %s encontrado (scalar) value=%s', $mk, is_scalar($val) ? (string)$val : '(non-scalar)'));
-          if (is_scalar($val) && (string)$val !== '' && ctype_digit((string)$val)) {
-            error_log(sprintf('[MT][subid][OK] meta %s -> %s', $mk, (string)$val));
-            return (string) $val;
-          }
-        }
-      } else {
-        error_log(sprintf('[MT][subid] meta %s vacío/no existe', $mk));
+        if ($pick)
+          return (string) $pick->get_id();
       }
     }
 
-    // ===== 3) Barrido final de metas que contengan "subscr" en la clave =====
-    $all_meta = get_post_meta($order_id);
-    $scanned  = is_array($all_meta) ? count($all_meta) : 0;
-    error_log(sprintf('[MT][subid] Escaneo metas genérico: total_metas=%d', $scanned));
+    // Fallback: intenta por meta (algunos plugins guardan _subscription_renewal o similares)
+    $maybe = get_post_meta($order_id, '_subscription_id', true);
+    if (is_scalar($maybe) && (string) $maybe !== '')
+      return (string) $maybe;
 
-    if (is_array($all_meta)) {
-      foreach ($all_meta as $k => $vals) {
-        if (stripos($k, 'subscr') === false) continue;
-        $vals_arr = (array) $vals;
-        error_log(sprintf('[MT][subid]  meta match key=%s (count=%d)', $k, count($vals_arr)));
-        foreach ($vals_arr as $v) {
-          if (is_array($v)) {
-            foreach ($v as $vv) {
-              if (is_scalar($vv) && ctype_digit((string)$vv)) {
-                error_log(sprintf('[MT][subid][OK] meta-scan %s -> %s', $k, (string)$vv));
-                return (string) $vv;
-              }
-            }
-          } elseif (is_scalar($v) && ctype_digit((string)$v)) {
-            error_log(sprintf('[MT][subid][OK] meta-scan %s -> %s', $k, (string)$v));
-            return (string) $v;
-          }
-        }
-      }
-    }
-
-    error_log('[MT][subid][EXIT] No se encontró suscripción para order_id=' . $order_id);
     return '';
   }
 }
+/* ============================================================
+ * NOTIFICATIONS (email -> userId -> notifications via shortcodes)
+ * ============================================================ */
 
+/**
+ * Lee JSON “limpio” desde un do_shortcode (maneja BOM, entities, etc.)
+ */
+if (!function_exists('mt__json_from_shortcode')) {
+  function mt__json_from_shortcode(string $sc) {
+    $raw = do_shortcode($sc);
+    $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF") $raw = substr($raw, 3);
+    if ($raw !== '') $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $json = json_decode($raw, true);
+    if (!is_array($json)) $json = json_decode(trim(wp_strip_all_tags($raw)), true);
+    return is_array($json) ? $json : null;
+  }
+}
 
+/**
+ * USER BY EMAIL (via [mega_user_update ...]) → devuelve array con el JSON (o null).
+ * Nota: el shortcode requiere "json" => pasamos '{}' por defecto.
+ */
+if (!function_exists('mt_user_fetch_by_email_sc')) {
+  function mt_user_fetch_by_email_sc(?string $email) {
+    if (!function_exists('mt_sanitize_email')) return null;
+    $e = mt_sanitize_email($email);
+    if (empty($e['ok'])) return null;
+
+    $shortcode = sprintf(
+      '[mega_user_update email="%s" json="%s" output="json"]',
+      esc_attr($e['api']), // email preparado para API (tu helper)
+      esc_attr('{}')
+    );
+    $data = mt__json_from_shortcode($shortcode);
+    if (!is_array($data)) return null;
+
+    // algunas instalaciones devuelven {data:{...}}
+    if (isset($data['data']) && is_array($data['data'])) $data = $data['data'];
+
+    return $data;
+  }
+}
+
+/**
+ * NOTIFICATIONS BY USER ID (via [mega_notifications_data ...]).
+ * Asume que el shortcode acepta userId, page, perpage, output="json"
+ */
+if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
+  function mt_notifications_fetch_by_userid_sc(string $userId, int $page = 1, int $perPage = 10) {
+    $userId = trim($userId);
+    if ($userId === '') return [];
+
+    $shortcode = sprintf(
+      '[mega_notifications_data userId="%s" page="%d" perpage="%d" output="json"]',
+      esc_attr($userId),
+      (int)$page,
+      (int)$perPage
+    );
+    $json = mt__json_from_shortcode($shortcode);
+    if (!is_array($json)) return [];
+
+    // normalizamos fuentes: data | items | array directo
+    $rows = [];
+    if (isset($json['data']) && is_array($json['data'])) {
+      $rows = $json['data'];
+    } elseif (isset($json['items']) && is_array($json['items'])) {
+      $rows = $json['items'];
+    } elseif (isset($json[0]) && is_array($json[0])) {
+      $rows = $json;
+    }
+
+    return array_values(array_filter($rows, 'is_array'));
+  }
+}
+
+/**
+ * Normaliza una notificación a la forma que usamos en el template.
+ * type limitado a: success | error | warning (fallback: warning)
+ */
+if (!function_exists('mt_notifications_normalize_row')) {
+  function mt_notifications_normalize_row(array $r): array {
+    $id    = (string)($r['id'] ?? $r['code'] ?? '');
+    $type  = strtolower((string)($r['type'] ?? 'warning'));
+    if (!in_array($type, ['success','error','warning'], true)) $type = 'warning';
+
+    // intenta mapear campos comunes
+    $title = (string)($r['title'] ?? $r['heading'] ?? $r['subject'] ?? '');
+    $msg   = (string)($r['message'] ?? $r['description'] ?? $r['body'] ?? '');
+    $read  = (bool)  ($r['read'] ?? $r['isRead'] ?? false);
+    $right = (string)($r['right_label'] ?? $r['actionLabel'] ?? '');
+
+    return [
+      'id'          => $id,
+      'type'        => $type,
+      'title'       => $title,
+      'message'     => $msg,
+      'read'        => $read,
+      'right_label' => $right,
+    ];
+  }
+}
+
+/**
+ * Atajo: EMAIL → PAYLOAD de notificaciones listo para el template.
+ * 1) saca user.id con mega_user_update
+ * 2) consulta mega_notifications_data con userId
+ * 3) normaliza la lista
+ */
+if (!function_exists('mt_notifications_payload_for_email')) {
+  function mt_notifications_payload_for_email(?string $email, int $page = 1, int $perPage = 10): array {
+    $user = mt_user_fetch_by_email_sc($email);
+    $uid  = is_array($user) ? (string)($user['id'] ?? '') : '';
+    if ($uid === '') return [];
+
+    $rows = mt_notifications_fetch_by_userid_sc($uid, $page, $perPage);
+    if (empty($rows)) return [];
+
+    return array_map('mt_notifications_normalize_row', $rows);
+  }
+}
