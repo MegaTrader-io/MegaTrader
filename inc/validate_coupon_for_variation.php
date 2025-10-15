@@ -67,6 +67,17 @@ if (!function_exists('mt_price_plain')) {
 if (!function_exists('mt_get_best_coupon_for_variation')) {
     function mt_get_best_coupon_for_variation($product_id): array
     {
+        if (!class_exists('WooCommerce')) {
+          return [
+            'valid' => false,
+            'message' => 'WooCommerce must be active to use this feature.',
+          ];
+        }
+
+        if (is_null(WC()->cart)) {
+          wc_load_cart();
+        }
+
         $best_coupon = null;
         $best_discount = 0;
         $best_result = null;
@@ -215,4 +226,23 @@ if (!function_exists('mt_most_popular_products')) {
 
         return $best_products;
     }
+}
+
+add_action('rest_api_init', function () {
+  register_rest_route('custom/v1', '/best-coupon', array(
+    'methods' => 'GET',
+    'callback' => 'mt_get_products_with_categories',
+    'permission_callback' => '__return_true'
+  ));
+});
+
+if (!function_exists('mt_get_products_with_categories')) {
+  function mt_get_products_with_categories(WP_REST_Request $request)
+  {
+    $product_id = (int)$request->get_param('id');
+
+    $result = mt_get_best_coupon_for_variation($product_id);
+
+    wp_send_json_success($result);
+  }
 }

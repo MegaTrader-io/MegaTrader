@@ -3,6 +3,7 @@
 if (!function_exists('megatrader_landing_page_scripts')) {
     function megatrader_landing_page_scripts(): void
     {
+        error_log('[LV] before load assets megatrader_landing_page_scripts');
         $css_path = get_template_directory() . '/assets/css/';
         $js_path = get_template_directory() . '/assets/js/';
         $css_uri = get_template_directory_uri() . '/assets/css/';
@@ -31,31 +32,17 @@ if (!function_exists('megatrader_landing_page_scripts')) {
         wp_enqueue_script('tw-modal', $js_uri . 'tw-modal.js', [], $tw_modal_js_version, true);
         wp_enqueue_script('megatrader-main', $js_uri . 'landing-page.js', ['mt-tabs'], $landing_js_version, true);
 
+        error_log('[LV] after load assets megatrader_landing_page_scripts');
+
+        error_log('[LV] before load get_products_with_attributes');
         $products_data = get_products_with_attributes();
+        error_log('[LV] after load get_products_with_attributes');
 
+        error_log('[LV] before load products_with_best_coupons');
         $products_with_best_coupons = [];
-        foreach ($products_data['products'] as $current_product) {
-            if ($current_product['slug'] === 'reset-fee' || $current_product['slug'] === 'activation-fee') {
-                continue;
-            }
+        error_log('[LV] after load products_with_best_coupons');
 
-            $model = wc_get_product($current_product['id']);
-            if ($model && $model->is_type('variable')) {
-                $variations = $model->get_children();
-
-                foreach ($variations as $variation_id) {
-                    $variation = wc_get_product($variation_id);
-                    $products_with_best_coupons[] = [
-                            'id' => $variation_id,
-                            'price' => $variation->get_price(),
-                            'slug' => $current_product['slug'],
-                            'coupon' => mt_get_best_coupon_for_variation($variation_id),
-                            'attributes' => $variation->get_attributes(),
-                    ];
-                }
-            }
-        }
-
+        error_log('[LV] before load megatrader-main');
         wp_localize_script('megatrader-main', 'MG_GLOBAL', [
                 'adminAjaxApi' => admin_url('admin-ajax.php'),
                 'baseApi' => esc_url_raw(rest_url('megatrader/v1')),
@@ -66,6 +53,7 @@ if (!function_exists('megatrader_landing_page_scripts')) {
                 'productMetaLabel' => Label::PRODUCT_META,
                 'bestProducts' => mt_most_popular_products()
         ]);
+        error_log('[LV] after load megatrader-main');
     }
 }
 

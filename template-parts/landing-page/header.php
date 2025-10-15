@@ -7,3 +7,5 @@
         section: 'landing-page',
         classes_navbar: 'mt-navbar---landing-page'
 ); ?>
+
+<?php error_log('[LV] header.php'); ?>

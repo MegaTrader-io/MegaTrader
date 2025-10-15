@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             form.addEventListener("product:selected", (e) => {
                 // try {
-                fn(e.detail);
+                void fn(e.detail);
                 // } catch (err) {
                 //     console.error("unable to listen product:selected:", err);
                 // }
@@ -485,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     void loadMarkerCarousel();
     void loadChooseYourAccountSize(
-        (params) => {
+        async (params) => {
             const metaInfoElement = document.querySelector('.metaInfo');
             metaInfoElement.innerHTML = '';
 
@@ -557,16 +557,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 metaInfoElement.appendChild(row)
             });
 
-            const productsWithBestCoupons = MG_GLOBAL.productsWithBestCoupons || [];
             const priceCard = document.querySelector(`.mt-pricing-card`);
             const couponBeforePrice = document.querySelector(`.coupon-before-price`);
 
-            const product = productsWithBestCoupons.find(product => Number(product.id) === Number(productionSelected.id))
+            const responseCoupons = await fetch(`wp-json/custom/v1/best-coupon?id=${productionSelected.id}`);
+            const dataCoupons = await responseCoupons.json();
+            const {data: coupon} = dataCoupons
+            console.info('dataCoupons', coupon);
+
             let price = Number(productionSelected['price-monthly'].replace('$', ''));
             const totalPlan = document.querySelector(`.total-plan`);
             const frequencyPanel = document.querySelector(`.frequency-plan`);
 
-            const coupon = product?.coupon;
 
             const planTypeInputRadio = document.querySelector(`[name="account-type"][value="${values['account-type']}"]`);
             if (planTypeInputRadio) {
