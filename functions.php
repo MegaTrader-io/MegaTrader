@@ -2350,3 +2350,43 @@ add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resour
   $payload['meta_data'] = $clean_meta;
   return $payload;
 }, 10, 4);
+
+/* === Address Autocomplete SOLO en Checkout y Profile === */
+add_action('wp_enqueue_scripts', function () {
+  // Ajusta estos "handles" si tus scripts/estilos tienen otros nombres
+  $handles_js  = ['mt-address', 'address-autocomplete', 'google-places', 'google-maps'];
+  $handles_css = ['mt-address-css', 'address-autocomplete-css'];
+
+  $is_profile = function_exists('is_wc_endpoint_url') && is_account_page() && is_wc_endpoint_url('profile');
+  $allowed    = ( function_exists('is_checkout') && is_checkout() ) || $is_profile;
+
+  // Helper para (des)registrar de forma segura
+  $safe_deq = function($handle){
+    if ( wp_script_is($handle, 'enqueued') )   wp_dequeue_script($handle);
+    if ( wp_script_is($handle, 'registered') ) wp_deregister_script($handle);
+    if ( wp_style_is($handle, 'enqueued') )    wp_dequeue_style($handle);
+    if ( wp_style_is($handle, 'registered') )  wp_deregister_style($handle);
+  };
+
+  if ( $allowed ) {
+    // Encola aquí SOLO cuando hace falta (si tu theme/plugin no lo hace ya)
+    // ej: wp_enqueue_script('mt-address', get_stylesheet_directory_uri().'/js/address-autocomplete.js', ['jquery'], '1.0', true);
+    //     wp_enqueue_style('mt-address-css', get_stylesheet_directory_uri().'/css/address-autocomplete.css', [], '1.0');
+  } else {
+    // En cualquier otra página, lo quitamos para evitar 404 y sobrecarga
+    foreach ($handles_js as $h)  $safe_deq($h);
+    foreach ($handles_css as $h) $safe_deq($h);
+  }
+}, 100); // prioridad alta para correr después de plugins/tema
+
+
+/* === Quitar cart fragments en páginas no-ecommerce === */
+add_action('wp_enqueue_scripts', function () {
+  if ( ! is_cart() && ! is_checkout() && ! is_account_page() ) {
+    wp_dequeue_script('wc-cart-fragments');
+    wp_deregister_script('wc-cart-fragments');
+  }
+}, 20);
+
+
+
