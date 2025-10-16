@@ -163,7 +163,7 @@ $tabs = array_map(function ($item) {
                     </div>
                 </div>
                 <?= render_template_meta_info(classes: 'tw-hidden template-metaInfo') ?>
-                <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-lg">
+                <div class="tw-w-full lg:tw-w-[360px] tw-bg-mgt-dark tw-rounded-2xl">
                     <div class="tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8 tw-px-4 tw-pt-4 tw-pb-2">
                         Plan Summary
                     </div>
