@@ -1027,7 +1027,6 @@ html, body {
 .mgt-theme .slider-content__info{
   position: relative;
   top: 44px;
-  margin-bottom: 100px;
   margin-left: 1rem;
   margin-right: 1rem;
 }
@@ -1089,7 +1088,7 @@ html, body {
 
 @media (min-width: 1280px){
   .mgt-theme .slider-content__image-web{
-    max-height: calc(100dvh - 16px - 60px - 86px - 44px - 100px);
+    max-height: calc(100dvh - 60px - 85px - 32px - 128px - 32px);
   }
 }
 
