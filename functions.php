@@ -2355,7 +2355,7 @@ add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resour
 add_action('wp_enqueue_scripts', function () {
   // Ajusta estos "handles" si tus scripts/estilos tienen otros nombres
   $handles_js  = ['mt-address', 'address-autocomplete', 'google-places', 'google-maps'];
-  $handles_css = ['mt-address-css', 'address-autocomplete-css'];
+  $handles_css = ['mt-address-css', 'address-autocomplete-css', 'shipping-workshop-block'];
 
   $is_profile = function_exists('is_wc_endpoint_url') && is_account_page() && is_wc_endpoint_url('profile');
   $allowed    = ( function_exists('is_checkout') && is_checkout() ) || $is_profile;
