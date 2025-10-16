@@ -2295,73 +2295,77 @@ if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
  * Normaliza una notificación a la forma que usamos en el template.
  * type limitado a: success | error | warning (fallback: warning)
  */
-// Reemplaza la función por esta (sin inventar campos que no existen en tu API)
+// Normaliza una notificación para la UI usando Label::notificationSpec
 if (!function_exists('mt_notifications_normalize_row')) {
   function mt_notifications_normalize_row(array $r): array {
     // Campos nativos del payload
     $apiType    = isset($r['type']) ? (string)$r['type'] : '';
     $userId     = isset($r['userId']) ? (string)$r['userId'] : '';
     $accountKey = isset($r['accountId']) ? (string)$r['accountId'] : '';
-    $message    = isset($r['message']) ? (string)$r['message'] : '';
+    $apiMsg     = isset($r['message']) ? (string)$r['message'] : '';
     $reason     = isset($r['reason']) ? (string)$r['reason'] : '';
+    $createdAt  = isset($r['createdAt']) ? (string)$r['createdAt'] : '';
+    $updatedAt  = isset($r['updatedAt']) ? (string)$r['updatedAt'] : '';
 
-    // Normaliza tipo a nuestra paleta (success|error|warning)
-    $type = strtolower($apiType);
-    if (!in_array($type, ['success','error','warning'], true)) {
-      // Si quieres colorear ciertos tipos, haz el mapping aquí:
-      // ej: if ($type === 'createdfrompurchase') $type = 'success';
-      $type = 'warning';
-    }
-
-    // Default: mostrar el accountId crudo si no logramos resolver la cuenta
+    // Resolve display id (MT-XXXXX) desde la cuenta
     $displayId = $accountKey;
-
-    // Resolver la cuenta para obtener platform.accountId (MT-XXXX)
     if ($accountKey !== '' && function_exists('mt_accounts_resolve_account_by_id')) {
       static $accCache = [];
       if (!array_key_exists($accountKey, $accCache)) {
-        try {
-          $accCache[$accountKey] = mt_accounts_resolve_account_by_id($accountKey) ?: [];
-        } catch (\Throwable $e) {
-          $accCache[$accountKey] = [];
-        }
+        try { $accCache[$accountKey] = mt_accounts_resolve_account_by_id($accountKey) ?: []; }
+        catch (\Throwable $e) { $accCache[$accountKey] = []; }
       }
       $acc = $accCache[$accountKey];
-
       if (is_array($acc)) {
         $plat = (isset($acc['platform']) && is_array($acc['platform'])) ? $acc['platform'] : [];
         $platAccountId = (string)($plat['accountId'] ?? $acc['accountId'] ?? '');
-        if ($platAccountId !== '') {
-          $displayId = $platAccountId; // ← lo que pintamos en el chip
-        }
+        if ($platAccountId !== '') $displayId = $platAccountId;
       }
     }
 
-    // La UI espera estas claves. 'title' NO se usa: lo dejamos vacío sin generarlo.
+    // Especificación UI desde tu mapa
+    $spec = (class_exists('Label') && method_exists('Label','notificationSpec'))
+      ? Label::notificationSpec($apiType)
+      : [
+          'severity' => 'warning',
+          'title'    => '',
+          'message'  => '',
+          'icon'     => 'mt-icon_info',
+          'classes'  => [
+            'bubble_bg' => 'bg-warning-100',
+            'dot'       => 'bg-warning-600',
+            'text'      => 'text-warning-600',
+          ],
+        ];
+
+    // Mensaje: prioriza el de la API; si viene vacío, usa el del mapa
+    $title   = (string)($spec['title'] ?? '');
+    $message = $apiMsg !== '' ? $apiMsg : (string)($spec['message'] ?? '');
+
     return [
-      'id'          => $displayId,  // MT-XXXX si se pudo; si no, el mongo id
-      'type'        => $type,       // success|error|warning
-      'message'     => $message,    // texto de la API
+      'id'          => $displayId,
+      'type'        => (string)($spec['severity'] ?? 'warning'), // success | error | warning
+      'title'       => $title,                                    // del mapa (puede ser vacío)
+      'message'     => $message,                                  // API o fallback del mapa
       'read'        => (bool)($r['read'] ?? false),
-      'right_label' => $reason,     // ej. número de orden
-      // meta opcional por si luego te sirve en JS (no afecta la UI actual)
+      'right_label' => $reason,                                   // ej. # de orden
+      'ui' => [
+        'icon'    => (string)($spec['icon'] ?? 'mt-icon_info'),
+        'classes' => (array) ($spec['classes'] ?? []),            // bubble_bg, dot, text
+      ],
       'meta' => [
-        'userId'         => $userId,
-        'accountId_raw'  => $accountKey,
-        'accountId_disp' => $displayId,
-        'apiType'        => $apiType,
+        'apiType'   => $apiType,
+        'userId'    => $userId,
+        'accountId' => $accountKey,
+        'createdAt' => $createdAt,
+        'updatedAt' => $updatedAt,
       ],
     ];
   }
 }
 
 
-/**
- * Atajo: EMAIL → PAYLOAD de notificaciones listo para el template.
- * 1) saca user.id con mega_user_update
- * 2) consulta mega_notifications_data con userId
- * 3) normaliza la lista
- */
+
 if (!function_exists('mt_notifications_payload_for_email')) {
   function mt_notifications_payload_for_email(?string $email, int $page = 1, int $perPage = 10): array {
     $user = mt_user_fetch_by_email_sc($email);
