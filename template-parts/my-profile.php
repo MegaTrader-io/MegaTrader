@@ -65,7 +65,7 @@ $account_overview_url = profile_url(user_email: $user_profile['user_email']);
         <div class="mt-my-profile__notifications">
             <a id="mt-notifications-toggle" class="mt-sidebar__menu__link" href="javascript:void(0)" aria-haspopup="dialog"
                 aria-expanded="false">
-                <i class="mt-icon mt-icon-sm mt-icon_notifications"></i>
+                <i class="mt-icon mt-icon_notifications"></i>
             </a>
 
             <?php

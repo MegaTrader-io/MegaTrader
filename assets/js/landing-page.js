@@ -484,6 +484,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     void loadMarkerCarousel();
+
+    const couponCache = {};
     void loadChooseYourAccountSize(
         async (params) => {
             const metaInfoElement = document.querySelector('.metaInfo');
@@ -560,17 +562,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const priceCard = document.querySelector(`.mt-pricing-card`);
             const couponBeforePrice = document.querySelector(`.coupon-before-price`);
 
-            const responseCoupons = await fetch(`wp-json/custom/v1/best-coupon?id=${productionSelected.id}`);
-            const dataCoupons = await responseCoupons.json();
-            const {data: coupon} = dataCoupons
-            console.info('dataCoupons', coupon);
-
             let price = Number(productionSelected['price-monthly'].replace('$', ''));
             const totalPlan = document.querySelector(`.total-plan`);
             const frequencyPanel = document.querySelector(`.frequency-plan`);
-
-
             const planTypeInputRadio = document.querySelector(`[name="account-type"][value="${values['account-type']}"]`);
+
+            if (frequencyPanel) {
+                frequencyPanel.innerText = `${values['account-type'] !== 'funded-plan' ? 'per month' : 'one time fee'}`;
+            }
+
             if (planTypeInputRadio) {
                 const img = planTypeInputRadio.nextElementSibling.querySelector('.mt-card__title__icon');
                 if (img) {
@@ -586,8 +586,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-
             document.querySelector('.plan-summary__name').innerText = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
+
+            const couponURL = `wp-json/custom/v1/best-coupon?id=${productionSelected.id}`;
+            if (!couponCache[couponURL]) {
+                const responseCoupons = await fetch(couponURL);
+                couponCache[couponURL] = await responseCoupons.json();
+            }
+
+            const {data: coupon} = couponCache[couponURL]
+
+            console.info('dataCoupons', coupon);
 
             if (coupon && coupon.valid) {
                 priceCard.querySelector('.mt-pricing-card__header').style.display = 'flex';
@@ -617,10 +626,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 totalPlan.innerText = currencyFormat(price);
-            }
-
-            if (frequencyPanel) {
-                frequencyPanel.innerText = `${values['account-type'] !== 'funded-plan' ? 'per month' : 'one time fee'}`;
             }
         }
     );

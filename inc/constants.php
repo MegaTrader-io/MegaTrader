@@ -230,15 +230,113 @@ class Label
         'passed_modal_body_title' => 'Congrats!',
         'passed_modal_body_description' => 'Your account has passed the evaluation',
         'passed_modal_button' => 'Activate Account',
-        'passed_modal_title' => 'Account Passed',        
+        'passed_modal_title' => 'Account Passed',
         'passed_modal_note_status_passed_w_activation_id' => 'Activation will open once your account is ready.',
-        'passed_modal_note_status_passed_no_activation_id' => 'Your account activates automatically once it’s ready.',        
+        'passed_modal_note_status_passed_no_activation_id' => 'Your account activates automatically once it’s ready.',
         'passed_modal_body_subtitle_default' => "Pay the activation fee below to activate your funded account.",
         'passed_modal_body_subtitle_w_activation_id' => "Your account is being prepared. You’ll be able to activate it soon.",
         'passed_modal_body_subtitle_no_activation_id' => "Your account is being prepared and will unlock automatically.",
         'account_chart_overlay_no_data' => 'There is not enough data to generate the graph.',
         'account_daily_journal_overlay_no_data' => 'There is not enough data to display this tablet.',
 
+    ];
+
+    public const NOTIFICATION_SEVERITY_CLASSES = [
+        'success' => [
+            'bubble_bg' => 'bg-success-100',
+            'dot' => 'bg-success-600',
+            'text' => 'text-success-600',
+        ],
+        'error' => [
+            'bubble_bg' => 'bg-error-100',
+            'dot' => 'bg-error-600',
+            'text' => 'text-error-600',
+        ],
+        'warning' => [
+            'bubble_bg' => 'bg-warning-100',
+            'dot' => 'bg-warning-600',
+            'text' => 'text-warning-600',
+        ],
+    ];
+
+
+    public const NOTIFICATION_MAP = [
+
+        'CreatedFromPurchase' => [
+            'severity' => 'success',
+            'title' => 'Account Created',
+            'message' => 'Your new trading account has been created successfully. Welcome aboard!',
+            'icon' => 'mt-icon_checkmark-solid',
+        ],
+        'ActivationBySystem' => [
+            'severity' => 'success',
+            'title' => 'Account Activated',
+            'message' => 'Your funded account is now active and ready for trading.',
+            'icon' => 'mt-icon_checkmark-solid',
+        ],
+        'PassedAssessment' => [
+            'severity' => 'success',
+            'title' => 'Congratulations! You’ve Passed!',
+            'message' => 'Your dedication and skills have led to success. Welcome to the next level!',
+            'icon' => 'mt-icon_checkmark-solid',
+        ],
+        'ProfitTargetReached' => [
+            'severity' => 'success',
+            'title' => 'Profit Target Reached',
+            'message' => 'You’ve hit your profit target! Great work — check your dashboard for next steps.',
+            'icon' => 'mt-icon_checkmark-solid',
+        ],
+        'UpgradeThresholdReached' => [
+            'severity' => 'success',
+            'title' => 'Upgrade Threshold Reached',
+            'message' => 'Your account has qualified for an upgrade — review the new account details.',
+            'icon' => 'mt-icon_checkmark-solid',
+        ],
+        'CreatedFromUpgrade' => [
+            'severity' => 'success',
+            'title' => 'Account Upgraded',
+            'message' => 'A new upgraded account has been created for you automatically.',
+            'icon' => 'mt-icon_checkmark-solid',
+        ],
+        'ManuallyUpgraded' => [
+            'severity' => 'success',
+            'title' => 'Manual Upgrade Completed',
+            'message' => 'Your account has been manually upgraded by our team.',
+            'icon' => 'mt-icon_checkmark-solid',
+        ],
+
+        'MaxDrawdownBreached' => [
+            'severity' => 'error',
+            'title' => 'Account Breach Alert',
+            'message' => 'Your account exceeded its maximum drawdown limit and has been marked as breached.',
+            'icon' => 'mt-icon_cancel',
+        ],
+        'MaxDailyDrawdownBreached' => [
+            'severity' => 'error',
+            'title' => 'Daily Loss Limit Breach',
+            'message' => 'Your account exceeded its daily loss limit and has been marked as breached.',
+            'icon' => 'mt-icon_cancel',
+        ],
+        'EvaluationFailed' => [
+            'severity' => 'error',
+            'title' => 'Evaluation Failed',
+            'message' => 'Unfortunately, you did not meet the evaluation criteria. Try again when ready.',
+            'icon' => 'mt-icon_cancel',
+        ],
+
+
+        'UpgradeInProgress' => [
+            'severity' => 'warning',
+            'title' => 'Upgrade In Progress',
+            'message' => 'We’re processing your account upgrade. You’ll receive confirmation shortly.',
+            'icon' => 'mt-icon_info',
+        ],
+        'SystemAutoAction' => [
+            'severity' => 'warning',
+            'title' => 'System Update',
+            'message' => 'A scheduled system process has updated your account automatically.',
+            'icon' => 'mt-icon_info',
+        ],
     ];
 
 }
