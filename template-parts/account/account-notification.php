@@ -42,10 +42,10 @@ if (empty($notifications)) {
   <div class="mt-notifications__arrow d-none d-md-block" aria-hidden="true"></div>
 
   <!-- Header mobile -->
-  <div class="mt-notifications__header d-flex align-items-center gap-2 d-md-none">
+  <div class="mt-notifications__header d-flex align-items-center gap-2 d-md-none mb-3">
     <span class="m-0 text-2xl text-uppercase text-131210 fw-light">Notifications</span>
     <button type="button" class="btn btn-link ms-auto p-0" data-mt-notif-close aria-label="Close">
-      <i class="mt-icon mt-icon_close"></i>
+      <i class="mt-icon mt-icon_close_solid mt-icon-dark"></i>
     </button>
   </div>
 

@@ -4719,7 +4719,7 @@ textarea.mtfb-note {
 }
 
 .mt-notifications__header {
-  padding: 16px 8px 8px;
+  padding: 0px 8px;
 }
 
 /* Body: ocupa 100% del ancho visual + scroll fino */
@@ -4738,15 +4738,6 @@ textarea.mtfb-note {
   border-bottom-right-radius: 8px;
   background-clip: padding-box;    /* evita que el scroll tape el redondeo */
 }
-
-/* Firefox: thumb claro sobre track oscuro */
-.mt-notifications__body{
-  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
-    scrollbar-width: thin;
-}
-
-/* WebKit (Chrome/Edge/Safari) */
-
 
 
 /* Hover de cada notificación */
