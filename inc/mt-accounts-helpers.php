@@ -2252,7 +2252,7 @@ if (!function_exists('mt_user_fetch_by_email_sc')) {
  */
 // NOTIFICATIONS BY USER ID (via [mega_notifications_data ...]) + sort desc by time
 if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
-  function mt_notifications_fetch_by_userid_sc(string $userId, int $page = 1, int $perPage = 10) {
+  function mt_notifications_fetch_by_userid_sc(string $userId, int $page = 1, int $perPage = 100) {
     $userId = trim($userId);
     if ($userId === '') return [];
 
@@ -2357,7 +2357,7 @@ if (!function_exists('mt_notifications_normalize_row')) {
 
 
 if (!function_exists('mt_notifications_payload_for_email')) {
-  function mt_notifications_payload_for_email(?string $email, int $page = 1, int $perPage = 10): array {
+  function mt_notifications_payload_for_email(?string $email, int $page = 1, int $perPage = 100): array {
     $user = mt_user_fetch_by_email_sc($email);
     $uid  = is_array($user) ? (string)($user['id'] ?? '') : '';
     if ($uid === '') return [];
