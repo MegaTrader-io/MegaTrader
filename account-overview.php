@@ -335,10 +335,9 @@ if (is_user_logged_in()) {
       );
 
       // === Flag: ¿mostrar "Manage Subscription"? ===
-      $__can_manage_subscription = true; // default visible
+      $__can_manage_subscription = true;
 
       if (!empty($mt_account_ui['accounts']) || !empty($mt_account_ui['current'])) {
-        // Buscar la fila seleccionada en el payload de prepare_ui
         $selRow = null;
 
         if (!empty($mt_selected_id) && !empty($mt_account_ui['accounts'])) {
@@ -356,15 +355,11 @@ if (is_user_logged_in()) {
           $selRow = $mt_account_ui['current'];
         }
 
-        // === NUEVO: decidir visibilidad de "Manage Subscription" usando subscriptionId como fuente principal
         $__selected_subscription_id = '';
         if (is_array($selRow)) {
-          // subscriptionId directo de la fila seleccionada
           $__selected_subscription_id = (string) ($selRow['subscriptionId'] ?? '');
-          // compat: hasSubscription legacy (por si aún llega desde la API)
           $hasSubLegacy = !empty($selRow['hasSubscription']);
 
-          // regla: si hay subscriptionId => true; si no, cae a hasSubscription legacy
           $__can_manage_subscription = ($__selected_subscription_id !== '' || $hasSubLegacy) ? true : false;
         }
       }
@@ -615,8 +610,9 @@ get_header();
 
 <div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
   aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>"
-  data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
-  data-main-product-id="<?php echo esc_attr($__main_product_id); ?>"
+  data-account-id="<?php echo esc_attr($mt_selected_id); ?>" 
+  data-main-id="<?php echo esc_attr($__main_product_id); ?>"
+  data-reset-id="<?php echo esc_attr($__reset_product_id); ?>"
   data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
@@ -646,10 +642,18 @@ get_header();
         <span class="fw-medium text-a8a29e text-base">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
         </span>
-        <a class="mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4"
-          href="<?php echo esc_url($__breach_reset_url); ?>">
+        <?php
+        $has_reset = !empty($__reset_product_id) && $__reset_product_id !== '0';
+        $btn_classes = 'mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4';
+        $btn_classes .= $has_reset ? '' : ' d-none disabled';
+        $btn_aria = $has_reset ? 'false' : 'true';
+        $btn_href = $has_reset ? esc_url($__breach_reset_url) : '#';
+        ?>
+        <a class="<?php echo esc_attr($btn_classes); ?>" href="<?php echo $btn_href; ?>"
+          aria-disabled="<?php echo $btn_aria; ?>">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?>
         </a>
+
       </div>
     </div>
   </div>

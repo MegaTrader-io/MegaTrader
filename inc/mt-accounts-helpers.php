@@ -1868,98 +1868,200 @@ if (!function_exists('mt_count_trades_for_day')) {
 if (!function_exists('mt_accounts_build_daily_journal')) {
   function mt_accounts_build_daily_journal($accountId, $page = 1, $perPage = 30)
   {
-    $json = mt_metrics_fetch_by_shortcode($accountId, $page, $perPage);
-    $items = [];
-    if (is_array($json)) {
-      if (isset($json['data']) && is_array($json['data']))
-        $items = $json['data'];
-      elseif (isset($json[0]) && is_array($json[0]))
-        $items = $json;
+    $accountId = (string) $accountId;
+    $rows = [];
+
+    if ($accountId === '' || !function_exists('mt_trades_fetch_by_shortcode')) {
+      return ['rows' => $rows, 'per_page' => (int) $perPage];
     }
 
-    $rows = [];
-    foreach ($items as $it) {
-      $m = (isset($it['metrics']) && is_array($it['metrics'])) ? $it['metrics'] : [];
+    // ==== Utilidades locales (sin colisionar nombres globales) ====
+    $tzUTC = new DateTimeZone('UTC');
+    $tzNY = new DateTimeZone('America/New_York');
 
-      // Día base desde metrics (UTC) → Eastern (solo día)
-      $tradeDateRaw = $m['tradeDate'] ?? ($m['tradeDateTimeUTC'] ?? null);
-      $day_iso_eastern = function_exists('mt_utc_to_eastern_ymd')
-        ? mt_utc_to_eastern_ymd($tradeDateRaw)
-        : (is_string($tradeDateRaw) ? substr($tradeDateRaw, 0, 10) : '');
+    $toNY = function (?string $iso) use ($tzUTC, $tzNY): ?DateTime {
+      if (!$iso)
+        return null;
+      try {
+        $dt = new DateTime($iso, $tzUTC);
+        $dt->setTimezone($tzNY);
+        return $dt;
+      } catch (\Throwable $e) {
+        return null;
+      }
+    };
 
-      // 1) Si NO pudimos determinar el día Eastern → NO pintes fila
-      if ($day_iso_eastern === '')
+    $fmtHMS = function (int $secs): string {
+      if ($secs <= 0)
+        return '00:00:00';
+      $h = (int) floor($secs / 3600);
+      $m = (int) floor(($secs % 3600) / 60);
+      $s = (int) ($secs % 60);
+      return sprintf('%02d:%02d:%02d', $h, $m, $s);
+    };
+
+    // ==== 1) Traer TODOS los trades CLOSED (paginado) ====
+    $perPageFetch = 500; // ancho para minimizar requests
+    $pageFetch = 1;
+    $all = [];
+
+    while (true) {
+      $chunk = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', $pageFetch, $perPageFetch);
+      if (is_wp_error($chunk) || empty($chunk))
+        break;
+
+      // Normalizar: puede venir como lista plana o como ['meta'=>..., 'data'=>[...]]
+      $items = [];
+      if (isset($chunk['data']) && is_array($chunk['data'])) {
+        $items = $chunk['data'];
+      } elseif (is_array($chunk)) {
+        $items = $chunk; // lista plana
+      }
+
+      if (empty($items))
+        break;
+
+      foreach ($items as $it) {
+        if (is_array($it))
+          $all[] = $it;
+      }
+
+      // Paginación: por meta o por tamaño del lote
+      $pagesCount = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : null;
+      if ($pagesCount && $pageFetch >= $pagesCount)
+        break;
+      if (count($items) < $perPageFetch)
+        break;
+
+      $pageFetch++;
+    }
+
+    if (empty($all)) {
+      return ['rows' => $rows, 'per_page' => (int) $perPage];
+    }
+
+    // ==== 2) Agrupar por día EST usando closeTime ====
+    $byDay = [];
+    foreach ($all as $t) {
+      $closeNY = $toNY(isset($t['closeTime']) ? (string) $t['closeTime'] : null);
+      $openNY = $toNY(isset($t['openTime']) ? (string) $t['openTime'] : null);
+      if (!$closeNY || !$openNY)
         continue;
 
-      // 2) Si NO hubo trades ese día en Eastern → NO pintes fila
-      if (function_exists('mt_count_trades_for_day')) {
-        $countTrades = mt_count_trades_for_day((string) $accountId, $day_iso_eastern);
-        if ($countTrades <= 0)
-          continue;
+      // Día clave = closeTime en EST
+      $day = $closeNY->format('Y-m-d');
+
+      $pnl = (float) ($t['pnl'] ?? 0);
+      $lots = (int) ($t['lots'] ?? 0);
+      $commission = (float) ($t['commission'] ?? 0); // viene negativa (gasto)
+      $durSecs = max(0, (int) round($closeNY->getTimestamp() - $openNY->getTimestamp()));
+
+      if (!isset($byDay[$day])) {
+        $byDay[$day] = [
+          'net' => 0.0,
+          'hi' => null,
+          'lo' => null,
+          'ct' => 0,
+          'trades' => 0,
+          'fees' => 0.0,
+          'wins' => 0,
+          'losses' => 0,
+          'sumWin' => 0.0,
+          'sumLoss' => 0.0,
+          'durWinSecs' => 0,
+          'durLossSecs' => 0,
+          '_seq' => [] // para rachas (orden por openTime)
+        ];
       }
 
-      // openTime será siempre el día Eastern (evitamos fallback a 'now' en mt_parse_open_time)
-      $openTime = $day_iso_eastern;
+      $D =& $byDay[$day];
+      $D['trades'] += 1;
+      $D['ct'] += max(0, $lots);
+      $D['fees'] += $commission;             // mantener negativa (gasto)
+      $D['net'] += ($pnl + $commission);    // neto del día
 
-      // === Mapeos nuevos ===
-      $net = array_key_exists('netPnL', $m) ? (float) $m['netPnL']
-        : (array_key_exists('dailyTotalRealizedPnL', $m) ? (float) $m['dailyTotalRealizedPnL'] : '-');
+      $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl);
+      $D['lo'] = is_null($D['lo']) ? $pnl : min($D['lo'], $pnl);
 
-      $hi = array_key_exists('bestTrade', $m) ? (float) $m['bestTrade'] : '-';
-      $lo = array_key_exists('worstTrade', $m) ? (float) $m['worstTrade'] : '-';
-      $ct = array_key_exists('totalClosedVolume', $m) ? (int) $m['totalClosedVolume'] : '-';
-      $trades = array_key_exists('tradesPlaced', $m) ? (int) $m['tradesPlaced'] : '-';
-      $awin = array_key_exists('averageWinningTrade', $m) ? (float) $m['averageWinningTrade'] : '-';
-      $aloss = array_key_exists('averageLosingTrade', $m) ? (float) $m['averageLosingTrade'] : '-';
-      $winPct = array_key_exists('winRate', $m) ? (float) $m['winRate'] : '-';
-      $lossPct = array_key_exists('lossRate', $m) ? (float) $m['lossRate'] : '-';
+      if ($pnl > 0) {
+        $D['wins'] += 1;
+        $D['sumWin'] += $pnl;
+        $D['durWinSecs'] += $durSecs;
+      } elseif ($pnl < 0) {
+        $D['losses'] += 1;
+        $D['sumLoss'] += $pnl; // negativo
+        $D['durLossSecs'] += $durSecs;
+      } // pnl == 0 no suma a wins/losses
 
-      // Comisiones: si no hay trades ni comisiones, ya filtramos arriba; aquí calculamos monto
-      $fees = '-';
-      if ((string) $accountId !== '' && function_exists('mt_sum_commissions_for_day')) {
-        $fees = mt_sum_commissions_for_day((string) $accountId, $day_iso_eastern);
-      }
-
-      // Streaks/duraciones (usando el mismo día Eastern)
-      $stats = ($accountId && function_exists('mt_trades_day_stats'))
-        ? mt_trades_day_stats((string) $accountId, $day_iso_eastern)
-        : ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
-
-      $maxW = $stats['maxConsecWins'] ?? '-';
-      $maxL = $stats['maxConsecLosses'] ?? '-';
-      $dWin = $stats['avgWinDuration'] ?? '-';
-      $dLos = $stats['avgLossDuration'] ?? '-';
-
-      $max = ($maxW === '-' && $maxL === '-') ? '-' : ($maxW . '/' . $maxL);
-      $dur = ($dWin === '-' && $dLos === '-') ? '-' : ($dWin . ' / ' . $dLos);
-
-      $rows[] = [
-        'openTime' => $openTime,   // ← SIEMPRE Eastern YYYY-MM-DD
-        'net' => $net,
-        'hi' => $hi,
-        'lo' => $lo,
-        'ct' => $ct,
-        'fees' => $fees,
-        'trades' => $trades,
-        'awin' => $awin,
-        'aloss' => $aloss,
-        'win' => $winPct,
-        'loss' => $lossPct,
-        'max' => $max,
-        'dur' => $dur,
+      $D['_seq'][] = [
+        'openTs' => $openNY->getTimestamp(),
+        'pnl' => $pnl
       ];
     }
 
+    // ==== 3) Reducir a filas (cálculos finales: rachas, promedios, duraciones) ====
+    foreach ($byDay as $day => $D) {
+      // Rachas: ordenar por hora de apertura
+      usort($D['_seq'], function ($a, $b) {
+        return $a['openTs'] <=> $b['openTs']; });
+      $curW = $curL = $maxW = $maxL = 0;
+      foreach ($D['_seq'] as $e) {
+        if ($e['pnl'] > 0) {
+          $curW += 1;
+          $curL = 0;
+        } elseif ($e['pnl'] < 0) {
+          $curL += 1;
+          $curW = 0;
+        } else {
+          $curW = 0;
+          $curL = 0; // pnl == 0 rompe rachas
+        }
+        $maxW = max($maxW, $curW);
+        $maxL = max($maxL, $curL);
+      }
 
-    // Orden descendente por fecha (usa 'openTime', que ahora es YYYY-MM-DD (Eastern) o string)
+      $wins = (int) $D['wins'];
+      $loss = (int) $D['losses'];
+      $tot = max(1, (int) $D['trades']); // evitar /0
+
+      $awin = $wins > 0 ? ($D['sumWin'] / $wins) : '-';
+      $aloss = $loss > 0 ? ($D['sumLoss'] / $loss) : '-'; // negativo
+      $winPct = round(($wins * 100.0) / $tot, 2);
+      $losPct = round(100.0 - $winPct, 2);
+
+      $avgWinDur = $wins > 0 ? (int) floor($D['durWinSecs'] / $wins) : 0;
+      $avgLosDur = $loss > 0 ? (int) floor($D['durLossSecs'] / $loss) : 0;
+
+      // Compat: mantener 'openTime' y añadir 'date' (idénticos, Y-m-d en EST)
+      $rows[] = [
+        'date' => $day,             // NUEVO alias pedido
+        'openTime' => $day,             // compat con template actual
+        'net' => (float) $D['net'],
+        'hi' => is_null($D['hi']) ? '-' : (float) $D['hi'],
+        'lo' => is_null($D['lo']) ? '-' : (float) $D['lo'],
+        'ct' => (int) $D['ct'],
+        'trades' => (int) $D['trades'],
+        'fees' => (float) $D['fees'], // suma negativa (gasto)
+        'awin' => $awin,
+        'aloss' => $aloss,
+        'win' => $winPct,
+        'loss' => $losPct,
+        'max' => $maxW . '/' . $maxL,
+        'dur' => $fmtHMS($avgWinDur) . '/' . $fmtHMS($avgLosDur),
+      ];
+    }
+
+    // ==== 4) Orden descendente por fecha ====
     usort($rows, function ($a, $b) {
-      $ta = strtotime((string) ($a['openTime'] ?? '')) ?: 0;
-      $tb = strtotime((string) ($b['openTime'] ?? '')) ?: 0;
+      $ta = strtotime((string) ($a['openTime'] ?? $a['date'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['openTime'] ?? $b['date'] ?? '')) ?: 0;
       return $tb <=> $ta;
     });
 
     return ['rows' => $rows, 'per_page' => (int) $perPage];
   }
+
+
 }
 
 
@@ -2210,13 +2312,17 @@ if (!function_exists('mt_subscription_id_for_order')) {
  * Lee JSON “limpio” desde un do_shortcode (maneja BOM, entities, etc.)
  */
 if (!function_exists('mt__json_from_shortcode')) {
-  function mt__json_from_shortcode(string $sc) {
+  function mt__json_from_shortcode(string $sc)
+  {
     $raw = do_shortcode($sc);
     $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
-    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF") $raw = substr($raw, 3);
-    if ($raw !== '') $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
+      $raw = substr($raw, 3);
+    if ($raw !== '')
+      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $json = json_decode($raw, true);
-    if (!is_array($json)) $json = json_decode(trim(wp_strip_all_tags($raw)), true);
+    if (!is_array($json))
+      $json = json_decode(trim(wp_strip_all_tags($raw)), true);
     return is_array($json) ? $json : null;
   }
 }
@@ -2226,10 +2332,13 @@ if (!function_exists('mt__json_from_shortcode')) {
  * Nota: el shortcode requiere "json" => pasamos '{}' por defecto.
  */
 if (!function_exists('mt_user_fetch_by_email_sc')) {
-  function mt_user_fetch_by_email_sc(?string $email) {
-    if (!function_exists('mt_sanitize_email')) return null;
+  function mt_user_fetch_by_email_sc(?string $email)
+  {
+    if (!function_exists('mt_sanitize_email'))
+      return null;
     $e = mt_sanitize_email($email);
-    if (empty($e['ok'])) return null;
+    if (empty($e['ok']))
+      return null;
 
     $shortcode = sprintf(
       '[mega_user_update email="%s" json="%s" output="json"]',
@@ -2237,10 +2346,12 @@ if (!function_exists('mt_user_fetch_by_email_sc')) {
       esc_attr('{}')
     );
     $data = mt__json_from_shortcode($shortcode);
-    if (!is_array($data)) return null;
+    if (!is_array($data))
+      return null;
 
     // algunas instalaciones devuelven {data:{...}}
-    if (isset($data['data']) && is_array($data['data'])) $data = $data['data'];
+    if (isset($data['data']) && is_array($data['data']))
+      $data = $data['data'];
 
     return $data;
   }
@@ -2252,18 +2363,21 @@ if (!function_exists('mt_user_fetch_by_email_sc')) {
  */
 // NOTIFICATIONS BY USER ID (via [mega_notifications_data ...]) + sort desc by time
 if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
-  function mt_notifications_fetch_by_userid_sc(string $userId, int $page = 1, int $perPage = 100) {
+  function mt_notifications_fetch_by_userid_sc(string $userId, int $page = 1, int $perPage = 100)
+  {
     $userId = trim($userId);
-    if ($userId === '') return [];
+    if ($userId === '')
+      return [];
 
     $shortcode = sprintf(
       '[mega_notifications_data userId="%s" page="%d" perpage="%d" output="json"]',
       esc_attr($userId),
-      (int)$page,
-      (int)$perPage
+      (int) $page,
+      (int) $perPage
     );
     $json = mt__json_from_shortcode($shortcode);
-    if (!is_array($json)) return [];
+    if (!is_array($json))
+      return [];
 
     // normaliza fuentes: data | items | array directo
     $rows = [];
@@ -2277,9 +2391,9 @@ if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
 
     // === sort: más recientes primero (updatedAt > createdAt) ===
     if (!empty($rows)) {
-      usort($rows, function($a, $b) {
-        $ta = strtotime((string)($a['updatedAt'] ?? $a['createdAt'] ?? '')) ?: 0;
-        $tb = strtotime((string)($b['updatedAt'] ?? $b['createdAt'] ?? '')) ?: 0;
+      usort($rows, function ($a, $b) {
+        $ta = strtotime((string) ($a['updatedAt'] ?? $a['createdAt'] ?? '')) ?: 0;
+        $tb = strtotime((string) ($b['updatedAt'] ?? $b['createdAt'] ?? '')) ?: 0;
         // desc
         return $tb <=> $ta;
       });
@@ -2297,17 +2411,18 @@ if (!function_exists('mt_notifications_fetch_by_userid_sc')) {
  */
 // Reemplaza la función por esta (sin inventar campos que no existen en tu API)
 if (!function_exists('mt_notifications_normalize_row')) {
-  function mt_notifications_normalize_row(array $r): array {
+  function mt_notifications_normalize_row(array $r): array
+  {
     // Campos nativos del payload
-    $apiType    = isset($r['type']) ? (string)$r['type'] : '';
-    $userId     = isset($r['userId']) ? (string)$r['userId'] : '';
-    $accountKey = isset($r['accountId']) ? (string)$r['accountId'] : '';
-    $message    = isset($r['message']) ? (string)$r['message'] : '';
-    $reason     = isset($r['reason']) ? (string)$r['reason'] : '';
+    $apiType = isset($r['type']) ? (string) $r['type'] : '';
+    $userId = isset($r['userId']) ? (string) $r['userId'] : '';
+    $accountKey = isset($r['accountId']) ? (string) $r['accountId'] : '';
+    $message = isset($r['message']) ? (string) $r['message'] : '';
+    $reason = isset($r['reason']) ? (string) $r['reason'] : '';
 
     // Normaliza tipo a nuestra paleta (success|error|warning)
     $type = strtolower($apiType);
-    if (!in_array($type, ['success','error','warning'], true)) {
+    if (!in_array($type, ['success', 'error', 'warning'], true)) {
       // Si quieres colorear ciertos tipos, haz el mapping aquí:
       // ej: if ($type === 'createdfrompurchase') $type = 'success';
       $type = 'warning';
@@ -2330,7 +2445,7 @@ if (!function_exists('mt_notifications_normalize_row')) {
 
       if (is_array($acc)) {
         $plat = (isset($acc['platform']) && is_array($acc['platform'])) ? $acc['platform'] : [];
-        $platAccountId = (string)($plat['accountId'] ?? $acc['accountId'] ?? '');
+        $platAccountId = (string) ($plat['accountId'] ?? $acc['accountId'] ?? '');
         if ($platAccountId !== '') {
           $displayId = $platAccountId; // ← lo que pintamos en el chip
         }
@@ -2339,17 +2454,17 @@ if (!function_exists('mt_notifications_normalize_row')) {
 
     // La UI espera estas claves. 'title' NO se usa: lo dejamos vacío sin generarlo.
     return [
-      'id'          => $displayId,  // MT-XXXX si se pudo; si no, el mongo id
-      'type'        => $type,       // success|error|warning
-      'message'     => $message,    // texto de la API
-      'read'        => (bool)($r['read'] ?? false),
+      'id' => $displayId,  // MT-XXXX si se pudo; si no, el mongo id
+      'type' => $type,       // success|error|warning
+      'message' => $message,    // texto de la API
+      'read' => (bool) ($r['read'] ?? false),
       'right_label' => $reason,     // ej. número de orden
       // meta opcional por si luego te sirve en JS (no afecta la UI actual)
       'meta' => [
-        'userId'         => $userId,
-        'accountId_raw'  => $accountKey,
+        'userId' => $userId,
+        'accountId_raw' => $accountKey,
         'accountId_disp' => $displayId,
-        'apiType'        => $apiType,
+        'apiType' => $apiType,
       ],
     ];
   }
@@ -2357,13 +2472,16 @@ if (!function_exists('mt_notifications_normalize_row')) {
 
 
 if (!function_exists('mt_notifications_payload_for_email')) {
-  function mt_notifications_payload_for_email(?string $email, int $page = 1, int $perPage = 100): array {
+  function mt_notifications_payload_for_email(?string $email, int $page = 1, int $perPage = 100): array
+  {
     $user = mt_user_fetch_by_email_sc($email);
-    $uid  = is_array($user) ? (string)($user['id'] ?? '') : '';
-    if ($uid === '') return [];
+    $uid = is_array($user) ? (string) ($user['id'] ?? '') : '';
+    if ($uid === '')
+      return [];
 
     $rows = mt_notifications_fetch_by_userid_sc($uid, $page, $perPage);
-    if (empty($rows)) return [];
+    if (empty($rows))
+      return [];
 
     return array_map('mt_notifications_normalize_row', $rows);
   }

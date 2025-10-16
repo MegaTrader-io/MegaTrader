@@ -4690,101 +4690,201 @@ textarea.mtfb-note {
   color: #000;
 }
 
-/**** Account Notifications ****/
+/***** Account Notifications *****/
 
-.mt-account-notifications{
+.mt-account-notifications {
   position: absolute;
-  right: 0;
-  top: 100%;
+  left: 395px;
+  top: 215px;
   width: auto;
-  max-height: 70vh;           /* puede quedarse, pero ya no usamos su overflow */
+  max-height: 70vh;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 20px 20px rgba(0,0,0,.10);
+  box-shadow: 0 20px 20px rgba(0, 0, 0, .10);
   padding: 8px;
   z-index: 1055;
-  overflow: visible;           /* ← clave: permitir que la flecha sobresalga */
+  overflow: visible;
+  /* permite que la flecha sobresalga */
 }
 
-/* flecha en desktop: absoluta al panel, afuera del borde superior */
-.mt-notifications__arrow{
-  position: absolute;          /* ← clave */
-  top: -13px;                  /* la altura de la flecha */
-  right: 26px;                 /* ajústalo si quieres */
+/* Flecha (desktop) */
+.mt-notifications__arrow {
+  position: absolute;
+  top: 23px;
+  left: -19px;
   width: 26px;
   height: 14px;
   background: #fff;
   clip-path: polygon(0 100%, 50% 0, 100% 100%);
-  pointer-events: none;        /* no captura clics */
+  pointer-events: none;
+  transform: rotate(270deg);
 }
 
 .mt-notifications__header {
-  padding: 0px 8px;
+  padding: 0 8px;
 }
 
-/* Body: ocupa 100% del ancho visual + scroll fino */
-.mt-notifications__body{
-  /* ocupa ancho completo visual que ya tienes */
+/* Body: ancho completo + scroll interno + respeta bordes inferiores */
+.mt-notifications__body {
   padding: 0 0 8px;
-
-  /* scroll interno */
   max-height: calc(70vh - 30px);
-  overflow-y: auto;
   overflow-x: hidden;
-
-  /* pinta su propio fondo y bordes de abajo, así el redondeo se ve */
+  overflow-y: auto;
   background: #fff;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  background-clip: padding-box;    /* evita que el scroll tape el redondeo */
+  background-clip: padding-box;
+
+  /* Scroll minimal (solo thumb visible) */
+  scrollbar-gutter: stable both-edges;
+  padding-right: 12px;
+  /* reserva ancho del scrollbar */
 }
 
+/* WebKit */
+.mt-notifications__body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.mt-notifications__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mt-notifications__body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, .35);
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+.mt-notifications__body::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, .5);
+}
+
+.mt-notifications__body::-webkit-scrollbar-button {
+  height: 10px;
+  background: transparent;
+}
+
+/* Firefox */
+@supports (scrollbar-color: auto) {
+  .mt-notifications__body {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, .35) transparent;
+  }
+}
 
 /* Hover de cada notificación */
-.mt-notification-account{
+.mt-notification-account {
   transition: background-color .15s ease, border-radius .15s ease;
 }
-.mt-notification-account:hover{
+
+.mt-notification-account:hover {
   border-radius: var(--Border-Radius-md, 8px);
   background: var(--Colors-Gray-100, #F5F5F5);
 }
 
+/* Control “ocultar notificación” (ojito) */
+.mt-notification-account .mt-notif-hide-ctrl {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .15s ease;
+}
+
+.mt-notification-account:hover .mt-notif-hide-ctrl,
+.mt-notification-account:focus-within .mt-notif-hide-ctrl {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mt-notif-hide-ctrl i {
+  display: inline-block;
+  line-height: 1;
+}
+
 /* Mobile = modal fullscreen */
-@media (max-width: 767.98px){
-  .mt-account-notifications{
+@media (max-width: 767.98px) {
+  .mt-account-notifications {
     position: fixed;
     inset: 0;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     border-radius: 0;
     box-shadow: none;
     padding: 16px 8px;
-    top: 0; right: 0;
-    overflow: auto;              /* en mobile sí puede scrollear el panel entero */
+    top: 0 !important;
+    right: 0 !important;
+    left: 0!important;
+    max-height: 100%;
+    overflow: auto;
+    /* hace scroll el panel entero */
   }
-  .mt-notifications__arrow{ display: none !important; }
-  .mt-notifications__body{
+
+  .mt-notifications__arrow {
+    display: none !important;
+  }
+
+  .mt-notifications__body {
     padding: 0 0 8px;
     max-height: none;
-    overflow: visible;           /* el panel completo hace scroll */
+    overflow: visible;
+    /* evita doble scroll en mobile */
     scrollbar-color: auto;
     scrollbar-width: auto;
     padding-right: 0;
   }
 }
 
-/* Paleta mínima (ajústala si usas utilidades propias) */
-.bg-success-100 { background: #CCFBF1 !important; }
-.bg-success-600 { background: #0D9488 !important; }
-.text-success-600 { color: #0D9488 !important; }
-.bg-error-100   { background: #FFE4E6 !important; }
-.bg-error-600   { background: #E11D48 !important; }
-.text-error-600 { color: #E11D48 !important; }
-.bg-warning-100 { background: #FFEDD5 !important; }
-.bg-warning-600 { background: #EA580C !important; }
-.text-warning-600 { color: #EA580C !important; }
-.bg-gray-100    { background: #F5F5F5 !important; }
-.bg-gray-200    { background: #E5E5E5 !important; }
+/* Paleta mínima */
+.bg-success-100 {
+  background: #CCFBF1 !important;
+}
+
+.bg-success-600 {
+  background: #0D9488 !important;
+}
+
+.text-success-600 {
+  color: #0D9488 !important;
+}
+
+.bg-error-100 {
+  background: #FFE4E6 !important;
+}
+
+.bg-error-600 {
+  background: #E11D48 !important;
+}
+
+.text-error-600 {
+  color: #E11D48 !important;
+}
+
+.bg-warning-100 {
+  background: #FFEDD5 !important;
+}
+
+.bg-warning-600 {
+  background: #EA580C !important;
+}
+
+.text-warning-600 {
+  color: #EA580C !important;
+}
+
+.bg-gray-100 {
+  background: #F5F5F5 !important;
+}
+
+.bg-gray-200 {
+  background: #E5E5E5 !important;
+}
+
+.js-mt-goto-account{ cursor: pointer; }
+.js-mt-goto-account:focus{
+  outline: 2px solid #E5E5E5;
+  outline-offset: 2px;
+}
+
 
 
 /***** End Account Notifications **/

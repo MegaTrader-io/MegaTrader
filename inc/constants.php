@@ -266,77 +266,102 @@ class Label
             'severity' => 'success',
             'title' => 'Account Created',
             'message' => 'Your new trading account has been created successfully. Welcome aboard!',
-            'icon' => 'mt-icon_checkmark-solid',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
+        ],
+        'CreatedFromReset' => [
+            'severity' => 'success',
+            'title' => 'Account Created',
+            'message' => 'Your new trading account has been created successfully. Welcome aboard!',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
+        ],
+        'CreatedManually' => [
+            'severity' => 'success',
+            'title' => 'Account Created Manually',
+            'message' => 'Your new trading account has been created successfully. Welcome aboard!',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
         ],
         'ActivationBySystem' => [
             'severity' => 'success',
             'title' => 'Account Activated',
             'message' => 'Your funded account is now active and ready for trading.',
-            'icon' => 'mt-icon_checkmark-solid',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
         ],
         'PassedAssessment' => [
             'severity' => 'success',
             'title' => 'Congratulations! You’ve Passed!',
             'message' => 'Your dedication and skills have led to success. Welcome to the next level!',
-            'icon' => 'mt-icon_checkmark-solid',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
         ],
         'ProfitTargetReached' => [
             'severity' => 'success',
             'title' => 'Profit Target Reached',
             'message' => 'You’ve hit your profit target! Great work — check your dashboard for next steps.',
-            'icon' => 'mt-icon_checkmark-solid',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
         ],
         'UpgradeThresholdReached' => [
             'severity' => 'success',
             'title' => 'Upgrade Threshold Reached',
             'message' => 'Your account has qualified for an upgrade — review the new account details.',
-            'icon' => 'mt-icon_checkmark-solid',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
         ],
         'CreatedFromUpgrade' => [
             'severity' => 'success',
             'title' => 'Account Upgraded',
             'message' => 'A new upgraded account has been created for you automatically.',
-            'icon' => 'mt-icon_checkmark-solid',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
         ],
         'ManuallyUpgraded' => [
             'severity' => 'success',
             'title' => 'Manual Upgrade Completed',
             'message' => 'Your account has been manually upgraded by our team.',
-            'icon' => 'mt-icon_checkmark-solid',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
+        ],
+        'ManuallyActivated' => [
+            'severity' => 'success',
+            'title' => 'Account Manually Activated',
+            'message' => 'Your new trading account has been activated successfully.',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
         ],
 
         'MaxDrawdownBreached' => [
             'severity' => 'error',
             'title' => 'Account Breach Alert',
             'message' => 'Your account exceeded its maximum drawdown limit and has been marked as breached.',
-            'icon' => 'mt-icon_cancel',
-        ],
-        'MaxDailyDrawdownBreached' => [
-            'severity' => 'error',
-            'title' => 'Daily Loss Limit Breach',
-            'message' => 'Your account exceeded its daily loss limit and has been marked as breached.',
-            'icon' => 'mt-icon_cancel',
+            'icon' => 'mt-icon_cancel mt-icon-error',
         ],
         'EvaluationFailed' => [
             'severity' => 'error',
             'title' => 'Evaluation Failed',
             'message' => 'Unfortunately, you did not meet the evaluation criteria. Try again when ready.',
-            'icon' => 'mt-icon_cancel',
+            'icon' => 'mt-icon_cancel mt-icon-error',
         ],
-
 
         'UpgradeInProgress' => [
             'severity' => 'warning',
             'title' => 'Upgrade In Progress',
             'message' => 'We’re processing your account upgrade. You’ll receive confirmation shortly.',
-            'icon' => 'mt-icon_info',
+            'icon' => 'mt-icon_info-solid mt-icon-warning-600',
+        ],
+        'MaxDailyDrawdownBreached' => [
+            'severity' => 'warning',
+            'title' => 'Daily Loss Limit Breach',
+            'message' => 'Daily Loss Limit exceeded — soft breach. Trading resumes next session.',
+            'icon' => 'mt-icon_info-solid mt-icon-warning-600',
         ],
         'SystemAutoAction' => [
             'severity' => 'warning',
             'title' => 'System Update',
             'message' => 'A scheduled system process has updated your account automatically.',
-            'icon' => 'mt-icon_info',
+            'icon' => 'mt-icon_info-solid mt-icon-warning-600',
         ],
+
+        'ResetBySystem' => [
+            'severity' => 'warning',
+            'title' => 'Account Reset',
+            'message' => 'Your account has been reset by the system. You can start a new evaluation anytime.',
+            'icon' => 'mt-icon_info-solid mt-icon-warning-600',
+        ],
+
     ];
 
 }

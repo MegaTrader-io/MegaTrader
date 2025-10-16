@@ -454,6 +454,11 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     background-color: #2DD4BF;
 }
 
+.mt-icon.mt-icon-success-dark {
+    background-color: #0D9488;
+}
+
+
 .mt-icon.mt-icon-primary {
     background-color: var(--Primary-400, #FFB34A);
 }
@@ -475,6 +480,9 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 .mt-icon.mt-icon-dark {
     background-color: #131210;
+}
+.mt-icon.mt-icon-warning-600 {
+    background-color: #EA580C;
 }
 
 .mt-icon_account {
@@ -805,6 +813,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-page__sidebar {
     flex: 1;
     width: 100%;
+    z-index: 1;
 }
 
 .mt-page__main {
