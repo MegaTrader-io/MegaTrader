@@ -570,10 +570,6 @@ html, body {
   margin-bottom: 0.5rem;
 }
 
-.mb-\[67px\]{
-  margin-bottom: 67px;
-}
-
 .mt-4{
   margin-top: 1rem;
 }
@@ -1032,33 +1028,43 @@ html, body {
   }
 }
 
-.slider-content__image-wrapper{
+.slider-content__image-wrapper.slider-content__image-wrapper--slider-1 {
   position: relative;
+  justify-content: center;
+  display: flex;
   margin-bottom: 67px;
 }
 
 .slider-content__image-wrapper.slider-content__image-wrapper--slider-1::after {
   content: '';
-  background-image: url(../../assets/img/auth/sd1-feature-content.png);
+  background-image: url(../../assets/img/auth/sd1-feature-content.svg);
   background-size: cover;
   background-position: center;
   width: 248px;
   height: 320px;
   position: absolute;
   bottom: -67px;
-  left: 153px;
+  left: 106px;
+}
+
+.slider-content__image-wrapper.slider-content__image-wrapper--slider-2 {
+  position: relative;
+  justify-content: center;
+  display: flex;
+  margin-bottom: 67px;
 }
 
 .slider-content__image-wrapper.slider-content__image-wrapper--slider-2::after {
   content: '';
-  background-image: url(../../assets/img/auth/sd12-mobile.png);
+  background-image: url(../../assets/img/auth/sd12-mobile.svg);
+  box-shadow: 0px 30px 35px 32px rgba(0, 0, 0, 0.20);
   background-size: cover;
   background-position: center;
-  width: 187px;
+  width: 185px;
   height: 402px;
   position: absolute;
   bottom: -67px;
-  left: 153px;
+  left: 104px;
 }
 
 .slider-content__image-feature{

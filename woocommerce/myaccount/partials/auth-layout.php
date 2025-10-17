@@ -21,10 +21,12 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                         <div class="swiper-slide">
                             <div class="slider-content">
                                 <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-1">
-                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd1-window.png"
-                                         class="slider-content__image-web"
-                                         style="object-fit: fill;box-shadow: 0px 20px 20px 20px rgba(0, 0, 0, 0.10);"
-                                         alt="Logo MegaTraderX"/>
+                                    <div>
+                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd11-window.svg"
+                                             style="object-fit: fill;"
+                                             alt="Logo MegaTraderX"/>
+                                    </div>
+
                                 </div>
 
                                 <div class="slider-content__info">
@@ -41,9 +43,8 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                         <div class="swiper-slide">
                             <div class="slider-content">
                                 <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-2">
-                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd2-window.png"
-                                         class="slider-content__image-web"
-                                         style="object-fit: fill;box-shadow: 0px 20px 20px 20px rgba(0, 0, 0, 0.10);"
+                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd12-window.svg"
+                                         style="object-fit: fill;"
                                          alt="Logo MegaTraderX"/>
                                 </div>
 
