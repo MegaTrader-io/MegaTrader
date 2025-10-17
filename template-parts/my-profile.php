@@ -61,22 +61,17 @@ $account_overview_url = profile_url(user_email: $user_profile['user_email']);
             ]); ?>
         </div>
 
-        <div class="mt-my-profile__notifications" data-user-email="<?=
-            esc_attr($user_profile['user_email'] ?? '');
-        ?>">
+
+        <div class="mt-my-profile__notifications" data-mt-ajax="<?php echo esc_url(admin_url('admin-ajax.php')); ?>"
+            data-mt-nonce="<?php echo esc_attr(wp_create_nonce('mt_user_notifs')); ?>">
             <a id="mt-notifications-toggle" class="mt-sidebar__menu__link" href="javascript:void(0)" aria-haspopup="dialog"
                 aria-expanded="false">
                 <i class="mt-icon mt-icon_notifications"></i>
             </a>
 
             <?php
-            $mt_user_email = (string) ($user_profile['user_email'] ?? '');
-            if (!$mt_user_email && function_exists('wp_get_current_user')) {
-                $cu = wp_get_current_user();
-                if ($cu && !empty($cu->user_email)) {
-                    $mt_user_email = (string) $cu->user_email;
-                }
-            }
+            // Usa el email real del usuario autenticado
+            $mt_user_email = $user_profile['user_email'] ?? '';
 
             get_template_part(
                 'template-parts/account/account-notification',
@@ -85,6 +80,7 @@ $account_overview_url = profile_url(user_email: $user_profile['user_email']);
             );
             ?>
         </div>
+
 
     <?php endif; ?>
 </div>

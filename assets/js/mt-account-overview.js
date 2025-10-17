@@ -2562,22 +2562,20 @@ if (document.readyState === "loading") {
   );
 })();
 
-/* === Notifications toggle (bell) — anchor to .mt-card.mt-card-dark.h-auto === */
+
+/* === Notifications toggle === */
 (function () {
   const CONTAINER_SEL = ".mt-my-profile__notifications";
   const PANEL_SEL = ".mt-account-notifications";
   const TOGGLE_ID = "#mt-notifications-toggle";
-  const ANCHOR_SEL = ".mt-card.mt-card-dark.h-auto"; // ancestro que define ancho
-
-  // ==== Persistencia ocultar notificaciones ====
-  const STORAGE_KEY = "mtHiddenNotifs:v1";
+  const ANCHOR_SEL = ".mt-card.mt-card-dark.h-auto";
 
   // === util: cuántas notis quedan visibles ===
   function visibleCount(panel) {
     return panel.querySelectorAll("[data-mt-notif-item]").length;
   }
 
-  // ==== Tooltip de marca (dinámico) ====
+  // ==== Tooltip “You are up to date.” (dinámico) ====
   function ensureBrandedTooltip(container, text) {
     const toggle = container.querySelector(TOGGLE_ID);
     if (!toggle) return;
@@ -2613,7 +2611,6 @@ if (document.readyState === "loading") {
   function removeBrandedTooltip(container) {
     const toggle = container.querySelector(TOGGLE_ID);
     if (!toggle) return;
-
     const wrapper = toggle.closest(".mt-tooltip");
     if (wrapper) {
       try { window.mtTooltips && window.mtTooltips.closeAll(); } catch (_) {}
@@ -2627,11 +2624,11 @@ if (document.readyState === "loading") {
   // === enciende/apaga la campana según haya items ===
   function syncBell(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel = container.querySelector(PANEL_SEL);
+    const panel  = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
     const icon = toggle.querySelector(".mt-icon");
-    const has = visibleCount(panel) > 0;
+    const has  = visibleCount(panel) > 0;
 
     if (icon) icon.classList.toggle("mt-icon-success", has);
     toggle.setAttribute("aria-disabled", has ? "false" : "true");
@@ -2644,114 +2641,43 @@ if (document.readyState === "loading") {
     }
   }
 
-  function loadHidden() {
+  // === AJAX: ocultar en BD ===
+  function sendHide(panel, uid) {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      return new Set(Array.isArray(arr) ? arr : []);
-    } catch (_) {
-      return new Set();
-    }
-  }
+      const url   = panel?.dataset?.ajaxUrl;
+      const nonce = panel?.dataset?.nonce;
+      if (!url || !uid) return;
 
-  function saveHidden(set) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+      const fd = new FormData();
+      fd.append("action", "mt_user_notif_hide");
+      fd.append("uid", uid);
+      fd.append("nonce", nonce);
+
+      fetch(url, { method: "POST", credentials: "same-origin", body: fd })
+        .catch(() => {});
     } catch (_) {}
   }
 
-  function itemIdFromArticle(article) {
-    if (!article) return "";
-    const hideBtn = article.querySelector("[data-mt-notif-hide]");
-    if (hideBtn?.dataset?.id) return hideBtn.dataset.id;
-    const markBtn = article.querySelector("[data-mt-mark-read]");
-    if (markBtn?.dataset?.id) return markBtn.dataset.id;
-    const chip = article.querySelector(".mt-chip");
-    return chip ? chip.textContent.trim() : "";
-  }
-
-  function applyHidden(panel, hidden) {
-    panel.querySelectorAll("[data-mt-notif-item]").forEach((article) => {
-      const id =
-        article.querySelector("[data-mt-notif-hide]")?.dataset?.id ||
-        article.querySelector("[data-mt-mark-read]")?.dataset?.id ||
-        itemIdFromArticle(article);
-      if (id && hidden.has(id)) {
-        article.remove();
-      }
-    });
-  }
-
-  function bindHide(panel, hidden) {
-    panel.addEventListener(
-      "click",
-      function (e) {
-        const btn = e.target.closest("[data-mt-notif-hide]");
-        if (!btn) return;
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-
-        const article =
-          btn.closest("[data-mt-notif-item]") ||
-          btn.closest(".mt-notification-account") ||
-          btn.closest("article");
-        const id = btn.dataset?.id || itemIdFromArticle(article);
-        if (!id || !article) return;
-
-        hidden.add(id);
-        saveHidden(hidden);
-        article.remove();
-
-        const container = panel.closest(CONTAINER_SEL) || document;
-        syncBell(container);
-
-        if (visibleCount(panel) === 0) {
-          closePanel(container);
-          // ✅ REFRESH tooltip al borrar la última (asegura hover inmediato)
-          try { window.mtTooltips && window.mtTooltips.refresh(container); } catch (_) {}
-        }
-      },
-      true
-    );
-
-    panel.addEventListener(
-      "keydown",
-      function (e) {
-        const btn = e.target.closest("[data-mt-notif-hide]");
-        if (!btn) return;
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          btn.click();
-        }
-      },
-      true
-    );
+  function uidFromBtn(btn, article) {
+    return btn?.dataset?.uid || btn?.dataset?.id || (function(){
+      const chip = article?.querySelector(".mt-chip");
+      return chip ? chip.textContent.trim() : "";
+    })();
   }
 
   // ==== Layout / toggle ====
-  function eachContainer(cb) {
-    document.querySelectorAll(CONTAINER_SEL).forEach(cb);
-  }
-
-  function getAnchor(container) {
-    const anchor = container.closest(ANCHOR_SEL);
-    return anchor || container;
-  }
+  function eachContainer(cb) { document.querySelectorAll(CONTAINER_SEL).forEach(cb); }
+  function getAnchor(container) { return container.closest(ANCHOR_SEL) || container; }
 
   function layoutToAnchor(container) {
     const panel = container.querySelector(PANEL_SEL);
     if (!panel) return;
-
     const anchor = getAnchor(container);
-
     const w = anchor.clientWidth || anchor.getBoundingClientRect().width || 360;
     panel.style.width = w + "px";
-
     const acs = getComputedStyle(anchor);
     if (acs.position === "static") anchor.style.position = "relative";
     if (acs.overflow !== "visible") anchor.style.overflow = "visible";
-
     panel.style.position = "absolute";
     panel.style.right = "0";
     panel.style.top = "100%";
@@ -2760,22 +2686,17 @@ if (document.readyState === "loading") {
 
   function openPanel(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel = container.querySelector(PANEL_SEL);
+    const panel  = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
-    const hidden = loadHidden();
-    applyHidden(panel, hidden);
     syncBell(container);
-
     if (visibleCount(panel) === 0) {
       toggle.setAttribute("aria-expanded", "false");
       return;
     }
 
     const rectToggle = toggle.getBoundingClientRect();
-    const GAP = 8;
-    const panelWidth = 360;
-
+    const GAP = 8, panelWidth = 360;
     panel.style.position = "fixed";
     panel.style.width = panelWidth + "px";
 
@@ -2788,12 +2709,10 @@ if (document.readyState === "loading") {
 
     let top = Math.round(rectToggle.top);
     const vh = (window.innerHeight || document.documentElement.clientHeight);
-    const maxTop = vh - 8;
-    if (top > maxTop) top = maxTop;
+    if (top > vh - 8) top = vh - 8;
 
     panel.style.left = left + "px";
-    panel.style.top = top + "px";
-
+    panel.style.top  = top  + "px";
     panel.style.zIndex = "2000";
     panel.hidden = false;
     panel.classList.add("is-open");
@@ -2802,9 +2721,7 @@ if (document.readyState === "loading") {
     panel.style.setProperty("opacity", "1", "important");
 
     toggle.setAttribute("aria-expanded", "true");
-    try {
-      panel.focus({ preventScroll: true });
-    } catch (_) {}
+    try { panel.focus({ preventScroll: true }); } catch (_) {}
 
     document.addEventListener("click", onDocClick, true);
     document.addEventListener("keydown", onKey, true);
@@ -2812,13 +2729,12 @@ if (document.readyState === "loading") {
 
   function closePanel(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel = container.querySelector(PANEL_SEL);
+    const panel  = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
     panel.classList.remove("is-open");
     panel.hidden = true;
-
-    ["position", "width", "left", "top", "zIndex", "display", "visibility", "opacity"]
+    ["position","width","left","top","zIndex","display","visibility","opacity"]
       .forEach((p) => panel.style.removeProperty(p));
 
     toggle.setAttribute("aria-expanded", "false");
@@ -2830,18 +2746,51 @@ if (document.readyState === "loading") {
     const inScope =
       ev.target.closest(CONTAINER_SEL) &&
       (ev.target.closest(TOGGLE_ID) || ev.target.closest(PANEL_SEL));
-    if (!inScope) {
-      eachContainer(closePanel);
-    }
+    if (!inScope) eachContainer(closePanel);
   }
+  function onKey(ev) { if (ev.key === "Escape") eachContainer(closePanel); }
 
-  function onKey(ev) {
-    if (ev.key === "Escape") eachContainer(closePanel);
+  function bindHide(panel) {
+    panel.addEventListener("click", function (e) {
+      const btn = e.target.closest("[data-mt-notif-hide]");
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+      const article =
+        btn.closest("[data-mt-notif-item]") ||
+        btn.closest(".mt-notification-account") ||
+        btn.closest("article");
+
+      const uid = uidFromBtn(btn, article);
+      if (!uid || !article) return;
+
+      // quita de UI y sincroniza BD
+      article.remove();
+      sendHide(panel, uid);
+
+      const container = panel.closest(CONTAINER_SEL) || document;
+      syncBell(container);
+      if (visibleCount(panel) === 0) {
+        closePanel(container);
+        try { window.mtTooltips && window.mtTooltips.refresh(container); } catch (_) {}
+      }
+    }, true);
+
+    panel.addEventListener("keydown", function (e) {
+      const btn = e.target.closest("[data-mt-notif-hide]");
+      if (!btn) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        btn.click();
+      }
+    }, true);
   }
 
   function initContainer(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel = container.querySelector(PANEL_SEL);
+    const panel  = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
     container.style.position = "";
@@ -2851,252 +2800,33 @@ if (document.readyState === "loading") {
     window.addEventListener("resize", relayout);
     window.addEventListener("orientationchange", relayout);
 
-    toggle.addEventListener(
-      "click",
-      function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-        const isOpen = !panel.hidden;
-        isOpen ? closePanel(container) : openPanel(container);
-      },
-      true
-    );
+    toggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      const isOpen = !panel.hidden;
+      isOpen ? closePanel(container) : openPanel(container);
+    }, true);
 
     panel.querySelectorAll("[data-mt-notif-close]").forEach((btn) => {
-      btn.addEventListener(
-        "click",
-        function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          closePanel(container);
-          try { toggle.focus({ preventScroll: true }); } catch (_) {}
-        },
-        { capture: true }
-      );
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        closePanel(container);
+        try { toggle.focus({ preventScroll: true }); } catch (_) {}
+      }, { capture: true });
     });
 
-    const hidden = loadHidden();
-    applyHidden(panel, hidden);
-    bindHide(panel, hidden);
+    bindHide(panel);
     syncBell(container);
-
-    // asegura que la librería tenga handlers en el estado inicial
     try { window.mtTooltips && window.mtTooltips.refresh(container); } catch (_) {}
   }
 
-  function init() {
-    document.querySelectorAll(CONTAINER_SEL).forEach(initContainer);
-  }
-
+  function init() { eachContainer(initContainer); }
   if (document.readyState !== "loading") init();
   else document.addEventListener("DOMContentLoaded", init);
 })();
 
 
 
-/**** Redirect to account from notification chip (con preloader + cookie + root) */
-(function () {
-  const CHIP_SEL = ".js-mt-goto-account[data-mt-account-id]";
-  const PANEL_SEL = ".mt-account-notifications";
 
-  // ===== Preloader idéntico al picker =====
-  let pendingPreloader = false;
-  let preloaderFallbackTimer = null;
-
-  function showPreloader() {
-    if (
-      window.jQuery &&
-      window.jQuery.fn &&
-      window.jQuery(".preloader").length
-    ) {
-      pendingPreloader = true;
-      window.jQuery(".preloader").stop(true, true).fadeIn(150);
-      clearTimeout(preloaderFallbackTimer);
-      preloaderFallbackTimer = setTimeout(hidePreloader, 7000);
-    } else {
-      const el = document.querySelector(".preloader");
-      if (!el) return;
-      pendingPreloader = true;
-      el.classList.add("is-active");
-      clearTimeout(preloaderFallbackTimer);
-      preloaderFallbackTimer = setTimeout(hidePreloader, 7000);
-    }
-  }
-  function hidePreloader() {
-    if (!pendingPreloader) return;
-    if (
-      window.jQuery &&
-      window.jQuery.fn &&
-      window.jQuery(".preloader").length
-    ) {
-      window.jQuery(".preloader").stop(true, true).fadeOut(150);
-    } else {
-      document.querySelector(".preloader")?.classList.remove("is-active");
-    }
-    pendingPreloader = false;
-    clearTimeout(preloaderFallbackTimer);
-  }
-
-  // ===== Cookie como el picker (con sufijo de usuario) =====
-  function getLastAccountKey() {
-    try {
-      var uid =
-        (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
-        "";
-      return "mt:lastAccountId" + (uid ? ":" + String(uid) : "");
-    } catch (_) {
-      return "mt:lastAccountId";
-    }
-  }
-  function saveLastAccountId(id) {
-    try {
-      document.cookie =
-        getLastAccountKey() +
-        "=" +
-        encodeURIComponent(String(id || "")) +
-        ";path=/;max-age=31536000";
-    } catch (_) {}
-  }
-
-  // ===== Cerrar el panel si está abierto =====
-  function closeNotifPanel(fromEl) {
-    const panel =
-      (
-        fromEl && fromEl.closest(".mt-my-profile__notifications")
-      )?.querySelector(PANEL_SEL) || document.querySelector(PANEL_SEL);
-    if (!panel) return;
-    panel.classList.remove("is-open");
-    panel.hidden = true;
-    [
-      "position",
-      "width",
-      "left",
-      "top",
-      "zIndex",
-      "display",
-      "visibility",
-      "opacity",
-    ].forEach((p) => panel.style.removeProperty(p));
-  }
-
-  document.addEventListener("click", (e) => {
-    const chip = e.target.closest(CHIP_SEL);
-    if (!chip) return;
-    e.preventDefault();
-
-    const accountId = chip.getAttribute("data-mt-account-id");
-    if (!accountId) return;
-
-    // 1) cerrar panel
-    closeNotifPanel(chip);
-
-    // 2) mostrar preloader global (mismo comportamiento que el picker)
-    showPreloader();
-
-    // 3) persistir cookie
-    saveLastAccountId(accountId);
-
-    // 4) actualizar el ROOT para que los módulos lean el id correcto
-    const root = document.getElementById("mt-account-overview");
-    if (root) root.setAttribute("data-account-id", String(accountId));
-
-    // 4b) sincroniza el header del account-selection en el acto
-    if (typeof window.__mtSyncAccountHeaderById === "function") {
-      window.__mtSyncAccountHeaderById(accountId);
-    }
-
-    // 5) disparar el mismo evento que el picker → refresh bus y guards ya están suscritos
-    document.dispatchEvent(
-      new CustomEvent("mt:accountSelected", {
-        detail: { accountId, id: accountId },
-      })
-    );
-
-    // 6) pedir refresh a todos (el bus ya maneja hide al terminar, pero dejamos fallback)
-    if (window.mtRefresh && typeof window.mtRefresh.refreshAll === "function") {
-      try {
-        window.mtRefresh.refreshAll(accountId);
-      } finally {
-        setTimeout(hidePreloader, 1200);
-      }
-    } else {
-      window.location.reload();
-    }
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "Enter" || e.key === " ") && e.target.closest(CHIP_SEL)) {
-      e.preventDefault();
-      e.target.click();
-    }
-  });
-})();
-/* ==== Sincronizar header de account-selection al cambiar por fuera del picker ==== */
-(function () {
-  const SELS = (window.MT_DATA && window.MT_DATA.selectors) || {};
-  const SIZE_SEL = SELS.size || "#mt-size";
-  const NAME_SEL = SELS.name || "#mt-name";
-  const LOGO_SEL = SELS.platformLogo || "#mt-platform-logo";
-  const OPENER_SEL = '[data-bs-target="#changeSubcriptionModal"]';
-
-  function findAccountById(id) {
-    const list =
-      window.MT_DATA && Array.isArray(MT_DATA.accounts) ? MT_DATA.accounts : [];
-    const sid = String(id || "");
-    return list.find((a) => String(a.id) === sid) || null;
-  }
-
-  function setText(el, val) {
-    if (el) el.textContent = val || "";
-  }
-  function setSrc(img, val) {
-    if (img && val) img.src = val;
-  }
-
-  function updateAccountSelectionHeader(acc) {
-    if (!acc) return;
-
-    setText(document.querySelector(SIZE_SEL), acc.size || "");
-    setText(document.querySelector(NAME_SEL), acc.name || "Account");
-    setSrc(document.querySelector(LOGO_SEL), acc.logo || "");
-
-    const opener = document.querySelector(OPENER_SEL);
-    if (opener) {
-      const hasSub = !!(acc.subscriptionId || acc.hasSubscription);
-      const orderId = parseInt(acc.order || acc.orderId || 0, 10) || 0;
-
-      opener.setAttribute("data-account-id", String(acc.id || ""));
-      opener.setAttribute(
-        "data-current-main-id",
-        String(acc.mainProductId || acc.mainId || "")
-      );
-      opener.setAttribute(
-        "data-current-reset-id",
-        String(acc.resetProductId || "")
-      );
-      opener.setAttribute(
-        "data-current-activation-id",
-        String(acc.activationProductId || "")
-      );
-      opener.setAttribute(
-        "data-subscription-id",
-        String(acc.subscriptionId || "")
-      );
-      opener.setAttribute("data-order-id", String(orderId || ""));
-      opener.setAttribute("data-has-subscription", hasSub ? "1" : "0");
-    }
-  }
-
-  document.addEventListener("mt:accountSelected", (e) => {
-    const id = e && e.detail && (e.detail.accountId || e.detail.id);
-    if (!id) return;
-    const acc = findAccountById(id);
-    updateAccountSelectionHeader(acc);
-  });
-
-  window.__mtSyncAccountHeaderById = function (id) {
-    const acc = findAccountById(id);
-    updateAccountSelectionHeader(acc);
-  };
-})();
