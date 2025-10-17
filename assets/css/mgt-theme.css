@@ -1037,13 +1037,25 @@ html, body {
   margin-bottom: 67px;
 }
 
-.slider-content__image-wrapper::after {
+.slider-content__image-wrapper.slider-content__image-wrapper--slider-1::after {
   content: '';
-  background-image: url(http://localhost:8082/wp-content/themes/megatrader-addons/assets/img/auth/sd1-feature-content.png);
+  background-image: url(../../assets/img/auth/sd1-feature-content.png);
   background-size: cover;
   background-position: center;
   width: 248px;
   height: 320px;
+  position: absolute;
+  bottom: -67px;
+  left: 153px;
+}
+
+.slider-content__image-wrapper.slider-content__image-wrapper--slider-2::after {
+  content: '';
+  background-image: url(../../assets/img/auth/sd12-mobile.png);
+  background-size: cover;
+  background-position: center;
+  width: 187px;
+  height: 402px;
   position: absolute;
   bottom: -67px;
   left: 153px;

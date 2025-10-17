@@ -73,10 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function initializeSwiper() {
         (new Swiper('.swiper', {
             direction: 'horizontal',
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false,
-            },
+            // autoplay: {
+            //     delay: 3000,
+            //     disableOnInteraction: false,
+            // },
             pagination: {
                 el: '.swiper-pagination',
             },
