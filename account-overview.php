@@ -610,10 +610,15 @@ get_header();
 
 <div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
   aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>"
-  data-account-id="<?php echo esc_attr($mt_selected_id); ?>" 
-  data-main-id="<?php echo esc_attr($__main_product_id); ?>"
+  data-account-id="<?php echo esc_attr($mt_selected_id); ?>" data-main-id="<?php echo esc_attr($__main_product_id); ?>"
   data-reset-id="<?php echo esc_attr($__reset_product_id); ?>"
-  data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>">
+  data-account-type="<?php echo esc_attr($mt_account_data['type'] ?? ''); ?>"
+  data-checkout-base="<?php echo esc_url(function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout'); ?>"
+  data-funded-title="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_funded']); ?>"
+  data-evaluation-title="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_evaluation']); ?>"
+  data-btn-default="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button']); ?>"
+  data-btn-no-reset="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button_no_reset']); ?>"
+  data-subscriptions-url="/subscriptions/">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
@@ -636,7 +641,7 @@ get_header();
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_title']; ?>
         </span>
-        <span class="text-white fw-medium text-uppercase text-2xl leading-7">
+        <span id="mtbreach-desc" class="text-white fw-medium text-uppercase text-2xl leading-7">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description']; ?>
         </span>
         <span class="fw-medium text-a8a29e text-base">
@@ -645,9 +650,8 @@ get_header();
         <?php
         $has_reset = !empty($__reset_product_id) && $__reset_product_id !== '0';
         $btn_classes = 'mega-btn-md mega-btn-primary-md mt-breach-reset-button mt-4';
-        $btn_classes .= $has_reset ? '' : ' d-none disabled';
-        $btn_aria = $has_reset ? 'false' : 'true';
-        $btn_href = $has_reset ? esc_url($__breach_reset_url) : '#';
+        $btn_aria = 'false'; 
+        $btn_href = $has_reset ? esc_url($__breach_reset_url) : '#'; // base; JS ajusta si no hay reset
         ?>
         <a class="<?php echo esc_attr($btn_classes); ?>" href="<?php echo $btn_href; ?>"
           aria-disabled="<?php echo $btn_aria; ?>">

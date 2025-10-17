@@ -1620,6 +1620,7 @@ window.mtOverlay = (function () {
     init();
   }
 })();
+
 // ===== Breach Alert Modal (centrado + backdrop) =====
 (function () {
   function init() {
@@ -1630,8 +1631,85 @@ window.mtOverlay = (function () {
     var actionBtn = modal.querySelector(".mt-breach-reset-button");
     var withBackdrop = null;
 
+    // === NUEVO: refresca título y botón según data-* (resetId/mainId/accountType) ===
+    function refreshBreachModalUI(modalEl) {
+      if (!modalEl) return;
+
+      var btn = modalEl.querySelector(".mt-breach-reset-button");
+      var descEl =
+        modalEl.querySelector("#mtbreach-desc") ||
+        modalEl.querySelector(".modal-body .text-2xl.leading-7");
+
+      var ds = modalEl.dataset || {};
+
+      // helpers
+      function normalizeId(v) {
+        if (v == null) return "";
+        var s = String(v).trim().toLowerCase();
+        return (s === "" || s === "0" || s === "null" || s === "undefined") ? "" : String(v).trim();
+      }
+      function normalizeType(t) {
+        var raw =
+          (t && String(t)) ||
+          (document.getElementById("mt-account-overview")?.getAttribute("data-account-type")) ||
+          "";
+        raw = String(raw).trim().toLowerCase();
+        if (raw.startsWith("funded")) return "funded";
+        if (raw.startsWith("evaluation") || raw.startsWith("eval")) return "evaluation";
+        // fallback: intenta detectar palabra aislada
+        if (raw.indexOf("funded") >= 0) return "funded";
+        if (raw.indexOf("evaluation") >= 0 || raw.indexOf("eval") >= 0) return "evaluation";
+        return "";
+      }
+
+      var resetId = normalizeId(ds.resetId);
+      var mainId  = normalizeId(ds.mainId);
+      var accType = normalizeType(ds.accountType);
+
+      var base    = (ds.checkoutBase || "/checkout").replace(/(\?|#).*$/, "");
+      var subsUrl = (ds.subscriptionsUrl || "/subscriptions/").replace(/\/+$/,"") + "/";
+
+      // labels (inyectadas desde PHP)
+      var fundedTitle     = ds.fundedTitle || "";
+      var evaluationTitle = ds.evaluationTitle || "";
+      var btnDefault      = ds.btnDefault || (btn ? btn.textContent : "");
+      var btnNoReset      = ds.btnNoReset || "";
+
+      // 1) Descripción por tipo (si hay labels)
+      if (descEl) {
+        if (accType === "funded" && fundedTitle) {
+          descEl.textContent = fundedTitle;
+        } else if (accType === "evaluation" && evaluationTitle) {
+          descEl.textContent = evaluationTitle;
+        }
+        // si no hay labels, queda el texto del server
+      }
+
+      // 2) Botón (href + label) — nunca ocultar
+      if (!btn) return;
+      btn.classList.remove("d-none", "disabled");
+      btn.removeAttribute("aria-disabled");
+
+      if (resetId) {
+        // Con reset: checkout + label default
+        btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId);
+        if (btnDefault) btn.textContent = btnDefault;
+      } else if (mainId) {
+        // Sin reset + con mainId: ir a /subscriptions/{mainId} + label no_reset
+        btn.href = subsUrl + encodeURIComponent(mainId);
+        if (btnNoReset) btn.textContent = btnNoReset;
+      } else {
+        // Sin reset ni mainId (o "0"): /subscriptions/ + label no_reset
+        btn.href = subsUrl;
+        if (btnNoReset) btn.textContent = btnNoReset;
+      }
+    }
+
     function openModal() {
       if (modal.classList.contains("show")) return;
+
+      // NUEVO: refrescar UI antes de abrir
+      refreshBreachModalUI(modal);
 
       modal.removeAttribute("inert");
 
@@ -1726,16 +1804,26 @@ window.mtOverlay = (function () {
       if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
 
+    // Actualiza si cambia la cuenta
+    document.addEventListener("mt:accountSelected", function () {
+      refreshBreachModalUI(modal);
+    });
+    document.addEventListener("mt:hasSubscriptionChanged", function () {
+      refreshBreachModalUI(modal);
+    });
+
     modal.__open = openModal;
     modal.__close = closeModal;
 
     if (modal.getAttribute("data-show") === "1") {
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openModal, {
-          once: true,
-        });
-      } else {
+      var openNow = function () {
+        refreshBreachModalUI(modal); // refrescar en auto-open
         openModal();
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", openNow, { once: true });
+      } else {
+        openNow();
       }
     }
   }
@@ -1746,6 +1834,9 @@ window.mtOverlay = (function () {
     init();
   }
 })();
+
+
+
 
 /* === fetchStatus (AJAX) — usado por breachGuard y otros === */
 function fetchStatus(accountId) {
