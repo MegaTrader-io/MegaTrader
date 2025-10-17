@@ -22,7 +22,7 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                             <div class="slider-content">
                                 <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-1">
                                     <div>
-                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd11-window.svg"
+                                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/Group13.svg"
                                              style="object-fit: fill;"
                                              alt="Logo MegaTraderX"/>
                                     </div>
@@ -43,7 +43,7 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                         <div class="swiper-slide">
                             <div class="slider-content">
                                 <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-2">
-                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd12-window.svg"
+                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/Group14.svg"
                                          style="object-fit: fill;"
                                          alt="Logo MegaTraderX"/>
                                 </div>
