@@ -68,6 +68,22 @@
     @apply hidden mx-auto md:block w-[calc(72%-52px)] min-h-[470px]  md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)];
 }
 
+.slider-content__image-wrapper.slider-content__image-wrapper--slider-1 {
+    position: relative;
+    justify-content: center;
+    display: flex;
+}
+
+.slider-content__image-wrapper.slider-content__image-wrapper--slider-2 {
+    position: relative;
+    justify-content: center;
+    display: flex;
+}
+
+.slider-content__image-feature {
+    @apply absolute bottom-0 left-0;
+}
+
 .mgt-theme .slider-content__info {
     @apply space-y-2 text-center mx-4 sm:mx-0 relative top-[44px];
 }

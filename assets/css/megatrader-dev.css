@@ -4612,7 +4612,7 @@ textarea.mtfb-note {
 .account-performance-chart__overlay {
   position: absolute;
   inset: 0;
-  z-index: 10;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;

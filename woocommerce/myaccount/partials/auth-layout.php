@@ -20,10 +20,12 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                     <div class="swiper-wrapper">
                         <div class="swiper-slide">
                             <div class="slider-content">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd11.png"
-                                     class="slider-content__image-web"
-                                     style="object-fit: fill;min-height: 685px"
-                                     alt="Logo MegaTraderX"/>
+                                <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-1">
+                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd1.svg"
+                                         style="object-fit: fill;"
+                                         alt="Logo MegaTraderX"/>
+
+                                </div>
 
                                 <div class="slider-content__info">
                                     <h3 class="slider-content__title mb-0">
@@ -38,10 +40,11 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                         </div>
                         <div class="swiper-slide">
                             <div class="slider-content">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd12.png"
-                                     class="slider-content__image-web"
-                                     style="object-fit: fill;min-height: 685px"
-                                     alt="Logo MegaTraderX"/>
+                                <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-2">
+                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd2.svg"
+                                         style="object-fit: fill;"
+                                         alt="Logo MegaTraderX"/>
+                                </div>
 
                                 <div class="slider-content__info">
                                     <h3 class="slider-content__title mb-0">

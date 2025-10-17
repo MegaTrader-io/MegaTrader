@@ -104,7 +104,21 @@ function mt_enqueue_auth_script_on_login_form(): void
     }
 }
 
-add_action('woocommerce_login_form', 'mt_enqueue_auth_script_on_login_form');
+add_action('wp', function () {
+  if (
+    is_page_template('page-auth-login.php') ||
+    is_page_template('page-auth-lost-password.php') ||
+    is_page_template('page-auth-register.php')) {
+    wp_enqueue_style(
+      'mt-auth-style',
+      get_stylesheet_directory_uri() . '/assets/css/mgt-theme.css',
+      [],
+      filemtime(get_stylesheet_directory() . '/assets/css/mgt-theme.css')
+    );
+  }
+});
+
+add_action('woocommerce_login_form', 'mt_enqueue_auth_script_on_login_form', );
 
 add_action('init', function () {
     remove_action('woocommerce_before_customer_login_form', 'woocommerce_output_all_notices', 10);
