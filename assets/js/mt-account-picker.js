@@ -102,7 +102,8 @@
       if (st === "ACTIVE") return "ACTIVE";
       if (st === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
       if (st === "PASSED" || st === "UPGRADED") return "PASSED";
-      if (st === "BREACHED" || st === "RESET") return "BREACHED";
+      //if (st === "BREACHED" || st === "RESET") return "BREACHED";
+      if (st === "BREACHED") return "BREACHED";
       return "ACTIVE";
     }
 
@@ -166,7 +167,8 @@
         var st = normalizeStatus(card.getAttribute("data-status"));
         var match =
           (want === "ACTIVE" && st === "ACTIVE") ||
-          (want === "BREACHED" && (st === "BREACHED" || st === "RESET")) ||
+          //(want === "BREACHED" && (st === "BREACHED" || st === "RESET")) ||
+          (want === "BREACHED" && st === "BREACHED" ) ||
           (want === "PASSED" && (st === "PASSED" || st === "UPGRADED")) ||
           (want === "PENDING_ACTIVATION" && st === "PENDING_ACTIVATION");
 

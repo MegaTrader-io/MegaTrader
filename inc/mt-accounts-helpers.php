@@ -1872,10 +1872,12 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     $rows = [];
 
     if ($accountId === '' || !function_exists('mt_trades_fetch_by_shortcode')) {
+      if (defined('WP_DEBUG') && WP_DEBUG)
+        error_log('[DJ] early-exit: missing accountId or mt_trades_fetch_by_shortcode');
       return ['rows' => $rows, 'per_page' => (int) $perPage];
     }
 
-    // ==== Utilidades locales (sin colisionar nombres globales) ====
+    // ==== Utilidades ====
     $tzUTC = new DateTimeZone('UTC');
     $tzNY = new DateTimeZone('America/New_York');
 
@@ -1887,6 +1889,8 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
         $dt->setTimezone($tzNY);
         return $dt;
       } catch (\Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] toNY error: ' . $e->getMessage() . ' iso=' . $iso);
         return null;
       }
     };
@@ -1901,21 +1905,39 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     };
 
     // ==== 1) Traer TODOS los trades CLOSED (paginado) ====
-    $perPageFetch = 500; // ancho para minimizar requests
+    $perPageFetch = 500;
     $pageFetch = 1;
     $all = [];
 
+    if (defined('WP_DEBUG') && WP_DEBUG)
+      error_log('[DJ] fetch start account=' . $accountId);
+
     while (true) {
       $chunk = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', $pageFetch, $perPageFetch);
-      if (is_wp_error($chunk) || empty($chunk))
-        break;
 
-      // Normalizar: puede venir como lista plana o como ['meta'=>..., 'data'=>[...]]
+      if (is_wp_error($chunk)) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] fetch error page=' . $pageFetch . ' msg=' . $chunk->get_error_message());
+        break;
+      }
+      if (empty($chunk)) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] fetch empty page=' . $pageFetch);
+        break;
+      }
+
+      // Normalizar: lista plana o {meta,data}
       $items = [];
       if (isset($chunk['data']) && is_array($chunk['data'])) {
         $items = $chunk['data'];
       } elseif (is_array($chunk)) {
-        $items = $chunk; // lista plana
+        $items = $chunk;
+      }
+
+      if (defined('WP_DEBUG') && WP_DEBUG) {
+        $pc = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : 0;
+        $tc = isset($chunk['meta']['totalCount']) ? (int) $chunk['meta']['totalCount'] : 0;
+        error_log('[DJ] fetch page=' . $pageFetch . ' got=' . count($items) . ' pagesCount=' . $pc . ' totalCount=' . $tc);
       }
 
       if (empty($items))
@@ -1926,7 +1948,6 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
           $all[] = $it;
       }
 
-      // Paginación: por meta o por tamaño del lote
       $pagesCount = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : null;
       if ($pagesCount && $pageFetch >= $pagesCount)
         break;
@@ -1936,6 +1957,9 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $pageFetch++;
     }
 
+    if (defined('WP_DEBUG') && WP_DEBUG)
+      error_log('[DJ] total trades fetched=' . count($all));
+
     if (empty($all)) {
       return ['rows' => $rows, 'per_page' => (int) $perPage];
     }
@@ -1943,18 +1967,37 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     // ==== 2) Agrupar por día EST usando closeTime ====
     $byDay = [];
     foreach ($all as $t) {
-      $closeNY = $toNY(isset($t['closeTime']) ? (string) $t['closeTime'] : null);
-      $openNY = $toNY(isset($t['openTime']) ? (string) $t['openTime'] : null);
-      if (!$closeNY || !$openNY)
-        continue;
+      $cIso = isset($t['closeTime']) ? (string) $t['closeTime'] : null;
+      $oIso = isset($t['openTime']) ? (string) $t['openTime'] : null;
 
-      // Día clave = closeTime en EST
+      $closeNY = $toNY($cIso);
+      $openNY = $toNY($oIso);
+      if (!$closeNY || !$openNY) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] skip trade (bad times) open=' . $oIso . ' close=' . $cIso);
+        continue;
+      }
+
+      // Día clave = closeTime en EST (YYYY-MM-DD)
       $day = $closeNY->format('Y-m-d');
 
       $pnl = (float) ($t['pnl'] ?? 0);
       $lots = (int) ($t['lots'] ?? 0);
-      $commission = (float) ($t['commission'] ?? 0); // viene negativa (gasto)
+      $commission = (float) ($t['commission'] ?? 0); // negativa (gasto)
       $durSecs = max(0, (int) round($closeNY->getTimestamp() - $openNY->getTimestamp()));
+
+      if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log(sprintf(
+          '[DJ] trade day=%s pnl=%.2f comm=%.4f lots=%d dur=%ds open=%s close=%s',
+          $day,
+          $pnl,
+          $commission,
+          $lots,
+          $durSecs,
+          $oIso,
+          $cIso
+        ));
+      }
 
       if (!isset($byDay[$day])) {
         $byDay[$day] = [
@@ -1970,18 +2013,26 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
           'sumLoss' => 0.0,
           'durWinSecs' => 0,
           'durLossSecs' => 0,
-          '_seq' => [] // para rachas (orden por openTime)
+          '_seq' => []
         ];
       }
 
       $D =& $byDay[$day];
+
       $D['trades'] += 1;
       $D['ct'] += max(0, $lots);
-      $D['fees'] += $commission;             // mantener negativa (gasto)
-      $D['net'] += ($pnl + $commission);    // neto del día
+      $D['fees'] += $commission;
+      $D['net'] += ($pnl + $commission);
 
-      $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl);
-      $D['lo'] = is_null($D['lo']) ? $pnl : min($D['lo'], $pnl);
+      // === NUEVA LÓGICA DE HIGH/LOW ===
+      if ($pnl > 0) {
+        // High = máximo solo entre positivos
+        $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl);
+      } elseif ($pnl < 0) {
+        // Low = mínimo (más negativo) solo entre negativos
+        $D['lo'] = is_null($D['lo']) ? $pnl : min($D['lo'], $pnl);
+      }
+      // si pnl == 0, no afecta hi/lo
 
       if ($pnl > 0) {
         $D['wins'] += 1;
@@ -1989,23 +2040,26 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
         $D['durWinSecs'] += $durSecs;
       } elseif ($pnl < 0) {
         $D['losses'] += 1;
-        $D['sumLoss'] += $pnl; // negativo
+        $D['sumLoss'] += $pnl;
         $D['durLossSecs'] += $durSecs;
-      } // pnl == 0 no suma a wins/losses
+      }
 
       $D['_seq'][] = [
         'openTs' => $openNY->getTimestamp(),
         'pnl' => $pnl
       ];
+      unset($D);
     }
 
-    // ==== 3) Reducir a filas (cálculos finales: rachas, promedios, duraciones) ====
-    foreach ($byDay as $day => $D) {
-      // Rachas: ordenar por hora de apertura
-      usort($D['_seq'], function ($a, $b) {
-        return $a['openTs'] <=> $b['openTs']; });
+    unset($D);
+
+    // ==== 3) Reducir a filas (usar $agg para no reusar $D por referencia) ====
+    foreach ($byDay as $day => $agg) {
+      usort($agg['_seq'], function ($a, $b) {
+        return $a['openTs'] <=> $b['openTs'];
+      });
       $curW = $curL = $maxW = $maxL = 0;
-      foreach ($D['_seq'] as $e) {
+      foreach ($agg['_seq'] as $e) {
         if ($e['pnl'] > 0) {
           $curW += 1;
           $curL = 0;
@@ -2014,34 +2068,34 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
           $curW = 0;
         } else {
           $curW = 0;
-          $curL = 0; // pnl == 0 rompe rachas
+          $curL = 0;
         }
         $maxW = max($maxW, $curW);
         $maxL = max($maxL, $curL);
       }
 
-      $wins = (int) $D['wins'];
-      $loss = (int) $D['losses'];
-      $tot = max(1, (int) $D['trades']); // evitar /0
+      $wins = (int) $agg['wins'];
+      $loss = (int) $agg['losses'];
+      $tot = max(1, (int) $agg['trades']);
 
-      $awin = $wins > 0 ? ($D['sumWin'] / $wins) : '-';
-      $aloss = $loss > 0 ? ($D['sumLoss'] / $loss) : '-'; // negativo
+      $awin = $wins > 0 ? ($agg['sumWin'] / $wins) : '-';
+      $aloss = $loss > 0 ? ($agg['sumLoss'] / $loss) : '-';
       $winPct = round(($wins * 100.0) / $tot, 2);
       $losPct = round(100.0 - $winPct, 2);
 
-      $avgWinDur = $wins > 0 ? (int) floor($D['durWinSecs'] / $wins) : 0;
-      $avgLosDur = $loss > 0 ? (int) floor($D['durLossSecs'] / $loss) : 0;
+      $avgWinDur = $wins > 0 ? (int) floor($agg['durWinSecs'] / $wins) : 0;
+      $avgLosDur = $loss > 0 ? (int) floor($agg['durLossSecs'] / $loss) : 0;
 
-      // Compat: mantener 'openTime' y añadir 'date' (idénticos, Y-m-d en EST)
       $rows[] = [
-        'date' => $day,             // NUEVO alias pedido
-        'openTime' => $day,             // compat con template actual
-        'net' => (float) $D['net'],
-        'hi' => is_null($D['hi']) ? '-' : (float) $D['hi'],
-        'lo' => is_null($D['lo']) ? '-' : (float) $D['lo'],
-        'ct' => (int) $D['ct'],
-        'trades' => (int) $D['trades'],
-        'fees' => (float) $D['fees'], // suma negativa (gasto)
+
+        'date' => $day,
+        'openTime' => $day,
+        'net' => (float) $agg['net'],
+        'hi' => is_null($agg['hi']) ? '-' : (float) $agg['hi'],
+        'lo' => is_null($agg['lo']) ? '-' : (float) $agg['lo'],
+        'ct' => (int) $agg['ct'],
+        'trades' => (int) $agg['trades'],
+        'fees' => (float) $agg['fees'],
         'awin' => $awin,
         'aloss' => $aloss,
         'win' => $winPct,
@@ -2051,16 +2105,32 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       ];
     }
 
-    // ==== 4) Orden descendente por fecha ====
+    // ==== 4) Orden descendente por fecha + log final ====
     usort($rows, function ($a, $b) {
       $ta = strtotime((string) ($a['openTime'] ?? $a['date'] ?? '')) ?: 0;
       $tb = strtotime((string) ($b['openTime'] ?? $b['date'] ?? '')) ?: 0;
       return $tb <=> $ta;
     });
 
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      foreach ($rows as $rr) {
+        error_log(sprintf(
+          '[DJ] ROW day=%s net=%s hi=%s lo=%s ct=%d trades=%d fees=%s max=%s dur=%s',
+          (string) $rr['openTime'],
+          is_numeric($rr['net']) ? number_format((float) $rr['net'], 2, '.', '') : (string) $rr['net'],
+          (string) $rr['hi'],
+          (string) $rr['lo'],
+          (int) $rr['ct'],
+          (int) $rr['trades'],
+          is_numeric($rr['fees']) ? number_format((float) $rr['fees'], 2, '.', '') : (string) $rr['fees'],
+          (string) $rr['max'],
+          (string) $rr['dur']
+        ));
+      }
+    }
+
     return ['rows' => $rows, 'per_page' => (int) $perPage];
   }
-
 
 }
 
@@ -2422,9 +2492,7 @@ if (!function_exists('mt_notifications_normalize_row')) {
 
     // Normaliza tipo a nuestra paleta (success|error|warning)
     $type = strtolower($apiType);
-    if (!in_array($type, ['success', 'error', 'warning'], true)) {
-      // Si quieres colorear ciertos tipos, haz el mapping aquí:
-      // ej: if ($type === 'createdfrompurchase') $type = 'success';
+    if (!in_array($type, ['success', 'error', 'warning'], true)) {     
       $type = 'warning';
     }
 
@@ -2447,19 +2515,18 @@ if (!function_exists('mt_notifications_normalize_row')) {
         $plat = (isset($acc['platform']) && is_array($acc['platform'])) ? $acc['platform'] : [];
         $platAccountId = (string) ($plat['accountId'] ?? $acc['accountId'] ?? '');
         if ($platAccountId !== '') {
-          $displayId = $platAccountId; // ← lo que pintamos en el chip
+          $displayId = $platAccountId; 
         }
       }
     }
 
     // La UI espera estas claves. 'title' NO se usa: lo dejamos vacío sin generarlo.
     return [
-      'id' => $displayId,  // MT-XXXX si se pudo; si no, el mongo id
-      'type' => $type,       // success|error|warning
-      'message' => $message,    // texto de la API
+      'id' => $displayId,  
+      'type' => $type,       
+      'message' => $message,    
       'read' => (bool) ($r['read'] ?? false),
-      'right_label' => $reason,     // ej. número de orden
-      // meta opcional por si luego te sirve en JS (no afecta la UI actual)
+      'right_label' => $reason,     
       'meta' => [
         'userId' => $userId,
         'accountId_raw' => $accountKey,

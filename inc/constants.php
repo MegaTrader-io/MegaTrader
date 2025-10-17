@@ -335,7 +335,6 @@ class Label
             'message' => 'Unfortunately, you did not meet the evaluation criteria. Try again when ready.',
             'icon' => 'mt-icon_cancel mt-icon-error',
         ],
-
         'UpgradeInProgress' => [
             'severity' => 'warning',
             'title' => 'Upgrade In Progress',
@@ -354,13 +353,85 @@ class Label
             'message' => 'A scheduled system process has updated your account automatically.',
             'icon' => 'mt-icon_info-solid mt-icon-warning-600',
         ],
-
         'ResetBySystem' => [
             'severity' => 'warning',
             'title' => 'Account Reset',
             'message' => 'Your account has been reset by the system. You can start a new evaluation anytime.',
             'icon' => 'mt-icon_info-solid mt-icon-warning-600',
         ],
+        'Created' => [
+            'severity' => 'success',
+            'title' => 'Account Created',
+            'message' => 'A new trading account has been created and is being initialized.',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
+        ],
+        'CreatedFromRepeat' => [
+            'severity' => 'success',
+            'title' => 'Account Re-Created',
+            'message' => 'Your account has been recreated from a previous cycle or renewal.',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
+        ],
+        'Repeated' => [
+            'severity' => 'success',
+            'title' => 'Account Reset',
+            'message' => 'Your account has been reset or restarted to begin a new trading cycle.',
+            'icon' => 'mt-icon_checkmark-solid mt-icon-success-dark',
+        ],
+        'LiquidateFridayBreached' => [
+            'severity' => 'error',
+            'title' => 'Friday Liquidation Rule Breach',
+            'message' => 'Positions remained open past the allowed Friday close time, breaching the liquidation rule.',
+            'icon' => 'mt-icon_cancel mt-icon-error',
+        ],
+        'MaxTimeBreached' => [
+            'severity' => 'error',
+            'title' => 'Max Trading Duration Reached',
+            'message' => 'The maximum allowed time for this account’s evaluation period has expired.',
+            'icon' => 'mt-icon_cancel mt-icon-error',
+        ],
+        'InactivityBreached' => [
+            'severity' => 'warning',
+            'title' => 'Inactivity Breach',
+            'message' => 'No trades were placed within the required activity window — account flagged for inactivity.',
+            'icon' => 'mt-icon_info-solid mt-icon-warning-600',
+        ],
+        'SoftBreachLimitBreached' => [
+            'severity' => 'warning',
+            'title' => 'Soft Breach Limit Triggered',
+            'message' => 'A soft rule limit was exceeded (e.g., daily loss or trade cap). Trading resumes next session.',
+            'icon' => 'mt-icon_info-solid mt-icon-warning-600',
+        ],
+        'MaxRiskBreached' => [
+            'severity' => 'error',
+            'title' => 'Max Risk Breach',
+            'message' => 'Risk exposure exceeded the permitted limit — account marked as breached.',
+            'icon' => 'mt-icon_cancel mt-icon-error',
+        ],
+        'MaxFloatingPnLBreached' => [
+            'severity' => 'error',
+            'title' => 'Max Floating PnL Breach',
+            'message' => 'Unrealized PnL exceeded allowed floating limits during open positions.',
+            'icon' => 'mt-icon_cancel mt-icon-error',
+        ],
+        'StopLossBreached' => [
+            'severity' => 'error',
+            'title' => 'Stop-Loss Breach',
+            'message' => 'Stop-loss protection was triggered due to excessive losses in a single trade or session.',
+            'icon' => 'mt-icon_cancel mt-icon-error',
+        ],
+        'ManuallyBreached' => [
+            'severity' => 'error',
+            'title' => 'Manual Breach',
+            'message' => 'Account marked as breached manually by risk management or support staff.',
+            'icon' => 'mt-icon_cancel mt-icon-error',
+        ],
+        'MaxOpenLotsBreached' => [
+            'severity' => 'error',
+            'title' => 'Position Size Breach',
+            'message' => 'Open position size exceeded the maximum allowed lot limit.',
+            'icon' => 'mt-icon_cancel mt-icon-error',
+        ],
+
 
     ];
 
