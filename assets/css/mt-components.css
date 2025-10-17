@@ -284,6 +284,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none"><mask id="mask0_13111_31576" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="30" height="30"><rect width="30" height="30" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_13111_31576)"><path d="M13.25 20.75L22.0625 11.9375L20.3125 10.1875L13.25 17.25L9.6875 13.6875L7.9375 15.4375L13.25 20.75ZM15 27.5C13.2708 27.5 11.6458 27.1719 10.125 26.5156C8.60417 25.8594 7.28125 24.9688 6.15625 23.8438C5.03125 22.7188 4.14063 21.3958 3.48438 19.875C2.82812 18.3542 2.5 16.7292 2.5 15C2.5 13.2708 2.82812 11.6458 3.48438 10.125C4.14063 8.60417 5.03125 7.28125 6.15625 6.15625C7.28125 5.03125 8.60417 4.14063 10.125 3.48438C11.6458 2.82812 13.2708 2.5 15 2.5C16.7292 2.5 18.3542 2.82812 19.875 3.48438C21.3958 4.14063 22.7188 5.03125 23.8438 6.15625C24.9688 7.28125 25.8594 8.60417 26.5156 10.125C27.1719 11.6458 27.5 13.2708 27.5 15C27.5 16.7292 27.1719 18.3542 26.5156 19.875C25.8594 21.3958 24.9688 22.7188 23.8438 23.8438C22.7188 24.9688 21.3958 25.8594 19.875 26.5156C18.3542 27.1719 16.7292 27.5 15 27.5Z" fill="%23FFB34A"/></g></svg>');
 }
 
+input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_check-list__item__text {
+    color: white;
+}
+
 .mt-card .mt-card__header {
     display: flex;
     justify-content: space-between;
@@ -450,6 +454,11 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     background-color: #2DD4BF;
 }
 
+.mt-icon.mt-icon-success-dark {
+    background-color: #0D9488;
+}
+
+
 .mt-icon.mt-icon-primary {
     background-color: var(--Primary-400, #FFB34A);
 }
@@ -471,6 +480,9 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 .mt-icon.mt-icon-dark {
     background-color: #131210;
+}
+.mt-icon.mt-icon-warning-600 {
+    background-color: #EA580C;
 }
 
 .mt-icon_account {
@@ -801,6 +813,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-page__sidebar {
     flex: 1;
     width: 100%;
+    z-index: 1;
 }
 
 .mt-page__main {
@@ -1618,6 +1631,10 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     font-weight: 500;
     line-height: 24px;
     word-wrap: break-word
+}
+
+.mt-pricing-card--light {
+    border-radius: 16px;
 }
 
 /* --- Modificador mt-pricing-card--light (Variantes 1 y 2 - Fondo blanco) --- */

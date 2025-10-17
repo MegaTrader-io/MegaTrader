@@ -1881,6 +1881,54 @@ function mt_ajax_account_feature_content() {
   wp_send_json_success(['html' => $html]);
 }
 
+// === AJAX: Account Performance (bloque de la tarjeta) ===
+add_action('wp_ajax_mt_accounts_performance', 'mt_ajax_accounts_performance');
+add_action('wp_ajax_nopriv_mt_accounts_performance', 'mt_ajax_accounts_performance');
+
+function mt_ajax_accounts_performance() {
+    try {
+        // Nonce (usa el mismo 'mt_accounts_action' que ya usan tus otros AJAX)
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field((string) $_POST['nonce']) : '';
+        if (function_exists('check_mt_nonce') && !check_mt_nonce($nonce, 'mt_accounts_action')) {
+            wp_send_json_error(['message' => 'Invalid nonce'], 403);
+        }
+
+        $account_id = isset($_POST['accountId']) ? sanitize_text_field((string) $_POST['accountId']) : '';
+        if ($account_id === '') {
+            wp_send_json_error(['message' => 'Missing accountId'], 400);
+        }
+
+        // Resolver cuenta y armar payload de performance (usa tus helpers existentes)
+        if (!function_exists('mt_accounts_resolve_account_by_id') || !function_exists('mt_accounts_build_performance')) {
+            wp_send_json_error(['message' => 'Helpers not available'], 500);
+        }
+
+        $resolved = mt_accounts_resolve_account_by_id($account_id);
+        if (!$resolved) {
+            wp_send_json_error(['message' => 'Account not found'], 404);
+        }
+
+        $performance = mt_accounts_build_performance($resolved);
+
+        // Render del template a buffer
+        ob_start();
+        get_template_part(
+            'template-parts/account/account-performance',
+            null,
+            [
+                'performance' => $performance,
+                'meta'        => ['accountId' => $account_id],
+            ]
+        );
+        $html = ob_get_clean();
+
+        wp_send_json_success(['html' => $html ?: '']);
+    } catch (Throwable $e) {
+        wp_send_json_error(['message' => $e->getMessage()], 500);
+    }
+}
+
+
 // === Performance Chart AJAX ===
 add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
 add_action('wp_ajax_nopriv_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
@@ -2062,6 +2110,30 @@ add_action('wp_ajax_mt_save_daily_feedback', function () {
         'payload' => $data,
     ]);
 });
+
+// Ajax : Redit to account from notification
+
+// functions.php
+add_action('wp_ajax_mt_switch_account', 'mt_switch_account_cb');
+add_action('wp_ajax_nopriv_mt_switch_account', 'mt_switch_account_cb'); // si aplica
+
+function mt_switch_account_cb() {
+  if ( !is_user_logged_in() ) wp_send_json_error(['msg'=>'forbidden'], 403);
+
+  check_ajax_referer('', '_ajax_nonce'); // si usas nonce
+
+  $accountId = isset($_POST['accountId']) ? sanitize_text_field($_POST['accountId']) : '';
+  if (!$accountId) wp_send_json_error(['msg'=>'missing accountId'], 400);
+
+  // TODO: valida que la cuenta pertenezca al usuario, etc.
+  // Marca la cuenta activa en tu store/metas/sesión:
+  update_user_meta(get_current_user_id(), 'mt_active_account_id', $accountId);
+
+  // Devuelve payload que tu UI pueda consumir (o solo success)
+  wp_send_json_success(['activeAccountId'=>$accountId]);
+}
+
+
 
 // Billing completo (solo lectura) debajo del bloque Billing en Admin > Pedido
 
@@ -2326,7 +2398,6 @@ add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resour
     }
   }
 
-  // Asegúrate de incluir account_id desde la orden (requisito del partner)
   $order = wc_get_order($resource_id);
   if ($order) {
     $account_id = (string) $order->get_meta('account_id');

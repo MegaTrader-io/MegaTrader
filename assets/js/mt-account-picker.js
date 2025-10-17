@@ -102,7 +102,8 @@
       if (st === "ACTIVE") return "ACTIVE";
       if (st === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
       if (st === "PASSED" || st === "UPGRADED") return "PASSED";
-      if (st === "BREACHED" || st === "RESET") return "BREACHED";
+      //if (st === "BREACHED" || st === "RESET") return "BREACHED";
+      if (st === "BREACHED") return "BREACHED";
       return "ACTIVE";
     }
 
@@ -166,7 +167,8 @@
         var st = normalizeStatus(card.getAttribute("data-status"));
         var match =
           (want === "ACTIVE" && st === "ACTIVE") ||
-          (want === "BREACHED" && (st === "BREACHED" || st === "RESET")) ||
+          //(want === "BREACHED" && (st === "BREACHED" || st === "RESET")) ||
+          (want === "BREACHED" && st === "BREACHED" ) ||
           (want === "PASSED" && (st === "PASSED" || st === "UPGRADED")) ||
           (want === "PENDING_ACTIVATION" && st === "PENDING_ACTIVATION");
 
@@ -349,21 +351,23 @@
       var breachModal = document.getElementById("mt-breach-alert-modal");
       if (breachModal) {
         breachModal.setAttribute("data-account-id", accId);
-        breachModal.setAttribute("data-main-product-id", mainId);
+        breachModal.setAttribute("data-main-id", mainId);
+        breachModal.setAttribute("data-reset-id", resetId || "");
 
         var baseBreach = breachModal.getAttribute("data-checkout-base") || base;
         var breachBtn = breachModal.querySelector(".mt-breach-reset-button");
+
         if (breachBtn) {
           breachBtn.setAttribute("data-account-id", accId);
-          breachBtn.setAttribute("data-main-product-id", mainId);
-          if (resetId) {
-            breachBtn.href = buildUrl(baseBreach, resetId);
-            breachBtn.classList.remove("disabled", "d-none");
+          breachBtn.setAttribute("data-main-id", mainId);
+          if (resetId && String(resetId) !== "0") {
+            breachBtn.classList.remove("d-none", "disabled");
             breachBtn.removeAttribute("aria-disabled");
+            breachBtn.href = buildUrl(baseBreach, resetId);
           } else {
-            breachBtn.href = "#";
-            breachBtn.classList.add("disabled");
+            breachBtn.classList.add("d-none", "disabled");
             breachBtn.setAttribute("aria-disabled", "true");
+            breachBtn.removeAttribute("href");
           }
         }
       }

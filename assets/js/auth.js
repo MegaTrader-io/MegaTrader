@@ -69,6 +69,30 @@ document.addEventListener('DOMContentLoaded', function () {
         obs.observe(wrapper, {childList: true, subtree: true});
     }
 
+    // Initialize Slider
+    function initializeSwiper() {
+        (new Swiper('.swiper', {
+            direction: 'horizontal',
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+            },
+            loop: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            scrollbar: {
+                el: '.swiper-scrollbar',
+            },
+        }))
+    }
+
+    initializeSwiper();
+
     const wrapper = document.querySelector('.woocommerce-notices-wrapper');
     if (wrapper && wrapper.innerHTML.trim() === '') {
         wrapper.remove();

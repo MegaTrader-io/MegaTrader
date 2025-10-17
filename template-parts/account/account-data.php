@@ -29,8 +29,8 @@ if (!empty($args['platform_image'])) {
 }
 
 $link_web = 'http://trade.megatrader.io';
-$link_appstore = '#';
-$link_playstore = '#';
+$link_appstore = 'https://apps.apple.com/us/app/megatraderx/id6753067261';
+$link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderxt.mobile';
 ?>
 
 <div class="mt-card" data-account-id="<?php echo esc_attr($account_id); ?>">
