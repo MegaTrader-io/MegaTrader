@@ -68,6 +68,26 @@
     @apply hidden mx-auto md:block w-[calc(72%-52px)] min-h-[470px]  md:max-h-[640px] xl:max-h-[calc(100dvh-60px-85px-32px-128px-32px)];
 }
 
+.slider-content__image-wrapper {
+    @apply relative mb-[67px];
+}
+
+.slider-content__image-wrapper::after {
+    content: '';
+    background-image: url(http://localhost:8082/wp-content/themes/megatrader-addons/assets/img/auth/sd1-feature-content.png);
+    background-size: cover;
+    background-position: center;
+    width: 248px;
+    height: 320px;
+    position: absolute;
+    bottom: -67px;
+    left: 153px;
+}
+
+.slider-content__image-feature {
+    @apply absolute bottom-0 left-0;
+}
+
 .mgt-theme .slider-content__info {
     @apply space-y-2 text-center mx-4 sm:mx-0 relative top-[44px];
 }

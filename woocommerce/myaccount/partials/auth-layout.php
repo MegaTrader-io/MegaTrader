@@ -20,10 +20,12 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                     <div class="swiper-wrapper">
                         <div class="swiper-slide">
                             <div class="slider-content">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd11.png"
-                                     class="slider-content__image-web"
-                                     style="object-fit: fill;min-height: 685px"
-                                     alt="Logo MegaTraderX"/>
+                                <div class="slider-content__image-wrapper">
+                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd1-window.png"
+                                         class="slider-content__image-web"
+                                         style="object-fit: fill;box-shadow: 0px 20px 20px 20px rgba(0, 0, 0, 0.10);"
+                                         alt="Logo MegaTraderX"/>
+                                </div>
 
                                 <div class="slider-content__info">
                                     <h3 class="slider-content__title mb-0">
@@ -38,9 +40,9 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                         </div>
                         <div class="swiper-slide">
                             <div class="slider-content">
-                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd12.png"
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd2-window.png"
                                      class="slider-content__image-web"
-                                     style="object-fit: fill;min-height: 685px"
+                                     style="object-fit: fill;box-shadow: 0px 20px 20px 20px rgba(0, 0, 0, 0.10);"
                                      alt="Logo MegaTraderX"/>
 
                                 <div class="slider-content__info">
