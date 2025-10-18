@@ -395,7 +395,7 @@ get_header();
 
 
 ?>
-
+<?php wp_body_open(); ?>
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
   data-email-api="<?php echo esc_attr($mt_user_email_api); ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
