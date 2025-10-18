@@ -11,6 +11,8 @@
         <?php error_log('[LV] after <?php wp_head(); ?>'); ?>
     </head>
 <body <?php body_class('font-roboto antialiased'); ?>>
+<?php wp_body_open(); ?>
+
 <div class="loading-overlay tw-hidden tw-fixed tw-inset-0 tw-bg-[#131210]/90 tw-justify-center tw-items-center tw-z-[9999999]">
     <div class="loader"></div>
 </div>
