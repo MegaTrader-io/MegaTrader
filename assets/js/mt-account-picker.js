@@ -168,7 +168,7 @@
         var match =
           (want === "ACTIVE" && st === "ACTIVE") ||
           //(want === "BREACHED" && (st === "BREACHED" || st === "RESET")) ||
-          (want === "BREACHED" && st === "BREACHED" ) ||
+          (want === "BREACHED" && st === "BREACHED") ||
           (want === "PASSED" && (st === "PASSED" || st === "UPGRADED")) ||
           (want === "PENDING_ACTIVATION" && st === "PENDING_ACTIVATION");
 
@@ -228,6 +228,9 @@
       var subId = card.getAttribute("data-subscription-id") || "";
       var orderId = card.getAttribute("data-order-id") || "";
       var accountType = card.getAttribute("data-account-type") || "";
+      var mainId = card.getAttribute("data-main-id") || "";
+      var resetId = card.getAttribute("data-reset-id") || "";
+      var actId = card.getAttribute("data-activation-id") || "";
 
       window.mtAccounts = window.mtAccounts || {};
       window.mtAccounts.selectedId = selectedId;
@@ -235,6 +238,9 @@
       window.mtAccounts.subscriptionId = subId;
       window.mtAccounts.orderId = orderId;
       window.mtAccounts.accountType = accountType;
+      window.mtAccounts.mainId = mainId;
+      window.mtAccounts.resetId = resetId;
+      window.mtAccounts.activationId = actId;
 
       saveLastAccountId(selectedId);
 
@@ -245,6 +251,9 @@
         openerBtn.setAttribute("data-subscription-id", subId);
         openerBtn.setAttribute("data-order-id", orderId);
         openerBtn.setAttribute("data-account-type", accountType);
+        openerBtn.setAttribute("data-main-id", mainId);
+        openerBtn.setAttribute("data-reset-id", resetId);
+        openerBtn.setAttribute("data-activation-id", actId);
       }
       var root = document.getElementById("mt-account-overview");
       if (root) {
@@ -253,6 +262,9 @@
         root.setAttribute("data-subscription-id", subId);
         root.setAttribute("data-order-id", orderId);
         root.setAttribute("data-account-type", accountType);
+        root.setAttribute("data-main-id", mainId);
+        root.setAttribute("data-reset-id", resetId);
+        root.setAttribute("data-activation-id", actId);
       }
 
       enableBtn(true);
@@ -260,7 +272,11 @@
 
       document.dispatchEvent(
         new CustomEvent("mt:hasSubscriptionChanged", {
-          detail: { accountId: selectedId, hasSubscription: hasSub,accountType },
+          detail: {
+            accountId: selectedId,
+            hasSubscription: hasSub,
+            accountType,
+          },
         })
       );
     }
@@ -353,6 +369,25 @@
           : "#";
       }
 
+      // === Header RESET (fuera del modal)
+      var headerReset = document.querySelector('.mt-picker-wrap .account-reset-button');
+      var openerHeader = document.querySelector('.mt-picker-wrap .mega-btn-dark-md');
+      if (headerReset) {
+        if (resetId && resetId !== "0") {
+          headerReset.classList.remove('d-none');
+          headerReset.href = buildUrl(base, resetId);
+          headerReset.setAttribute('data-account-id', accId);
+          headerReset.setAttribute('data-main-id', mainId);
+          headerReset.setAttribute('data-reset-id', resetId);
+          if (openerHeader) openerHeader.style.paddingRight = '140px';
+        } else {
+          headerReset.classList.add('d-none');
+          headerReset.removeAttribute('href');
+          headerReset.setAttribute('data-reset-id','');
+          if (openerHeader) openerHeader.style.removeProperty('padding-right');
+        }
+      }
+
       // Breach
       var breachModal = document.getElementById("mt-breach-alert-modal");
       if (breachModal) {
@@ -371,7 +406,6 @@
           breachBtn.setAttribute("data-reset-id", resetId || "");
           breachBtn.setAttribute("data-current-status", status);
           breachBtn.setAttribute("data-account-type", accountType);
-         
         }
       }
 
@@ -382,7 +416,6 @@
         passedModal.setAttribute("data-main-product-id", mainId);
         passedModal.setAttribute("data-current-status", status);
         passedModal.setAttribute("data-activation-id", actId);
-        
 
         var baseAct = passedModal.getAttribute("data-checkout-base") || base;
         var actBtn = passedModal.querySelector("#mt-activation-btn");
@@ -442,16 +475,21 @@
         forceFilter(bucket);
         setActiveCard(card);
 
-        // NUEVO: inicializar data-subscription-id en opener/root
         var subId0 = card.getAttribute("data-subscription-id") || "";
         var order0 = card.getAttribute("data-order-id") || "";
         var accType0 = card.getAttribute("data-account-type") || "";
-
+        var base = CFG.checkoutBase || "/checkout";
+        var main0 = card.getAttribute("data-main-id") || "";
+        var reset0 = card.getAttribute("data-reset-id") || "";
+        var act0 = card.getAttribute("data-activation-id") || "";
 
         if (openerBtn && (loadLastAccountId() || CFG.currentId)) {
           openerBtn.setAttribute("data-subscription-id", subId0);
           openerBtn.setAttribute("data-order-id", order0);
           openerBtn.setAttribute("data-account-type", accType0);
+          openerBtn.setAttribute("data-main-id", main0);
+          openerBtn.setAttribute("data-reset-id", reset0);
+          openerBtn.setAttribute("data-activation-id", act0);
         }
         var root0 = document.getElementById("mt-account-overview");
         if (root0 && (loadLastAccountId() || CFG.currentId)) {
