@@ -59,22 +59,20 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 ?>
 
 <div class="mt-picker-wrap position-relative">
-  <div class="mega-btn-md mega-btn-dark-md w-100" role="button" tabindex="0"
-       data-bs-toggle="modal" data-bs-target="#changeSubcriptionModal"
-       data-account-id="<?php echo esc_attr($account_id); ?>"
-       data-main-id="<?php echo esc_attr($mainId); ?>"
-       data-reset-id="<?php echo esc_attr($resetId); ?>"
-       data-order-id="<?php echo esc_attr($ord); ?>"
-       data-activation-id="<?php echo esc_attr($activationId); ?>"
-       data-account-type="<?php echo esc_attr($curProgText); ?>"
-       data-subscription-id="<?php echo esc_attr($subscriptionIdCurrent); ?>">
+  <div class="mega-btn-md mega-btn-dark-md w-100" role="button" tabindex="0" data-bs-toggle="modal"
+    data-bs-target="#changeSubcriptionModal" data-account-id="<?php echo esc_attr($account_id); ?>"
+    data-main-id="<?php echo esc_attr($mainId); ?>" data-reset-id="<?php echo esc_attr($resetId); ?>"
+    data-order-id="<?php echo esc_attr($ord); ?>" data-activation-id="<?php echo esc_attr($activationId); ?>"
+    data-account-type="<?php echo esc_attr($curProgText); ?>"
+    data-subscription-id="<?php echo esc_attr($subscriptionIdCurrent); ?>">
 
     <div class="d-flex align-items-center gap-2 w-100">
       <span class="svg-button mt-icon mt-icon_caret-down mt-icon-white"></span>
       <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-2 row-gap-2">
         <div class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md"></div>
         <div class="d-flex gap-2 align-items-center flex-fill">
-          <img id="mt-platform-logo" src="<?php echo esc_url($currentLogo); ?>" alt="Platform logo" width="30" height="30" style="width:30px;height:30px;object-fit:contain;border-radius:6px;" />
+          <img id="mt-platform-logo" src="<?php echo esc_url($currentLogo); ?>" alt="Platform logo" width="30"
+            height="30" style="width:30px;height:30px;object-fit:contain;border-radius:6px;" />
           <div class="fw-medium plan-name text-uppercase text-white text-2xl leading-7">
             <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
             <span id="mt-name"><?php echo esc_html($productName); ?></span>
@@ -82,33 +80,37 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
         </div>
       </div>
     </div>
-
-    <?php if (!empty($resetId) && $resetId !== '0'): ?>
-      <!-- DESKTOP/TABLET: botón dentro del picker -->
-      <a class="mt-btn mt-btn--xs mt-btn--secondary account-reset-button account-reset-button--inside d-none d-md-inline-flex"
-         href="<?php echo esc_url($checkout . '?add-to-cart=' . urlencode($resetId)); ?>"
-         data-account-id="<?php echo esc_attr($account_id); ?>"
-         data-main-id="<?php echo esc_attr($mainId); ?>"
-         data-reset-id="<?php echo esc_attr($resetId); ?>">
-        <span class="mt-icon mt-icon_reset-fee mt-icon-white mt-icon-sm"></span>
-        <span><?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?></span>
-      </a>
-    <?php endif; ?>
+    <?php /* ?>
+<?php if (!empty($resetId) && $resetId !== '0'): ?>
+ <!-- DESKTOP/TABLET: botón dentro del picker -->
+ <a class="mt-btn mt-btn--xs mt-btn--secondary account-reset-button account-reset-button--inside d-none d-md-inline-flex"
+    href="<?php echo esc_url($checkout . '?add-to-cart=' . urlencode($resetId)); ?>"
+    data-account-id="<?php echo esc_attr($account_id); ?>"
+    data-main-id="<?php echo esc_attr($mainId); ?>"
+    data-reset-id="<?php echo esc_attr($resetId); ?>">
+   <span class="mt-icon mt-icon_reset-fee mt-icon-white mt-icon-sm"></span>
+   <span><?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?></span>
+ </a>
+<?php endif; ?>
+<?php */ ?>
 
   </div>
 </div>
 
+<?php /* ?>
 <?php if (!empty($resetId) && $resetId !== '0'): ?>
-  <!-- MOBILE: botón fuera del picker -->
-  <a class="mt-btn mt-btn--xs mt-btn--secondary account-reset-button account-reset-button--outside d-inline-flex d-md-none"
-     href="<?php echo esc_url($checkout . '?add-to-cart=' . urlencode($resetId)); ?>"
-     data-account-id="<?php echo esc_attr($account_id); ?>"
-     data-main-id="<?php echo esc_attr($mainId); ?>"
-     data-reset-id="<?php echo esc_attr($resetId); ?>">
-    <span class="mt-icon mt-icon_reset-fee mt-icon-white mt-icon-sm"></span>
-    <span><?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?></span>
-  </a>
+<!-- MOBILE: botón fuera del picker -->
+<a class="mt-btn mt-btn--xs mt-btn--secondary account-reset-button account-reset-button--outside d-inline-flex d-md-none"
+href="<?php echo esc_url($checkout . '?add-to-cart=' . urlencode($resetId)); ?>"
+data-account-id="<?php echo esc_attr($account_id); ?>"
+data-main-id="<?php echo esc_attr($mainId); ?>"
+data-reset-id="<?php echo esc_attr($resetId); ?>">
+<span class="mt-icon mt-icon_reset-fee mt-icon-white mt-icon-sm"></span>
+<span><?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?></span>
+</a>
 <?php endif; ?>
+<?php */ ?>
+
 
 
 
