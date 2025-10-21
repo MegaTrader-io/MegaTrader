@@ -1646,34 +1646,41 @@ window.mtOverlay = (function () {
       function normalizeId(v) {
         if (v == null) return "";
         var s = String(v).trim().toLowerCase();
-        return (s === "" || s === "0" || s === "null" || s === "undefined") ? "" : String(v).trim();
+        return s === "" || s === "0" || s === "null" || s === "undefined"
+          ? ""
+          : String(v).trim();
       }
       function normalizeType(t) {
         var raw =
           (t && String(t)) ||
-          (document.getElementById("mt-account-overview")?.getAttribute("data-account-type")) ||
+          document
+            .getElementById("mt-account-overview")
+            ?.getAttribute("data-account-type") ||
           "";
         raw = String(raw).trim().toLowerCase();
         if (raw.startsWith("funded")) return "funded";
-        if (raw.startsWith("evaluation") || raw.startsWith("eval")) return "evaluation";
+        if (raw.startsWith("evaluation") || raw.startsWith("eval"))
+          return "evaluation";
         // fallback: intenta detectar palabra aislada
         if (raw.indexOf("funded") >= 0) return "funded";
-        if (raw.indexOf("evaluation") >= 0 || raw.indexOf("eval") >= 0) return "evaluation";
+        if (raw.indexOf("evaluation") >= 0 || raw.indexOf("eval") >= 0)
+          return "evaluation";
         return "";
       }
 
       var resetId = normalizeId(ds.resetId);
-      var mainId  = normalizeId(ds.mainId);
+      var mainId = normalizeId(ds.mainId);
       var accType = normalizeType(ds.accountType);
 
-      var base    = (ds.checkoutBase || "/checkout").replace(/(\?|#).*$/, "");
-      var subsUrl = (ds.subscriptionsUrl || "/subscriptions/").replace(/\/+$/,"") + "/";
+      var base = (ds.checkoutBase || "/checkout").replace(/(\?|#).*$/, "");
+      var subsUrl =
+        (ds.subscriptionsUrl || "/subscriptions/").replace(/\/+$/, "") + "/";
 
       // labels (inyectadas desde PHP)
-      var fundedTitle     = ds.fundedTitle || "";
+      var fundedTitle = ds.fundedTitle || "";
       var evaluationTitle = ds.evaluationTitle || "";
-      var btnDefault      = ds.btnDefault || (btn ? btn.textContent : "");
-      var btnNoReset      = ds.btnNoReset || "";
+      var btnDefault = ds.btnDefault || (btn ? btn.textContent : "");
+      var btnNoReset = ds.btnNoReset || "";
 
       // 1) Descripción por tipo (si hay labels)
       if (descEl) {
@@ -1834,9 +1841,6 @@ window.mtOverlay = (function () {
     init();
   }
 })();
-
-
-
 
 /* === fetchStatus (AJAX) — usado por breachGuard y otros === */
 function fetchStatus(accountId) {
@@ -2592,10 +2596,9 @@ if (document.readyState === "loading") {
   function postTo(url, fields) {
     var form = document.createElement("form");
     form.method = "post";
-    form.action = url.replace(/\?.*$/, ""); // ej: "/checkout"
+    form.action = url.replace(/\?.*$/, "");
     form.className = "d-none";
 
-    // Si el href traía ?add-to-cart=, reenviarlo por POST (Woo lo entiende)
     var m = (url.match(/[?&]add-to-cart=([^&#]+)/) || [])[1];
     if (m) {
       var inpATC = document.createElement("input");
@@ -2605,10 +2608,9 @@ if (document.readyState === "loading") {
       form.appendChild(inpATC);
     }
 
-    // Campos extra
     Object.keys(fields || {}).forEach(function (k) {
       var v = fields[k];
-      if (v == null || v === "") return; // sólo si hay valor
+      if (v == null || v === "") return;
       var inp = document.createElement("input");
       inp.type = "hidden";
       inp.name = k;
@@ -2620,31 +2622,37 @@ if (document.readyState === "loading") {
     form.submit();
   }
 
-  // Intercepta clicks en botones de los modales (breach + activation)
+  // Intercepta clicks (breach, activation y el botón nuevo)
   document.addEventListener(
     "click",
     function (ev) {
       var el =
         ev.target && ev.target.closest
-          ? ev.target.closest(".mt-breach-reset-button, #mt-activation-btn")
+          ? ev.target.closest(
+              ".mt-breach-reset-button, #mt-activation-btn, .account-reset-button"
+            )
           : null;
       if (!el) return;
 
       var href = el.getAttribute("href") || "";
       if (!href || href === "#") return;
 
-      var host = el.closest("#mt-breach-alert-modal, #mt-account-passed-modal");
+      var host = el.closest(
+        "#mt-breach-alert-modal, #mt-account-passed-modal, .mt-picker-wrap, #mt-account-overview"
+      );
       if (!host) return;
 
-      var accountId = host.getAttribute("data-account-id") || "";
-      var mainProductId = host.getAttribute("data-main-product-id") || "";
-
+      var accountId =
+        el.getAttribute("data-account-id") ||
+        host.getAttribute("data-account-id") ||
+        "";
       if (!accountId) return;
 
       ev.preventDefault();
       ev.stopPropagation();
 
       var fields = { account_id: accountId };
+      var mainProductId = host.getAttribute("data-main-product-id") || "";
       if (mainProductId) fields.main_product_id = mainProductId;
 
       postTo(href, fields);
@@ -2652,7 +2660,6 @@ if (document.readyState === "loading") {
     { capture: true }
   );
 })();
-
 
 /* === Notifications toggle === */
 (function () {
@@ -2691,11 +2698,15 @@ if (document.readyState === "loading") {
       panel.appendChild(body);
       wrapper.appendChild(panel);
 
-      try { window.mtTooltips && window.mtTooltips.refresh(wrapper); } catch (_) {}
+      try {
+        window.mtTooltips && window.mtTooltips.refresh(wrapper);
+      } catch (_) {}
     } else {
       const body = wrapper.querySelector(".mt-tooltip__body");
       if (body) body.textContent = text || "You are up to date.";
-      try { window.mtTooltips && window.mtTooltips.refresh(wrapper); } catch (_) {}
+      try {
+        window.mtTooltips && window.mtTooltips.refresh(wrapper);
+      } catch (_) {}
     }
   }
 
@@ -2704,22 +2715,26 @@ if (document.readyState === "loading") {
     if (!toggle) return;
     const wrapper = toggle.closest(".mt-tooltip");
     if (wrapper) {
-      try { window.mtTooltips && window.mtTooltips.closeAll(); } catch (_) {}
+      try {
+        window.mtTooltips && window.mtTooltips.closeAll();
+      } catch (_) {}
       const parent = wrapper.parentNode;
       parent.insertBefore(toggle, wrapper);
       wrapper.remove();
-      try { window.mtTooltips && window.mtTooltips.refresh(parent || document); } catch (_) {}
+      try {
+        window.mtTooltips && window.mtTooltips.refresh(parent || document);
+      } catch (_) {}
     }
   }
 
   // === enciende/apaga la campana según haya items ===
   function syncBell(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel  = container.querySelector(PANEL_SEL);
+    const panel = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
     const icon = toggle.querySelector(".mt-icon");
-    const has  = visibleCount(panel) > 0;
+    const has = visibleCount(panel) > 0;
 
     if (icon) icon.classList.toggle("mt-icon-success", has);
     toggle.setAttribute("aria-disabled", has ? "false" : "true");
@@ -2735,7 +2750,7 @@ if (document.readyState === "loading") {
   // === AJAX: ocultar en BD ===
   function sendHide(panel, uid) {
     try {
-      const url   = panel?.dataset?.ajaxUrl;
+      const url = panel?.dataset?.ajaxUrl;
       const nonce = panel?.dataset?.nonce;
       if (!url || !uid) return;
 
@@ -2744,21 +2759,32 @@ if (document.readyState === "loading") {
       fd.append("uid", uid);
       fd.append("nonce", nonce);
 
-      fetch(url, { method: "POST", credentials: "same-origin", body: fd })
-        .catch(() => {});
+      fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        body: fd,
+      }).catch(() => {});
     } catch (_) {}
   }
 
   function uidFromBtn(btn, article) {
-    return btn?.dataset?.uid || btn?.dataset?.id || (function(){
-      const chip = article?.querySelector(".mt-chip");
-      return chip ? chip.textContent.trim() : "";
-    })();
+    return (
+      btn?.dataset?.uid ||
+      btn?.dataset?.id ||
+      (function () {
+        const chip = article?.querySelector(".mt-chip");
+        return chip ? chip.textContent.trim() : "";
+      })()
+    );
   }
 
   // ==== Layout / toggle ====
-  function eachContainer(cb) { document.querySelectorAll(CONTAINER_SEL).forEach(cb); }
-  function getAnchor(container) { return container.closest(ANCHOR_SEL) || container; }
+  function eachContainer(cb) {
+    document.querySelectorAll(CONTAINER_SEL).forEach(cb);
+  }
+  function getAnchor(container) {
+    return container.closest(ANCHOR_SEL) || container;
+  }
 
   function layoutToAnchor(container) {
     const panel = container.querySelector(PANEL_SEL);
@@ -2777,7 +2803,7 @@ if (document.readyState === "loading") {
 
   function openPanel(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel  = container.querySelector(PANEL_SEL);
+    const panel = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
     syncBell(container);
@@ -2787,23 +2813,24 @@ if (document.readyState === "loading") {
     }
 
     const rectToggle = toggle.getBoundingClientRect();
-    const GAP = 8, panelWidth = 360;
+    const GAP = 8,
+      panelWidth = 360;
     panel.style.position = "fixed";
     panel.style.width = panelWidth + "px";
 
     let left = Math.round(rectToggle.right + GAP);
-    const vw = (window.innerWidth || document.documentElement.clientWidth);
+    const vw = window.innerWidth || document.documentElement.clientWidth;
     if (left + panelWidth > vw - 8) {
       left = Math.round(rectToggle.left - panelWidth - GAP);
       if (left < 8) left = 8;
     }
 
     let top = Math.round(rectToggle.top);
-    const vh = (window.innerHeight || document.documentElement.clientHeight);
+    const vh = window.innerHeight || document.documentElement.clientHeight;
     if (top > vh - 8) top = vh - 8;
 
     panel.style.left = left + "px";
-    panel.style.top  = top  + "px";
+    panel.style.top = top + "px";
     panel.style.zIndex = "2000";
     panel.hidden = false;
     panel.classList.add("is-open");
@@ -2812,7 +2839,9 @@ if (document.readyState === "loading") {
     panel.style.setProperty("opacity", "1", "important");
 
     toggle.setAttribute("aria-expanded", "true");
-    try { panel.focus({ preventScroll: true }); } catch (_) {}
+    try {
+      panel.focus({ preventScroll: true });
+    } catch (_) {}
 
     document.addEventListener("click", onDocClick, true);
     document.addEventListener("keydown", onKey, true);
@@ -2820,13 +2849,21 @@ if (document.readyState === "loading") {
 
   function closePanel(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel  = container.querySelector(PANEL_SEL);
+    const panel = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
     panel.classList.remove("is-open");
     panel.hidden = true;
-    ["position","width","left","top","zIndex","display","visibility","opacity"]
-      .forEach((p) => panel.style.removeProperty(p));
+    [
+      "position",
+      "width",
+      "left",
+      "top",
+      "zIndex",
+      "display",
+      "visibility",
+      "opacity",
+    ].forEach((p) => panel.style.removeProperty(p));
 
     toggle.setAttribute("aria-expanded", "false");
     document.removeEventListener("click", onDocClick, true);
@@ -2839,49 +2876,61 @@ if (document.readyState === "loading") {
       (ev.target.closest(TOGGLE_ID) || ev.target.closest(PANEL_SEL));
     if (!inScope) eachContainer(closePanel);
   }
-  function onKey(ev) { if (ev.key === "Escape") eachContainer(closePanel); }
+  function onKey(ev) {
+    if (ev.key === "Escape") eachContainer(closePanel);
+  }
 
   function bindHide(panel) {
-    panel.addEventListener("click", function (e) {
-      const btn = e.target.closest("[data-mt-notif-hide]");
-      if (!btn) return;
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-
-      const article =
-        btn.closest("[data-mt-notif-item]") ||
-        btn.closest(".mt-notification-account") ||
-        btn.closest("article");
-
-      const uid = uidFromBtn(btn, article);
-      if (!uid || !article) return;
-
-      // quita de UI y sincroniza BD
-      article.remove();
-      sendHide(panel, uid);
-
-      const container = panel.closest(CONTAINER_SEL) || document;
-      syncBell(container);
-      if (visibleCount(panel) === 0) {
-        closePanel(container);
-        try { window.mtTooltips && window.mtTooltips.refresh(container); } catch (_) {}
-      }
-    }, true);
-
-    panel.addEventListener("keydown", function (e) {
-      const btn = e.target.closest("[data-mt-notif-hide]");
-      if (!btn) return;
-      if (e.key === "Enter" || e.key === " ") {
+    panel.addEventListener(
+      "click",
+      function (e) {
+        const btn = e.target.closest("[data-mt-notif-hide]");
+        if (!btn) return;
         e.preventDefault();
-        btn.click();
-      }
-    }, true);
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+        const article =
+          btn.closest("[data-mt-notif-item]") ||
+          btn.closest(".mt-notification-account") ||
+          btn.closest("article");
+
+        const uid = uidFromBtn(btn, article);
+        if (!uid || !article) return;
+
+        // quita de UI y sincroniza BD
+        article.remove();
+        sendHide(panel, uid);
+
+        const container = panel.closest(CONTAINER_SEL) || document;
+        syncBell(container);
+        if (visibleCount(panel) === 0) {
+          closePanel(container);
+          try {
+            window.mtTooltips && window.mtTooltips.refresh(container);
+          } catch (_) {}
+        }
+      },
+      true
+    );
+
+    panel.addEventListener(
+      "keydown",
+      function (e) {
+        const btn = e.target.closest("[data-mt-notif-hide]");
+        if (!btn) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          btn.click();
+        }
+      },
+      true
+    );
   }
 
   function initContainer(container) {
     const toggle = container.querySelector(TOGGLE_ID);
-    const panel  = container.querySelector(PANEL_SEL);
+    const panel = container.querySelector(PANEL_SEL);
     if (!toggle || !panel) return;
 
     container.style.position = "";
@@ -2891,33 +2940,43 @@ if (document.readyState === "loading") {
     window.addEventListener("resize", relayout);
     window.addEventListener("orientationchange", relayout);
 
-    toggle.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-      const isOpen = !panel.hidden;
-      isOpen ? closePanel(container) : openPanel(container);
-    }, true);
-
-    panel.querySelectorAll("[data-mt-notif-close]").forEach((btn) => {
-      btn.addEventListener("click", function (e) {
+    toggle.addEventListener(
+      "click",
+      function (e) {
         e.preventDefault();
         e.stopPropagation();
-        closePanel(container);
-        try { toggle.focus({ preventScroll: true }); } catch (_) {}
-      }, { capture: true });
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        const isOpen = !panel.hidden;
+        isOpen ? closePanel(container) : openPanel(container);
+      },
+      true
+    );
+
+    panel.querySelectorAll("[data-mt-notif-close]").forEach((btn) => {
+      btn.addEventListener(
+        "click",
+        function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          closePanel(container);
+          try {
+            toggle.focus({ preventScroll: true });
+          } catch (_) {}
+        },
+        { capture: true }
+      );
     });
 
     bindHide(panel);
     syncBell(container);
-    try { window.mtTooltips && window.mtTooltips.refresh(container); } catch (_) {}
+    try {
+      window.mtTooltips && window.mtTooltips.refresh(container);
+    } catch (_) {}
   }
 
-  function init() { eachContainer(initContainer); }
+  function init() {
+    eachContainer(initContainer);
+  }
   if (document.readyState !== "loading") init();
   else document.addEventListener("DOMContentLoaded", init);
 })();
-
-
-
-
