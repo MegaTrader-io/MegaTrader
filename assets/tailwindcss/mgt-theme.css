@@ -49,7 +49,7 @@
 }
 
 .mgt-theme .auth-preview {
-    @apply relative hidden rounded-2xl pt-[60px] xl:pb-[32px] h-full xl:h-auto md:px-[52px] lg:flex-1 md:block bg-mgt-dark lg:overflow-hidden xl:flex flex-col;
+    @apply relative hidden rounded-2xl pt-[60px] h-full xl:h-auto md:px-[52px] lg:flex-1 md:block bg-mgt-dark lg:overflow-hidden xl:flex flex-col;
 }
 
 .mgt-theme .auth-preview__container {
