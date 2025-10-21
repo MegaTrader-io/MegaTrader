@@ -234,7 +234,7 @@ add_action('wp_enqueue_scripts', function () {
         return;
     }
 
-    wp_enqueue_script('mt-auth', get_stylesheet_directory_uri() . '/assets/js/auth.js', [], '1.0.0', true);
+    wp_enqueue_script('mt-auth', get_stylesheet_directory_uri() . '/assets/js/auth.js', [], '1.0.1', true);
 
     $inline = <<<JS
 (function cleanResetPassParam(){'use strict';try{if(!('URL'in window)||!('history'in window)||typeof history.replaceState!=='function'){return}const url=new URL(window.location.href);const PARAM='reset-pass';const removeIfExists=true;const onlyWhenTrue=false;const hasParam=url.searchParams.has(PARAM);if(!hasParam)return;if(onlyWhenTrue){const value=url.searchParams.get(PARAM);if(value!=='true')return}url.searchParams.delete(PARAM);const newUrl=url.origin+url.pathname+(url.search?url.search:'')+(url.hash||'');history.replaceState(null,document.title,newUrl)}catch(err){console.warn('[cleanResetPassParam] Failed:',err)}})();
