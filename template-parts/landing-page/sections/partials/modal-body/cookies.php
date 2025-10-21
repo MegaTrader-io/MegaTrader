@@ -196,7 +196,7 @@
             </li>
             <li class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">
                 <span class="tw-font-bold tw-text-stone-300">Browser Tools</span>: Most major
-                browsers—such as Chrome, Firefox, Safari, and Edge—offer tools to tw-block, delete, or
+                browsers—such as Chrome, Firefox, Safari, and Edge—offer tools to block, delete, or
                 review cookies. You can configure your browser to reject all cookies or to alert you
                 when a site attempts to place a cookie.
             </li>

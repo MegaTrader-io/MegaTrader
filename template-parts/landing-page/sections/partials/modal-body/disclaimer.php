@@ -149,7 +149,7 @@
             <li class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">
                 <span class="tw-font-bold tw-text-stone-300">No Passive Earnings</span>: Users are not
                 compensated for time, participation, or platform usage alone. Rewards must be earned and
-                are not tw-fixed or recurring.
+                are not fixed or recurring.
             </li>
         </ul>
     </div>
@@ -287,7 +287,7 @@
     <p class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">MegaTrader
         urges users to treat the simulation seriously while recognizing its limitations. Always
         supplement your experience with additional education and maintain a conservative outlook if
-        tw-transitioning to real-world market participation. Trading involves substantial risk, and there
+        transitioning to real-world market participation. Trading involves substantial risk, and there
         are no guarantees of success in any environment.
     </p>
 </div>
@@ -326,7 +326,7 @@
     <p class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">We retain
         the right to amend rules, disqualify participants, or suspend features at our discretion. By
         participating, you agree to abide by evolving platform policies without asserting entitlement to
-        tw-fixed outcomes. MegaTrader is a private environment for skills evaluation and does not offer
+        fixed outcomes. MegaTrader is a private environment for skills evaluation and does not offer
         enforceable contractual benefits to participants.
     </p>
 </div>
@@ -398,7 +398,7 @@
             </li>
             <li class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">
                 <span class="tw-font-bold tw-text-stone-300">No Data Licensing</span>: Any live-like pricing
-                tw-visible on the platform is either delayed or approximated for educational display.
+                visible on the platform is either delayed or approximated for educational display.
                 MegaTrader does not purchase or distribute real-time market data.
             </li>
             <li class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-normal">

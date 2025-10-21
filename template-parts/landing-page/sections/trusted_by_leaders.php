@@ -28,7 +28,7 @@
 
             <div
                     class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6">
-                MegaTraderX made the tw-transition into funded trading seamless. The user-friendly interface and
+                MegaTraderX made the transition into funded trading seamless. The user-friendly interface and
                 powerful
                 analytics helped me reach my goals faster than I imagined.
             </div>
@@ -46,7 +46,7 @@
                     <div
                             class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6">
                         United
-                        State
+                        States
                     </div>
                 </div>
             </div>
@@ -67,7 +67,7 @@
 
             <div
                     class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6">
-                Precision and tw-flexibility are key in my trading style—and MegaTraderX delivers both. From
+                Precision and flexibility are key in my trading style—and MegaTraderX delivers both. From
                 multi-asset support to advanced charting, it’s my go-to platform every day
             </div>
 
@@ -83,7 +83,7 @@
                     <div
                             class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6">
                         United
-                        State
+                        States
                     </div>
                 </div>
             </div>
@@ -123,7 +123,7 @@
                 <div
                         class="tw-justify-start tw-text-stone-400 tw-text-base tw-font-medium tw-leading-6">
                     United
-                    State
+                    States
                 </div>
             </div>
         </div>
