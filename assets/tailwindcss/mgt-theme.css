@@ -53,7 +53,10 @@
 }
 
 .mgt-theme .auth-preview__container {
-    @apply content-center h-full flex items-center min-h-[calc(50dvh-60px-16px-32px)] justify-center flex-grow;
+    @apply flex items-center justify-center;
+    min-height: calc(100dvh - 260px);
+    padding-top: 32px;
+    padding-bottom: 32px;
 }
 
 .mgt-theme .auth-preview__content {
@@ -194,33 +197,33 @@
     @apply h-full max-h-full;
 }
 
+/* Imagen del mockup */
 .responsive-image {
-    max-width: 100% !important;
-    object-fit: fill;
-    /*background-color: #0a58ca;*/
-    margin-bottom: 32px;
+    max-width: min(55%, 880px);
+    height: auto;
+    max-height: calc(100dvh - 360px); /* reduce un poco más la altura total */
+    margin-bottom: 24px;
+    object-fit: contain;
 }
 
+/* Pantallas medianas y grandes */
 @media (min-width: 1024px) {
     .responsive-image {
-        max-width: 90% !important;
-        /*background-color: silver;*/
+        max-width: min(52%, 840px);
+        max-height: calc(100dvh - 340px);
     }
 }
 
 @media (min-width: 1280px) {
     .responsive-image {
-        max-width: 65% !important;
-        /*background-color: lightblue;*/
-        margin-bottom: 16px;
+        max-width: min(50%, 800px);
+        max-height: calc(100dvh - 320px);
     }
 }
 
 @media (min-width: 1536px) {
     .responsive-image {
-        width: 60% !important;
-        margin-bottom: 32px;
-        /*background-color: red;*/
+        max-width: min(48%, 780px);
+        max-height: calc(100dvh - 300px);
     }
 }
-

@@ -16,7 +16,7 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
     <div class="auth-preview">
         <div class="auth-preview__container">
             <div class="auth-preview__content">
-                <div class="swiper">
+                <div class="swiper" style="--swiper-pagination-top: 12px;overflow: visible !important;">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide">
                             <div class="slider-content">

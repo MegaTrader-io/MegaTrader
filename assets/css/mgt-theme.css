@@ -598,10 +598,6 @@ html, body {
   min-height: 470px;
 }
 
-.min-h-\[calc\(50dvh-60px-16px-32px\)\]{
-  min-height: calc(50dvh - 60px - 16px - 32px);
-}
-
 .w-6{
   width: 1.5rem;
 }
@@ -624,10 +620,6 @@ html, body {
 
 .flex-col{
   flex-direction: column;
-}
-
-.content-center{
-  align-content: center;
 }
 
 .items-center{
@@ -967,12 +959,11 @@ html, body {
 
 .mgt-theme .auth-preview__container{
   display: flex;
-  height: 100%;
-  min-height: calc(50dvh - 60px - 16px - 32px);
-  flex-grow: 1;
-  align-content: center;
   align-items: center;
   justify-content: center;
+  min-height: calc(100dvh - 260px);
+  padding-top: 32px;
+  padding-bottom: 32px;
 }
 
 .mgt-theme .auth-preview__content{
@@ -1241,34 +1232,38 @@ html, body {
   max-height: 100%;
 }
 
+/* Imagen del mockup */
+
 .responsive-image {
-  max-width: 100% !important;
-  -o-object-fit: fill;
-     object-fit: fill;
-  /*background-color: #0a58ca;*/
-  margin-bottom: 32px;
+  max-width: min(55%, 880px);
+  height: auto;
+  max-height: calc(100dvh - 360px);
+  /* reduce un poco más la altura total */
+  margin-bottom: 24px;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
+
+/* Pantallas medianas y grandes */
 
 @media (min-width: 1024px) {
   .responsive-image {
-    max-width: 90% !important;
-    /*background-color: silver;*/
+    max-width: min(52%, 840px);
+    max-height: calc(100dvh - 340px);
   }
 }
 
 @media (min-width: 1280px) {
   .responsive-image {
-    max-width: 65% !important;
-    /*background-color: lightblue;*/
-    margin-bottom: 16px;
+    max-width: min(50%, 800px);
+    max-height: calc(100dvh - 320px);
   }
 }
 
 @media (min-width: 1536px) {
   .responsive-image {
-    width: 60% !important;
-    margin-bottom: 32px;
-    /*background-color: red;*/
+    max-width: min(48%, 780px);
+    max-height: calc(100dvh - 300px);
   }
 }
 
@@ -1378,4 +1373,3 @@ html, body {
     align-items: flex-start;
   }
 }
-
