@@ -966,6 +966,7 @@ html, body {
   .mgt-theme .auth-preview{
     display: flex;
     height: auto;
+    padding-bottom: 32px;
   }
 }
 
@@ -1347,6 +1348,10 @@ html, body {
 
   .xl\:items-center{
     align-items: center;
+  }
+
+  .xl\:pb-\[32px\]{
+    padding-bottom: 32px;
   }
 }
 
