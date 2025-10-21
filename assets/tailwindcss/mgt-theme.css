@@ -49,7 +49,7 @@
 }
 
 .mgt-theme .auth-preview {
-    @apply relative hidden rounded-2xl pt-[60px] xl:pb-[32px] h-full xl:h-auto md:px-[52px] lg:flex-1 md:block bg-mgt-dark lg:overflow-hidden xl:flex flex-col;
+    @apply relative hidden rounded-2xl py-[60px] xl:py-[32px] h-full xl:h-auto md:px-[52px] lg:flex-1 md:block bg-mgt-dark lg:overflow-hidden xl:flex flex-col;
 }
 
 .mgt-theme .auth-preview__container {
@@ -61,7 +61,7 @@
 }
 
 .mgt-theme .slider-content {
-    @apply min-h-[668px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px];
+    @apply flex-col w-full h-full 2xl:items-start xl:grid xl:grid-rows-[auto_auto];
 }
 
 .mgt-theme .slider-content__image-web {
@@ -85,7 +85,7 @@
 }
 
 .mgt-theme .slider-content__info {
-    @apply space-y-2 text-center mx-4 sm:mx-0 relative top-[44px];
+    @apply space-y-2 text-center mx-4 sm:mx-0 relative;
 }
 
 .mgt-theme .slider-content__title {
@@ -103,8 +103,6 @@
 .mgt-theme .swiper-pagination {
     position: relative;
     bottom: auto !important;
-    margin-top: 44px;
-    margin-bottom: 32px;
 }
 
 .mgt-theme .auth-form__footer-wrapper {
@@ -195,3 +193,34 @@
 .mgt-theme .auth--full-height {
     @apply h-full max-h-full;
 }
+
+.responsive-image {
+    max-width: 100% !important;
+    object-fit: fill;
+    /*background-color: #0a58ca;*/
+    margin-bottom: 32px;
+}
+
+@media (min-width: 1024px) {
+    .responsive-image {
+        max-width: 90% !important;
+        /*background-color: silver;*/
+    }
+}
+
+@media (min-width: 1280px) {
+    .responsive-image {
+        max-width: 65% !important;
+        background-color: lightblue;
+        /*margin-bottom: 16px;*/
+    }
+}
+
+@media (min-width: 1536px) {
+    .responsive-image {
+        width: 60% !important;
+        margin-bottom: 32px;
+        /*background-color: red;*/
+    }
+}
+
