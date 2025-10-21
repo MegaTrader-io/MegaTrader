@@ -1307,6 +1307,12 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     font-size: 16px;
     padding: 12px 12px;
 }
+.mt-btn--xs {
+    font-size: 14px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    line-height: normal;
+}
 
 /* ===== VARIANTES ===== */
 /* Primary */

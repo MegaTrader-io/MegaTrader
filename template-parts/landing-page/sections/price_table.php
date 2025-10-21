@@ -141,7 +141,7 @@ $tabs = array_map(function ($item) {
     </div>
 
     <div class="tw-mx-auto tw-pb-8 tw-max-w-[760px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium text-stone-400 md:tw-max-w-[860px]">
-        Choose from tw-flexible account sizes and plans tailored to your trading style—whether you're growing your
+        Choose from flexible account sizes and plans tailored to your trading style—whether you're growing your
         skills
         or ready to trade real capital with confidence
     </div>

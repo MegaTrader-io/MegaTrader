@@ -228,19 +228,15 @@ if ($mt_is_activation) {
 
 
 // Account + Main product (desde POST>GET)
-$__ids = function_exists('mtch_resolve_ids') ? mtch_resolve_ids() : ['account_id' => '', 'main_product_id' => ''];
+$__ids = function_exists('mtch_resolve_ids') ? mtch_resolve_ids() : ['account_id' => ''];
 $mt_selected_id = (string) ($__ids['account_id'] ?? '');
-$mt_main_product_id = (string) ($__ids['main_product_id'] ?? '');
 
 if (function_exists('WC') && WC()->session) {
     WC()->session->set('mt_account_id', $mt_selected_id ?: '');
-    WC()->session->set('mt_main_product_id', (int) ($mt_main_product_id ?: 0));
 }
 
 
 ?>
-
-
 <div class="container">
     <div class="mt-page">
         <div class="mt-page__sidebar">
@@ -248,22 +244,16 @@ if (function_exists('WC') && WC()->session) {
         </div>
         <div class="mt-page__main">
             <?php render_step_selector(true); ?>
-
             <form id="checkout-form" name="checkout" method="post"
                 class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
                 action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
-
-                <?php if (!empty($mt_selected_id) && !empty($mt_main_product_id)): ?>
+                <?php if ($mt_selected_id !== ''): ?>
                     <input type="hidden" name="account_id" id="mt_account_id"
                         value="<?php echo esc_attr($mt_selected_id); ?>">
-                    <input type="hidden" name="main_product_id" id="mt_main_product_id"
-                        value="<?php echo esc_attr($mt_main_product_id); ?>">
                 <?php endif; ?>
-                
                 <div class="product-container">
                     <div class="mt-card">
                         <div class="mt-card-wrapper d-flex flex-column gap-4">
-
                             <div class="mt-card-header d-flex gap-3 align-items-center flex-wrap">
                                 <div class="mt-card-plan d-flex flex-column flex-grow-1">
                                     <div
@@ -284,7 +274,6 @@ if (function_exists('WC') && WC()->session) {
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="mt-card-plataform d-flex align-items-center bg-131210 gap-3 p-3 rounded-3">
                                     <div class="mt-card-plataform-logo">
                                         <?php if ($platform_logo_url): ?>
@@ -304,9 +293,7 @@ if (function_exists('WC') && WC()->session) {
                                     </div>
                                 </div>
                             </div>
-
                             <hr class="border-gray m-0" />
-
                             <!-- metas -->
                             <div class="mt-card-body">
                                 <?php if (!empty($items)): ?>
@@ -315,8 +302,10 @@ if (function_exists('WC') && WC()->session) {
                                             <div class="mt-meta-item" data-meta-key="<?php echo esc_attr($it['key']); ?>">
                                                 <i class="mt-icon mt-icon-white <?php echo esc_attr($it['icon_class']); ?>"></i>
                                                 <div class="mt-meta-text">
-                                                    <span class="mt-meta-label"><?php echo esc_html($it['label']); ?></span>
-                                                    <span class="mt-meta-value"><?php echo esc_html($it['value']); ?></span>
+                                                    <span class="mt-meta-label">
+                                                        <?php echo esc_html($it['label']); ?></span>
+                                                    <span class="mt-meta-value">
+                                                        <?php echo esc_html($it['value']); ?></span>
                                                 </div>
                                             </div>
                                         <?php endforeach; ?>
@@ -324,11 +313,9 @@ if (function_exists('WC') && WC()->session) {
                                 <?php endif; ?>
                             </div>
                             <!-- /metas -->
-
                         </div>
                     </div>
                 </div>
-
                 <?php if (!$mt_is_activation): ?>
                     <div class="addons-container">
                         <?php
@@ -397,7 +384,6 @@ if (function_exists('WC') && WC()->session) {
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
-
                 <div id="billing-container" class="d-flex flex-column gap-3">
                     <div class="fw-medium leading-8 text-size-20 text-white">
                         <?php echo esc_html(Label::CHECKOUT_META['billing_title']); ?>
@@ -412,7 +398,6 @@ if (function_exists('WC') && WC()->session) {
                                         <?php echo esc_html(Label::CHECKOUT_META['edit_billing']); ?>
                                     </a>
                                 </div>
-
                                 <div class="d-flex justify-content-between gap-3">
                                     <div class="flex-fill d-flex flex-column gap-3">
                                         <div class="d-flex align-items-start gap-2">
@@ -421,7 +406,6 @@ if (function_exists('WC') && WC()->session) {
                                                 <?php echo esc_html(trim(($billing['first_name'] ?? '') . ' ' . ($billing['last_name'] ?? '')) ?: '—'); ?>
                                             </div>
                                         </div>
-
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="mt-icon mt-icon_mail"></i>
                                             <div class="text-base fw-medium text-white" id="mt-sum-email">
@@ -436,7 +420,6 @@ if (function_exists('WC') && WC()->session) {
                                                 <?php echo esc_html($billing['phone'] ?: '—'); ?>
                                             </div>
                                         </div>
-
                                         <div class="d-flex align-items-start gap-2">
                                             <i class="mt-icon mt-icon_home"></i>
                                             <?php
@@ -453,7 +436,6 @@ if (function_exists('WC') && WC()->session) {
                                 </div>
                             </div>
                         </div>
-
                         <!-- form -->
                         <div id="mt-billing-form" class="<?php echo $has_complete_billing ? 'd-none' : ''; ?>">
                             <div class="billing-details pt-3">
@@ -461,7 +443,6 @@ if (function_exists('WC') && WC()->session) {
                                 $user_id = get_current_user_id();
                                 $current_state = $user_id ? get_user_meta($user_id, 'billing_state', true) : '';
                                 ?>
-
                                 <?php
                                 do_action('woocommerce_before_checkout_form');
                                 do_action('woocommerce_checkout_before_customer_details');
@@ -476,7 +457,6 @@ if (function_exists('WC') && WC()->session) {
                                 do_action('woocommerce_checkout_after_customer_details');
                                 do_action('woocommerce_after_checkout_form');
                                 ?>
-
                                 <input type="hidden" id="mt_save_billing_nonce"
                                     value="<?php echo esc_attr($mt_billing_nonce); ?>">
                                 <button type="button" id="mt-save-billing"
@@ -487,16 +467,13 @@ if (function_exists('WC') && WC()->session) {
                         </div>
                     </div>
                 </div>
-
                 <div class="payment-container review-container">
                     <div class="fw-medium leading-8 text-size-20 text-white pb-3">
                         <?php echo esc_html(Label::CHECKOUT_META['payment_title']); ?>
                     </div>
-
                     <div class="mt-payment-cards" id="mt-payment">
                         <?php wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout())); ?>
                     </div>
-
                     <div class="mt-card mt-3">
                         <?php wc_get_template('checkout/review-order.php'); ?>
                         <hr class="border-gray m-0">
@@ -515,9 +492,7 @@ if (function_exists('WC') && WC()->session) {
                                     <?php esc_html_e('Update totals', 'woocommerce'); ?>
                                 </button>
                             </noscript>
-
                             <?php do_action('woocommerce_review_order_before_submit'); ?>
-
                             <?php
                             if (!isset($order_button_text)) {
                                 $order_button_text = apply_filters('woocommerce_order_button_text', __('Place order', 'woocommerce'));
@@ -527,26 +502,21 @@ if (function_exists('WC') && WC()->session) {
                                 '<button type="submit" class="mega-btn-md mega-btn-primary-md w-100" name="woocommerce_checkout_place_order" value="' . esc_attr($order_button_text) . '" data-value="' . esc_attr($order_button_text) . '">' . esc_html($order_button_text) . '</button>'
                             );
                             ?>
-
                             <div class="d-flex gap-1 align-items-center pt-3">
                                 <i class="mt-icon mt-icon_lock"></i>
                                 <span class="text-base fw-light text-a8a29e">
                                     <?php echo esc_html(Label::CHECKOUT_META['payment_disclaimer']); ?>
                                 </span>
                             </div>
-
                             <?php do_action('woocommerce_review_order_after_submit'); ?>
                             <?php wp_nonce_field('woocommerce-process_checkout', 'woocommerce-process-checkout-nonce'); ?>
                         </div>
                     </div>
                 </div>
-
             </form>
-
             <div id="mt-order-success-nonce"
                 data-nonce="<?php echo esc_attr(wp_create_nonce('mt_render_order_success_modal')); ?>"></div>
         </div>
-
         <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
     </div>
 </div>

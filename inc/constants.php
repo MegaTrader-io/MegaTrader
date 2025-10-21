@@ -226,7 +226,7 @@ class Label
         "breach_modal_body_title" => "OOPS!",
         "breach_modal_body_description_evaluation" => "Your evaluation account has failed!",
         "breach_modal_body_description_funded" => "Your funded account has failed!",
-        "breach_modal_body_subtitle" => "In order to continue trading you need to reset your account.",
+        "breach_modal_body_subtitle" => "Reset your account or buy a new plan under the same rules.",
         "breach_modal_button" => "Reset account",
         "breach_modal_button_no_reset" => "Buy new plan",
         'passed_modal_body_title' => 'Congrats!',
