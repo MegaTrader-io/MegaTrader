@@ -1259,8 +1259,8 @@ html, body {
 @media (min-width: 1280px) {
   .responsive-image {
     max-width: 65% !important;
-    background-color: lightblue;
-    /*margin-bottom: 16px;*/
+    /*background-color: lightblue;*/
+    margin-bottom: 16px;
   }
 }
 
