@@ -49,11 +49,14 @@
 }
 
 .mgt-theme .auth-preview {
-    @apply relative hidden rounded-2xl pt-[60px] xl:pb-[32px] h-full xl:h-auto md:px-[52px] lg:flex-1 md:block bg-mgt-dark lg:overflow-hidden xl:flex flex-col;
+    @apply relative hidden rounded-2xl py-[60px] xl:py-[32px] h-full xl:h-auto md:px-[52px] lg:flex-1 md:block bg-mgt-dark lg:overflow-hidden xl:flex flex-col;
 }
 
 .mgt-theme .auth-preview__container {
-    @apply content-center h-full flex items-center min-h-[calc(50dvh-60px-16px-32px)] justify-center flex-grow;
+    @apply flex items-center justify-center;
+    min-height: calc(100dvh - 260px);
+    padding-top: 32px;
+    padding-bottom: 32px;
 }
 
 .mgt-theme .auth-preview__content {
@@ -61,7 +64,7 @@
 }
 
 .mgt-theme .slider-content {
-    @apply min-h-[668px] flex-col w-full h-full xl:items-center 2xl:items-start xl:grid xl:grid-rows-[auto_128px];
+    @apply flex-col w-full h-full 2xl:items-start xl:grid xl:grid-rows-[auto_auto];
 }
 
 .mgt-theme .slider-content__image-web {
@@ -85,7 +88,7 @@
 }
 
 .mgt-theme .slider-content__info {
-    @apply space-y-2 text-center mx-4 sm:mx-0 relative top-[44px];
+    @apply space-y-2 text-center mx-4 sm:mx-0 relative;
 }
 
 .mgt-theme .slider-content__title {
@@ -103,8 +106,6 @@
 .mgt-theme .swiper-pagination {
     position: relative;
     bottom: auto !important;
-    margin-top: 44px;
-    margin-bottom: 32px;
 }
 
 .mgt-theme .auth-form__footer-wrapper {
@@ -194,4 +195,35 @@
 
 .mgt-theme .auth--full-height {
     @apply h-full max-h-full;
+}
+
+/* Imagen del mockup */
+.responsive-image {
+    max-width: min(55%, 880px);
+    height: auto;
+    max-height: calc(100dvh - 360px); /* reduce un poco más la altura total */
+    margin-bottom: 24px;
+    object-fit: contain;
+}
+
+/* Pantallas medianas y grandes */
+@media (min-width: 1024px) {
+    .responsive-image {
+        max-width: min(52%, 840px);
+        max-height: calc(100dvh - 340px);
+    }
+}
+
+@media (min-width: 1280px) {
+    .responsive-image {
+        max-width: min(50%, 800px);
+        max-height: calc(100dvh - 320px);
+    }
+}
+
+@media (min-width: 1536px) {
+    .responsive-image {
+        max-width: min(48%, 780px);
+        max-height: calc(100dvh - 300px);
+    }
 }

@@ -16,15 +16,14 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
     <div class="auth-preview">
         <div class="auth-preview__container">
             <div class="auth-preview__content">
-                <div class="swiper">
+                <div class="swiper" style="--swiper-pagination-top: 12px;overflow: visible !important;">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide">
                             <div class="slider-content">
                                 <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-1">
                                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/s1.png"
-                                         style="object-fit: fill;max-width: 75%;"
+                                         class="responsive-image"
                                          alt="Logo MegaTraderX"/>
-
                                 </div>
 
                                 <div class="slider-content__info">
@@ -42,7 +41,7 @@ if (!isset($classes) || !is_string($classes)) $classes = '';
                             <div class="slider-content">
                                 <div class="slider-content__image-wrapper slider-content__image-wrapper--slider-2">
                                     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/auth/sd2.png"
-                                         style="object-fit: fill;max-width: 75%;"
+                                         class="responsive-image"
                                          alt="Logo MegaTraderX"/>
                                 </div>
 
