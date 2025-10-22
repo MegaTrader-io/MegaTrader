@@ -59,23 +59,40 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // handler clicks for landing page
-        document.querySelectorAll('.mt-navbar---landing-page .mt-navbar__nav-link')
+        document.querySelectorAll('.mt-navbar__nav-link,.dropdown-menu__link')
             .forEach(btn => {
                 btn.addEventListener('click', (ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();
-                    const element = document.getElementById(ev.currentTarget.dataset.menu);
-                    if (!element) {
-                        return;
+
+                    try {
+                        const elementId = ev.currentTarget.dataset.menu;
+                        const target = document.getElementById(elementId);
+                        if (target) {
+                            const elementPosition = target.getBoundingClientRect().top + window.scrollY;
+                            const offsetPosition = elementPosition - getCurrentHeaderHeight();
+
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth',
+                            });
+                        }
+
+                        if (ev.currentTarget.classList.contains('dropdown-menu__link')) {
+                            const dropdown = ev.currentTarget.closest('.dropdown');
+                            if (dropdown) {
+                                const toggle = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+                                if (toggle) {
+                                    const bsDropdown = bootstrap.Dropdown.getInstance(toggle);
+                                    if (bsDropdown) {
+                                        bsDropdown.hide();
+                                    }
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Navigation handler error:', error);
                     }
-
-                    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                    const offsetPosition = elementPosition - getCurrentHeaderHeight();
-
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: 'smooth',
-                    });
                 })
             })
 
@@ -116,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             toggleScrolled();
 
-            window.addEventListener('scroll', toggleScrolled, { passive: true });
+            window.addEventListener('scroll', toggleScrolled, {passive: true});
         }
     }
 

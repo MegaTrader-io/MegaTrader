@@ -41,9 +41,9 @@ body.admin-bar {
     background: transparent;
     box-shadow: none;
     border-bottom: 1px solid transparent;
-    transition: background 0.3s ease, 
-                box-shadow 0.3s ease, 
-                border-color 0.3s ease;
+    transition: background 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .mt-navbar__links--scrolled {
@@ -232,8 +232,45 @@ body.admin-bar {
     }
 }
 
-.mt-navbar.mt-navbar--my-account  .mt-navbar__nav {
+.mt-navbar.mt-navbar--my-account .mt-navbar__nav {
     display: none;
 }
 
+.mt-navbar__actions {
+    display: flex;
+    gap: 16px;
+}
 
+.mt-menu-container {
+    position: relative;
+}
+
+.mt-menu-container__btn-burger {
+    display: block;
+    padding: 12px;
+}
+
+.mt-menu-container__btn-burger::after {
+    content: none;
+}
+
+.mt-menu-container__menu {
+    position: absolute;
+    background-color: white;
+    bottom: 0;
+}
+
+@media (min-width: 1024px) {
+    .mt-menu-container {
+        display: none;
+    }
+}
+
+.mt-menu-container .dropdown-menu .dropdown-item:focus-visible {
+    outline: none;
+}
+
+.mt-menu-container .dropdown-menu .dropdown-item:active {
+    background-color: inherit;
+    color: black;
+}
