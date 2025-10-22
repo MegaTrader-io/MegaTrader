@@ -6,6 +6,10 @@ enum LayoutType: string
     case LandingPage = 'landing_page';
 }
 
+final class CACHE_KEY {
+  public const USER_INFO = 'mt_user_%s';
+}
+
 class Label
 {
     public const STATUS_ACTIVE = 'ACTIVE';

@@ -92,6 +92,9 @@ function mt_start_veriff_verification()
     wp_send_json_error(['message' => 'Invalid API response.'], 422);
   }
 
+  $key = sprintf(CACHE_KEY::USER_INFO, md5(strtolower($email)));
+  delete_transient($key);
+
   wp_send_json_success([
     'url' => $data['verification']['url'] ?? null,
     'token' => $data['verification']['sessionToken'] ?? null,
