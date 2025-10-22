@@ -32,7 +32,7 @@ class MT_Api {
   {
     if (!$email) return [];
 
-    $key = 'mt_user_' . md5(strtolower($email));
+    $key = sprintf(CACHE_KEY::USER_INFO, md5(strtolower($email)));
     $cached = get_transient($key);
     if ($cached !== false) return $cached;
 
