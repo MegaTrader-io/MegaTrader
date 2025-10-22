@@ -85,7 +85,7 @@ $navbar_actions = $args['navbar_actions'] ?? function () {
                                             <?= $link['wrapper_attributes'] ? ' ' . implode(' ', array_map(function ($key, $value) {
                                                         return $key . '="' . $value . '"';
                                                     }, array_keys($link['wrapper_attributes']), $link['wrapper_attributes'])) : '' ?>
-                                       class="dropdown-menu__link dropdown-item">
+                                       class="dropdown-menu__link dropdown-item text-center">
                                         <?= $link['value'] ?>
                                     </a>
                                 </li>
