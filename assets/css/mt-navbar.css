@@ -217,15 +217,18 @@ body.admin-bar {
     .mt-navbar.mt-navbar--my-account .mt-navbar__auth-link {
         display: block !important;
     }
+
     .mt-navbar.mt-navbar--my-account .mt-navbar__container {
         flex-direction: row-reverse;
         justify-content: flex-end;
         gap: 16px;
     }
+
     .mt-navbar.mt-navbar--my-account .mt-navbar__logo-wordmark {
         width: 167px
     }
 }
+
 @media (min-width: 1200px) {
     .mt-navbar.mt-navbar--my-account .mt-navbar__links {
         display: none;
@@ -273,4 +276,12 @@ body.admin-bar {
 .mt-menu-container .dropdown-menu .dropdown-item:active {
     background-color: inherit;
     color: black;
+}
+
+.mt-navbar--landing-page-bs .mt-navbar__container {
+    gap: 32px;
+}
+
+.mt-navbar--landing-page-bs .mt-navbar__nav {
+    flex: 1;
 }

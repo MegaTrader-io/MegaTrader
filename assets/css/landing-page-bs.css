@@ -1,0 +1,88 @@
+/* Bloque principal */
+
+.hero-bs {
+    color: #fff;
+}
+
+.hero-bs__container {
+    max-width: 1200px;
+    margin-block: 48px;
+}
+
+.hero-bs__row {
+    display: flex;
+    gap: 48px;
+}
+
+/* Contenido izquierdo */
+.hero-bs__content {
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-bs__content > * + *{
+    margin-top: 32px;
+}
+
+.hero-bs__title {
+    color: white;
+    font-size: 60px;
+    margin-bottom: 0;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 72px;
+    letter-spacing: -2px;
+}
+
+@media (min-width: 768px) {
+    .hero-bs__title {
+    }
+}
+
+.hero-bs__benefits{
+    margin-bottom: 0;
+}
+
+.hero-bs__benefits > * + * {
+    margin-top: 12px;
+}
+
+.hero-bs__benefit {
+    font-size: 1rem;
+    gap: 4px;
+    color: #ccc;
+}
+
+.hero-bs__icon {
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    color: #f6a20e; /* Amarillo de acento */
+}
+
+.hero-bs__text {
+    color: #A8A29E;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word
+}
+
+.hero-bs__btn {
+    display: inline;
+}
+
+/* Media */
+.hero-bs__media {
+    text-align: center;
+}
+
+.hero-bs__media-wrapper {
+    width: 600px;
+    height: 496px;
+}
+
+.hero-bs__image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
