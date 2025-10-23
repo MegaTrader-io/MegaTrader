@@ -63,6 +63,7 @@ $performance = array_merge($defaults, (array) $performance);
 $account_id = isset($meta['accountId']) ? (string) $meta['accountId'] : ($performance['accountId'] ?? '');
 $balance = $performance['currentBalance'];
 $equity = $performance['currentEquity'];
+$highestProfitDay = $performance['highestProfitDay'];
 $profit = $performance['currentProfit'];
 $profitPct = $performance['currentProfitPercent'];
 $daysTraded = (int) $performance['activeTradingDays'];
@@ -78,7 +79,7 @@ $isEvaluation = mt_is_evaluation($performance['label'] ?? '');
 $profitTarget = $isFunded
     ? ($performance['targetAmount'] ?? null)
     : ($performance['target'] ?? null);
-$consistencyBestWorst = $performance['consistencyCurrentBestWorstDayProfit'] ?? null;
+$consistencyCurrentTop = $performance['consistencyCurrentTopDayProfit'] ?? null;
 $consistency = $performance['consistency'] ?? null;
 $consistencyUrl = Label::PLAN_RULES_URLS['Consistency'] ?? '';
 
@@ -124,7 +125,23 @@ if ($hasDays) {
 
 $profitFillPctInt = (int) round((float) $profitFillPct);
 
+/* ========= Consistency (Top vs Consistency) ========= */
+$hasConsistency = is_numeric($consistency ?? null) && is_numeric($consistencyCurrentTop ?? null);
 
+$topPctRaw = $hasConsistency ? (float) $consistencyCurrentTop : 0.0; // viene en %
+$topFillPct = (int) round(max(0, min(100, $topPctRaw)));            // clamp 0..100
+
+$isFailTop = $hasConsistency ? ((float) $consistency <= (float) $consistencyCurrentTop) : true;
+
+$consistencyIconClass = $hasConsistency
+    ? ($isFailTop ? 'mt-icon-error mt-icon_cancel' : 'mt-icon-success mt-icon_checkmark-solid')
+    : 'mt-icon-error mt-icon_cancel';
+
+$topTextClass = $isFailTop ? 'text-error' : 'text-success';           // color para Top (derecha)
+$barToneClass = $isFailTop ? 'mt-progress-bar--error' : 'mt-progress-bar--success'; // color barra
+
+$topTxt = mt_format_percent_compact($consistencyCurrentTop);
+$consTxt = mt_format_percent_compact($consistency);
 
 
 /* Formatted variables */
@@ -160,13 +177,11 @@ if ($isFunded) {
 }
 
 
-
-
 ?>
 
-
 <?php if ($has_data): ?>
-    <div class="mt-card mt-card__row gap-32" data-component="account-performance" data-account-id="<?php echo esc_attr($account_id); ?>">
+    <div class="mt-card mt-card__row gap-32" data-component="account-performance"
+        data-account-id="<?php echo esc_attr($account_id); ?>">
         <div class="w-100 d-flex flex-column gap-32">
             <div class="d-flex flex-column gap-3">
                 <div class="mt-card__title__text fw-medium text-uppercase">
@@ -237,6 +252,17 @@ if ($isFunded) {
                         </div>
                         <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($equity)); ?></div>
                     </div>
+                    <?php if ($highestProfitDay !== null): ?>
+                        <div class="mt-card__item">
+                            <div class="mt-card__item-text">
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_highest_profit_day'] ?? 'Highest Profit Day'); ?>
+                            </div>
+                            <div class="mt-card__item-value text-white">
+                                <?php echo esc_html(mt_format_money($highestProfitDay)); ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="mt-card__item">
                         <div class="mt-card__item-text d-flex gap-1 align-items-center">
                             <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_net_pl']); ?>
@@ -349,34 +375,57 @@ if ($isFunded) {
                 </div>
 
                 <?php if ($isFunded): ?>
-                    <div class="d-flex align-items-center gap-2 border-top-gray pt-3">
-                        <span class="mt-icon <?php
-                        echo (is_numeric($consistency) && is_numeric($consistencyBestWorst))
-                            ? (((float) $consistency <= (float) $consistencyBestWorst)
-                                ? 'mt-icon-error mt-icon_cancel'
-                                : 'mt-icon-success mt-icon_checkmark-solid'
-                            )
-                            : 'mt-icon-error mt-icon_cancel';
-                        ?>"></span>
-                        <div class="text-white text-base fw-medium">
-                            <span
-                                class="text-white text-base fw-medium d-flex flex-column"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description_funded_start']); ?>
-                                <?php echo esc_html(mt_format_percent_compact($consistency)); ?>
-                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description_funded_ended']); ?></span>
-                            <?php if ($consistencyUrl): ?>
-                                <a href="<?php echo esc_url($consistencyUrl); ?>" target="_blank" rel="noopener"
-                                    class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
-                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_link_text']); ?>
-                                </a>
-                            <?php else: ?>
-                                <span class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
-                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_link_text']); ?>
-                                </span>
-                            <?php endif; ?>
+                    <div class="d-flex flex-column align-items-center gap-2 border-top-gray pt-3">
+                        <div class="w-100 d-flex align-items-center gap-2">
+                            <span class="mt-icon <?php echo esc_attr($consistencyIconClass); ?>"></span>
 
+                            <div class="text-white text-base fw-medium w-100">
+                                <span class="text-white text-base fw-medium d-flex flex-column">
+                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description_funded_start']); ?>
+                                    <?php echo esc_html(mt_format_percent_compact($consistency)); ?>
+                                    <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_description_funded_ended']); ?>
+                                </span>
+
+                                <?php if (!empty($consistencyUrl)): ?>
+                                    <a href="<?php echo esc_url($consistencyUrl); ?>" target="_blank" rel="noopener"
+                                        class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
+                                        <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_link_text']); ?>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="text-primary text-14px-line-20px fw-medium text-decoration-underline">
+                                        <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_link_text']); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
                         </div>
+
+                        <div class="w-100">
+                            <!-- Encabezado de barra -->
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span
+                                    class="text-white text-base fw-500"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_progress_text']); ?></span>
+                                <span class="text-base fw-500">
+                                    <span class="<?php echo esc_attr($topTextClass); ?>"><?php echo esc_html($topTxt); ?></span>
+                                    <span class="text-white"> / <?php echo esc_html($consTxt); ?></span>
+                                </span>
+                            </div>
+
+                            <!-- Barra de progreso (llena con Top) -->
+                            <div class="mt-progress-bar mt-progress-bar--md <?php echo esc_attr($barToneClass); ?>"
+                                role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                aria-valuenow="<?php echo $topFillPct; ?>" data-progress="<?php echo $topFillPct; ?>"
+                                style="--mt-progress-value: <?php echo $topFillPct; ?>%;">
+                                <span class="mt-progress-bar__fill"></span>
+                            </div>
+                            <span class="text-a8a29e text-xs"> <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_progress_text_description']); ?></span>
+                        </div>
+
+
+
                     </div>
                 <?php endif; ?>
+
+
             </div>
         </div>
     </div>

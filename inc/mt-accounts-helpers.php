@@ -363,9 +363,12 @@ if (!function_exists('mt_program_rules_url')) {
   function mt_program_rules_url($programOrLabel)
   {
     $plan = mt_program_plan($programOrLabel, '');
-    $map = Label::PLAN_RULES_URLS ?? [];
-    return $map[$plan] ?? '';
-  }
+    $map = [];
+    if (class_exists('Label') && defined('Label::PLAN_RULES_URLS')) {
+      $map = Label::PLAN_RULES_URLS;
+    }
+    return $map[$plan] ?? '';  }
+
 }
 
 
@@ -406,6 +409,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'accountId' => (string) ($account['id'] ?? ''),
       'currentBalance' => $metrics['currentBalance'] ?? mt__get($metrics, ['balance']),
       'currentEquity' => $metrics['currentEquity'] ?? null,
+      'highestProfitDay' => $metrics['consistencyTopDayRealizedProfit'] ?? null,
       'currentProfit' => $metrics['currentProfit'] ?? $metrics['profit'] ?? null,
       'currentProfitPercent' => $metrics['currentProfitPercent'] ?? $metrics['profitPercent'] ?? null,
       'activeTradingDays' => $metrics['activeTradingDays'] ?? $metrics['tradingDays'] ?? null,
@@ -417,7 +421,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'label' => $program['label'] ?? $program['description'] ?? mt__get($metrics, ['label']),
       'consistency' => mt__get($account, ['rules', 'consistency']),
       'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
-      'consistencyCurrentBestWorstDayProfit' => $metrics['consistencyCurrentBestWorstDayProfit'] ?? null,
+      'consistencyCurrentTopDayProfit' => $metrics['consistencyCurrentTopDayProfit'] ?? null,
 
     ];
     foreach ($payload as $k => $v) {
@@ -514,9 +518,19 @@ if (!function_exists('mt_accounts_fetch_account_json_by_shortcode')) {
     $raw = do_shortcode($shortcode);
     if (!is_string($raw) || $raw === '')
       return null;
-    $raw = trim(wp_strip_all_tags($raw));
+
+    $raw = trim(wp_unslash($raw));
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
+      $raw = substr($raw, 3);
+    if ($raw !== '')
+      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
     $data = json_decode($raw, true);
+    if (!is_array($data))
+      $data = json_decode(trim(wp_strip_all_tags($raw)), true);
+
     return is_array($data) ? $data : null;
+
   }
 }
 
@@ -966,14 +980,8 @@ function mt_accounts_get_credentials($account_id)
 
   // 2) Consultar la API usando TU helper del shortcode (mismo flujo que performance)
   //    IMPORTANT: pasar los "atts" como array, NO el id suelto.
-  $atts = [
-    'id' => $account_id,
-    'page' => 1,
-    'perpage' => 10,
-    'output' => 'json',
-  ];
-  // Asegúrate que la firma de esta función acepte $atts = []
-  $json = mt_accounts_fetch_account_json_by_shortcode($atts);
+  $json = mt_accounts_fetch_account_json_by_shortcode($account_id, 1, 10);
+
 
   // 3) Elegir la cuenta pedida y construir credenciales
   $acc = function_exists('mt_accounts_pick_account_from_json')
@@ -1011,48 +1019,6 @@ function mt_accounts_ajax_account_data()
   $html = ob_get_clean();
 
   wp_send_json_success(['html' => $html]);
-}
-
-// === Construye credenciales desde el JSON de una cuenta ===
-if (!function_exists('mt_accounts_build_credentials_from_account')) {
-  function mt_accounts_build_credentials_from_account($account)
-  {
-    if (empty($account)) {
-      return [
-        'login' => '',
-        'password' => '',
-        'server' => '',
-        'links' => ['web' => '', 'appstore' => '', 'playstore' => ''],
-        'platform' => ['code' => '', 'name' => 'Trading Platform', 'icon_class' => ''],
-      ];
-    }
-    $a = is_object($account) ? json_decode(json_encode($account), true) : (array) $account;
-
-    $login = $a['login'] ?? ($a['credentials']['login'] ?? ($a['accountNumber'] ?? ($a['tradingLogin'] ?? '')));
-    $password = $a['password'] ?? ($a['credentials']['password'] ?? '');
-    $server = $a['server'] ?? ($a['credentials']['server'] ?? '');
-
-    $platform_code = strtolower($a['platform']['code'] ?? ($a['platform_code'] ?? ''));
-    $platform_name = $a['platform']['name'] ?? ($a['platform_name'] ?? 'Trading Platform');
-
-    $links = [
-      'web' => $a['links']['web'] ?? '',
-      'appstore' => $a['links']['appstore'] ?? '',
-      'playstore' => $a['links']['playstore'] ?? '',
-    ];
-
-    return [
-      'login' => (string) $login,
-      'password' => (string) $password,
-      'server' => (string) $server,
-      'links' => $links,
-      'platform' => [
-        'code' => $platform_code,
-        'name' => $platform_name,
-        'icon_class' => '',
-      ],
-    ];
-  }
 }
 
 
@@ -1233,13 +1199,6 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
             $resp = mt_metrics_fetch_by_shortcode($accountId, ['from' => $ymd, 'to' => $ymd]);
           } catch (\Throwable $e) {
             error_log('[MT][PERF][err] mt_metrics_fetch_by_shortcode(array): ' . $e->getMessage());
-          }
-          if (!is_array($resp) || !isset($resp['data'])) {
-            try {
-              $resp = mt_metrics_fetch_by_shortcode($accountId, $ymd, $ymd);
-            } catch (\Throwable $e) {
-              error_log('[MT][PERF][err] mt_metrics_fetch_by_shortcode(scalar): ' . $e->getMessage());
-            }
           }
         }
 
@@ -1595,28 +1554,69 @@ function mt_accounts_ajax_status()
 
 /* === MÉTRICS vía shortcode (JSON) === */
 if (!function_exists('mt_metrics_fetch_by_shortcode')) {
-  function mt_metrics_fetch_by_shortcode($accountId, $page = 1, $perPage = 30, $ttl = 15)
+  function mt_metrics_fetch_by_shortcode($accountId, $arg2 = 1, $perPage = 30, $ttl = 15)
   {
     $accountId = trim((string) $accountId);
     if ($accountId === '')
       return null;
 
-    $sc = sprintf(
-      '[mega_metrics_data id="%s" page="%d" perpage="%d" output="json" ttl="%d"]',
-      esc_attr($accountId),
-      (int) $page,
-      (int) $perPage,
-      (int) $ttl
-    );
+    // Defaults
+    $page = 1;
+    $per = 50;
+    $from = '';
+    $to = '';
+    $ttlVal = 15;
+
+    // Modo nuevo: $arg2 es array con from/to/page/perpage/ttl
+    if (is_array($arg2)) {
+      $page = isset($arg2['page']) ? (int) $arg2['page'] : 1;
+      $per = isset($arg2['perpage']) ? (int) $arg2['perpage'] : (isset($arg2['perPage']) ? (int) $arg2['perPage'] : 50);
+      $from = isset($arg2['from']) ? (string) $arg2['from'] : '';
+      $to = isset($arg2['to']) ? (string) $arg2['to'] : '';
+      $ttlVal = isset($arg2['ttl']) ? (int) $arg2['ttl'] : 15;
+    } else {
+      // Modo legacy: args escalares (como lo tenías)
+      $page = (int) $arg2;
+      $per = (int) $perPage;
+      $ttlVal = (int) $ttl;
+    }
+
+    // Construir shortcode con from/to solo si vienen
+    $attrs = [
+      'id' => esc_attr($accountId),
+      'page' => max(1, $page),
+      'perpage' => max(1, $per),
+      'output' => 'json',
+      'ttl' => max(0, $ttlVal),
+    ];
+    if ($from !== '')
+      $attrs['from'] = $from;
+    if ($to !== '')
+      $attrs['to'] = $to;
+
+    $parts = [];
+    foreach ($attrs as $k => $v) {
+      $parts[] = $k . '="' . $v . '"';
+    }
+    $sc = '[mega_metrics_data ' . implode(' ', $parts) . ']';
 
     $raw = do_shortcode($sc);
     if (!is_string($raw) || $raw === '')
       return null;
-    $raw = trim(wp_strip_all_tags($raw));
+    $raw = trim(wp_unslash($raw));
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
+      $raw = substr($raw, 3);
+    if ($raw !== '')
+      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
     $data = json_decode($raw, true);
+    if (!is_array($data))
+      $data = json_decode(trim(wp_strip_all_tags($raw)), true);
+
     return is_array($data) ? $data : null;
   }
 }
+
 
 /* === TRADES vía shortcode (JSON) === */
 if (!function_exists('mt_trades_fetch_by_shortcode')) {
@@ -1670,13 +1670,18 @@ if (!function_exists('mt_trades_day_stats')) {
     }
     $trades = $cache[$accountId];
 
+    // Filtrado consistente con el diario: closeTime -> ET + cutoff 6pm
     $dayTrades = array_values(array_filter($trades, function ($t) use ($day_iso) {
-      if (!isset($t['closeTime']))
+      if (empty($t['closeTime']))
         return false;
-      return substr((string) $t['closeTime'], 0, 10) === $day_iso;
+      $ct = (string) $t['closeTime'];
+      $ct_ymd = function_exists('mt_utc_to_eastern_ymd_cutoff')
+        ? mt_utc_to_eastern_ymd_cutoff($ct, 18)
+        : (function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10));
+      return $ct_ymd === $day_iso;
     }));
+
     if (empty($dayTrades)) {
-      // SIN TRADES ESE DÍA → todo en '-'
       return ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
     }
 
@@ -1686,25 +1691,15 @@ if (!function_exists('mt_trades_day_stats')) {
       return $ta <=> $tb;
     });
 
-    $maxW = 0;
-    $maxL = 0;
-    $runW = 0;
-    $runL = 0;
-    $sumW = 0;
-    $cntW = 0;
-    $sumL = 0;
-    $cntL = 0;
+    $maxW = $maxL = $runW = $runL = 0;
+    $sumW = $sumL = 0;
+    $cntW = $cntL = 0;
 
     foreach ($dayTrades as $t) {
-      if (!array_key_exists('pnl', $t)) {
-        $runW = 0;
-        $runL = 0;
-        continue;
-      }
-      $pnl = $t['pnl'];
+      $pnl = $t['pnl'] ?? null;
 
       $durSec = null;
-      if (isset($t['openTime'], $t['closeTime'])) {
+      if (!empty($t['openTime']) && !empty($t['closeTime'])) {
         $o = strtotime((string) $t['openTime']);
         $c = strtotime((string) $t['closeTime']);
         if ($o && $c && $c >= $o)
@@ -1728,8 +1723,7 @@ if (!function_exists('mt_trades_day_stats')) {
           $cntL++;
         }
       } else {
-        $runW = 0;
-        $runL = 0;
+        $runW = $runL = 0;
       }
     }
 
@@ -1738,16 +1732,15 @@ if (!function_exists('mt_trades_day_stats')) {
       return sprintf('%02d:%02d:%02d', floor($s / 3600), floor(($s % 3600) / 60), $s % 60);
     };
 
-    // CON TRADES ESE DÍA:
-    // - Si faltan pérdidas/ganancias → 0 y 00:00:00 (no '-')
     return [
-      'maxConsecWins' => ($maxW > 0) ? $maxW : 0,
-      'maxConsecLosses' => ($maxL > 0) ? $maxL : 0,
-      'avgWinDuration' => ($cntW > 0) ? $fmt($sumW / $cntW) : '00:00:00',
-      'avgLossDuration' => ($cntL > 0) ? $fmt($sumL / $cntL) : '00:00:00',
+      'maxConsecWins' => $maxW ?: 0,
+      'maxConsecLosses' => $maxL ?: 0,
+      'avgWinDuration' => $cntW > 0 ? $fmt($sumW / $cntW) : '00:00:00',
+      'avgLossDuration' => $cntL > 0 ? $fmt($sumL / $cntL) : '00:00:00',
     ];
   }
 }
+
 
 /* === UTC -> Eastern (US/Eastern) a 'YYYY-MM-DD' === */
 if (!function_exists('mt_utc_to_eastern_ymd')) {
@@ -1777,13 +1770,50 @@ if (!function_exists('mt_utc_to_eastern_ymd')) {
   }
 }
 
-/* === Sumatoria de commission por día (Eastern) === */
+// UTC -> Eastern 'YYYY-MM-DD' con cutoff: si hora >= $cutoffHour => asigna al día siguiente
+if (!function_exists('mt_utc_to_eastern_ymd_cutoff')) {
+  function mt_utc_to_eastern_ymd_cutoff($utcString, $cutoffHour = 18)
+  {
+    $src = is_string($utcString) ? trim($utcString) : '';
+    if ($src === '')
+      return '';
+    try {
+      $utc = new DateTimeZone('UTC');
+      $ny = new DateTimeZone('America/New_York');
+
+      // Acepta 'YYYY-MM-DD' o ISO. Si viene solo fecha, asumimos 00:00:00 UTC.
+      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src))
+        $src .= ' 00:00:00';
+
+      $dt = new DateTime($src, $utc);
+      $dt->setTimezone($ny);
+
+      // cutoff: si hora >= 18 (6pm ET), empuja al día siguiente
+      if ((int) $dt->format('G') >= (int) $cutoffHour) {
+        $dt->modify('+1 day');
+      }
+      return $dt->format('Y-m-d');
+    } catch (\Throwable $e) {
+      return '';
+    }
+  }
+}
+
+
+/* === Sumatoria de commission por día (Eastern) — usa closeTime con cutoff 6pm === */
 if (!function_exists('mt_sum_commissions_for_day')) {
   /**
-   * Suma 'commission' de todos los trades CERRADOS cuyo openTime y closeTime,
-   * ambos convertidos a Eastern (US/Eastern), caen en el MISMO día y coinciden
-   * con $day_iso_eastern (YYYY-MM-DD).
-   * Retorna float (negativo generalmente) o '-' si no hay ningún trade que cumpla.
+   * Suma 'commission' de todos los trades CERRADOS cuyo closeTime,
+   * convertido a Eastern (US/Eastern) y aplicando cutoff de las 6:00pm,
+   * cae en el día $day_iso_eastern (YYYY-MM-DD).
+   *
+   * Regla de cutoff:
+   *   - Si la hora local (ET) del closeTime es >= 18 (6pm), el trade
+   *     se asigna al día siguiente para efectos del row diario.
+   *
+   * @param string $accountId        ID de cuenta
+   * @param string $day_iso_eastern  Día destino en formato 'YYYY-MM-DD' (ET)
+   * @return float|string            Suma (float) o '-' si no hubo trades para ese día
    */
   function mt_sum_commissions_for_day(string $accountId, string $day_iso_eastern)
   {
@@ -1793,35 +1823,68 @@ if (!function_exists('mt_sum_commissions_for_day')) {
     if ($accountId === '' || $day_iso_eastern === '')
       return '-';
 
+    // Conversor local: intenta usar mt_utc_to_eastern_ymd_cutoff si existe; si no, replica lógica.
+    $toEasternYmdCutoff = function (?string $iso, int $cutoffHour = 18): string {
+      $iso = is_string($iso) ? trim($iso) : '';
+      if ($iso === '')
+        return '';
+      // Si existe helper global con cutoff, úsalo.
+      if (function_exists('mt_utc_to_eastern_ymd_cutoff')) {
+        return mt_utc_to_eastern_ymd_cutoff($iso, $cutoffHour);
+      }
+      // Fallback: convertir a ET y aplicar cutoff manualmente.
+      try {
+        $utc = new DateTimeZone('UTC');
+        $ny = new DateTimeZone('America/New_York');
+        // Si viene solo YYYY-MM-DD, asumir 00:00:00 UTC:
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $iso))
+          $iso .= ' 00:00:00';
+        $dt = new DateTime($iso, $utc);
+        $dt->setTimezone($ny);
+        if ((int) $dt->format('G') >= $cutoffHour) {
+          $dt->modify('+1 day');
+        }
+        return $dt->format('Y-m-d');
+      } catch (\Throwable $e) {
+        // Último fallback: recorte naïve
+        return substr($iso, 0, 10);
+      }
+    };
+
+    // Cache de trades por cuenta (como antes)
     if (!isset($cache[$accountId])) {
-      $trades = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500);
+      $trades = function_exists('mt_trades_fetch_by_shortcode')
+        ? mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500)
+        : null;
       $cache[$accountId] = is_array($trades) ? $trades : [];
     }
+
     $trades = $cache[$accountId];
     if (empty($trades))
       return '-';
 
     $sum = 0.0;
     $found = false;
+
     foreach ($trades as $t) {
-      $ot = isset($t['openTime']) ? (string) $t['openTime'] : '';
+      // Usamos SOLO closeTime para decidir el día del row (con cutoff)
       $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
-      if ($ot === '' || $ct === '')
+      if ($ct === '')
         continue;
 
-      $ot_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ot) : substr($ot, 0, 10);
-      $ct_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10);
-
-      if ($ot_ymd === $day_iso_eastern && $ct_ymd === $day_iso_eastern) {
+      $ct_ymd = $toEasternYmdCutoff($ct, 18);
+      if ($ct_ymd === $day_iso_eastern) {
         if (isset($t['commission']) && is_numeric($t['commission'])) {
           $sum += (float) $t['commission'];
           $found = true;
         }
       }
     }
+
     return $found ? $sum : '-';
   }
 }
+
 
 /* === Conteo de trades por día (Eastern) === */
 if (!function_exists('mt_count_trades_for_day')) {
@@ -1847,20 +1910,21 @@ if (!function_exists('mt_count_trades_for_day')) {
 
     $cnt = 0;
     foreach ($trades as $t) {
-      $ot = isset($t['openTime']) ? (string) $t['openTime'] : '';
       $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
-      if ($ot === '' || $ct === '')
+      if ($ct === '')
         continue;
 
-      $ot_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ot) : substr($ot, 0, 10);
-      $ct_ymd = function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10);
+      $ct_ymd = function_exists('mt_utc_to_eastern_ymd_cutoff')
+        ? mt_utc_to_eastern_ymd_cutoff($ct, 18)
+        : (function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10));
 
-      if ($ot_ymd === $day_iso_eastern && $ct_ymd === $day_iso_eastern) {
+      if ($ct_ymd === $day_iso_eastern) {
         $cnt++;
       }
     }
     return $cnt;
   }
+
 }
 
 
@@ -1979,7 +2043,11 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       }
 
       // Día clave = closeTime en EST (YYYY-MM-DD)
-      $day = $closeNY->format('Y-m-d');
+      // Antes: $day = $closeNY->format('Y-m-d');
+      $day = function_exists('mt_utc_to_eastern_ymd_cutoff')
+        ? mt_utc_to_eastern_ymd_cutoff((string) $t['closeTime'], 18)
+        : $closeNY->format('Y-m-d'); // fallback sin cutoff
+
 
       $pnl = (float) ($t['pnl'] ?? 0);
       $lots = (int) ($t['lots'] ?? 0);
@@ -2163,12 +2231,23 @@ if (!function_exists('mt_daily_journal_rows_html')) {
     foreach ($rows as $i => $r) {
       $page = (int) floor($i / max(1, $per_page)) + 1;
 
-      $ts = isset($r['openTime']) ? strtotime((string) $r['openTime']) : 0;
-      $day_iso = $ts ? gmdate('Y-m-d', $ts) : '';
-      $day_label = $ts ? gmdate('m/d/Y', $ts) : '-';
+      // --- NUEVO: la fecha ya viene "cerrada" con cutoff en $r['openTime'] (o 'date').
+      // No dependemos del TZ del servidor para formatear; usamos el string YYYY-MM-DD tal cual.
+      $ymd = (string) ($r['openTime'] ?? $r['date'] ?? '');
+      $day_iso = substr($ymd, 0, 10);
+
+      // Formato label MM/DD/YYYY de forma estable (UTC, sin efectos del TZ del server)
+      if ($day_iso !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $day_iso)) {
+        // gmdate sobre timestamp "naive" 00:00:00, suficiente para formatear la etiqueta
+        $day_ts = strtotime($day_iso . ' 00:00:00 UTC');
+        $day_label = $day_ts ? gmdate('m/d/Y', $day_ts) : '-';
+      } else {
+        $day_label = '-';
+      }
 
       $fb = ($acc_id && $day_iso && function_exists('mt_get_daily_feedback'))
         ? mt_get_daily_feedback($user_id, (int) $acc_id, $day_iso) : null;
+
       $has_fb = !empty($fb);
       $mood = $has_fb ? (int) ($fb['mood'] ?? 0) : 0;
       $follow = $has_fb ? ((int) ($fb['followed_plan'] ?? 0) ? 1 : 0) : 0;
@@ -2208,6 +2287,7 @@ if (!function_exists('mt_daily_journal_rows_html')) {
     return trim(ob_get_clean());
   }
 }
+
 
 
 

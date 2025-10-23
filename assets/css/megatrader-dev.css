@@ -1121,7 +1121,9 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .border-top-gray {
   border-top: 1px solid var(--colors-gray-700, #404040);
 }
-
+.border-bottom-gray {
+  border-bottom: 1px solid var(--colors-gray-700, #404040);
+}
 .border-bottom-dark {
   border-bottom: 1px solid var(--surface-dark, #292524);
 }
