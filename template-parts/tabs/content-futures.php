@@ -308,7 +308,7 @@ function render_platforms($platforms) {
 
     const REMEMBER_PREVIOUS_SELECTION = <?= $remember_previous_selection ? 'true' : 'false' ?>;
     const CHECKOUT_URL = '<?= home_url( '/checkout/?add-to-cart=PRODUCT_ID' ) ?>';
-    const REGISTER_URL = '<?= home_url( '/auth/register/?redirect_to=' ) ?>';
+    const LOGIN_URL = '<?= home_url( '/auth/login/?redirect_to=' ) ?>';
     const isUserLoggedIn = <?= is_user_logged_in() ? 'true' : 'false' ?>;
     const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
 
@@ -351,7 +351,7 @@ function render_platforms($platforms) {
         const checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', selectedProductId);
 
         if (!isUserLoggedIn) {
-            checkoutBtn.href = REGISTER_URL + encodeURIComponent(checkoutUrl);
+            checkoutBtn.href = LOGIN_URL + encodeURIComponent(checkoutUrl);
             return;
         }
 

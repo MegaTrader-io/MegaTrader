@@ -133,94 +133,107 @@ add_action('init', function () {
 
 function mt_process_login(): void
 {
-    $var = $_REQUEST['woocommerce-login-nonce'] ?? null;
-    $var1 = $_REQUEST['_wpnonce'] ?? null;
-    $nonce = wc_get_var($var, wc_get_var($var1, ''));
+  $var = $_REQUEST['woocommerce-login-nonce'] ?? null;
+  $var1 = $_REQUEST['_wpnonce'] ?? null;
+  $nonce = wc_get_var($var, wc_get_var($var1, ''));
 
-    if (isset($_GET['reset-pass']) && $_GET['reset-pass'] === 'success') {
-        wc_add_notice(__('Your password has been reset successfully.', 'woocommerce'), 'success');
-    }
+  if (isset($_GET['reset-pass']) && $_GET['reset-pass'] === 'success') {
+    wc_add_notice(__('Your password has been reset successfully.', 'woocommerce'), 'success');
+  }
 
-    if (
-        !wp_verify_nonce($nonce, 'woocommerce-login') ||
-        !isset($_POST['login'], $_POST['username'], $_POST['password']) ||
-        !is_string($_POST['username']) || !is_string($_POST['password'])
-    ) {
-        return;
-    }
+  if (
+    !wp_verify_nonce($nonce, 'woocommerce-login') ||
+    !isset($_POST['login'], $_POST['username'], $_POST['password']) ||
+    !is_string($_POST['username']) || !is_string($_POST['password'])
+  ) {
+    return;
+  }
 
-    $username = trim((string) wp_unslash($_POST['username']));
-    $password = (string) $_POST['password'];
-    $remember = isset($_POST['rememberme']);
+  $username = trim((string)wp_unslash($_POST['username']));
+  $password = (string)$_POST['password'];
+  $remember = isset($_POST['rememberme']);
 
-    if ($username === '') {
-        wc_add_notice(__('Email is required.', 'your-td'), 'error', ['field' => 'username']);
-    } elseif (!is_email($username)) {
-        wc_add_notice(__('Enter a valid email address.', 'your-td'), 'error', ['field' => 'username']);
-    }
-    if ($password === '') {
-        wc_add_notice(__('Password is required.', 'your-td'), 'error', ['field' => 'password']);
-    }
-    if (wc_notice_count('error') > 0) {
-        return;
-    }
+  if ($username === '') {
+    wc_add_notice(__('Email is required.', 'your-td'), 'error', ['field' => 'username']);
+  } elseif (!is_email($username)) {
+    wc_add_notice(__('Enter a valid email address.', 'your-td'), 'error', ['field' => 'username']);
+  }
+  if ($password === '') {
+    wc_add_notice(__('Password is required.', 'your-td'), 'error', ['field' => 'password']);
+  }
+  if (wc_notice_count('error') > 0) {
+    return;
+  }
 
-    $validation_error = apply_filters('woocommerce_process_login_errors', new WP_Error(), $username, $password);
-    if ($validation_error->get_error_code()) {
-        foreach ($validation_error->get_error_codes() as $code) {
-            $field = in_array($code, ['empty_username', 'invalid_username'], true) ? 'username'
-                : (in_array($code, ['empty_password'], true) ? 'password' : 'general');
-            foreach ($validation_error->get_error_messages($code) as $msg) {
-                wc_add_notice($msg, 'error', ['field' => $field]);
-            }
+  $validation_error = apply_filters('woocommerce_process_login_errors', new WP_Error(), $username, $password);
+  if ($validation_error->get_error_code()) {
+    foreach ($validation_error->get_error_codes() as $code) {
+      $field = in_array($code, ['empty_username', 'invalid_username'], true) ? 'username'
+        : (in_array($code, ['empty_password'], true) ? 'password' : 'general');
+      foreach ($validation_error->get_error_messages($code) as $msg) {
+        wc_add_notice($msg, 'error', ['field' => $field]);
+      }
+    }
+    return;
+  }
+
+  if (is_multisite()) {
+    $user_data = get_user_by(is_email($username) ? 'email' : 'login', $username);
+    if ($user_data && !is_user_member_of_blog($user_data->ID, get_current_blog_id())) {
+      add_user_to_blog(get_current_blog_id(), $user_data->ID, 'customer');
+    }
+  }
+
+  $user = wp_signon(apply_filters('woocommerce_login_credentials', [
+    'user_login' => $username,
+    'user_password' => $password,
+    'remember' => $remember,
+  ]), is_ssl());
+
+  if (is_wp_error($user)) {
+    foreach ($user->get_error_codes() as $code) {
+      $field = match ($code) {
+        'empty_username', 'invalid_username' => 'username',
+        'empty_password', 'incorrect_password' => 'password',
+        default => 'general',
+      };
+      foreach ($user->get_error_messages($code) as $msg) {
+        if ($code === 'incorrect_password') {
+          wc_add_notice('Incorrect password', 'error', ['field' => $field]);
+          continue;
         }
-        return;
-    }
-
-    if (is_multisite()) {
-        $user_data = get_user_by(is_email($username) ? 'email' : 'login', $username);
-        if ($user_data && !is_user_member_of_blog($user_data->ID, get_current_blog_id())) {
-            add_user_to_blog(get_current_blog_id(), $user_data->ID, 'customer');
+        if ($code === 'invalid_email') {
+          wc_add_notice('No account found with this email.', 'error', ['field' => $field]);
+          continue;
         }
+        wc_add_notice($msg, 'error', ['field' => $field]);
+      }
     }
+    do_action('woocommerce_login_failed');
+    return;
+  }
 
-    $user = wp_signon(apply_filters('woocommerce_login_credentials', [
-        'user_login' => $username,
-        'user_password' => $password,
-        'remember' => $remember,
-    ]), is_ssl());
+  $default_redirect = profile_url(user_email: $user->user_email);
 
-    if (is_wp_error($user)) {
-        foreach ($user->get_error_codes() as $code) {
-            $field = match ($code) {
-                'empty_username', 'invalid_username' => 'username',
-                'empty_password', 'incorrect_password' => 'password',
-                default => 'general',
-            };
-            foreach ($user->get_error_messages($code) as $msg) {
-                if ($code === 'incorrect_password') {
-                    wc_add_notice('Incorrect password', 'error', ['field' => $field]);
-                    continue;
-                }
-                if ($code === 'invalid_email') {
-                    wc_add_notice('No account found with this email.', 'error', ['field' => $field]);
-                    continue;
-                }
-                wc_add_notice($msg, 'error', ['field' => $field]);
-            }
-        }
-        do_action('woocommerce_login_failed');
-        return;
+  $raw_redirect = $_POST['redirect'] ?? $_GET['redirect_to'] ?? $default_redirect;
+  $redirect = wp_unslash($raw_redirect);
+
+  $parsed_redirect = wp_parse_url($redirect);
+  $current_host = wp_parse_url(home_url(), PHP_URL_HOST);
+
+  if (
+    empty($parsed_redirect['host']) ||
+    $parsed_redirect['host'] === $current_host
+  ) {
+    if (strpos($parsed_redirect['path'] ?? '', '/wp-admin') === 0 && !current_user_can('manage_options')) {
+      $redirect = home_url('/');
     }
+  } else {
+    $redirect = $default_redirect;
+  }
 
-    $url = profile_url(
-        user_email: $user->user_email
-    );
-
-    wp_safe_redirect(
-        $url
-    );
-    exit;
+  wp_safe_redirect($redirect);
+  exit;
 }
 
 
