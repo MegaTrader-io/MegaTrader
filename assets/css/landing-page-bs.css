@@ -1,12 +1,20 @@
 /* Bloque principal */
 
+.landing-bs {
+    margin-bottom: 64px;
+}
+
+.landing-bs > * + * {
+    margin-top: 48px;
+}
+
 .hero-bs {
     color: #fff;
+    padding-block: 48px;
 }
 
 .hero-bs__container {
     max-width: 1200px;
-    margin-block: 48px;
 }
 
 .hero-bs__row {
@@ -20,7 +28,7 @@
     flex-direction: column;
 }
 
-.hero-bs__content > * + *{
+.hero-bs__content > * + * {
     margin-top: 32px;
 }
 
@@ -39,7 +47,7 @@
     }
 }
 
-.hero-bs__benefits{
+.hero-bs__benefits {
     margin-bottom: 0;
 }
 
@@ -85,4 +93,69 @@
     display: block;
     width: 100%;
     height: auto;
+}
+
+/* =========================================================
+   Verified Section (Over $70 Million Verified Payouts)
+   ========================================================= */
+
+.verified-bs {
+    text-align: center;
+    overflow: hidden;
+}
+
+.verified-bs__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+/* Header / Title / Subtitle */
+
+
+.verified-bs__title {
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    word-wrap: break-word;
+    margin-bottom: 0;
+}
+
+.verified-bs__title span {
+    color: var(--Surface-Primary);
+}
+
+.verified-bs__subtitle {
+    max-width: 760px;
+    text-align: center;
+    color: var(--body-color);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 0;
+}
+
+.verified-bs__cards .verified-bs__swiper {
+    margin-top: 32px;
+    --swiper-pagination-bullet-inactive-opacity: 0.40;
+    --swiper-pagination-bullet-inactive-color: white;
+    --swiper-pagination-color: white;
+    --swiper-pagination-top: auto;
+    --swiper-pagination-bottom: auto;
+}
+
+.verified-bs__cards .swiper-pagination {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-block: 8px;
+    gap: 8px;
+    margin-block: 16px;
 }
