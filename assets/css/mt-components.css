@@ -369,12 +369,14 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     justify-content: space-between;
     align-items: center;
     display: inline-flex;
+     border-bottom: 1px solid var(--colors-gray-700, #404040);
 }
 
+/*
 .mt-card .mt-card__item:not(:last-child) {
     border-bottom: 1px var(--Colors-Gray-700, #404040) solid;
 }
-
+*/
 
 .mt-card .mt-card__item .mt-card__item-text {
     flex: 1 1 0;

@@ -1121,7 +1121,9 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .border-top-gray {
   border-top: 1px solid var(--colors-gray-700, #404040);
 }
-
+.border-bottom-gray {
+  border-bottom: 1px solid var(--colors-gray-700, #404040);
+}
 .border-bottom-dark {
   border-bottom: 1px solid var(--surface-dark, #292524);
 }
@@ -1547,6 +1549,8 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .leading-tight {
   line-height: 1.25;
 }
+
+.with-icon-offset { padding-inline-start: calc(var(--mt-icon-size, 24px) + var(--mt-gap, 8px)); }
 
 /* ---- Badge -----*/
 

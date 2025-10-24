@@ -173,6 +173,7 @@ add_action('wp', function () {
 
 require_once get_template_directory() . '/inc/mt-navbar.php';
 require_once get_template_directory() . '/inc/landing-page-hooks.php';
+require_once get_template_directory() . '/inc/mt-landing-page-bs.php';
 
 add_action('wp_enqueue_scripts', function () {
     if (
@@ -1773,6 +1774,7 @@ add_action('template_redirect', function () {
     '/auth/login/',   // login Page
     '/auth/register/',   // Register Page
     '/auth/lost-password/',   // Lost Password Page
+    '/landing-page-bootstrap/',   // Landing Page Bootstrap
   ];
 
   $public_paths = apply_filters('mt_public_paths', $public_paths, $path);

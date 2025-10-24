@@ -6,6 +6,26 @@ if (!defined('ABSPATH')) {
 
 final class Mt_Navbar
 {
+    public static function render_navbar_bs(string $section, string|null $classes_navbar = null): void
+    {
+        $method = str_replace('-', '_', $section) . '_nav';
+
+        $template_action = "template-parts/navbar/actions/{$section}-actions";
+
+        if (!method_exists(self::class, $method)) {
+            echo 'No navbar found for section: ' . $section;
+            return;
+        }
+
+        get_template_part('template-parts/navbar/mt-navbar-bs', null, [
+            'links' => self::$method(),
+            'classes_navbar' => $classes_navbar,
+            'navbar_actions' => function () use ($section, $template_action) {
+                get_template_part($template_action);
+            }
+        ]);
+    }
+
     public static function render_navbar(string $section, string|null $classes_navbar = null): void
     {
         $method = str_replace('-', '_', $section) . '_nav';
@@ -41,6 +61,16 @@ final class Mt_Navbar
             ['href' => '#pricing', 'value' => 'PRICING', 'wrapper_attributes' => ['data-menu' => 'pricing']],
             ['href' => '#features', 'value' => 'FEATURES', 'wrapper_attributes' => ['data-menu' => 'features']],
             ['href' => '#our-team', 'value' => 'OUR TEAM', 'wrapper_attributes' => ['data-menu' => 'our-team']],
+            ['href' => '#faq', 'value' => 'FAQ', 'wrapper_attributes' => ['data-menu' => 'faq']],
+        ];
+    }
+
+    private static function landing_page_bs_nav(): array
+    {
+        return [
+            ['href' => '#how-it-works', 'value' => 'HOW IT WORKS', 'wrapper_attributes' => ['data-menu' => 'how-it-works']],
+            ['href' => '#pricing', 'value' => 'PRICING', 'wrapper_attributes' => ['data-menu' => 'pricing']],
+            ['href' => '#features', 'value' => 'FEATURES', 'wrapper_attributes' => ['data-menu' => 'features']],
             ['href' => '#faq', 'value' => 'FAQ', 'wrapper_attributes' => ['data-menu' => 'faq']],
         ];
     }
