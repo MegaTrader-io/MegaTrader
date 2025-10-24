@@ -288,7 +288,7 @@ if ($isFunded) {
                 </div>
             </div>
         </div>
-        <div class="w-100 d-flex flex-column gap-32">
+        <div class="w-100 d-flex flex-column gap-4">
             <div class="d-flex flex-column gap-3">
                 <div class="mt-card__title__text fw-medium text-uppercase">
                     <?php echo esc_html($titleRight); ?>
@@ -370,7 +370,6 @@ if ($isFunded) {
                                 <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules_link_text']); ?>
                             </span>
                         <?php endif; ?>
-
                     </div>
                 </div>
 
@@ -398,34 +397,26 @@ if ($isFunded) {
                                 <?php endif; ?>
                             </div>
                         </div>
-
-                        <div class="w-100">
-                            <!-- Encabezado de barra -->
+                        <div class="w-100 with-icon-offset">
                             <div class="d-flex justify-content-between align-items-center mt-2">
                                 <span
                                     class="text-white text-base fw-500"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_progress_text']); ?></span>
                                 <span class="text-base fw-500">
-                                    <span class="<?php echo esc_attr($topTextClass); ?>"><?php echo esc_html($topTxt); ?></span>
-                                    <span class="text-white"> / <?php echo esc_html($consTxt); ?></span>
+                                    <span class="<?php echo esc_attr($topTextClass); ?>"><?php echo esc_html($consistencyCurrentTop); ?></span>
+                                    <span class="text-white"> / <?php echo esc_html($consistency); ?></span>
                                 </span>
                             </div>
-
-                            <!-- Barra de progreso (llena con Top) -->
                             <div class="mt-progress-bar mt-progress-bar--md <?php echo esc_attr($barToneClass); ?>"
                                 role="progressbar" aria-valuemin="0" aria-valuemax="100"
                                 aria-valuenow="<?php echo $topFillPct; ?>" data-progress="<?php echo $topFillPct; ?>"
                                 style="--mt-progress-value: <?php echo $topFillPct; ?>%;">
                                 <span class="mt-progress-bar__fill"></span>
                             </div>
-                            <span class="text-a8a29e text-xs"> <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_progress_text_description']); ?></span>
+                            <span class="text-a8a29e text-xs d-flex justify-content-center mt-1">
+                                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_progress_text_description']); ?></span>
                         </div>
-
-
-
                     </div>
                 <?php endif; ?>
-
-
             </div>
         </div>
     </div>

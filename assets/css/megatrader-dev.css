@@ -1550,6 +1550,8 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   line-height: 1.25;
 }
 
+.with-icon-offset { padding-inline-start: calc(var(--mt-icon-size, 24px) + var(--mt-gap, 8px)); }
+
 /* ---- Badge -----*/
 
 .badge-mega {
