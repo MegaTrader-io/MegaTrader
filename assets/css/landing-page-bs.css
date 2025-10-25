@@ -336,10 +336,15 @@
     }
 }
 
+.platforms-bs {
+    background: #131210;
+}
+
 .platforms-bs__list {
     display: flex;
     justify-content: space-between;
     padding-inline: 32px;
+    padding-block: 48px;
 }
 
 .platforms-bs__item {
@@ -361,45 +366,25 @@
    ========================================================= */
 
 .journal-bs {
-    background-color: #0d0d0d;
+    background-color: var(--smoke-color2);
     padding-block: 64px;
-    overflow: hidden;
+    margin-top: 0;
 }
 
 .journal-bs__container {
     max-width: 1200px;
     margin: 0 auto;
     padding-inline: 16px;
+    padding-bottom: 16px;
 }
 
 /* Header */
 .journal-bs__header {
     text-align: left;
-    margin-bottom: 40px;
 }
 
-/* Badge */
-.journal-bs__badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-}
-
-.journal-bs__badge-main {
-    background-color: #00d084;
-    color: #0d0d0d;
-    font-weight: 700;
-    font-size: 0.875rem;
-    padding: 6px 12px;
-    border-radius: 20px;
-    text-transform: uppercase;
-}
-
-.journal-bs__badge-sub {
-    color: #a3a3a3;
-    font-size: 0.875rem;
+.journal-bs__header > * + * {
+    margin-top: 16px;
 }
 
 /* Title */
@@ -410,62 +395,19 @@
     font-weight: 300;
     text-transform: uppercase;
     line-height: 48px;
-    word-wrap: break-word
-}
-
-/* Tabs */
-.journal-bs__tabs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 32px;
-}
-
-.journal-bs__tab {
-    background-color: transparent;
-    border: 1px solid #ffb34a;
-    color: #ffb34a;
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.journal-bs__tab:hover {
-    background-color: rgba(255, 179, 74, 0.1);
-}
-
-.journal-bs__tab.is-active {
-    background-color: #ffb34a;
-    color: #0d0d0d;
+    margin-bottom: 0;
 }
 
 /* Swiper Section */
 .journal-bs__content {
     position: relative;
-}
-
-.journal-bs__swiper {
-    width: 100%;
+    padding-top: 48px;
 }
 
 .journal-bs__card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden;
-    height: 340px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.journal-bs__card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(255, 179, 74, 0.1);
+    background-color: var(--body-bg);
+    width: 800px;
+    height: 500px;
 }
 
 .journal-bs__media {
@@ -480,7 +422,7 @@
 }
 
 /* Pagination */
-.swiper-pagination {
+.journal-bs__content .swiper-pagination {
     position: relative;
     margin-top: 16px;
     display: flex;
@@ -488,13 +430,13 @@
     gap: 8px;
 }
 
-.swiper-pagination-bullet {
+.journal-bs__content .swiper-pagination-bullet {
     background-color: #fff;
     opacity: 0.3;
     transition: opacity 0.3s ease;
 }
 
-.swiper-pagination-bullet-active {
+.journal-bs__content .swiper-pagination-bullet-active {
     opacity: 1;
 }
 
@@ -505,16 +447,8 @@
         line-height: 36px;
     }
 
-    .journal-bs__badge {
-        justify-content: center;
-    }
-
     .journal-bs__header {
         text-align: center;
-    }
-
-    .journal-bs__tabs {
-        justify-content: center;
     }
 
     .journal-bs__card {
@@ -524,82 +458,95 @@
 
 
 /* =========================================================
-   Component: Badge Duo (Selectable with Active/Inactive States)
+   Component: Badge Duo
    ========================================================= */
 
 .badge-duo {
-    --badge-color-active: var(--theme-color3);   /* color principal (teal) */
-    --badge-text-active: #0d0d0d;
     display: inline-flex;
+    justify-content: flex-start;
     align-items: center;
     gap: 8px;
-
+    padding: 6px 16px 6px 6px;
     border-radius: 64px;
-    outline: 2px solid var(--badge-color-active);
+    outline: 2px solid #14B8A6;
     outline-offset: -2px;
     background-color: transparent;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
 }
 
-
-.badge-duo:has(input:checked) {
-    padding: 6px 16px 6px 6px;
-}
-
-.badge-duo:has(input:not(:checked)) {
-    padding: 6px 6px 6px 16px;
-}
-
-/* Ocultamos el input */
-.badge-duo__input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-
-.badge-duo__input:checked ~ .badge-duo__primary {
-    background-color: var(--badge-color-active);
-    color: var(--badge-text-active);
-
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
-    border-radius: 64px;
+.badge-duo__primary {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
     padding: 8px 12px;
-    display: flex;
-    align-items: center;
-}
-
-.badge-duo__input:checked ~ .badge-duo__secondary {
-    background-color: transparent;
-    color: #14B8A6;
-
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 20px;
-}
-
-.badge-duo__input:not(:checked) ~ .badge-duo__primary {
-    background-color: transparent;
-    color: #14B8A6;
-
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 20px;
-}
-
-.badge-duo__input:not(:checked) ~ .badge-duo__secondary {
-    background-color: var(--badge-color-active);
-    color: var(--badge-text-active);
-
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 20px;
+    background: #14B8A6;
     border-radius: 64px;
-    padding: 8px 16px;
-    display: flex;
+    overflow: hidden;
+}
+
+
+.badge-duo__secondary {
+    color: #14B8A6;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.badge-duo__primary .badge-duo__text {
+    color: #131210;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    word-wrap: break-word;
+}
+
+.badge-duo__secondary .badge-duo__text {
+    color: var(--theme-color3);
+}
+
+/* =========================================================
+   Component: Badge Group (Static visual tabs)
+   ========================================================= */
+
+.badge-group {
+    display: inline-flex;
+    justify-content: flex-start;
     align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background-color: #1E1E1E;
+    border-radius: 12px;
+    outline: 1px solid #404040;
+    outline-offset: -1px;
+}
+
+/* Ítem genérico */
+.badge-group__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: transparent;
+}
+
+/* Texto */
+.badge-group__text {
+    color: #FFB34A;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+/* Estado activo */
+.badge-group__item.is-active {
+    background-color: #FFB34A;
+}
+
+.badge-group__item.is-active .badge-group__text {
+    color: #020617;
 }

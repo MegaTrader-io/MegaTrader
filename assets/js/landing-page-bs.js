@@ -4,16 +4,16 @@ document.addEventListener('DOMContentLoaded', function () {
     function initializeSwiper() {
         new Swiper('.verified-bs__swiper', {
             direction: 'horizontal',
-            // autoplay: {
-            //     delay: 3000,
-            //     disableOnInteraction: false,
-            // },
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
             slidesPerView: 1.2,
             spaceBetween: 16,
             centeredSlides: false,
             loop: true,
             pagination: {
-                el: '.swiper-pagination',
+                el: '.verified-bs__swiper .swiper-pagination',
                 clickable: true,
             },
             breakpoints: {
@@ -22,19 +22,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 1200: {slidesPerView: 4},
             },
             scrollbar: {
-                el: '.swiper-scrollbar',
+                el: '.verified-bs__swiper .swiper-scrollbar',
             },
         });
+
+        var glide = new Glide('.verified-bs__glide', {
+            perView: 3,
+            type: 'carousel',
+            gap: 16,
+            startAt: 0
+        })
+
+        glide.mount()
     }
 
     initializeSwiper();
-
-    document.querySelectorAll('.badge-duo').forEach(badge => {
-        badge.querySelector('input').addEventListener('click', (ev) => {
-            console.info(ev.currentTarget.checked)
-            // document.querySelectorAll('.badge-duo')
-            //     .forEach(b => b.classList.remove('badge-duo--active'));
-            // badge.classList.add('badge-duo--active');
-        });
-    });
 });

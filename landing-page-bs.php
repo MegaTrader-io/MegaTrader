@@ -8,7 +8,7 @@ get_header('landing-page-bs');
 
     <main class="landing-bs">
         <!-- Hero Section -->
-        <section class="container-fluid px-0 hero-bs text-white">
+        <section class="hero-bs text-white">
             <div class="container hero-bs__container">
                 <div class="hero-bs__row">
                     <div class="hero-bs__content">
@@ -195,21 +195,23 @@ get_header('landing-page-bs');
         ?>
 
         <section class="platforms-bs">
-            <div class="platforms-bs__list">
-                <div class="platforms-bs__item platforms-bs__item--available">
-                    <img src="<?= $platform_base_url . '/megatraderx.svg'; ?>" alt="MegaTraderX Sponsor Logo">
-                </div>
-                <div class="platforms-bs__item">
-                    <img src="<?= $platform_base_url . '/tradovate.svg'; ?>" alt="MegaTraderX Sponsor Logo">
-                    <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
-                </div>
-                <div class="platforms-bs__item">
-                    <img src="<?= $platform_base_url . '/ninjatrader.svg'; ?>" alt="MegaTraderX Sponsor Logo">
-                    <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
-                </div>
-                <div class="platforms-bs__item">
-                    <img src="<?= $platform_base_url . '/quantower.svg'; ?>" alt="MegaTraderX Sponsor Logo">
-                    <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
+            <div class="container">
+                <div class="platforms-bs__list">
+                    <div class="platforms-bs__item platforms-bs__item--available">
+                        <img src="<?= $platform_base_url . '/megatraderx.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                    </div>
+                    <div class="platforms-bs__item">
+                        <img src="<?= $platform_base_url . '/tradovate.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                        <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
+                    </div>
+                    <div class="platforms-bs__item">
+                        <img src="<?= $platform_base_url . '/ninjatrader.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                        <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
+                    </div>
+                    <div class="platforms-bs__item">
+                        <img src="<?= $platform_base_url . '/quantower.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                        <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -217,43 +219,44 @@ get_header('landing-page-bs');
         <section class="journal-bs text-white">
             <div class="container journal-bs__container">
                 <header class="journal-bs__header">
-                    <label class="badge-duo" for="feature">
-                        <input type="checkbox" name="feature" id="feature" class="badge-duo__input" value="1" checked>
-                        <span class="badge-duo__primary">TRADEIFY EXCLUSIVE</span>
-                        <span class="badge-duo__secondary">Included in all plans</span>
-                    </label>
+                    <div class="badge-duo">
+                        <div class="badge-duo__primary">
+                            <div class="badge-duo__text">TRADEIFY EXCLUSIVE</div>
+                        </div>
+                        <div class="badge-duo__secondary">
+                            <div class="badge-duo__text">Included in all plans</div>
+                        </div>
+                    </div>
 
                     <h2 class="journal-bs__title">
                         Journal to find your winning strategies
                     </h2>
 
-                    <nav class="journal-bs__tabs">
-                        <button class="journal-bs__tab is-active">P&amp;L Calendar</button>
-                        <button class="journal-bs__tab">Trade Tagging</button>
-                        <button class="journal-bs__tab">Personalized Reports</button>
-                    </nav>
-                </header>
-
-                <div class="journal-bs__content">
-                    <div class="swiper journal-bs__swiper">
-                        <div class="swiper-wrapper">
-                            <?php foreach (['calendar', 'tagging', 'reports'] as $item): ?>
-                                <div class="swiper-slide">
-                                    <article class="journal-bs__card">
-                                        <div class="journal-bs__media">
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/journal-<?php echo $item; ?>.png"
-                                                 alt="<?php echo ucfirst($item); ?> preview"
-                                                 class="journal-bs__image"
-                                                 loading="lazy">
-                                        </div>
-                                    </article>
-                                </div>
-                            <?php endforeach; ?>
+                    <div class="badge-group">
+                        <div class="badge-group__item is-active">
+                            <div class="badge-group__text">P&amp;L Calendar</div>
                         </div>
-                        <div class="swiper-pagination"></div>
+                        <div class="badge-group__item">
+                            <div class="badge-group__text">Trade tagging</div>
+                        </div>
+                        <div class="badge-group__item">
+                            <div class="badge-group__text">Personalized reports</div>
+                        </div>
+                    </div>
+                </header>
+            </div>
+            <div class="journal-bs__content">
+                <div class="verified-bs__glide">
+                    <div class="glide__track" data-glide-el="track">
+                        <ul class="glide__slides">
+                            <?php foreach (['calendar', 'tagging', 'reports'] as $item): ?>
+                                <li class="glide__slide">
+                                    <div class="journal-bs__card"></div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     </div>
                 </div>
-            </div>
         </section>
     </main>
 
