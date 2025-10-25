@@ -112,6 +112,9 @@
 
 /* Header / Title / Subtitle */
 
+.verified-bs__image {
+    width: 100%;
+}
 
 .verified-bs__title {
     color: white;
@@ -550,7 +553,6 @@
 .badge-group__item.is-active .badge-group__text {
     color: #020617;
 }
-
 
 .slider__slides .glide__slide:not(.glide__slide--active) .journal-bs__card {
     opacity: 0.5;

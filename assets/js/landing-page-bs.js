@@ -27,13 +27,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         var glide = new Glide('#verified-bs-id', {
-            perView: 3,
             type: 'carousel',
-            gap: 16,
-            autoplay: 3000,
-            startAt: 0,
             focusAt: 'center',
+            perView: 2.280599,
+            gap: 16,
+            peek: { before: 100, after: 100 },
+            autoplay: 3000,
         })
+
+
+
+        // const setFixedWidth = () => {
+        //     document.querySelectorAll('#verified-bs-id .glide__slide').forEach(slide => {
+        //         slide.style.width = '800px';
+        //     });
+        // };
+        //
+        // glide.on(['mount.after', 'run.after', 'resize'], setFixedWidth);
 
         glide.mount()
     }

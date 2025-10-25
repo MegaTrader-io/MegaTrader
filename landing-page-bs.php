@@ -113,12 +113,10 @@ get_header('landing-page-bs');
                         <?php foreach ($certifies as $certify) : ?>
                             <div class="swiper-slide">
                                 <article class="verified-bs__card">
-                                    <div class="verified-bs__card-content">
-                                        <img src="<?php echo esc_url($certify['img']); ?>"
-                                             alt="Mega Certified Trader Badge"
-                                             class="verified-bs__image"
-                                             loading="lazy">
-                                    </div>
+                                    <img src="<?php echo esc_url($certify['img']); ?>"
+                                         alt="Mega Certified Trader Badge"
+                                         class="verified-bs__image"
+                                         loading="lazy">
                                 </article>
                             </div>
                         <?php endforeach; ?>
