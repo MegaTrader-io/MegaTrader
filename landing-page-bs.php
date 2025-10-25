@@ -262,30 +262,13 @@ get_header('landing-page-bs');
                                 <div class="mt-card journal-bs__card"></div>
                             </li>
 
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
                         </ul>
+                    </div>
+
+                    <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
+                        <button class="slider__bullet glide__bullet" data-glide-dir="=0"></button>
+                        <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
+                        <button class="slider__bullet glide__bullet" data-glide-dir="=2"></button>
                     </div>
                 </div>
             </div>

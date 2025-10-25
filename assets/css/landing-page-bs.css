@@ -555,3 +555,11 @@
 .slider__slides .glide__slide:not(.glide__slide--active) .journal-bs__card {
     opacity: 0.5;
 }
+
+.verified-bs__glide .glide__bullets {
+    position: relative;
+    bottom: auto;
+    margin-block: 16px;
+    padding-block: 8px;
+    padding-inline: 16px;
+}
