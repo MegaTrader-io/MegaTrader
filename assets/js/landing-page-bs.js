@@ -28,4 +28,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     initializeSwiper();
+
+    document.querySelectorAll('.badge-duo').forEach(badge => {
+        badge.querySelector('input').addEventListener('click', (ev) => {
+            console.info(ev.currentTarget.checked)
+            // document.querySelectorAll('.badge-duo')
+            //     .forEach(b => b.classList.remove('badge-duo--active'));
+            // badge.classList.add('badge-duo--active');
+        });
+    });
 });

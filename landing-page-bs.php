@@ -213,6 +213,48 @@ get_header('landing-page-bs');
                 </div>
             </div>
         </section>
+
+        <section class="journal-bs text-white">
+            <div class="container journal-bs__container">
+                <header class="journal-bs__header">
+                    <label class="badge-duo" for="feature">
+                        <input type="checkbox" name="feature" id="feature" class="badge-duo__input" value="1" checked>
+                        <span class="badge-duo__primary">TRADEIFY EXCLUSIVE</span>
+                        <span class="badge-duo__secondary">Included in all plans</span>
+                    </label>
+
+                    <h2 class="journal-bs__title">
+                        Journal to find your winning strategies
+                    </h2>
+
+                    <nav class="journal-bs__tabs">
+                        <button class="journal-bs__tab is-active">P&amp;L Calendar</button>
+                        <button class="journal-bs__tab">Trade Tagging</button>
+                        <button class="journal-bs__tab">Personalized Reports</button>
+                    </nav>
+                </header>
+
+                <div class="journal-bs__content">
+                    <div class="swiper journal-bs__swiper">
+                        <div class="swiper-wrapper">
+                            <?php foreach (['calendar', 'tagging', 'reports'] as $item): ?>
+                                <div class="swiper-slide">
+                                    <article class="journal-bs__card">
+                                        <div class="journal-bs__media">
+                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/journal-<?php echo $item; ?>.png"
+                                                 alt="<?php echo ucfirst($item); ?> preview"
+                                                 class="journal-bs__image"
+                                                 loading="lazy">
+                                        </div>
+                                    </article>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
 <?php get_footer('landing-page-bs'); ?>
