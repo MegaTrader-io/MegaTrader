@@ -79,16 +79,16 @@ get_header('landing-page-bs');
         </section>
 
         <?php
-        $base_relative_path = get_template_directory_uri() . '/assets/img/landing-page/verified-payouts';
+        $verified_payouts_base_url = get_template_directory_uri() . '/assets/img/landing-page/verified-payouts';
         $certifies = [
-                ['img' => $base_relative_path . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $base_relative_path . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $base_relative_path . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $base_relative_path . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $base_relative_path . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $base_relative_path . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $base_relative_path . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $base_relative_path . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
         ]
 
         ?>
@@ -189,6 +189,30 @@ get_header('landing-page-bs');
             </div>
         </section>
 
+
+        <?php
+        $platform_base_url = get_template_directory_uri() . '/assets/img/landing-page/platforms';
+        ?>
+
+        <section class="platforms-bs">
+            <div class="platforms-bs__list">
+                <div class="platforms-bs__item platforms-bs__item--available">
+                    <img src="<?= $platform_base_url . '/megatraderx.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                </div>
+                <div class="platforms-bs__item">
+                    <img src="<?= $platform_base_url . '/tradovate.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                    <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
+                </div>
+                <div class="platforms-bs__item">
+                    <img src="<?= $platform_base_url . '/ninjatrader.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                    <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
+                </div>
+                <div class="platforms-bs__item">
+                    <img src="<?= $platform_base_url . '/quantower.svg'; ?>" alt="MegaTraderX Sponsor Logo">
+                    <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
+                </div>
+            </div>
+        </section>
     </main>
 
 <?php get_footer('landing-page-bs'); ?>

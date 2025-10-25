@@ -336,5 +336,22 @@
     }
 }
 
+.platforms-bs__list {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 32px;
+}
 
+.platforms-bs__item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-direction: column;
+}
+
+.platforms-bs__item--available {
+    display: flex;
+    flex-direction: unset;
+    align-items: center;
+}
 
