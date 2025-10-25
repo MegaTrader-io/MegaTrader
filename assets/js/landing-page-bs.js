@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             perView: 3,
             type: 'carousel',
             gap: 16,
+            autoplay: 3000,
             startAt: 0,
             focusAt: 'center',
         })
