@@ -35,16 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
             autoplay: 3000,
         })
 
-
-
-        // const setFixedWidth = () => {
-        //     document.querySelectorAll('#verified-bs-id .glide__slide').forEach(slide => {
-        //         slide.style.width = '800px';
-        //     });
-        // };
-        //
-        // glide.on(['mount.after', 'run.after', 'resize'], setFixedWidth);
-
         glide.mount()
     }
 
