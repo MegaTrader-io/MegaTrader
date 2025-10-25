@@ -406,7 +406,7 @@
 
 .journal-bs__card {
     background-color: var(--body-bg);
-    width: 800px;
+    width: auto;
     height: 500px;
 }
 

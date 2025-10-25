@@ -26,11 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
             },
         });
 
-        var glide = new Glide('.verified-bs__glide', {
+        var glide = new Glide('#verified-bs-id', {
             perView: 3,
             type: 'carousel',
             gap: 16,
-            startAt: 0
+            startAt: 0,
+            focusAt: 'center',
         })
 
         glide.mount()

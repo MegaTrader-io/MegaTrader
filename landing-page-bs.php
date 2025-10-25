@@ -246,17 +246,49 @@ get_header('landing-page-bs');
                 </header>
             </div>
             <div class="journal-bs__content">
-                <div class="verified-bs__glide">
-                    <div class="glide__track" data-glide-el="track">
-                        <ul class="glide__slides">
-                            <?php foreach (['calendar', 'tagging', 'reports'] as $item): ?>
-                                <li class="glide__slide">
-                                    <div class="journal-bs__card"></div>
-                                </li>
-                            <?php endforeach; ?>
+                <div id="verified-bs-id" class="verified-bs__glide slider glide">
+                    <div class="slider__track glide__track" data-glide-el="track">
+                        <ul class="slider__slides glide__slides">
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
+
+                            <li class="slider__frame glide__slide">
+                                <div class="mt-card journal-bs__card"></div>
+                            </li>
                         </ul>
                     </div>
                 </div>
+            </div>
         </section>
     </main>
 
