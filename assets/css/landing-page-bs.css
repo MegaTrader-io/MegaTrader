@@ -159,3 +159,182 @@
     gap: 8px;
     margin-block: 16px;
 }
+
+/* =========================================================
+   Payout Section (Earn Your First Payout in 5 Days)
+   ========================================================= */
+
+.payout-bs {
+    padding-block: 48px;
+}
+
+.payout-bs__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+}
+
+/* ===============================
+   Left Side (Text Content)
+   =============================== */
+
+.payout-bs__content > * + * {
+    margin-top: 32px;
+}
+
+
+.payout-bs__header {
+    margin-bottom: 0;
+}
+
+.payout-bs__title {
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    margin-bottom: 0;
+    color: #fff;
+}
+
+/* Steps list */
+.payout-bs__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.payout-bs__item {
+    display: flex;
+    align-items: flex-start;
+    border: none;
+    gap: 8px;
+}
+
+.payout-bs__number {
+    background-color: var(--success-color);
+    text-align: center;
+    color: var(--black-color);
+    font-size: 20px;
+    width: 48px;
+    height: 48px;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    border-radius: 50%;
+}
+
+.payout-bs__text {
+    text-align: left;
+}
+
+.payout-bs__step-title {
+    align-self: stretch;
+    color: var(--success-color);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 32px;
+    word-wrap: break-word;
+    margin-bottom: 0;
+}
+
+.payout-bs__step-desc {
+    align-self: stretch;
+    color: #A8A29E;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+    padding-left: 56px;
+    margin-bottom: 0;
+}
+
+/* CTA button */
+.payout-bs__btn {
+}
+
+/* ===============================
+   Right Side (Media)
+   =============================== */
+
+.payout-bs__media-wrapper {
+    width: 800px;
+    height: 624px;
+}
+
+/* ===============================
+   Responsive adjustments
+   =============================== */
+
+@media (max-width: 991.98px) {
+    .payout-bs__row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .payout-bs__content {
+        align-items: center;
+    }
+
+    .payout-bs__title {
+        font-size: 32px;
+        line-height: 40px;
+    }
+
+    .payout-bs__list {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .payout-bs__item {
+        text-align: left;
+    }
+
+    .payout-bs__btn {
+        align-self: center;
+    }
+
+    .payout-bs__media-wrapper {
+        max-width: 480px;
+        height: 320px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .payout-bs__title {
+        font-size: 28px;
+        line-height: 36px;
+    }
+
+    .payout-bs__row {
+        gap: 32px;
+    }
+
+    .payout-bs__item {
+        padding: 12px 16px;
+    }
+
+    .payout-bs__number {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+
+    .payout-bs__step-title {
+        font-size: 1rem;
+    }
+
+    .payout-bs__step-desc {
+        font-size: 0.875rem;
+    }
+
+    .payout-bs__media-wrapper {
+        height: 260px;
+    }
+}
+
+
+

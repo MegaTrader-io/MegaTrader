@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function initializeSwiper() {
         new Swiper('.verified-bs__swiper', {
             direction: 'horizontal',
-            autoplay: {
-                delay: 3000,
-                disableOnInteraction: false,
-            },
+            // autoplay: {
+            //     delay: 3000,
+            //     disableOnInteraction: false,
+            // },
             slidesPerView: 1.2,
-            spaceBetween: 8,
+            spaceBetween: 16,
             centeredSlides: false,
             loop: true,
             pagination: {
