@@ -32,10 +32,10 @@ $navbar_actions = $args['navbar_actions'] ?? function () {
                 <div class="mt-navbar__logo">
                     <a href="<?php echo esc_url(home_url()); ?>" class="mt-navbar__logo-link">
                         <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
-                             alt="MegaTrader" class="mt-navbar__logo-icon" width="60" height="60" loading="eager">
-                        <div class="mt-navbar__logo-text">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg"
-                                 alt="MegaTrader" class="mt-navbar__logo-wordmark" height="28" loading="eager"/>
+                             alt="MegaTrader" class="mt-navbar__logo-icon-bs" width="40" height="40" loading="eager">
+                        <div class="mt-navbar__logo-text-bs">
+                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original-bs.svg"
+                                 alt="MegaTrader" class="mt-navbar__logo-wordmark-bs" loading="eager"/>
                         </div>
                     </a>
                 </div>
