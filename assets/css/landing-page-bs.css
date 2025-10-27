@@ -76,7 +76,19 @@
 }
 
 .hero-bs__btn {
-    display: inline;
+    display: flex;
+    color: #3D2900;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 28px;
+    padding-block: 16px;
+    padding-inline: 32px;
+    border: none;
+}
+
+.mega-btn-primary-md.hero-bs__btn:not([disabled]):hover {
+    border: none;
 }
 
 /* Media */
