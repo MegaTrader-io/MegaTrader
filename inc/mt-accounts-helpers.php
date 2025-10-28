@@ -2456,15 +2456,13 @@ if (!function_exists('mt_subscription_id_for_order')) {
   }
 }
 
-/* === Preparar lista de cuentas para UI de payout === */
-<?php
-/* === Prepare account list for payout UI (filters ACTIVE + Funded and checks payout eligibility) === */
+/* === Prepare accounts list for payout UI (with balances & limits) === */
 if (!function_exists('mt_prepare_ui_payout')) {
   function mt_prepare_ui_payout(string $email): array
   {
     $out = ['items' => [], 'selected' => null];
 
-    /* -- Helpers: JSON cleaner -- */
+    // ---- small helpers ----
     $clean_json = static function (string $raw) {
       $decoded  = html_entity_decode($raw, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
       $stripped = trim(wp_strip_all_tags($decoded));
@@ -2473,7 +2471,6 @@ if (!function_exists('mt_prepare_ui_payout')) {
       return (json_last_error() === JSON_ERROR_NONE && is_array($arr)) ? $arr : null;
     };
 
-    /* -- Helpers: safe array getter by path -- */
     $aget = static function (array $a, array $path, $def = null) {
       $v = $a;
       foreach ($path as $k) {
@@ -2483,13 +2480,6 @@ if (!function_exists('mt_prepare_ui_payout')) {
       return $v;
     };
 
-    /* -- Helpers: normalize string -- */
-    $norm = static function (string $s): string {
-      $s = trim(preg_replace('/\s+/', ' ', $s));
-      return strtolower($s);
-    };
-
-    /* -- Helpers: boolean cast -- */
     $b = static function ($v): bool {
       if (is_bool($v)) return $v;
       if (is_numeric($v)) return ((int)$v) !== 0;
@@ -2501,31 +2491,21 @@ if (!function_exists('mt_prepare_ui_payout')) {
       return !empty($v);
     };
 
-    /* -- Helper: ends with "Funded" -- */
     $endsFunded = static function ($s) {
       return (bool)preg_match('/\bFunded\s*$/i', (string)$s);
     };
 
-    /* -- Logos map -- */
-    $DEFAULT_LOGO = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
-    $PLATFORM_LOGOS = [
-      $norm('MegaTrader') => $DEFAULT_LOGO,
-      $norm('NinjaTrader') => '/wp-content/uploads/2025/02/icon_ninjatrader.svg',
-      $norm('Tradovate')  => '/wp-content/uploads/2025/02/icon_tradovate.svg',
-      $norm('Quantower')  => '/wp-content/uploads/2025/02/icon_quantower.svg',
-    ];
-
-    /* -- Input -- */
+    // ---- input ----
     $email = sanitize_email($email);
     if (!$email) return $out;
 
-    /* -- Fetch accounts by email -- */
+    // 1) fetch all accounts (shortcode)
     $sc_accounts = sprintf('[mega_accounts_data email="%s" page="1" perpage="50" output="json"]', esc_attr($email));
     $raw = (string)do_shortcode($sc_accounts);
     $acc = $clean_json($raw);
     if (!$acc) return $out;
 
-    /* -- Normalize list -- */
+    // normalize to list
     $list = null;
     foreach ([['data','items'], ['items'], ['results'], ['data'], []] as $p) {
       $cand = $p ? $aget($acc,$p,null) : $acc;
@@ -2533,21 +2513,21 @@ if (!function_exists('mt_prepare_ui_payout')) {
     }
     if (!$list) return $out;
 
-    /* -- Filter ACTIVE + Funded -- */
+    // 2) filter ACTIVE + “Funded” in description or label
     $filtered = [];
     foreach ($list as $row) {
       if (!is_array($row)) continue;
       $st = strtoupper(trim((string)($row['status'] ?? '')));
       if ($st !== 'ACTIVE') continue;
-      $desc  = (string)$aget($row,['program','description'], '');
-      $label = (string)$aget($row,['program','label'], '');
+      $desc = (string)$aget($row,['program','description'], '');
+      $label= (string)$aget($row,['program','label'], '');
       if (!$endsFunded($desc) && !$endsFunded($label)) continue;
       $row['_createdAt'] = (string)($row['createdAt'] ?? '');
       $filtered[] = $row;
     }
     if (!$filtered) return $out;
 
-    /* -- Sort by createdAt desc + pick selected -- */
+    // sort by created desc and preselect newest
     usort($filtered, static function ($a,$b){
       $ta = strtotime((string)($a['_createdAt'] ?? '')) ?: 0;
       $tb = strtotime((string)($b['_createdAt'] ?? '')) ?: 0;
@@ -2555,35 +2535,43 @@ if (!function_exists('mt_prepare_ui_payout')) {
     });
     $out['selected'] = (string)($filtered[0]['id'] ?? '');
 
-    /* -- Resolve account detail by ID -- */
+    // helpers
     $resolve_by_id = static function (string $id) use ($clean_json) {
       if (function_exists('mt_accounts_resolve_account_by_id')) {
-        try { $acc = mt_accounts_resolve_account_by_id($id); if (is_array($acc)) return $acc; } catch (\Throwable $e) {}
+        try {
+          $acc = mt_accounts_resolve_account_by_id($id);
+          if (is_array($acc)) return $acc;
+        } catch (\Throwable $e) {}
       }
       $sc = sprintf('[mega_account_data id="%s" page="1" perpage="50" output="json"]', esc_attr($id));
       $raw = (string)do_shortcode($sc);
-      $arr = $clean_json($raw);
-      return $arr ?: null;
+      return $clean_json($raw) ?: null;
     };
 
-    /* -- Eligibility (direct API call) -- */
     $fetch_elig = static function (string $id) {
+      // Uses camelCase accountId in the endpoint internally
       $data = mega_api_get_payout_eligibility($id);
       return is_wp_error($data) ? null : (is_array($data) ? $data : null);
     };
 
-    /* -- Resolve platform logo -- */
-    $resolve_logo = static function (?array $byId, array $row) use ($PLATFORM_LOGOS, $DEFAULT_LOGO, $aget, $norm) {
+    $resolve_logo = static function (?array $byId, array $row) use ($aget) {
       $platformRaw = (string)(
         $aget($byId ?? [], ['platform','platform'], '') ?:
         $aget($row, ['program','platform'], '') ?:
         ($row['platform'] ?? '')
       );
-      $key = $norm($platformRaw);
+      $DEFAULT_LOGO = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
+      $PLATFORM_LOGOS = [
+        'megatrader' => $DEFAULT_LOGO,
+        'ninjatrader'=> '/wp-content/uploads/2025/02/icon_ninjatrader.svg',
+        'tradovate'  => '/wp-content/uploads/2025/02/icon_tradovate.svg',
+        'quantower'  => '/wp-content/uploads/2025/02/icon_quantower.svg',
+      ];
+      $key = strtolower(trim(preg_replace('/\s+/', ' ', $platformRaw)));
       return $PLATFORM_LOGOS[$key] ?? $DEFAULT_LOGO;
     };
 
-    /* -- Status keys for eligibility -- */
+    // status keys required by eligibility
     $STATUS_KEYS = [
       'userKYCVerified','accountIsFlat','accountHasMetMinTradingDays',
       'accountHasProfitShare','accountIsActive','accountHasProfit',
@@ -2591,154 +2579,87 @@ if (!function_exists('mt_prepare_ui_payout')) {
       'accountConsistencyMet','payoutHasMetMinTradingDays','payoutCycleCheckPassed',
     ];
 
-    /* -- Balance accessors (try multiple shapes) -- */
-    $get_current_balance = static function(array $byId, array $elig, array $row, $aget) {
-      foreach (
-        [
-          ['balance','current'],
-          ['balances','current'],
-          ['metrics','currentBalance'],
-          ['currentBalance'],
-          ['account','currentBalance'],
-        ] as $path
-      ) {
-        $v = $aget($byId, $path, null);
-        if (is_numeric($v)) return (float)$v;
-      }
-      // fallback from eligibility if present
-      foreach (
-        [
-          ['account','currentBalance'],
-          ['metrics','currentBalance'],
-        ] as $path
-      ) {
-        $v = $aget($elig, $path, null);
-        if (is_numeric($v)) return (float)$v;
-      }
-      // last resort: maybe API returns on $row
-      foreach (
-        [
-          ['balance','current'],
-          ['currentBalance'],
-        ] as $path
-      ) {
-        $v = $aget($row, $path, null);
-        if (is_numeric($v)) return (float)$v;
-      }
-      return null;
-    };
-
-    $get_starting_balance = static function(array $byId, array $elig, array $row, $aget) {
-      foreach (
-        [
-          ['balance','starting'],
-          ['balances','starting'],
-          ['metrics','startingBalance'],
-          ['startingBalance'],
-          ['account','startingBalance'],
-          ['program','buyingPower'],  // a veces el “starting” coincide con BP inicial
-        ] as $path
-      ) {
-        $v = $aget($byId, $path, null);
-        if (is_numeric($v)) return (float)$v;
-      }
-      foreach (
-        [
-          ['account','startingBalance'],
-          ['metrics','startingBalance'],
-          ['program','buyingPower'],
-        ] as $path
-      ) {
-        $v = $aget($elig, $path, null);
-        if (is_numeric($v)) return (float)$v;
-      }
-      foreach (
-        [
-          ['startingBalance'],
-          ['program','buyingPower'],
-        ] as $path
-      ) {
-        $v = $aget($row, $path, null);
-        if (is_numeric($v)) return (float)$v;
-      }
-      return null;
-    };
-
-    /* -- Iterate filtered accounts -- */
+    // 3) build items
     foreach ($filtered as $row) {
       $id = (string)($row['id'] ?? '');
       if (!$id) continue;
 
-      $byId        = $resolve_by_id($id);
+      $byId = $resolve_by_id($id);
       $accountName = (string)$aget($byId ?? [], ['platform','accountId'], '');
       if ($accountName === '') continue;
 
-      $logo = $resolve_logo($byId, $row);
-      $elig = $fetch_elig($id);
+      // ---- balances (from byId JSON you shared) ----
+      $currentBalance  = (float)($aget($byId ?? [], ['metrics','currentBalance'], 0) ?: 0);
+      $startingBalance = (float)($aget($byId ?? [], ['program','startingBalance'], 0) ?: 0);
 
-      $enabled      = $b($aget($elig ?? [], ['payoutCycle','enabled'], null));
-      $targetPassed = $b($aget($elig ?? [], ['payoutCycle','targetPassed'], null));
-      $statusArr    = $aget($elig ?? [], ['accountStatus'], []);
+      // map minimum balance from constants
+      $minMap = (defined('MT_PAYOUT::MIN_BALANCE_MAP')) ? MT_PAYOUT::MIN_BALANCE_MAP : (class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : []);
+      $minimumBalance = isset($minMap[$startingBalance]) ? (float)$minMap[$startingBalance] : 0.0;
 
-      $statusEval = [];
-      $allStatusOK = true;
+      // withdrawal room vs API max
+      $withdrawalRoom = max(0.0, $currentBalance - $minimumBalance);
+
+      $elig = $fetch_elig($id) ?: [];
+      $enabled       = $b($aget($elig, ['payoutCycle','enabled'], null));
+      $targetPassed  = $b($aget($elig, ['payoutCycle','targetPassed'], null));
+      $status        = (array)$aget($elig, ['accountStatus'], []);
+      $allStatusOK   = true;
+      $statusEval    = [];
       foreach ($STATUS_KEYS as $k) {
-        $val = $b($statusArr[$k] ?? null);
+        $val = $b($status[$k] ?? null);
         $statusEval[$k] = $val;
         if ($val === false) $allStatusOK = false;
       }
-
-      $maxW_api = $aget($elig ?? [], ['payoutCycle','maxWithdrawal'], null);
-      $maxW_api = is_numeric($maxW_api) ? (float)$maxW_api : null;
-
-      // --- balances + minimum ---
-      $currentBalance  = $get_current_balance($byId ?? [], $elig ?? [], $row, $aget);
-      $startingBalance = $get_starting_balance($byId ?? [], $elig ?? [], $row, $aget);
-
-      $minimumBalance = null;
-      if (is_numeric($startingBalance)) {
-        $sb = (int)round($startingBalance);
-        $minimumBalance = MT_PAYOUT::MIN_BALANCE_MAP[$sb] ?? null;
+      $maxWithdrawalApi = (float)($aget($elig, ['payoutCycle','maxWithdrawal'], null));
+      if (!$maxWithdrawalApi && is_array($byId)) {
+        // fallback from account payload if present
+        $maxWithdrawalApi = (float)($aget($byId, ['payout','payoutCycle','maxWithdrawal'], 0));
       }
 
-      $withdrawalRoom = (is_numeric($currentBalance) && is_numeric($minimumBalance))
-        ? ($currentBalance - $minimumBalance)
-        : null;
+      // Base eligibility from API
+      $eligibleBase = ($enabled && $targetPassed && $allStatusOK);
 
-      // --- eligibility UI (extra regla de $250) + maxWithdrawalUI ---
-      $eligible = ($enabled && $targetPassed && $allStatusOK);
-      $eligibleForPayout = $eligible;
+      // Extra business rule: need at least $250 room over minimum
+      $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= 250));
 
-      $maxWithdrawalUI = null;
-      if ($eligible && $withdrawalRoom !== null && $maxW_api !== null) {
-        if ($withdrawalRoom < 250) {
-          $eligibleForPayout = false;
-          $maxWithdrawalUI = 0.0;
-        } else {
-          $maxWithdrawalUI = min($withdrawalRoom, $maxW_api);
-        }
-      }
+      // UI max = min(room, apiMax) when eligible; otherwise 0
+      $maxWithdrawalUI = ($eligibleForPayout)
+        ? max(0.0, min($withdrawalRoom, (float)$maxWithdrawalApi))
+        : 0.0;
 
-      $badge = $eligible
-        ? ['text' => 'Eligible','class'=>'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
-        : ['text' => 'Ineligible','class'=>'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
+      // badge
+      $badge = $eligibleForPayout
+        ? ['text'=>'Eligible','class'=>'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
+        : ['text'=>'Ineligible','class'=>'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
 
+      // logo
+      $logo = $resolve_logo($byId, $row);
+
+      // pack item
       $out['items'][] = [
-        'id'                 => $id,
-        'logo'               => $logo,
-        'accountName'        => $accountName,
-        'platformAccountId'  => $accountName,
-        'eligible'           => $eligible,
-        'eligibleForPayout'  => (bool)$eligibleForPayout,
-        'badge'              => $badge,
+        'id' => $id,
+        'logo' => $logo,
+        'accountName' => $accountName,
+        'platformAccountId' => $accountName,
+
+        // flags
+        'eligible' => $eligibleBase,
+        'eligibleForPayout' => $eligibleForPayout,
+
+        // core meta for UI & validation
         'meta' => [
-          'currentBalance'     => is_numeric($currentBalance) ? (float)$currentBalance : null,
-          'startingBalance'    => is_numeric($startingBalance) ? (float)$startingBalance : null,
-          'minimumBalance'     => is_numeric($minimumBalance) ? (float)$minimumBalance : null,
-          'withdrawalRoom'     => is_numeric($withdrawalRoom) ? (float)$withdrawalRoom : null,
-          'maxWithdrawalApi'   => $maxW_api,
-          'maxWithdrawalUI'    => is_numeric($maxWithdrawalUI) ? (float)$maxWithdrawalUI : null,
+          'maxWithdrawal'    => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null, // raw from API
+          'maxWithdrawalApi' => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalUI'  => $maxWithdrawalUI,
+
+          // balances
+          'currentBalance'   => $currentBalance,
+          'startingBalance'  => $startingBalance,
+          'minimumBalance'   => $minimumBalance,
+          'withdrawalRoom'   => $withdrawalRoom,
         ],
+
+        'badge' => $badge,
       ];
     }
 

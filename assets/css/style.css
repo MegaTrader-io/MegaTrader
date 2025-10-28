@@ -1057,8 +1057,8 @@ select.is-invalid:focus,
 input.is-invalid:focus,
 .was-validated input:invalid:focus {
     outline: 0;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+    -webkit-box-shadow: none important;
+    box-shadow: none !important;
 }
 
 textarea.is-invalid {
