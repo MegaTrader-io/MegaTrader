@@ -72,7 +72,7 @@
     btn.setAttribute("data-platform-account-id", item.platformAccountId || "");
     btn.innerHTML =
       '<span class="d-flex align-items-center gap-2">'
-      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md" aria-hidden="true"></span>'
+      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond" aria-hidden="true"></span>'
       + (item.logo ? ('  <img src="'+escapeHtml(item.logo)+'" alt="" style="width:24px;height:24px;border-radius:50%;">') : '')
       + '  <span class="fw-bold text-white">'+escapeHtml(item.accountName || "—")+'</span>'
       + '</span>'
@@ -147,7 +147,7 @@
 
     btn.innerHTML =
       '<span class="d-flex align-items-center gap-2">'
-      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md" aria-hidden="true"></span>'
+      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond" aria-hidden="true"></span>'
       + (selItem.logo ? ('  <img src="'+escapeHtml(selItem.logo)+'" alt="" style="width:24px;height:24px;border-radius:50%;">') : '')
       + '  <span id="mt-payout-acc-label" class="fw-bold text-white">'+escapeHtml(selItem.accountName || "—")+'</span>'
       + '</span>'

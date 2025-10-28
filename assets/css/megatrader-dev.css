@@ -4933,3 +4933,14 @@ textarea.mtfb-note {
 }
 
 /***** End Account Notifications **/
+
+/***** Modal Payout **/
+
+#mt-payout-acc-menu .dropdown-item:focus, .dropdown-item:hover {
+    color: var(--bs-dropdown-link-hover-color);
+    background-color: #2a2a2a;
+}
+
+
+/***** End Modal Payout **/
+
