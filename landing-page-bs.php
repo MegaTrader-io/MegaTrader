@@ -128,7 +128,7 @@ get_header('landing-page-bs');
                 ],
                 [
                         'title' => 'Trade 5 days',
-                        'description' => 'Scale your futures trading with your simulated funds'
+                        'description' => 'Scale your futures trading with your<br> simulated funds'
                 ],
                 [
                         'title' => 'Get paid',
@@ -149,15 +149,12 @@ get_header('landing-page-bs');
 
                         <ol class="payout-bs__list list-unstyled">
                             <?php foreach ($payouts_items as $key => $item): ?>
-                                <li class="mt-card payout-bs__item">
-                                    <div class="d-flex gap-3 align-items-center">
-                                        <div class="payout-bs__number"><?= $key + 1 ?></div>
-                                        <div class="payout-bs__text">
-                                            <h3 class="payout-bs__step-title"><?= $item['title'] ?></h3>
-                                        </div>
+                                <li class="payout-bs__item">
+                                    <div class="payout-bs__item-title">
+                                        <?= ($key + 1) ?>. <?= $item['title'] ?>
                                     </div>
-                                    <div class="payout-bs__text">
-                                        <p class="payout-bs__step-desc">
+                                    <div class="payout-bs__wrapper_content">
+                                        <p>
                                             <?= $item['description'] ?>
                                         </p>
                                     </div>

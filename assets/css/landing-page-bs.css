@@ -240,55 +240,51 @@
 .payout-bs__list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 32px;
     margin-bottom: 0;
     padding-left: 0;
 }
 
 .payout-bs__item {
-    display: flex;
-    align-items: flex-start;
-    border: none;
-    gap: 8px;
-}
-
-.payout-bs__number {
-    background-color: var(--success-color);
-    text-align: center;
-    color: var(--black-color);
-    font-size: 20px;
-    width: 48px;
-    height: 48px;
-    font-weight: 700;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    border-radius: 50%;
-}
-
-.payout-bs__text {
-    text-align: left;
-}
-
-.payout-bs__step-title {
     align-self: stretch;
-    color: var(--success-color);
+    padding: 4px 16px;
+    overflow: hidden;
+    border-left: 2px #2DD4BF solid;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: inline-flex
+}
+
+.payout-bs__item-title {
+    width: 304px;
+    height: 32px;
+    color: #2DD4BF;
     font-size: 20px;
     font-weight: 700;
     line-height: 32px;
-    word-wrap: break-word;
-    margin-bottom: 0;
+    word-wrap: break-word
 }
 
-.payout-bs__step-desc {
+.payout-bs__wrapper_content {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: flex
+}
+
+.payout-bs__wrapper_content p {
     align-self: stretch;
     color: #A8A29E;
+    max-width: 328px;
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
     word-wrap: break-word;
-    padding-left: 56px;
-    margin-bottom: 0;
+    margin-bottom: 0
 }
 
 /* CTA button */
@@ -328,10 +324,6 @@
         max-width: 420px;
     }
 
-    .payout-bs__item {
-        text-align: left;
-    }
-
     .payout-bs__btn {
         align-self: center;
     }
@@ -350,24 +342,6 @@
 
     .payout-bs__row {
         gap: 32px;
-    }
-
-    .payout-bs__item {
-        padding: 12px 16px;
-    }
-
-    .payout-bs__number {
-        width: 28px;
-        height: 28px;
-        font-size: 1rem;
-    }
-
-    .payout-bs__step-title {
-        font-size: 1rem;
-    }
-
-    .payout-bs__step-desc {
-        font-size: 0.875rem;
     }
 
     .payout-bs__media-wrapper {
