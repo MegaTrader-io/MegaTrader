@@ -28,10 +28,6 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
       <!-- Header -->
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mtpayout-title" class="modal-title text-white heading-sm-medium d-flex align-items-center gap-2 text-uppercase">
-          <!-- SVG diamante -->
-          <svg class="mt-icon mt-icon-diamond" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2l7 7-7 13L5 9l7-7z"></path>
-          </svg>
           Request Payout
         </span>
         <button type="button"
@@ -45,19 +41,13 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
       </div>
 
       <!-- Body -->
-      <div class="modal-body d-flex flex-column gap-3">
-
-        <!-- Selector/Lista de cuentas -->
-        <div class="p-3 rounded-3" style="background: var(--Surface-Body,#131210); outline:1px solid var(--Colors-Gray-700,#404040);">
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="text-white fw-medium text-uppercase">Select Account</span>
-          </div>
+      <div class="modal-body d-flex flex-column gap-3">            
 
           <!-- Aquí se inyecta la UI -->
           <div id="mt-payout-accounts" class="d-flex flex-column gap-2 mt-3">
             <div class="text-muted">Loading accounts…</div>
           </div>
-        </div>
+      
 
         <!-- Método de pago (placeholder; luego lo conectamos a tu flujo) -->
         <div class="d-flex flex-column gap-2">
