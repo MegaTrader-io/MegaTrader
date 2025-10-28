@@ -86,10 +86,6 @@ get_header('landing-page-bs');
                 ['img' => $verified_payouts_base_url . '/Certificate-passed-2.png', 'title' => 'Mega Certified Trader'],
                 ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-3.png', 'title' => 'Mega Certified Trader'],
                 ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-4.png', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/Certificate-passed-1.png', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/Certificate-passed-2.png', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-3.png', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-4.png', 'title' => 'Mega Certified Trader'],
         ]
 
         ?>
@@ -109,7 +105,7 @@ get_header('landing-page-bs');
 
             <!-- Slider -->
             <div class="verified-bs__cards overflow-x-auto scrollbar-hide">
-                <div class="verified-bs__swiper carousel animate-carousel"
+                <div class="verified-bs__carousel animate-carousel"
                      style="--total-width: <?= count($certifies) * 378 ?>px">
                     <?php foreach ($certifies as $key => $certify) : ?>
                         <img src="<?php echo esc_url($certify['img']); ?>"

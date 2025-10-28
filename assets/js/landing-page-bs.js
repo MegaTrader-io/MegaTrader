@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', function () {
     console.info('[landing_page_bootstrap] landing page bootstrap');
 
     function initializeSwiper() {
-        
+
+
+
 
 
         (new Glide('#verified-bs-id', {
