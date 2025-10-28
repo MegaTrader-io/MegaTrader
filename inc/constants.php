@@ -10,6 +10,16 @@ final class CACHE_KEY {
   public const USER_INFO = 'mt_user_%s';
 }
 
+final class MT_PAYOUT {
+    /** Map: startingBalance => minimumBalance (absolute) */
+    public const MIN_BALANCE_MAP = [
+        25000  => 26100,
+        50000  => 52100,
+        100000 => 103100,
+        150000 => 154600,
+    ];
+}
+
 class Label
 {
     public const STATUS_ACTIVE = 'ACTIVE';

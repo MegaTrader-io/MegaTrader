@@ -732,6 +732,17 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 .mt-icon_bar-chart {
     mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_15869_16098" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_15869_16098)"><path d="M16 20V13H20V20H16ZM10 20V4H14V20H10ZM4 20V9H8V20H4Z" fill="white"/></g></svg>');
 }
+
+.mt-icon_rise {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_17369_3760" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_17369_3760)"><path d="M16.1807 18L16.1325 10.512L8.66265 18H5L14.3976 8.64H10.9759C9.91566 8.64 9.04819 9.504 9.04819 10.56C9.04819 10.992 9.19277 11.424 9.43373 11.712L7.60241 13.536C6.87952 12.72 6.44578 11.664 6.44578 10.512C6.44578 8.016 8.46988 6 10.9759 6H18.7831V17.952L16.1807 18Z" fill="black"/></g></svg>');
+}
+
+.mt-icon_btc {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><mask id="mask0_17369_3510" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_17369_3510)"><path d="M17.4506 10.1091C17.6891 8.51238 16.4734 7.654 14.811 7.08138L15.3502 4.91838L14.0332 4.59025L13.5082 6.69625C13.1625 6.61 12.807 6.52863 12.4537 6.448L12.9825 4.32812L11.6666 4L11.127 6.16225C10.8405 6.097 10.5592 6.0325 10.2862 5.96463L10.2878 5.95788L8.472 5.5045L8.12175 6.91075C8.12175 6.91075 9.09863 7.13462 9.078 7.1485C9.61125 7.28163 9.708 7.6345 9.6915 7.91425L9.07725 10.3784C9.114 10.3878 9.16162 10.4012 9.21412 10.4222L9.07537 10.3878L8.214 13.8396C8.14875 14.0016 7.98338 14.2446 7.61063 14.1524C7.62375 14.1715 6.65363 13.9135 6.65363 13.9135L6 15.421L7.71375 15.8481C8.0325 15.928 8.34487 16.0116 8.652 16.0904L8.10713 18.2785L9.42225 18.6066L9.96225 16.4421C10.3211 16.5396 10.6699 16.6296 11.0111 16.7144L10.4734 18.8688L11.79 19.1969L12.3349 17.0133C14.58 17.4381 16.2686 17.2667 16.9785 15.2365C17.5511 13.6015 16.9504 12.6584 15.7691 12.043C16.6294 11.8439 17.2777 11.278 17.4506 10.1091ZM14.442 14.3275C14.0347 15.9625 11.2822 15.079 10.3894 14.857L11.1124 11.9586C12.0049 12.1814 14.8661 12.6224 14.442 14.3275ZM14.8489 10.0855C14.4776 11.5728 12.1864 10.8171 11.4427 10.6319L12.0982 8.00313C12.8419 8.18838 15.2359 8.53413 14.8489 10.0855Z" fill="white"/></g></svg>');
+}
+.mt-icon_eth {
+    mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.91179 11.0515L0 8.14963L4.91179 0V11.0515ZM4.9118 11.0515V0L9.82166 8.14963L4.9118 11.0515ZM0 9.08025L4.91179 16V11.9821L0 9.08025ZM4.9118 11.9821L9.82552 9.08025L4.9118 16V11.9821Z" fill="white"/></svg>');
+}
 /* END ICONS */
 
 /* BADGE */

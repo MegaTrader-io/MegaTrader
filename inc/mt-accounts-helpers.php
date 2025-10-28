@@ -367,7 +367,8 @@ if (!function_exists('mt_program_rules_url')) {
     if (class_exists('Label') && defined('Label::PLAN_RULES_URLS')) {
       $map = Label::PLAN_RULES_URLS;
     }
-    return $map[$plan] ?? '';  }
+    return $map[$plan] ?? '';
+  }
 
 }
 
@@ -2456,33 +2457,23 @@ if (!function_exists('mt_subscription_id_for_order')) {
 }
 
 /* === Preparar lista de cuentas para UI de payout === */
+<?php
+/* === Prepare account list for payout UI (filters ACTIVE + Funded and checks payout eligibility) === */
 if (!function_exists('mt_prepare_ui_payout')) {
   function mt_prepare_ui_payout(string $email): array
   {
     $out = ['items' => [], 'selected' => null];
 
-    // -------- utils --------
-    $dbg = static function(string $msg, $ctx = null) {
-      $prefix = '[MT_PAYOUT_UI] ';
-      if ($ctx !== null) {
-        $msg .= ' :: ' . wp_json_encode($ctx, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-      }
-      if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log($prefix . $msg);
-      }
-    };
-
+    /* -- Helpers: JSON cleaner -- */
     $clean_json = static function (string $raw) {
-      // decodifica entidades, quita tags, y extrae el primer {...} o [...]
       $decoded  = html_entity_decode($raw, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
       $stripped = trim(wp_strip_all_tags($decoded));
-      if (preg_match('/(\{.*\}|\[.*\])/s', $stripped, $m)) {
-        $stripped = $m[1];
-      }
+      if (preg_match('/(\{.*\}|\[.*\])/s', $stripped, $m)) $stripped = $m[1];
       $arr = json_decode($stripped, true);
       return (json_last_error() === JSON_ERROR_NONE && is_array($arr)) ? $arr : null;
     };
 
+    /* -- Helpers: safe array getter by path -- */
     $aget = static function (array $a, array $path, $def = null) {
       $v = $a;
       foreach ($path as $k) {
@@ -2492,168 +2483,265 @@ if (!function_exists('mt_prepare_ui_payout')) {
       return $v;
     };
 
+    /* -- Helpers: normalize string -- */
     $norm = static function (string $s): string {
-      $s = trim($s);
-      $s = preg_replace('/\s+/',' ',$s);
+      $s = trim(preg_replace('/\s+/', ' ', $s));
       return strtolower($s);
     };
 
+    /* -- Helpers: boolean cast -- */
+    $b = static function ($v): bool {
+      if (is_bool($v)) return $v;
+      if (is_numeric($v)) return ((int)$v) !== 0;
+      if (is_string($v)) {
+        $t = strtolower(trim($v));
+        if (in_array($t, ['1','true','yes','on'], true)) return true;
+        if (in_array($t, ['0','false','no','off',''], true)) return false;
+      }
+      return !empty($v);
+    };
+
+    /* -- Helper: ends with "Funded" -- */
     $endsFunded = static function ($s) {
       return (bool)preg_match('/\bFunded\s*$/i', (string)$s);
     };
 
-    // -------- logos (igual que tu prepare_ui) --------
-    $DEFAULT_LOGO   = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
+    /* -- Logos map -- */
+    $DEFAULT_LOGO = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
     $PLATFORM_LOGOS = [
-      $norm('MegaTrader')  => $DEFAULT_LOGO,
+      $norm('MegaTrader') => $DEFAULT_LOGO,
       $norm('NinjaTrader') => '/wp-content/uploads/2025/02/icon_ninjatrader.svg',
-      $norm('Tradovate')   => '/wp-content/uploads/2025/02/icon_tradovate.svg',
-      $norm('Quantower')   => '/wp-content/uploads/2025/02/icon_quantower.svg',
+      $norm('Tradovate')  => '/wp-content/uploads/2025/02/icon_tradovate.svg',
+      $norm('Quantower')  => '/wp-content/uploads/2025/02/icon_quantower.svg',
     ];
 
-    // -------- entrada --------
+    /* -- Input -- */
     $email = sanitize_email($email);
-    if (!$email) { $dbg('email vacío/invalid'); return $out; }
+    if (!$email) return $out;
 
-    // 1) todas las cuentas por email
+    /* -- Fetch accounts by email -- */
     $sc_accounts = sprintf('[mega_accounts_data email="%s" page="1" perpage="50" output="json"]', esc_attr($email));
     $raw = (string)do_shortcode($sc_accounts);
-    $dbg('raw mega_accounts_data len', strlen($raw));
-
     $acc = $clean_json($raw);
-    if (!$acc) { $dbg('mega_accounts_data JSON inválido'); return $out; }
+    if (!$acc) return $out;
 
-    // normalizar a lista indexada
+    /* -- Normalize list -- */
     $list = null;
     foreach ([['data','items'], ['items'], ['results'], ['data'], []] as $p) {
       $cand = $p ? $aget($acc,$p,null) : $acc;
       if (is_array($cand) && $cand && array_keys($cand) === range(0, count($cand)-1)) { $list = $cand; break; }
     }
-    if (!$list) { $dbg('no list en mega_accounts_data', ['keys_root'=>array_keys($acc)]); return $out; }
-    $dbg('cuentas totales', ['count'=>count($list)]);
+    if (!$list) return $out;
 
-    // 2) filtrar ACTIVE + Funded (label o description)
+    /* -- Filter ACTIVE + Funded -- */
     $filtered = [];
     foreach ($list as $row) {
-      if (!is_array($row)) { continue; }
+      if (!is_array($row)) continue;
       $st = strtoupper(trim((string)($row['status'] ?? '')));
-      if ($st !== 'ACTIVE') { continue; }
-      $desc  = (string)$aget($row,['program','description'],'');
-      $label = (string)$aget($row,['program','label'],'');
-      if (!$endsFunded($desc) && !$endsFunded($label)) { continue; }
-
+      if ($st !== 'ACTIVE') continue;
+      $desc  = (string)$aget($row,['program','description'], '');
+      $label = (string)$aget($row,['program','label'], '');
+      if (!$endsFunded($desc) && !$endsFunded($label)) continue;
       $row['_createdAt'] = (string)($row['createdAt'] ?? '');
       $filtered[] = $row;
     }
-    $dbg('post filtro ACTIVE+Funded', [
-      'count'=>count($filtered),
-      'ids'=>array_values(array_map(fn($r)=>$r['id']??'', $filtered))
-    ]);
-    if (!$filtered) { return $out; }
+    if (!$filtered) return $out;
 
-    // ordenar por createdAt desc y seleccionar la más nueva
+    /* -- Sort by createdAt desc + pick selected -- */
     usort($filtered, static function ($a,$b){
       $ta = strtotime((string)($a['_createdAt'] ?? '')) ?: 0;
       $tb = strtotime((string)($b['_createdAt'] ?? '')) ?: 0;
       return $tb <=> $ta;
     });
     $out['selected'] = (string)($filtered[0]['id'] ?? '');
-    $dbg('selected', ['id'=>$out['selected']]);
 
-    // helpers: by-id (OBLIGATORIO para accountName), elig, logo
-    $resolve_by_id = static function (string $id) use ($clean_json, $dbg) {
-      // prioridad: helper si existe
+    /* -- Resolve account detail by ID -- */
+    $resolve_by_id = static function (string $id) use ($clean_json) {
       if (function_exists('mt_accounts_resolve_account_by_id')) {
-        try {
-          $acc = mt_accounts_resolve_account_by_id($id);
-          if (is_array($acc)) { return $acc; }
-        } catch (\Throwable $e) {
-          $dbg('resolve_by_id helper error', ['id'=>$id,'e'=>$e->getMessage()]);
-        }
+        try { $acc = mt_accounts_resolve_account_by_id($id); if (is_array($acc)) return $acc; } catch (\Throwable $e) {}
       }
-      // fallback: shortcode OFICIAL que pediste
-      $sc  = sprintf('[mega_account_data id="%s" page="1" perpage="50" output="json"]', esc_attr($id));
+      $sc = sprintf('[mega_account_data id="%s" page="1" perpage="50" output="json"]', esc_attr($id));
       $raw = (string)do_shortcode($sc);
       $arr = $clean_json($raw);
-      if (!is_array($arr)) { $dbg('resolve_by_id JSON inválido', ['id'=>$id]); }
       return $arr ?: null;
     };
 
-    $fetch_elig = static function (string $id) use ($clean_json, $dbg) {
-      $sc  = sprintf('[mega_payouts_eligibility_data accountId="%s" output="json"]', esc_attr($id));
-      $raw = (string)do_shortcode($sc);
-      $arr = $clean_json($raw);
-      if (!is_array($arr)) { $dbg('elig inválido', ['id'=>$id]); }
-      return $arr ?: null;
+    /* -- Eligibility (direct API call) -- */
+    $fetch_elig = static function (string $id) {
+      $data = mega_api_get_payout_eligibility($id);
+      return is_wp_error($data) ? null : (is_array($data) ? $data : null);
     };
 
+    /* -- Resolve platform logo -- */
     $resolve_logo = static function (?array $byId, array $row) use ($PLATFORM_LOGOS, $DEFAULT_LOGO, $aget, $norm) {
       $platformRaw = (string)(
         $aget($byId ?? [], ['platform','platform'], '') ?:
-        $aget($row,        ['program','platform'],    '') ?:
+        $aget($row, ['program','platform'], '') ?:
         ($row['platform'] ?? '')
       );
       $key = $norm($platformRaw);
       return $PLATFORM_LOGOS[$key] ?? $DEFAULT_LOGO;
     };
 
-    // 3) enriquecer cada cuenta (accountName SIEMPRE desde by-id platform.accountId)
+    /* -- Status keys for eligibility -- */
+    $STATUS_KEYS = [
+      'userKYCVerified','accountIsFlat','accountHasMetMinTradingDays',
+      'accountHasProfitShare','accountIsActive','accountHasProfit',
+      'accountHasWithdrawalAmount','accountIsFunded','accountHasPendingPayout',
+      'accountConsistencyMet','payoutHasMetMinTradingDays','payoutCycleCheckPassed',
+    ];
+
+    /* -- Balance accessors (try multiple shapes) -- */
+    $get_current_balance = static function(array $byId, array $elig, array $row, $aget) {
+      foreach (
+        [
+          ['balance','current'],
+          ['balances','current'],
+          ['metrics','currentBalance'],
+          ['currentBalance'],
+          ['account','currentBalance'],
+        ] as $path
+      ) {
+        $v = $aget($byId, $path, null);
+        if (is_numeric($v)) return (float)$v;
+      }
+      // fallback from eligibility if present
+      foreach (
+        [
+          ['account','currentBalance'],
+          ['metrics','currentBalance'],
+        ] as $path
+      ) {
+        $v = $aget($elig, $path, null);
+        if (is_numeric($v)) return (float)$v;
+      }
+      // last resort: maybe API returns on $row
+      foreach (
+        [
+          ['balance','current'],
+          ['currentBalance'],
+        ] as $path
+      ) {
+        $v = $aget($row, $path, null);
+        if (is_numeric($v)) return (float)$v;
+      }
+      return null;
+    };
+
+    $get_starting_balance = static function(array $byId, array $elig, array $row, $aget) {
+      foreach (
+        [
+          ['balance','starting'],
+          ['balances','starting'],
+          ['metrics','startingBalance'],
+          ['startingBalance'],
+          ['account','startingBalance'],
+          ['program','buyingPower'],  // a veces el “starting” coincide con BP inicial
+        ] as $path
+      ) {
+        $v = $aget($byId, $path, null);
+        if (is_numeric($v)) return (float)$v;
+      }
+      foreach (
+        [
+          ['account','startingBalance'],
+          ['metrics','startingBalance'],
+          ['program','buyingPower'],
+        ] as $path
+      ) {
+        $v = $aget($elig, $path, null);
+        if (is_numeric($v)) return (float)$v;
+      }
+      foreach (
+        [
+          ['startingBalance'],
+          ['program','buyingPower'],
+        ] as $path
+      ) {
+        $v = $aget($row, $path, null);
+        if (is_numeric($v)) return (float)$v;
+      }
+      return null;
+    };
+
+    /* -- Iterate filtered accounts -- */
     foreach ($filtered as $row) {
       $id = (string)($row['id'] ?? '');
-      if (!$id) { continue; }
+      if (!$id) continue;
 
-      $byId = $resolve_by_id($id);
-
-      // EXTRAER accountName *sin fallback*
+      $byId        = $resolve_by_id($id);
       $accountName = (string)$aget($byId ?? [], ['platform','accountId'], '');
-      if ($accountName === '') {
-        // si no vino, log y se ignora esta cuenta para evitar "Account"
-        $dbg('byId sin platform.accountId, se omite cuenta', ['id'=>$id]);
-        continue;
+      if ($accountName === '') continue;
+
+      $logo = $resolve_logo($byId, $row);
+      $elig = $fetch_elig($id);
+
+      $enabled      = $b($aget($elig ?? [], ['payoutCycle','enabled'], null));
+      $targetPassed = $b($aget($elig ?? [], ['payoutCycle','targetPassed'], null));
+      $statusArr    = $aget($elig ?? [], ['accountStatus'], []);
+
+      $statusEval = [];
+      $allStatusOK = true;
+      foreach ($STATUS_KEYS as $k) {
+        $val = $b($statusArr[$k] ?? null);
+        $statusEval[$k] = $val;
+        if ($val === false) $allStatusOK = false;
       }
 
-      // logo por plataforma
-      $logo = $resolve_logo($byId, $row);
+      $maxW_api = $aget($elig ?? [], ['payoutCycle','maxWithdrawal'], null);
+      $maxW_api = is_numeric($maxW_api) ? (float)$maxW_api : null;
 
-      // eligibility + badge
-      $elig       = $fetch_elig($id);
-      $eligible   = false;
-      $maxW       = null;
+      // --- balances + minimum ---
+      $currentBalance  = $get_current_balance($byId ?? [], $elig ?? [], $row, $aget);
+      $startingBalance = $get_starting_balance($byId ?? [], $elig ?? [], $row, $aget);
 
-      if (is_array($elig)) {
-        $eligible = true;
-        $st = $elig['accountStatus'] ?? null;
-        if (!is_array($st)) {
-          $eligible = false;
+      $minimumBalance = null;
+      if (is_numeric($startingBalance)) {
+        $sb = (int)round($startingBalance);
+        $minimumBalance = MT_PAYOUT::MIN_BALANCE_MAP[$sb] ?? null;
+      }
+
+      $withdrawalRoom = (is_numeric($currentBalance) && is_numeric($minimumBalance))
+        ? ($currentBalance - $minimumBalance)
+        : null;
+
+      // --- eligibility UI (extra regla de $250) + maxWithdrawalUI ---
+      $eligible = ($enabled && $targetPassed && $allStatusOK);
+      $eligibleForPayout = $eligible;
+
+      $maxWithdrawalUI = null;
+      if ($eligible && $withdrawalRoom !== null && $maxW_api !== null) {
+        if ($withdrawalRoom < 250) {
+          $eligibleForPayout = false;
+          $maxWithdrawalUI = 0.0;
         } else {
-          foreach ($st as $k => $v) {
-            if (is_bool($v) && $v === false) { $eligible = false; $dbg('elig boolean false', ['id'=>$id,'key'=>$k]); break; }
-          }
-        }
-        if (empty($elig['payoutCycle']['enabled'])) { $eligible = false; $dbg('payoutCycle.enabled false', ['id'=>$id]); }
-        if (isset($elig['payoutCycle']['maxWithdrawal']) && is_numeric($elig['payoutCycle']['maxWithdrawal'])) {
-          $maxW = $elig['payoutCycle']['maxWithdrawal'] + 0;
+          $maxWithdrawalUI = min($withdrawalRoom, $maxW_api);
         }
       }
 
       $badge = $eligible
-        ? ['text' => 'Eligible',   'class' => 'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
-        : ['text' => 'Ineligible', 'class' => 'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
+        ? ['text' => 'Eligible','class'=>'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
+        : ['text' => 'Ineligible','class'=>'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
 
       $out['items'][] = [
-        'id'                => $id,
-        'logo'              => $logo,
-        'accountName'       => $accountName,   // visible
-        'platformAccountId' => $accountName,   // data-platform-account-id
-        'eligible'          => $eligible,
-        'badge'             => $badge,
-        'meta'              => ['maxWithdrawal' => $maxW],
+        'id'                 => $id,
+        'logo'               => $logo,
+        'accountName'        => $accountName,
+        'platformAccountId'  => $accountName,
+        'eligible'           => $eligible,
+        'eligibleForPayout'  => (bool)$eligibleForPayout,
+        'badge'              => $badge,
+        'meta' => [
+          'currentBalance'     => is_numeric($currentBalance) ? (float)$currentBalance : null,
+          'startingBalance'    => is_numeric($startingBalance) ? (float)$startingBalance : null,
+          'minimumBalance'     => is_numeric($minimumBalance) ? (float)$minimumBalance : null,
+          'withdrawalRoom'     => is_numeric($withdrawalRoom) ? (float)$withdrawalRoom : null,
+          'maxWithdrawalApi'   => $maxW_api,
+          'maxWithdrawalUI'    => is_numeric($maxWithdrawalUI) ? (float)$maxWithdrawalUI : null,
+        ],
       ];
-
-      $dbg('item listo', ['id'=>$id,'accountName'=>$accountName,'eligible'=>$eligible,'maxWithdrawal'=>$maxW]);
     }
 
-    $dbg('final', ['count'=>count($out['items']), 'selected'=>$out['selected']]);
     return $out;
   }
 }

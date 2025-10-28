@@ -398,7 +398,7 @@ if (function_exists('WC') && WC()->session) {
                                         <?php echo esc_html(Label::CHECKOUT_META['edit_billing']); ?>
                                     </a>
                                 </div>
-                                <div class="d-flex justify-content-between gap-3">
+                                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-between">
                                     <div class="flex-fill d-flex flex-column gap-3">
                                         <div class="d-flex align-items-start gap-2">
                                             <i class="mt-icon mt-icon_account"></i>

@@ -839,9 +839,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .translate-x-neg-25-important {
   --tw-translate-x: -25% !important;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) !important;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) !important;
 }
 
 .translate-x-neg-50 {
@@ -850,16 +848,12 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .translate-x-neg-50-transform {
   --tw-translate-x: -50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .translate-x-neg-10 {
   --tw-translate-x: -2.5rem;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .translate-y-neg-50 {
@@ -868,9 +862,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .translate-y-neg-50-transform {
   --tw-translate-y: -50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .translate-y-neg-36px {
@@ -879,9 +871,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .translate-y-neg-36px-transform {
   --tw-translate-y: -36px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .rotate-180 {
@@ -890,15 +880,11 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .rotate-180-transform {
   --tw-rotate: 180deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .transform {
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 /* ----- CUSTOM SIZES------ */
@@ -1121,9 +1107,11 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .border-top-gray {
   border-top: 1px solid var(--colors-gray-700, #404040);
 }
+
 .border-bottom-gray {
   border-bottom: 1px solid var(--colors-gray-700, #404040);
 }
+
 .border-bottom-dark {
   border-bottom: 1px solid var(--surface-dark, #292524);
 }
@@ -1258,6 +1246,24 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .fill-white {
   fill: var(--white-color);
+}
+
+
+/* -------- Custom Flex --------*/
+
+.flex-basis-0 {
+  flex-basis: 0;
+}
+
+.flex-basis-1 {
+  flex-basis: 1;
+}
+.flex-1-1-0 {
+  flex: 1 1 0;
+}
+
+.flex-1-0-0 {
+  flex: 1 0 0;
 }
 
 /* -------- TEXT --------*/
@@ -1550,7 +1556,9 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   line-height: 1.25;
 }
 
-.with-icon-offset { padding-inline-start: calc(var(--mt-icon-size, 24px) + var(--mt-gap, 8px)); }
+.with-icon-offset {
+  padding-inline-start: calc(var(--mt-icon-size, 24px) + var(--mt-gap, 8px));
+}
 
 /* ---- Badge -----*/
 
@@ -1881,12 +1889,7 @@ label[for="wc-nmi-new-payment-method"] {
 
 .woocommerce-checkout #payment .payment_box .wc-payment-form,
 .woocommerce-checkout #payment div.payment_box .wc-credit-card-form,
-.woocommerce
-  .woocommerce-checkout
-  #payment
-  ul.payment_methods
-  .wc-saved-payment-methods
-  li,
+.woocommerce .woocommerce-checkout #payment ul.payment_methods .wc-saved-payment-methods li,
 .woocommerce-checkout #payment div.payment_box p:last-child,
 .woocommerce-checkout #payment div.form-row.place-order {
   background-color: var(--smoke-color2);
@@ -1898,11 +1901,7 @@ label[for="wc-nmi-new-payment-method"] {
   padding-top: 0;
 }
 
-.woocommerce-checkout
-  #payment
-  .payment_box
-  .woocommerce-SavedPaymentMethods:not([data-count="0"])
-  + .wc-payment-form {
+.woocommerce-checkout #payment .payment_box .woocommerce-SavedPaymentMethods:not([data-count="0"])+.wc-payment-form {
   padding-top: 0;
 }
 
@@ -1910,10 +1909,7 @@ label[for="wc-nmi-new-payment-method"] {
   transition: all var(--collapsable-animation-duration, 300ms) ease-in-out;
 }
 
-.woocommerce-checkout
-  #payment
-  div.payment_box
-  p.woocommerce-SavedPaymentMethods-saveNew {
+.woocommerce-checkout #payment div.payment_box p.woocommerce-SavedPaymentMethods-saveNew {
   padding-top: 0;
 }
 
@@ -1923,37 +1919,20 @@ label[for="wc-nmi-new-payment-method"] {
   overflow: hidden;
 }
 
-.woocommerce
-  .woocommerce-checkout
-  #payment
-  ul.payment_methods
-  .wc-saved-payment-methods
-  li.woocommerce-SavedPaymentMethods-token {
+.woocommerce .woocommerce-checkout #payment ul.payment_methods .wc-saved-payment-methods li.woocommerce-SavedPaymentMethods-token {
   border-radius: 16px;
 }
 
-.woocommerce
-  .woocommerce-checkout
-  #payment
-  ul.payment_methods
-  .wc-saved-payment-methods:not([data-count="0"])
-  li.woocommerce-SavedPaymentMethods-new {
+.woocommerce .woocommerce-checkout #payment ul.payment_methods .wc-saved-payment-methods:not([data-count="0"]) li.woocommerce-SavedPaymentMethods-new {
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
 }
 
-.woocommerce-checkout
-  #payment
-  .payment_box
-  .woocommerce-SavedPaymentMethods[data-count="0"] {
+.woocommerce-checkout #payment .payment_box .woocommerce-SavedPaymentMethods[data-count="0"] {
   display: none;
 }
 
-.woocommerce-checkout
-  #payment
-  .payment_box
-  .woocommerce-SavedPaymentMethods[data-count="0"]
-  + .wc-payment-form {
+.woocommerce-checkout #payment .payment_box .woocommerce-SavedPaymentMethods[data-count="0"]+.wc-payment-form {
   padding-top: 16px;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
@@ -1971,14 +1950,14 @@ label[for="wc-nmi-new-payment-method"] {
 }
 
 /* ------- Saved Mayment Method  ------- */
-ul.woocommerce-SavedPaymentMethods li input[type="radio"] ~ label {
+ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label {
   display: flex;
   align-items: center;
   gap: 16px;
   padding-left: 0;
 }
 
-ul.woocommerce-SavedPaymentMethods li input[type="radio"] ~ label::before {
+ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
   position: unset;
   flex-shrink: 0;
 }
@@ -2447,22 +2426,19 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"] ~ label::before {
 }
 
 /* Estado OFF */
-.subscription-auto-renew-toggle--off
-  .subscription-auto-renew-toggle__i::before {
+.subscription-auto-renew-toggle--off .subscription-auto-renew-toggle__i::before {
   background: #ffffff !important;
   transform: translateY(-2px) !important;
   width: 22px;
   height: 22px;
 }
 
-.subscription-auto-renew-toggle--visually-disabled
-  .subscription-auto-renew-toggle__i {
+.subscription-auto-renew-toggle--visually-disabled .subscription-auto-renew-toggle__i {
   background-color: #57534e !important;
   border-color: #57534e !important;
 }
 
-.subscription-auto-renew-toggle--visually-disabled.no-active
-  .subscription-auto-renew-toggle__i::before {
+.subscription-auto-renew-toggle--visually-disabled.no-active .subscription-auto-renew-toggle__i::before {
   background: #a8a29e !important;
 }
 
@@ -2557,9 +2533,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"] ~ label::before {
   border-top: 1px solid var(--surface-dark, #292524);
 }
 
-.mega-accordion
-  .accordion-body-list
-  .accordion-body-list-item:not(:last-child) {
+.mega-accordion .accordion-body-list .accordion-body-list-item:not(:last-child) {
   border-bottom: 1px solid var(--surface-dark, #292524);
 }
 
@@ -2673,7 +2647,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"] ~ label::before {
   margin-left: 0;
 }
 
-.logo-container + .logo-container {
+.logo-container+.logo-container {
   margin-left: -10px;
   z-index: 2;
 }
@@ -2851,7 +2825,8 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"] ~ label::before {
 /* Firefox uses an overlay div */
 .google-signin-btn .googlesitekit-sign-in-with-google__frontend-output-button iframe
 
-/* Chrome uses the iframe content div */ {
+/* Chrome uses the iframe content div */
+  {
   scale: 10;
 }
 
@@ -3025,10 +3000,7 @@ a.pagination-number {
 }
 
 /* ------ Stripe Checkbox - Updates Subscriptions Payment Method to New Card */
-#add_payment_method
-  #payment
-  ul.payment_methods
-  input[type="checkbox"]#wc-stripe-update-subs-payment-method-card {
+#add_payment_method #payment ul.payment_methods input[type="checkbox"]#wc-stripe-update-subs-payment-method-card {
   appearance: none;
   -webkit-appearance: none;
   display: inline-block;
@@ -3044,10 +3016,7 @@ a.pagination-number {
   transition: background-color 0.3s ease-in-out;
 }
 
-#add_payment_method
-  #payment
-  ul.payment_methods
-  input[type="checkbox"]#wc-stripe-update-subs-payment-method-card:checked {
+#add_payment_method #payment ul.payment_methods input[type="checkbox"]#wc-stripe-update-subs-payment-method-card:checked {
   content: "";
   background-image: url('data:image/svg+xml,<svg width="11" height="8" viewBox="0 0 11 8" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="M3.79862 5.95955C3.56125 6.1967 3.17661 6.19661 2.93935 5.95935L1.23284 4.25284C0.992563 4.01256 0.603211 4.01188 0.362087 4.2513V4.2513C0.119756 4.49193 0.119063 4.88366 0.360543 5.12514L2.79623 7.56083C3.1125 7.87709 3.62527 7.87709 3.94153 7.56083L10.3317 1.17062C10.5718 0.930539 10.5718 0.541287 10.3317 0.301203V0.301203C10.0917 0.0612002 9.70264 0.0611083 9.46252 0.300998L3.79862 5.95955Z" stroke="black" stroke-width="0.8" fill="black"/></svg>');
   background-size: 11px;
@@ -3192,15 +3161,13 @@ a.pagination-number {
   z-index: 999999 !important;
 }
 
-.mt-payment-cards
-  .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
+.mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
   display: flex;
   flex-direction: row;
 }
 
 @media (max-width: 767.98px) {
-  .mt-payment-cards
-    .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
+  .mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
     flex-direction: column;
   }
 
@@ -3311,9 +3278,7 @@ a.pagination-number {
   align-items: stretch !important;
 }
 
-.place-order
-  .privacy.woocommerce-invalid.woocommerce-invalid-required-field
-  .invalid-feedback.privacy-policy-error {
+.place-order .privacy.woocommerce-invalid.woocommerce-invalid-required-field .invalid-feedback.privacy-policy-error {
   margin-bottom: 8px;
   margin-top: -8px;
 }
@@ -3356,9 +3321,9 @@ a.pagination-number {
   }
 }
 
-.mega-navbar > .nav-left,
-.mega-navbar > .nav-tabs,
-.mega-navbar > .nav-right {
+.mega-navbar>.nav-left,
+.mega-navbar>.nav-tabs,
+.mega-navbar>.nav-right {
   flex: 0 0 auto;
   min-width: 0;
   height: var(--nav-h);
@@ -3640,7 +3605,7 @@ body.mt-placing .woocommerce-checkout {
   display: none;
 }
 
-.mt-toggle-group > .mt-toggle-button {
+.mt-toggle-group>.mt-toggle-button {
   scroll-snap-align: start;
 }
 
@@ -3657,20 +3622,16 @@ body.mt-placing .woocommerce-checkout {
 
 .mt-tabs-gradient--left {
   left: 0;
-  background: linear-gradient(
-    270deg,
-    rgba(19, 18, 16, 0) 0%,
-    var(--Surface-Body, #131210) 100%
-  );
+  background: linear-gradient(270deg,
+      rgba(19, 18, 16, 0) 0%,
+      var(--Surface-Body, #131210) 100%);
 }
 
 .mt-tabs-gradient--right {
   right: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(19, 18, 16, 0) 0%,
-    var(--Surface-Body, #131210) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(19, 18, 16, 0) 0%,
+      var(--Surface-Body, #131210) 100%);
 }
 
 .mt-tabs-row .mt-btn[disabled] {
@@ -4130,8 +4091,7 @@ body.mt-placing .woocommerce-checkout {
 }
 
 #mt-daily-journal .dj-row {
-  border-bottom: var(--Type-letter-spacing-sm, 1px) solid
-    var(--Colors-Gray-800, #292524);
+  border-bottom: var(--Type-letter-spacing-sm, 1px) solid var(--Colors-Gray-800, #292524);
 }
 
 #mt-daily-journal .dj-row.is-last {
@@ -4415,7 +4375,7 @@ textarea.mtfb-note {
   gap: 16px;
 }
 
-.account-settings__sections-wrapper > * + * {
+.account-settings__sections-wrapper>*+* {
   margin-top: 16px;
 }
 
@@ -4497,15 +4457,14 @@ textarea.mtfb-note {
   margin-bottom: 32px;
 }
 
-.mt-user-profile-card__avatar-container {
-}
+.mt-user-profile-card__avatar-container {}
 
 .mt-user-profile-card__member-since {
   font-size: 16px;
   text-align: right;
 }
 
-.mt-user-profile-card__details > * + * {
+.mt-user-profile-card__details>*+* {
   margin-top: 8px;
 }
 
@@ -4584,8 +4543,7 @@ textarea.mtfb-note {
 
 .mt-apex-tip::before {
   border-width: 7px;
-  border-color: var(--Colors-Gray-700, #404040) transparent transparent
-    transparent;
+  border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
 }
 
 .mt-apex-tip::after {
@@ -4927,6 +4885,7 @@ textarea.mtfb-note {
 .js-mt-goto-account {
   cursor: pointer;
 }
+
 .js-mt-goto-account:focus {
   outline: 2px solid #e5e5e5;
   outline-offset: 2px;
@@ -4936,16 +4895,17 @@ textarea.mtfb-note {
 
 /***** Modal Payout **/
 
-#mt-payout-acc-menu .dropdown-item:focus, .dropdown-item:hover {
-    color: var(--bs-dropdown-link-hover-color);
-    background-color: #2a2a2a;
+#mt-payout-acc-menu .dropdown-item:focus,
+.dropdown-item:hover {
+  color: var(--bs-dropdown-link-hover-color);
+  background-color: #2a2a2a;
 }
 
-button#mt-payout-acc-btn:hover, button#mt-payout-acc-btn:active {
-    background: #131210;
-    border: 1px solid #d4d4d4;
+button#mt-payout-acc-btn:hover,
+button#mt-payout-acc-btn:active {
+  background: #131210;
+  border: 1px solid #d4d4d4;
 }
 
 
 /***** End Modal Payout **/
-

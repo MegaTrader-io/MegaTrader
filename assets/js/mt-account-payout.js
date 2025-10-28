@@ -1,20 +1,27 @@
+
 (function () {
   "use strict";
 
   // =========================
-  // Prefetch / Caché en memoria
+  // Prefetch / Caché en memoria con TTL
   // =========================
-  var MT_PAYOUT_CACHE = null;
+  var CACHE_TTL_MS = 15000; // 15s (ajústalo)
+  var MT_PAYOUT_CACHE = null; // { ts: number, data: {...} }
   var AJAX_URL = (window.ajaxurl || "/wp-admin/admin-ajax.php");
 
-  function prefetchPayoutData() {
+  function prefetchPayoutData(force){
     var modal = document.getElementById("mt-request-payout-modal");
     if (!modal) return Promise.resolve(null);
 
     var email = modal.getAttribute("data-user-email") || "";
     if (!email) return Promise.resolve(null);
 
-    if (MT_PAYOUT_CACHE) return Promise.resolve(MT_PAYOUT_CACHE);
+    var now = Date.now();
+    var fresh = MT_PAYOUT_CACHE && (now - MT_PAYOUT_CACHE.ts) < CACHE_TTL_MS;
+
+    if (!force && fresh) {
+      return Promise.resolve(MT_PAYOUT_CACHE.data);
+    }
 
     var fd = new FormData();
     fd.append("action", "mt_payouts_prepare_ui");
@@ -24,30 +31,33 @@
       .then(function (r) { return r.json(); })
       .then(function (res) {
         if (res && res.success && res.data && Array.isArray(res.data.items)) {
-          MT_PAYOUT_CACHE = res.data; // cache
-          return MT_PAYOUT_CACHE;
+          MT_PAYOUT_CACHE = { ts: Date.now(), data: res.data };
+          return MT_PAYOUT_CACHE.data;
         }
         throw new Error("No data");
       })
-      .catch(function () { return null; });
+      .catch(function (e) {
+        console.warn("[PAYOUT] fetch error:", e);
+        return MT_PAYOUT_CACHE ? MT_PAYOUT_CACHE.data : null;
+      });
   }
 
-  // Prefetch global temprano + en hover/click del trigger
+  // Prefetch inicial + en hover/click del trigger
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function(){
-      prefetchPayoutData();
+      prefetchPayoutData(false);
       wirePrefetchTriggers();
     }, { once: true });
   } else {
-    prefetchPayoutData();
+    prefetchPayoutData(false);
     wirePrefetchTriggers();
   }
 
   function wirePrefetchTriggers(){
     var triggers = document.querySelectorAll('[data-bs-target="#mt-request-payout-modal"]');
     triggers.forEach(function(btn){
-      btn.addEventListener("mouseenter", prefetchPayoutData, {passive:true});
-      btn.addEventListener("click", prefetchPayoutData, {passive:true});
+      btn.addEventListener("mouseenter", function(){ prefetchPayoutData(false); }, {passive:true});
+      btn.addEventListener("click", function(){ prefetchPayoutData(false); }, {passive:true});
     });
   }
 
@@ -56,7 +66,6 @@
   // =========================
   function $(sel, ctx){ return (ctx||document).querySelector(sel); }
   function $all(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); }
-
   function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]); }); }
 
   // =========================
@@ -91,28 +100,31 @@
     var modal = document.getElementById("mt-request-payout-modal");
     if (!modal) return;
 
-    // hidratar solo una vez al abrir
-    modal.addEventListener("show.bs.modal", hydrateOnce, { once:true });
+    // hidratar una vez al abrir, pero forzamos refetch para evitar estado viejo
+    modal.addEventListener("show.bs.modal", function(){ hydrateOnce(true); }, { once:true });
+
+    // y cada vez que se vuelve a abrir el modal en la misma sesión, fuerza refresh
+    modal.addEventListener("show.bs.modal", function(){ hydrateOnce(true); });
   }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init, { once: true });
   } else { init(); }
 
-  function hydrateOnce(){
+  function hydrateOnce(force){
     var modal = document.getElementById("mt-request-payout-modal");
     var mount = $("#mt-payout-accounts", modal);
     if (!mount) return;
 
-    // 1) Si tenemos caché, pinta al instante
-    if (MT_PAYOUT_CACHE && Array.isArray(MT_PAYOUT_CACHE.items)) {
-      renderDropdown(mount, MT_PAYOUT_CACHE);
+    // pinta algo inmediato si hay caché
+    if (MT_PAYOUT_CACHE && Array.isArray(MT_PAYOUT_CACHE.data?.items)) {
+      renderDropdown(mount, MT_PAYOUT_CACHE.data);
     } else {
       mount.innerHTML = '<div class="text-muted">Loading accounts…</div>';
     }
 
-    // 2) Refresca en segundo plano (y re-render si cambió)
-    prefetchPayoutData().then(function(data){
+    // Refresca (forzado) y re-render si cambió
+    prefetchPayoutData(!!force).then(function(data){
       if (data && Array.isArray(data.items)) {
         renderDropdown(mount, data);
       } else if (!MT_PAYOUT_CACHE) {
@@ -139,7 +151,7 @@
     var btn = document.createElement("button");
     btn.id = "mt-payout-acc-btn";
     btn.type = "button";
-    btn.className = "btn btn border-gray bg-131210 w-100 d-flex justify-content-between align-items-center rounded-2xl p-2";
+    btn.className = "btn btn border-gray bg-131210 w-100 d-flex justify-content-between align-items-center rounded-2xl p-3";
     btn.setAttribute("data-bs-toggle", "dropdown");
     btn.setAttribute("aria-expanded", "false");
     btn.setAttribute("data-account-id", selItem.id);
@@ -151,7 +163,7 @@
       + (selItem.logo ? ('  <img src="'+escapeHtml(selItem.logo)+'" alt="" style="width:24px;height:24px;border-radius:50%;">') : '')
       + '  <span id="mt-payout-acc-label" class="fw-bold text-white text-base">'+escapeHtml(selItem.accountName || "—")+'</span>'
       + '</span>'
-      + '<span class="d-flex align-items-center gap-3">'
+      + '<span class="d-flex align-items-center gap-3 right-group">'
       + '  <span class="'+escapeHtml(selItem.badge.class)+'">'+escapeHtml(selItem.badge.text)+'</span>'
       + '  <span class="mt-icon mt-icon_caret-down mt-icon-white"></span>'
       + '</span>';
@@ -207,17 +219,14 @@
           var newImg = document.createElement("img");
           newImg.src = item.logo;
           newImg.alt = "";
-          newImg.style.width = "24px";
-          newImg.style.height = "24px";
+          newImg.style.width = "30px";
+          newImg.style.height = "30px";
           newImg.style.borderRadius = "50%";
           holder.insertBefore(newImg, labelNode);
         }
       }
-      var rightGroup = btn.querySelector(".d-flex.align-items-center.gap-3 .badge-mega");
-      if (rightGroup) {
-        rightGroup.className = item.badge.class;
-        rightGroup.textContent = item.badge.text;
-      }
+      var badge = btn.querySelector(".badge-mega");
+      if (badge){ badge.className = item.badge.class; badge.textContent = item.badge.text; }
 
       updateLimitsAndCTA(item, maxEl, cont);
     });
@@ -238,4 +247,12 @@
       }
     }
   }
+
+  // Exponer pequeño helper para depurar y forzar refresh desde consola
+  window.MT_PAYOUT_DEBUG = {
+    forceRefresh: function(){ MT_PAYOUT_CACHE = null; return prefetchPayoutData(true).then(console.log); },
+    cache: function(){ return MT_PAYOUT_CACHE; }
+  };
+
 })();
+
