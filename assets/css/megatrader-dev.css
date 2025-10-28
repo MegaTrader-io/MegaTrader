@@ -4941,6 +4941,11 @@ textarea.mtfb-note {
     background-color: #2a2a2a;
 }
 
+button#mt-payout-acc-btn:hover, button#mt-payout-acc-btn:active {
+    background: #131210;
+    border: 1px solid #d4d4d4;
+}
+
 
 /***** End Modal Payout **/
 

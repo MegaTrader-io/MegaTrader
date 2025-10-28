@@ -44,7 +44,7 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
       <div class="modal-body d-flex flex-column gap-3">            
 
           <!-- Aquí se inyecta la UI -->
-          <div id="mt-payout-accounts" class="d-flex flex-column gap-2 mt-3">
+          <div id="mt-payout-accounts" class="d-flex flex-column gap-2">
             <div class="text-muted">Loading accounts…</div>
           </div>
       

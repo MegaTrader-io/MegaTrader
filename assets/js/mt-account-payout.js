@@ -72,7 +72,7 @@
     btn.setAttribute("data-platform-account-id", item.platformAccountId || "");
     btn.innerHTML =
       '<span class="d-flex align-items-center gap-2">'
-      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond" aria-hidden="true"></span>'
+      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md" aria-hidden="true"></span>'
       + (item.logo ? ('  <img src="'+escapeHtml(item.logo)+'" alt="" style="width:24px;height:24px;border-radius:50%;">') : '')
       + '  <span class="fw-bold text-white">'+escapeHtml(item.accountName || "—")+'</span>'
       + '</span>'
@@ -139,7 +139,7 @@
     var btn = document.createElement("button");
     btn.id = "mt-payout-acc-btn";
     btn.type = "button";
-    btn.className = "btn btn border-gray bg-131210 w-100 d-flex justify-content-between align-items-center rounded-12";
+    btn.className = "btn btn border-gray bg-131210 w-100 d-flex justify-content-between align-items-center rounded-2xl p-2";
     btn.setAttribute("data-bs-toggle", "dropdown");
     btn.setAttribute("aria-expanded", "false");
     btn.setAttribute("data-account-id", selItem.id);
@@ -147,9 +147,9 @@
 
     btn.innerHTML =
       '<span class="d-flex align-items-center gap-2">'
-      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond" aria-hidden="true"></span>'
+      + '  <span class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md" aria-hidden="true"></span>'
       + (selItem.logo ? ('  <img src="'+escapeHtml(selItem.logo)+'" alt="" style="width:24px;height:24px;border-radius:50%;">') : '')
-      + '  <span id="mt-payout-acc-label" class="fw-bold text-white">'+escapeHtml(selItem.accountName || "—")+'</span>'
+      + '  <span id="mt-payout-acc-label" class="fw-bold text-white text-base">'+escapeHtml(selItem.accountName || "—")+'</span>'
       + '</span>'
       + '<span class="d-flex align-items-center gap-3">'
       + '  <span class="'+escapeHtml(selItem.badge.class)+'">'+escapeHtml(selItem.badge.text)+'</span>'
