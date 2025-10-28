@@ -140,6 +140,8 @@ function megatrader_scripts() {
     wp_enqueue_script( 'mt-addons',	        MEGATRADER_JS .'mt-addons.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-payment',	        MEGATRADER_JS .'payment-methods.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-account-picker',	        MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-account-payout',	        MEGATRADER_JS .'mt-account-payout.js', array(), REALTIME_VERSION, true);
+
     wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-tooltips-js',	        MEGATRADER_JS .'mt-tooltips.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-billing-validation-js',	        MEGATRADER_JS .'billing-validation.js', array(), REALTIME_VERSION, true);
@@ -1927,7 +1929,6 @@ function mt_ajax_accounts_performance() {
     }
 }
 
-
 // === Performance Chart AJAX ===
 add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
 add_action('wp_ajax_nopriv_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
@@ -2028,6 +2029,22 @@ function mt_ajax_account_daily_journal() {
     'per_page' => $ui_per,
   ]);
 }
+
+// == AJAX: prepara UI de payout desde email ==
+add_action('wp_ajax_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
+add_action('wp_ajax_nopriv_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
+function mt_ajax_payouts_prepare_ui() {
+  $email = '';
+  if (isset($_REQUEST['email'])) $email = sanitize_email(wp_unslash($_REQUEST['email']));
+  if (!$email && is_user_logged_in()) $email = wp_get_current_user()->user_email ?? '';
+  if (empty($email)) wp_send_json_error(['message' => 'Missing email'], 400);
+
+  if (!function_exists('mt_prepare_ui_payout')) wp_send_json_error(['message' => 'Helper not available'], 500);
+
+  $payload = mt_prepare_ui_payout($email);
+  wp_send_json_success($payload);
+}
+
 
 
 // ===== MT Daily Feedback (tabla + AJAX) =====

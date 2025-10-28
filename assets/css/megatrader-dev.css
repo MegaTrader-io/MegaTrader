@@ -1612,6 +1612,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   background-color: #f43f5e;
 }
 
+.badge-mega-error {
+  background-color: #f43f5e;
+}
+
 .badge-mega-default {
   background-color: var(--Colors-Gray-200);
 }
