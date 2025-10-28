@@ -6,15 +6,17 @@ enum LayoutType: string
     case LandingPage = 'landing_page';
 }
 
-final class CACHE_KEY {
-  public const USER_INFO = 'mt_user_%s';
+final class CACHE_KEY
+{
+    public const USER_INFO = 'mt_user_%s';
 }
 
-final class MT_PAYOUT {
+final class MT_PAYOUT
+{
     /** Map: startingBalance => minimumBalance (absolute) */
     public const MIN_BALANCE_MAP = [
-        25000  => 26100,
-        50000  => 52100,
+        25000 => 26100,
+        50000 => 52100,
         100000 => 103100,
         150000 => 154600,
     ];
@@ -453,5 +455,20 @@ class Label
 
 
     ];
+
+    public const META_ACCOUNT_PAYOUT = [
+        'modalTitle' => 'Request Payout',
+        'maxWithdrawal' => 'Maximum Withdrawal',
+        'paymentMethod' => 'Payment Method',
+        'withdrawalAmount' => 'Enter the amount you wish to withdraw',
+        'withdrawalAmountError' => 'Amount exceeds the maximum allowed for this payout.',
+        'email' => 'Email',
+        'submitButton' => 'Continue',
+        'cancelButton' => 'Cancel',
+        'riseworks' => 'Riseworks',
+        'btc' => 'BTC',
+        'eth' => 'ETH',
+    ];
+
 
 }
