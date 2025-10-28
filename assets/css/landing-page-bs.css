@@ -356,8 +356,7 @@
 .platforms-bs__list {
     display: flex;
     justify-content: space-between;
-    padding-inline: 32px;
-    padding-block: 48px;
+    padding-bottom: 48px;
 }
 
 .platforms-bs__item {
@@ -380,7 +379,7 @@
 
 .journal-bs {
     background-color: var(--smoke-color2);
-    padding-block: 64px;
+    padding-block: 48px;
     margin-top: 0;
 }
 
@@ -414,7 +413,7 @@
 /* Swiper Section */
 .journal-bs__content {
     position: relative;
-    padding-top: 48px;
+    padding-top: 32px;
 }
 
 .journal-bs__card {
