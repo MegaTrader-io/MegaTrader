@@ -1675,7 +1675,6 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 }
 
 .pricing-table-container__title {
-    padding-bottom: 1rem;
     margin-bottom: 0;
     text-align: center;
     font-size: 40px;
@@ -1690,12 +1689,12 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     margin-right: auto;
     margin-bottom: 0;
     max-width: 760px;
-    padding-bottom: 2rem;
     text-align: center;
     font-size: 1.25rem;
     font-weight: 500;
     line-height: 2rem;
     color: var(--body-color);
+    padding: 16px 0;
 }
 
 @media (min-width: 768px){
