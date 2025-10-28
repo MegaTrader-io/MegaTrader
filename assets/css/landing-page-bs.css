@@ -158,7 +158,7 @@
 }
 
 #verified-bs-carousel {
-    padding: 32px 0px
+    padding: 32px 0;
 }
 
 .splide__slide {

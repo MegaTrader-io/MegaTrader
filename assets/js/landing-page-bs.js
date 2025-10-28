@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 gap: '16px',
                 perPage: calculatePerPage(),
                 autoScroll: {
-                    speed: 1,
+                    speed: 0.2,
                     pauseOnHover: true,
                     pauseOnFocus: true,
                 },
