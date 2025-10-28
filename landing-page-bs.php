@@ -63,7 +63,8 @@ get_header('landing-page-bs');
                         <div class="d-flex">
                             <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md hero-bs__btn">
                                 Get Funded Now
-                                <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>" width="44" height="43">
+                                <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
+                                     width="44" height="43">
                             </a>
                         </div>
                     </div>
@@ -81,14 +82,14 @@ get_header('landing-page-bs');
         <?php
         $verified_payouts_base_url = get_template_directory_uri() . '/assets/img/landing-page/verified-payouts';
         $certifies = [
-                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/certified-passed.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
-                ['img' => $verified_payouts_base_url . '/certified-withdrawal.svg', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-passed-1.png', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-passed-2.png', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-3.png', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-4.png', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-passed-1.png', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-passed-2.png', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-3.png', 'title' => 'Mega Certified Trader'],
+                ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-4.png', 'title' => 'Mega Certified Trader'],
         ]
 
         ?>
@@ -97,33 +98,25 @@ get_header('landing-page-bs');
             <div class="container verified-bs__container">
                 <header class="verified-bs__header text-center">
                     <h2 class="verified-bs__title">
-                        Over <span>$70 million</span> verified payouts
+                        Verified <span>ACHIEVEMENTS</span> from Real Traders
                     </h2>
                     <p class="verified-bs__subtitle">
-                        Every certificate represents a trader reaching their next level.
-                        Explore the success stories and see what’s possible with MegaTrader.
+                        Every certificate represents a trader moving forward — from passing evaluations to receiving
+                        payouts. This is just the beginning of what’s possible.
                     </p>
                 </header>
             </div>
 
             <!-- Slider -->
-            <div class="verified-bs__cards">
-                <div class="swiper verified-bs__swiper">
-                    <div class="swiper-wrapper">
-                        <?php foreach ($certifies as $certify) : ?>
-                            <div class="swiper-slide">
-                                <article class="verified-bs__card">
-                                    <img src="<?php echo esc_url($certify['img']); ?>"
-                                         alt="Mega Certified Trader Badge"
-                                         class="verified-bs__image"
-                                         loading="lazy">
-                                </article>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div class="swiper-pagination"></div>
+            <div class="verified-bs__cards overflow-x-auto scrollbar-hide">
+                <div class="verified-bs__swiper carousel animate-carousel"
+                     style="--total-width: <?= count($certifies) * 378 ?>px">
+                    <?php foreach ($certifies as $key => $certify) : ?>
+                        <img src="<?php echo esc_url($certify['img']); ?>"
+                             alt="Mega Certified Trader Badge"
+                             class="verified-bs__image"
+                             loading="lazy">
+                    <?php endforeach; ?>
                 </div>
             </div>
         </section>

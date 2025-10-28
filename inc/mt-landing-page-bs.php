@@ -25,12 +25,22 @@ add_action('wp_enqueue_scripts', function () {
   wp_enqueue_style('swiper-bundle', $css_uri . 'swiper-bundle.min.css', [], $css_version);
   wp_enqueue_script('swiper-bundle-style', $js_uri . 'swiper-bundle.min.js', [], $js_version, true);
 
-
   $css_version = file_exists($css_path . 'glide.core.min.css') ? filemtime($css_path . 'glide.core.min.css') : null;
   $js_version = file_exists($js_path . 'glide.js') ? filemtime($js_path . 'glide.js') : null;
 
   wp_enqueue_style('glide-style', $css_uri . 'glide.core.min.css', [], $css_version);
   wp_enqueue_script('glide-js', $js_uri . 'glide.js', [], $js_version, true);
+
+
+  $css_version = file_exists($css_path . 'splide.min.css') ? filemtime($css_path . 'splide.min.css') : null;
+  $js_version = file_exists($js_path . 'splide.min.js') ? filemtime($js_path . 'splide.min.js') : null;
+
+  wp_enqueue_style('splide-style', $css_uri . 'splide.min.css', [], $css_version);
+  wp_enqueue_script('splide-js', $js_uri . 'splide.min.js', [], $js_version, true);
+
+  $js_version = file_exists($js_path . 'splide-extension-auto-scroll.min.js') ? filemtime($js_path . 'splide-extension-auto-scroll.min.js') : null;
+  wp_enqueue_script('splide-extension-js', $js_uri . 'splide-extension-auto-scroll.min.js', [], $js_version, true);
+
 
   $css_version = file_exists($css_path . 'glide.theme.min.css') ? filemtime($css_path . 'glide.theme.min.css') : null;
   wp_enqueue_style('glide-theme-style', $css_uri . 'glide.theme.min.css', [], $css_version);
