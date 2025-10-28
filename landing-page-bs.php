@@ -261,7 +261,7 @@ get_header('landing-page-bs');
             </div>
         </section>
 
-        <?php require 'template-parts/landing-page/sections/price_table.php'; ?>
+        <?php get_template_part('template-parts/landing-page/sections/price_table', null, ['classes' => 'container']); ?>
 
     </main>
 

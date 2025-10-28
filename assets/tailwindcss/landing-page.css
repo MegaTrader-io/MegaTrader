@@ -470,8 +470,3 @@ body[data-scroll-locked] {
         @apply tw-hidden;
     }
 }
-
-.plan-summary .plan-summary__plan-icon, .plan-summary .plan-summary__platform-icon {
-    width: 30px;
-    height: 30px;
-}

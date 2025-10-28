@@ -336,6 +336,7 @@ function render_platforms($platforms) {
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
         console.log('selectedProduct', selectedProduct);
         const selectedProductId = selectedProduct.id ?? '';
+
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
         const event = new CustomEvent("product:selected", {

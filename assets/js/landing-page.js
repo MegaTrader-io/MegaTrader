@@ -300,9 +300,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const copyTooltip = element.querySelector('.mgt-copy-tooltip');
                     if (copyTooltip) {
-                        copyTooltip.classList.remove('tw-hidden');
+                        copyTooltip.classList.remove('d-none');
                         setTimeout(() => {
-                            copyTooltip.classList.add('tw-hidden');
+                            copyTooltip.classList.add('d-none');
                         }, 800);
                     }
                 } catch (err) {
@@ -548,9 +548,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const template = document.querySelector(`.template-metaInfo`);
 
+
             metaInfoList.forEach(metaInfo => {
                 const row = template.cloneNode(true);
-                row.classList.remove('template-metaInfo', 'tw-hidden');
+                row.classList.remove('template-metaInfo', 'd-none');
                 const labelHTML = row.querySelector('.mega-info-row__label');
                 labelHTML.dataset.key = metaInfo.key;
                 labelHTML.innerText = metaInfo.label;
@@ -588,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             document.querySelector('.plan-summary__name').innerText = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
 
-            const couponURL = `wp-json/custom/v1/best-coupon?id=${productionSelected.id}`;
+            const couponURL = `/wp-json/custom/v1/best-coupon?id=${productionSelected.id}`;
             if (!couponCache[couponURL]) {
                 const responseCoupons = await fetch(couponURL);
                 couponCache[couponURL] = await responseCoupons.json();

@@ -888,7 +888,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     gap: 30px;
 }
 
-.mt-sidebar .mt-sidebar__container__collapsed { 
+.mt-sidebar .mt-sidebar__container__collapsed {
     position: absolute;
     inset: var(--sidebar-padding);
     visibility: hidden;
@@ -897,7 +897,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 .mt-sidebar.mt-sidebar_collapsed .mt-sidebar__wrapper {
     width: var(--sidebar-width-collapsed);
-    height: var(--sidebar-height-collapsed); 
+    height: var(--sidebar-height-collapsed);
 }
 .mt-sidebar.mt-sidebar_collapsed .mt-sidebar__container {
     opacity: 0;
@@ -918,7 +918,7 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     .mt-sidebar__wrapper  {
         width: var(--sidebar-width-expanded);
     }
-    .mt-sidebar .mt-sidebar__container { 
+    .mt-sidebar .mt-sidebar__container {
         width: calc(var(--sidebar-width-expanded) - (2 * var(--sidebar-padding)));
         transition: opacity 0.2s;
     }
@@ -997,13 +997,13 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     inset: 0 auto 0 -100%;
     z-index: var(--z-modal);
     overflow-y: auto;
-    
+
     min-width: 320px;
     width: calc(100% - 40px);
     max-width: 500px;
     padding: 16px;
     background-color: #1E1E1E;
-    
+
     transition: left var(--drawer-slide-animation-time) ease-out;
 }
 
@@ -1411,11 +1411,11 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path fill="%23000" d="M11 5h2v6h6v2h-2 6v6h-2v-6H5v-2h6z"/></svg>') no-repeat 50% 50% / contain;
 }
 
-.mt-btn--link {    
+.mt-btn--link {
     padding: var(--Spacing-2xs, 4px) var(--Spacing-sm, 12px);
     background-color: transparent;
     color: var(--Surface-Primary-Hover, #ffb861);
-    width: 100%;    
+    width: 100%;
 }
 
 
@@ -1658,6 +1658,249 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
     font-size: 14px;
     margin-bottom: 5px;
 }
+
+.pricing-table-container {
+    padding: 0 16px;
+}
+
+.pricing-table-container__title {
+    padding-bottom: 1rem;
+    margin-bottom: 0;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    color: white;
+}
+
+.pricing-table-container__subtitle{
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
+    max-width: 760px;
+    padding-bottom: 2rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 2rem;
+    color: var(--body-color);
+}
+
+@media (min-width: 768px){
+    .pricing-table-container__subtitle{
+        max-width: 860px;
+    }
+}
+
+.pricing-table-panel > :not([hidden]) ~ :not([hidden]){
+    --tw-space-y-reverse: 0;
+    margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(2rem * var(--tw-space-y-reverse));
+}
+
+@media (min-width: 1024px){
+    .pricing-table-panel{
+        display: flex;
+        gap: 2rem;
+    }
+
+    .pricing-table-panel > :not([hidden]) ~ :not([hidden]){
+        --tw-space-y-reverse: 0;
+        margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(0px * var(--tw-space-y-reverse));
+    }
+}
+
+.pricing-table-panel__tabs{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+}
+
+.pricing-table-panel__tabs > :not([hidden]) ~ :not([hidden]){
+    --tw-space-y-reverse: 0;
+    margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(2rem * var(--tw-space-y-reverse));
+}
+
+@media (min-width: 1024px){
+    .pricing-table-panel__tabs{
+        row-gap: 1.5rem;
+    }
+
+    .pricing-table-panel__tabs > :not([hidden]) ~ :not([hidden]){
+        --tw-space-y-reverse: 0;
+        margin-top: calc(3rem * calc(1 - var(--tw-space-y-reverse)));
+        margin-bottom: calc(3rem * var(--tw-space-y-reverse));
+    }
+}
+
+/****************************************
+/****************************************
+/****************************************
+
+  BEGIN PRICING-TABLE-PANEL__WRAPPER_AREA
+
+ ****************************************
+ ****************************************
+ ****************************************/
+
+.pricing-table-panel__wrapper_area {
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-table-panel__wrapper_area > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(2rem * var(--tw-space-y-reverse));
+}
+
+@media (min-width: 1024px) {
+    .pricing-table-panel__sticky_header {
+        position: sticky;
+        top: calc((var(--promo-banner-height,0px)) + (var(--admin-bar-height,0px)) + (var(--nav-bar-height,0px)));
+    }
+}
+
+.pricing-table-panel__plan_summary_container {
+    display: inline-flex;
+    height: 104px;
+    align-items: center;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.pricing-table-panel__summary_card {
+    width: 100%;
+    border-radius: 1rem;
+    background-color: var(--smoke-color2);
+}
+
+@media (min-width: 1024px) {
+    .pricing-table-panel__summary_card {
+        width: 360px;
+    }
+}
+
+.pricing-table-panel__summary_title {
+    justify-content: flex-start;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 2rem;
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.pricing-table-panel__meta_info {
+    padding: 8px 24px;
+}
+
+.pricing-table-panel__copy_btn {
+    position: relative;
+    border-style: none;
+}
+
+.pricing-table-panel__tooltip {
+    position: absolute;
+    top: -28px;
+    --tw-translate-x: -45%;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+    font-size: 0.75rem;
+    line-height: 1rem;
+    --tw-text-opacity: 1 !important;
+    color: rgb(255 255 255 / var(--tw-text-opacity, 1)) !important;
+}
+
+.pricing-table-panel__checkout_btn {
+    /* mezcla BEM + clase existente */
+}
+
+.plan-summary__name {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.plan-summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    line-height: 1.75rem;
+}
+
+.plan-summary__platform-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.mega-info-row {
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.mega-info-row__icon_container {
+    position: relative;
+    height: 1.5rem;
+    width: 1.5rem;
+    --tw-text-opacity: 1;
+    color: rgb(168 162 158 / var(--tw-text-opacity, 1));
+}
+
+.tw-group.mark .mega-info-row__icon_container {
+    --tw-text-opacity: 1;
+    color: rgb(19 18 16 / var(--tw-text-opacity, 1));
+}
+
+.mega-info-row__content {
+    flex: 1 1 0%;
+    justify-content: flex-start;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 500;
+    line-height: 1.5;
+    --tw-text-opacity: 1;
+    color: rgb(168 162 158 / var(--tw-text-opacity, 1));
+}
+
+.tw-group.mark .mega-info-row__content {
+    --tw-text-opacity: 1;
+    color: rgb(19 18 16 / var(--tw-text-opacity, 1));
+}
+
+.mega-info-row__label {
+    /* Mantiene la semántica, puedes extender si necesitas resaltar el texto */
+}
+
+.mega-info-row__value {
+    /* Puedes aplicar colores o pesos distintos si lo deseas */
+}
+
+/****************************************
+/****************************************
+/****************************************
+
+  END PRICING-TABLE-PANEL__WRAPPER_AREA
+
+ ****************************************
+ ****************************************
+ ****************************************/
 
 .mt-verified {
     display: flex;

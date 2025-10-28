@@ -53,6 +53,9 @@ add_action('wp_enqueue_scripts', function () {
   $css_ver = file_exists($css_file) ? @filemtime($css_file) : '1.0.0';
   $js_ver = file_exists($js_file) ? @filemtime($js_file) : '1.0.0';
 
+  $clipboard_js_version = file_exists($js_path . 'clipboard.min.js') ? filemtime($js_path . 'clipboard.min.js') : null;
+  wp_enqueue_script('clipboard', $js_uri . 'clipboard.min.js', [], $clipboard_js_version, true);
+
   wp_enqueue_style(
     'mt-landing-page-bs',
     $theme_uri . '/assets/css/landing-page-bs.css',
@@ -68,11 +71,19 @@ add_action('wp_enqueue_scripts', function () {
     true
   );
 
+  $products_data = get_products_with_attributes();
+  $products_with_best_coupons = [];
+
   // Pasar datos al JS (opcional)
-  wp_localize_script('mt-landing-page-bs', 'MT_LANDING_PAGE_BS', [
-    'ajaxUrl' => admin_url('admin-ajax.php'),
-    'nonce' => wp_create_nonce('mt_landing_nonce'),
-    'isLogged' => is_user_logged_in(),
+  wp_localize_script('mt-landing-page-bs', 'MG_GLOBAL', [
+    'adminAjaxApi' => admin_url('admin-ajax.php'),
+    'baseApi' => esc_url_raw(rest_url('megatrader/v1')),
+    'nonce' => wp_create_nonce('wp_rest'),
+    'subscriptionNonce' => wp_create_nonce('subscription_action'),
+    'products' => $products_data['products'] ?? [],
+    'productsWithBestCoupons' => $products_with_best_coupons ?? [],
+    'productMetaLabel' => Label::PRODUCT_META,
+    'bestProducts' => mt_most_popular_products()
   ]);
 }, 20);
 

@@ -1,0 +1,69 @@
+.pricing-table-panel__wrapper_area {
+    @apply tw-space-y-8 tw-flex tw-flex-col;
+}
+
+.pricing-table-panel__sticky_header {
+    @apply lg:tw-sticky lg:tw-top-[calc((var(--promo-banner-height,0px))+(var(--admin-bar-height,0px))+(var(--nav-bar-height,0px)))]
+}
+
+.pricing-table-panel__plan_summary_container {
+    @apply tw-px-4 tw-h-[104px] tw-inline-flex tw-items-center tw-justify-center;
+}
+
+.pricing-table-panel__summary_card {
+    @apply tw-w-full lg:tw-w-[360px] tw-bg-[var(--smoke-color2)] tw-rounded-2xl;
+}
+
+.pricing-table-panel__summary_title {
+    @apply tw-justify-start tw-text-white tw-text-xl tw-font-bold tw-leading-8 tw-px-4 tw-pt-4 tw-pb-2;
+}
+
+.pricing-table-panel__meta_info {
+    padding: 8px 24px;
+}
+
+.pricing-table-panel__copy_btn {
+    @apply tw-relative tw-border-none;
+}
+
+.pricing-table-panel__tooltip {
+    @apply tw-absolute -tw-top-[28px] -tw-translate-x-[45%] tw-text-xs !tw-text-white;
+
+}
+
+.pricing-table-panel__checkout_btn {
+    /* mezcla BEM + clase existente */
+}
+
+.plan-summary__name {
+    @apply tw-text-2xl tw-text-white tw-font-medium tw-uppercase;
+}
+
+.plan-summary {
+    @apply tw-inline-flex tw-items-center tw-justify-start tw-gap-2 tw-leading-7;
+}
+
+.plan-summary__platform-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.mega-info-row {
+    @apply tw-w-full tw-py-3 tw-inline-flex tw-justify-start tw-items-center tw-gap-2;
+}
+
+.mega-info-row__icon_container {
+    @apply tw-w-6 tw-h-6 tw-relative tw-text-[#A8A29E] group-[.mark]:tw-text-[#131210];
+}
+
+.mega-info-row__content {
+    @apply tw-flex-1 tw-justify-start tw-text-stone-400 group-[.mark]:tw-text-[#131210] tw-text-base tw-font-medium tw-leading-normal;
+}
+
+.mega-info-row__label {
+    /* Mantiene la semántica, puedes extender si necesitas resaltar el texto */
+}
+
+.mega-info-row__value {
+    /* Puedes aplicar colores o pesos distintos si lo deseas */
+}
