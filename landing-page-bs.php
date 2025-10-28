@@ -62,9 +62,10 @@ get_header('landing-page-bs');
 
                         <div class="d-flex">
                             <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md hero-bs__btn">
-                                Get Funded Now
                                 <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
                                      width="44" height="43">
+                                Get Funded Now
+
                             </a>
                         </div>
                     </div>
