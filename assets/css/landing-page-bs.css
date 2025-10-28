@@ -157,6 +157,10 @@
     margin-bottom: 0;
 }
 
+#verified-bs-carousel {
+    padding: 32px 0px
+}
+
 .splide__slide {
     width: 378px !important; /* ✅ ancho fijo */
     height: 260px;
