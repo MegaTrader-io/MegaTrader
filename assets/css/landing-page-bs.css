@@ -157,29 +157,14 @@
     margin-bottom: 0;
 }
 
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-.scrollbar-hide-strict {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    overflow-y: hidden;
-}
-
-.scrollbar-hide::-webkit-scrollbar,
-.scrollbar-hide-strict::-webkit-scrollbar {
-    display: none;
-}
-
-@keyframes verified-bs__carousel {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(calc(-1 * var(--total-width)));
-    }
+.splide__slide {
+    width: 378px !important; /* ✅ ancho fijo */
+    height: 260px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
 }
 
 .verified-bs__carousel {

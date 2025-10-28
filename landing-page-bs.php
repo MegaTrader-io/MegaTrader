@@ -103,16 +103,18 @@ get_header('landing-page-bs');
                 </header>
             </div>
 
-            <!-- Slider -->
-            <div class="verified-bs__cards overflow-x-auto scrollbar-hide">
-                <div class="verified-bs__carousel animate-carousel"
-                     style="--total-width: <?= count($certifies) * 378 ?>px">
-                    <?php foreach ($certifies as $key => $certify) : ?>
-                        <img src="<?php echo esc_url($certify['img']); ?>"
-                             alt="Mega Certified Trader Badge"
-                             class="verified-bs__image"
-                             loading="lazy">
-                    <?php endforeach; ?>
+            <div id="verified-bs-carousel" class="splide">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <?php foreach ($certifies as $key => $certify) : ?>
+                            <li class="splide__slide">
+                                <img src="<?php echo esc_url($certify['img']); ?>"
+                                     alt="Mega Certified Trader Badge"
+                                     class="verified-bs__image"
+                                     loading="lazy">
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             </div>
         </section>
