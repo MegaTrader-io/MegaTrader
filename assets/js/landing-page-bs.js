@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })).mount()
     }
 
-    async function loadChooseYourAccountSize(fn = function () {
+    async function loadPricingTable(fn = function () {
     }) {
         /**
          * Initialize tab component
@@ -112,6 +112,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 // }
             });
         })
+
+        async function loadChooseYourAccountSize(fn) {
+            const defaultAccountType = document.querySelector('.btn-account-type.account-active').dataset.value;
+
+            let internalOptions = {
+                accountType: defaultAccountType,
+            };
+
+            /** Handler Account Type **/
+            const buttons = [];
+            document.querySelectorAll('.btn-account-type').forEach(btn => {
+                buttons.push(btn);
+                btn.addEventListener('click', function (e) {
+                    buttons.forEach(btn => {
+                        btn.classList.remove('account-active');
+                    })
+
+                    e.currentTarget.classList.add('account-active');
+                    internalOptions.accountType = e.currentTarget.dataset.value;
+                    internalOptions.defaultPlatform = e.currentTarget.dataset.defaultPlatform;
+                    internalOptions.defaultMarketType = e.currentTarget.dataset.defaultMarketType;
+
+                    fn(internalOptions);
+                })
+            })
+        }
+
 
         /**
          * **********************************************************
@@ -148,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const couponCache = {};
-    void loadChooseYourAccountSize(
+    void loadPricingTable(
         async (params) => {
             const metaInfoElement = document.querySelector('.metaInfo');
             metaInfoElement.innerHTML = '';
@@ -295,4 +322,127 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initializeSwiper();
     loadCopyElements();
+
+    void loadChooseYourAccountSize(
+        (params) => {
+            const {defaultPlatform, defaultMarketType} = params;
+            const productionSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
+            const productPlatformDetail = productionSelected[params.accountType];
+
+            function formatNumber(value) {
+                return '$' + parseInt(value.toString().replace('$', ''));
+            }
+
+            const defaultMetaInfo = {}
+            for (const priceSize in productPlatformDetail) {
+                const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
+                const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
+                for (const metaInfoKey in metaInfo) {
+                    if (metaInfo[metaInfoKey]) {
+                        defaultMetaInfo[metaInfoKey] = true;
+                    }
+                }
+            }
+
+            const validMetaInfo = Object.keys(defaultMetaInfo);
+            let metaInfoList = [];
+            Object.keys(MG_GLOBAL.productMetaLabel).forEach(key => {
+                if (validMetaInfo.includes(key)) {
+                    metaInfoList.push({key, label: MG_GLOBAL.productMetaLabel[key]})
+                }
+            })
+
+            const mostPopularElement = document.querySelector('.price-table__plan.price-table__plan--most-popular');
+
+            if (mostPopularElement) {
+                mostPopularElement.classList.remove('price-table__plan--most-popular');
+                mostPopularElement.classList.add('price-table__plan--regular-plan');
+
+                const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
+                if (btnGetPlan) {
+                    btnGetPlan.classList.remove('mega-btn-primary-md');
+                    btnGetPlan.classList.add('mega-btn-default-md');
+                }
+            }
+
+            for (const priceSize in productPlatformDetail) {
+                const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
+                const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
+                const productId = attributes.find(item => item['id'])['id'];
+                const product = MG_GLOBAL?.productsWithBestCoupons?.find(p => p.id === Number(productId));
+                const coupon = product?.coupon;
+                const is_most_popular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
+
+                if (is_most_popular) {
+                    const mostPopularElement = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
+                    if (mostPopularElement) {
+                        mostPopularElement.classList.add('price-table__plan--most-popular');
+                        mostPopularElement.classList.remove('price-table__plan--regular-plan');
+
+                        const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
+                        if (btnGetPlan) {
+                            btnGetPlan.classList.add('mega-btn-primary-md');
+                            btnGetPlan.classList.remove('mega-btn-default-md');
+                        }
+                    }
+                }
+
+                let price = formatNumber(priceObject);
+                const priceInformation = document.querySelector(`.price-information[data-price="${priceSize}"]`);
+                const pricePanel = document.querySelector(`.price-plan[data-price="${priceSize}"]`);
+                const frequencyPanel = document.querySelector(`.frequency-plan[data-price="${priceSize}"]`);
+                if (pricePanel) {
+                    const badgeCoupon = document.querySelector(`.badge-coupon[data-price="${priceSize}"]`);
+                    const couponBeforePrice = document.querySelector(`.coupon-before-price[data-price="${priceSize}"]`);
+
+                    if (coupon && coupon.valid) {
+                        badgeCoupon.style.display = 'block';
+                        couponBeforePrice.style.display = 'block';
+                        priceInformation.classList.add('has-coupon');
+
+                        couponBeforePrice.querySelector('span').innerText = price;
+                        pricePanel.innerText = formatNumber(coupon.final_total);
+                        badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
+                        badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon;
+                    } else {
+                        badgeCoupon.style.display = 'none';
+                        couponBeforePrice.style.display = 'none';
+                        priceInformation.classList.remove('has-coupon', 'tw-min-h-[140px]', 'tw-items-center');
+
+                        pricePanel.innerText = price;
+                    }
+                }
+
+                if (frequencyPanel) {
+                    frequencyPanel.innerText = ` ${params.accountType !== 'funded-plan' ? 'per month' : 'one time fee'}`;
+                }
+
+                const metaInfoObject = attributes.find(item => item['meta-info']);
+                if (metaInfoObject) {
+                    const metaInfoContext = metaInfoObject['meta-info'];
+                    const metaInfoElement = document.querySelector(`.metaInfo[data-price="${priceSize}"]`);
+                    const template = document.querySelector(`.template-metaInfo`);
+
+                    metaInfoElement.innerHTML = '';
+
+                    metaInfoList.forEach(metaInfo => {
+                        const row = template.cloneNode(true);
+                        row.classList.remove('template-metaInfo', 'tw-hidden');
+                        const labelHTML = row.querySelector('.mega-info-row__label');
+                        labelHTML.dataset.key = metaInfo.key;
+                        labelHTML.innerText = metaInfo.label;
+                        row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
+                        metaInfoElement.appendChild(row)
+                    })
+                }
+            }
+
+            if (document.querySelector('.price-information.has-coupon')) {
+                document.querySelectorAll('.price-information:not(.has-coupon)').forEach(element => {
+                    element.classList.add('tw-min-h-[140px]', 'tw-items-center');
+                })
+            }
+
+        }
+    );
 });
