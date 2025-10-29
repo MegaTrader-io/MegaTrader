@@ -462,12 +462,15 @@ class Label
         'paymentMethod' => 'Payment Method',
         'withdrawalAmount' => 'Enter the amount you wish to withdraw',
         'withdrawalAmountError' => 'Amount exceeds the maximum allowed for this payout.',
+        'withdrawalAmountMinorZero' => 'Enter a valid amount greater than 0.',
+        'withdrawalAmountNotEligible' => 'This account is not eligible for payout at the moment.',
         'email' => 'Email',
         'submitButton' => 'Continue',
         'cancelButton' => 'Cancel',
         'riseworks' => 'Riseworks',
         'btc' => 'BTC',
         'eth' => 'ETH',
+        'verifiedDetails' => 'Please verify your details before confirming. Incorrect information may cause payment delays.',
     ];
 
 
