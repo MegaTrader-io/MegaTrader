@@ -75,7 +75,7 @@ foreach ($account_sizes as $index => $size) {
     }
 
     foreach (Label::PRODUCT_META as $key => $value) {
-        if ($metaInfoList[$key]) {
+        if (isset($metaInfoList[$key])) {
             $defaultMetaInfo[$key] = true;
         }
     }

@@ -5,7 +5,6 @@
     <?php require 'sections/megatrader_in_numbers.php'; ?>
     <?php require 'sections/timeline.php'; ?>
     <?php require 'sections/price_table.php'; ?>
-    <?php require 'sections/pricing_table.php'; ?>
     <?php require 'sections/smarter_tools_for_confident_trading.php'; ?>
     <?php require 'sections/your_path_to_profitable.php'; ?>
     <?php require 'sections/earn_more_through_our_affiliate_program.php'; ?>

@@ -75,7 +75,7 @@ foreach ($account_sizes as $index => $size) {
     }
 
     foreach (Label::PRODUCT_META as $key => $value) {
-        if ($metaInfoList[$key]) {
+        if (isset($metaInfoList[$key])) {
             $defaultMetaInfo[$key] = true;
         }
     }
@@ -100,7 +100,7 @@ if ($firstProduct) {
     $has_coupon = $coupon['valid'];
 }
 
-function render_template_meta_info($value = '', $label = '', $classes = '')
+function render_template_meta($value = '', $label = '', $classes = '')
 {
     $checkIconUrl = get_template_directory_uri() . '/assets/img/landing-page/check.svg';
 
@@ -164,7 +164,7 @@ $tabs = array_map(function ($item) {
                         </div>
                     </div>
                 </div>
-                <?= render_template_meta_info(classes: 'd-none template-metaInfo') ?>
+                <?= render_template_meta(classes: 'd-none template-metaInfo') ?>
 
                 <div class="pricing-table-panel__summary_card">
                     <div class="pricing-table-panel__summary_title">
@@ -178,7 +178,7 @@ $tabs = array_map(function ($item) {
                             $label = Label::PRODUCT_META[$field];
                             $value = $metaInfoList[$field];
 
-                            echo render_template_meta_info(value: $value, label: $label);
+                            echo render_template_meta(value: $value, label: $label);
                             ?>
                         <?php endforeach; ?>
                     </div>
