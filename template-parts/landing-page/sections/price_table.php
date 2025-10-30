@@ -138,7 +138,7 @@ $tabs = array_map(function ($item) {
 
 ?>
 
-<section class="pricing-table-container">
+<section id="pricing" class="pricing-table-container">
     <h2 class="pricing-table-container__title">
         Choose your account size
     </h2>
