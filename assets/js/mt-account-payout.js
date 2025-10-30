@@ -177,7 +177,7 @@ function switchToStep(step) {
     btn.innerHTML =
       '<span class="d-flex align-items-center gap-2">' +
       '  <span class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md" aria-hidden="true"></span>' +
-      (selItem.logo ? '  <img src="' + escapeHtml(selItem.logo) + '" alt="" style="width:24px;height:24px;border-radius:50%;">' : "") +
+      (selItem.logo ? '  <img src="' + escapeHtml(selItem.logo) + '" alt="" style="width:30px;height:30px;border-radius:50%;">' : "") +
       '  <span id="mt-payout-acc-label" class="fw-bold text-white text-base">' + (selItem.accountName || "—") + "</span>" +
       "</span>" +
       '<span class="d-flex align-items-center gap-3 right-group">' +
