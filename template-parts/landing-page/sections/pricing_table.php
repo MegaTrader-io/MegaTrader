@@ -138,9 +138,9 @@ $tabs = array_map(function ($item) {
 
 ?>
 
-<section class="pricing-table-container">
+<section id="pricing" class="pricing-table-container">
     <h2 class="pricing-table-container__title">
-        Choose an account type
+        Choose account type
     </h2>
 
     <div class="pricing-table-container-options">
@@ -264,102 +264,6 @@ $tabs = array_map(function ($item) {
                 </svg>
                 <div class="mt-badge-wrapper">
                     <div class="mt-badge mt-badge-rounded-sm mt-badge-light">COMING SOON</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="pricing-table-panel <?php echo $classes; ?>">
-        <div class="pricing-table-panel__tabs mt-tabs-no-border">
-            <?php render_tabs($tabs, tabs_modal_id: 'price-table-select-type'); ?>
-        </div>
-        <div class="pricing-table-panel__wrapper_area">
-            <div class="pricing-table-panel__sticky_header">
-                <div class="pricing-table-panel__plan_summary_container">
-                    <div class="plan-summary">
-                        <img class="plan-summary__plan-icon" src="<?= $accountThumbnailUrl; ?>" alt="Plan Icon">
-                        <img class="plan-summary__platform-icon" src="<?= $platformThumbnailUrl; ?>"
-                             alt="Platform Icon">
-                        <div class="plan-summary__name">
-                            <?= $defaultPlanName ?>
-                        </div>
-                    </div>
-                </div>
-                <?= render_template_meta_info(classes: 'd-none template-metaInfo') ?>
-
-                <div class="pricing-table-panel__summary_card">
-                    <div class="pricing-table-panel__summary_title">
-                        Plan Summary
-                    </div>
-
-                    <div class="metaInfo pricing-table-panel__meta_info">
-                        <?php $defaultMetaInfo = [];
-                        foreach ($defaultMetaInfo as $field => $value) : ?>
-                            <?php
-                            $label = Label::PRODUCT_META[$field];
-                            $value = $metaInfoList[$field];
-
-                            echo render_template_meta_info(value: $value, label: $label);
-                            ?>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <div class="pricing-table-panel__pricing_card mt-pricing-card mt-pricing-card--light">
-                        <div class="mt-pricing-card__header">
-                            <div class="mt-pricing-card__header-text mt-pricing-card--discount_total">
-                                Save
-                                <span><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span> with
-                                code
-                            </div>
-
-                            <div class="mt-pricing-card__code-container">
-                        <span class="mt-pricing-card__code text-uppercase">
-                            <?= $has_coupon ? $coupon['coupon'] : 0 ?>
-                        </span>
-                                <button type="button"
-                                        class="mt-pricing-card__copy-btn btn-copy pricing-table-panel__copy_btn"
-                                        aria-label="Copy Code"
-                                        data-copy-text="<?= $has_coupon ? $coupon['coupon'] : 0 ?>">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <mask id="mask0_15572_33010" style="mask-type:alpha"
-                                              maskUnits="userSpaceOnUse"
-                                              x="0" y="0" width="24" height="24">
-                                            <rect width="24" height="24" fill="#D9D9D9"/>
-                                        </mask>
-                                        <g mask="url(#mask0_15572_33010)">
-                                            <path d="M9 18C8.45 18 7.97917 17.8042 7.5875 17.4125C7.19583 17.0208 7 16.55 7 16V4C7 3.45 7.19583 2.97917 7.5875 2.5875C7.97917 2.19583 8.45 2 9 2H18C18.55 2 19.0208 2.19583 19.4125 2.5875C19.8042 2.97917 20 3.45 20 4V16C20 16.55 19.8042 17.0208 19.4125 17.4125C19.0208 17.8042 18.55 18 18 18H9ZM5 22C4.45 22 3.97917 21.8042 3.5875 21.4125C3.19583 21.0208 3 20.55 3 20V6H5V20H16V22H5Z"
-                                                  fill="black"/>
-                                        </g>
-                                    </svg>
-                                    <span class="pricing-table-panel__tooltip mgt-copy-tooltip d-none">copied</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mt-pricing-card__content">
-                            <div class="mt-pricing-card__price-group gap-2">
-                        <span class="coupon-before-price mt-badge mt-badge-rounded-sm mt-badge-light"
-                              style="display: <?= $has_coupon ? 'block' : 'none' ?>">
-                              Before:
-                              <span><?= wc_price($firstProduct['price'], ['decimals' => 0]) ?></span>
-                        </span>
-                                <div class="pricing-table-panel__price_row d-flex align-items-end gap-1">
-                            <span class="mt-pricing-card__current-price total-plan">
-                                <?= wc_price($has_coupon ? $firstProduct['price'] - $coupon['discount_total'] : $firstProduct['price'], ['decimals' => 0]) ?>
-                            </span>
-                                    <span class="mt-pricing-card__fee-type frequency-plan">
-                                <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?>
-                            </span>
-                                </div>
-                            </div>
-
-                            <a href="#" id="proceed-to-checkout-btn"
-                               class="mega-btn-md mega-btn-secondary-md pricing-table-panel__checkout_btn">
-                                GET FUNDED
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
