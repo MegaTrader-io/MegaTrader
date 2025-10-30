@@ -259,6 +259,8 @@ function switchToStep(step) {
   function applyLimitsAndValidation(item, maxEl, inputEl, errEl, contBtn) {
     var eligible = !!item.eligible && !!item.eligibleForPayout;
     var maxUI = item.meta && typeof item.meta.maxWithdrawalUI === "number" ? item.meta.maxWithdrawalUI : null;
+    var minUI = item.meta && typeof item.meta.minWithdrawal === "number" ? item.meta.minWithdrawal : 0;
+
 
     if (maxEl) {
       var txt = maxUI !== null && maxUI > 0 ? fmtMoney(maxUI) : "—";
@@ -300,6 +302,13 @@ function switchToStep(step) {
       if (!Number.isFinite(val) || val <= 0) { setError(I18N.withdrawalAmountMinorZero || "Enter a valid amount greater than 0."); return; }
       if (m <= 0) { setError(I18N.withdrawalAmountNotEligible || "This account is not eligible for payout at the moment."); return; }
       if (val > m) { setError(I18N.withdrawalAmountError || "Amount exceeds the maximum allowed for this payout."); return; }
+       if (val < minUI) {
+      setError(
+        (I18N.withdrawalAmountBelowMin || "Amount is below the minimum withdrawal for this account.") +
+        (minUI > 0 ? " " + "(" + fmtMoney(minUI) + " min)" : "")
+      );
+      return;
+    }
 
       setError("");
       if (contBtn) { contBtn.disabled = false; contBtn.classList.remove("disabled"); }

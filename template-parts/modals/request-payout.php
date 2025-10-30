@@ -61,7 +61,7 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
                     <div class="d-flex flex-column gap-2">
                         <span
                             class="text-a8a29e fw-bold text-base"><?php echo esc_html(Label::META_ACCOUNT_PAYOUT['withdrawalAmount']); ?></span>
-                        <div id="mt-payout-error" class="text-danger" style="display:none;"></div>
+                        <div id="mt-payout-error" class="text-error text-base fw-medium" style="display:none;"></div>
                         <input id="mt-payout-amount" type="number" min="0" step="1" class="form-control" placeholder="0"
                             inputmode="numeric" autocomplete="off">
                         <small id="mt-payout-max" class="text-a8a29e" data-max="0">

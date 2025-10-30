@@ -20,6 +20,14 @@ final class MT_PAYOUT
         100000 => 103100,
         150000 => 154600,
     ];
+
+    public const MIN_WITHDRAWAL_MAP = [
+        25000 => 250,
+        50000 => 500,
+        100000 => 1000,
+        150000 => 1500,
+    ];
+
 }
 
 class Label
@@ -464,6 +472,7 @@ class Label
         'withdrawalAmountError' => 'Amount exceeds the maximum allowed for this payout.',
         'withdrawalAmountMinorZero' => 'Enter a valid amount greater than 0.',
         'withdrawalAmountNotEligible' => 'This account is not eligible for payout at the moment.',
+        'withdrawalAmountBelowMin' => 'Amount is below the minimum withdrawal for this account.',
         'email' => 'Email',
         'submitButton' => 'Continue',
         'cancelButton' => 'Cancel',

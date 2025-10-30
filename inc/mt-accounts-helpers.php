@@ -2631,6 +2631,11 @@ if (!function_exists('mt_prepare_ui_payout')) {
       $minMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : [];
       $minimumBalance = isset($minMap[$startingBalance]) ? (float) $minMap[$startingBalance] : 0.0;
 
+      //MIN_WITHDRAWAL_MAP
+      $minWMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
+      $minimumWithdrawal = isset($minWMap[$startingBalance]) ? (float) $minWMap[$startingBalance] : 0.0;
+
+
       // withdrawal room
       $withdrawalRoom = max(0.0, $currentBalance - $minimumBalance);
 
@@ -2659,7 +2664,7 @@ if (!function_exists('mt_prepare_ui_payout')) {
       $eligibleBase = ($enabled && $targetPassed && $allStatusOK);
 
       // Regla monto mínimo UI (250)
-      $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= 250));
+      $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= $minimumWithdrawal));
 
       $maxWithdrawalUI = $eligibleForPayout
         ? max(0.0, min($withdrawalRoom, (float) $maxWithdrawalApi))
@@ -2692,6 +2697,8 @@ if (!function_exists('mt_prepare_ui_payout')) {
           'startingBalance' => $startingBalance,
           'minimumBalance' => $minimumBalance,
           'withdrawalRoom' => $withdrawalRoom,
+          'minWithdrawal' => $minimumWithdrawal,
+
         ],
 
         'badge' => $badge,
