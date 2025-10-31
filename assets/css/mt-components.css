@@ -1954,13 +1954,16 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     padding-top: 9px;
 }
 
-.mt-pricing-table-partners__ninja {
-    /*padding-top: 18px;*/
-}
-
 .mt-badge-wrapper {
     position: absolute;
+}
+
+.mt-pricing-table-partners__tradovate .mt-badge-wrapper {
     transform: translate(45%, 11px);
+}
+
+.mt-pricing-table-partners__ninja .mt-badge-wrapper {
+    transform: translate(30%, 11px);
 }
 
 /****************************************
@@ -2081,6 +2084,12 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     padding-bottom: 0.75rem;
 }
 
+.price-table-attributes .mega-info-row:first-child {
+    border-color: #404040;
+    border-top-width: 1px;
+    border-top-style: solid;
+}
+
 .mega-info-row__icon_container {
     position: relative;
     height: 1.5rem;
@@ -2100,7 +2109,6 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 500;
-    line-height: 1.5;
     --tw-text-opacity: 1;
     color: rgb(168 162 158 / var(--tw-text-opacity, 1));
 }
@@ -2199,9 +2207,10 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 }
 
 .price-table {
-    padding-top: calc(32px + 24px);
+    padding-top: 24px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    align-items: center;
 }
 
 .price-table__plan--regular-plan {
@@ -2213,6 +2222,33 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     justify-content: flex-start;
     align-items: flex-start;
     display: inline-flex
+}
+
+.price-table__plan--most-popular {
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+    border-width: 2px;
+    border-color: #ffb34a;
+    background-color: #131210;
+    padding-bottom: 2rem;
+    border-style: solid;
+}
+
+.price-table__plan--most-popular .price-table__most-popular-badge {
+    display: inline-flex;
+}
+
+.price-table__plan--most-popular .price-table__size {
+    background: black;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: inherit;
+    border-top-left-radius: inherit;
+}
+
+.price-table__plan--most-popular .price-table__size > * + * {
+    margin-top: 16px;
 }
 
 .price-table__plan--regular-plan:first-child {
@@ -2229,6 +2265,33 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 
 .price-table__most-popular-badge {
     display: none;
+}
+
+.price-table__most-popular-badge-wrapper {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    background-color: #131210;
+    border-radius: 8px;
+    outline: 1px solid #404040;
+    outline-offset: -1px;
+}
+
+.price-table__most-popular-badge-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.price-table__most-popular-badge-text {
+    color: #A8A29E;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 16px;
+    word-wrap: break-word;
 }
 
 .price-table__size {
@@ -2257,21 +2320,29 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 }
 
 
-.frequency-plan {
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 24px;
-    word-wrap: break-word
+.price-table__right-line {
+    border-right: 1px #404040 solid;
+}
+
+.price-table__plan:last-child .price-table__right-line {
+    border-right: none;
+}
+
+.price-information {
+    padding-top: 12px;
+    display: inline-grid;
+}
+
+.price-information--min-h-112 {
+    min-height: 112px;
 }
 
 .price-table-attributes, .price-information {
     padding-inline: 24px;
-    padding-top: 12px;
     width: 100%;
 }
 
-.mega-info-row {
+.price-table-attributes .mega-info-row {
     display: grid;
     grid-template-columns: 1fr auto;
 }
@@ -2284,7 +2355,7 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     word-wrap: break-word
 }
 
-.mega-info-row__value {
+.price-table-attributes .mega-info-row__value {
     text-align: right;
     color: white;
     font-size: 16px;
@@ -2328,7 +2399,7 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 }
 
 .badge-coupon__text {
-    display: flex;
+    display: inline;
     flex: 1;
     letter-spacing: -0.025em;
 }
@@ -2340,9 +2411,14 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 .price-information__summary {
     display: flex;
     gap: 8px;
+    padding-bottom: 8px;
 }
 
-.coupon-before-price {
+.price-information__price {
+    padding-bottom: 12px;
+}
+
+.price-information__summary .coupon-before-price {
     color: white;
     font-size: 20px;
     font-weight: 500;

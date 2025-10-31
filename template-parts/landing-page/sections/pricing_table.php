@@ -1,124 +1,100 @@
 <?php
+$page_slug = pathinfo(__FILE__, PATHINFO_FILENAME);
+$remember_previous_selection = true;
 
-$classes = $args['classes'] ?? '';
+$mt_classes = isset($args['classes']) ? $args['classes'] : '';
 
-$products_data = get_products_with_attributes();
-$attributes = $products_data['attributes'] ?? [];
+$mt_products_data = get_products_with_attributes();
+$mt_attributes = $mt_products_data['attributes'] ?? [];
 
-$account_sizes = [];
-$account_types = [];
-$platforms = [];
-$market_type = [];
+$mt_account_sizes = [];
+$mt_account_types = [];
+$mt_platforms = [];
+$mt_market_types = [];
 
-foreach ($attributes as $attr) {
-    switch ($attr['taxonomy']) {
+foreach ($mt_attributes as $mt_attr) {
+    switch ($mt_attr['taxonomy']) {
         case 'pa_account-size':
-            $account_sizes[] = $attr['slug'];
+            $mt_account_sizes[] = $mt_attr['slug'];
             break;
         case 'pa_account-types':
-            $account_types[] = $attr;
+            $mt_account_types[] = $mt_attr;
             break;
         case 'pa_market-type':
-            $market_type[] = $attr;
+            $mt_market_types[] = $mt_attr;
             break;
         case 'pa_platform':
-            $platforms[] = $attr;
+            $mt_platforms[] = $mt_attr;
             break;
     }
 }
 
-$defaultAccountType = $account_types[0];
-$accountThumbnailUrl = $defaultAccountType['thumbnail_url'];
-$platformThumbnailUrl = $platforms[0]['thumbnail_url'];
+$mt_default_account_type = $mt_account_types[0];
+$mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'];
+$mt_platform_thumbnail_url = $mt_platforms[0]['thumbnail_url'];
 
-$size = $account_sizes[0];
-$defaultSlug = $defaultAccountType['slug'];
-$defaultPlanName = $size . ' ' . $defaultAccountType['name'];
+$mt_size = $mt_account_sizes[0];
+$mt_default_slug = $mt_default_account_type['slug'];
+$mt_default_plan_name = $mt_size . ' ' . $mt_default_account_type['name'];
 
-$get_plan_url = is_user_logged_in() ? wc_get_account_endpoint_url('') : home_url('auth/register');
-
-$filtered = array_filter($products_data['products'], function ($product) use ($defaultSlug) {
-    return $product['slug'] === $defaultSlug;
+$mt_filtered_products = array_filter($mt_products_data['products'], function ($mt_product) use ($mt_default_slug) {
+    return $mt_product['slug'] === $mt_default_slug;
 });
 
-$product = reset($filtered) ?: null;
+$mt_product = reset($mt_filtered_products) ?: null;
 
-$productLevel = $product[$defaultSlug][$size][$defaultSlug];
-$defaultPlatform = array_key_first($productLevel);
-$defaultMarketType = array_key_first($productLevel[$defaultPlatform]);
+$mt_product_level = $mt_product[$mt_default_slug][$mt_size][$mt_default_slug];
+$mt_default_platform = array_key_first($mt_product_level);
+$mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
 
-$planList = [];
-$defaultMetaInfo = [];
-$metaInfoList = [];
-$firstProduct = null;
+$mt_plan_list = [];
+$mt_default_meta_info = [];
 $has_coupon_global = null;
 
-foreach ($account_sizes as $index => $size) {
-    $parent_id = $product['id'];
-    $properties = array_values($product[$defaultSlug][$size][$defaultSlug][$defaultPlatform])[0];
-    $id = -1;
-    $price = '0.00';
-    $metaInfoList = [];
-    foreach ($properties as $property) {
-        foreach ($property as $key => $arrayProperties) {
-            switch ($key) {
+foreach ($mt_account_sizes as $mt_index => $mt_size) {
+    $mt_parent_id = $mt_product['id'];
+    $mt_properties = array_values($mt_product[$mt_default_slug][$mt_size][$mt_default_slug][$mt_default_platform])[0];
+
+    $mt_id = -1;
+    $mt_price = '0.00';
+    $mt_meta_info_list = [];
+
+    foreach ($mt_properties as $mt_property) {
+        foreach ($mt_property as $mt_key => $mt_value) {
+            switch ($mt_key) {
                 case 'id':
-                    $id = $arrayProperties;
+                    $mt_id = $mt_value;
                     break;
                 case 'price-monthly':
-                    $price = intval(str_replace('$', '', $arrayProperties));
+                    $mt_price = intval(str_replace('$', '', $mt_value));
                     break;
                 case 'meta-info':
-                    $metaInfoList = $arrayProperties;
+                    $mt_meta_info_list = $mt_value;
                     break;
             }
         }
     }
 
-    foreach (Label::PRODUCT_META as $key => $value) {
-        if (isset($metaInfoList[$key]) && $metaInfoList[$key]) {
-            $defaultMetaInfo[$key] = true;
+    foreach (Label::PRODUCT_META as $mt_key => $mt_label) {
+        if (isset($mt_meta_info_list[$mt_key]) && $mt_meta_info_list[$mt_key]) {
+            $mt_default_meta_info[$mt_key] = true;
         }
     }
 
-    if ($index == 0) {
-        $firstProduct = [
-                'id' => $id,
-                'parent_id' => $parent_id,
-                'price' => $price,
-                'size' => $size,
-                'metaInfoList' => $metaInfoList
-        ];
-    }
-
-    $coupon = mt_get_best_coupon_for_variation($id);
-    if ($coupon['valid'] && !$has_coupon_global) {
-        $has_coupon_global = true;
-    }
-
-    $planList[] = [
-            'id' => $id,
-            'parent_id' => $parent_id,
-            'price' => $price,
-            'size' => $size,
-            'metaInfoList' => $metaInfoList
+    $mt_plan_list[] = [
+            'id' => $mt_id,
+            'parent_id' => $mt_parent_id,
+            'price' => $mt_price,
+            'size' => $mt_size,
+            'meta_info_list' => $mt_meta_info_list
     ];
 }
 
-$has_coupon = false;
-$coupon = ['discount_total' => null, 'coupon' => null, 'original_total' => null];
+$mt_best_products = mt_most_popular_products();
 
-if ($firstProduct) {
-    $metaInfoList = $firstProduct['metaInfoList'];
-    $coupon = mt_get_best_coupon_for_variation($firstProduct['id']);
-    $has_coupon = $coupon['valid'];
-}
-
-$best_products = mt_most_popular_products();
-
-function render_template_meta_info($value = '', $label = '', $classes = '')
+function mt_render_template_meta_info($value = '', $label = '', $classes = '')
 {
-    $title = $label == 'Max Contracts' ? 'Max<br>Contracts' : $label;
+    $title = $label === 'Max Contracts' ? 'Max<br>Contracts' : $label;
 
     return <<<HTML
 <div class="mega-info-row {$classes}">
@@ -128,20 +104,24 @@ function render_template_meta_info($value = '', $label = '', $classes = '')
 HTML;
 }
 
-function render_account_types($account_types)
+function mt_render_account_types($account_types, $mt_default_platform, $mt_default_market_type)
 {
-    if (empty($account_types)) return;
+    if (empty($account_types)) {
+        return;
+    }
 
     foreach ($account_types as $index => $item) {
         $slug = esc_attr($item['slug']);
         $name = esc_html($item['name']);
         $thumbnail = esc_url($item['thumbnail_url']);
         $radio_id = esc_attr('account-type-' . $slug);
-        $checked_attr = $index == 0 ? 'checked="true"' : '';
+        $checked_attr = $index === 0 ? 'checked="true"' : '';
 
         ?>
-
-        <input type="radio" name="account-type" value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
+        <input type="radio" name="account-type"
+               data-default-platform="<?= $mt_default_platform ?>"
+               data-default-market-type="<?= $mt_default_market_type ?>"
+               value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
         <div class="mt-pricing-table-plan-options__item">
             <label for="<?= $radio_id ?>">
                 <?php if ($thumbnail): ?>
@@ -153,39 +133,32 @@ function render_account_types($account_types)
                 </div>
             </label>
         </div>
-
         <?php
     }
 }
 
 ?>
 
-<section id="pricing" class="pricing-table-container container">
+<section id="pricing" class="pricing-table-container container <?= esc_attr($mt_classes) ?>">
     <h2 class="pricing-table-container__title">
-        Choose account type
+        <?php esc_html_e('Choose account type', 'megatrader'); ?>
     </h2>
 
     <div class="pricing-table-container-options">
         <div class="mt-pricing-table-plan-options">
-            <?php render_account_types($account_types); ?>
+            <?php mt_render_account_types($mt_account_types, $mt_default_platform, $mt_default_market_type); ?>
         </div>
 
         <div class="mt-pricing-table-benefits">
-            <div class="mt-pricing-table-benefits__item">
-                Instant Funding
-            </div>
+            <div class="mt-pricing-table-benefits__item"><?php esc_html_e('Instant Funding', 'megatrader'); ?></div>
             <img class="mt-pricing-table-benefits__icon"
-                 src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/quick-flash.svg"
+                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'); ?>"
                  alt="flash" width="24" height="24">
-            <div class="mt-pricing-table-benefits__item">
-                Lightning Fast Payouts
-            </div>
+            <div class="mt-pricing-table-benefits__item"><?php esc_html_e('Lightning Fast Payouts', 'megatrader'); ?></div>
             <img class="mt-pricing-table-benefits__icon"
-                 src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/quick-flash.svg"
+                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'); ?>"
                  alt="flash" width="24" height="24">
-            <div class="mt-pricing-table-benefits__item">
-                No Challenge
-            </div>
+            <div class="mt-pricing-table-benefits__item"><?php esc_html_e('No Challenge', 'megatrader'); ?></div>
         </div>
 
         <div class="mt-pricing-table-partners">
@@ -263,91 +236,113 @@ function render_account_types($account_types)
     </div>
 
     <div class="price-table">
-        <?php
-        foreach ($planList as $index => $plan) : ?>
+        <?php foreach ($mt_plan_list as $mt_index => $mt_plan) : ?>
             <?php
-            $id = $plan['id'];
-            $size = $plan['size'];
-            $parent_id = $plan['parent_id'];
-            $price = $plan['price'];
-            $metaInfoList = $plan['metaInfoList'];
+            $mt_id = $mt_plan['id'];
+            $mt_size = $mt_plan['size'];
+            $mt_parent_id = $mt_plan['parent_id'];
+            $mt_price = $mt_plan['price'];
+            $mt_meta_info_list = $mt_plan['meta_info_list'];
 
-            $coupon = mt_get_best_coupon_for_variation($id);
-            $has_coupon = $coupon['valid'];
-            $price_plan = $has_coupon ? $coupon['final_total'] : $price;
+            $mt_coupon = mt_get_best_coupon_for_variation($mt_id);
+            $mt_has_coupon = false;
+            $mt_price_plan = $mt_price;
 
-            $scan_product = $best_products[$parent_id];
-            $is_most_popular = false;//$scan_product && $scan_product['variation_id'] == $id;
+            $mt_scan_product = $mt_best_products[$mt_parent_id];
+            $mt_is_most_popular = $mt_scan_product && $mt_scan_product['variation_id'] == $mt_id;
+
+            $CHECKOUT_URL = home_url('/checkout/?add-to-cart=' . $mt_id);
+            $LOGIN_URL = home_url('/auth/login/?redirect_to=');
+
+            $mt_get_plan_url = $LOGIN_URL . $CHECKOUT_URL;
+            if (is_user_logged_in()) {
+                $mt_get_plan_url = $CHECKOUT_URL;
+            }
+
             ?>
-            <div class="price-table__plan <?= $is_most_popular
-                    ? 'price-table__plan--most-popular'
-                    : 'price-table__plan--regular-plan'
-            ?> tw-group" data-price="<?= $size ?>">
+
+            <div class="price-table__plan <?= $mt_is_most_popular ? 'price-table__plan--most-popular' : 'price-table__plan--regular-plan' ?>"
+                 data-price="<?= esc_attr($mt_size) ?>">
                 <div class="price-table__size">
                     <div class="price-table__most-popular-badge">
-                        <span class="mt-badge mt-badge-sm mt-badge-primary !tw-inline-flex !tw-justify-start">
-                            Most popular
-                        </span>
+                        <div class="price-table__most-popular-badge-wrapper">
+                            <svg class="price-table__most-popular-badge-icon" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_17404_34902" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                      y="0" width="24" height="24">
+                                    <rect width="24" height="24" fill="#D9D9D9"/>
+                                </mask>
+                                <g mask="url(#mask0_17404_34902)">
+                                    <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#FFB34A"/>
+                                </g>
+                            </svg>
+                            <div class="price-table__most-popular-badge-text"><?php esc_html_e('Most popular', 'megatrader'); ?></div>
+                        </div>
                     </div>
-                    <div class="price-table__title"><?= $size ?>
-                        Account
+                    <div class="price-table__title">
+                        <?= esc_html($mt_size) ?> Account
                     </div>
                 </div>
-                <div data-price="<?= $size ?>"
-                     class="price-information tw-px-4 tw-flex <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800 <?= $has_coupon_global && !$has_coupon ? 'tw-min-h-[140px] tw-items-center' : '' ?>">
+
+                <div class="price-table__right-line price-information" data-price="<?= esc_attr($mt_size) ?>">
                     <div class="w-100">
-                        <div class="price-information__summary">
-                            <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
-                                 data-price="<?= $size ?>"
-                                 class="coupon-before-price tw-text-red-500 tw-text-base tw-font-medium tw-line-through tw-uppercase tw-leading-7">
-                                <span><?= $has_coupon ? mt_price_plain($coupon['original_total']) : '0' ?></span>
+                        <div style="display: none;"
+                             class="price-information__summary">
+                            <div class="coupon-before-price" data-price="<?= esc_attr($mt_size) ?>">
+                                <span></span>
                             </div>
-                            <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
-                                 data-price="<?= $size ?>"
-                                 class="badge-coupon w-100">
+                            <div class="badge-coupon w-100" data-price="<?= esc_attr($mt_size) ?>">
                                 <div class="badge-coupon__wrapper">
-                                    <div class="badge-coupon__text">
-                                        Save <span
-                                                class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
-                                        with code
+                                    <div class="badge-coupon__text text-truncate">
+                                        <?php esc_html_e('Save', 'megatrader'); ?>
+                                        <span class="badge-coupon__discount_total">
+                                            <?= $mt_has_coupon ? mt_price_plain($mt_coupon['discount_total']) : 0 ?>
+                                        </span>
+                                        <?php esc_html_e('with code', 'megatrader'); ?>
                                     </div>
                                     <svg width="1" height="24" viewBox="0 0 1 24" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
-                                        <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
+                                        <line x1="0.5" y1="0" x2="0.5" y2="24" stroke="#404040"/>
                                     </svg>
                                     <div class="badge-coupon__code tw-uppercase tw-justify-start">
-                                        <?= $has_coupon ? strtoupper($coupon['coupon']) : '' ?>
+                                        <?= $mt_has_coupon ? esc_html(strtoupper($mt_coupon['coupon'])) : '' ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="tw-text-white tw-font-medium">
-                            <span class="tw-text-4xl tw-leading-[48px] price-plan"
-                                  data-price="<?= $size ?>"><?= mt_price_plain($price_plan) ?></span>
-                            <span class="tw-text-xl frequency-plan"
-                                  data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?></span>
+                        <div class="price-information__price">
+                            <span class="price-plan" data-price="<?= esc_attr($mt_size) ?>">
+                                <?= mt_price_plain($mt_price_plan) ?>
+                            </span>
+                            <span class="frequency-plan" data-price="<?= esc_attr($mt_size) ?>">
+                                <?= $mt_default_slug !== 'funded-plan' ? esc_html__('per month', 'megatrader') : esc_html__('one time fee', 'megatrader') ?>
+                            </span>
                         </div>
                     </div>
                 </div>
-                <?= render_template_meta_info(classes: 'd-none template-metaInfo') ?>
-                <div class="price-table-attributes tw-px-4 <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800 metaInfo"
-                     data-price="<?= $size ?>">
-                    <?php foreach ($defaultMetaInfo as $field => $value): ?>
+
+                <?= mt_render_template_meta_info(classes: 'd-none template-metaInfo') ?>
+
+                <div class="price-table__right-line price-table-attributes metaInfo"
+                     data-price="<?= esc_attr($mt_size) ?>">
+                    <?php foreach ($mt_default_meta_info as $mt_field => $mt_value): ?>
                         <?php
-                        $label = Label::PRODUCT_META[$field];
-                        $value = $metaInfoList[$field];
+                        $mt_label = Label::PRODUCT_META[$mt_field];
+                        $mt_value = $mt_meta_info_list[$mt_field];
+                        echo mt_render_template_meta_info(value: $mt_value, label: $mt_label);
                         ?>
-                        <?= render_template_meta_info(value: $value, label: $label) ?>
                     <?php endforeach; ?>
                 </div>
-                <div class="price-table__footer tw-px-6 tw-py-6 <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800">
-                    <a href="<?= $get_plan_url ?>"
-                       class="mega-btn-md <?= $is_most_popular ? 'mega-btn-primary-md' : 'mega-btn-default-md' ?> w-100 tw-no-underline">
-                        GET FUNDED WITH $<?= $size ?>
+
+                <div class="price-table__right-line price-table__footer" data-price="<?= esc_attr($mt_size) ?>">
+                    <a href="<?= esc_url($mt_get_plan_url) ?>"
+                       class="mega-btn-md <?= $mt_is_most_popular ? 'mega-btn-primary-md' : 'mega-btn-default-md' ?> w-100">
+                        <?= esc_html__('GET FUNDED WITH $', 'megatrader') . esc_html($mt_size) ?>
                     </a>
                 </div>
             </div>
-        <?php endforeach ?>
+        <?php endforeach; ?>
     </div>
 </section>
