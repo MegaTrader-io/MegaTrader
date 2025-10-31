@@ -91,29 +91,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadChooseYourAccountSize(fn) {
-        const btnAccountTypeClass = 'mt-pricing-table-plan-options__item';
-        const activePlanClass = 'mt-pricing-table-plan-options__item--highlight';
-        const defaultAccountType = document.querySelector(`.${btnAccountTypeClass}.${activePlanClass}`).dataset.value;
-
-        let internalOptions = {
-            accountType: defaultAccountType,
-        };
-
-        /** Handler Account Type **/
-        const buttons = [];
-        document.querySelectorAll(`.${btnAccountTypeClass}`).forEach(btn => {
-            buttons.push(btn);
+        document.querySelectorAll(`[name="account-type"]`).forEach(btn => {
             btn.addEventListener('click', function (e) {
-                buttons.forEach(btn => {
-                    btn.classList.remove(activePlanClass);
-                })
+                const accountType = e.currentTarget.value;
 
-                e.currentTarget.classList.add(activePlanClass);
-                internalOptions.accountType = e.currentTarget.dataset.value;
-                internalOptions.defaultPlatform = e.currentTarget.dataset.defaultPlatform;
-                internalOptions.defaultMarketType = e.currentTarget.dataset.defaultMarketType;
-
-                fn(internalOptions);
+                fn({
+                    accountType
+                });
             })
         })
     }

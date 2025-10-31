@@ -51,6 +51,7 @@ $planList = [];
 $defaultMetaInfo = [];
 $metaInfoList = [];
 $firstProduct = null;
+$has_coupon_global = null;
 
 foreach ($account_sizes as $index => $size) {
     $parent_id = $product['id'];
@@ -75,7 +76,7 @@ foreach ($account_sizes as $index => $size) {
     }
 
     foreach (Label::PRODUCT_META as $key => $value) {
-        if (isset($metaInfoList[$key])) {
+        if (isset($metaInfoList[$key]) && $metaInfoList[$key]) {
             $defaultMetaInfo[$key] = true;
         }
     }
@@ -89,6 +90,19 @@ foreach ($account_sizes as $index => $size) {
                 'metaInfoList' => $metaInfoList
         ];
     }
+
+    $coupon = mt_get_best_coupon_for_variation($id);
+    if ($coupon['valid'] && !$has_coupon_global) {
+        $has_coupon_global = true;
+    }
+
+    $planList[] = [
+            'id' => $id,
+            'parent_id' => $parent_id,
+            'price' => $price,
+            'size' => $size,
+            'metaInfoList' => $metaInfoList
+    ];
 }
 
 $has_coupon = false;
@@ -98,6 +112,20 @@ if ($firstProduct) {
     $metaInfoList = $firstProduct['metaInfoList'];
     $coupon = mt_get_best_coupon_for_variation($firstProduct['id']);
     $has_coupon = $coupon['valid'];
+}
+
+$best_products = mt_most_popular_products();
+
+function render_template_meta_info($value = '', $label = '', $classes = '')
+{
+    $title = $label == 'Max Contracts' ? 'Max<br>Contracts' : $label;
+
+    return <<<HTML
+<div class="mega-info-row {$classes}">
+    <div class="mega-info-row__label">{$title}</div>
+    <div class="mega-info-row__value">{$value}</div>
+</div>
+HTML;
 }
 
 function render_account_types($account_types)
@@ -132,7 +160,7 @@ function render_account_types($account_types)
 
 ?>
 
-<section id="pricing" class="pricing-table-container">
+<section id="pricing" class="pricing-table-container container">
     <h2 class="pricing-table-container__title">
         Choose account type
     </h2>
@@ -232,5 +260,94 @@ function render_account_types($account_types)
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="price-table">
+        <?php
+        foreach ($planList as $index => $plan) : ?>
+            <?php
+            $id = $plan['id'];
+            $size = $plan['size'];
+            $parent_id = $plan['parent_id'];
+            $price = $plan['price'];
+            $metaInfoList = $plan['metaInfoList'];
+
+            $coupon = mt_get_best_coupon_for_variation($id);
+            $has_coupon = $coupon['valid'];
+            $price_plan = $has_coupon ? $coupon['final_total'] : $price;
+
+            $scan_product = $best_products[$parent_id];
+            $is_most_popular = false;//$scan_product && $scan_product['variation_id'] == $id;
+            ?>
+            <div class="price-table__plan <?= $is_most_popular
+                    ? 'price-table__plan--most-popular'
+                    : 'price-table__plan--regular-plan'
+            ?> tw-group" data-price="<?= $size ?>">
+                <div class="price-table__size">
+                    <div class="price-table__most-popular-badge">
+                        <span class="mt-badge mt-badge-sm mt-badge-primary !tw-inline-flex !tw-justify-start">
+                            Most popular
+                        </span>
+                    </div>
+                    <div class="price-table__title"><?= $size ?>
+                        Account
+                    </div>
+                </div>
+                <div data-price="<?= $size ?>"
+                     class="price-information tw-px-4 tw-flex <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800 <?= $has_coupon_global && !$has_coupon ? 'tw-min-h-[140px] tw-items-center' : '' ?>">
+                    <div class="w-100">
+                        <div class="price-information__summary">
+                            <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
+                                 data-price="<?= $size ?>"
+                                 class="coupon-before-price tw-text-red-500 tw-text-base tw-font-medium tw-line-through tw-uppercase tw-leading-7">
+                                <span><?= $has_coupon ? mt_price_plain($coupon['original_total']) : '0' ?></span>
+                            </div>
+                            <div style="display: <?= $has_coupon ? 'block' : 'none' ?>"
+                                 data-price="<?= $size ?>"
+                                 class="badge-coupon w-100">
+                                <div class="badge-coupon__wrapper">
+                                    <div class="badge-coupon__text">
+                                        Save <span
+                                                class="badge-coupon__discount_total"><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span>
+                                        with code
+                                    </div>
+                                    <svg width="1" height="24" viewBox="0 0 1 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <line x1="0.5" y1="2.18557e-08" x2="0.499999" y2="24" stroke="#404040"/>
+                                    </svg>
+                                    <div class="badge-coupon__code tw-uppercase tw-justify-start">
+                                        <?= $has_coupon ? strtoupper($coupon['coupon']) : '' ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tw-text-white tw-font-medium">
+                            <span class="tw-text-4xl tw-leading-[48px] price-plan"
+                                  data-price="<?= $size ?>"><?= mt_price_plain($price_plan) ?></span>
+                            <span class="tw-text-xl frequency-plan"
+                                  data-price="<?= $size ?>"> <?= $defaultSlug !== 'funded-plan' ? 'per month' : 'one time fee' ?></span>
+                        </div>
+                    </div>
+                </div>
+                <?= render_template_meta_info(classes: 'd-none template-metaInfo') ?>
+                <div class="price-table-attributes tw-px-4 <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800 metaInfo"
+                     data-price="<?= $size ?>">
+                    <?php foreach ($defaultMetaInfo as $field => $value): ?>
+                        <?php
+                        $label = Label::PRODUCT_META[$field];
+                        $value = $metaInfoList[$field];
+                        ?>
+                        <?= render_template_meta_info(value: $value, label: $label) ?>
+                    <?php endforeach; ?>
+                </div>
+                <div class="price-table__footer tw-px-6 tw-py-6 <?= $index !== array_key_last($planList) ? 'tw-border-r-2' : '' ?> tw-border-stone-800">
+                    <a href="<?= $get_plan_url ?>"
+                       class="mega-btn-md <?= $is_most_popular ? 'mega-btn-primary-md' : 'mega-btn-default-md' ?> w-100 tw-no-underline">
+                        GET FUNDED WITH $<?= $size ?>
+                    </a>
+                </div>
+            </div>
+        <?php endforeach ?>
     </div>
 </section>
