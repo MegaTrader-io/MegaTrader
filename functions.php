@@ -138,14 +138,15 @@ function megatrader_scripts() {
     wp_enqueue_script( 'megatrader-modal',	MEGATRADER_JS .'modal.js', array('jquery', 'bootstrap-bundle'), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-tabs',	        MEGATRADER_JS .'mt-tabs.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-addons',	        MEGATRADER_JS .'mt-addons.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-payment',	        MEGATRADER_JS .'payment-methods.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-account-picker',	        MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-account-payout',	        MEGATRADER_JS .'mt-account-payout.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-payment',	    MEGATRADER_JS .'payment-methods.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-account-picker',	MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
+    wp_enqueue_script( 'mt-account-payout', MEGATRADER_JS . 'mt-account-payout.js', array(), REALTIME_VERSION, true);
 
     wp_localize_script('mt-account-payout', 'MT_PAYOUT_VARS', array(
-  'ajaxurl' => admin_url('admin-ajax.php'),
-  'nonce'   => wp_create_nonce('mt_payout_nonce')
-));
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('mt-payout'), 
+    ));
+
 
     wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-tooltips-js',	        MEGATRADER_JS .'mt-tooltips.js', array(), REALTIME_VERSION, true);

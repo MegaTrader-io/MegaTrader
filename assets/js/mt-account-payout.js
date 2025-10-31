@@ -8,16 +8,11 @@
   var CACHE_TTL_MS = 15000;
   var MT_PAYOUT_CACHE = null;
   var AJAX_URL =
-    (typeof window !== "undefined" &&
-      window.MT_PAYOUT_VARS &&
-      window.MT_PAYOUT_VARS.ajaxurl) ||
-    (typeof window !== "undefined" && window.ajaxurl) ||
+    (window.MT_PAYOUT_VARS && window.MT_PAYOUT_VARS.ajaxurl) ||
+    window.ajaxurl ||
     "/wp-admin/admin-ajax.php";
-  var NONCE =
-    (typeof window !== "undefined" &&
-      window.MT_PAYOUT_VARS &&
-      window.MT_PAYOUT_VARS.nonce) ||
-    "";
+  var AJAX_NONCE = window.MT_PAYOUT_VARS && window.MT_PAYOUT_VARS.nonce;
+  var AJAX_IP = window.MT_PAYOUT_VARS && window.MT_PAYOUT_VARS.ip; // opcional
 
   // ---------- Utils ----------
   function $(sel, ctx) {
@@ -69,7 +64,7 @@
     var fd = new FormData();
     fd.append("action", "mt_payouts_prepare_ui");
     fd.append("email", email);
-    if (NONCE) fd.append("nonce", NONCE);
+    if (AJAX_NONCE) fd.append("nonce", AJAX_NONCE);
 
     return fetch(AJAX_URL, {
       method: "POST",
@@ -396,7 +391,6 @@
     if (!modal) return;
     var btns = $all("#mt-payout-step1 .mt-btn[data-value]", modal);
     if (!btns.length) {
-      // Añadir data-value a los 3 botones si el HTML aún no lo tiene
       var labels = [
         { text: "Rise", sel: ".mt-icon_rise", value: "Rise" },
         { text: "BTC", sel: ".mt-icon_btc", value: "BTC" },
@@ -430,7 +424,6 @@
       );
     });
 
-    // seleccionar por defecto Rise si existe
     var any =
       btns.find(function (x) {
         return (x.getAttribute("data-value") || "").toLowerCase() === "rise";
@@ -550,7 +543,6 @@
       contBtn.addEventListener(
         "click",
         function () {
-          // Si ya estamos en step 2, no enviar (confirm s/hace el POST).
           var step2Visible = !document
             .getElementById("mt-payout-step2")
             ?.classList.contains("d-none");
@@ -635,11 +627,10 @@
 
         if (!account || !amount || !method) return;
         if (!email) {
-          // email requerido dentro del methodFields
           var err = document.getElementById("mt-payout-error");
           if (err) {
             err.style.display = "";
-            err.textContent = "Missing payout email.";
+            err.textContent = "Email is required for payout method.";
           }
           return;
         }
@@ -648,14 +639,18 @@
           account: account,
           amount: amount,
           method: method,
-          methodFields: [{ name: method, value: email }], // ← OBLIGATORIO email real
+          currency: "USD",
+          reason: "Completed min payout",
+          methodFields: [{ name: method, value: email }],
         };
+        if (AJAX_IP) payload.ip = AJAX_IP;
 
-        // FormData + nonce
         var fd = new FormData();
         fd.append("action", "mt_payouts_create");
         fd.append("json", JSON.stringify(payload));
-        if (NONCE) fd.append("nonce", NONCE);
+        if (AJAX_NONCE) fd.append("nonce", AJAX_NONCE);
+
+        console.log("[PAYOUT] POST →", AJAX_URL, payload);
 
         confirmBtn.disabled = true;
         showPreloader();
@@ -666,11 +661,19 @@
           credentials: "same-origin",
         })
           .then(function (r) {
-            return r.json();
+            return r.text().then(function (t) {
+              // Log RAW (útil para 500)
+              console.log("[PAYOUT] RAW ←", t);
+              try {
+                return JSON.parse(t);
+              } catch (e) {
+                throw new Error("Invalid JSON: " + t);
+              }
+            });
           })
           .then(function (res) {
+            console.log("[PAYOUT] JSON ←", res);
             if (res && res.success) {
-              // Step 3 (Congrats)
               renderCongratsStep();
             } else {
               var msg =
@@ -680,8 +683,9 @@
               confirmBtn.disabled = false;
             }
           })
-          .catch(function () {
-            showErrorInline("Network error");
+          .catch(function (e) {
+            console.error("[PAYOUT] ERR ←", e);
+            showErrorInline("Network/server error");
             confirmBtn.disabled = false;
           })
           .finally(function () {
