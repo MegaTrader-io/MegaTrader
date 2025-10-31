@@ -2214,7 +2214,7 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 }
 
 .price-table:has(.price-table__plan--most-popular) .price-table__plan--regular-plan {
-    margin-top: 24px;
+    margin-top: 40px;
 }
 
 .price-table__plan--regular-plan {
@@ -2235,7 +2235,7 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     border-width: 2px;
     border-color: #ffb34a;
     background-color: #131210;
-    padding-bottom: 2rem;
+    padding-bottom: 16px;
     border-style: solid;
 }
 
