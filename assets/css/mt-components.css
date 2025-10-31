@@ -2213,6 +2213,10 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     align-items: center;
 }
 
+.price-table:has(.price-table__plan--most-popular) .price-table__plan--regular-plan {
+    margin-top: 24px;
+}
+
 .price-table__plan--regular-plan {
     background: #1E1E1E;
     overflow: hidden;
