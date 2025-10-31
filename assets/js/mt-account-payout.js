@@ -12,7 +12,6 @@
     window.ajaxurl ||
     "/wp-admin/admin-ajax.php";
   var AJAX_NONCE = window.MT_PAYOUT_VARS && window.MT_PAYOUT_VARS.nonce;
-  var AJAX_IP = window.MT_PAYOUT_VARS && window.MT_PAYOUT_VARS.ip; // opcional
 
   // ---------- Utils ----------
   function $(sel, ctx) {
@@ -36,7 +35,6 @@
     if (!isFinite(n)) return "—";
     return "$" + (Math.round(Number(n) * 100) / 100).toLocaleString();
   }
-
   function showPreloader() {
     try {
       if (window.jQuery && window.jQuery(".preloader").length)
@@ -48,6 +46,63 @@
       if (window.jQuery && window.jQuery(".preloader").length)
         window.jQuery(".preloader").fadeOut();
     } catch (e) {}
+  }
+
+  // ---------- Modal de error global (footer) + fallback ----------
+  function showGlobalError(headline, message, opts) {
+    try {
+      if (
+        window.MEGATRADER &&
+        typeof window.MEGATRADER.showError === "function"
+      ) {
+        window.MEGATRADER.showError(
+          headline || "Request failed",
+          message || "Unexpected error.",
+          opts || {}
+        );
+        setTimeout(function () {
+          var lastBackdrop = document.querySelector(
+            ".modal-backdrop:last-of-type"
+          );
+          if (lastBackdrop) lastBackdrop.classList.add("mt-error");
+        }, 0);
+        return;
+      }
+      var m = document.getElementById("mt-error-modal");
+      if (m) {
+        var t = document.getElementById("mt-error-title");
+        var msg = document.getElementById("mt-error-message");
+        if (t) t.textContent = headline || "Request failed";
+        if (msg) msg.textContent = message || "Unexpected error.";
+        var inst =
+          window.bootstrap && window.bootstrap.Modal
+            ? window.bootstrap.Modal.getOrCreateInstance(m, { backdrop: true })
+            : null;
+        if (inst) {
+          inst.show();
+          setTimeout(function () {
+            var lastBackdrop = document.querySelector(
+              ".modal-backdrop:last-of-type"
+            );
+            if (lastBackdrop) lastBackdrop.classList.add("mt-error");
+          }, 0);
+        } else {
+          alert(
+            (headline ? headline + "\n\n" : "") +
+              (message || "Unexpected error.")
+          );
+        }
+      } else {
+        alert(
+          (headline ? headline + "\n\n" : "") + (message || "Unexpected error.")
+        );
+      }
+    } catch (e) {
+      console.error("showError failed:", e);
+      alert(
+        (headline ? headline + "\n\n" : "") + (message || "Unexpected error.")
+      );
+    }
   }
 
   // ---------- Data prefetch ----------
@@ -64,7 +119,7 @@
     var fd = new FormData();
     fd.append("action", "mt_payouts_prepare_ui");
     fd.append("email", email);
-    if (AJAX_NONCE) fd.append("nonce", AJAX_NONCE);
+    if (AJAX_NONCE) fd.append("nonce", AJAX_NONCE); // esta ruta usa 'nonce'
 
     return fetch(AJAX_URL, {
       method: "POST",
@@ -128,7 +183,6 @@
       "#mt-request-payout-modal .modal-footer"
     );
     if (!footer) return null;
-
     var confirmBtn = document.getElementById("mt-payout-confirm");
     if (!confirmBtn) {
       confirmBtn = document.createElement("button");
@@ -136,7 +190,8 @@
       confirmBtn.type = "button";
       confirmBtn.className =
         "flex-1-1-0 mt-btn mt-btn--md mt-btn--primary d-none";
-      confirmBtn.textContent = I18N?.confirmButton || "Confirm Request";
+      confirmBtn.textContent =
+        (I18N && I18N.confirmButton) || "Confirm Request";
       footer.appendChild(confirmBtn);
     }
     return confirmBtn;
@@ -149,30 +204,22 @@
     var cancelBtn = document.getElementById("mt-payout-cancel");
     var contBtn = document.getElementById("mt-payout-continue");
     var confirmBtn = ensureConfirmButton();
-
     if (!s1 || !s2 || !backBtn || !cancelBtn || !contBtn || !confirmBtn) return;
 
-    // Asegurar (link) para back/cancel
     backBtn.className = "flex-1-1-0 mt-btn mt-btn--link text-white";
     cancelBtn.className = "flex-1-1-0 mt-btn mt-btn--link text-white";
 
     if (step === 2) {
-      // Mostrar Step 2
       s1.classList.add("d-none");
       s2.classList.remove("d-none");
-
-      // Visibilidad botones
       backBtn.classList.remove("d-none");
       cancelBtn.classList.add("d-none");
       contBtn.classList.add("d-none");
       confirmBtn.classList.remove("d-none");
       confirmBtn.disabled = false;
     } else {
-      // Step 1
       s2.classList.add("d-none");
       s1.classList.remove("d-none");
-
-      // Visibilidad botones
       cancelBtn.classList.remove("d-none");
       backBtn.classList.add("d-none");
       contBtn.classList.remove("d-none");
@@ -219,7 +266,10 @@
     var mount = $("#mt-payout-accounts", modal);
     if (!mount) return;
 
-    if (MT_PAYOUT_CACHE && Array.isArray(MT_PAYOUT_CACHE.data?.items)) {
+    if (
+      MT_PAYOUT_CACHE &&
+      Array.isArray(MT_PAYOUT_CACHE.data && MT_PAYOUT_CACHE.data.items)
+    ) {
       renderDropdown(mount, MT_PAYOUT_CACHE.data);
     } else {
       mount.innerHTML = '<div class="text-muted">Loading accounts…</div>';
@@ -263,7 +313,6 @@
       "data-platform-account-id",
       selItem.platformAccountId || ""
     );
-
     btn.innerHTML =
       '<span class="d-flex align-items-center gap-2">' +
       '  <span class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md" aria-hidden="true"></span>' +
@@ -310,14 +359,12 @@
     wrap.appendChild(select);
     mount.appendChild(wrap);
 
-    // También setear en el dataset del modal para fallback
     var modal = document.getElementById("mt-request-payout-modal");
-    if (modal) {
+    if (modal)
       modal.setAttribute(
         "data-account-id",
         selItem.id || modal.getAttribute("data-account-id") || ""
       );
-    }
 
     var maxEl = document.getElementById("mt-payout-max");
     var amtIn = document.getElementById("mt-payout-amount");
@@ -328,7 +375,6 @@
     ul.addEventListener("click", function (e) {
       var opt = e.target.closest(".mt-payout-option");
       if (!opt) return;
-
       var id = opt.getAttribute("data-value");
       var item = data.items.find(function (it) {
         return it.id === id;
@@ -341,7 +387,8 @@
         "data-platform-account-id",
         item.platformAccountId || ""
       );
-      $("#mt-payout-acc-label", btn).textContent = item.accountName || "—";
+      var lab = $("#mt-payout-acc-label", btn);
+      if (lab) lab.textContent = item.accountName || "—";
 
       var img = btn.querySelector("img");
       if (img && item.logo) img.src = item.logo;
@@ -364,10 +411,7 @@
         badge.textContent = item.badge.text;
       }
 
-      // actualizar fallback en modal
-      var modal = document.getElementById("mt-request-payout-modal");
       if (modal) modal.setAttribute("data-account-id", id);
-
       applyLimitsAndValidation(item, maxEl, amtIn, errEl, contBtn);
     });
 
@@ -381,7 +425,6 @@
         { passive: true }
       );
 
-    // Wire method selectors (Rise / BTC / ETH)
     wireMethodSelectors();
   }
 
@@ -389,25 +432,13 @@
   function wireMethodSelectors() {
     var modal = document.getElementById("mt-request-payout-modal");
     if (!modal) return;
-    var btns = $all("#mt-payout-step1 .mt-btn[data-value]", modal);
-    if (!btns.length) {
-      var labels = [
-        { text: "Rise", sel: ".mt-icon_rise", value: "Rise" },
-        { text: "BTC", sel: ".mt-icon_btc", value: "BTC" },
-        { text: "ETH", sel: ".mt-icon_eth", value: "ETH" },
-      ];
-      labels.forEach(function (def) {
-        var host = modal.querySelector(
-          "#mt-payout-step1 .mt-icon" + def.sel.replace(".mt-icon_", "_")
-        );
-        if (host) {
-          var b = host.closest("button.mt-btn");
-          if (b) b.setAttribute("data-value", def.value);
-        }
-      });
-      btns = $all("#mt-payout-step1 .mt-btn[data-value]", modal);
-    }
 
+    var btns = $all(
+      '#mt-payout-step1 .mt-btn[data-role="mt-method-btn"][data-value]',
+      modal
+    );
+
+    // Click handler
     btns.forEach(function (b) {
       b.addEventListener(
         "click",
@@ -418,20 +449,28 @@
           });
           b.classList.remove("mt-btn--secondary");
           b.classList.add("mt-btn--primary");
-          modal.setAttribute("data-method", b.getAttribute("data-value") || "");
+          var val = (b.getAttribute("data-value") || "").toLowerCase(); // 'rise' | 'crypto-bitcoin' | 'crypto-ethereum'
+          modal.setAttribute("data-method", val);
+
+          // Sincroniza el hidden field principal (name debe == method)
+          var hf = document.getElementById("mt-payout-methodfield-primary");
+          if (hf) hf.setAttribute("name", val);
+          var mHidden = document.getElementById("mt-payout-method");
+          if (mHidden) mHidden.value = val;
         },
         { passive: true }
       );
     });
 
-    var any =
+    // Default: 'rise'
+    var def =
       btns.find(function (x) {
         return (x.getAttribute("data-value") || "").toLowerCase() === "rise";
       }) || btns[0];
-    if (any) any.click();
+    if (def) def.click();
   }
 
-  // ---------- Validación + Step 1/2 lógica ----------
+  // ---------- Validación + Step 1/2 ----------
   function applyLimitsAndValidation(item, maxEl, inputEl, errEl, contBtn) {
     var eligible = !!item.eligible && !!item.eligibleForPayout;
     var maxUI =
@@ -468,7 +507,7 @@
     if (!eligible || !(maxUI > 0) || !inputEl) return;
 
     var max = function () {
-      var v = parseFloat(maxEl?.dataset?.max || "0");
+      var v = parseFloat((maxEl && maxEl.dataset && maxEl.dataset.max) || "0");
       return Number.isFinite(v) ? v : 0;
     };
 
@@ -489,7 +528,6 @@
       var m = max();
       var raw = inputEl.value.trim();
       var val = parseFloat(raw);
-
       if (contBtn) {
         contBtn.disabled = true;
         contBtn.classList.add("disabled");
@@ -501,34 +539,33 @@
       }
       if (!Number.isFinite(val) || val <= 0) {
         setError(
-          I18N.withdrawalAmountMinorZero ||
+          (I18N && I18N.withdrawalAmountMinorZero) ||
             "Enter a valid amount greater than 0."
         );
         return;
       }
       if (m <= 0) {
         setError(
-          I18N.withdrawalAmountNotEligible ||
+          (I18N && I18N.withdrawalAmountNotEligible) ||
             "This account is not eligible for payout at the moment."
         );
         return;
       }
       if (val > m) {
         setError(
-          I18N.withdrawalAmountError ||
+          (I18N && I18N.withdrawalAmountError) ||
             "Amount exceeds the maximum allowed for this payout."
         );
         return;
       }
       if (val < minUI) {
         setError(
-          (I18N.withdrawalAmountBelowMin ||
+          ((I18N && I18N.withdrawalAmountBelowMin) ||
             "Amount is below the minimum withdrawal for this account.") +
-            (minUI > 0 ? " " + "(" + fmtMoney(minUI) + " min)" : "")
+            (minUI > 0 ? " (" + fmtMoney(minUI) + " min)" : "")
         );
         return;
       }
-
       setError("");
       if (contBtn) {
         contBtn.disabled = false;
@@ -538,14 +575,14 @@
 
     inputEl.addEventListener("input", validate, { passive: true });
 
-    // Step 1 → Step 2
-    if (contBtn) {
+    // Step 1 → Step 2 (proteger múltiples bindings)
+    if (contBtn && !contBtn._wired) {
+      contBtn._wired = true;
       contBtn.addEventListener(
         "click",
         function () {
-          var step2Visible = !document
-            .getElementById("mt-payout-step2")
-            ?.classList.contains("d-none");
+          var s2 = document.getElementById("mt-payout-step2");
+          var step2Visible = s2 && !s2.classList.contains("d-none");
           if (step2Visible) return;
 
           validate();
@@ -553,38 +590,35 @@
 
           var modal = document.getElementById("mt-request-payout-modal");
           var email =
-            modal?.getAttribute("data-user-email") ||
-            $("#mt-payout-email")?.value ||
+            (modal && modal.getAttribute("data-user-email")) ||
+            ($("#mt-payout-email") && $("#mt-payout-email").value) ||
             "";
 
-          // Método seleccionado
-          var method = modal?.getAttribute("data-method") || "";
+          var method = (modal && modal.getAttribute("data-method")) || "";
           if (!method) {
             setError("Select a payout method.");
             return;
           }
 
-          // Account seleccionado
           var accBtn = document.getElementById("mt-payout-acc-btn");
           var internalId =
-            accBtn?.getAttribute("data-account-id") ||
-            modal?.getAttribute("data-account-id") ||
+            (accBtn && accBtn.getAttribute("data-account-id")) ||
+            (modal && modal.getAttribute("data-account-id")) ||
             item.id;
 
           var raw = inputEl.value.trim();
           var amount = parseFloat(raw) || 0;
-
           var fee = Math.round(amount * 0.1 * 100) / 100;
           var receive = Math.max(0, Math.round((amount - fee) * 100) / 100);
 
-          var setTxt = function (id, val) {
+          function setTxt(id, val) {
             var el = document.getElementById(id);
             if (el) el.textContent = val;
-          };
+          }
           setTxt("mt-review-email", email || "—");
           setTxt(
             "mt-review-account",
-            accBtn?.getAttribute("data-platform-account-id") ||
+            (accBtn && accBtn.getAttribute("data-platform-account-id")) ||
               item.platformAccountId ||
               "—"
           );
@@ -595,7 +629,7 @@
           window.MT_PAYOUT_SUBMIT = {
             accountId: internalId,
             platformAccountId:
-              accBtn?.getAttribute("data-platform-account-id") ||
+              (accBtn && accBtn.getAttribute("data-platform-account-id")) ||
               item.platformAccountId ||
               "",
             amount: amount,
@@ -617,13 +651,15 @@
       confirmBtn._wired = true;
       confirmBtn.addEventListener("click", function () {
         var s2 = document.getElementById("mt-payout-step2");
-        if (!s2 || s2.classList.contains("d-none")) return; // Solo en Step 2
+        if (!s2 || s2.classList.contains("d-none")) return;
 
         var st = window.MT_PAYOUT_SUBMIT || {};
         var account = st.accountId || "";
         var amount = st.amount || 0;
         var method = st.method || "";
         var email = st.email || "";
+        var ip =
+          (window.MT_PAYOUT_VARS && window.MT_PAYOUT_VARS.ip) || "127.0.0.1";
 
         if (!account || !amount || !method) return;
         if (!email) {
@@ -635,22 +671,26 @@
           return;
         }
 
-        var payload = {
-          account: account,
-          amount: amount,
-          method: method,
-          currency: "USD",
-          reason: "Completed min payout",
-          methodFields: [{ name: method, value: email }],
-        };
-        if (AJAX_IP) payload.ip = AJAX_IP;
-
+        var methodLower = String(method).toLowerCase();
         var fd = new FormData();
         fd.append("action", "mt_payouts_create");
-        fd.append("json", JSON.stringify(payload));
-        if (AJAX_NONCE) fd.append("nonce", AJAX_NONCE);
+        if (AJAX_NONCE) fd.append("_wpnonce", AJAX_NONCE);
+        fd.append("account", String(account));
+        fd.append("amount", String(amount));
+        fd.append("method", methodLower);
+        fd.append("currency", "USD");
+        fd.append("reason", "Customer request from js");
+        fd.append(
+          "methodFields",
+          JSON.stringify([{ name: methodLower, value: email }])
+        );
+        fd.append("ip", "127.0.0.1");
 
-        console.log("[PAYOUT] POST →", AJAX_URL, payload);
+        console.log(
+          "[PAYOUT] POST →",
+          AJAX_URL,
+          Object.fromEntries(fd.entries())
+        );
 
         confirmBtn.disabled = true;
         showPreloader();
@@ -661,47 +701,67 @@
           credentials: "same-origin",
         })
           .then(function (r) {
+            var status = r.status;
             return r.text().then(function (t) {
-              // Log RAW (útil para 500)
-              console.log("[PAYOUT] RAW ←", t);
+              var json;
               try {
-                return JSON.parse(t);
+                json = JSON.parse(t);
               } catch (e) {
-                throw new Error("Invalid JSON: " + t);
+                json = null;
               }
+              return { status: status, raw: t, json: json };
             });
           })
-          .then(function (res) {
-            console.log("[PAYOUT] JSON ←", res);
+          .then(function (resp) {
+            console.log("[PAYOUT] ←", resp);
+            var status = resp.status;
+            var res = resp.json;
+
+            if (status === 409) {
+              showGlobalError(
+                "Payout unavailable",
+                (res && res.data && res.data.message) ||
+                  (res && res.message) ||
+                  "You already have a payout request in progress for this account.",
+                { code: "409" }
+              );
+              confirmBtn.disabled = false;
+              return;
+            }
+
+            if (status < 200 || status >= 300 || !res) {
+              var msg =
+                (res && res.data && (res.data.message || res.data.error)) ||
+                (res && res.message) ||
+                "Request failed. Please try again later.";
+              showGlobalError("Request failed", msg, { code: String(status) });
+              confirmBtn.disabled = false;
+              return;
+            }
+
             if (res && res.success) {
               renderCongratsStep();
             } else {
-              var msg =
+              var msg2 =
                 (res && res.data && (res.data.message || res.data.error)) ||
-                "Request failed";
-              showErrorInline(msg);
+                "Unknown error. Please try again later.";
+              showGlobalError("Request failed", msg2, {});
               confirmBtn.disabled = false;
             }
           })
           .catch(function (e) {
             console.error("[PAYOUT] ERR ←", e);
-            showErrorInline("Network/server error");
+            showGlobalError(
+              "Network error",
+              "Network/server error, please try again later.",
+              {}
+            );
             confirmBtn.disabled = false;
           })
           .finally(function () {
             hidePreloader();
           });
       });
-    }
-
-    function showErrorInline(message) {
-      var err = document.getElementById("mt-payout-error");
-      if (err) {
-        err.style.display = "";
-        err.textContent = message || "Error";
-      } else {
-        alert(message || "Error");
-      }
     }
   }
 
@@ -714,22 +774,19 @@
     var headerTitle = modal.querySelector("#mtpayout-title");
     if (headerTitle) headerTitle.textContent = "Payout Request";
 
-    var congrats = I18N?.congrats || "Congrats!";
+    var congrats = (I18N && I18N.congrats) || "Congrats!";
     var msg =
-      I18N?.congratsMessage || "Your request has been successfully submitted";
+      (I18N && I18N.congratsMessage) ||
+      "Your request has been successfully submitted";
     var subtitle =
-      I18N?.congratsSubtitle ||
+      (I18N && I18N.congratsSubtitle) ||
       "You’ll be notified once your request is approved.";
 
     if (body) {
       body.innerHTML =
         '<div class="text-center w-100 mb-n4">' +
-        '  <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block"' +
-        '       src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png"' +
-        '       alt="thank you" width="690" height="132">' +
-        '  <img decoding="async" class="d-inline-block d-sm-none"' +
-        '       src="/wp-content/themes/megatrader-addons/assets/img/thank-you2.png"' +
-        '       alt="thank you" width="327" height="132">' +
+        '  <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png" alt="thank you" width="690" height="132">' +
+        '  <img decoding="async" class="d-inline-block d-sm-none" src="/wp-content/themes/megatrader-addons/assets/img/thank-you2.png" alt="thank you" width="327" height="132">' +
         "</div>" +
         '<div class="d-flex flex-column align-items-center gap-2 pb-4">' +
         '  <div class="fw-medium leading-60px text-5xl text-uppercase text-white">' +
@@ -759,13 +816,10 @@
   function init() {
     var modal = document.getElementById("mt-request-payout-modal");
     if (!modal) return;
-
     modal.addEventListener("show.bs.modal", function () {
       switchToStep(1);
       hydrateOnce(true);
     });
-
-    // Back button behavior
     var backBtn = document.getElementById("mt-payout-back");
     if (backBtn)
       backBtn.addEventListener(

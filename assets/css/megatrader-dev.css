@@ -72,6 +72,11 @@
 * MODAL
 */
 
+/* Error modal siempre encima de cualquier otro modal */
+#mt-error-modal.modal { z-index: 4000 !important; }
+/* Su backdrop también por encima del resto */
+.modal-backdrop.mt-error { z-index: 3990 !important; }
+
 .modal {
   --bs-modal-width: 600px;
 }

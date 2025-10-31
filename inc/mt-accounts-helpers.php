@@ -421,7 +421,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'maxDailyLossLimitPnLLevel' => $metrics['maxDailyLossLimitPnLLevel'] ?? null,
       'label' => $program['label'] ?? $program['description'] ?? mt__get($metrics, ['label']),
       'consistency' => mt__get($account, ['rules', 'consistency']),
-      'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
+      'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmountFromStartBalance']),
       'consistencyCurrentTopDayProfit' => $metrics['consistencyCurrentTopDayProfit'] ?? null,
 
     ];
@@ -2624,33 +2624,32 @@ if (!function_exists('mt_prepare_ui_payout')) {
         continue;
 
       // ---- balances ----
-      $currentBalance   = (float) ($aget($byId, ['metrics', 'currentBalance'], 0) ?: 0);
-      $startingBalance  = (float) ($aget($byId, ['program', 'startingBalance'], 0) ?: 0);
+      $currentBalance = (float) ($aget($byId, ['metrics', 'currentBalance'], 0) ?: 0);
+      $startingBalance = (float) ($aget($byId, ['program', 'startingBalance'], 0) ?: 0);
 
       // MIN_BALANCE_MAP
-      $minMap          = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : [];
-      $minimumBalance  = isset($minMap[$startingBalance]) ? (float) $minMap[$startingBalance] : 0.0;
+      $minMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : [];
+      $minimumBalance = isset($minMap[$startingBalance]) ? (float) $minMap[$startingBalance] : 0.0;
 
       // MIN_WITHDRAWAL_MAP
-      $minWMap             = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
-      $minimumWithdrawal   = isset($minWMap[$startingBalance]) ? (float) $minWMap[$startingBalance] : 0.0;
+      $minWMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
+      $minimumWithdrawal = isset($minWMap[$startingBalance]) ? (float) $minWMap[$startingBalance] : 0.0;
 
       // withdrawal room
       $withdrawalRoom = max(0.0, $currentBalance - $minimumBalance);
 
-      // elegibilidad (endpoint con INTERNAL id)
-      $elig         = $fetch_elig($id) ?: [];
-      $enabled      = $b($aget($elig, ['payoutCycle', 'enabled'], null));
+      $elig = $fetch_elig($id) ?: [];
+      $enabled = $b($aget($elig, ['payoutCycle', 'enabled'], null));
       $targetPassed = $b($aget($elig, ['payoutCycle', 'targetPassed'], null));
-      $status       = (array) $aget($elig, ['accountStatus'], []);
+      $status = (array) $aget($elig, ['accountStatus'], []);
 
-      // TODOS los status deben ser true
       $allStatusOK = true;
       $statusEval = [];
       foreach ($STATUS_KEYS as $k) {
         $val = $b($status[$k] ?? false);
         $statusEval[$k] = $val;
-        if ($val === false) $allStatusOK = false;
+        if ($val === false)
+          $allStatusOK = false;
       }
 
       $maxWithdrawalApi = (float) $aget($elig, ['payoutCycle', 'maxWithdrawal'], null);
@@ -2658,9 +2657,7 @@ if (!function_exists('mt_prepare_ui_payout')) {
         $maxWithdrawalApi = (float) $aget($byId, ['payout', 'payoutCycle', 'maxWithdrawal'], 0);
       }
 
-      // Regla final: enabled && targetPassed && TODOS los status true
-      $eligibleBase      = ($enabled && $targetPassed && $allStatusOK);
-      // Regla monto mínimo UI (por cuenta)
+      $eligibleBase = ($enabled && $targetPassed && $allStatusOK);
       $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= $minimumWithdrawal));
 
       $maxWithdrawalUI = $eligibleForPayout
@@ -2674,27 +2671,25 @@ if (!function_exists('mt_prepare_ui_payout')) {
       $logo = $resolve_logo($byId, $row);
 
       $out['items'][] = [
-        // IMPORTANTE: este id es el INTERNAL id (para POST y elegibilidad)
         'id' => $id,
         'logo' => $logo,
 
-        // solo UI
-        'accountName' => $accountName,       // muestra "platform.accountId"
-        'platformAccountId' => $accountName, // igual, solo display
+        'accountName' => $accountName,
+        'platformAccountId' => $accountName,
 
         'eligible' => $eligibleBase,
         'eligibleForPayout' => $eligibleForPayout,
 
         'meta' => [
-          'maxWithdrawal'     => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
-          'maxWithdrawalApi'  => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
-          'maxWithdrawalUI'   => $maxWithdrawalUI,
+          'maxWithdrawal' => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalApi' => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalUI' => $maxWithdrawalUI,
 
-          'currentBalance'    => $currentBalance,
-          'startingBalance'   => $startingBalance,
-          'minimumBalance'    => $minimumBalance,
-          'withdrawalRoom'    => $withdrawalRoom,
-          'minWithdrawal'     => $minimumWithdrawal,
+          'currentBalance' => $currentBalance,
+          'startingBalance' => $startingBalance,
+          'minimumBalance' => $minimumBalance,
+          'withdrawalRoom' => $withdrawalRoom,
+          'minWithdrawal' => $minimumWithdrawal,
         ],
 
         'badge' => $badge,
@@ -2704,3 +2699,5 @@ if (!function_exists('mt_prepare_ui_payout')) {
     return $out;
   }
 }
+
+

@@ -108,7 +108,7 @@ class Label
                 'text' => 'Customer Support available 24/5',
             ],
         ],
-        'submit_btn_text' => 'Procede to checkout',
+        'submit_btn_text' => 'Proceed to checkout',
     ];
 
     public const PLANS_FEATURES = [

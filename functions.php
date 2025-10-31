@@ -144,7 +144,8 @@ function megatrader_scripts() {
 
     wp_localize_script('mt-account-payout', 'MT_PAYOUT_VARS', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce'   => wp_create_nonce('mt-payout'), 
+        'nonce'   => wp_create_nonce('mt-payout'),
+        'ip'      => $_SERVER['REMOTE_ADDR'] ?? '', 
     ));
 
 
@@ -2051,135 +2052,163 @@ function mt_ajax_payouts_prepare_ui() {
   wp_send_json_success($payload);
 }
 
-/* ============================================================
- * Create Payout (AJAX)
- * ============================================================ */
-/* === Create Payout Ajax (con DEBUG) === */
-add_action('wp_ajax_mt_payouts_create', 'mt_ajax_payouts_create');
-add_action('wp_ajax_nopriv_mt_payouts_create', 'mt_ajax_payouts_create');
 
-function mt_ajax_payouts_create() {
-  // --- DEBUG INICIO ---
-  error_log('MT PAYOUT CREATE | HIT');
-  error_log('MT PAYOUT CREATE | METHOD=' . ($_SERVER['REQUEST_METHOD'] ?? 'UNK') . ' URI=' . ($_SERVER['REQUEST_URI'] ?? ''));
-  error_log('MT PAYOUT CREATE | POST=' . print_r($_POST, true));
-  // --- FIN DEBUG CABECERA ---
+/**
+ * AJAX: mt_payouts_create
+ * Nonce key: mt-payout
+ * Flujo: AJAX -> mega_api_create_payout($payload) (api-functions.php)
+ * Logs: request/clean/payload/response
+ * IP: fijo "127.0.0.1"
+ * 409: status 409 + mensaje claro (no reintentar)
+ */
+if (!function_exists('mt_ajax_payouts_create')) {
+  function mt_ajax_payouts_create() {
+    $LOG_TAG = '[MT_PAYOUT_CREATE]';
 
-  // (Opcional) validar nonce si viene
-  if (isset($_POST['nonce'])) {
-    $nonce_ok = wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mt-payout');
-    error_log('MT PAYOUT CREATE | NONCE=' . ($nonce_ok ? 'OK' : 'FAIL'));
-    if (!$nonce_ok) {
-      wp_send_json_error(['message' => 'Invalid nonce'], 403);
-    }
-  } else {
-    error_log('MT PAYOUT CREATE | NONCE=ABSENT');
-  }
-
-  // 1) Obtener payload
-  $payload = null;
-
-  if (isset($_POST['json']) && $_POST['json'] !== '') {
-    $json_raw = wp_unslash($_POST['json']);
-    error_log('MT PAYOUT CREATE | JSON_RAW_LEN=' . strlen($json_raw));
-    $decoded = json_decode($json_raw, true);
-    if (!is_array($decoded)) {
-      error_log('MT PAYOUT CREATE | BAD_JSON error=' . json_last_error_msg());
-      wp_send_json_error(['message' => 'Bad JSON'], 400);
-    }
-    $payload = $decoded;
-  } else {
-    // Campos sueltos como fallback
-    $account  = isset($_POST['account']) ? sanitize_text_field(wp_unslash($_POST['account'])) : '';
-    $amount   = isset($_POST['amount']) ? floatval(wp_unslash($_POST['amount'])) : 0;
-    $currency = isset($_POST['currency']) ? sanitize_text_field(wp_unslash($_POST['currency'])) : null;
-    $reason   = isset($_POST['reason']) ? sanitize_text_field(wp_unslash($_POST['reason'])) : null;
-    $ip       = isset($_POST['ip']) ? sanitize_text_field(wp_unslash($_POST['ip'])) : null;
-
-    // methodFields como JSON string (array de {name,value})
-    $methodFields = [];
-    if (!empty($_POST['methodFields'])) {
-      $mf_raw = wp_unslash($_POST['methodFields']);
-      error_log('MT PAYOUT CREATE | MF_RAW_LEN=' . strlen($mf_raw));
-      $mf_arr = json_decode($mf_raw, true);
-      if (!is_array($mf_arr)) {
-        error_log('MT PAYOUT CREATE | MF_BAD_JSON error=' . json_last_error_msg());
-        wp_send_json_error(['message' => 'methodFields must be JSON array'], 400);
+    // ---------- Helpers ----------
+    $log = static function(string $label, $data = null) use ($LOG_TAG) {
+      if (is_array($data) || is_object($data)) {
+        error_log("$LOG_TAG $label: " . wp_json_encode($data));
+      } else {
+        error_log("$LOG_TAG $label: " . (string)$data);
       }
-      $methodFields = $mf_arr;
+    };
+
+    // ---------- Seguridad ----------
+    if (empty($_POST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field($_POST['_wpnonce']), 'mt-payout')) {
+      status_header(403);
+      wp_send_json_error(['message' => 'Invalid security token.'], 403);
     }
 
-    $payload = [
+    // ---------- Log request crudo (sin nonce/alias) ----------
+    $raw = $_POST;
+    unset($raw['_wpnonce'], $raw['nonce']);
+    $log('REQUEST_RAW_POST', $raw);
+
+    // ---------- Sanitización ----------
+    $account = isset($_POST['account']) ? sanitize_text_field(wp_unslash($_POST['account'])) : '';
+    $amount  = isset($_POST['amount'])  ? floatval(wp_unslash($_POST['amount'])) : 0.0;
+    $method  = isset($_POST['method'])  ? sanitize_text_field(wp_unslash($_POST['method'])) : '';
+
+    // methodFields puede llegar como JSON string o array [{name,value}]
+    $methodFields = [];
+    if (isset($_POST['methodFields'])) {
+      $mf = wp_unslash($_POST['methodFields']);
+      if (is_string($mf)) {
+        $d = json_decode($mf, true);
+        if (is_array($d)) $methodFields = $d;
+      } elseif (is_array($mf)) {
+        foreach ($mf as $row) {
+          if (is_array($row) && isset($row['name'])) {
+            $methodFields[] = [
+              'name'  => sanitize_text_field($row['name']),
+              'value' => is_scalar($row['value'] ?? '') ? sanitize_text_field((string)$row['value']) : '',
+            ];
+          }
+        }
+      }
+    }
+
+    // Permitir reason desde POST; default compatible con backend
+    $reason = isset($_POST['reason']) && $_POST['reason'] !== ''
+      ? sanitize_text_field(wp_unslash($_POST['reason']))
+      : 'Customer request';
+
+    $currency = 'USD';
+
+    // IP FIJA requerida por backend
+    $ip = '127.0.0.1';
+
+    $clean = [
       'account'      => $account,
       'amount'       => $amount,
+      'method'       => $method,
       'methodFields' => $methodFields,
+      'currency'     => $currency,
+      'reason'       => $reason,
+      'ip'           => $ip,
     ];
-    if (!empty($currency)) $payload['currency'] = $currency;
-    if (!empty($reason))   $payload['reason']   = $reason;
-    if (!empty($ip))       $payload['ip']       = $ip;
-  }
+    $log('REQUEST_CLEAN', $clean);
 
-  // 2) Validaciones mínimas
-  if (!is_array($payload)) {
-    error_log('MT PAYOUT CREATE | ERR payload_missing');
-    wp_send_json_error(['message' => 'Missing payload'], 400);
-  }
-  if (empty($payload['account'])) {
-    error_log('MT PAYOUT CREATE | ERR account_missing');
-    wp_send_json_error(['message' => 'Missing field: account'], 400);
-  }
-  if (!isset($payload['amount']) || !is_numeric($payload['amount']) || floatval($payload['amount']) <= 0) {
-    error_log('MT PAYOUT CREATE | ERR amount_invalid');
-    wp_send_json_error(['message' => 'amount must be a positive number'], 400);
-  }
-  if (!isset($payload['methodFields']) || !is_array($payload['methodFields']) || empty($payload['methodFields'])) {
-    error_log('MT PAYOUT CREATE | ERR methodFields_missing');
-    wp_send_json_error(['message' => 'methodFields must be a non-empty array'], 400);
-  }
-
-  // 3) Normalización ligera de methodFields
-  foreach ($payload['methodFields'] as $i => $mf) {
-    if (!is_array($mf) || !array_key_exists('name', $mf) || !array_key_exists('value', $mf)) {
-      error_log('MT PAYOUT CREATE | ERR methodFields['.$i.'] malformed');
-      wp_send_json_error(['message' => 'methodFields[' . $i . '] must have name and value'], 400);
+    // ---------- Validaciones mínimas ----------
+    if ($account === '' || $amount <= 0 || $method === '' || empty($methodFields)) {
+      $log('VALIDATION_ERROR', 'Missing or invalid fields.');
+      status_header(400);
+      wp_send_json_error(['message' => 'Missing or invalid fields.'], 400);
     }
-    $payload['methodFields'][$i]['name']  = (string) $mf['name'];
-    $payload['methodFields'][$i]['value'] = (string) $mf['value'];
-  }
 
-  // (Debug) log del payload final antes de la API
-  error_log('MT PAYOUT CREATE | PAYLOAD=' . wp_json_encode($payload));
+    // ---------- Payload final hacia la capa API ----------
+    $payload = $clean;
+    $log('PAYLOAD', $payload);
 
-  // 4) Llamar a la API interna si existe
-  if (function_exists('mega_api_create_payout')) {
-    $res = mega_api_create_payout($payload);
+    // ---------- Llamada a la capa central (api-functions.php) ----------
+    try {
+      $res = mega_api_create_payout($payload);
+    } catch (Throwable $e) {
+      $log('EXCEPTION', $e->getMessage());
+      status_header(500);
+      wp_send_json_error(['message' => 'Server error. Please try again later.'], 500);
+    }
 
+    // ---------- Manejo de respuesta / errores ----------
     if (is_wp_error($res)) {
-      error_log('MT PAYOUT CREATE | API_ERROR code=' . $res->get_error_code() . ' msg=' . $res->get_error_message());
-      wp_send_json_error(['message' => $res->get_error_message(), 'code' => $res->get_error_code()], 500);
+      $err_msg  = $res->get_error_message();
+      $err_data = $res->get_error_data();
+      $log('WP_ERROR_MSG', $err_msg);
+      if ($err_data !== null) $log('WP_ERROR_DATA', $err_data);
+
+      $status = 500;
+      if (is_array($err_data) && isset($err_data['status']) && is_numeric($err_data['status'])) {
+        $status = (int)$err_data['status'];
+      }
+
+      // Intenta extraer mensaje del backend si existe
+      $backend_msg = null;
+      if (is_array($err_data) && isset($err_data['backend'])) {
+        if (is_array($err_data['backend']) && isset($err_data['backend']['message'])) {
+          $backend_msg = (string)$err_data['backend']['message'];
+        } elseif (is_string($err_data['backend'])) {
+          $backend_msg = $err_data['backend'];
+        }
+      }
+
+      $final_msg = $backend_msg ?: $err_msg ?: 'Request failed. Please try again later.';
+
+      if ($status === 409) {
+        status_header(409);
+        wp_send_json_error(['message' => $final_msg], 409); // ← muestra el motivo real del 409
+      }
+
+      status_header($status);
+      wp_send_json_error(['message' => $final_msg], $status);
     }
 
-    error_log('MT PAYOUT CREATE | API_OK=' . wp_json_encode($res));
-    wp_send_json_success(['data' => $res]);
+    // Respuesta normalizada si viniera como { error: true, status: 409, ... }
+    if (is_array($res) && !empty($res['error'])) {
+      $log('API_ERROR', $res);
+      $status  = isset($res['status']) && is_numeric($res['status']) ? (int)$res['status'] : 500;
+      $message = $res['message'] ?? 'Request failed. Please try again later.';
+
+      if ($status === 409) {
+        status_header(409);
+        wp_send_json_error(['message' => $message], 409);
+      }
+
+      status_header($status);
+      wp_send_json_error(['message' => $message, 'code' => $status], $status);
+    }
+
+    // ---------- OK ----------
+    $log('RESP_OK', $res);
+    wp_send_json_success([
+      'message'  => 'Payout created successfully.',
+      'response' => $res,
+    ], 200);
   }
-
-  // 5) Fallback vía shortcode
-  $json_payload = wp_json_encode($payload);
-  $sc = '[mega_payouts_create output="json" json=\'' . esc_attr($json_payload) . '\']';
-  error_log('MT PAYOUT CREATE | FALLBACK_SC len=' . strlen($sc));
-
-  $out = do_shortcode($sc);
-  error_log('MT PAYOUT CREATE | FALLBACK_OUT_LEN=' . strlen((string)$out));
-
-  $decoded = json_decode((string) $out, true);
-  if (is_array($decoded) && empty($decoded['error'])) {
-    error_log('MT PAYOUT CREATE | FALLBACK_OK=' . wp_json_encode($decoded));
-    wp_send_json_success(['data' => $decoded]);
-  }
-
-  error_log('MT PAYOUT CREATE | FALLBACK_FAIL raw=' . (is_string($out) ? substr($out, 0, 500) : 'NON_STRING'));
-  wp_send_json_error(['message' => 'Create payout failed', 'raw' => $out], 500);
 }
+
+add_action('wp_ajax_mt_payouts_create', 'mt_ajax_payouts_create');
+add_action('wp_ajax_nopriv_mt_payouts_create', 'mt_ajax_payouts_create');
 
 
 
