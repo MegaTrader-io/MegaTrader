@@ -142,6 +142,11 @@ function megatrader_scripts() {
     wp_enqueue_script( 'mt-account-picker',	        MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-account-payout',	        MEGATRADER_JS .'mt-account-payout.js', array(), REALTIME_VERSION, true);
 
+    wp_localize_script('mt-account-payout', 'MT_PAYOUT_VARS', array(
+  'ajaxurl' => admin_url('admin-ajax.php'),
+  'nonce'   => wp_create_nonce('mt_payout_nonce')
+));
+
     wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-tooltips-js',	        MEGATRADER_JS .'mt-tooltips.js', array(), REALTIME_VERSION, true);
     wp_enqueue_script( 'mt-billing-validation-js',	        MEGATRADER_JS .'billing-validation.js', array(), REALTIME_VERSION, true);
@@ -2043,6 +2048,136 @@ function mt_ajax_payouts_prepare_ui() {
 
   $payload = mt_prepare_ui_payout($email);
   wp_send_json_success($payload);
+}
+
+/* ============================================================
+ * Create Payout (AJAX)
+ * ============================================================ */
+/* === Create Payout Ajax (con DEBUG) === */
+add_action('wp_ajax_mt_payouts_create', 'mt_ajax_payouts_create');
+add_action('wp_ajax_nopriv_mt_payouts_create', 'mt_ajax_payouts_create');
+
+function mt_ajax_payouts_create() {
+  // --- DEBUG INICIO ---
+  error_log('MT PAYOUT CREATE | HIT');
+  error_log('MT PAYOUT CREATE | METHOD=' . ($_SERVER['REQUEST_METHOD'] ?? 'UNK') . ' URI=' . ($_SERVER['REQUEST_URI'] ?? ''));
+  error_log('MT PAYOUT CREATE | POST=' . print_r($_POST, true));
+  // --- FIN DEBUG CABECERA ---
+
+  // (Opcional) validar nonce si viene
+  if (isset($_POST['nonce'])) {
+    $nonce_ok = wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'mt-payout');
+    error_log('MT PAYOUT CREATE | NONCE=' . ($nonce_ok ? 'OK' : 'FAIL'));
+    if (!$nonce_ok) {
+      wp_send_json_error(['message' => 'Invalid nonce'], 403);
+    }
+  } else {
+    error_log('MT PAYOUT CREATE | NONCE=ABSENT');
+  }
+
+  // 1) Obtener payload
+  $payload = null;
+
+  if (isset($_POST['json']) && $_POST['json'] !== '') {
+    $json_raw = wp_unslash($_POST['json']);
+    error_log('MT PAYOUT CREATE | JSON_RAW_LEN=' . strlen($json_raw));
+    $decoded = json_decode($json_raw, true);
+    if (!is_array($decoded)) {
+      error_log('MT PAYOUT CREATE | BAD_JSON error=' . json_last_error_msg());
+      wp_send_json_error(['message' => 'Bad JSON'], 400);
+    }
+    $payload = $decoded;
+  } else {
+    // Campos sueltos como fallback
+    $account  = isset($_POST['account']) ? sanitize_text_field(wp_unslash($_POST['account'])) : '';
+    $amount   = isset($_POST['amount']) ? floatval(wp_unslash($_POST['amount'])) : 0;
+    $currency = isset($_POST['currency']) ? sanitize_text_field(wp_unslash($_POST['currency'])) : null;
+    $reason   = isset($_POST['reason']) ? sanitize_text_field(wp_unslash($_POST['reason'])) : null;
+    $ip       = isset($_POST['ip']) ? sanitize_text_field(wp_unslash($_POST['ip'])) : null;
+
+    // methodFields como JSON string (array de {name,value})
+    $methodFields = [];
+    if (!empty($_POST['methodFields'])) {
+      $mf_raw = wp_unslash($_POST['methodFields']);
+      error_log('MT PAYOUT CREATE | MF_RAW_LEN=' . strlen($mf_raw));
+      $mf_arr = json_decode($mf_raw, true);
+      if (!is_array($mf_arr)) {
+        error_log('MT PAYOUT CREATE | MF_BAD_JSON error=' . json_last_error_msg());
+        wp_send_json_error(['message' => 'methodFields must be JSON array'], 400);
+      }
+      $methodFields = $mf_arr;
+    }
+
+    $payload = [
+      'account'      => $account,
+      'amount'       => $amount,
+      'methodFields' => $methodFields,
+    ];
+    if (!empty($currency)) $payload['currency'] = $currency;
+    if (!empty($reason))   $payload['reason']   = $reason;
+    if (!empty($ip))       $payload['ip']       = $ip;
+  }
+
+  // 2) Validaciones mínimas
+  if (!is_array($payload)) {
+    error_log('MT PAYOUT CREATE | ERR payload_missing');
+    wp_send_json_error(['message' => 'Missing payload'], 400);
+  }
+  if (empty($payload['account'])) {
+    error_log('MT PAYOUT CREATE | ERR account_missing');
+    wp_send_json_error(['message' => 'Missing field: account'], 400);
+  }
+  if (!isset($payload['amount']) || !is_numeric($payload['amount']) || floatval($payload['amount']) <= 0) {
+    error_log('MT PAYOUT CREATE | ERR amount_invalid');
+    wp_send_json_error(['message' => 'amount must be a positive number'], 400);
+  }
+  if (!isset($payload['methodFields']) || !is_array($payload['methodFields']) || empty($payload['methodFields'])) {
+    error_log('MT PAYOUT CREATE | ERR methodFields_missing');
+    wp_send_json_error(['message' => 'methodFields must be a non-empty array'], 400);
+  }
+
+  // 3) Normalización ligera de methodFields
+  foreach ($payload['methodFields'] as $i => $mf) {
+    if (!is_array($mf) || !array_key_exists('name', $mf) || !array_key_exists('value', $mf)) {
+      error_log('MT PAYOUT CREATE | ERR methodFields['.$i.'] malformed');
+      wp_send_json_error(['message' => 'methodFields[' . $i . '] must have name and value'], 400);
+    }
+    $payload['methodFields'][$i]['name']  = (string) $mf['name'];
+    $payload['methodFields'][$i]['value'] = (string) $mf['value'];
+  }
+
+  // (Debug) log del payload final antes de la API
+  error_log('MT PAYOUT CREATE | PAYLOAD=' . wp_json_encode($payload));
+
+  // 4) Llamar a la API interna si existe
+  if (function_exists('mega_api_create_payout')) {
+    $res = mega_api_create_payout($payload);
+
+    if (is_wp_error($res)) {
+      error_log('MT PAYOUT CREATE | API_ERROR code=' . $res->get_error_code() . ' msg=' . $res->get_error_message());
+      wp_send_json_error(['message' => $res->get_error_message(), 'code' => $res->get_error_code()], 500);
+    }
+
+    error_log('MT PAYOUT CREATE | API_OK=' . wp_json_encode($res));
+    wp_send_json_success(['data' => $res]);
+  }
+
+  // 5) Fallback vía shortcode
+  $json_payload = wp_json_encode($payload);
+  $sc = '[mega_payouts_create output="json" json=\'' . esc_attr($json_payload) . '\']';
+  error_log('MT PAYOUT CREATE | FALLBACK_SC len=' . strlen($sc));
+
+  $out = do_shortcode($sc);
+  error_log('MT PAYOUT CREATE | FALLBACK_OUT_LEN=' . strlen((string)$out));
+
+  $decoded = json_decode((string) $out, true);
+  if (is_array($decoded) && empty($decoded['error'])) {
+    error_log('MT PAYOUT CREATE | FALLBACK_OK=' . wp_json_encode($decoded));
+    wp_send_json_success(['data' => $decoded]);
+  }
+
+  error_log('MT PAYOUT CREATE | FALLBACK_FAIL raw=' . (is_string($out) ? substr($out, 0, 500) : 'NON_STRING'));
+  wp_send_json_error(['message' => 'Create payout failed', 'raw' => $out], 500);
 }
 
 

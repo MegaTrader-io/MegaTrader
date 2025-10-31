@@ -137,6 +137,9 @@
   width: 100%;
   max-width: 800px;
 }
+#mt-request-payout-modal .modal-dialog{
+  --bs-modal-width:700px;
+}
 
 @media (min-width: 641px) and (max-width: 799px) {
   .modal-dialog.modal-mega {
