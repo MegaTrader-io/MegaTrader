@@ -232,10 +232,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     labelHTML.dataset.key = metaInfo.key;
                     labelHTML.innerText = metaInfo.label;
 
-                    if (metaInfo.key === 'max_contracts') {
-                        labelHTML.innerHTML = 'Max<br>Contracts';
-                    }
-
                     row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
                     metaInfoElement.appendChild(row)
                 })

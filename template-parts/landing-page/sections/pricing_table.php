@@ -94,11 +94,9 @@ $mt_best_products = mt_most_popular_products();
 
 function mt_render_template_meta_info($value = '', $label = '', $classes = '')
 {
-    $title = $label === 'Max Contracts' ? 'Max<br>Contracts' : $label;
-
     return <<<HTML
 <div class="mega-info-row {$classes}">
-    <div class="mega-info-row__label">{$title}</div>
+    <div class="mega-info-row__label">{$label}</div>
     <div class="mega-info-row__value">{$value}</div>
 </div>
 HTML;

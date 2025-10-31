@@ -2352,7 +2352,8 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
-    word-wrap: break-word
+    white-space: nowrap;
+    letter-spacing: -0.025em;
 }
 
 .price-table-attributes .mega-info-row__value {
@@ -2361,7 +2362,8 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
-    word-wrap: break-word
+    white-space: nowrap;
+    letter-spacing: -0.025em;
 }
 
 
