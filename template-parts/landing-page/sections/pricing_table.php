@@ -29,6 +29,8 @@ foreach ($mt_attributes as $mt_attr) {
     }
 }
 
+$mt_account_types = array_reverse($mt_account_types);
+
 $mt_default_account_type = $mt_account_types[0];
 $mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'];
 $mt_platform_thumbnail_url = $mt_platforms[0]['thumbnail_url'];
@@ -144,20 +146,33 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
 
     <div class="pricing-table-container-options">
         <div class="mt-pricing-table-plan-options">
-            <?php mt_render_account_types(array_reverse($mt_account_types), $mt_default_platform, $mt_default_market_type); ?>
+            <?php mt_render_account_types($mt_account_types, $mt_default_platform, $mt_default_market_type); ?>
         </div>
 
-        <div class="mt-pricing-table-benefits">
-            <div class="mt-pricing-table-benefits__item"><?php esc_html_e('Instant Funding', 'megatrader'); ?></div>
-            <img class="mt-pricing-table-benefits__icon"
-                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'); ?>"
-                 alt="flash" width="24" height="24">
-            <div class="mt-pricing-table-benefits__item"><?php esc_html_e('Lightning Fast Payouts', 'megatrader'); ?></div>
-            <img class="mt-pricing-table-benefits__icon"
-                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'); ?>"
-                 alt="flash" width="24" height="24">
-            <div class="mt-pricing-table-benefits__item"><?php esc_html_e('No Challenge', 'megatrader'); ?></div>
-        </div>
+
+        <?php
+        foreach ($mt_account_types as $index => $item) {
+            $slug = esc_attr($item['slug']);
+            $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+
+            ?>
+
+            <?php if (!empty($parsed['data'])): ?>
+                <div class="mt-pricing-table-benefits" data-account-type-benefits="<?= $slug ?>">
+                    <?php foreach ($parsed['data'] as $index => $text): ?>
+                        <?php if ($index > 0): ?>
+                            <img class="mt-pricing-table-benefits__icon"
+                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'); ?>"
+                                 alt="flash" width="24" height="24">
+                        <?php endif; ?>
+                        <div class="mt-pricing-table-benefits__item"><?php echo esc_html($text) ?></div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php
+        }
+        ?>
 
         <div class="mt-pricing-table-partners">
             <div class="mt-pricing-table-partners__mega">
