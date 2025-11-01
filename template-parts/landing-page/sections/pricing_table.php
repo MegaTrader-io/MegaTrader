@@ -144,7 +144,7 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
 
     <div class="pricing-table-container-options">
         <div class="mt-pricing-table-plan-options">
-            <?php mt_render_account_types($mt_account_types, $mt_default_platform, $mt_default_market_type); ?>
+            <?php mt_render_account_types(array_reverse($mt_account_types), $mt_default_platform, $mt_default_market_type); ?>
         </div>
 
         <div class="mt-pricing-table-benefits">
