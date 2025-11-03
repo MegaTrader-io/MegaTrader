@@ -2,11 +2,42 @@
 
 defined('ABSPATH') || exit;
 
+/* === Helpers === */
+if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
+    require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
+}
+
+
+/* Check account Elegible for payout? */
+if (!function_exists('mt_user_has_payout_accounts')) {
+  function mt_user_has_payout_accounts(string $email, bool $requireEligible = true): bool {
+    $email = sanitize_email($email);
+    if (!$email || !function_exists('mt_prepare_ui_payout')) return false;
+
+    $out = mt_prepare_ui_payout($email);
+    if (!is_array($out) || empty($out['items'])) return false;
+
+    if (!$requireEligible) return true; 
+    foreach ($out['items'] as $it) {
+      $eligible = !empty($it['eligibleForPayout']);
+      $maxUI = isset($it['meta']['maxWithdrawalUI']) ? floatval($it['meta']['maxWithdrawalUI']) : 0.0;
+      if ($eligible && $maxUI > 0) return true;
+    }
+    return false;
+  }
+}
+
+/* get email from the use login */
+$current_user = wp_get_current_user();
+$user_email = ($current_user && !empty($current_user->user_email)) ? sanitize_email($current_user->user_email) : '';
+$can_request_payout = $user_email ? mt_user_has_payout_accounts($user_email, true) : false;
+
+
 $mt_current_account_section = static function (): string {
     $req_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     $req_path = rtrim($req_path ?: '/', '/');
 
-    $account_base_url = wc_get_page_permalink('myaccount');           // e.g. https://.../my-account/
+    $account_base_url = wc_get_page_permalink('myaccount');           
     $account_base = (string) parse_url($account_base_url, PHP_URL_PATH);
     $account_base = rtrim($account_base ?: '/my-account', '/');
 
@@ -14,11 +45,9 @@ $mt_current_account_section = static function (): string {
         return '';
     }
 
-    // resto del path después de /my-account
     $rest = ltrim(substr($req_path, strlen($account_base)), '/');    // '' | 'overview/...' | 'profile/...'
     $first = $rest === '' ? '' : strtolower(strtok($rest, '/'));
 
-    // La raíz (/my-account/) o 'dashboard' cuentan como 'overview'
     if ($first === '' || $first === 'dashboard') {
         $first = 'overview';
     }
@@ -55,6 +84,7 @@ $menu_links = [
         'icon' => 'mt-icon_wallet',
         'href' => '#',
         'modal_target' => '#mt-request-payout-modal',
+        'is_disabled' => !$can_request_payout,
     ],
     [
         'class' => $mt_is_active('profile', 'active'),
@@ -88,9 +118,8 @@ if (!function_exists('render_menu_link')) {
         $badge = $item['badge'] ?? null;
         $id = esc_attr($item['id'] ?? '');
 
-        // Si viene modal_target, forzamos data-attrs y href="#"
         $modal_attrs = '';
-        if (!empty($item['modal_target'])) {
+    if (!empty($item['modal_target']) && !$is_disabled) { 
             $href = '#';
             $modal_attrs = ' data-bs-toggle="modal" data-bs-target="' . esc_attr($item['modal_target']) . '" role="button"';
         }
@@ -126,7 +155,7 @@ if (!function_exists('render_menu_link_collapsed')) {
         $badge = $item['badge'] ?? null;
 
         $modal_attrs = '';
-        if (!empty($item['modal_target'])) {
+    if (!empty($item['modal_target']) && !$is_disabled) { 
             $href = '#';
             $modal_attrs = ' data-bs-toggle="modal" data-bs-target="' . esc_attr($item['modal_target']) . '" role="button"';
         }
