@@ -156,11 +156,10 @@ if (!function_exists('mt_get_best_selling_variation_this_month')) {
     global $wpdb;
 
     try {
-      $start_date = date('Y-m-01 00:00:00');
-      $end_date = current_time('mysql'); // fecha actual según WP timezone
+      $start_date = date('Y-m-d 00:00:00', strtotime('-1 month'));
 
       $where_product = '';
-      $params = [$start_date, $end_date, 'wc-completed'];
+      $params = [$start_date, 'wc-completed'];
 
       if ($product_id !== null) {
         $where_product = "AND wpl.product_id = %d";
@@ -176,7 +175,6 @@ if (!function_exists('mt_get_best_selling_variation_this_month')) {
                 INNER JOIN {$wpdb->prefix}wc_orders wo ON wo.id = wpl.order_id
             WHERE
                 wpl.date_created >= %s
-                AND wpl.date_created <= %s
                 AND wo.status = %s
                 {$where_product}
             GROUP BY
