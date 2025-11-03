@@ -262,6 +262,64 @@ get_header('landing-page-bs');
         </section>
 
         <?php get_template_part('template-parts/landing-page/sections/pricing_table', null, ['classes' => 'container']); ?>
+
+        <section id="competition" class="competition container">
+            <div class="competition__wrapper">
+                <div class="competition__content">
+                    <h2 class="competition__title">
+                        Join the World’s Biggest Futures Trading Competition
+                    </h2>
+
+                    <div class="competition__rewards">
+                        <div class="competition__reward-card">
+                            <div class="competition__reward-header">
+                                <!-- SVG ICON -->
+                                <span class="competition__reward-amount">$1,000,000</span>
+                            </div>
+                            <p class="competition__reward-label">Reward Pool</p>
+                        </div>
+
+                        <div class="competition__reward-card">
+                            <div class="competition__reward-header">
+                                <!-- SVG ICON -->
+                                <span class="competition__reward-amount">$200,000</span>
+                            </div>
+                            <p class="competition__reward-label">Grand Reward</p>
+                        </div>
+                    </div>
+
+                    <p class="competition__entry-note">
+                        FREE entry with a Tradeify account. $35 otherwise.
+                    </p>
+
+                    <div class="competition__perks">
+                        <div class="competition__perk">
+                            <!-- SVG ICON -->
+                            <span class="competition__perk-text">
+          Top 400 traders earn Cash Rewards
+        </span>
+                        </div>
+                        <div class="competition__perk">
+                            <!-- SVG ICON -->
+                            <span class="competition__perk-text">
+          Top 200 also get a Live Account
+        </span>
+                        </div>
+                    </div>
+
+                    <div class="competition__cta">
+                        <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
+                            Get Funded Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="competition__image">
+                    <div class="competition__image-placeholder"></div>
+                </div>
+            </div>
+
+        </section>
     </main>
 
 <?php get_footer('landing-page-bs'); ?>

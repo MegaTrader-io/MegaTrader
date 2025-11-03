@@ -139,7 +139,7 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
 
 ?>
 
-<section id="pricing" class="pricing-table-container container <?= esc_attr($mt_classes) ?>">
+<section id="pricing" class="pricing-table-container <?= esc_attr($mt_classes) ?>">
     <h2 class="pricing-table-container__title">
         <?php esc_html_e('Choose account type', 'megatrader'); ?>
     </h2>
@@ -357,5 +357,97 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
                 </div>
             </div>
         <?php endforeach; ?>
+    </div>
+
+    <div class="testimonials">
+        <div class="testimonials__card">
+            <img
+                    class="testimonials__image"
+                    src="<?= get_template_directory_uri() ?>/assets/img/landing-page/testimonial-1.png"
+                    alt="Angela's Testimony"
+            />
+            <div class="testimonials__content">
+                <p class="testimonials__quote">
+                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast they solve any issues”
+                </p>
+                <div class="testimonials__info">
+                    <div class="testimonials__author">
+                        <span class="testimonials__name">Angela Kim, United States</span>
+                        <svg
+                                class="testimonials__icon"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <mask
+                                    id="mask0_17091_43407"
+                                    style="mask-type:alpha"
+                                    maskUnits="userSpaceOnUse"
+                                    x="0"
+                                    y="0"
+                                    width="20"
+                                    height="20"
+                            >
+                                <rect width="20" height="20" fill="#D9D9D9" />
+                            </mask>
+                            <g mask="url(#mask0_17091_43407)">
+                                <path
+                                        d="M4.854 17.5L6.20817 11.6458L1.6665 7.70832L7.6665 7.18749L9.99984 1.66666L12.3332 7.18749L18.3332 7.70832L13.7915 11.6458L15.1457 17.5L9.99984 14.3958L4.854 17.5Z"
+                                        fill="#FFB34A"
+                                />
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="testimonials__role">Professional Trader</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonials__card">
+            <img
+                    class="testimonials__image"
+                    src="<?= get_template_directory_uri() ?>/assets/img/landing-page/testimonial-2.png"
+                    alt="Angela's Testimony"
+            />
+            <div class="testimonials__content">
+                <p class="testimonials__quote">
+                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast they solve any issues”
+                </p>
+                <div class="testimonials__info">
+                    <div class="testimonials__author">
+                        <span class="testimonials__name">Angela Kim, United States</span>
+                        <svg
+                                class="testimonials__icon"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <mask
+                                    id="mask0_17091_43407"
+                                    style="mask-type:alpha"
+                                    maskUnits="userSpaceOnUse"
+                                    x="0"
+                                    y="0"
+                                    width="20"
+                                    height="20"
+                            >
+                                <rect width="20" height="20" fill="#D9D9D9" />
+                            </mask>
+                            <g mask="url(#mask0_17091_43407)">
+                                <path
+                                        d="M4.854 17.5L6.20817 11.6458L1.6665 7.70832L7.6665 7.18749L9.99984 1.66666L12.3332 7.18749L18.3332 7.70832L13.7915 11.6458L15.1457 17.5L9.99984 14.3958L4.854 17.5Z"
+                                        fill="#FFB34A"
+                                />
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="testimonials__role">Professional Trader</div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
