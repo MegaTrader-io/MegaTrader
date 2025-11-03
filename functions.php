@@ -2047,12 +2047,7 @@ function mt_ajax_payouts_prepare_ui() {
 }
 
 
-
-/**
- * MegaTrader Payouts – frontend/JSON + prepare_ui
- */
-
-/* ---------- Encola JS + expone vars ---------- */
+/** Encola script + expone MT_PAYOUT_VARS (ajaxurl, nonce) */
 add_action('wp_enqueue_scripts', function () {
   wp_enqueue_script(
     'mt-account-payout',
@@ -2062,201 +2057,92 @@ add_action('wp_enqueue_scripts', function () {
     true
   );
   wp_localize_script('mt-account-payout', 'MT_PAYOUT_VARS', [
-    'ajaxurl'          => admin_url('admin-ajax.php'),
-    // Nonce separado para cada endpoint
-    'nonce_prepare_ui' => wp_create_nonce('mt_payouts_prepare_ui'),
-    'nonce_create'     => wp_create_nonce('mt_payouts_create'),
+    'ajaxurl' => admin_url('admin-ajax.php'),
+    'nonce'   => wp_create_nonce('mt_payouts'), // NO CAMBIAR
   ]);
 });
 
-/* =======================================================================
- *  PREPARE UI  (FormData) -> devuelve cuentas y límites para el modal
- *  Acción: mt_payouts_prepare_ui
- * ======================================================================= */
-add_action('wp_ajax_mt_payouts_prepare_ui', 'mt_payouts_prepare_ui_cb');
-add_action('wp_ajax_nopriv_mt_payouts_prepare_ui', 'mt_payouts_prepare_ui_cb');
-
-function mt_payouts_prepare_ui_cb() {
-  $TAG='[MT_PAYOUT_UI]';
-
-  if (!check_ajax_referer('mt_payouts_prepare_ui', 'nonce', false)) {
-    error_log("$TAG NONCE_FAIL");
-    wp_send_json_error(['message'=>'Invalid or missing nonce.'], 400);
-  }
-
-  $email = sanitize_email($_POST['email'] ?? '');
-  if ($email === '') {
-    wp_send_json_error(['message'=>'Missing email'], 400);
-  }
-
-  // --- Obtén cuentas y elegibilidad con tus helpers existentes ---
-  // Debes tener algo como mega_api_get_accounts($email) y mega_api_get_payout_eligibility($accountId)
-  try {
-    $accounts = function_exists('mega_api_get_accounts') ? mega_api_get_accounts($email) : [];
-  } catch (Throwable $e) {
-    error_log("$TAG ACC_ERR ".$e->getMessage());
-    wp_send_json_error(['message'=>'Accounts fetch failed'], 500);
-  }
-
-  $items = [];
-  if (is_array($accounts)) {
-    foreach ($accounts as $a) {
-      // Asegura claves seguras (id, name, size)
-      $id   = (string)($a['id'] ?? ($a['accountId'] ?? ''));
-      $name = (string)($a['name'] ?? $a['accountName'] ?? 'Account');
-      $size = (string)($a['accountSize'] ?? $a['size'] ?? '');
-
-      if ($id === '') continue;
-
-      // Elegibilidad
-      $elig       = true;
-      $eligBadge  = ['class'=>'badge-mega badge-mega-default badge-mega-sm','text'=>'Eligible'];
-      $maxUI      = null;
-      $minUI      = 0;
-      $logo       = (string)($a['logo'] ?? '');
-      $platformId = (string)($a['platformAccountId'] ?? '');
-
-      try {
-        if (function_exists('mega_api_get_payout_eligibility')) {
-          $el = mega_api_get_payout_eligibility($id);
-          if (is_array($el)) {
-            $isEligible = (bool)($el['eligible'] ?? true);
-            $hasPending = (bool)($el['accountHasPendingPayout'] ?? false);
-            $maxUI      = isset($el['payoutCycle']['maxWithdrawal']) ? floatval($el['payoutCycle']['maxWithdrawal']) : null;
-            $minUI      = isset($el['payoutCycle']['minWithdrawal']) ? floatval($el['payoutCycle']['minWithdrawal']) : 0;
-
-            // Mostrar siempre; solo badge cambia si hay pending
-            $elig = $isEligible;
-            if ($hasPending) {
-              $eligBadge = ['class'=>'badge-mega badge-mega-warning badge-mega-sm','text'=>'Pending'];
-            } elseif ($isEligible) {
-              $eligBadge = ['class'=>'badge-mega badge-mega-success badge-mega-sm','text'=>'Eligible'];
-            } else {
-              $eligBadge = ['class'=>'badge-mega badge-mega-secondary badge-mega-sm','text'=>'Not eligible'];
-            }
-          }
-        }
-      } catch (Throwable $e2) {
-        error_log("$TAG ELIG_ERR ".$e2->getMessage());
-      }
-
-      $items[] = [
-        'id'                  => $id,
-        'accountName'         => $name,
-        'accountSize'         => $size,
-        'platformAccountId'   => $platformId,
-        'logo'                => $logo,
-        'eligible'            => $elig,
-        'eligibleForPayout'   => $elig,
-        'badge'               => $eligBadge,
-        'meta'                => [
-          'maxWithdrawalUI'   => is_null($maxUI) ? null : floatval($maxUI),
-          'minWithdrawal'     => floatval($minUI),
-        ],
-      ];
-    }
-  }
-
-  // Si no hay items, devuelve vacío sin romper el front
-  wp_send_json_success([
-    'items'      => $items,
-    'selectedId' => $items[0]['id'] ?? null,
-  ]);
-}
-
-/* =======================================================================
- *  CREATE (JSON obligado) -> llama a /payouts con methodFields[email, apiKey]
- *  Acción: mt_payouts_create
- * ======================================================================= */
-add_action('wp_ajax_mt_payouts_create', 'mt_payouts_create_cb');
+/** AJAX endpoint: action=mt_payouts_create */
+add_action('wp_ajax_mt_payouts_create',        'mt_payouts_create_cb');
 add_action('wp_ajax_nopriv_mt_payouts_create', 'mt_payouts_create_cb');
 
 function mt_payouts_create_cb() {
-  $TAG='[MT_PAYOUT_JSON]';
+  $TAG = '[MT_PAYOUT_JSON]';
 
-  // Nonce por query o POST: _wpnonce
-  if (!check_ajax_referer('mt_payouts_create', '_wpnonce', false)) {
-    error_log("$TAG NONCE_FAIL");
-    wp_send_json_error(['message'=>'Invalid or missing nonce.'], 400);
+  // 1) Nonce (respeta MT_PAYOUT_VARS.nonce en _wpnonce)
+  if (!check_ajax_referer('mt_payouts', '_wpnonce', false)) {
+    error_log("$TAG NONCE_FAIL got=".($_REQUEST['_wpnonce'] ?? 'NULL'));
+    wp_send_json_error(['message' => 'Invalid or missing nonce.'], 400);
   }
 
+  // 2) Leer cuerpo JSON (Content-Type: application/json)
   $raw = file_get_contents('php://input');
-  error_log("$TAG RAW=".substr($raw ?? '',0,2000));
+  error_log("$TAG RAW=" . substr($raw ?? '', 0, 2000));
   $data = json_decode($raw, true);
   if (!is_array($data)) {
-    wp_send_json_error(['message'=>'Invalid JSON body.'], 400);
+    wp_send_json_error(['message' => 'Invalid JSON body.'], 400);
   }
 
-  $account  = sanitize_text_field($data['account']  ?? '');
-  $amount   = isset($data['amount']) ? floatval($data['amount']) : 0;
-  $method   = sanitize_text_field($data['method']   ?? '');   // sin lowercasing
-  $currency = sanitize_text_field($data['currency'] ?? 'USD');
-  $reason   = sanitize_text_field($data['reason']   ?? 'Customer request from js');
-  $ip       = sanitize_text_field($data['ip']       ?? '127.0.0.1');
+  // 3) Extraer campos (SIN cambiar casing de method ni methodFields)
+  $account  = isset($data['account'])  ? (string)$data['account']  : '';
+  $amount   = isset($data['amount'])   ? (0 + $data['amount'])     : 0;
+  $method   = isset($data['method'])   ? (string)$data['method']   : '';
+  $currency = isset($data['currency']) ? (string)$data['currency'] : 'USD';
+  $reason   = isset($data['reason'])   ? (string)$data['reason']   : 'Customer request from js';
+  $ip       = isset($data['ip'])       ? (string)$data['ip']       : '127.0.0.1';
 
-  // email desde methodFields
-  $email = '';
+  // methodFields tal cual: [{"name":"email","value":"..."}]
+  $methodFields = [];
   if (!empty($data['methodFields']) && is_array($data['methodFields'])) {
-    foreach ($data['methodFields'] as $f) {
-      if (($f['name'] ?? '') === 'email') { $email = sanitize_email($f['value'] ?? ''); break; }
+    foreach ($data['methodFields'] as $i => $mf) {
+      if (is_array($mf) && isset($mf['name']) && array_key_exists('value', $mf)) {
+        $methodFields[] = ['name' => (string)$mf['name'], 'value' => (string)$mf['value']];
+      }
     }
   }
 
-  // Construye payload EXACTO (methodFields con email + apiKey fija)
   $payload = [
     'account'      => $account,
     'amount'       => $amount,
-    'method'       => $method,       // e.g. "Rise"
-    'currency'     => $currency,
-    'reason'       => $reason,
+    'method'       => $method,              // NO toLowerCase
+    'currency'     => $currency ?: 'USD',
+    'reason'       => $reason ?: 'Customer request',
+    'methodFields' => $methodFields,        // casing EXACTO
     'ip'           => $ip ?: '127.0.0.1',
-    'methodFields' => [
-      ['name'=>'email',  'value'=>$email],
-      ['name'=>'apiKey', 'value'=>'ofeiph4ie1uteiCoaTie7eegaiCheexeechoolohmor3nezi0i'],
-    ],
   ];
-  error_log("$TAG CLEAN=". wp_json_encode($payload));
+  error_log("$TAG CLEAN=" . wp_json_encode($payload));
 
-  if ($account==='' || $amount<=0 || $method==='' || $email==='') {
-    wp_send_json_error(['message'=>'Missing or invalid fields.'], 400);
+  // Validación rápida
+  if ($payload['account'] === '' || !is_numeric($payload['amount']) || $payload['amount'] <= 0 || $payload['method'] === '' || empty($payload['methodFields'])) {
+    wp_send_json_error(['message' => 'Missing or invalid fields.'], 400);
   }
 
-  // Envía JSON directo a /payouts (sin pasar por otros normalizadores)
+  // (Opcional) Log REQ preview antes del plugin
+  error_log("$TAG REQ_PRE body=" . wp_json_encode($payload));
+
+  // 4) Delegar al plugin
   try {
-    $url = 'https://ext-api.kovce8r7fc.app.axcera.io/payouts';
-    $args = [
-      'method'  => 'POST',
-      'headers' => ['Content-Type'=>'application/json'],
-      'body'    => wp_json_encode($payload),
-      'timeout' => 20,
-    ];
-    error_log("$TAG REQ url=$url body=".substr($args['body'],0,2000));
-    $resp = wp_remote_request($url, $args);
-
-    if (is_wp_error($resp)) {
-      error_log("$TAG WP_ERR ".$resp->get_error_message());
-      wp_send_json_error(['message'=>$resp->get_error_message()], 500);
-    }
-
-    $status = wp_remote_retrieve_response_code($resp);
-    $body   = wp_remote_retrieve_body($resp);
-    error_log("$TAG RESP status=$status body=".substr($body,0,2000));
-
-    $decoded = json_decode($body, true);
-    if ($status === 409) {
-      wp_send_json_error(['message'=> ($decoded['message'] ?? 'Conflict: payout already in progress')], 409);
-    }
-    if ($status < 200 || $status >= 300) {
-      wp_send_json_error(['message'=> $decoded['message'] ?? 'HTTP error'], $status);
-    }
-
-    wp_send_json_success(['message'=>'Payout created successfully.','response'=>$decoded], 200);
-
+    $res = mega_api_create_payout($payload);
   } catch (Throwable $e) {
-    error_log("$TAG EXC ".$e->getMessage());
-    wp_send_json_error(['message'=>'Server error.'], 500);
+    error_log("$TAG EXC=" . $e->getMessage());
+    wp_send_json_error(['message' => 'Server error.'], 500);
   }
+
+  // 5) Responder
+  if (is_wp_error($res)) {
+    $msg = $res->get_error_message();
+    $d   = $res->get_error_data();
+    $status = (is_array($d) && isset($d['status'])) ? (int)$d['status'] : 500;
+    $backend = (is_array($d) && isset($d['backend'])) ? $d['backend'] : null;
+    $final = is_array($backend) && isset($backend['message']) ? $backend['message'] : ($msg ?: 'Request failed.');
+    error_log("$TAG WP_ERROR status=$status msg=$final data=" . (is_string($backend) ? $backend : wp_json_encode($backend)));
+    wp_send_json_error(['message' => $final], $status);
+  }
+
+  error_log("$TAG OK=" . (is_string($res) ? $res : wp_json_encode($res)));
+  wp_send_json_success(['message' => 'Payout created successfully.', 'response' => $res], 200);
 }
+
 
 
 
@@ -2343,7 +2229,6 @@ add_action('wp_ajax_mt_save_daily_feedback', function () {
 
 // Ajax : Redit to account from notification
 
-// functions.php
 add_action('wp_ajax_mt_switch_account', 'mt_switch_account_cb');
 add_action('wp_ajax_nopriv_mt_switch_account', 'mt_switch_account_cb'); // si aplica
 
