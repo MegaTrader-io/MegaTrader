@@ -122,45 +122,47 @@ add_action( 'widgets_init', 'megatrader_widgets_init' );
  */
 function megatrader_scripts() {
 
-	wp_enqueue_style( 'bootstrap',				MEGATRADER_CSS .'bootstrap.min.css', array(), _MEGATRADER_VERSION );
-	// wp_enqueue_style( 'scrollCue-css',		MEGATRADER_CSS .'scrollCue.min.css', array(), _MEGATRADER_VERSION );
-	wp_enqueue_style( 'megatrader-main',		MEGATRADER_CSS .'style.css', array(), REALTIME_VERSION );
-    wp_enqueue_style( 'megatrader-style',       get_stylesheet_uri(), array(), _MEGATRADER_VERSION );
-	wp_enqueue_style( 'megatrader-dev',         MEGATRADER_CSS .'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION);
-    wp_enqueue_style( 'mt-components',          MEGATRADER_CSS .'mt-components.css', array(), REALTIME_VERSION);
-    wp_enqueue_style( 'mt-navbar-style',         MEGATRADER_CSS . 'mt-navbar.css', array(), REALTIME_VERSION);
+	/* ===== CSS ===== */
+	wp_enqueue_style( 'bootstrap',           MEGATRADER_CSS . 'bootstrap.min.css',  array(), _MEGATRADER_VERSION );
+	// wp_enqueue_style( 'scrollCue-css',    MEGATRADER_CSS . 'scrollCue.min.css',  array(), _MEGATRADER_VERSION );
+	wp_enqueue_style( 'megatrader-main',     MEGATRADER_CSS . 'style.css',          array(), REALTIME_VERSION );
+	wp_enqueue_style( 'megatrader-style',    get_stylesheet_uri(),                  array(), _MEGATRADER_VERSION );
+	wp_enqueue_style( 'megatrader-dev',      MEGATRADER_CSS . 'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION );
+	wp_enqueue_style( 'mt-components',       MEGATRADER_CSS . 'mt-components.css',  array(), REALTIME_VERSION );
+	wp_enqueue_style( 'mt-navbar-style',     MEGATRADER_CSS . 'mt-navbar.css',      array(), REALTIME_VERSION );
 
+	/* ===== JS ===== */
+	wp_enqueue_script( 'bootstrap-bundle',       MEGATRADER_JS . 'bootstrap.bundle.min.js', array('jquery'), _MEGATRADER_VERSION, true );
+	// wp_enqueue_script( 'scrollCue',           MEGATRADER_JS . 'scrollCue.min.js',        array('jquery'), _MEGATRADER_VERSION, true );
+	// wp_enqueue_script( 'smoothscroll',        MEGATRADER_JS . 'smoothscroll.min.js',     array('jquery'), _MEGATRADER_VERSION, true );
+	wp_enqueue_script( 'megatrader-modal',       MEGATRADER_JS . 'modal.js',                array('jquery','bootstrap-bundle'), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-tabs',                MEGATRADER_JS . 'mt-tabs.js',              array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-addons',              MEGATRADER_JS . 'mt-addons.js',            array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-payment',             MEGATRADER_JS . 'payment-methods.js',      array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-account-picker',      MEGATRADER_JS . 'mt-account-picker.js',    array(), REALTIME_VERSION, true );
 
-	//Register All JS
-	wp_enqueue_script( 'bootstrap-bundle',	MEGATRADER_JS .'bootstrap.bundle.min.js', array('jquery'), _MEGATRADER_VERSION, true);
-	// wp_enqueue_script( 'scrollCue',			MEGATRADER_JS .'scrollCue.min.js', array('jquery'), _MEGATRADER_VERSION, true);
-	// wp_enqueue_script( 'smoothscroll',		MEGATRADER_JS .'smoothscroll.min.js', array('jquery'), _MEGATRADER_VERSION, true);
-    wp_enqueue_script( 'megatrader-modal',	MEGATRADER_JS .'modal.js', array('jquery', 'bootstrap-bundle'), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-tabs',	        MEGATRADER_JS .'mt-tabs.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-addons',	        MEGATRADER_JS .'mt-addons.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-payment',	    MEGATRADER_JS .'payment-methods.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-account-picker',	MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
-  
+	wp_enqueue_script( 'mt-account-payout',      MEGATRADER_JS . 'mt-account-payout.js',    array('bootstrap-bundle'), REALTIME_VERSION, true );
+	wp_localize_script( 'mt-account-payout', 'MT_PAYOUT_VARS', array(
+		'ajaxurl' => admin_url('admin-ajax.php'),
+		'nonce'   => wp_create_nonce('mt_payouts'), // NO CAMBIAR
+	));
 
+	wp_enqueue_script( 'mt-navbar-js',           MEGATRADER_JS . 'mt-navbar.js',            array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-tooltips-js',         MEGATRADER_JS . 'mt-tooltips.js',          array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-billing-validation-js', MEGATRADER_JS . 'billing-validation.js', array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-sidebar-js',          MEGATRADER_JS . 'mt-sidebar.js',           array(), REALTIME_VERSION, true );
 
-    wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-tooltips-js',	        MEGATRADER_JS .'mt-tooltips.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-billing-validation-js',	        MEGATRADER_JS .'billing-validation.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-sidebar-js',	        MEGATRADER_JS .'mt-sidebar.js', array(), REALTIME_VERSION, true);
-   
+	wp_enqueue_script( 'megatrader-main',        MEGATRADER_JS . 'main.js',                 array('jquery','mt-tabs'), REALTIME_VERSION, true );
+	wp_localize_script( 'megatrader-main', 'theme_ajax', array(
+		'ajax_url' => admin_url('admin-ajax.php'),
+	));
 
-
-
-    wp_enqueue_script( 'megatrader-main',	MEGATRADER_JS .'main.js', array('jquery', 'mt-tabs'), REALTIME_VERSION, true);
-
-	wp_localize_script('megatrader-main', 'theme_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php')
-    ));
-
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+	/* comment-reply para posts con comentarios anidados */
+	if ( is_singular() && comments_open() && get_option('thread_comments') ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
 }
+
 
 add_action('after_setup_theme', function () {
   $inc = trailingslashit( get_stylesheet_directory() ) . 'inc/init.php';
@@ -2047,20 +2049,6 @@ function mt_ajax_payouts_prepare_ui() {
 }
 
 
-/** Encola script + expone MT_PAYOUT_VARS (ajaxurl, nonce) */
-add_action('wp_enqueue_scripts', function () {
-  wp_enqueue_script(
-    'mt-account-payout',
-    get_stylesheet_directory_uri() . '/assets/js/mt-account-payout.js',
-    [],
-    time(),
-    true
-  );
-  wp_localize_script('mt-account-payout', 'MT_PAYOUT_VARS', [
-    'ajaxurl' => admin_url('admin-ajax.php'),
-    'nonce'   => wp_create_nonce('mt_payouts'), // NO CAMBIAR
-  ]);
-});
 
 /** AJAX endpoint: action=mt_payouts_create */
 add_action('wp_ajax_mt_payouts_create',        'mt_payouts_create_cb');
@@ -2143,6 +2131,32 @@ function mt_payouts_create_cb() {
   wp_send_json_success(['message' => 'Payout created successfully.', 'response' => $res], 200);
 }
 
+
+// Debug de transporte WP_HTTP solo para /payouts (activar con WP_DEBUG)
+if (defined('WP_DEBUG') && WP_DEBUG) {
+  add_action('http_api_debug', function($response, $context, $class, $args, $url) {
+    if (strpos($url, '/payouts') === false) return; // solo traza payouts
+
+    error_log('[HTTP_DEBUG] ctx=' . $context . ' url=' . $url);
+    if (!empty($args['headers'])) error_log('[HTTP_DEBUG] headers=' . wp_json_encode($args['headers'], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+    if (array_key_exists('body', $args)) {
+      $body = is_string($args['body']) ? $args['body'] : wp_json_encode($args['body'], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+      error_log('[HTTP_DEBUG] body.len=' . strlen((string)$body) . ' sha1=' . sha1((string)$body));
+      error_log('[HTTP_DEBUG] body=' . substr((string)$body, 0, 4000));
+    }
+
+    if (is_wp_error($response)) {
+      error_log('[HTTP_DEBUG] resp=WP_Error ' . $response->get_error_message());
+    } else {
+      $code = wp_remote_retrieve_response_code($response);
+      $ct   = wp_remote_retrieve_header($response, 'content-type');
+      $rb   = wp_remote_retrieve_body($response);
+      error_log('[HTTP_DEBUG] status=' . $code . ' ct=' . ($ct ?: 'n/a'));
+      error_log('[HTTP_DEBUG] resp.len=' . strlen((string)$rb) . ' sha1=' . sha1((string)$rb));
+      error_log('[HTTP_DEBUG] resp=' . substr((string)$rb, 0, 4000));
+    }
+  }, 10, 5);
+}
 
 
 

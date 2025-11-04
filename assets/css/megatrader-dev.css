@@ -73,9 +73,14 @@
 */
 
 /* Error modal siempre encima de cualquier otro modal */
-#mt-error-modal.modal { z-index: 4000 !important; }
+#mt-error-modal.modal {
+  z-index: 4000 !important;
+}
+
 /* Su backdrop también por encima del resto */
-.modal-backdrop.mt-error { z-index: 3990 !important; }
+.modal-backdrop.mt-error {
+  z-index: 3990 !important;
+}
 
 .modal {
   --bs-modal-width: 600px;
@@ -142,8 +147,9 @@
   width: 100%;
   max-width: 800px;
 }
-#mt-request-payout-modal .modal-dialog{
-  --bs-modal-width:700px;
+
+#mt-request-payout-modal .modal-dialog {
+  --bs-modal-width: 700px;
 }
 
 @media (min-width: 641px) and (max-width: 799px) {
@@ -1266,6 +1272,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .flex-basis-1 {
   flex-basis: 1;
 }
+
 .flex-1-1-0 {
   flex: 1 1 0;
 }
@@ -4913,6 +4920,15 @@ button#mt-payout-acc-btn:hover,
 button#mt-payout-acc-btn:active {
   background: #131210;
   border: 1px solid #d4d4d4;
+}
+
+@media (min-width: 992px) {
+  .mt-acc-menu {
+     max-height:230px;
+    overflow-y:auto ;
+    overflow-x:hidden ;
+    background-color:#1e1e1e;
+  }
 }
 
 

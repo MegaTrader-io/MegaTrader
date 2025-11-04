@@ -311,27 +311,35 @@
         });
     }
 
-    function updateHeaderFromCard(card) {
-      if (!card) return;
-      var sizeVal = card.getAttribute("data-size") || "";
-      var nameVal = card.getAttribute("data-name") || "Account";
-      var logoVal = card.getAttribute("data-logo") || "";
-      var status = (card.getAttribute("data-status") || "").toLowerCase();
+   function updateHeaderFromCard(card) {
+  if (!card) return;
 
-      var sizeEl = document.querySelector(SEL.size || "#mt-size");
-      var nameEl = document.querySelector(SEL.name || "#mt-name");
-      var logoEl = document.querySelector(
-        SEL.platformLogo || "#mt-platform-logo"
-      );
-      var badgeEl = document.querySelector(SEL.badge || "#mt-badge");
+  var sizeVal  = card.getAttribute("data-size")  || "";
+  var nameVal  = card.getAttribute("data-name")  || "Account";
+  var logoVal  = card.getAttribute("data-logo")  || "";
+  var status   = (card.getAttribute("data-status") || "").toLowerCase();
+  var platId   = card.getAttribute("data-platform-account-id")
+              || card.getAttribute("data-account-id")
+              || "";
 
-      if (sizeEl) sizeEl.textContent = sizeVal;
-      if (nameEl) nameEl.textContent = nameVal;
-      if (logoEl && logoVal) logoEl.src = logoVal;
-      if (badgeEl) {
-        badgeEl.textContent = status ? titleCase(status) : "NoStatusDefine";
-      }
-    }
+  var sizeEl = document.querySelector(SEL.size || "#mt-size");
+  var nameEl = document.querySelector(SEL.name || "#mt-name");
+  var logoEl = document.querySelector(SEL.platformLogo || "#mt-platform-logo");
+  var badgeEl = document.querySelector(SEL.badge || "#mt-badge");
+  var idBadgeEl = document.querySelector("#mt-account-id-badge"); // <— NUEVO
+
+  if (sizeEl) sizeEl.textContent = sizeVal;
+  if (nameEl) nameEl.textContent = nameVal;
+  if (logoEl && logoVal) logoEl.src = logoVal;
+  if (badgeEl) {
+    badgeEl.textContent = status
+      ? (status.replace(/-/g," ").replace(/\b\w/g, function(m){ return m.toUpperCase(); }))
+      : "NoStatusDefine";
+  }
+  // === Badge NUEVO (muestra el platform/account id) ===
+  if (idBadgeEl) idBadgeEl.textContent = platId;
+}
+
 
     function closeModal() {
       if (!modal) return;
@@ -474,6 +482,7 @@
         var bucket = statusToBucket(card.getAttribute("data-status") || "");
         forceFilter(bucket);
         setActiveCard(card);
+        updateHeaderFromCard(card);
 
         var subId0 = card.getAttribute("data-subscription-id") || "";
         var order0 = card.getAttribute("data-order-id") || "";

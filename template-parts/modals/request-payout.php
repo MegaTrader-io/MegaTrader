@@ -22,7 +22,7 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
                     data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">
                         <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
-                            style="width:30px;height:30px;">
+                            style="width:24px;height:24px;">
                     </span>
                 </button>
             </div>
