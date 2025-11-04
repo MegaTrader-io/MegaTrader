@@ -166,210 +166,51 @@ function megatrader_scripts() {
 	}
 }
 
-// Elimanr script no necesarios
 
-add_action('wp_enqueue_scripts', function () {
-  global $wp_styles;
-  if (isset($wp_styles->registered)) {
+// === BLOQUEA el CSS inexistente del plugin Address Autocomplete (blocks) ===
+add_action('after_setup_theme', function () {
+
+  // 1) Quita 'style' y 'editorStyle' del block ANTES de registrarlo
+  add_filter('block_type_metadata', function ($metadata) {
+    $is_plugin = isset($metadata['file']) && strpos($metadata['file'], 'address-autocomplete-for-woocommerce') !== false;
+    if ($is_plugin) {
+      foreach (['style', 'editorStyle'] as $k) {
+        if (!empty($metadata[$k]) && preg_match('#build/style-index\.css#', (string)$metadata[$k])) {
+          unset($metadata[$k]);
+        }
+      }
+    }
+    return $metadata;
+  }, 9);
+
+  // 2) Dequeue/Deregister si igualmente se registró
+  $strip = function () {
+    global $wp_styles;
+    if (empty($wp_styles) || empty($wp_styles->registered)) return;
     foreach ($wp_styles->registered as $h => $o) {
-      if (preg_match('#/overview/?$#', $o->src)) {
+      $src = isset($o->src) ? $o->src : '';
+      if ($src && strpos($src, 'address-field-autocomplete-for-woocommerce/build/style-index.css') !== false) {
         wp_dequeue_style($h);
         wp_deregister_style($h);
-        error_log("Bloqueado stylesheet mal formado: $h => $o->src");
+        // error_log("Blocked AddressAutocomplete CSS: $h => $src");
       }
     }
-  }
-}, 999);
+  };
+  add_action('wp_enqueue_scripts', $strip, 9999);
+  add_action('wp_print_styles',   $strip, 9999);
+  add_action('wp_enqueue_block_assets', $strip, 9999);
+  add_action('admin_enqueue_scripts',   $strip, 9999);
 
-
-/* ===========================================================
- *  PERF: Slim JS/CSS en /my-account/overview
- * =========================================================== */
-
-
-/* ===== Slim en /my-account/overview sin romper el preloader ===== */
-
-if (!function_exists('mt_is_overview')) {
-  function mt_is_overview(): bool {
-    if (function_exists('is_account_page') && is_account_page()
-        && function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('overview')) {
-      return true;
+  // 3) Como última barrera, no imprimas el <link> si logra colarse
+  add_filter('style_loader_tag', function ($html, $handle, $href) {
+    if (strpos($href, 'address-field-autocomplete-for-woocommerce/build/style-index.css') !== false) {
+      return '';
     }
-    $req  = $_SERVER['REQUEST_URI'] ?? '';
-    $path = $req ? (parse_url($req, PHP_URL_PATH) ?? '') : '';
-    return (bool) preg_match('#/my-account/overview/?$#', $path);
-  }
-}
-
-/* ——— Basura global ——— */
-remove_action('wp_head', 'print_emoji_detection_script', 7);
-remove_action('wp_print_styles', 'print_emoji_styles');
-add_action('wp_enqueue_scripts', function () { wp_deregister_script('wp-embed'); }, 100);
-
-/* ——— jquery-migrate fuera (menos checkout/cart) ——— */
-add_action('wp_default_scripts', function($scripts){
-  if (is_admin()) return;
-  $keep = (function_exists('is_checkout') && is_checkout())
-       || (function_exists('is_cart') && is_cart());
-  if ($keep) return;
-  if (!empty($scripts->registered['jquery'])) {
-    $dep = $scripts->registered['jquery']->deps ?? [];
-    $scripts->registered['jquery']->deps = array_diff($dep, ['jquery-migrate']);
-  }
+    return $html;
+  }, 10, 3);
 });
 
-/* ——— Dieta de scripts en OVERVIEW (sin tocar preloader) ——— */
-add_action('wp_enqueue_scripts', function () {
-  if (is_admin() || !mt_is_overview()) return;
-
-  // Config del preloader para overview: no auto-show, sin fallback ruidoso
-  add_action('wp_head', function () {
-    ?>
-    <script>
-      window.__MT_PRELOADER_CONFIG = { autoShow: false, fallbackOff: true };
-      // Shim no destructivo: si el preloader real no está listo, exponemos API mínima
-      (function(){
-        var el = null;
-        function elPreloader(){ return el || (el = document.querySelector('.preloader')); }
-        window.mtPreloader = window.mtPreloader || {
-          show: function(){ elPreloader()?.classList.add('is-active'); },
-          hide: function(){ elPreloader()?.classList.remove('is-active'); },
-          safeHide: function(){
-            try { this.hide(); } catch(e){}
-          }
-        };
-        // Apagar cualquier “fallback” del script real
-        window.__MT_PRELOADER_FALLBACK_OFF = true;
-        // Por si llegó activo desde el server, lo escondemos tras primer paint
-        document.addEventListener('DOMContentLoaded', function(){
-          if (window.__MT_PRELOADER_CONFIG?.autoShow === false) {
-            window.mtPreloader.safeHide();
-          }
-        }, {once:true});
-      })();
-    </script>
-    <?php
-  }, 0);
-
-  // Quita lo que sí sobra en overview (NO tocamos preloader)
-  $handles = [
-    'megatrader-main',
-    'mt-payment',
-    'mt-billing-validation-js',
-    'wc-cart-fragments',
-    // marketing/multimedia
-    'apexcharts',                 // lo cargarás on-demand dentro del módulo
-    'intlTelInput','iti-utils',
-    'swiper','swiper-bundle','swiper-init',
-    'sourcebuster-js','wc-order-attribution','order-attribution',
-    'wp-consent-api','wp-consent-api-integration',
-  ];
-  foreach ($handles as $h) {
-    if (wp_script_is($h, 'enqueued') || wp_script_is($h, 'registered')) {
-      wp_dequeue_script($h);
-      wp_deregister_script($h);
-    }
-  }
-
-  // Fallback por archivo (NO incluir preloader.js aquí)
-  $kill_by_file = [
-    'intlTelInput.min.js','utils.js',
-    'swiper-bundle.min.js','swiper-init.js',
-    'sourcebuster.min.js','order-attribution.min.js',
-    'wp-consent-api.min.js','wp-consent-api-integration.min.js',
-  ];
-  $wp_scripts = wp_scripts();
-  if ($wp_scripts && !empty($wp_scripts->registered)) {
-    foreach ($wp_scripts->registered as $h => $obj) {
-      if (empty($obj->src)) continue;
-      $base = basename(parse_url($obj->src, PHP_URL_PATH));
-      if (in_array($base, $kill_by_file, true)) {
-        wp_dequeue_script($h);
-        wp_deregister_script($h);
-      }
-    }
-  }
-}, 1000);
-
-/* ——— Defer a lo no crítico que sí queda en overview ——— */
-add_filter('script_loader_tag', function($tag, $handle){
-  $defer_list = ['bootstrap-bundle','mt-tooltips-js','mt-navbar-js','mt-sidebar-js','mt-tabs','notifications-js'];
-  return in_array($handle, $defer_list, true) ? str_replace(' src=', ' defer src=', $tag) : $tag;
-}, 10, 2);
-
-/* ——— Cart fragments siempre fuera en overview ——— */
-add_action('wp_enqueue_scripts', function () {
-  if (is_admin() || !mt_is_overview()) return;
-  if (wp_script_is('wc-cart-fragments','enqueued') || wp_script_is('wc-cart-fragments','registered')) {
-    wp_dequeue_script('wc-cart-fragments');
-    wp_deregister_script('wc-cart-fragments');
-  }
-}, 999);
-
-add_action('wp_enqueue_scripts', function () {
-  if (!function_exists('mt_is_overview') || !mt_is_overview()) return;
-
-  // ya lo haces en 99; este es un “seguro” en prioridad mayor
-  wp_dequeue_style('style-index');
-  wp_dequeue_style('wp-block-library');
-  wp_dequeue_style('wp-block-library-theme');
-  wp_dequeue_style('global-styles');
-}, 120);
-
-add_action('wp_enqueue_scripts', function () {
-  if (is_admin() || !function_exists('mt_is_overview') || !mt_is_overview()) return;
-
-  // cubre ambos nombres posibles de tus handles
-  $async_handles = [
-    'mt-navbar','mt-navbar-js',
-    'mt-sidebar','mt-sidebar-js',
-    'mt-tooltips','mt-tooltips-js',
-    'mt-tabs',
-    'mt-addons',
-    'notifications','notifications-js',
-  ];
-
-  $scripts = wp_scripts();
-  if ($scripts && !empty($scripts->registered)) {
-    foreach ($async_handles as $h) {
-      if (!empty($scripts->registered[$h])) {
-        // marca async en el registro del script
-        $scripts->registered[$h]->extra['async'] = true;
-      }
-    }
-  }
-}, 110);
-
-// Si está en async, no le apliques defer (tu filtro existente se respeta, pero reforzamos):
-add_filter('script_loader_tag', function ($tag, $handle) {
-  $scripts = wp_scripts();
-  if ($scripts && !empty($scripts->registered[$handle]) && !empty($scripts->registered[$handle]->extra['async'])) {
-    // añade el atributo si WP no lo imprimió
-    if (strpos($tag, ' async') === false) $tag = str_replace(' src=', ' async src=', $tag);
-    return $tag; // no le metas defer
-  }
-
-  // tu lista de defer sigue igual:
-  $defer_list = ['bootstrap-bundle','mt-tooltips-js','mt-navbar-js','mt-sidebar-js','mt-tabs','notifications-js'];
-  return in_array($handle, $defer_list, true) ? str_replace(' src=', ' defer src=', $tag) : $tag;
-}, 9, 2);
-
-add_action('wp_enqueue_scripts', function () {
-  if (!function_exists('mt_is_overview') || !mt_is_overview()) return;
-
-  // Evita que el picker se cargue en el primer paint
-  foreach (['mt-account-picker','mt_account_picker','mt-picker'] as $h) {
-    if (wp_script_is($h, 'enqueued') || wp_script_is($h, 'registered')) {
-      wp_dequeue_script($h);
-    }
-  }
-}, 1200);
-
-
-
-
-// End Desencolar JS de checkout en Overview
-
+// ===END  BLOQUEA el CSS inexistente del plugin Address Autocomplete (blocks) ===
 
 add_action('after_setup_theme', function () {
   $inc = trailingslashit( get_stylesheet_directory() ) . 'inc/init.php';
