@@ -168,6 +168,7 @@ function megatrader_scripts() {
 
 // Elimanr script no necesarios
 
+
 /* ===========================================================
  *  PERF: Slim JS/CSS en /my-account/overview
  * =========================================================== */
@@ -291,6 +292,66 @@ add_action('wp_enqueue_scripts', function () {
     wp_deregister_script('wc-cart-fragments');
   }
 }, 999);
+
+add_action('wp_enqueue_scripts', function () {
+  if (!function_exists('mt_is_overview') || !mt_is_overview()) return;
+
+  // ya lo haces en 99; este es un “seguro” en prioridad mayor
+  wp_dequeue_style('style-index');
+  wp_dequeue_style('wp-block-library');
+  wp_dequeue_style('wp-block-library-theme');
+  wp_dequeue_style('global-styles');
+}, 120);
+
+add_action('wp_enqueue_scripts', function () {
+  if (is_admin() || !function_exists('mt_is_overview') || !mt_is_overview()) return;
+
+  // cubre ambos nombres posibles de tus handles
+  $async_handles = [
+    'mt-navbar','mt-navbar-js',
+    'mt-sidebar','mt-sidebar-js',
+    'mt-tooltips','mt-tooltips-js',
+    'mt-tabs',
+    'mt-addons',
+    'notifications','notifications-js',
+  ];
+
+  $scripts = wp_scripts();
+  if ($scripts && !empty($scripts->registered)) {
+    foreach ($async_handles as $h) {
+      if (!empty($scripts->registered[$h])) {
+        // marca async en el registro del script
+        $scripts->registered[$h]->extra['async'] = true;
+      }
+    }
+  }
+}, 110);
+
+// Si está en async, no le apliques defer (tu filtro existente se respeta, pero reforzamos):
+add_filter('script_loader_tag', function ($tag, $handle) {
+  $scripts = wp_scripts();
+  if ($scripts && !empty($scripts->registered[$handle]) && !empty($scripts->registered[$handle]->extra['async'])) {
+    // añade el atributo si WP no lo imprimió
+    if (strpos($tag, ' async') === false) $tag = str_replace(' src=', ' async src=', $tag);
+    return $tag; // no le metas defer
+  }
+
+  // tu lista de defer sigue igual:
+  $defer_list = ['bootstrap-bundle','mt-tooltips-js','mt-navbar-js','mt-sidebar-js','mt-tabs','notifications-js'];
+  return in_array($handle, $defer_list, true) ? str_replace(' src=', ' defer src=', $tag) : $tag;
+}, 9, 2);
+
+add_action('wp_enqueue_scripts', function () {
+  if (!function_exists('mt_is_overview') || !mt_is_overview()) return;
+
+  // Evita que el picker se cargue en el primer paint
+  foreach (['mt-account-picker','mt_account_picker','mt-picker'] as $h) {
+    if (wp_script_is($h, 'enqueued') || wp_script_is($h, 'registered')) {
+      wp_dequeue_script($h);
+    }
+  }
+}, 1200);
+
 
 
 

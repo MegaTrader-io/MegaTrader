@@ -1,189 +1,162 @@
-jQuery(document).ready(function ($) {
+jQuery(function ($) {
   const preloader = $(".preloader");
+  const MT_DEBUG = true; // pon true si quieres logs
 
-  $.preloader = {
-      show: function () {
-          preloader.fadeIn(150);
-      },
-      hide: function () {
-          preloader.fadeOut(150);
-      },
-      toggle: function () {
-          preloader.fadeToggle(150);
-      },
-      isVisible: function () {
-          return preloader.is(':visible');
-      }
+  // Helpers
+  function show() {
+    preloader.length && preloader.stop(true, true).fadeIn(120);
+  }
+  function hide() {
+    preloader.length && preloader.stop(true, true).fadeOut(120);
+  }
+  function log(...a) {
+    if (MT_DEBUG) console.log.apply(console, a);
   }
 
+  // 1) Oculta rápido en primera carga (evita “long-task” visual)
+  document.addEventListener("DOMContentLoaded", () => hide(), { once: true });
+
+  // 2) Enlaces: sólo internos, sin target _blank ni modificadores
   $(document).on("click", "a", function (e) {
-    const href = $(this).attr("href");
+    const a = this;
+    const href = a.getAttribute("href") || "";
     if (
       !href ||
       href.startsWith("#") ||
       href.startsWith("javascript:") ||
-      href.includes("mailto:") ||
-      href.includes("tel:")
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:")
     )
       return;
 
+    // click principal sin Ctrl/Cmd/Alt/Shift y sin target=_blank
+    const isPlainClick =
+      e.which === 1 && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey;
     const isInternal = href.startsWith(location.origin) || href.startsWith("/");
-    if (isInternal && preloader.length) {
-      console.log("🔗 Mostrando preloader (enlace interno):", href);
-      preloader.fadeIn(150);
+    const isNewTab = a.target && a.target === "_blank";
+
+    if (isPlainClick && isInternal && !isNewTab) {
+      show(); // no animación costosa antes de unload
+      log("🔗 preloader (link):", href);
     }
   });
 
-  $("form").on("submit", function (e) {
-    if (preloader.length) {
-      console.log("📤 Mostrando preloader (formulario enviado)");
-      preloader.fadeIn(150);
+  // 3) Formularios: limita el alcance (nada de $('form').text())
+  $(document).on("submit", "form", function () {
+    show();
+    const $form = $(this);
 
-    // Verificar errores 2 segundos después
+    // Revisión ligera de errores sólo en ese form, no en todo el DOM
     setTimeout(() => {
-        const visibleErrors = $('.woocommerce-error, .woocommerce-invalid, .invalid-feedback:visible').length > 0;
-        const isInvalidCard = $('form').text().toLowerCase().includes('invalid card');
+      const hasErrors =
+        $form.find(
+          ".woocommerce-error, .woocommerce-invalid, .invalid-feedback:visible"
+        ).length > 0;
+      if (hasErrors) {
+        hide();
+        log("🛑 errores detectados en form → hide");
+      }
+    }, 1500);
+  });
 
-        if (visibleErrors || isInvalidCard) {
-            console.log('🛑 Error detectado (tarjeta u otro) → ocultando preloader');
-            preloader.fadeOut(200);
-        }
-    }, 2000);
+  // 4) Eventos Woo conocidos → hide
+  $(document.body).on("checkout_error checkout_place_order_errored", hide);
+
+  // 5) Modals propios: si abres un modal, no dejes el overlay activo
+  $(document).on("shown.bs.modal hidden.bs.modal", "#emailModal", hide);
+
+  // 6) Cupón: animación corta, sin trabajo extra
+  $(document).on(
+    "click",
+    ".apply-btn, .woocommerce-remove-coupon",
+    function () {
+      show();
+      setTimeout(hide, 800);
     }
-  });
+  );
 
-  $(document).on("click", ".open-email-modal-btn", function (e) {
-    e.preventDefault();
-    if (preloader.length) {
-      console.log("👆 Click en .open-email-modal-btn");
-      preloader.fadeIn(150, function () {
-        setTimeout(() => {
-          $("#emailModal").modal("show");
-        }, 1000);
-      });
+  // 7) Fallback: sólo si sigue visible y NO hay errores en pantalla
+  setTimeout(() => {
+    if (!preloader.is(":visible")) return;
+    const hasAnyErrors =
+      $(".woocommerce-error:visible, .invalid-feedback:visible").length > 0;
+    if (!hasAnyErrors) {
+      hide();
+      log("⏳ fallback → hide");
     }
-  });
+  }, 4000);
 
-  $("#emailModal").on("shown.bs.modal", function () {
-    console.log("📩 Modal #emailModal mostrado → ocultando preloader");
-    preloader.fadeOut(150);
-  });
-
-// WooCommerce: Mostrar preloader al hacer clic en #place_order
-// $(document).on('click', '#place_order', function () {
-//     console.log('🛒 Click en botón PLACE ORDER');
-//     preloader.fadeIn(150);
-
-//     // Verificar errores 2 segundos después
-//     setTimeout(() => {
-//         const visibleErrors = $('.woocommerce-error, .woocommerce-invalid, .invalid-feedback:visible').length > 0;
-//         const isInvalidCard = $('form').text().toLowerCase().includes('invalid card');
-
-//         if (visibleErrors || isInvalidCard) {
-//             console.log('🛑 Error detectado (tarjeta u otro) → ocultando preloader');
-//             preloader.fadeOut(200);
-//         }
-//     }, 2000);
-// });
-
-
-  $(document.body).on("checkout_error", function () {
-    console.log("✅ Evento checkout_error detectado");
-    preloader.fadeOut(150);
-  });
-
-  $(document.body).on("checkout_place_order_errored", function () {
-    console.log("✅ Evento checkout_place_order_errored detectado");
-    preloader.fadeOut(150);
-  });
-
-  $(document).on("click", ".apply-btn", function () {
-    console.log("🏷️ Click en .apply-btn → mostrando preloader");
-    preloader.fadeIn(150, function () {
-      setTimeout(() => {
-        preloader.fadeOut(150);
-        console.log("🏷️ Delay Apply Coupon → ocultando preloader");
-      }, 1000);
-    });
-  });
-
-  $(document).on("click", ".woocommerce-remove-coupon", function () {
-    console.log("❌ Click en [Remove Coupon] → mostrando preloader");
-    preloader.fadeIn(150, function () {
-      setTimeout(() => {
-        preloader.fadeOut(150);
-        console.log("❌ Delay Remove Coupon → ocultando preloader");
-      }, 1000);
-    });
-  });
-
- setTimeout(() => {
-    const hasErrors = $('.woocommerce-error, .woocommerce-invalid, .invalid-feedback:visible').length > 0;
-    const isInvalidCard = $('form').text().toLowerCase().includes('invalid card');
-
-    if (preloader.is(':visible')) {
-        console.log('⚠️ Fallback: preloader aún visible...');
-
-        if (hasErrors || isInvalidCard) {
-            console.log('🚫 Errores detectados en fallback → ocultando preloader');
-        } else {
-            console.log('⏳ Sin errores, ocultando por seguridad');
+  // 8) Observers SOLO donde toca (evita trabajo en overview)
+  // Woo errors dinámicos (ligero)
+  const wooRoot = document.querySelector(".woocommerce");
+  if (wooRoot && document.body.classList.contains("woocommerce-checkout")) {
+    const wooObserver = new MutationObserver((list) => {
+      for (const m of list) {
+        for (const n of m.addedNodes) {
+          if (
+            n.nodeType === 1 &&
+            (n.classList.contains("woocommerce-error") ||
+              n.classList.contains("woocommerce-invalid"))
+          ) {
+            log(
+              "🛑 Woo error en DOM:",
+              (n.textContent || "").trim().slice(0, 140)
+            );
+          }
         }
-
-        preloader.fadeOut(200);
-    }
-}, 7000);
-
-  const wooObserver = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (
-          node.nodeType === 1 &&
-          (node.classList.contains("woocommerce-error") ||
-            node.classList.contains("woocommerce-invalid"))
-        ) {
-          console.log(
-            "🛑 WooCommerce insertó error en DOM:",
-            node.textContent.trim()
-          );
-        }
-      });
+      }
     });
-  });
-
-  const wooTarget = document.querySelector(".woocommerce");
-  if (wooTarget) {
-    wooObserver.observe(wooTarget, { childList: true, subtree: true });
-  }
-
-    // Preloader para cambios en los Add-ons (activar/desactivar)
-  const addonsContainer = document.querySelector('.single-checkout-widget.checkout-addons');
-
-  if (addonsContainer) {
-    const addonObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' &&
-          mutation.attributeName === 'class' &&
-          mutation.target.classList.contains('addons-item')
-        ) {
-          console.log("🔄 Cambio en .addons-item:", mutation.target);
-          console.log("📦 Ejecutando preloader por cambio en clase active");
-          preloader.fadeIn(150);
-
-          setTimeout(() => {
-            preloader.fadeOut(150);
-            console.log("⏳ Preloader finalizado para .addons-item");
-          }, 1000);
-        }
-      });
-    });
-
-    const addonItems = addonsContainer.querySelectorAll('.addons-item');
-    addonItems.forEach((item) => {
-      addonObserver.observe(item, { attributes: true, attributeFilter: ['class'] });
+    wooObserver.observe(wooRoot, { childList: true, subtree: true });
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (document.hidden) wooObserver.disconnect();
+      },
+      { once: true }
+    );
+    window.addEventListener("beforeunload", () => wooObserver.disconnect(), {
+      once: true,
     });
   }
 
-  
+  // Add-ons: sólo observa si existe (checkout), no en overview
+  const addons = document.querySelector(
+    ".single-checkout-widget.checkout-addons"
+  );
+  if (addons && document.body.classList.contains("woocommerce-checkout")) {
+    const addonObserver = new MutationObserver((list) => {
+      let touched = false;
+      for (const m of list) {
+        if (
+          m.type === "attributes" &&
+          m.attributeName === "class" &&
+          m.target instanceof Element &&
+          m.target.classList.contains("addons-item")
+        ) {
+          touched = true;
+          break;
+        }
+      }
+      if (touched) {
+        show();
+        setTimeout(hide, 800);
+      }
+    });
+    addons.querySelectorAll(".addons-item").forEach((el) => {
+      addonObserver.observe(el, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    });
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (document.hidden) addonObserver.disconnect();
+      },
+      { once: true }
+    );
+    window.addEventListener("beforeunload", () => addonObserver.disconnect(), {
+      once: true,
+    });
+  }
 });

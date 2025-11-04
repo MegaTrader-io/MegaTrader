@@ -3066,3 +3066,47 @@ if (document.readyState === "loading") {
   if (document.readyState !== "loading") init();
   else document.addEventListener("DOMContentLoaded", init);
 })();
+
+(function(){
+  const MODAL_ID = 'changeSubcriptionModal';
+  const PICKER_SRC = '/wp-content/themes/megatrader-addons/assets/js/mt-account-picker.js';
+
+  let loadingPicker = false;
+
+  function loadPickerOnce(cb){
+    if (window.mtPicker) { cb && cb(); return; }
+    if (loadingPicker) return;
+    loadingPicker = true;
+
+    const s = document.createElement('script');
+    s.id = 'mt-picker-js';
+    s.src = PICKER_SRC;
+    s.defer = true;
+    s.onload = function(){
+      loadingPicker = false;
+      if (window.mtPreloader) window.mtPreloader.hide();
+      if (window.mtPicker && typeof window.mtPicker.init === 'function') window.mtPicker.init();
+      cb && cb();
+    };
+    s.onerror = function(){ loadingPicker = false; if (window.mtPreloader) window.mtPreloader.hide(); };
+    if (window.mtPreloader) window.mtPreloader.show();
+    document.head.appendChild(s);
+  }
+
+  // 1) si hacen click en el botón que abre el modal → prepara el JS
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('[data-bs-target="#'+MODAL_ID+'"]');
+    if (btn) loadPickerOnce();
+  });
+
+  // 2) si el modal se va a mostrar por cualquier vía → garantiza el JS
+  const modal = document.getElementById(MODAL_ID);
+  if (modal) {
+    modal.addEventListener('show.bs.modal', function(){
+      loadPickerOnce();
+    });
+  }
+})();
+
+
+

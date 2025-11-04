@@ -13,13 +13,71 @@ if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
 $t0 = microtime(true);
 if (!function_exists('mt_bench')) {
   function mt_bench($label, $t0) {
-    error_log('[MT BENCH] ' . $label . ' +' . number_format((microtime(true) - $t0) * 1000, 1) . 'ms');
+    $ms = number_format((microtime(true) - $t0) * 1000, 1);
+    // Log temporal (debug)
+    error_log('[MT BENCH] ' . $label . ' +' . $ms . 'ms');
+    // Server-Timing (visible en DevTools → Network → Headers)
+    $metric = preg_replace('/[^a-z0-9_]/i', '_', (string)$label);
+    header(sprintf('Server-Timing: %s;dur=%s', $metric, $ms), false);
   }
 }
 register_shutdown_function(function() use ($t0){
-  // Log total al finalizar
   mt_bench('TOTAL_PAGE', $t0);
 });
+
+/* === Utilidades de caché (temporales) === */
+if (!function_exists('mt_fetch_accounts_cached')) {
+  /**
+   * Trae cuentas con cache 30s y fallback plain->encoded.
+   * Devuelve array [$accounts, $variant] donde $variant es 'plain' o 'encoded'.
+   */
+  function mt_fetch_accounts_cached(string $email_plain, string $email_api, float $t0): array {
+    $cache_key = 'mt_acc_' . md5($email_plain ?: $email_api);
+    $cached = get_transient($cache_key);
+    if ($cached !== false && is_array($cached) && isset($cached['data'], $cached['variant'])) {
+      mt_bench('accounts_from_cache_'.$cached['variant'], $t0);
+      return [$cached['data'], $cached['variant']];
+    }
+
+    $accounts = [];
+    $variant  = 'plain';
+
+    try {
+      $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_plain, 1, 50) : [];
+    } catch (Throwable $e) {
+      if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][accounts_plain][EX] '.$e->getMessage());
+    }
+
+    if (empty($accounts)) {
+      try {
+        $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_api, 1, 50) : [];
+        $variant  = 'encoded';
+      } catch (Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][accounts_enc][EX] '.$e->getMessage());
+      }
+    }
+
+    set_transient($cache_key, ['data' => $accounts, 'variant' => $variant], 30); // 30s
+    mt_bench('accounts_fetched_'.$variant, $t0);
+    return [$accounts, $variant];
+  }
+}
+
+if (!function_exists('mt_get_agreement_status_cached')) {
+  /**
+   * Cachea el estado del acuerdo por 5 min.
+   */
+  function mt_get_agreement_status_cached(string $email_api, float $t0) {
+    if ($email_api === '') return null;
+    $k = 'mt_agreement_' . md5($email_api);
+    $cached = get_transient($k);
+    if ($cached !== false) { mt_bench('agreement_from_cache', $t0); return $cached; }
+    $data = (function_exists('mt_get_agreement_status_by_email')) ? mt_get_agreement_status_by_email($email_api, 0) : null;
+    set_transient($k, $data, 5 * MINUTE_IN_SECONDS);
+    mt_bench('agreement_fetched', $t0);
+    return $data;
+  }
+}
 
 /* === Estado base === */
 $mt_user_email = '';
@@ -33,8 +91,10 @@ $mt_cnt_encoded = 0;
 $mt_feature_content = [];
 $mt_account_data = [];
 $mt_daily_journal = [];
+$__selected_subscription_id = '';
 $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
 $__can_manage_subscription = true;
+$mt_chart = [];
 
 /* === Usuario + email saneado === */
 if (is_user_logged_in()) {
@@ -57,41 +117,17 @@ if (is_user_logged_in()) {
       $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
       mt_bench('email_sanitized', $t0);
 
-      /* === 1) Traer cuentas del usuario (probar plain y encoded para evitar doble encoding) === */
-      $accounts_plain = [];
-      $accounts_enc = [];
+      /* === 1) Traer cuentas (cache 30s, plain -> encoded) === */
+      list($accounts, $mt_fetch_variant) = mt_fetch_accounts_cached($mt_user_email, $mt_user_email_api, $t0);
+      $mt_cnt_plain   = ($mt_fetch_variant === 'plain')   ? (is_array($accounts) ? count($accounts) : 0) : 0;
+      $mt_cnt_encoded = ($mt_fetch_variant === 'encoded') ? (is_array($accounts) ? count($accounts) : 0) : 0;
 
-      try {
-        $accounts_plain = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($mt_user_email, 1, 50) : [];
-      } catch (Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][accounts_plain][EX] ' . $e->getMessage());
-      }
-
-      try {
-        $accounts_enc = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($mt_user_email_api, 1, 50) : [];
-      } catch (Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][accounts_enc][EX] ' . $e->getMessage());
-      }
-
-      $mt_cnt_plain = is_array($accounts_plain) ? count($accounts_plain) : 0;
-      $mt_cnt_encoded = is_array($accounts_enc) ? count($accounts_enc) : 0;
-
-      if ($mt_cnt_plain >= $mt_cnt_encoded) {
-        $accounts = $accounts_plain;
-        $mt_fetch_variant = 'plain';
-      } else {
-        $accounts = $accounts_enc;
-        $mt_fetch_variant = 'encoded';
-      }
       if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('[MT][email] plain=' . $mt_user_email . ' | encoded=' . $mt_user_email_api . ' | cnt_plain=' . $mt_cnt_plain . ' | cnt_enc=' . $mt_cnt_encoded . ' | variant=' . $mt_fetch_variant);
+        error_log('[MT][email] plain='.$mt_user_email.' | encoded='.$mt_user_email_api.' | variant='.$mt_fetch_variant.' | cnt='.count((array)$accounts));
       }
-      mt_bench('accounts_fetched_'.$mt_fetch_variant, $t0);
 
-      // === Agreement Modal ===
-      $__mt_agreement = (function_exists('mt_get_agreement_status_by_email') && $mt_user_email_api)
-        ? mt_get_agreement_status_by_email($mt_user_email_api, 0)
-        : null;
+      // === Agreement Modal (con caché 5min) ===
+      $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api, $t0);
 
       $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
         ? (string) $__mt_agreement['agreementURL']
@@ -185,13 +221,9 @@ if (is_user_logged_in()) {
         }
         mt_bench('chart_payload', $t0);
 
-        if (
-          !empty($mt_selected_id)
-          && function_exists('mt_accounts_resolve_account_by_id')
-          && function_exists('mt_accounts_build_account_data')
-        ) {
-          $acc3 = mt_accounts_resolve_account_by_id($mt_selected_id);
-          if ($acc3) $mt_account_data = mt_accounts_build_account_data($acc3);
+        // Account data (re-usa $resolved, evita resolve duplicado)
+        if ($resolved && function_exists('mt_accounts_build_account_data')) {
+          $mt_account_data = mt_accounts_build_account_data($resolved);
         }
         mt_bench('account_data_payload', $t0);
       }
@@ -268,11 +300,11 @@ if (is_user_logged_in()) {
       $__mt_account_passed_show = (in_array($__status_norm, ['PENDING_ACTIVATION', 'PASSED'], true)) ? '1' : '0';
 
       $__note_passed_with_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
-      $__note_passed_no_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
+      $__note_passed_no_id    = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
 
-      $__body_subtitle = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_default'];
+      $__body_subtitle                 = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_default'];
       $__body_subtitle_w_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_w_activation_id'];
-      $__body_subtitle_no_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
+      $__body_subtitle_no_activation_id= Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
 
       $__note_text = '';
       $__show_note = false;
@@ -304,6 +336,7 @@ if (is_user_logged_in()) {
 
       $__btn_classes = [];
       if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
+        // botón activo
       } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
         $__btn_classes[] = 'disabled';
       } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
@@ -319,7 +352,6 @@ if (is_user_logged_in()) {
       );
 
       $__can_manage_subscription = true;
-
       if (!empty($mt_account_ui['accounts']) || !empty($mt_account_ui['current'])) {
         $selRow = null;
 
@@ -342,7 +374,6 @@ if (is_user_logged_in()) {
         if (is_array($selRow)) {
           $__selected_subscription_id = (string) ($selRow['subscriptionId'] ?? '');
           $hasSubLegacy = !empty($selRow['hasSubscription']);
-
           $__can_manage_subscription = ($__selected_subscription_id !== '' || $hasSubLegacy) ? true : false;
         }
       }
@@ -371,6 +402,14 @@ if (empty($mt_account_ui['accounts'])) {
 }
 
 get_header();
+
+// --- early flush para romper buffering (Cloudflare/Nginx suelen requerir >1KB) ---
+@ini_set('zlib.output_compression', '0');
+while (ob_get_level() > 0) { @ob_end_flush(); }
+echo str_repeat("<!-- mt-preflush -->", 80); // ~2KB
+flush();
+// ------------------------------------------------------------------------------
+
 mt_bench('header_sent', $t0);
 ?>
 <?php wp_body_open(); ?>
