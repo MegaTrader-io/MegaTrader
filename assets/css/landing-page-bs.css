@@ -669,3 +669,8 @@
     width: 24px;
     height: 24px;
 }
+
+.payouts-and-comparison__platforms {
+    display: flex;
+    gap: 41px;
+}

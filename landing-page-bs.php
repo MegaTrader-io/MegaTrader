@@ -405,7 +405,7 @@ get_header('landing-page-bs');
                              alt="flash">
 
                         <div class="payouts-and-comparison__content">
-                            <div class="d-flex">
+                            <div class="payouts-and-comparison__platforms">
                                 <svg width="110" height="30" viewBox="0 0 110 30" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <path d="M0 15C0 6.71573 6.71573 0 15 0C23.2843 0 30 6.71573 30 15C30 23.2843 23.2843 30 15 30C6.71573 30 0 23.2843 0 15Z"
