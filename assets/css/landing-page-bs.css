@@ -592,7 +592,7 @@
     width: 100%;
 }
 
-.payouts-and-comparison__title {
+.payouts-and-comparison__title, .comparison__header {
     color: white;
     font-size: 40px;
     font-weight: 300;
