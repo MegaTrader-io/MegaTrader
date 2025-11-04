@@ -575,6 +575,210 @@
     padding-inline: 16px;
 }
 
+.testimonials {
+    display: flex;
+    gap: 16px;
+    padding-block: 16px;
+}
+
+.testimonials__card {
+    display: flex;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.testimonials__image {
+    width: 200px;
+    height: 200px;
+    border-radius: 16px 0 0 16px;
+    object-fit: cover;
+}
+
+.testimonials__content {
+    padding: 32px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: var(--smoke-color2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testimonials__content > * + * {
+    margin-top: 16px;
+}
+
+.testimonials__quote {
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.testimonials__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.testimonials__author {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.testimonials__name {
+    display: inline-block;
+}
+
+.testimonials__icon {
+    flex-shrink: 0;
+}
+
+.testimonials__role {
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.competition {
+    padding: 48px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #1E1E1E 0%, #0A0A0A 100%);
+}
+
+.competition__wrapper {
+    display: inline-flex;
+    justify-content: center;
+    gap: 48px;
+}
+
+.competition__content {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 32px;
+}
+
+.competition__title {
+    align-self: stretch;
+    color: #fff;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    word-wrap: break-word;
+}
+
+.competition__rewards {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.competition__reward-card {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 24px;
+    background: #1E1E1E;
+    border-radius: 16px;
+    overflow: hidden;
+    gap: 8px;
+}
+
+.competition__reward-header {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.competition__reward-amount {
+    color: #FFB34A;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 32px;
+}
+
+.competition__reward-label {
+    color: #A8A29E;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.competition__entry-note {
+    margin-bottom: 0;
+}
+
+.competition__entry-note {
+    color: #A8A29E;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    max-width: 760px;
+    width: 100%;
+}
+
+.competition__perks {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+}
+
+.competition__perk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    align-self: stretch;
+}
+
+.competition__perk-text {
+    color: #A8A29E;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.competition__cta {
+    margin-top: 8px;
+}
+
+.competition__image {
+    flex: 1 1 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.competition__image-placeholder {
+    flex: 1 1 0;
+    align-self: stretch;
+    background: #1E1E1E;
+    border-radius: 16px;
+}
+
 .payouts-and-comparison {
     background: var(--smoke-color2);
 }

@@ -316,13 +316,19 @@ get_header('landing-page-bs');
 
                     <div class="competition__perks">
                         <div class="competition__perk">
-                            <!-- SVG ICON -->
+                            <img class="payouts-and-comparison__checked"
+                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                 alt="checked circle">
+
                             <span class="competition__perk-text">
           Top 400 traders earn Cash Rewards
         </span>
                         </div>
                         <div class="competition__perk">
-                            <!-- SVG ICON -->
+                            <img class="payouts-and-comparison__checked"
+                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                 alt="checked circle">
+
                             <span class="competition__perk-text">
           Top 200 also get a Live Account
         </span>
