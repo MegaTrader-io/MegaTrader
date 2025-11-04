@@ -2,6 +2,15 @@ jQuery(function ($) {
   const preloader = $(".preloader");
   const MT_DEBUG = true; // pon true si quieres logs
 
+  $.preloader = {
+    show: function () {
+        preloader.show();
+    },
+    hide: function () {
+        preloader.hide();
+    }
+  }
+
   // Helpers
   function show() {
     preloader.length && preloader.stop(true, true).show();
