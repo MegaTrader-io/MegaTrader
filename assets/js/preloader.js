@@ -4,10 +4,10 @@ jQuery(function ($) {
 
   // Helpers
   function show() {
-    preloader.length && preloader.stop(true, true).fadeIn(120);
+    preloader.length && preloader.stop(true, true).show();
   }
   function hide() {
-    preloader.length && preloader.stop(true, true).fadeOut(120);
+    preloader.length && preloader.stop(true, true).hide();
   }
   function log(...a) {
     if (MT_DEBUG) console.log.apply(console, a);
@@ -76,15 +76,13 @@ jQuery(function ($) {
   );
 
   // 7) Fallback: sólo si sigue visible y NO hay errores en pantalla
-  setTimeout(() => {
     if (!preloader.is(":visible")) return;
     const hasAnyErrors =
-      $(".woocommerce-error:visible, .invalid-feedback:visible").length > 0;
+        $(".woocommerce-error:visible, .invalid-feedback:visible").length > 0;
     if (!hasAnyErrors) {
-      hide();
-      log("⏳ fallback → hide");
+        hide();
+        log("⏳ fallback → hide");
     }
-  }, 4000);
 
   // 8) Observers SOLO donde toca (evita trabajo en overview)
   // Woo errors dinámicos (ligero)
@@ -160,3 +158,4 @@ jQuery(function ($) {
     });
   }
 });
+

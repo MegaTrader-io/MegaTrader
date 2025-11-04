@@ -403,6 +403,7 @@ if (empty($mt_account_ui['accounts'])) {
 
 get_header();
 
+
 // --- early flush para romper buffering (Cloudflare/Nginx suelen requerir >1KB) ---
 @ini_set('zlib.output_compression', '0');
 while (ob_get_level() > 0) { @ob_end_flush(); }
