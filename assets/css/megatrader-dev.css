@@ -4927,9 +4927,10 @@ button#mt-payout-acc-btn:active {
      max-height:230px;
     overflow-y:auto ;
     overflow-x:hidden ;
-    background-color:#1e1e1e;
+  
   }
 }
 
 
 /***** End Modal Payout **/
+

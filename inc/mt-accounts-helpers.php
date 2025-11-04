@@ -2,6 +2,20 @@
 // File: public_html/wp-content/themes/megatrader-addons/inc/mt-accounts-helpers.php
 defined('ABSPATH') || exit;
 
+// ==== Cache utils (transients + memo) ====
+if (!function_exists('mt_cache_key')) {
+  function mt_cache_key(string $ns, array $parts): string {
+    return $ns . ':' . md5(implode('|', array_map('strval', $parts)));
+  }
+}
+if (!function_exists('mt_cache_get')) {
+  function mt_cache_get(string $key) { return get_transient($key); }
+}
+if (!function_exists('mt_cache_set')) {
+  function mt_cache_set(string $key, $value, int $ttl = 120) { return set_transient($key, $value, $ttl); }
+}
+
+
 class MT_Accounts
 {
   public static function is_active_status($status): bool
@@ -604,34 +618,48 @@ if (!function_exists('mt_accounts_ajax_performance')) {
 if (!function_exists('mt_accounts_resolve_account_by_id')) {
   function mt_accounts_resolve_account_by_id(string $accountId)
   {
+    static $memo = []; // petición-local
+    $accountId = trim((string)$accountId);
+    if ($accountId === '') return null;
+
+    // 1) memo de request
+    if (isset($memo[$accountId])) return $memo[$accountId];
+
+    // 2) transient corto (reduce golpes a la API)
+    $tkey = mt_cache_key('mt:acc_by_id', [$accountId]);
+    $cached = mt_cache_get($tkey);
+    if (is_array($cached)) { $memo[$accountId] = $cached; return $cached; }
+
     $acc = null;
 
-    // 1) API directa
-    if (class_exists('MT_Api') && method_exists('MT_Api', 'fetch_account_by_id')) {
-      try {
-        $acc = MT_Api::fetch_account_by_id($accountId);
-      } catch (Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG)
-          error_log('[MT][acc_resolve][by_id] ' . $e->getMessage());
+    // 3) API directa
+    if (class_exists('MT_Api') && method_exists('MT_Api','fetch_account_by_id')) {
+      try { $acc = MT_Api::fetch_account_by_id($accountId); } catch (\Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][by_id] '.$e->getMessage());
       }
     }
 
-    // 2) Fallback: shortcode + pick
+    // 4) Fallback: shortcode + pick
     if (!$acc && function_exists('mt_accounts_fetch_account_json_by_shortcode')) {
       try {
         $json = mt_accounts_fetch_account_json_by_shortcode($accountId, 1, 1);
         if (function_exists('mt_accounts_pick_account_from_json')) {
           $acc = mt_accounts_pick_account_from_json($json, $accountId);
         }
-      } catch (Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG)
-          error_log('[MT][acc_resolve][shortcode] ' . $e->getMessage());
+      } catch (\Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][shortcode] '.$e->getMessage());
       }
     }
 
-    return (is_array($acc) && !empty($acc)) ? $acc : null;
+    $acc = (is_array($acc) && !empty($acc)) ? $acc : null;
+
+    // 5) guarda 90s
+    if ($acc) mt_cache_set($tkey, $acc, 90);
+    $memo[$accountId] = $acc;
+    return $acc;
   }
 }
+
 
 
 // ===== MONEY / PERCENT HELPERS =====
@@ -1125,141 +1153,117 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
   function mt_accounts_build_performance_chart(array $account): array
   {
     $tz = new DateTimeZone('UTC');
+    $todayDt = new DateTime('now', $tz); $todayDt->setTime(0,0,0);
 
-    $todayDt = new DateTime('now', $tz);
-    $todayDt->setTime(0, 0, 0);
-
-    $firstRawTop = (string) ($account['firstTradeDate'] ?? '');
-    $firstRawMetric = (string) ($account['metrics']['firstTradeDate'] ?? $account['metric']['firstTradeDate'] ?? '');
-    $firstRawAlt1 = (string) ($account['createdAt'] ?? '');
-    $firstRawAlt2 = (string) ($account['owner']['account']['createdAt'] ?? '');
-
+    $firstRawTop   = (string)($account['firstTradeDate'] ?? '');
+    $firstRawMetric= (string)($account['metrics']['firstTradeDate'] ?? $account['metric']['firstTradeDate'] ?? '');
+    $firstRawAlt1  = (string)($account['createdAt'] ?? '');
+    $firstRawAlt2  = (string)($account['owner']['account']['createdAt'] ?? '');
     $firstRaw = $firstRawTop ?: ($firstRawMetric ?: ($firstRawAlt1 ?: $firstRawAlt2));
-    $firstDt = $firstRaw ? new DateTime($firstRaw, $tz) : clone $todayDt;
-    $firstDt->setTime(0, 0, 0);
-    if ($firstDt > $todayDt) {
-      $firstDt = clone $todayDt;
-    }
 
-    $accountId = (string) ($account['accountId'] ?? $account['id'] ?? '');
+    $firstDt = $firstRaw ? new DateTime($firstRaw,$tz) : clone $todayDt;
+    $firstDt->setTime(0,0,0);
+    if ($firstDt > $todayDt) $firstDt = clone $todayDt;
 
-
-    $totalSinceStart = (int) $firstDt->diff($todayDt)->days + 1;
+    $accountId = (string)($account['accountId'] ?? $account['id'] ?? '');
+    $totalSinceStart = (int)$firstDt->diff($todayDt)->days + 1;
     $pointsToLoad = min(30, max(1, $totalSinceStart));
 
-    $startDt = (clone $todayDt)->modify('-' . ($pointsToLoad - 1) . ' days');
-    $dates = [];
-    for ($i = 0; $i < $pointsToLoad; $i++) {
-      $ymd = $startDt->format('Y-m-d');
-      $dates[] = ['fromDate' => $ymd, 'toDate' => $ymd];
-      $startDt->modify('+1 day');
+    $startDt = (clone $todayDt)->modify('-'.($pointsToLoad-1).' days');
+    $from = $startDt->format('Y-m-d'); $to = $todayDt->format('Y-m-d');
+
+    // === 1 sola consulta del rango ===
+    $resp = function_exists('mt_metrics_fetch_by_shortcode')
+      ? mt_metrics_fetch_by_shortcode($accountId, ['from'=>$from,'to'=>$to,'perpage'=>200,'ttl'=>30])
+      : null;
+
+    $rows = (is_array($resp) && isset($resp['data']) && is_array($resp['data'])) ? $resp['data'] : [];
+
+    // agrupar por YYYY-MM-DD y quedarnos con el último updatedAt del día
+    $byDay = [];
+    foreach ($rows as $row) {
+      $metrics = isset($row['metrics']) && is_array($row['metrics']) ? $row['metrics'] : [];
+      $cb = $metrics['currentBalance'] ?? null;
+      if (!is_numeric($cb)) continue;
+      $ts = strtotime($row['updatedAt'] ?? $row['createdAt'] ?? '') ?: 0;
+      $ymd = substr((string)($row['date'] ?? $row['fromDate'] ?? $row['toDate'] ?? ''),0,10);
+      if (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$ymd)) {
+        // fallback: desde updatedAt
+        $ymd = $ts ? gmdate('Y-m-d',$ts) : '';
+      }
+      if ($ymd==='') continue;
+
+      if (!isset($byDay[$ymd]) || $ts >= $byDay[$ymd]['ts']) {
+        $byDay[$ymd] = ['ts'=>$ts, 'value'=>(float)$cb];
+      }
     }
 
+    // rellenar días del rango [from..to] con el último balance disponible
+    $series = [];
+    $cursor = new DateTime($from, $tz);
+    $carry = null;
+    for ($i=0; $i<$pointsToLoad; $i++) {
+      $ymd = $cursor->format('Y-m-d');
+      if (isset($byDay[$ymd])) $carry = $byDay[$ymd]['value'];
+      if ($carry !== null) $series[] = ['date'=>$ymd,'value'=>(float)$carry];
+      $cursor->modify('+1 day');
+    }
+    // fallback si vacío
+    if (empty($series)) {
+      $m = $account['metrics'] ?? $account['metric'] ?? [];
+      $cb = is_numeric($m['currentBalance'] ?? null) ? (float)$m['currentBalance'] : null;
+      if ($cb !== null) $series[] = ['date'=>$todayDt->format('Y-m-d'), 'value'=>$cb];
+    }
+
+    // límites
+    $m = $account['metrics'] ?? $account['metric'] ?? [];
+    $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float)$m['equityPassLevel'] : null;
+    $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float)$m['maxLossLimitEquityLevel'] : null;
+
+    // periods (igual que antes)
     $periods = [];
     $sinceTextDays = $totalSinceStart;
     $sinceValue = $pointsToLoad;
     if ($sinceTextDays < 7) {
-      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
     } elseif ($sinceTextDays < 14) {
-      $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
-      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
+      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
     } elseif ($sinceTextDays < 30) {
-      $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
-      $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
-      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
+      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
+      $periods[] = ['value'=>14,'text'=>'LAST 14 DAYS'];
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
     } else {
-      $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
-      $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
-      $periods[] = ['value' => 30, 'text' => 'LAST 30 DAYS'];
-      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
-    }
-    error_log('[MT][PERF] periods=' . wp_json_encode($periods));
-
-    $m = $account['metrics'] ?? $account['metric'] ?? [];
-    $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
-    $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
-    error_log('[MT][PERF] bounds: upper=' . var_export($upper_bound, true) . ' | lower=' . var_export($lower_bound, true));
-
-    $series = [];
-    if ($accountId) {
-      foreach ($dates as $d) {
-        $ymd = $d['fromDate'];
-
-        $resp = null;
-
-        if (function_exists('mega_api_get_metrics')) {
-          try {
-            $resp = mega_api_get_metrics($accountId, 1, 10, $ymd, $ymd);
-          } catch (\Throwable $e) {
-            error_log('[MT][PERF][err] mega_api_get_metrics: ' . $e->getMessage());
-          }
-        }
-
-        if ((!is_array($resp) || empty($resp['data'])) && function_exists('mt_metrics_fetch_by_shortcode')) {
-          try {
-            $resp = mt_metrics_fetch_by_shortcode($accountId, ['from' => $ymd, 'to' => $ymd]);
-          } catch (\Throwable $e) {
-            error_log('[MT][PERF][err] mt_metrics_fetch_by_shortcode(array): ' . $e->getMessage());
-          }
-        }
-
-        $count = (is_array($resp) && isset($resp['data']) && is_array($resp['data'])) ? count($resp['data']) : 0;
-
-        $balance = null;
-        $bestTs = -1;
-        if ($count > 0) {
-          foreach ($resp['data'] as $row) {
-            $metrics = (isset($row['metrics']) && is_array($row['metrics'])) ? $row['metrics'] : [];
-            $cb = $metrics['currentBalance'] ?? null;
-            if (!is_numeric($cb))
-              continue;
-            $ts = strtotime($row['updatedAt'] ?? $row['createdAt'] ?? '');
-            if ($ts === false)
-              $ts = 0;
-            if ($ts >= $bestTs) {
-              $bestTs = $ts;
-              $balance = (float) $cb;
-            }
-          }
-        }
-
-        if (is_numeric($balance)) {
-          $series[] = ['date' => $ymd, 'value' => (float) $balance];
-        }
-      }
+      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
+      $periods[] = ['value'=>14,'text'=>'LAST 14 DAYS'];
+      $periods[] = ['value'=>30,'text'=>'LAST 30 DAYS'];
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
     }
 
-    if (empty($series)) {
-      $cb = is_numeric($m['currentBalance'] ?? null) ? (float) $m['currentBalance'] : null;
-      if ($cb !== null)
-        $series[] = ['date' => $todayDt->format('Y-m-d'), 'value' => $cb];
-    }
-
-
+    // título igual que tu versión
     $program = $account['program'] ?? null;
-    $plabel = (string) ($program['label'] ?? $program['description'] ?? 'Account');
-    $sb = $program['startingBalance'] ?? null;
-    $size = '';
-    $name = $plabel ?: 'Account';
-    if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'parse_program_label')) {
-      [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
-    } elseif (is_numeric($sb) && $sb > 0) {
-      $k = (int) round($sb / 1000);
-      $size = $k > 0 ? ($k . 'k') : (string) $sb;
+    $plabel  = (string)($program['label'] ?? $program['description'] ?? 'Account');
+    $sb      = $program['startingBalance'] ?? null;
+    $size=''; $name=$plabel ?: 'Account';
+    if (class_exists('MT_Accounts') && method_exists('MT_Accounts','parse_program_label')) {
+      [$size,$name] = MT_Accounts::parse_program_label($plabel,$sb);
+    } elseif (is_numeric($sb) && $sb>0) {
+      $k=(int)round($sb/1000); $size = $k>0 ? ($k.'k') : (string)$sb;
     }
-    $title = trim(($size ? $size . ' ' : '') . $name);
+    $title = trim(($size ? $size.' ' : '').$name);
 
     return [
-      'accountId' => $accountId,
-      'title' => $title,
-      'plan_revenue' => $series,   // [{date, value}]
-      'series' => $series,
-      'upper_bound' => $upper_bound,
-      'lower_bound' => $lower_bound,
-      'periods' => $periods,
+      'accountId'=>$accountId,
+      'title'=>$title,
+      'plan_revenue'=>$series,
+      'series'=>$series,
+      'upper_bound'=>$upper_bound,
+      'lower_bound'=>$lower_bound,
+      'periods'=>$periods,
     ];
   }
 }
+
 
 
 // === Account Data (payload) ===
@@ -1557,104 +1561,90 @@ function mt_accounts_ajax_status()
 if (!function_exists('mt_metrics_fetch_by_shortcode')) {
   function mt_metrics_fetch_by_shortcode($accountId, $arg2 = 1, $perPage = 30, $ttl = 15)
   {
-    $accountId = trim((string) $accountId);
-    if ($accountId === '')
-      return null;
+    $accountId = trim((string)$accountId);
+    if ($accountId === '') return null;
 
-    // Defaults
-    $page = 1;
-    $per = 50;
-    $from = '';
-    $to = '';
-    $ttlVal = 15;
-
-    // Modo nuevo: $arg2 es array con from/to/page/perpage/ttl
+    // ---- parse args (igual que tu versión) ----
+    $page=1; $per=50; $from=''; $to=''; $ttlVal=15;
     if (is_array($arg2)) {
-      $page = isset($arg2['page']) ? (int) $arg2['page'] : 1;
-      $per = isset($arg2['perpage']) ? (int) $arg2['perpage'] : (isset($arg2['perPage']) ? (int) $arg2['perPage'] : 50);
-      $from = isset($arg2['from']) ? (string) $arg2['from'] : '';
-      $to = isset($arg2['to']) ? (string) $arg2['to'] : '';
-      $ttlVal = isset($arg2['ttl']) ? (int) $arg2['ttl'] : 15;
+      $page = isset($arg2['page']) ? (int)$arg2['page'] : 1;
+      $per  = isset($arg2['perpage']) ? (int)$arg2['perpage'] : (isset($arg2['perPage']) ? (int)$arg2['perPage'] : 50);
+      $from = isset($arg2['from']) ? (string)$arg2['from'] : '';
+      $to   = isset($arg2['to'])   ? (string)$arg2['to']   : '';
+      $ttlVal = isset($arg2['ttl'])? (int)$arg2['ttl'] : 15;
     } else {
-      // Modo legacy: args escalares (como lo tenías)
-      $page = (int) $arg2;
-      $per = (int) $perPage;
-      $ttlVal = (int) $ttl;
+      $page = (int)$arg2; $per = (int)$perPage; $ttlVal = (int)$ttl;
     }
 
-    // Construir shortcode con from/to solo si vienen
+    // ---- cache key ----
+    $tkey = mt_cache_key('mt:metrics_sc', [$accountId,$page,$per,$from,$to]);
+    $hit  = mt_cache_get($tkey);
+    if (is_array($hit)) return $hit;
+
+    // ---- construir shortcode ----
     $attrs = [
-      'id' => esc_attr($accountId),
-      'page' => max(1, $page),
-      'perpage' => max(1, $per),
-      'output' => 'json',
-      'ttl' => max(0, $ttlVal),
+      'id'=>esc_attr($accountId),
+      'page'=>max(1,$page),
+      'perpage'=>max(1,$per),
+      'output'=>'json',
+      'ttl'=>max(0,$ttlVal),
     ];
-    if ($from !== '')
-      $attrs['from'] = $from;
-    if ($to !== '')
-      $attrs['to'] = $to;
+    if ($from!=='') $attrs['from']=$from;
+    if ($to  !=='') $attrs['to']=$to;
 
-    $parts = [];
-    foreach ($attrs as $k => $v) {
-      $parts[] = $k . '="' . $v . '"';
-    }
-    $sc = '[mega_metrics_data ' . implode(' ', $parts) . ']';
+    $parts=[]; foreach ($attrs as $k=>$v){ $parts[]=$k.'="'.$v.'"'; }
+    $sc='[mega_metrics_data '.implode(' ',$parts).']';
 
     $raw = do_shortcode($sc);
-    if (!is_string($raw) || $raw === '')
-      return null;
+    if (!is_string($raw) || $raw==='') return null;
     $raw = trim(wp_unslash($raw));
-    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
-      $raw = substr($raw, 3);
-    if ($raw !== '')
-      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    if ($raw!=='' && substr($raw,0,3)==="\xEF\xBB\xBF") $raw=substr($raw,3);
+    if ($raw!=='') $raw=html_entity_decode($raw, ENT_QUOTES|ENT_HTML5,'UTF-8');
 
-    $data = json_decode($raw, true);
-    if (!is_array($data))
-      $data = json_decode(trim(wp_strip_all_tags($raw)), true);
+    $data = json_decode($raw,true);
+    if (!is_array($data)) $data = json_decode(trim(wp_strip_all_tags($raw)), true);
 
-    return is_array($data) ? $data : null;
+    $out = is_array($data) ? $data : null;
+    if ($out) mt_cache_set($tkey, $out, 60); // cache 60s
+    return $out;
   }
 }
+
 
 
 /* === TRADES vía shortcode (JSON) === */
 if (!function_exists('mt_trades_fetch_by_shortcode')) {
   function mt_trades_fetch_by_shortcode(string $accountId, string $type = 'CLOSED', int $page = 1, int $perPage = 500)
   {
-    $accountId = trim((string) $accountId);
-    if ($accountId === '')
-      return null;
+    $accountId = trim((string)$accountId);
+    if ($accountId === '') return null;
+
+    $tkey = mt_cache_key('mt:trades_sc', [$accountId,$type,$page,$perPage]);
+    $hit  = mt_cache_get($tkey);
+    if (is_array($hit)) return $hit;
 
     $sc = sprintf(
       '[mega_trades_data id="%s" type="%s" page="%d" perpage="%d" output="json"]',
-      esc_attr($accountId),
-      esc_attr($type),
-      (int) $page,
-      (int) $perPage
+      esc_attr($accountId), esc_attr($type), (int)$page, (int)$perPage
     );
-
     $raw = do_shortcode($sc);
     $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
-    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
-      $raw = substr($raw, 3);
-    if ($raw !== '')
-      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    if ($raw!=='' && substr($raw,0,3)==="\xEF\xBB\xBF") $raw=substr($raw,3);
+    if ($raw!=='') $raw=html_entity_decode($raw, ENT_QUOTES|ENT_HTML5,'UTF-8');
 
-    $json = json_decode($raw, true);
-    if (!is_array($json))
-      $json = json_decode(trim(wp_strip_all_tags($raw)), true);
-    if (!is_array($json))
-      return null;
+    $json = json_decode($raw,true);
+    if (!is_array($json)) $json = json_decode(trim(wp_strip_all_tags($raw)), true);
+    if (!is_array($json)) return null;
 
-    if (isset($json['data']) && is_array($json['data']))
-      return $json['data'];
-    if (isset($json[0]) && is_array($json[0]))
-      return $json;
-    return null;
+    $out = null;
+    if (isset($json['data']) && is_array($json['data'])) $out = $json['data'];
+    elseif (isset($json[0]) && is_array($json[0]))       $out = $json;
+
+    if ($out) mt_cache_set($tkey, $out, 60); // cache 60s
+    return $out;
   }
 }
+
 
 /* === TRADES: streaks + duraciones por día (YYYY-MM-DD) === */
 if (!function_exists('mt_trades_day_stats')) {
@@ -2669,6 +2659,3 @@ if (!function_exists('mt_prepare_ui_payout')) {
     return $out;
   }
 }
-
-
-

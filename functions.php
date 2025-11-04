@@ -155,7 +155,8 @@ function megatrader_scripts() {
 	wp_enqueue_script( 'mt-sidebar-js',          MEGATRADER_JS . 'mt-sidebar.js',           array(), REALTIME_VERSION, true );
 
 	wp_enqueue_script( 'megatrader-main',        MEGATRADER_JS . 'main.js',                 array('jquery','mt-tabs'), REALTIME_VERSION, true );
-	wp_localize_script( 'megatrader-main', 'theme_ajax', array(
+	
+    wp_localize_script( 'megatrader-main', 'theme_ajax', array(
 		'ajax_url' => admin_url('admin-ajax.php'),
 	));
 
@@ -164,6 +165,136 @@ function megatrader_scripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 }
+
+// Elimanr script no necesarios
+
+/* ===========================================================
+ *  PERF: Slim JS/CSS en /my-account/overview
+ * =========================================================== */
+
+
+/* ===== Slim en /my-account/overview sin romper el preloader ===== */
+
+if (!function_exists('mt_is_overview')) {
+  function mt_is_overview(): bool {
+    if (function_exists('is_account_page') && is_account_page()
+        && function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('overview')) {
+      return true;
+    }
+    $req  = $_SERVER['REQUEST_URI'] ?? '';
+    $path = $req ? (parse_url($req, PHP_URL_PATH) ?? '') : '';
+    return (bool) preg_match('#/my-account/overview/?$#', $path);
+  }
+}
+
+/* ——— Basura global ——— */
+remove_action('wp_head', 'print_emoji_detection_script', 7);
+remove_action('wp_print_styles', 'print_emoji_styles');
+add_action('wp_enqueue_scripts', function () { wp_deregister_script('wp-embed'); }, 100);
+
+/* ——— jquery-migrate fuera (menos checkout/cart) ——— */
+add_action('wp_default_scripts', function($scripts){
+  if (is_admin()) return;
+  $keep = (function_exists('is_checkout') && is_checkout())
+       || (function_exists('is_cart') && is_cart());
+  if ($keep) return;
+  if (!empty($scripts->registered['jquery'])) {
+    $dep = $scripts->registered['jquery']->deps ?? [];
+    $scripts->registered['jquery']->deps = array_diff($dep, ['jquery-migrate']);
+  }
+});
+
+/* ——— Dieta de scripts en OVERVIEW (sin tocar preloader) ——— */
+add_action('wp_enqueue_scripts', function () {
+  if (is_admin() || !mt_is_overview()) return;
+
+  // Config del preloader para overview: no auto-show, sin fallback ruidoso
+  add_action('wp_head', function () {
+    ?>
+    <script>
+      window.__MT_PRELOADER_CONFIG = { autoShow: false, fallbackOff: true };
+      // Shim no destructivo: si el preloader real no está listo, exponemos API mínima
+      (function(){
+        var el = null;
+        function elPreloader(){ return el || (el = document.querySelector('.preloader')); }
+        window.mtPreloader = window.mtPreloader || {
+          show: function(){ elPreloader()?.classList.add('is-active'); },
+          hide: function(){ elPreloader()?.classList.remove('is-active'); },
+          safeHide: function(){
+            try { this.hide(); } catch(e){}
+          }
+        };
+        // Apagar cualquier “fallback” del script real
+        window.__MT_PRELOADER_FALLBACK_OFF = true;
+        // Por si llegó activo desde el server, lo escondemos tras primer paint
+        document.addEventListener('DOMContentLoaded', function(){
+          if (window.__MT_PRELOADER_CONFIG?.autoShow === false) {
+            window.mtPreloader.safeHide();
+          }
+        }, {once:true});
+      })();
+    </script>
+    <?php
+  }, 0);
+
+  // Quita lo que sí sobra en overview (NO tocamos preloader)
+  $handles = [
+    'megatrader-main',
+    'mt-payment',
+    'mt-billing-validation-js',
+    'wc-cart-fragments',
+    // marketing/multimedia
+    'apexcharts',                 // lo cargarás on-demand dentro del módulo
+    'intlTelInput','iti-utils',
+    'swiper','swiper-bundle','swiper-init',
+    'sourcebuster-js','wc-order-attribution','order-attribution',
+    'wp-consent-api','wp-consent-api-integration',
+  ];
+  foreach ($handles as $h) {
+    if (wp_script_is($h, 'enqueued') || wp_script_is($h, 'registered')) {
+      wp_dequeue_script($h);
+      wp_deregister_script($h);
+    }
+  }
+
+  // Fallback por archivo (NO incluir preloader.js aquí)
+  $kill_by_file = [
+    'intlTelInput.min.js','utils.js',
+    'swiper-bundle.min.js','swiper-init.js',
+    'sourcebuster.min.js','order-attribution.min.js',
+    'wp-consent-api.min.js','wp-consent-api-integration.min.js',
+  ];
+  $wp_scripts = wp_scripts();
+  if ($wp_scripts && !empty($wp_scripts->registered)) {
+    foreach ($wp_scripts->registered as $h => $obj) {
+      if (empty($obj->src)) continue;
+      $base = basename(parse_url($obj->src, PHP_URL_PATH));
+      if (in_array($base, $kill_by_file, true)) {
+        wp_dequeue_script($h);
+        wp_deregister_script($h);
+      }
+    }
+  }
+}, 1000);
+
+/* ——— Defer a lo no crítico que sí queda en overview ——— */
+add_filter('script_loader_tag', function($tag, $handle){
+  $defer_list = ['bootstrap-bundle','mt-tooltips-js','mt-navbar-js','mt-sidebar-js','mt-tabs','notifications-js'];
+  return in_array($handle, $defer_list, true) ? str_replace(' src=', ' defer src=', $tag) : $tag;
+}, 10, 2);
+
+/* ——— Cart fragments siempre fuera en overview ——— */
+add_action('wp_enqueue_scripts', function () {
+  if (is_admin() || !mt_is_overview()) return;
+  if (wp_script_is('wc-cart-fragments','enqueued') || wp_script_is('wc-cart-fragments','registered')) {
+    wp_dequeue_script('wc-cart-fragments');
+    wp_deregister_script('wc-cart-fragments');
+  }
+}, 999);
+
+
+
+// End Desencolar JS de checkout en Overview
 
 
 add_action('after_setup_theme', function () {

@@ -197,9 +197,7 @@ const $ = jQuery; //TODO: remove, temp for dev mode
             //     })
         }
 
-        function objectIsEmpty(obj) {
-            Object.keys(obj).length === 0
-        }
+        function objectIsEmpty(obj){ return !obj || Object.keys(obj).length === 0; }
 
         function updatePlatformName() {
             const platformName = $("#platform .button.active .title").text();

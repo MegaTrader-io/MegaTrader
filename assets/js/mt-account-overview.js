@@ -6,6 +6,38 @@
   const clamp = (n, min, max) =>
     Math.max(min, Math.min(max, parseInt(n, 10) || 0));
 
+// ===== Boot Timers (primera carga) =====
+window.__MT_TIMING = window.__MT_TIMING || {};
+performance.mark('mt:boot:start');
+
+(function setupBootObserver(){
+  // Long tasks (>120ms)
+  try {
+    const lt = new PerformanceObserver((list)=>{
+      for (const e of list.getEntries()) {
+        if (e.duration >= 120) {
+          console.log(`[perf][long-task] ${Math.round(e.duration)}ms @ ${Math.round(e.startTime)}ms`);
+        }
+      }
+    });
+    lt.observe({ entryTypes:['longtask'] });
+  } catch(_) {}
+
+  // Recursos lentos (js/css/xhr/fetch) (>300ms)
+  try {
+    const ro = new PerformanceObserver((list)=>{
+      for (const r of list.getEntries()) {
+        if (r.duration >= 300) {
+          console.log(`[perf][res] ${r.initiatorType} ${r.name} → ${Math.round(r.duration)}ms`);
+        }
+      }
+    });
+    ro.observe({ entryTypes:['resource'] });
+  } catch(_) {}
+})();
+
+
+
   /* ========= Donuts ========= */
   function initDonuts(root = document) {
     $$(".mt-donut", root).forEach((d) => {
@@ -326,11 +358,23 @@ window.mtRefresh = (function () {
   const handlers = {};
   let inflight = 0;
 
-  const show = () =>
-    document.querySelector(".preloader")?.classList.add("is-active");
-  const hide = () =>
+  // Spinner con retardo para evitar flicker
+  let showTimer = null;
+  const show = () => {
+    if (showTimer) return;
+    showTimer = setTimeout(() => {
+      document.querySelector(".preloader")?.classList.add("is-active");
+    }, 120);
+  };
+  const hide = () => {
+    if (showTimer) {
+      clearTimeout(showTimer);
+      showTimer = null;
+    }
     document.querySelector(".preloader")?.classList.remove("is-active");
+  };
 
+  // Track de operaciones (acepta promesas o sync)
   function track(maybePromise) {
     inflight++;
     show();
@@ -341,23 +385,86 @@ window.mtRefresh = (function () {
       return maybePromise.finally(done);
     }
     setTimeout(done, 200);
+    return undefined;
   }
 
   return {
     register(name, fn) {
       handlers[name] = fn;
     },
+
     refreshAll(id) {
-      Object.values(handlers).forEach((fn) => fn && track(fn(id)));
+      Object.entries(handlers).forEach(([key, fn]) => {
+        if (!fn) return;
+        const t0 = performance.now();
+        track(
+          Promise.resolve(fn(id)).finally(() => {
+            const t1 = performance.now();
+            console.log(`[mtRefresh][${key}] → ${Math.round(t1 - t0)}ms`);
+          })
+        );
+      });
+    },
+
+    refreshAllSequence(id) {
+      const seq = [];
+      const prime = "accountData";
+      const heavy = Object.keys(handlers).filter((k) => k !== prime);
+
+      // Step 1: rápido (accountData)
+      if (handlers[prime]) {
+        const t0 = performance.now();
+        seq.push(
+          Promise.resolve(handlers[prime](id)).finally(() => {
+            const t1 = performance.now();
+            console.log(`[mtRefresh][${prime}] → ${Math.round(t1 - t0)}ms`);
+          })
+        );
+      }
+
+      // Step 2: el resto en paralelo
+      const rest = heavy.map((key) => {
+        if (!handlers[key]) return null;
+        const t0 = performance.now();
+        return Promise.resolve(handlers[key](id)).finally(() => {
+          const t1 = performance.now();
+          console.log(`[mtRefresh][${key}] → ${Math.round(t1 - t0)}ms`);
+        });
+      });
+
+      return Promise.all(seq.concat(rest.filter(Boolean)));
     },
   };
 })();
 
-// Dispara refresh de TODOS ante selección de cuenta
+/* === Consolidated accountSelected handler (único y seguro) === */
 document.addEventListener("mt:accountSelected", (e) => {
-  const id = e?.detail?.accountId;
+  const id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
   if (!id) return;
-  window.mtRefresh.refreshAll(id);
+
+  // Paso 1: refresca todos los módulos (o usa refreshAllSequence si lo tienes)
+  // window.mtRefresh?.refreshAll?.(id);
+  window.mtRefresh?.refreshAllSequence?.(id); // pinta Account Data primero (si está disponible)
+
+  // Paso 2: chequeo de breach (throttle propio)
+  try {
+    breachGuardCheck?.(id);
+  } catch (_) {}
+
+  // Paso 3: re-sincroniza Manage Subscription
+  try {
+    syncManageSubscription?.();
+  } catch (_) {}
+
+  // Paso 4/5: re-render del breach modal (si existe)
+  try {
+    const modalRef =
+      window.MT_BREACH_MODAL ||
+      document.getElementById("mt-breach-modal") ||
+      document.querySelector(".mt-breach-modal") ||
+      undefined;
+    refreshBreachModalUI?.(modalRef);
+  } catch (_) {}
 });
 
 // ===== Overlay utils (genérico) =====
@@ -1811,10 +1918,6 @@ window.mtOverlay = (function () {
       if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
     });
 
-    // Actualiza si cambia la cuenta
-    document.addEventListener("mt:accountSelected", function () {
-      refreshBreachModalUI(modal);
-    });
     document.addEventListener("mt:hasSubscriptionChanged", function () {
       refreshBreachModalUI(modal);
     });
@@ -1970,18 +2073,6 @@ window.breachGuardCheck = breachGuardCheck;
     if (firstId) breachGuardCheck(firstId);
   }
 })();
-
-// 2) cuando el usuario cambia de cuenta
-document.addEventListener("mt:accountSelected", function (e) {
-  var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
-  if (id) breachGuardCheck(id);
-});
-// ===== ENd Breach Modal =====
-
-document.addEventListener("mt:accountSelected", function (e) {
-  var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
-  if (id) breachGuardCheck(id);
-});
 
 // == Main width var: --mt-main-width (+ --dj-viewport) ==
 (function () {
@@ -2226,11 +2317,6 @@ function mtBindManageSubsNav() {
   } else {
     syncManageSubscription();
   }
-
-  // reactiva cuando cambias de cuenta
-  document.addEventListener("mt:accountSelected", function () {
-    syncManageSubscription();
-  });
 
   // y cuando confirmas con el botón "Select" del picker (por si el root se actualiza ahí)
   document.addEventListener("click", function (e) {
