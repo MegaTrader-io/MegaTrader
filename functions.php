@@ -168,6 +168,19 @@ function megatrader_scripts() {
 
 // Elimanr script no necesarios
 
+add_action('wp_enqueue_scripts', function () {
+  global $wp_styles;
+  if (isset($wp_styles->registered)) {
+    foreach ($wp_styles->registered as $h => $o) {
+      if (preg_match('#/overview/?$#', $o->src)) {
+        wp_dequeue_style($h);
+        wp_deregister_style($h);
+        error_log("Bloqueado stylesheet mal formado: $h => $o->src");
+      }
+    }
+  }
+}, 999);
+
 
 /* ===========================================================
  *  PERF: Slim JS/CSS en /my-account/overview
