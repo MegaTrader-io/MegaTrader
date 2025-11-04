@@ -1,12 +1,20 @@
 /* Bloque principal */
 
+.landing-bs {
+    margin-bottom: 64px;
+}
+
+.landing-bs > * + * {
+    margin-top: 48px;
+}
+
 .hero-bs {
     color: #fff;
+    padding-block: 48px;
 }
 
 .hero-bs__container {
     max-width: 1200px;
-    margin-block: 48px;
 }
 
 .hero-bs__row {
@@ -20,7 +28,7 @@
     flex-direction: column;
 }
 
-.hero-bs__content > * + *{
+.hero-bs__content > * + * {
     margin-top: 32px;
 }
 
@@ -39,7 +47,7 @@
     }
 }
 
-.hero-bs__benefits{
+.hero-bs__benefits {
     margin-bottom: 0;
 }
 
@@ -68,7 +76,18 @@
 }
 
 .hero-bs__btn {
-    display: inline;
+    display: flex;
+    color: #3D2900;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 28px;
+    padding: 16px 24px;
+    border: none;
+}
+
+.mega-btn-primary-md.hero-bs__btn:not([disabled]):hover {
+    border: none;
 }
 
 /* Media */
@@ -85,4 +104,778 @@
     display: block;
     width: 100%;
     height: auto;
+}
+
+/* =========================================================
+   Verified Section (Over $70 Million Verified Payouts)
+   ========================================================= */
+
+.verified-bs {
+    text-align: center;
+    overflow: hidden;
+}
+
+.verified-bs__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+/* Header / Title / Subtitle */
+
+.verified-bs__image {
+    width: 100%;
+}
+
+.verified-bs__title {
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    word-wrap: break-word;
+    margin-bottom: 0;
+}
+
+.verified-bs__title span {
+    color: var(--Surface-Primary);
+}
+
+.verified-bs__subtitle {
+    max-width: 760px;
+    text-align: center;
+    color: var(--body-color);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 0;
+}
+
+#verified-bs-carousel {
+    padding: 32px 0;
+}
+
+.splide__slide {
+    width: 378px !important; /* ✅ ancho fijo */
+    height: 260px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.verified-bs__carousel {
+    animation: verified-bs__carousel 120s linear infinite;
+}
+
+.verified-bs__carousel:hover {
+    animation-play-state: paused;
+}
+
+.verified-bs__cards .verified-bs__carousel {
+    gap: 16px;
+    display: flex;
+}
+
+.verified-bs__cards {
+    padding: 32px 16px;
+}
+
+.verified-bs__image {
+    display: inline-table;
+    border-radius: 16px;
+    border: 4px #1E1E1E solid;
+    width: 378px !important;
+    height: 260px !important;
+}
+
+.verified-bs__image:hover {
+    border-color: #FFB34A;
+}
+
+/* =========================================================
+   Payout Section (Earn Your First Payout in 5 Days)
+   ========================================================= */
+
+.payout-bs {
+    padding-block: 48px;
+}
+
+.payout-bs__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 48px;
+}
+
+/* ===============================
+   Left Side (Text Content)
+   =============================== */
+
+.payout-bs__content > * + * {
+    margin-top: 32px;
+}
+
+
+.payout-bs__header {
+    margin-bottom: 0;
+}
+
+.payout-bs__title {
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    margin-bottom: 0;
+    color: #fff;
+}
+
+/* Steps list */
+.payout-bs__list {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+.payout-bs__item {
+    align-self: stretch;
+    padding: 4px 16px;
+    overflow: hidden;
+    border-left: 2px #2DD4BF solid;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: inline-flex
+}
+
+.payout-bs__item-title {
+    width: 304px;
+    height: 32px;
+    color: #2DD4BF;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 32px;
+    word-wrap: break-word
+}
+
+.payout-bs__wrapper_content {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: flex
+}
+
+.payout-bs__wrapper_content p {
+    align-self: stretch;
+    color: #A8A29E;
+    max-width: 328px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+    margin-bottom: 0
+}
+
+/* CTA button */
+.payout-bs__btn {
+}
+
+/* ===============================
+   Right Side (Media)
+   =============================== */
+
+.payout-bs__media-wrapper {
+    width: 800px;
+    height: 624px;
+}
+
+/* ===============================
+   Responsive adjustments
+   =============================== */
+
+@media (max-width: 991.98px) {
+    .payout-bs__row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .payout-bs__content {
+        align-items: center;
+    }
+
+    .payout-bs__title {
+        font-size: 32px;
+        line-height: 40px;
+    }
+
+    .payout-bs__list {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .payout-bs__btn {
+        align-self: center;
+    }
+
+    .payout-bs__media-wrapper {
+        max-width: 480px;
+        height: 320px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .payout-bs__title {
+        font-size: 28px;
+        line-height: 36px;
+    }
+
+    .payout-bs__row {
+        gap: 32px;
+    }
+
+    .payout-bs__media-wrapper {
+        height: 260px;
+    }
+}
+
+.platforms-bs {
+    background: #131210;
+}
+
+.platforms-bs__list {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 48px;
+}
+
+.platforms-bs__item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-direction: column;
+}
+
+.platforms-bs__item--available {
+    display: flex;
+    flex-direction: unset;
+    align-items: center;
+}
+
+
+/* =========================================================
+   Journal Section (Journal to Find Your Winning Strategies)
+   ========================================================= */
+
+.journal-bs {
+    background-color: var(--smoke-color2);
+    padding-block: 48px;
+    margin-top: 0;
+}
+
+.journal-bs__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-inline: 16px;
+    padding-bottom: 16px;
+}
+
+/* Header */
+.journal-bs__header {
+    text-align: left;
+}
+
+.journal-bs__header > * + * {
+    margin-top: 16px;
+}
+
+/* Title */
+.journal-bs__title {
+    align-self: stretch;
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    margin-bottom: 0;
+}
+
+/* Swiper Section */
+.journal-bs__content {
+    position: relative;
+    padding-top: 32px;
+}
+
+.journal-bs__card {
+    background-color: var(--body-bg);
+    width: auto;
+    height: 500px;
+}
+
+.journal-bs__media {
+    width: 100%;
+    height: 100%;
+}
+
+.journal-bs__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Pagination */
+.journal-bs__content .swiper-pagination {
+    position: relative;
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.journal-bs__content .swiper-pagination-bullet {
+    background-color: #fff;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.journal-bs__content .swiper-pagination-bullet-active {
+    opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .journal-bs__title {
+        font-size: 28px;
+        line-height: 36px;
+    }
+
+    .journal-bs__header {
+        text-align: center;
+    }
+
+    .journal-bs__card {
+        height: 260px;
+    }
+}
+
+
+/* =========================================================
+   Component: Badge Duo
+   ========================================================= */
+
+.badge-duo {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px 6px 6px;
+    border-radius: 64px;
+    outline: 2px solid #14B8A6;
+    outline-offset: -2px;
+    background-color: transparent;
+}
+
+.badge-duo__primary {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #14B8A6;
+    border-radius: 64px;
+    overflow: hidden;
+}
+
+
+.badge-duo__secondary {
+    color: #14B8A6;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.badge-duo__primary .badge-duo__text {
+    color: #131210;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    word-wrap: break-word;
+}
+
+.badge-duo__secondary .badge-duo__text {
+    color: var(--theme-color3);
+}
+
+/* =========================================================
+   Component: Badge Group (Static visual tabs)
+   ========================================================= */
+
+.badge-group {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background-color: #1E1E1E;
+    border-radius: 12px;
+    outline: 1px solid #404040;
+    outline-offset: -1px;
+}
+
+/* Ítem genérico */
+.badge-group__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: transparent;
+}
+
+/* Texto */
+.badge-group__text {
+    color: #FFB34A;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+/* Estado activo */
+.badge-group__item.is-active {
+    background-color: #FFB34A;
+}
+
+.badge-group__item.is-active .badge-group__text {
+    color: #020617;
+}
+
+.slider__slides .glide__slide:not(.glide__slide--active) .journal-bs__card {
+    opacity: 0.5;
+}
+
+.verified-bs__glide .glide__bullets {
+    position: relative;
+    bottom: auto;
+    margin-block: 16px;
+    padding-block: 8px;
+    padding-inline: 16px;
+}
+
+.testimonials {
+    display: flex;
+    gap: 16px;
+    padding-block: 16px;
+}
+
+.testimonials__card {
+    display: flex;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.testimonials__image {
+    width: 200px;
+    height: 200px;
+    border-radius: 16px 0 0 16px;
+    object-fit: cover;
+}
+
+.testimonials__content {
+    padding: 32px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: var(--smoke-color2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testimonials__content > * + * {
+    margin-top: 16px;
+}
+
+.testimonials__quote {
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.testimonials__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.testimonials__author {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.testimonials__name {
+    display: inline-block;
+}
+
+.testimonials__icon {
+    flex-shrink: 0;
+}
+
+.testimonials__role {
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.competition {
+    padding: 48px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #1E1E1E 0%, #0A0A0A 100%);
+}
+
+.competition__wrapper {
+    display: inline-flex;
+    justify-content: center;
+    gap: 48px;
+}
+
+.competition__content {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 32px;
+}
+
+.competition__title {
+    align-self: stretch;
+    color: #fff;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    word-wrap: break-word;
+}
+
+.competition__rewards {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.competition__reward-card {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 24px;
+    background: #1E1E1E;
+    border-radius: 16px;
+    overflow: hidden;
+    gap: 8px;
+}
+
+.competition__reward-header {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.competition__reward-amount {
+    color: #FFB34A;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 32px;
+}
+
+.competition__reward-label {
+    color: #A8A29E;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 0;
+    line-height: 24px;
+}
+
+.competition__entry-note {
+    margin-bottom: 0;
+}
+
+.competition__entry-note {
+    color: #A8A29E;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    max-width: 760px;
+    width: 100%;
+}
+
+.competition__perks {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+}
+
+.competition__perk {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    align-self: stretch;
+}
+
+.competition__perk-text {
+    color: #A8A29E;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.competition__cta {
+    margin-top: 8px;
+}
+
+.competition__image {
+    flex: 1 1 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.competition__image-placeholder {
+    flex: 1 1 0;
+    align-self: stretch;
+    background: #1E1E1E;
+    border-radius: 16px;
+}
+
+.payouts-and-comparison {
+    background: var(--smoke-color2);
+}
+
+.payouts-and-comparison {
+    text-align: center;
+    overflow: hidden;
+}
+
+.payouts-and-comparison__container {
+    padding-block: 48px;
+}
+
+.payouts-and-comparison__image {
+    width: 100%;
+}
+
+.payouts-and-comparison__title, .comparison__header {
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    word-wrap: break-word;
+    margin-bottom: 0;
+}
+
+.payouts-and-comparison__title span {
+    color: var(--Surface-Primary);
+}
+
+.payouts-and-comparison__subtitle {
+    max-width: 760px;
+    text-align: center;
+    color: var(--body-color);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 0;
+}
+
+.payouts-and-comparison__image {
+    width: 452px;
+    height: 358px;
+}
+
+.payouts-and-comparison__cards{
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-top: 32px;
+    padding-top: 16px;
+}
+
+.payouts-and-comparison__card {
+    padding: 32px 16px 16px 16px;
+    position: relative;
+    background: var(--body-bg);
+    border-radius: 16px;
+}
+
+.payouts-and-comparison__badge {
+    width: calc(100% - 16px - 16px);
+    position: absolute;
+    top: -12px
+}
+
+.payouts-and-comparison__content {
+    margin-top: 16px;
+    padding: 8px 16px 16px 16px;
+}
+
+.payouts-and-comparison__list li {
+    display: flex;
+    gap: 4px;
+}
+
+.payouts-and-comparison__list p {
+    margin-bottom: 0;
+}
+
+.payouts-and-comparison__list > * + * {
+    margin-top: 12px;
+}
+
+.payouts-and-comparison__checked {
+    width: 24px;
+    height: 24px;
+}
+
+.payouts-and-comparison__platforms {
+    display: flex;
+    gap: 41px;
 }

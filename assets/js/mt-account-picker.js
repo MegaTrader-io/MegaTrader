@@ -313,10 +313,15 @@
 
     function updateHeaderFromCard(card) {
       if (!card) return;
+
       var sizeVal = card.getAttribute("data-size") || "";
       var nameVal = card.getAttribute("data-name") || "Account";
       var logoVal = card.getAttribute("data-logo") || "";
       var status = (card.getAttribute("data-status") || "").toLowerCase();
+      var platId =
+        card.getAttribute("data-platform-account-id") ||
+        card.getAttribute("data-account-id") ||
+        "";
 
       var sizeEl = document.querySelector(SEL.size || "#mt-size");
       var nameEl = document.querySelector(SEL.name || "#mt-name");
@@ -324,13 +329,20 @@
         SEL.platformLogo || "#mt-platform-logo"
       );
       var badgeEl = document.querySelector(SEL.badge || "#mt-badge");
+      var idBadgeEl = document.querySelector("#mt-account-id-badge"); // <— NUEVO
 
       if (sizeEl) sizeEl.textContent = sizeVal;
       if (nameEl) nameEl.textContent = nameVal;
       if (logoEl && logoVal) logoEl.src = logoVal;
       if (badgeEl) {
-        badgeEl.textContent = status ? titleCase(status) : "NoStatusDefine";
+        badgeEl.textContent = status
+          ? status.replace(/-/g, " ").replace(/\b\w/g, function (m) {
+              return m.toUpperCase();
+            })
+          : "NoStatusDefine";
       }
+      // === Badge NUEVO (muestra el platform/account id) ===
+      if (idBadgeEl) idBadgeEl.textContent = platId;
     }
 
     function closeModal() {
@@ -370,21 +382,25 @@
       }
 
       // === Header RESET (fuera del modal)
-      var headerReset = document.querySelector('.mt-picker-wrap .account-reset-button');
-      var openerHeader = document.querySelector('.mt-picker-wrap .mega-btn-dark-md');
+      var headerReset = document.querySelector(
+        ".mt-picker-wrap .account-reset-button"
+      );
+      var openerHeader = document.querySelector(
+        ".mt-picker-wrap .mega-btn-dark-md"
+      );
       if (headerReset) {
         if (resetId && resetId !== "0") {
-          headerReset.classList.remove('d-none');
+          headerReset.classList.remove("d-none");
           headerReset.href = buildUrl(base, resetId);
-          headerReset.setAttribute('data-account-id', accId);
-          headerReset.setAttribute('data-main-id', mainId);
-          headerReset.setAttribute('data-reset-id', resetId);
-          if (openerHeader) openerHeader.style.paddingRight = '140px';
+          headerReset.setAttribute("data-account-id", accId);
+          headerReset.setAttribute("data-main-id", mainId);
+          headerReset.setAttribute("data-reset-id", resetId);
+          if (openerHeader) openerHeader.style.paddingRight = "140px";
         } else {
-          headerReset.classList.add('d-none');
-          headerReset.removeAttribute('href');
-          headerReset.setAttribute('data-reset-id','');
-          if (openerHeader) openerHeader.style.removeProperty('padding-right');
+          headerReset.classList.add("d-none");
+          headerReset.removeAttribute("href");
+          headerReset.setAttribute("data-reset-id", "");
+          if (openerHeader) openerHeader.style.removeProperty("padding-right");
         }
       }
 
@@ -474,6 +490,7 @@
         var bucket = statusToBucket(card.getAttribute("data-status") || "");
         forceFilter(bucket);
         setActiveCard(card);
+        updateHeaderFromCard(card);
 
         var subId0 = card.getAttribute("data-subscription-id") || "";
         var order0 = card.getAttribute("data-order-id") || "";

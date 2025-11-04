@@ -37,6 +37,7 @@ foreach ($attributes as $attr) {
 function render_account_sizes($account_sizes) {
     if (empty($account_sizes)) return;
 
+    $is_active_assigned = false;
     foreach ($account_sizes as $index => $item) {
         $slug = esc_attr($item['slug']);
         $name = esc_html($item['name']);
@@ -93,6 +94,7 @@ function render_account_sizes($account_sizes) {
 function render_account_types($account_types) {
     if (empty($account_types)) return;
 
+    $is_active_assigned = false;
     foreach ($account_types as $index => $item) {
         $slug = esc_attr($item['slug']);
         $name = esc_html($item['name']);
@@ -336,6 +338,7 @@ function render_platforms($platforms) {
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
         console.log('selectedProduct', selectedProduct);
         const selectedProductId = selectedProduct.id ?? '';
+
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
         const event = new CustomEvent("product:selected", {

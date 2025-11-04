@@ -77,6 +77,7 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
             <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
             <span id="mt-name"><?php echo esc_html($productName); ?></span>
           </div>
+          <div id="mt-account-id-badge" class="mt-badge mt-badge-light mt-badge-rounded-sm"></div>
         </div>
       </div>
     </div>

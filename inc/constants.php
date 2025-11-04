@@ -6,8 +6,28 @@ enum LayoutType: string
     case LandingPage = 'landing_page';
 }
 
-final class CACHE_KEY {
-  public const USER_INFO = 'mt_user_%s';
+final class CACHE_KEY
+{
+    public const USER_INFO = 'mt_user_%s';
+}
+
+final class MT_PAYOUT
+{
+    /** Map: startingBalance => minimumBalance (absolute) */
+    public const MIN_BALANCE_MAP = [
+        25000 => 26100,
+        50000 => 52100,
+        100000 => 103100,
+        150000 => 154600,
+    ];
+
+    public const MIN_WITHDRAWAL_MAP = [
+        25000 => 250,
+        50000 => 500,
+        100000 => 1000,
+        150000 => 1500,
+    ];
+
 }
 
 class Label
@@ -88,7 +108,7 @@ class Label
                 'text' => 'Customer Support available 24/5',
             ],
         ],
-        'submit_btn_text' => 'Procede to checkout',
+        'submit_btn_text' => 'Proceed to checkout',
     ];
 
     public const PLANS_FEATURES = [
@@ -136,6 +156,7 @@ class Label
         "payment_method" => "Payment Method",
         "confirmation_email_sent" => "Confirmation email sent – Account activating now.",
         "go_to_my_account" => "Go to My Account",
+        "congrats" => "Congrats!",
     ];
 
     public const CHECKOUT_META = [
@@ -209,7 +230,7 @@ class Label
         "performance_dll_tooltip_title" => "Daily Loss Limit (DLL)",
         "performance_dll_tooltip_description" => "Reaching the DLL pauses trading for the day. It’s removed once a profit milestone is met.",
         "performance_dpl_tooltip_title" => "Daily P&L (DPL)",
-        "performance_dpl_tooltip_description" => "Realized P&L measured at any time during the trading day (6:00 PM - 4:10 PM EST)",
+        "performance_dpl_tooltip_description" => "Realized P&L measured at any time during the trading day (6:00 PM - 4:10 PM EST)",
         "performance_no_data" => "No performance data to render.",
         "feature_content_winning_trades" => "Winning Trades",
         "feature_content_losing_trades" => "Losing Trades",
@@ -443,5 +464,27 @@ class Label
 
 
     ];
+
+    public const META_ACCOUNT_PAYOUT = [
+        'modalTitle' => 'Request Payout',
+        'maxWithdrawal' => 'Maximum Withdrawal',
+        'paymentMethod' => 'Payment Method',
+        'withdrawalAmount' => 'Enter the amount you wish to withdraw',
+        'withdrawalAmountError' => 'Amount exceeds the maximum allowed for this payout.',
+        'withdrawalAmountMinorZero' => 'Enter a valid amount greater than 0.',
+        'withdrawalAmountNotEligible' => 'This account is not eligible for payout at the moment.',
+        'withdrawalAmountBelowMin' => 'Amount is below the minimum withdrawal for this account.',
+        'email' => 'Email',
+        'submitButton' => 'Continue',
+        'cancelButton' => 'Cancel',
+        'riseworks' => 'Riseworks',
+        'btc' => 'BTC',
+        'eth' => 'ETH',
+        'verifiedDetails' => 'Please verify your details before confirming. Incorrect information may cause payment delays.',
+        'congratsTitle' => 'Congrats!',
+        'congratsMessage' => 'Your request has been successfully submitted.',
+        'congratsSubtitle' => 'You’ll be notified once your request is approved.',
+    ];
+
 
 }

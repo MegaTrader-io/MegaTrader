@@ -122,42 +122,49 @@ add_action( 'widgets_init', 'megatrader_widgets_init' );
  */
 function megatrader_scripts() {
 
-	wp_enqueue_style( 'bootstrap',				MEGATRADER_CSS .'bootstrap.min.css', array(), _MEGATRADER_VERSION );
-	// wp_enqueue_style( 'scrollCue-css',		MEGATRADER_CSS .'scrollCue.min.css', array(), _MEGATRADER_VERSION );
-	wp_enqueue_style( 'megatrader-main',		MEGATRADER_CSS .'style.css', array(), REALTIME_VERSION );
-    wp_enqueue_style( 'megatrader-style',       get_stylesheet_uri(), array(), _MEGATRADER_VERSION );
-	wp_enqueue_style( 'megatrader-dev',         MEGATRADER_CSS .'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION);
-    wp_enqueue_style( 'mt-components',          MEGATRADER_CSS .'mt-components.css', array(), REALTIME_VERSION);
-    wp_enqueue_style( 'mt-navbar-style',         MEGATRADER_CSS . 'mt-navbar.css', array(), REALTIME_VERSION);
+	/* ===== CSS ===== */
+	wp_enqueue_style( 'bootstrap',           MEGATRADER_CSS . 'bootstrap.min.css',  array(), _MEGATRADER_VERSION );
+	// wp_enqueue_style( 'scrollCue-css',    MEGATRADER_CSS . 'scrollCue.min.css',  array(), _MEGATRADER_VERSION );
+	wp_enqueue_style( 'megatrader-main',     MEGATRADER_CSS . 'style.css',          array(), REALTIME_VERSION );
+	wp_enqueue_style( 'megatrader-style',    get_stylesheet_uri(),                  array(), _MEGATRADER_VERSION );
+	wp_enqueue_style( 'megatrader-dev',      MEGATRADER_CSS . 'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION );
+	wp_enqueue_style( 'mt-components',       MEGATRADER_CSS . 'mt-components.css',  array(), REALTIME_VERSION );
+	wp_enqueue_style( 'mt-navbar-style',     MEGATRADER_CSS . 'mt-navbar.css',      array(), REALTIME_VERSION );
 
+	/* ===== JS ===== */
+	wp_enqueue_script( 'bootstrap-bundle',       MEGATRADER_JS . 'bootstrap.bundle.min.js', array('jquery'), _MEGATRADER_VERSION, true );
+	// wp_enqueue_script( 'scrollCue',           MEGATRADER_JS . 'scrollCue.min.js',        array('jquery'), _MEGATRADER_VERSION, true );
+	// wp_enqueue_script( 'smoothscroll',        MEGATRADER_JS . 'smoothscroll.min.js',     array('jquery'), _MEGATRADER_VERSION, true );
+	wp_enqueue_script( 'megatrader-modal',       MEGATRADER_JS . 'modal.js',                array('jquery','bootstrap-bundle'), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-tabs',                MEGATRADER_JS . 'mt-tabs.js',              array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-addons',              MEGATRADER_JS . 'mt-addons.js',            array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-payment',             MEGATRADER_JS . 'payment-methods.js',      array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-account-picker',      MEGATRADER_JS . 'mt-account-picker.js',    array(), REALTIME_VERSION, true );
 
-	//Register All JS
-	wp_enqueue_script( 'bootstrap-bundle',	MEGATRADER_JS .'bootstrap.bundle.min.js', array('jquery'), _MEGATRADER_VERSION, true);
-	// wp_enqueue_script( 'scrollCue',			MEGATRADER_JS .'scrollCue.min.js', array('jquery'), _MEGATRADER_VERSION, true);
-	// wp_enqueue_script( 'smoothscroll',		MEGATRADER_JS .'smoothscroll.min.js', array('jquery'), _MEGATRADER_VERSION, true);
-    wp_enqueue_script( 'megatrader-modal',	MEGATRADER_JS .'modal.js', array('jquery', 'bootstrap-bundle'), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-tabs',	        MEGATRADER_JS .'mt-tabs.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-addons',	        MEGATRADER_JS .'mt-addons.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-payment',	        MEGATRADER_JS .'payment-methods.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-account-picker',	        MEGATRADER_JS .'mt-account-picker.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-navbar-js',	        MEGATRADER_JS .'mt-navbar.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-tooltips-js',	        MEGATRADER_JS .'mt-tooltips.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-billing-validation-js',	        MEGATRADER_JS .'billing-validation.js', array(), REALTIME_VERSION, true);
-    wp_enqueue_script( 'mt-sidebar-js',	        MEGATRADER_JS .'mt-sidebar.js', array(), REALTIME_VERSION, true);
-   
+/*
+	wp_enqueue_script( 'mt-account-payout',      MEGATRADER_JS . 'mt-account-payout.js',    array('bootstrap-bundle'), REALTIME_VERSION, true );
+	wp_localize_script( 'mt-account-payout', 'MT_PAYOUT_VARS', array(
+		'ajaxurl' => admin_url('admin-ajax.php'),
+		'nonce'   => wp_create_nonce('mt_payouts'), // NO CAMBIAR
+	));
+     */
 
+	wp_enqueue_script( 'mt-navbar-js',           MEGATRADER_JS . 'mt-navbar.js',            array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-tooltips-js',         MEGATRADER_JS . 'mt-tooltips.js',          array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-billing-validation-js', MEGATRADER_JS . 'billing-validation.js', array(), REALTIME_VERSION, true );
+	wp_enqueue_script( 'mt-sidebar-js',          MEGATRADER_JS . 'mt-sidebar.js',           array(), REALTIME_VERSION, true );
 
+	wp_enqueue_script( 'megatrader-main',        MEGATRADER_JS . 'main.js',                 array('jquery','mt-tabs'), REALTIME_VERSION, true );
+	wp_localize_script( 'megatrader-main', 'theme_ajax', array(
+		'ajax_url' => admin_url('admin-ajax.php'),
+	));
 
-    wp_enqueue_script( 'megatrader-main',	MEGATRADER_JS .'main.js', array('jquery', 'mt-tabs'), REALTIME_VERSION, true);
-
-	wp_localize_script('megatrader-main', 'theme_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php')
-    ));
-
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+	/* comment-reply para posts con comentarios anidados */
+	if ( is_singular() && comments_open() && get_option('thread_comments') ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
 }
+
 
 add_action('after_setup_theme', function () {
   $inc = trailingslashit( get_stylesheet_directory() ) . 'inc/init.php';
@@ -1927,7 +1934,6 @@ function mt_ajax_accounts_performance() {
     }
 }
 
-
 // === Performance Chart AJAX ===
 add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
 add_action('wp_ajax_nopriv_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
@@ -2029,6 +2035,133 @@ function mt_ajax_account_daily_journal() {
   ]);
 }
 
+// == AJAX: prepara UI de payout desde email ==
+add_action('wp_ajax_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
+add_action('wp_ajax_nopriv_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
+function mt_ajax_payouts_prepare_ui() {
+  $email = '';
+  if (isset($_REQUEST['email'])) $email = sanitize_email(wp_unslash($_REQUEST['email']));
+  if (!$email && is_user_logged_in()) $email = wp_get_current_user()->user_email ?? '';
+  if (empty($email)) wp_send_json_error(['message' => 'Missing email'], 400);
+
+  if (!function_exists('mt_prepare_ui_payout')) wp_send_json_error(['message' => 'Helper not available'], 500);
+
+  $payload = mt_prepare_ui_payout($email);
+  wp_send_json_success($payload);
+}
+
+
+
+/** AJAX endpoint: action=mt_payouts_create */
+add_action('wp_ajax_mt_payouts_create',        'mt_payouts_create_cb');
+add_action('wp_ajax_nopriv_mt_payouts_create', 'mt_payouts_create_cb');
+
+function mt_payouts_create_cb() {
+  $TAG = '[MT_PAYOUT_JSON]';
+
+  // 1) Nonce (respeta MT_PAYOUT_VARS.nonce en _wpnonce)
+  if (!check_ajax_referer('mt_payouts', '_wpnonce', false)) {
+    error_log("$TAG NONCE_FAIL got=".($_REQUEST['_wpnonce'] ?? 'NULL'));
+    wp_send_json_error(['message' => 'Invalid or missing nonce.'], 400);
+  }
+
+  // 2) Leer cuerpo JSON (Content-Type: application/json)
+  $raw = file_get_contents('php://input');
+  error_log("$TAG RAW=" . substr($raw ?? '', 0, 2000));
+  $data = json_decode($raw, true);
+  if (!is_array($data)) {
+    wp_send_json_error(['message' => 'Invalid JSON body.'], 400);
+  }
+
+  // 3) Extraer campos (SIN cambiar casing de method ni methodFields)
+  $account  = isset($data['account'])  ? (string)$data['account']  : '';
+  $amount   = isset($data['amount'])   ? (0 + $data['amount'])     : 0;
+  $method   = isset($data['method'])   ? (string)$data['method']   : '';
+  $currency = isset($data['currency']) ? (string)$data['currency'] : 'USD';
+  $reason   = isset($data['reason'])   ? (string)$data['reason']   : 'Customer request from js';
+  $ip       = isset($data['ip'])       ? (string)$data['ip']       : '127.0.0.1';
+
+  // methodFields tal cual: [{"name":"email","value":"..."}]
+  $methodFields = [];
+  if (!empty($data['methodFields']) && is_array($data['methodFields'])) {
+    foreach ($data['methodFields'] as $i => $mf) {
+      if (is_array($mf) && isset($mf['name']) && array_key_exists('value', $mf)) {
+        $methodFields[] = ['name' => (string)$mf['name'], 'value' => (string)$mf['value']];
+      }
+    }
+  }
+
+  $payload = [
+    'account'      => $account,
+    'amount'       => $amount,
+    'method'       => $method,              // NO toLowerCase
+    'currency'     => $currency ?: 'USD',
+    'reason'       => $reason ?: 'Customer request',
+    'methodFields' => $methodFields,        // casing EXACTO
+    'ip'           => $ip ?: '127.0.0.1',
+  ];
+  error_log("$TAG CLEAN=" . wp_json_encode($payload));
+
+  // Validación rápida
+  if ($payload['account'] === '' || !is_numeric($payload['amount']) || $payload['amount'] <= 0 || $payload['method'] === '' || empty($payload['methodFields'])) {
+    wp_send_json_error(['message' => 'Missing or invalid fields.'], 400);
+  }
+
+  // (Opcional) Log REQ preview antes del plugin
+  error_log("$TAG REQ_PRE body=" . wp_json_encode($payload));
+
+  // 4) Delegar al plugin
+  try {
+    $res = mega_api_create_payout($payload);
+  } catch (Throwable $e) {
+    error_log("$TAG EXC=" . $e->getMessage());
+    wp_send_json_error(['message' => 'Server error.'], 500);
+  }
+
+  // 5) Responder
+  if (is_wp_error($res)) {
+    $msg = $res->get_error_message();
+    $d   = $res->get_error_data();
+    $status = (is_array($d) && isset($d['status'])) ? (int)$d['status'] : 500;
+    $backend = (is_array($d) && isset($d['backend'])) ? $d['backend'] : null;
+    $final = is_array($backend) && isset($backend['message']) ? $backend['message'] : ($msg ?: 'Request failed.');
+    error_log("$TAG WP_ERROR status=$status msg=$final data=" . (is_string($backend) ? $backend : wp_json_encode($backend)));
+    wp_send_json_error(['message' => $final], $status);
+  }
+
+  error_log("$TAG OK=" . (is_string($res) ? $res : wp_json_encode($res)));
+  wp_send_json_success(['message' => 'Payout created successfully.', 'response' => $res], 200);
+}
+
+
+// Debug de transporte WP_HTTP solo para /payouts (activar con WP_DEBUG)
+if (defined('WP_DEBUG') && WP_DEBUG) {
+  add_action('http_api_debug', function($response, $context, $class, $args, $url) {
+    if (strpos($url, '/payouts') === false) return; // solo traza payouts
+
+    error_log('[HTTP_DEBUG] ctx=' . $context . ' url=' . $url);
+    if (!empty($args['headers'])) error_log('[HTTP_DEBUG] headers=' . wp_json_encode($args['headers'], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+    if (array_key_exists('body', $args)) {
+      $body = is_string($args['body']) ? $args['body'] : wp_json_encode($args['body'], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+      error_log('[HTTP_DEBUG] body.len=' . strlen((string)$body) . ' sha1=' . sha1((string)$body));
+      error_log('[HTTP_DEBUG] body=' . substr((string)$body, 0, 4000));
+    }
+
+    if (is_wp_error($response)) {
+      error_log('[HTTP_DEBUG] resp=WP_Error ' . $response->get_error_message());
+    } else {
+      $code = wp_remote_retrieve_response_code($response);
+      $ct   = wp_remote_retrieve_header($response, 'content-type');
+      $rb   = wp_remote_retrieve_body($response);
+      error_log('[HTTP_DEBUG] status=' . $code . ' ct=' . ($ct ?: 'n/a'));
+      error_log('[HTTP_DEBUG] resp.len=' . strlen((string)$rb) . ' sha1=' . sha1((string)$rb));
+      error_log('[HTTP_DEBUG] resp=' . substr((string)$rb, 0, 4000));
+    }
+  }, 10, 5);
+}
+
+
+
 
 // ===== MT Daily Feedback (tabla + AJAX) =====
 add_action('after_setup_theme', function () {
@@ -2112,7 +2245,6 @@ add_action('wp_ajax_mt_save_daily_feedback', function () {
 
 // Ajax : Redit to account from notification
 
-// functions.php
 add_action('wp_ajax_mt_switch_account', 'mt_switch_account_cb');
 add_action('wp_ajax_nopriv_mt_switch_account', 'mt_switch_account_cb'); // si aplica
 

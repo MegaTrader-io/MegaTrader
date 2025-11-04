@@ -161,11 +161,13 @@ function mt_process_login(): void
   if ($password === '') {
     wc_add_notice(__('Password is required.', 'your-td'), 'error', ['field' => 'password']);
   }
+
   if (wc_notice_count('error') > 0) {
     return;
   }
 
   $validation_error = apply_filters('woocommerce_process_login_errors', new WP_Error(), $username, $password);
+
   if ($validation_error->get_error_code()) {
     foreach ($validation_error->get_error_codes() as $code) {
       $field = in_array($code, ['empty_username', 'invalid_username'], true) ? 'username'
@@ -193,7 +195,7 @@ function mt_process_login(): void
   if (is_wp_error($user)) {
     foreach ($user->get_error_codes() as $code) {
       $field = match ($code) {
-        'empty_username', 'invalid_username' => 'username',
+        'empty_username', 'invalid_username', 'invalid_email' => 'username',
         'empty_password', 'incorrect_password' => 'password',
         default => 'general',
       };
@@ -202,8 +204,9 @@ function mt_process_login(): void
           wc_add_notice('Incorrect password', 'error', ['field' => $field]);
           continue;
         }
+
         if ($code === 'invalid_email') {
-          wc_add_notice('No account found with this email.', 'error', ['field' => $field]);
+          wc_add_notice('Invalid username or email.', 'error', ['field' => $field]);
           continue;
         }
         wc_add_notice($msg, 'error', ['field' => $field]);

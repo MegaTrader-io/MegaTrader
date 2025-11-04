@@ -367,7 +367,8 @@ if (!function_exists('mt_program_rules_url')) {
     if (class_exists('Label') && defined('Label::PLAN_RULES_URLS')) {
       $map = Label::PLAN_RULES_URLS;
     }
-    return $map[$plan] ?? '';  }
+    return $map[$plan] ?? '';
+  }
 
 }
 
@@ -420,7 +421,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'maxDailyLossLimitPnLLevel' => $metrics['maxDailyLossLimitPnLLevel'] ?? null,
       'label' => $program['label'] ?? $program['description'] ?? mt__get($metrics, ['label']),
       'consistency' => mt__get($account, ['rules', 'consistency']),
-      'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmount']),
+      'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmountFromStartBalance']),
       'consistencyCurrentTopDayProfit' => $metrics['consistencyCurrentTopDayProfit'] ?? null,
 
     ];
@@ -2454,3 +2455,220 @@ if (!function_exists('mt_subscription_id_for_order')) {
     return '';
   }
 }
+
+/* === Prepare accounts list for payout UI (with balances & limits) === */
+if (!function_exists('mt_prepare_ui_payout')) {
+  function mt_prepare_ui_payout(string $email): array
+  {
+    $out = ['items' => [], 'selected' => null];
+
+    // ---- small helpers ----
+    $clean_json = static function (string $raw) {
+      $decoded = html_entity_decode($raw, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $stripped = trim(wp_strip_all_tags($decoded));
+      if (preg_match('/(\{.*\}|\[.*\])/s', $stripped, $m)) $stripped = $m[1];
+      $arr = json_decode($stripped, true);
+      return (json_last_error() === JSON_ERROR_NONE && is_array($arr)) ? $arr : null;
+    };
+
+    $aget = static function (array $a, array $path, $def = null) {
+      $v = $a;
+      foreach ($path as $k) {
+        if (is_array($v) && array_key_exists($k, $v)) $v = $v[$k]; else return $def;
+      }
+      return $v;
+    };
+
+    $b = static function ($v): bool {
+      if (is_bool($v)) return $v;
+      if (is_numeric($v)) return ((int)$v) !== 0;
+      if (is_string($v)) {
+        $t = strtolower(trim($v));
+        if (in_array($t, ['1','true','yes','on'], true)) return true;
+        if (in_array($t, ['0','false','no','off',''], true)) return false;
+      }
+      return !empty($v);
+    };
+
+    $endsFunded = static function ($s) {
+      return (bool) preg_match('/\bFunded\s*$/i', (string)$s);
+    };
+
+    $extract_account_size = static function (?string $label, ?string $desc): string {
+      $src = trim((string)($label ?: $desc ?: ''));
+      if ($src === '') return '';
+      $parts = explode('|', $src, 2);
+      return trim($parts[0]); // e.g. "25k Elite Plan"
+    };
+
+    // ---- input ----
+    $email = sanitize_email($email);
+    if (!$email) return $out;
+
+    // 1) fetch all accounts (shortcode)
+    $sc_accounts = sprintf('[mega_accounts_data email="%s" page="1" perpage="50" output="json"]', esc_attr($email));
+    $raw = (string) do_shortcode($sc_accounts);
+    $acc = $clean_json($raw);
+    if (!$acc) return $out;
+
+    // normalize to list
+    $list = null;
+    foreach ([['data','items'], ['items'], ['results'], ['data'], []] as $p) {
+      $cand = $p ? $aget($acc, $p, null) : $acc;
+      if (is_array($cand) && $cand && array_keys($cand) === range(0, count($cand)-1)) { $list = $cand; break; }
+    }
+    if (!$list) return $out;
+
+    // 2) filter ACTIVE + “…Funded” in description or label
+    $filtered = [];
+    foreach ($list as $row) {
+      if (!is_array($row)) continue;
+      $st = strtoupper(trim((string)($row['status'] ?? '')));
+      if ($st !== 'ACTIVE') continue;
+      $desc  = (string) $aget($row, ['program','description'], '');
+      $label = (string) $aget($row, ['program','label'], '');
+      if (!$endsFunded($desc) && !$endsFunded($label)) continue;
+      $row['_createdAt'] = (string) ($row['createdAt'] ?? '');
+      // guarda early para size
+      $row['_programDesc']  = $desc;
+      $row['_programLabel'] = $label;
+      $row['_accountSize']  = $extract_account_size($label, $desc);
+      $filtered[] = $row;
+    }
+    if (!$filtered) return $out;
+
+    // sort by created desc and preselect newest
+    usort($filtered, static function ($a, $b) {
+      $ta = strtotime((string)($a['_createdAt'] ?? '')) ?: 0;
+      $tb = strtotime((string)($b['_createdAt'] ?? '')) ?: 0;
+      return $tb <=> $ta;
+    });
+    $out['selected'] = (string) ($filtered[0]['id'] ?? '');
+
+    // helpers
+    $resolve_by_id = static function (string $id) use ($clean_json) {
+      if (function_exists('mt_accounts_resolve_account_by_id')) {
+        try { $acc = mt_accounts_resolve_account_by_id($id); if (is_array($acc)) return $acc; } catch (\Throwable $e) {}
+      }
+      $sc = sprintf('[mega_account_data id="%s" page="1" perpage="50" output="json"]', esc_attr($id));
+      $raw = (string) do_shortcode($sc);
+      return $clean_json($raw) ?: null;
+    };
+
+    $fetch_elig = static function (string $internalId) {
+      $data = mega_api_get_payout_eligibility($internalId);
+      return is_wp_error($data) ? null : (is_array($data) ? $data : null);
+    };
+
+    $resolve_logo = static function (?array $byId, array $row) use ($aget) {
+      $platformRaw = (string)(
+        $aget($byId ?? [], ['platform','platform'], '') ?:
+        $aget($row,  ['program','platform'], '') ?:
+        ($row['platform'] ?? '')
+      );
+      $DEFAULT_LOGO = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
+      $PLATFORM_LOGOS = [
+        'megatrader' => $DEFAULT_LOGO,
+        'ninjatrader' => '/wp-content/uploads/2025/02/icon_ninjatrader.svg',
+        'tradovate'   => '/wp-content/uploads/2025/02/icon_tradovate.svg',
+        'quantower'   => '/wp-content/uploads/2025/02/icon_quantower.svg',
+      ];
+      $key = strtolower(trim(preg_replace('/\s+/', ' ', $platformRaw)));
+      return $PLATFORM_LOGOS[$key] ?? $DEFAULT_LOGO;
+    };
+
+    $STATUS_KEYS = [
+      'amountAvailable','userKYCVerified','accountIsFlat','accountHasMetMinTradingDays',
+      'accountHasProfitShare','accountIsActive','accountHasProfit','accountHasWithdrawalAmount',
+      'accountIsFunded','accountHasPendingPayout','accountConsistencyMet',
+      'payoutHasMetMinTradingDays','payoutCycleCheckPassed',
+    ];
+
+    // 3) build items
+    foreach ($filtered as $row) {
+      $id = (string)($row['id'] ?? '');
+      if (!$id) continue;
+
+      $byId = $resolve_by_id($id);
+      if (!is_array($byId)) continue;
+
+      // accountName (platform.accountId) – badge secundario
+      $accountName = (string) $aget($byId, ['platform','accountId'], '');
+      if ($accountName === '') continue;
+
+      // ---- balances ----
+      $currentBalance  = (float) ($aget($byId, ['metrics','currentBalance'], 0) ?: 0);
+      $startingBalance = (float) ($aget($byId, ['program','startingBalance'], 0) ?: 0);
+
+      $minMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : [];
+      $minimumBalance = isset($minMap[$startingBalance]) ? (float)$minMap[$startingBalance] : 0.0;
+
+      $minWMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
+      $minimumWithdrawal = isset($minWMap[$startingBalance]) ? (float)$minWMap[$startingBalance] : 0.0;
+
+      $withdrawalRoom = max(0.0, $currentBalance - $minimumBalance);
+
+      $elig = $fetch_elig($id) ?: [];
+      $enabled      = $b($aget($elig, ['payoutCycle','enabled'], null));
+      $targetPassed = $b($aget($elig, ['payoutCycle','targetPassed'], null));
+      $status       = (array) $aget($elig, ['accountStatus'], []);
+
+      $allStatusOK = true;
+      foreach ($STATUS_KEYS as $k) { if (!$b($status[$k] ?? false)) { $allStatusOK = false; break; } }
+
+      $maxWithdrawalApi = (float) $aget($elig, ['payoutCycle','maxWithdrawal'], null);
+      if (!$maxWithdrawalApi && is_array($byId)) {
+        $maxWithdrawalApi = (float) $aget($byId, ['payout','payoutCycle','maxWithdrawal'], 0);
+      }
+
+      $eligibleBase      = ($enabled && $targetPassed && $allStatusOK);
+      $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= $minimumWithdrawal));
+
+      $maxWithdrawalUI = $eligibleForPayout ? max(0.0, min($withdrawalRoom, (float)$maxWithdrawalApi)) : 0.0;
+
+      $badge = $eligibleForPayout
+        ? ['text' => 'Eligible',   'class' => 'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
+        : ['text' => 'Ineligible', 'class' => 'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
+
+      $logo = $resolve_logo($byId, $row);
+
+      // NUEVOS CAMPOS: accountSize + copias de label/description por si quieres usarlas luego
+      $accountSize = (string) ($row['_accountSize'] ?? '');
+      $programLabel = (string) ($row['_programLabel'] ?? '');
+      $programDesc  = (string) ($row['_programDesc'] ?? '');
+
+      $out['items'][] = [
+        'id' => $id,
+        'logo' => $logo,
+
+        'accountSize' => $accountSize,      // ← nuevo: "25k Elite Plan"
+        'accountName' => $accountName,      // ← ahora lo usarás como badge
+        'platformAccountId' => $accountName,
+
+        'programLabel' => $programLabel,
+        'programDescription' => $programDesc,
+
+        'eligible' => $eligibleBase,
+        'eligibleForPayout' => $eligibleForPayout,
+
+        'meta' => [
+          'maxWithdrawal'     => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalApi'  => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalUI'   => $maxWithdrawalUI,
+          'currentBalance'    => $currentBalance,
+          'startingBalance'   => $startingBalance,
+          'minimumBalance'    => $minimumBalance,
+          'withdrawalRoom'    => $withdrawalRoom,
+          'minWithdrawal'     => $minimumWithdrawal,
+        ],
+
+        'badge' => $badge,
+      ];
+    }
+
+    return $out;
+  }
+}
+
+
+

@@ -92,21 +92,39 @@ body.admin-bar {
     width: 60px
 }
 
+.mt-navbar__logo-icon-bs {
+    height: 40px;
+    width: 40px
+}
+
 .mt-navbar__logo-text {
     display: none;
     height: 45px;
     width: 250px
 }
 
+.mt-navbar__logo-text-bs {
+    display: none;
+}
+
 @media (min-width: 1280px) {
     .mt-navbar__logo-text {
         display: block
+    }
+
+    .mt-navbar__logo-text-bs {
+        display: block;
     }
 }
 
 .mt-navbar__logo-wordmark {
     height: 47px;
     width: 170px
+}
+
+.mt-navbar__logo-wordmark-bs {
+    height: 30px;
+    width: 167px
 }
 
 @media (min-width: 1024px) {
@@ -282,6 +300,3 @@ body.admin-bar {
     gap: 32px;
 }
 
-.mt-navbar--landing-page-bs .mt-navbar__nav {
-    flex: 1;
-}
