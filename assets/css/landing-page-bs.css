@@ -642,7 +642,7 @@
 }
 
 .payouts-and-comparison__badge {
-    width: 100%;
+    width: calc(100% - 16px - 16px);
     position: absolute;
     top: -12px
 }
