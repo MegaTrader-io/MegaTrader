@@ -401,8 +401,8 @@ get_header('landing-page-bs');
                         </div>
 
                         <img class="payouts-and-comparison__image"
-                             src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/window-popular.png'); ?>"
-                             alt="flash" width="24" height="24">
+                             src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/window-coming-soon.png'); ?>"
+                             alt="flash">
 
                         <div class="payouts-and-comparison__content">
                             <div class="d-flex">
