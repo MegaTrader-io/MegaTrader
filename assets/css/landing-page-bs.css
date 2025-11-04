@@ -574,3 +574,98 @@
     padding-block: 8px;
     padding-inline: 16px;
 }
+
+.payouts-and-comparison {
+    background: var(--smoke-color2);
+}
+
+.payouts-and-comparison {
+    text-align: center;
+    overflow: hidden;
+}
+
+.payouts-and-comparison__container {
+    padding-block: 48px;
+}
+
+.payouts-and-comparison__image {
+    width: 100%;
+}
+
+.payouts-and-comparison__title {
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    word-wrap: break-word;
+    margin-bottom: 0;
+}
+
+.payouts-and-comparison__title span {
+    color: var(--Surface-Primary);
+}
+
+.payouts-and-comparison__subtitle {
+    max-width: 760px;
+    text-align: center;
+    color: var(--body-color);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 0;
+}
+
+.payouts-and-comparison__image {
+    width: 452px;
+    height: 358px;
+}
+
+.payouts-and-comparison__cards{
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-top: 32px;
+    padding-top: 16px;
+}
+
+.payouts-and-comparison__card {
+    padding: 32px 16px 16px 16px;
+    position: relative;
+    background: var(--body-bg);
+    border-radius: 16px;
+}
+
+.payouts-and-comparison__badge {
+    width: 100%;
+    position: absolute;
+    top: -12px
+}
+
+.payouts-and-comparison__content {
+    margin-top: 16px;
+    padding: 8px 16px 16px 16px;
+}
+
+.payouts-and-comparison__list li {
+    display: flex;
+    gap: 4px;
+}
+
+.payouts-and-comparison__list p {
+    margin-bottom: 0;
+}
+
+.payouts-and-comparison__list > * + * {
+    margin-top: 12px;
+}
+
+.payouts-and-comparison__checked {
+    width: 24px;
+    height: 24px;
+}
