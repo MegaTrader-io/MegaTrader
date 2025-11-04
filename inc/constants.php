@@ -170,7 +170,7 @@ class Label
     public const SIDEBAR_META = [
         "launch_button" => "Launch MegatraderX",
         "plan_title" => "Explore the plans",
-        "plan_description" => "Find the perfect plan to enhance experience.",
+        "plan_description" => "Choose the best plan to level your trading.",
         "plan_button" => "Buy a new challenge",
     ];
 
@@ -267,7 +267,7 @@ class Label
         'passed_modal_body_subtitle_w_activation_id' => "Your account is being prepared. You’ll be able to activate it soon.",
         'passed_modal_body_subtitle_no_activation_id' => "Your account is being prepared and will unlock automatically.",
         'account_chart_overlay_no_data' => 'There is not enough data to generate the graph.',
-        'account_daily_journal_overlay_no_data' => 'There is not enough data to display this tablet.',
+        'account_daily_journal_overlay_no_data' => 'There is not enough data to display this table.',
 
     ];
 
