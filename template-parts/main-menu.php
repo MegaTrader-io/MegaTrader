@@ -84,7 +84,12 @@ $menu_links = [
         'icon' => 'mt-icon_wallet',
         'href' => '#',
         'modal_target' => '#mt-request-payout-modal',
-        'is_disabled' => !$can_request_payout,
+        /*'is_disabled' => !$can_request_payout,*/
+        'is_disabled' => true,
+         'badge' => [
+            'text' => 'COMING SOON',
+            'style' => 'light'
+        ]
     ],
     [
         'class' => $mt_is_active('profile', 'active'),

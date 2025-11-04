@@ -141,11 +141,13 @@ function megatrader_scripts() {
 	wp_enqueue_script( 'mt-payment',             MEGATRADER_JS . 'payment-methods.js',      array(), REALTIME_VERSION, true );
 	wp_enqueue_script( 'mt-account-picker',      MEGATRADER_JS . 'mt-account-picker.js',    array(), REALTIME_VERSION, true );
 
+/*
 	wp_enqueue_script( 'mt-account-payout',      MEGATRADER_JS . 'mt-account-payout.js',    array('bootstrap-bundle'), REALTIME_VERSION, true );
 	wp_localize_script( 'mt-account-payout', 'MT_PAYOUT_VARS', array(
 		'ajaxurl' => admin_url('admin-ajax.php'),
 		'nonce'   => wp_create_nonce('mt_payouts'), // NO CAMBIAR
 	));
+     */
 
 	wp_enqueue_script( 'mt-navbar-js',           MEGATRADER_JS . 'mt-navbar.js',            array(), REALTIME_VERSION, true );
 	wp_enqueue_script( 'mt-tooltips-js',         MEGATRADER_JS . 'mt-tooltips.js',          array(), REALTIME_VERSION, true );
