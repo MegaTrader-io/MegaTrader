@@ -216,7 +216,7 @@ function mt_process_login(): void
     return;
   }
 
-  $default_redirect = profile_url(user_email: $user->user_email);
+  $default_redirect = home_url('/my-account/overview/');
 
   $raw_redirect = $_POST['redirect'] ?? $_GET['redirect_to'] ?? $default_redirect;
   $redirect = wp_unslash($raw_redirect);
