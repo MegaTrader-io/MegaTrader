@@ -7,30 +7,30 @@ if (!defined('ABSPATH')) exit;
  *    Si el registro está deshabilitado, no ocultamos el login.
  */
 add_filter('woocommerce_login_form_enabled', function (bool $enabled): bool {
-    $registration_enabled = get_option('woocommerce_enable_myaccount_registration', 'no') === 'yes';
-    if (!$registration_enabled) {
-        return $enabled; // no ocultes login si no hay registro
-    }
+  $registration_enabled = get_option('woocommerce_enable_myaccount_registration', 'no') === 'yes';
+  if (!$registration_enabled) {
+    return $enabled; // no ocultes login si no hay registro
+  }
 
-    $is_register_endpoint = (string)get_query_var('register', '');
-    $is_register_action = isset($_GET['action']) && $_GET['action'] === 'register';
+  $is_register_endpoint = (string)get_query_var('register', '');
+  $is_register_action = isset($_GET['action']) && $_GET['action'] === 'register';
 
-    if (!is_user_logged_in() && ($is_register_endpoint !== '' || $is_register_action)) {
-        return false; // apaga el bloque de login
-    }
-    return $enabled;
+  if (!is_user_logged_in() && ($is_register_endpoint !== '' || $is_register_action)) {
+    return false; // apaga el bloque de login
+  }
+  return $enabled;
 }, 10, 1);
 
 add_action('init', function () {
-    if (class_exists('WC_Form_Handler')) {
-        remove_action('wp_loaded', ['WC_Form_Handler', 'process_registration'], 20);
-        add_action('wp_loaded', 'mt_process_registration', 20);
-    }
+  if (class_exists('WC_Form_Handler')) {
+    remove_action('wp_loaded', ['WC_Form_Handler', 'process_registration'], 20);
+    add_action('wp_loaded', 'mt_process_registration', 20);
+  }
 }, 11);
 
 add_action('rest_api_init', function () {
   register_rest_route('register-process', '/callback', [
-    'methods'  => 'POST',
+    'methods' => 'POST',
     'callback' => 'mt_process_callback_register',
     'permission_callback' => '__return_true',
   ]);
@@ -38,18 +38,20 @@ add_action('rest_api_init', function () {
 
 function mt_process_callback_register(WP_REST_Request $request): WP_REST_Response
 {
-  $nonce = $request->get_header('x-wp-nonce');
-  if (!wp_verify_nonce($nonce, 'wp_rest')) {
+  $auth_nonce = $request->get_header('x-wp-nonce');
+  if (!wp_verify_nonce($auth_nonce, 'wp_rest')) {
     return new WP_REST_Response([
       'success' => false,
-      'errors'  => ['general' => 'Security check failed. Please refresh and try again.'],
+      'errors' => ['general' => 'Security check failed. Please refresh and try again.'],
     ], 403);
   }
 
-  $email     = sanitize_email($request->get_param('email'));
-  $password  = (string)$request->get_param('password');
-  $confirm   = (string)$request->get_param('confirm_password');
-  $privacy   = (string)$request->get_param('privacy_policy');
+  $email = sanitize_email($request->get_param('email'));
+  $password = (string)$request->get_param('password');
+  $confirm = (string)$request->get_param('confirm_password');
+  $privacy = (string)$request->get_param('privacy_policy');
+
+  $raw_redirect = (string)$request->get_param('redirect') ?: (string)$request->get_param('redirect_to');
 
   $errors = [];
 
@@ -84,7 +86,7 @@ function mt_process_callback_register(WP_REST_Request $request): WP_REST_Respons
   if (!empty($errors)) {
     return new WP_REST_Response([
       'success' => false,
-      'errors'  => $errors,
+      'errors' => $errors,
     ], 400);
   }
 
@@ -92,215 +94,237 @@ function mt_process_callback_register(WP_REST_Request $request): WP_REST_Respons
   if ($generate_username) {
     $username = '';
   } else {
-    $username = isset($_POST['username']) && is_string($_POST['username'])
-      ? sanitize_user(wp_unslash($_POST['username']), true)
-      : '';
+    $username = sanitize_user($request->get_param('username') ?? '', true);
     if ($username === '') {
       $username = strstr($email, '@', true) ?: $email;
     }
   }
-  $final_password = get_option('woocommerce_registration_generate_password') === 'yes' ? wp_generate_password() : $password;
+
+  $final_password = get_option('woocommerce_registration_generate_password') === 'yes'
+    ? wp_generate_password()
+    : $password;
 
   $new_customer = wc_create_new_customer($email, wc_clean($username), $final_password);
 
   if (is_wp_error($new_customer)) {
     foreach ($new_customer->get_error_codes() as $code) {
       $field = match ($code) {
-        'registration-error-invalid-email', 'registration-error-email-exists' => 'email',
+        'registration-error-invalid-email',
+        'registration-error-email-exists' => 'email',
         default => 'general',
       };
       foreach ($new_customer->get_error_messages($code) as $msg) {
         $errors[$field] = $msg;
       }
     }
+
     return new WP_REST_Response([
       'success' => false,
-      'errors'  => $errors
+      'errors' => $errors,
     ], 400);
   }
 
   wc_set_customer_auth_cookie($new_customer);
 
+  // --- Determine redirect URL ---
+  $default_redirect = home_url('/my-account/overview/');
+  $redirect = $raw_redirect ?: $default_redirect;
+  $redirect = wp_unslash($redirect);
+
+  $parsed_redirect = wp_parse_url($redirect);
+  $current_host = wp_parse_url(home_url(), PHP_URL_HOST);
+
+  if (
+    empty($parsed_redirect['host']) ||
+    $parsed_redirect['host'] === $current_host
+  ) {
+    if (strpos($parsed_redirect['path'] ?? '', '/wp-admin') === 0 && !current_user_can('manage_options')) {
+      $redirect = home_url('/');
+    }
+  } else {
+    $redirect = $default_redirect;
+  }
+
   return new WP_REST_Response([
     'success' => true,
     'message' => 'Account created successfully.',
-    'redirect' => home_url('/my-account/overview/'),
+    'redirect' => $redirect,
   ], 200);
 }
 
 function mt_process_registration(): void
 {
-    // 1) Gate: solo procesa cuando viene el submit correcto + nonce válido.
-    $nonce = isset($_POST['woocommerce-register-nonce'])
-        ? wp_unslash($_POST['woocommerce-register-nonce'])
-        : (isset($_POST['_wpnonce']) ? wp_unslash($_POST['_wpnonce']) : '');
+  // 1) Gate: solo procesa cuando viene el submit correcto + nonce válido.
+  $nonce = isset($_POST['woocommerce-register-nonce'])
+    ? wp_unslash($_POST['woocommerce-register-nonce'])
+    : (isset($_POST['_wpnonce']) ? wp_unslash($_POST['_wpnonce']) : '');
 
-    if (
-        !isset($_POST['register']) ||
-        !wp_verify_nonce($nonce, 'woocommerce-register')
-    ) {
-        return;
+  if (
+    !isset($_POST['register']) ||
+    !wp_verify_nonce($nonce, 'woocommerce-register')
+  ) {
+    return;
+  }
+
+  // 2) Inputs (sanitizados y tipados)
+  $firstname = isset($_POST['firstname']) && is_string($_POST['firstname'])
+    ? (string)sanitize_text_field($_POST['firstname']) : '';
+
+  $lastname = isset($_POST['lastname']) && is_string($_POST['lastname'])
+    ? (string)sanitize_text_field($_POST['lastname']) : '';
+
+  $email = isset($_POST['email']) && is_string($_POST['email'])
+    ? sanitize_email(wp_unslash($_POST['email'])) : '';
+
+  $phone = isset($_POST['phone']) && is_string($_POST['phone'])
+    ? trim((string)wp_unslash($_POST['phone'])) : '';
+
+  $billing_country = isset($_POST['billing_country']) && is_string($_POST['billing_country'])
+    ? trim((string)sanitize_text_field($_POST['billing_country'])) : '';
+
+
+  $password = isset($_POST['password']) && is_string($_POST['password'])
+    ? (string)$_POST['password'] : '';
+
+  $confirm = isset($_POST['confirm_password']) && is_string($_POST['confirm_password'])
+    ? (string)$_POST['confirm_password'] : '';
+
+  $privacy_ok = isset($_POST['privacy_policy']) && (string)$_POST['privacy_policy'] === '1';
+
+  // 3) Validaciones propias (antes de filtros de Woo)
+  if ($firstname === '') {
+    wc_add_notice(__('First Name is required.', 'your-td'), 'error', ['field' => 'firstname']);;
+  }
+
+  if ($lastname === '') {
+    wc_add_notice(__('Last Name is required.', 'your-td'), 'error', ['field' => 'lastname']);;
+  }
+
+  if ($email === '') {
+    wc_add_notice(__('Email is required.', 'your-td'), 'error', ['field' => 'email']);
+  } elseif (!is_email($email)) {
+    wc_add_notice(__('Enter a valid email address.', 'your-td'), 'error', ['field' => 'email']);
+  }
+
+  // Password requerido solo si Woo no lo genera automáticamente
+  $generate_password = get_option('woocommerce_registration_generate_password') === 'yes';
+  if (!$generate_password) {
+    if ($password === '') {
+      wc_add_notice(__('Password is required.', 'your-td'), 'error', ['field' => 'password']);
+    } elseif (strlen($password) < 8) {
+      wc_add_notice(__('Use at least 8 characters.', 'your-td'), 'error', ['field' => 'password']);
     }
 
-    // 2) Inputs (sanitizados y tipados)
-    $firstname = isset($_POST['firstname']) && is_string($_POST['firstname'])
-        ? (string)sanitize_text_field($_POST['firstname']) : '';
-
-    $lastname = isset($_POST['lastname']) && is_string($_POST['lastname'])
-        ? (string)sanitize_text_field($_POST['lastname']) : '';
-
-    $email = isset($_POST['email']) && is_string($_POST['email'])
-        ? sanitize_email(wp_unslash($_POST['email'])) : '';
-
-    $phone = isset($_POST['phone']) && is_string($_POST['phone'])
-        ? trim((string)wp_unslash($_POST['phone'])) : '';
-
-    $billing_country = isset($_POST['billing_country']) && is_string($_POST['billing_country'])
-        ? trim((string)sanitize_text_field($_POST['billing_country'])) : '';
-
-
-    $password = isset($_POST['password']) && is_string($_POST['password'])
-        ? (string)$_POST['password'] : '';
-
-    $confirm = isset($_POST['confirm_password']) && is_string($_POST['confirm_password'])
-        ? (string)$_POST['confirm_password'] : '';
-
-    $privacy_ok = isset($_POST['privacy_policy']) && (string)$_POST['privacy_policy'] === '1';
-
-    // 3) Validaciones propias (antes de filtros de Woo)
-    if ($firstname === '') {
-        wc_add_notice(__('First Name is required.', 'your-td'), 'error', ['field' => 'firstname']);;
+    if ($confirm === '') {
+      wc_add_notice(__('Please confirm your password.', 'your-td'), 'error', ['field' => 'confirm_password']);
+    } elseif ($password !== $confirm) {
+      wc_add_notice(__('Passwords do not match.', 'your-td'), 'error', ['field' => 'confirm_password']);
     }
+  }
 
-    if ($lastname === '') {
-        wc_add_notice(__('Last Name is required.', 'your-td'), 'error', ['field' => 'lastname']);;
+  if ($phone === '') {
+    wc_add_notice(__('Phone number is required.', 'your-td'), 'error', ['field' => 'phone']);
+  } elseif (!preg_match('/^[0-9+\-\s().]{7,}$/', $phone)) {
+    wc_add_notice(__('Enter a valid phone number.', 'your-td'), 'error', ['field' => 'phone']);
+  }
+
+  if (!$privacy_ok) {
+    wc_add_notice(__('You must accept the Terms and the Privacy Policy.', 'your-td'), 'error', ['field' => 'privacy_policy']);
+  }
+
+  // Si ya hay errores, no sigas
+  if (wc_notice_count('error') > 0) {
+    return;
+  }
+
+  // 4) Validaciones de Woo (permite a plugins/tema meter reglas)
+  // Para compat: Woo espera $username (aunque no lo uses) y $password.
+  $tmp_username = '';
+  $validation_error = apply_filters('woocommerce_process_registration_errors', new WP_Error(), $tmp_username, $password, $email);
+  if ($validation_error instanceof WP_Error && $validation_error->get_error_codes()) {
+    foreach ($validation_error->get_error_codes() as $code) {
+      $field = match ($code) {
+        'registration-error-invalid-email',
+        'registration-error-email-exists' => 'email',
+        default => 'general',
+      };
+      foreach ($validation_error->get_error_messages($code) as $msg) {
+        wc_add_notice($msg, 'error', ['field' => $field]);
+      }
     }
+    return;
+  }
 
-    if ($email === '') {
-        wc_add_notice(__('Email is required.', 'your-td'), 'error', ['field' => 'email']);
-    } elseif (!is_email($email)) {
-        wc_add_notice(__('Enter a valid email address.', 'your-td'), 'error', ['field' => 'email']);
+  // 5) Username a usar según ajustes de Woo
+  $generate_username = get_option('woocommerce_registration_generate_username') === 'yes';
+  if ($generate_username) {
+    // base: parte local del email
+    $username = '';
+  } else {
+    $username = isset($_POST['username']) && is_string($_POST['username'])
+      ? sanitize_user(wp_unslash($_POST['username']), true)
+      : '';
+    if ($username === '') {
+      // fallback sensato
+      $username = strstr($email, '@', true) ?: $email;
     }
+  }
 
-    // Password requerido solo si Woo no lo genera automáticamente
-    $generate_password = get_option('woocommerce_registration_generate_password') === 'yes';
-    if (!$generate_password) {
-        if ($password === '') {
-            wc_add_notice(__('Password is required.', 'your-td'), 'error', ['field' => 'password']);
-        } elseif (strlen($password) < 8) {
-            wc_add_notice(__('Use at least 8 characters.', 'your-td'), 'error', ['field' => 'password']);
-        }
+  // 6) Password final a usar
+  $final_password = $generate_password ? wp_generate_password() : $password;
 
-        if ($confirm === '') {
-            wc_add_notice(__('Please confirm your password.', 'your-td'), 'error', ['field' => 'confirm_password']);
-        } elseif ($password !== $confirm) {
-            wc_add_notice(__('Passwords do not match.', 'your-td'), 'error', ['field' => 'confirm_password']);
-        }
+  // 7) Crear usuario
+  $new_customer = wc_create_new_customer($email, wc_clean($username), $final_password);
+  if (is_wp_error($new_customer)) {
+    foreach ($new_customer->get_error_codes() as $code) {
+      $field = match ($code) {
+        'registration-error-invalid-email',
+        'registration-error-email-exists' => 'email',
+        default => 'general',
+      };
+      foreach ($new_customer->get_error_messages($code) as $msg) {
+        wc_add_notice($msg, 'error', ['field' => $field]);
+      }
     }
+    return;
+  }
 
-    if ($phone === '') {
-        wc_add_notice(__('Phone number is required.', 'your-td'), 'error', ['field' => 'phone']);
-    } elseif (!preg_match('/^[0-9+\-\s().]{7,}$/', $phone)) {
-        wc_add_notice(__('Enter a valid phone number.', 'your-td'), 'error', ['field' => 'phone']);
-    }
+  // 8) Guardar metadatos y nombre
+  // billing_phone (Woo estándar)
+  update_user_meta($new_customer, 'billing_first_name', $firstname);
+  update_user_meta($new_customer, 'billing_last_name', $lastname);
+  update_user_meta($new_customer, 'billing_phone', $phone);
+  update_user_meta($new_customer, 'billing_country', $billing_country);
 
-    if (!$privacy_ok) {
-        wc_add_notice(__('You must accept the Terms and the Privacy Policy.', 'your-td'), 'error', ['field' => 'privacy_policy']);
-    }
+  wp_update_user([
+    'ID' => $new_customer,
+    'first_name' => $firstname,
+    'last_name' => $lastname,
+    'display_name' => $firstname . ' ' . $lastname,
+  ]);
 
-    // Si ya hay errores, no sigas
-    if (wc_notice_count('error') > 0) {
-        return;
-    }
+  // 9) Mensaje de éxito (coherente con ajustes de Woo)
+  if ($generate_password) {
+    wc_add_notice(__('Your account was created successfully and a password has been sent to your email address.', 'woocommerce'));
+  } else {
+    wc_add_notice(__('Your account was created successfully. Your login details have been sent to your email address.', 'woocommerce'));
+  }
 
-    // 4) Validaciones de Woo (permite a plugins/tema meter reglas)
-    // Para compat: Woo espera $username (aunque no lo uses) y $password.
-    $tmp_username = '';
-    $validation_error = apply_filters('woocommerce_process_registration_errors', new WP_Error(), $tmp_username, $password, $email);
-    if ($validation_error instanceof WP_Error && $validation_error->get_error_codes()) {
-        foreach ($validation_error->get_error_codes() as $code) {
-            $field = match ($code) {
-                'registration-error-invalid-email',
-                'registration-error-email-exists' => 'email',
-                default => 'general',
-            };
-            foreach ($validation_error->get_error_messages($code) as $msg) {
-                wc_add_notice($msg, 'error', ['field' => $field]);
-            }
-        }
-        return;
-    }
+  // 10) Autologin + redirect seguro
+  if (apply_filters('woocommerce_registration_auth_new_customer', true, $new_customer)) {
+    wc_set_customer_auth_cookie($new_customer);
+    $redirect = !empty($_POST['redirect'])
+      ? wp_unslash($_POST['redirect'])
+      : (wc_get_raw_referer() ?: wc_get_page_permalink('myaccount'));
 
-    // 5) Username a usar según ajustes de Woo
-    $generate_username = get_option('woocommerce_registration_generate_username') === 'yes';
-    if ($generate_username) {
-        // base: parte local del email
-        $username = '';
-    } else {
-        $username = isset($_POST['username']) && is_string($_POST['username'])
-            ? sanitize_user(wp_unslash($_POST['username']), true)
-            : '';
-        if ($username === '') {
-            // fallback sensato
-            $username = strstr($email, '@', true) ?: $email;
-        }
-    }
+    $redirect = remove_query_arg(['wc_error', 'password-reset'], $redirect);
 
-    // 6) Password final a usar
-    $final_password = $generate_password ? wp_generate_password() : $password;
-
-    // 7) Crear usuario
-    $new_customer = wc_create_new_customer($email, wc_clean($username), $final_password);
-    if (is_wp_error($new_customer)) {
-        foreach ($new_customer->get_error_codes() as $code) {
-            $field = match ($code) {
-                'registration-error-invalid-email',
-                'registration-error-email-exists' => 'email',
-                default => 'general',
-            };
-            foreach ($new_customer->get_error_messages($code) as $msg) {
-                wc_add_notice($msg, 'error', ['field' => $field]);
-            }
-        }
-        return;
-    }
-
-    // 8) Guardar metadatos y nombre
-    // billing_phone (Woo estándar)
-    update_user_meta($new_customer, 'billing_first_name', $firstname);
-    update_user_meta($new_customer, 'billing_last_name', $lastname);
-    update_user_meta($new_customer, 'billing_phone', $phone);
-    update_user_meta($new_customer, 'billing_country', $billing_country);
-
-    wp_update_user([
-        'ID' => $new_customer,
-        'first_name' => $firstname,
-        'last_name' => $lastname,
-        'display_name' => $firstname . ' ' . $lastname,
-    ]);
-
-    // 9) Mensaje de éxito (coherente con ajustes de Woo)
-    if ($generate_password) {
-        wc_add_notice(__('Your account was created successfully and a password has been sent to your email address.', 'woocommerce'));
-    } else {
-        wc_add_notice(__('Your account was created successfully. Your login details have been sent to your email address.', 'woocommerce'));
-    }
-
-    // 10) Autologin + redirect seguro
-    if (apply_filters('woocommerce_registration_auth_new_customer', true, $new_customer)) {
-        wc_set_customer_auth_cookie($new_customer);
-        $redirect = !empty($_POST['redirect'])
-            ? wp_unslash($_POST['redirect'])
-            : (wc_get_raw_referer() ?: wc_get_page_permalink('myaccount'));
-
-        $redirect = remove_query_arg(['wc_error', 'password-reset'], $redirect);
-
-        wp_safe_redirect(
-            wp_validate_redirect(
-                apply_filters('woocommerce_registration_redirect', $redirect, $new_customer),
-                wc_get_page_permalink('myaccount')
-            )
-        );
-        exit;
-    }
+    wp_safe_redirect(
+      wp_validate_redirect(
+        apply_filters('woocommerce_registration_redirect', $redirect, $new_customer),
+        wc_get_page_permalink('myaccount')
+      )
+    );
+    exit;
+  }
 }
