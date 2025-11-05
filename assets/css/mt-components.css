@@ -2444,3 +2444,89 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     line-height: 32px;
     word-wrap: break-word
 }
+
+.plan-detail-selection {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    color: white;
+    font-family: inherit;
+}
+
+.plan-detail-selection__title {
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+}
+
+.plan-detail-selection__card {
+    margin: 8px 0 16px 0;
+}
+
+.plan-detail-selection__header {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.plan-detail-selection__account-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.plan-detail-selection__platform-icon {
+    width: 30px;
+    height: 30px;
+}
+
+.plan-detail-selection__name {
+    flex: 1 1 0;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 32px;
+    word-wrap: break-word;
+}
+
+.plan-detail-selection__checked-wrapper {
+    width: 30px;
+    height: 30px;
+    position: relative;
+}
+
+.plan-detail-selection__checked {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.plan-detail-selection__features-list {
+    margin-top: 8px;
+    list-style: none;
+    padding: 0;
+}
+
+.plan-detail-selection__features-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plan-detail-selection__features-text {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.plan-detail-selection__note {
+    color: #A8A29E;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}

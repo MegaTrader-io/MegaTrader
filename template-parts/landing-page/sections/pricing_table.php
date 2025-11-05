@@ -368,7 +368,8 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
             />
             <div class="testimonials__content">
                 <p class="testimonials__quote">
-                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast they solve any issues”
+                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast
+                    they solve any issues”
                 </p>
                 <div class="testimonials__info">
                     <div class="testimonials__author">
@@ -390,7 +391,7 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
                                     width="20"
                                     height="20"
                             >
-                                <rect width="20" height="20" fill="#D9D9D9" />
+                                <rect width="20" height="20" fill="#D9D9D9"/>
                             </mask>
                             <g mask="url(#mask0_17091_43407)">
                                 <path
@@ -413,7 +414,8 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
             />
             <div class="testimonials__content">
                 <p class="testimonials__quote">
-                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast they solve any issues”
+                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast
+                    they solve any issues”
                 </p>
                 <div class="testimonials__info">
                     <div class="testimonials__author">
@@ -435,7 +437,7 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
                                     width="20"
                                     height="20"
                             >
-                                <rect width="20" height="20" fill="#D9D9D9" />
+                                <rect width="20" height="20" fill="#D9D9D9"/>
                             </mask>
                             <g mask="url(#mask0_17091_43407)">
                                 <path
@@ -451,3 +453,15 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
         </div>
     </div>
 </section>
+
+<script>
+    const PAGE_KEY = '<?= $page_slug ?>-storage';
+    window[PAGE_KEY] = {
+        screenLoaded: false
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+
+    });
+</script>

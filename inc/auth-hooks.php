@@ -353,6 +353,48 @@ function mt_process_login(): void
   exit;
 }
 
+function mt_extract_add_to_cart_id(?string $redirectUrl): ?int
+{
+  try {
+    if (empty($redirectUrl)) {
+      return null;
+    }
+
+    $decodedUrl = rawurldecode($redirectUrl);
+
+    if (!filter_var($decodedUrl, FILTER_VALIDATE_URL)) {
+      return null;
+    }
+
+    $parsed = parse_url($decodedUrl);
+
+    if (empty($parsed['host'])) {
+      return null;
+    }
+
+    if (empty($parsed['path']) || !str_contains($parsed['path'], '/checkout/')) {
+      return null;
+    }
+
+    if (empty($parsed['query'])) {
+      return null;
+    }
+
+    parse_str($parsed['query'], $query);
+
+    if (!isset($query['add-to-cart']) || !ctype_digit($query['add-to-cart'])) {
+      return null;
+    }
+
+    return (int)$query['add-to-cart'];
+  } catch (Throwable $e) {
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log("[extractAddToCartId] Error: " . $e->getMessage());
+    }
+    return null;
+  }
+}
+
 
 add_action('wp_enqueue_scripts', function () {
   // Obtén la ruta relativa de la URL actual

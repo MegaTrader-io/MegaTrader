@@ -10,15 +10,21 @@ foreach ($errors as $error) {
     MT_WC_Error::$field_errors[$error['data']['field']] = $error['notice'];
 }
 
-$default_country = 'US';
-
-$valid_states = WC()->countries->get_states($default_country);
+$product_id = null;
+if (isset($_GET['redirect_to'])) {
+    $redirect_to = rawurldecode($_GET['redirect_to']);
+    $product_id = mt_extract_add_to_cart_id($redirect_to);
+}
 ?>
 
 <?php //do_action('woocommerce_before_customer_login_form'); ?>
 
 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/logo-mt.svg"
      width="72" height="72" alt="Logo MegaTraderX"/>
+
+<?php if ($product_id !== null): ?>
+    <?php get_template_part('template-parts/plan-detail-selection', null, ['card_product_id' => $product_id]); ?>
+<?php endif; ?>
 
 <div>
     <h2 class="auth-form__title"><?php esc_html_e('REGISTER', 'woocommerce'); ?></h2>
