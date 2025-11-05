@@ -43,7 +43,7 @@ foreach ($errors as $error) {
             details.</p>
     </div>
 
-    <form class="auth-form__form-wrapper" method="post"
+    <form id="form-login" class="auth-form__form-wrapper" method="post"
           novalidate <?php do_action('woocommerce_register_form_tag'); ?>>
 
         <?php //do_action('woocommerce_register_form_start'); ?>
