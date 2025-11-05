@@ -397,11 +397,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         msg.textContent = message || 'An unexpected error occurred.';
                         wrapper.appendChild(msg);
                         form.parentNode.insertBefore(wrapper, form);
-
-                        $.preloader.hide();
-                        inputs.forEach(el => el.readOnly = false);
-                        submitBtn.classList.remove('btn--loading');
                     }
+
+                    $.preloader.hide();
+                    inputs.forEach(el => el.readOnly = false);
+                    submitBtn.classList.remove('btn--loading');
                 });
             }
 
