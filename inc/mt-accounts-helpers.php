@@ -889,182 +889,210 @@ if (!function_exists('mt_value_compare_icon_classes')) {
 
     // positivo:
     if ($target === null || $target === '' || !is_numeric($target))
-      return $cls_pos; // Meta no numérica: siempre cumplido si V > 0
-
+      return $cls_neutral;
     $t = (float) $target;
 
-    // Meta negativa/cero: siempre cumplido si V > 0
     if ($t <= 0)
+      return $cls_pos;           // meta no válida => consideramos cumplida
+
+    if (abs($v - $t) < 1e-9) {
       return $cls_pos;
+    }
 
-    // Meta positiva:
-    if ($v > $t)
-      return $cls_pos; // cumplido
-
-    if (abs($v - $t) < 1e-9)
-      return $cls_pos; // igual (cumplido)
-
-    return $cls_neutral; // V > 0, pero V < T
+    return ($v > $t) ? $cls_pos : $cls_neutral;
   }
 }
 
-// Construye links de plataforma (web/app/icono) desde un código (mt4|mt5|ctrader, etc.)
-if (!function_exists('mt_platform_links_by_code')) {
-  function mt_platform_links_by_code(string $code)
-  {
-    $code = strtolower(trim($code));
-    $map = [
-      'ctrader' => [
-        'web' => 'https://app.spotware.com',
-        'appstore' => 'https://apps.apple.com/app/ctrader/id767428811',
-        'playstore' => 'https://play.google.com/store/apps/details?id=com.spotware.ct',
-        'icon_class' => 'mt-icon-ctrader',
-        'name' => 'cTrader',
-      ],
-      'mt4' => [
-        'web' => '',
-        'appstore' => 'https://apps.apple.com/app/metatrader-4/id496212596',
-        'playstore' => 'https://play.google.com/store/apps/details?id=net.metaquotes.metatrader4',
-        'icon_class' => 'mt-icon-mt4',
-        'name' => 'MetaTrader 4',
-      ],
-      'mt5' => [
-        'web' => '',
-        'appstore' => 'https://apps.apple.com/app/metatrader-5/id413251709',
-        'playstore' => 'https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5',
-        'icon_class' => 'mt-icon-mt5',
-        'name' => 'MetaTrader 5',
-      ],
-    ];
-    $base = ['web' => '', 'appstore' => '', 'playstore' => '', 'icon_class' => '', 'name' => 'Trading Platform'];
-    return $map[$code] ?? $base;
-  }
+// Mapea links por plataforma
+function mt_accounts_default_platform_links($code)
+{
+  $code = strtolower((string) $code);
+  $map = [
+    'ctrader' => [
+      'web' => 'https://app.spotware.com',
+      'appstore' => 'https://apps.apple.com/app/ctrader/id767428811',
+      'playstore' => 'https://play.google.com/store/apps/details?id=com.spotware.ct',
+      'icon_class' => 'mt-icon-ctrader',
+      'name' => 'cTrader',
+    ],
+    'mt4' => [
+      'web' => '',
+      'appstore' => 'https://apps.apple.com/app/metatrader-4/id496212596',
+      'playstore' => 'https://play.google.com/store/apps/details?id=net.metaquotes.metatrader4',
+      'icon_class' => 'mt-icon-mt4',
+      'name' => 'MetaTrader 4',
+    ],
+    'mt5' => [
+      'web' => '',
+      'appstore' => 'https://apps.apple.com/app/metatrader-5/id413251709',
+      'playstore' => 'https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5',
+      'icon_class' => 'mt-icon-mt5',
+      'name' => 'MetaTrader 5',
+    ],
+  ];
+  $base = ['web' => '', 'appstore' => '', 'playstore' => '', 'icon_class' => '', 'name' => 'Trading Platform'];
+  return $map[$code] ?? $base;
 }
 
 // Construye credenciales desde un objeto/array "cuenta" (JSON/API)
-if (!function_exists('mt_accounts_build_credentials_from_account')) {
-  function mt_accounts_build_credentials_from_account($account)
-  {
-    $a = is_object($account) ? json_decode(json_encode($account), true) : (array) $account;
-    $login = $a['login'] ?? ($a['credentials']['login'] ?? ($a['accountNumber'] ?? ($a['tradingLogin'] ?? '')));
-    $server = $a['server'] ?? ($a['credentials']['server'] ?? '');
-    $pwd = $a['password'] ?? ($a['credentials']['password'] ?? '');
-    $platform_code = strtolower($a['platform']['code'] ?? ($a['platform_code'] ?? ''));
-    $platform_name = $a['platform']['name'] ?? ($a['platform_name'] ?? '');
-    $links = mt_platform_links_by_code($platform_code);
+function mt_accounts_build_credentials_from_account($account)
+{
+  $a = is_object($account) ? json_decode(json_encode($account), true) : (array) $account;
 
-    return [
-      'login' => (string) $login,
-      'password' => (string) $pwd,
-      'server' => (string) $server,
-      'links' => $links,
-      'platform' => [
-        'code' => $platform_code,
-        'name' => $platform_name ?: ($links['name'] ?? 'Trading Platform'),
-        'icon_class' => $links['icon_class'],
-      ],
-      // compatibilidad
-      'platformName' => $platform_name ?: ($links['name'] ?? 'Trading Platform'),
-      'iconClass' => $links['icon_class'],
-      'accountId' => (string) ($a['id'] ?? $login),
-    ];
+  $login = $a['login'] ?? ($a['credentials']['login'] ?? ($a['accountNumber'] ?? ($a['tradingLogin'] ?? '')));
+  $server = $a['server'] ?? ($a['credentials']['server'] ?? '');
+  $pwd = $a['password'] ?? ($a['credentials']['password'] ?? '');
+
+  $platform_code = strtolower($a['platform']['code'] ?? ($a['platform_code'] ?? ''));
+  $platform_name = $a['platform']['name'] ?? ($a['platform_name'] ?? '');
+  $links = [
+    'web' => $a['links']['web'] ?? '',
+    'appstore' => $a['links']['appstore'] ?? '',
+    'playstore' => $a['links']['playstore'] ?? '',
+  ];
+
+  // Defaults por plataforma
+  if (!$links['web'] && !$links['appstore'] && !$links['playstore']) {
+    $links = array_intersect_key(mt_accounts_default_platform_links($platform_code), $links + ['x' => 1]);
   }
+
+  $platform_defaults = mt_accounts_default_platform_links($platform_code);
+  return [
+    'login' => (string) $login,
+    'password' => (string) $pwd,
+    'server' => (string) $server,
+    'links' => $links,
+    'platform' => [
+      'code' => $platform_code,
+      'name' => $platform_name ?: $platform_defaults['name'],
+      'icon_class' => $platform_defaults['icon_class'],
+    ],
+  ];
 }
 
-// Devuelve todas las credenciales para pintar en la UI (Modal de cuenta)
-if (!function_exists('mt_accounts_prepare_credentials_ui')) {
-  function mt_accounts_prepare_credentials_ui(string $account_id)
-  {
-    $account_id = trim($account_id);
-    if ($account_id === '') {
-      return [
-        'login' => '', 'password' => '', 'server' => '',
-        'links' => ['web' => '', 'appstore' => '', 'playstore' => ''],
-        'platform' => ['code' => '', 'name' => 'Trading Platform', 'icon_class' => ''],
-      ];
-    }
+// Fallback a post_meta si no vino nada por JSON/API
+function mt_accounts_build_credentials_from_meta($account_id)
+{
+  return [
+    'login' => get_post_meta($account_id, 'mt_login', true),
+    'password' => get_post_meta($account_id, 'mt_password', true),
+    'server' => get_post_meta($account_id, 'mt_server', true),
+    'links' => [
+      'web' => get_post_meta($account_id, 'mt_link_web', true),
+      'appstore' => get_post_meta($account_id, 'mt_link_appstore', true),
+      'playstore' => get_post_meta($account_id, 'mt_link_playstore', true),
+    ],
+    'platform' => [
+      'code' => strtolower(get_post_meta($account_id, 'mt_platform_code', true)),
+      'name' => get_post_meta($account_id, 'mt_platform_name', true),
+      'icon_class' => '',
+    ],
+  ];
+}
 
-    // 2) Consultar la API usando TU helper del shortcode (mismo flujo que performance)
-    // IMPORTANT: pasar los "atts" como array, NO el id suelto.
-    $json = mt_accounts_fetch_account_json_by_shortcode($account_id, 1, 10);
-
-    // 3) Elegir la cuenta pedida y construir credenciales
-    $acc = function_exists('mt_accounts_pick_account_from_json') ? mt_accounts_pick_account_from_json($json, $account_id) : null;
-    $creds = mt_accounts_build_credentials_from_account($acc);
-
-    // 4) Defaults + retorno con shape estable
-    $defaults = [
+// PUBLIC: obtiene credenciales por ID unificando fuentes
+// === Credenciales por accountId (usa el mismo fetch del shortcode que performance) ===
+function mt_accounts_get_credentials($account_id)
+{
+  // 1) Sanitizar como STRING (Mongo ObjectId de 24 hex)
+  $account_id = sanitize_text_field($account_id ?? '');
+  if (!preg_match('/^[a-f0-9]{24}$/i', $account_id)) {
+    // Retorno seguro si el id no es válido
+    return [
       'login' => '',
       'password' => '',
       'server' => '',
       'links' => ['web' => '', 'appstore' => '', 'playstore' => ''],
       'platform' => ['code' => '', 'name' => 'Trading Platform', 'icon_class' => ''],
     ];
-    return array_replace_recursive($defaults, is_array($creds) ? $creds : []);
   }
+
+  // 2) Consultar la API usando TU helper del shortcode (mismo flujo que performance)
+  //    IMPORTANT: pasar los "atts" como array, NO el id suelto.
+  $json = mt_accounts_fetch_account_json_by_shortcode($account_id, 1, 10);
+
+
+  // 3) Elegir la cuenta pedida y construir credenciales
+  $acc = function_exists('mt_accounts_pick_account_from_json')
+    ? mt_accounts_pick_account_from_json($json, $account_id)
+    : null;
+
+  $creds = mt_accounts_build_credentials_from_account($acc);
+
+  // 4) Defaults + retorno con shape estable
+  $defaults = [
+    'login' => '',
+    'password' => '',
+    'server' => '',
+    'links' => ['web' => '', 'appstore' => '', 'playstore' => ''],
+    'platform' => ['code' => '', 'name' => 'Trading Platform', 'icon_class' => ''],
+  ];
+  return array_replace_recursive($defaults, is_array($creds) ? $creds : []);
 }
+
 
 // === AJAX: devuelve el HTML de template-parts/account/account-data por accountId ===
-if (!function_exists('mt_accounts_ajax_account_data')) {
-  add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
-  add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
-  function mt_accounts_ajax_account_data()
-  {
-    check_ajax_referer('mt-acc-nonce', 'nonce');
-    $account_id = isset($_POST['account_id']) ? sanitize_text_field($_POST['account_id']) : '';
-    ob_start();
-    get_template_part('template-parts/account/account-data', null, [
-      'meta' => ['accountId' => $account_id],
-    ]);
-    $html = ob_get_clean();
-    wp_send_json_success(['html' => $html]);
-  }
+
+add_action('wp_ajax_mt_accounts_data', 'mt_accounts_ajax_account_data');
+add_action('wp_ajax_nopriv_mt_accounts_data', 'mt_accounts_ajax_account_data');
+function mt_accounts_ajax_account_data()
+{
+  check_ajax_referer('mt-acc-nonce', 'nonce');
+
+  $account_id = isset($_POST['account_id']) ? sanitize_text_field($_POST['account_id']) : '';
+
+  ob_start();
+  get_template_part('template-parts/account/account-data', null, [
+    'meta' => ['accountId' => $account_id],
+  ]);
+  $html = ob_get_clean();
+
+  wp_send_json_success(['html' => $html]);
 }
 
+
 // ================= Email: normalizar, validar y preparar para API ================
+
 if (!function_exists('mt_normalize_email')) {
   /**
    * Trim + lowercase y normaliza espacios raros.
    */
-  function mt_normalize_email(?string $raw): string
+  function mt_normalize_email(?string $email): string
   {
-    $raw = (string) $raw;
-    $email = strtolower(trim($raw));
-    // Reemplazar diferentes tipos de espacios con un espacio simple (opcionalmente)
-    $email = preg_replace('/\s+/', ' ', $email);
-    // Eliminar espacios de nuevo
-    return trim($email);
+    if (!is_string($email))
+      return '';
+    // Quita espacios invisibles/UTF y normaliza
+    $email = trim(preg_replace('/\s+/u', '', $email));
+    return mb_strtolower($email, 'UTF-8');
   }
 }
 
 if (!function_exists('mt_validate_email')) {
   /**
-   * Valida un email normalizado. Usa WordPress helper.
+   * Valida formato de email estándar.
    */
-  function mt_validate_email(?string $normalized): bool
+  function mt_validate_email(string $email): bool
   {
-    return is_email($normalized);
+    return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
   }
 }
 
 if (!function_exists('mt_email_for_api')) {
   /**
-   * Codifica el email para pasar como parámetro de URL (slug/query param).
-   * Solo codifica la parte local si contiene símbolos conflictivos.
-   * @return string
+   * Prepara el email para enviarlo en consultas GET de la API.
+   * - Mantiene el dominio intacto (no codifica '@' ni nada después).
+   * - Solo codifica en el local-part los caracteres: ? / # & = + ( ) , : y espacio.
+   * - No hace doble encoding.
    */
-  function mt_email_for_api(?string $normalized): string
+  function mt_email_for_api(string $email): string
   {
-    $normalized = (string) $normalized;
-    if ($normalized === '')
-      return '';
-    $parts = explode('@', $normalized, 2);
+    $parts = explode('@', $email, 2);
     if (count($parts) !== 2)
-      return urlencode($normalized); // No tiene '@', codificar todo
+      return '';
 
     [$local, $domain] = $parts;
 
-    // Solo codificar la parte local si existen esos símbolos (evita doble encode)
+    // Mapa de reemplazo SOLO para el local-part
     $replacements = [
       ' ' => '%20',
       '?' => '%3F',
@@ -1078,11 +1106,13 @@ if (!function_exists('mt_email_for_api')) {
       ',' => '%2C',
       ':' => '%3A',
     ];
-    $needsEncoding = strpbrk($local, " ?/#&=+(),:") !== false;
 
+    // Reemplaza solo si existen esos símbolos (evita doble encode)
+    $needsEncoding = strpbrk($local, " ?/#&=+(),:") !== false;
     if ($needsEncoding) {
       $local = strtr($local, $replacements);
     }
+
     return $local . '@' . $domain;
   }
 }
@@ -1106,22 +1136,167 @@ if (!function_exists('mt_sanitize_email')) {
     }
 
     // Opcional: limitar a ASCII básico si tu API lo requiere estrictamente
-    // $ascii = function_exists('idn_to_ascii') ? idn_to_ascii($normalized, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46) : $normalized;
-    // $normalized = (string) $ascii;
+    // $ascii = idn_to_ascii($normalized, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46) ?: $normalized;
 
     $apiSafe = mt_email_for_api($normalized);
 
+    return ['ok' => true, 'email' => $normalized, 'api' => $apiSafe, 'error' => ''];
+  }
+}
+
+
+
+// === Performance Chart Payload ===
+
+
+if (!function_exists('mt_accounts_build_performance_chart')) {
+  function mt_accounts_build_performance_chart(array $account): array
+  {
+    $tz = new DateTimeZone('UTC');
+    $todayDt = new DateTime('now', $tz); $todayDt->setTime(0,0,0);
+
+    $firstRawTop   = (string)($account['firstTradeDate'] ?? '');
+    $firstRawMetric= (string)($account['metrics']['firstTradeDate'] ?? $account['metric']['firstTradeDate'] ?? '');
+    $firstRawAlt1  = (string)($account['createdAt'] ?? '');
+    $firstRawAlt2  = (string)($account['owner']['account']['createdAt'] ?? '');
+    $firstRaw = $firstRawTop ?: ($firstRawMetric ?: ($firstRawAlt1 ?: $firstRawAlt2));
+
+    $firstDt = $firstRaw ? new DateTime($firstRaw,$tz) : clone $todayDt;
+    $firstDt->setTime(0,0,0);
+    if ($firstDt > $todayDt) $firstDt = clone $todayDt;
+
+    $accountId = (string)($account['accountId'] ?? $account['id'] ?? '');
+    $totalSinceStart = (int)$firstDt->diff($todayDt)->days + 1;
+    $pointsToLoad = min(30, max(1, $totalSinceStart));
+
+    $startDt = (clone $todayDt)->modify('-'.($pointsToLoad-1).' days');
+    $from = $startDt->format('Y-m-d'); $to = $todayDt->format('Y-m-d');
+
+    // === 1 sola consulta del rango ===
+    $resp = function_exists('mt_metrics_fetch_by_shortcode')
+      ? mt_metrics_fetch_by_shortcode($accountId, ['from'=>$from,'to'=>$to,'perpage'=>200,'ttl'=>30])
+      : null;
+
+    $rows = (is_array($resp) && isset($resp['data']) && is_array($resp['data'])) ? $resp['data'] : [];
+
+    // agrupar por YYYY-MM-DD y quedarnos con el último updatedAt del día
+    $byDay = [];
+    foreach ($rows as $row) {
+      $metrics = isset($row['metrics']) && is_array($row['metrics']) ? $row['metrics'] : [];
+      $cb = $metrics['currentBalance'] ?? null;
+      if (!is_numeric($cb)) continue;
+      $ts = strtotime($row['updatedAt'] ?? $row['createdAt'] ?? '') ?: 0;
+      $ymd = substr((string)($row['date'] ?? $row['fromDate'] ?? $row['toDate'] ?? ''),0,10);
+      if (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$ymd)) {
+        // fallback: desde updatedAt
+        $ymd = $ts ? gmdate('Y-m-d',$ts) : '';
+      }
+      if ($ymd==='') continue;
+
+      if (!isset($byDay[$ymd]) || $ts >= $byDay[$ymd]['ts']) {
+        $byDay[$ymd] = ['ts'=>$ts, 'value'=>(float)$cb];
+      }
+    }
+
+    // rellenar días del rango [from..to] con el último balance disponible
+    $series = [];
+    $cursor = new DateTime($from, $tz);
+    $carry = null;
+    for ($i=0; $i<$pointsToLoad; $i++) {
+      $ymd = $cursor->format('Y-m-d');
+      if (isset($byDay[$ymd])) $carry = $byDay[$ymd]['value'];
+      if ($carry !== null) $series[] = ['date'=>$ymd,'value'=>(float)$carry];
+      $cursor->modify('+1 day');
+    }
+    // fallback si vacío
+    if (empty($series)) {
+      $m = $account['metrics'] ?? $account['metric'] ?? [];
+      $cb = is_numeric($m['currentBalance'] ?? null) ? (float)$m['currentBalance'] : null;
+      if ($cb !== null) $series[] = ['date'=>$todayDt->format('Y-m-d'), 'value'=>$cb];
+    }
+
+    // límites
+    $m = $account['metrics'] ?? $account['metric'] ?? [];
+    $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float)$m['equityPassLevel'] : null;
+    $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float)$m['maxLossLimitEquityLevel'] : null;
+
+    // periods (igual que antes)
+    $periods = [];
+    $sinceTextDays = $totalSinceStart;
+    $sinceValue = $pointsToLoad;
+    if ($sinceTextDays < 7) {
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+    } elseif ($sinceTextDays < 14) {
+      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+    } elseif ($sinceTextDays < 30) {
+      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
+      $periods[] = ['value'=>14,'text'=>'LAST 14 DAYS'];
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+    } else {
+      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
+      $periods[] = ['value'=>14,'text'=>'LAST 14 DAYS'];
+      $periods[] = ['value'=>30,'text'=>'LAST 30 DAYS'];
+      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+    }
+
+    // título igual que tu versión
+    $program = $account['program'] ?? null;
+    $plabel  = (string)($program['label'] ?? $program['description'] ?? 'Account');
+    $sb      = $program['startingBalance'] ?? null;
+    $size=''; $name=$plabel ?: 'Account';
+    if (class_exists('MT_Accounts') && method_exists('MT_Accounts','parse_program_label')) {
+      [$size,$name] = MT_Accounts::parse_program_label($plabel,$sb);
+    } elseif (is_numeric($sb) && $sb>0) {
+      $k=(int)round($sb/1000); $size = $k>0 ? ($k.'k') : (string)$sb;
+    }
+    $title = trim(($size ? $size.' ' : '').$name);
+
     return [
-      'ok' => true,
-      'email' => $normalized,
-      'api' => $apiSafe,
-      'error' => '',
+      'accountId'=>$accountId,
+      'title'=>$title,
+      'plan_revenue'=>$series,
+      'series'=>$series,
+      'upper_bound'=>$upper_bound,
+      'lower_bound'=>$lower_bound,
+      'periods'=>$periods,
     ];
   }
 }
 
 
-// ============== MISC WOOCOMMERCE/PRODUCT HELPERS ======================
+
+// === Account Data (payload) ===
+if (!function_exists('mt_accounts_build_account_data')) {
+  function mt_accounts_build_account_data(array $account): array
+  {
+    $plat = $account['platform'] ?? [];
+    if (!is_array($plat))
+      $plat = [];
+
+    $platformName = (string) ($plat['platform'] ?? $account['platformName'] ?? $account['platform_label'] ?? '');
+    $server = (string) ($plat['server'] ?? $account['server'] ?? '');
+    $login = (string) ($plat['login'] ?? $account['login'] ?? '');
+    $password = (string) ($plat['password'] ?? $account['password'] ?? '');
+    $accountId = (string) ($plat['accountId'] ?? $account['accountId'] ?? '');
+
+    // Fallback de login al email del usuario por si la API no lo trae
+    if ($login === '' && is_user_logged_in()) {
+      $u = wp_get_current_user();
+      if ($u && $u->exists())
+        $login = strtolower(trim((string) $u->user_email));
+    }
+
+    return [
+      'platform' => $platformName,
+      'server' => $server,
+      'login' => $login,
+      'password' => $password,
+      'accountId' => $accountId
+    ];
+  }
+}
+
 /**
  * Find a product ID by category slugs.
  *
@@ -1176,22 +1351,23 @@ if (!function_exists('mt_reset_checkout_url')) {
   }
 }
 
+
 if (!function_exists('mt_get_agreement_status_by_email')) {
+
   /**
    * Obtiene estado de acuerdo por email (URL-encoded) desde el shortcode.
    * Devuelve:
-   * - agreementURL (string|null)
-   * - agreementSigned (bool|null)
-   * - agreementStatus (string|null) // valor original (p.ej., "ACTIVE")
-   * - agreementStatusBool (bool|null) // derivado de status string (p.ej., true si "ACTIVE")
-   *
-   * @param string $emailUrlEncoded
-   * @return array
+   *  - agreementURL (string|null)
+   *  - agreementSigned (bool|null)
+   *  - agreementStatus (string|null)           // valor original (p.ej., "ACTIVE")
+   *  - agreementStatusBool (bool|null)         // derivado de status string (p.ej., ACTIVE => true)
    */
-  function mt_get_agreement_status_by_email(string $emailUrlEncoded): array
+  function mt_get_agreement_status_by_email(string $email_encoded, int $ttl = 120): array
   {
-    $emailUrlEncoded = trim((string) $emailUrlEncoded);
-    if ($emailUrlEncoded === '' || !function_exists('do_shortcode')) {
+    $email_encoded = is_string($email_encoded) ? trim($email_encoded) : '';
+    if ($email_encoded === '') {
+      if (defined('WP_DEBUG') && WP_DEBUG)
+        error_log('[MT Agreement] empty email');
       return [
         'agreementURL' => null,
         'agreementSigned' => null,
@@ -1199,21 +1375,29 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
         'agreementStatusBool' => null,
       ];
     }
-    $shortcode = sprintf(
-      '[mega_agreement_status email="%s" output="json"]',
-      esc_attr($emailUrlEncoded)
-    );
-    $raw = do_shortcode($shortcode);
+    if (strpos($email_encoded, '%') === false && strpos($email_encoded, '@') !== false) {
+      $email_encoded = rawurlencode(strtolower($email_encoded));
+      if (defined('WP_DEBUG') && WP_DEBUG)
+        error_log('[MT Agreement][normalized_email]=' . $email_encoded);
+    }
 
-    if (!is_string($raw) || $raw === '') {
-      return [
-        'agreementURL' => null,
-        'agreementSigned' => null,
-        'agreementStatus' => null,
-        'agreementStatusBool' => null,
-      ];
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[MT Agreement][in] email=' . $email_encoded . ' ttl=' . max(0, $ttl));
     }
-    $raw = trim(wp_unslash($raw));
+
+    // Ejecutar shortcode
+    $sc = sprintf(
+      '[mega_subscriptions_data email="%s" output="json" ttl="%d"]',
+      esc_attr($email_encoded),
+      max(0, $ttl)
+    );
+    if (defined('WP_DEBUG') && WP_DEBUG)
+      error_log('[MT Agreement][sc]=' . $sc);
+
+    $raw = do_shortcode($sc);
+    $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
+
+    // Quitar BOM si existe y decodificar entidades HTML
     if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
       $raw = substr($raw, 3);
     if ($raw !== '')
@@ -1272,6 +1456,25 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
         $status_bool = true;
       if (in_array($status_lc, $status_false_set, true))
         $status_bool = false;
+      if ($status_bool === null) {
+        $tmp = filter_var($status_lc, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($tmp !== null)
+          $status_bool = $tmp;
+      }
+    }
+
+    if ($signed === null && $status_bool !== null)
+      $signed = $status_bool;
+
+    if ($signed === false && $status_bool === true)
+      $signed = true;
+
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[MT Agreement][final] signed_raw=' . var_export($signed_raw, true)
+        . ' signed=' . var_export($signed, true)
+        . ' status_raw=' . var_export($status_str, true)
+        . ' status_bool=' . var_export($status_bool, true)
+        . ' url=' . ($agreement_url ?? ''));
     }
 
     return [
@@ -1280,94 +1483,417 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
       'agreementStatus' => $status_str,
       'agreementStatusBool' => $status_bool,
     ];
-
   }
 }
 
-// === AJAX: devuelve el status de la cuenta (usado en el Account Picker) ===
-if (!function_exists('mt_accounts_ajax_status')) {
-  add_action('wp_ajax_mt_accounts_status', 'mt_accounts_ajax_status');
-  add_action('wp_ajax_nopriv_mt_accounts_status', 'mt_accounts_ajax_status');
-  function mt_accounts_ajax_status()
-  {
-    check_ajax_referer('mt-acc-nonce', 'nonce');
-    $accountId = isset($_POST['accountId']) ? sanitize_text_field((string) $_POST['accountId']) : '';
-    if ($accountId === '') {
-      wp_send_json_error(['message' => 'Missing accountId']);
+// === AJAX: devolver STATUS por accountId ===
+add_action('wp_ajax_mt_accounts_status', 'mt_accounts_ajax_status');
+add_action('wp_ajax_nopriv_mt_accounts_status', 'mt_accounts_ajax_status');
+
+
+function mt_accounts_ajax_status()
+{
+  check_ajax_referer('mt-acc-nonce', 'nonce');
+
+  $accountId = sanitize_text_field((string) ($_POST['accountId'] ?? $_POST['account_id'] ?? ''));
+  if ($accountId === '') {
+    wp_send_json_error(['message' => 'Missing accountId']);
+  }
+
+  $found = null;
+
+  if (!$found && function_exists('mt_accounts_resolve_account_by_id')) {
+    try {
+      $found = mt_accounts_resolve_account_by_id($accountId);
+    } catch (Throwable $e) {
     }
-    $found = null;
-    if (function_exists('mt_accounts_resolve_account_by_id')) {
-      try {
-        $found = mt_accounts_resolve_account_by_id($accountId);
-      } catch (\Throwable $e) {
-      }
+  }
+
+  if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_account_by_id')) {
+    try {
+      $found = MT_Accounts::get_account_by_id($accountId);
+    } catch (Throwable $e) {
     }
-    if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_accounts')) {
-      try {
-        $all = MT_Accounts::get_accounts();
-        if (is_array($all)) {
-          foreach ($all as $row) {
-            $rid = (string) ($row['id'] ?? $row['accountId'] ?? $row['account_id'] ?? '');
-            if ($rid === (string) $accountId) {
-              $found = $row;
-              break;
-            }
+  }
+
+  if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_accounts')) {
+    try {
+      $all = MT_Accounts::get_accounts();
+      if (is_array($all)) {
+        foreach ($all as $row) {
+          $rid = (string) ($row['id'] ?? $row['accountId'] ?? $row['account_id'] ?? '');
+          if ($rid === (string) $accountId) {
+            $found = $row;
+            break;
           }
         }
-      } catch (\Throwable $e) {
       }
+    } catch (Throwable $e) {
     }
-    if (!$found || !is_array($found)) {
-      wp_send_json_error(['message' => 'Account not found']);
+  }
+
+  if (!$found || !is_array($found)) {
+    wp_send_json_error(['message' => 'Account not found']);
+  }
+
+  $status = '';
+  if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'prepare_ui')) {
+    try {
+      $ui = MT_Accounts::prepare_ui([$found]);
+      if (is_array($ui))
+        $status = (string) ($ui['current']['status'] ?? '');
+    } catch (Throwable $e) {
+    }
+  }
+  if ($status === '')
+    $status = (string) ($found['status'] ?? '');
+  $status = trim($status);
+
+  if ($status === '') {
+    wp_send_json_error(['message' => 'Status not found']);
+  }
+
+  wp_send_json_success(['status' => $status]);
+}
+
+
+/* === MÉTRICS vía shortcode (JSON) === */
+if (!function_exists('mt_metrics_fetch_by_shortcode')) {
+  function mt_metrics_fetch_by_shortcode($accountId, $arg2 = 1, $perPage = 30, $ttl = 15)
+  {
+    $accountId = trim((string)$accountId);
+    if ($accountId === '') return null;
+
+    // ---- parse args (igual que tu versión) ----
+    $page=1; $per=50; $from=''; $to=''; $ttlVal=15;
+    if (is_array($arg2)) {
+      $page = isset($arg2['page']) ? (int)$arg2['page'] : 1;
+      $per  = isset($arg2['perpage']) ? (int)$arg2['perpage'] : (isset($arg2['perPage']) ? (int)$arg2['perPage'] : 50);
+      $from = isset($arg2['from']) ? (string)$arg2['from'] : '';
+      $to   = isset($arg2['to'])   ? (string)$arg2['to']   : '';
+      $ttlVal = isset($arg2['ttl'])? (int)$arg2['ttl'] : 15;
+    } else {
+      $page = (int)$arg2; $per = (int)$perPage; $ttlVal = (int)$ttl;
     }
 
-    $status = '';
-    if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'prepare_ui')) {
-      try {
-        $ui = MT_Accounts::prepare_ui([$found]);
-        if (is_array($ui))
-          $status = (string) ($ui['current']['status'] ?? '');
-      } catch (\Throwable $e) {
-      }
-    }
-    if ($status === '')
-      $status = (string) ($found['status'] ?? '');
-    $status = trim($status);
+    // ---- cache key ----
+    $tkey = mt_cache_key('mt:metrics_sc', [$accountId,$page,$per,$from,$to]);
+    $hit  = mt_cache_get($tkey);
+    if (is_array($hit)) return $hit;
 
-    if ($status === '') {
-      wp_send_json_error(['message' => 'Status not found']);
-    }
+    // ---- construir shortcode ----
+    $attrs = [
+      'id'=>esc_attr($accountId),
+      'page'=>max(1,$page),
+      'perpage'=>max(1,$per),
+      'output'=>'json',
+      'ttl'=>max(0,$ttlVal),
+    ];
+    if ($from!=='') $attrs['from']=$from;
+    if ($to  !=='') $attrs['to']=$to;
 
-    wp_send_json_success(['status' => $status]);
+    $parts=[]; foreach ($attrs as $k=>$v){ $parts[]=$k.'="'.$v.'"'; }
+    $sc='[mega_metrics_data '.implode(' ',$parts).']';
+
+    $raw = do_shortcode($sc);
+    if (!is_string($raw) || $raw==='') return null;
+    $raw = trim(wp_unslash($raw));
+    if ($raw!=='' && substr($raw,0,3)==="\xEF\xBB\xBF") $raw=substr($raw,3);
+    if ($raw!=='') $raw=html_entity_decode($raw, ENT_QUOTES|ENT_HTML5,'UTF-8');
+
+    $data = json_decode($raw,true);
+    if (!is_array($data)) $data = json_decode(trim(wp_strip_all_tags($raw)), true);
+
+    $out = is_array($data) ? $data : null;
+    if ($out) mt_cache_set($tkey, $out, 60); // cache 60s
+    return $out;
   }
 }
 
 
-// ============== DAILY JOURNAL HELPERS ======================
 
-/* === DAILY JOURNAL: obtener el conteo de trades para un día EST (con cutoff) === */
-if (!function_exists('mt_get_trades_count_for_day')) {
-  /**
-   * @param string $accountId
-   * @param string $day_iso_eastern YYYY-MM-DD del día EST a contar (con corte a las 18:00 UTC)
-   * @param array $allTradesCache Cache de todos los trades [accountId => trades]
-   * @return int
-   */
-  function mt_get_trades_count_for_day(string $accountId, string $day_iso_eastern, array $allTradesCache = []): int
+/* === TRADES vía shortcode (JSON) === */
+if (!function_exists('mt_trades_fetch_by_shortcode')) {
+  function mt_trades_fetch_by_shortcode(string $accountId, string $type = 'CLOSED', int $page = 1, int $perPage = 500)
   {
-    if ($accountId === '')
-      return 0;
-    $cache = $allTradesCache;
+    $accountId = trim((string)$accountId);
+    if ($accountId === '') return null;
+
+    $tkey = mt_cache_key('mt:trades_sc', [$accountId,$type,$page,$perPage]);
+    $hit  = mt_cache_get($tkey);
+    if (is_array($hit)) return $hit;
+
+    $sc = sprintf(
+      '[mega_trades_data id="%s" type="%s" page="%d" perpage="%d" output="json"]',
+      esc_attr($accountId), esc_attr($type), (int)$page, (int)$perPage
+    );
+    $raw = do_shortcode($sc);
+    $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
+    if ($raw!=='' && substr($raw,0,3)==="\xEF\xBB\xBF") $raw=substr($raw,3);
+    if ($raw!=='') $raw=html_entity_decode($raw, ENT_QUOTES|ENT_HTML5,'UTF-8');
+
+    $json = json_decode($raw,true);
+    if (!is_array($json)) $json = json_decode(trim(wp_strip_all_tags($raw)), true);
+    if (!is_array($json)) return null;
+
+    $out = null;
+    if (isset($json['data']) && is_array($json['data'])) $out = $json['data'];
+    elseif (isset($json[0]) && is_array($json[0]))       $out = $json;
+
+    if ($out) mt_cache_set($tkey, $out,25); 
+    return $out;
+  }
+}
+
+
+/* === TRADES: streaks + duraciones por día (YYYY-MM-DD) === */
+if (!function_exists('mt_trades_day_stats')) {
+  function mt_trades_day_stats(string $accountId, string $day_iso): array
+  {
+    static $cache = [];
+    $day_iso = substr((string) $day_iso, 0, 10);
+    if ($day_iso === '') {
+      return ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
+    }
     if (!isset($cache[$accountId])) {
-      // Intenta obtener los trades del shortcode
-      if (!function_exists('mt_trades_fetch_by_shortcode'))
-        return 0;
-      $chunk = mt_trades_fetch_by_shortcode($accountId, 1, 10000); // Max fetch
-      $cache[$accountId] = is_array($chunk['data'] ?? null) ? $chunk['data'] : [];
+      $trades = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500);
+      $cache[$accountId] = is_array($trades) ? $trades : [];
+    }
+    $trades = $cache[$accountId];
+
+    // Filtrado consistente con el diario: closeTime -> ET + cutoff 6pm
+    $dayTrades = array_values(array_filter($trades, function ($t) use ($day_iso) {
+      if (empty($t['closeTime']))
+        return false;
+      $ct = (string) $t['closeTime'];
+      $ct_ymd = function_exists('mt_utc_to_eastern_ymd_cutoff')
+        ? mt_utc_to_eastern_ymd_cutoff($ct, 18)
+        : (function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10));
+      return $ct_ymd === $day_iso;
+    }));
+
+    if (empty($dayTrades)) {
+      return ['maxConsecWins' => '-', 'maxConsecLosses' => '-', 'avgWinDuration' => '-', 'avgLossDuration' => '-'];
     }
 
+    usort($dayTrades, function ($a, $b) {
+      $ta = strtotime((string) ($a['closeTime'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['closeTime'] ?? '')) ?: 0;
+      return $ta <=> $tb;
+    });
+
+    $maxW = $maxL = $runW = $runL = 0;
+    $sumW = $sumL = 0;
+    $cntW = $cntL = 0;
+
+    foreach ($dayTrades as $t) {
+      $pnl = $t['pnl'] ?? null;
+
+      $durSec = null;
+      if (!empty($t['openTime']) && !empty($t['closeTime'])) {
+        $o = strtotime((string) $t['openTime']);
+        $c = strtotime((string) $t['closeTime']);
+        if ($o && $c && $c >= $o)
+          $durSec = $c - $o;
+      }
+
+      if (is_numeric($pnl) && $pnl > 0) {
+        $runW++;
+        $runL = 0;
+        $maxW = max($maxW, $runW);
+        if ($durSec !== null) {
+          $sumW += $durSec;
+          $cntW++;
+        }
+      } elseif (is_numeric($pnl) && $pnl < 0) {
+        $runL++;
+        $runW = 0;
+        $maxL = max($maxL, $runL);
+        if ($durSec !== null) {
+          $sumL += $durSec;
+          $cntL++;
+        }
+      } else {
+        $runW = $runL = 0;
+      }
+    }
+
+    $fmt = function ($s) {
+      $s = (int) round($s);
+      return sprintf('%02d:%02d:%02d', floor($s / 3600), floor(($s % 3600) / 60), $s % 60);
+    };
+
+    return [
+      'maxConsecWins' => $maxW ?: 0,
+      'maxConsecLosses' => $maxL ?: 0,
+      'avgWinDuration' => $cntW > 0 ? $fmt($sumW / $cntW) : '00:00:00',
+      'avgLossDuration' => $cntL > 0 ? $fmt($sumL / $cntL) : '00:00:00',
+    ];
+  }
+}
+
+
+/* === UTC -> Eastern (US/Eastern) a 'YYYY-MM-DD' === */
+if (!function_exists('mt_utc_to_eastern_ymd')) {
+  /**
+   * Convierte una fecha/hora UTC (string) al día 'YYYY-MM-DD' en America/New_York.
+   * Admite 'YYYY-MM-DD' o timestamps ISO (con o sin 'Z').
+   * Devuelve '' si no puede parsear.
+   */
+  function mt_utc_to_eastern_ymd($utcString)
+  {
+    $src = is_string($utcString) ? trim($utcString) : '';
+    if ($src === '')
+      return '';
+    try {
+      // Si viene solo YYYY-MM-DD, asumir 00:00:00 UTC de ese día
+      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src)) {
+        $src .= ' 00:00:00';
+      }
+      $utc = new DateTimeZone('UTC');
+      $ny = new DateTimeZone('America/New_York');
+      $dt = new DateTime($src, $utc);
+      $dt->setTimezone($ny);
+      return $dt->format('Y-m-d');
+    } catch (\Throwable $e) {
+      return '';
+    }
+  }
+}
+
+// UTC -> Eastern 'YYYY-MM-DD' con cutoff: si hora >= $cutoffHour => asigna al día siguiente
+if (!function_exists('mt_utc_to_eastern_ymd_cutoff')) {
+  function mt_utc_to_eastern_ymd_cutoff($utcString, $cutoffHour = 18)
+  {
+    $src = is_string($utcString) ? trim($utcString) : '';
+    if ($src === '')
+      return '';
+    try {
+      $utc = new DateTimeZone('UTC');
+      $ny = new DateTimeZone('America/New_York');
+
+      // Acepta 'YYYY-MM-DD' o ISO. Si viene solo fecha, asumimos 00:00:00 UTC.
+      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src))
+        $src .= ' 00:00:00';
+
+      $dt = new DateTime($src, $utc);
+      $dt->setTimezone($ny);
+
+      // cutoff: si hora >= 18 (6pm ET), empuja al día siguiente
+      if ((int) $dt->format('G') >= (int) $cutoffHour) {
+        $dt->modify('+1 day');
+      }
+      return $dt->format('Y-m-d');
+    } catch (\Throwable $e) {
+      return '';
+    }
+  }
+}
+
+
+/* === Sumatoria de commission por día (Eastern) — usa closeTime con cutoff 6pm === */
+if (!function_exists('mt_sum_commissions_for_day')) {
+  /**
+   * Suma 'commission' de todos los trades CERRADOS cuyo closeTime,
+   * convertido a Eastern (US/Eastern) y aplicando cutoff de las 6:00pm,
+   * cae en el día $day_iso_eastern (YYYY-MM-DD).
+   *
+   * Regla de cutoff:
+   *   - Si la hora local (ET) del closeTime es >= 18 (6pm), el trade
+   *     se asigna al día siguiente para efectos del row diario.
+   *
+   * @param string $accountId        ID de cuenta
+   * @param string $day_iso_eastern  Día destino en formato 'YYYY-MM-DD' (ET)
+   * @return float|string            Suma (float) o '-' si no hubo trades para ese día
+   */
+  function mt_sum_commissions_for_day(string $accountId, string $day_iso_eastern)
+  {
+    static $cache = [];
+    $accountId = trim((string) $accountId);
+    $day_iso_eastern = substr((string) $day_iso_eastern, 0, 10);
+    if ($accountId === '' || $day_iso_eastern === '')
+      return '-';
+
+    // Conversor local: intenta usar mt_utc_to_eastern_ymd_cutoff si existe; si no, replica lógica.
+    $toEasternYmdCutoff = function (?string $iso, int $cutoffHour = 18): string {
+      $iso = is_string($iso) ? trim($iso) : '';
+      if ($iso === '')
+        return '';
+      // Si existe helper global con cutoff, úsalo.
+      if (function_exists('mt_utc_to_eastern_ymd_cutoff')) {
+        return mt_utc_to_eastern_ymd_cutoff($iso, $cutoffHour);
+      }
+      // Fallback: convertir a ET y aplicar cutoff manualmente.
+      try {
+        $utc = new DateTimeZone('UTC');
+        $ny = new DateTimeZone('America/New_York');
+        // Si viene solo YYYY-MM-DD, asumir 00:00:00 UTC:
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $iso))
+          $iso .= ' 00:00:00';
+        $dt = new DateTime($iso, $utc);
+        $dt->setTimezone($ny);
+        if ((int) $dt->format('G') >= $cutoffHour) {
+          $dt->modify('+1 day');
+        }
+        return $dt->format('Y-m-d');
+      } catch (\Throwable $e) {
+        // Último fallback: recorte naïve
+        return substr($iso, 0, 10);
+      }
+    };
+
+    // Cache de trades por cuenta (como antes)
     if (!isset($cache[$accountId])) {
+      $trades = function_exists('mt_trades_fetch_by_shortcode')
+        ? mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500)
+        : null;
+      $cache[$accountId] = is_array($trades) ? $trades : [];
+    }
+
+    $trades = $cache[$accountId];
+    if (empty($trades))
+      return '-';
+
+    $sum = 0.0;
+    $found = false;
+
+    foreach ($trades as $t) {
+      // Usamos SOLO closeTime para decidir el día del row (con cutoff)
+      $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
+      if ($ct === '')
+        continue;
+
+      $ct_ymd = $toEasternYmdCutoff($ct, 18);
+      if ($ct_ymd === $day_iso_eastern) {
+        if (isset($t['commission']) && is_numeric($t['commission'])) {
+          $sum += (float) $t['commission'];
+          $found = true;
+        }
+      }
+    }
+
+    return $found ? $sum : '-';
+  }
+}
+
+
+/* === Conteo de trades por día (Eastern) === */
+if (!function_exists('mt_count_trades_for_day')) {
+  /**
+   * Cuenta trades CERRADOS cuyo openTime y closeTime, convertidos a Eastern,
+   * caen el mismo día y coinciden con $day_iso_eastern (YYYY-MM-DD).
+   */
+  function mt_count_trades_for_day(string $accountId, string $day_iso_eastern): int
+  {
+    static $cache = [];
+    $accountId = trim((string) $accountId);
+    $day_iso_eastern = substr((string) $day_iso_eastern, 0, 10);
+    if ($accountId === '' || $day_iso_eastern === '')
       return 0;
+
+    if (!isset($cache[$accountId])) {
+      $trades = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500);
+      $cache[$accountId] = is_array($trades) ? $trades : [];
     }
     $trades = $cache[$accountId];
     if (empty($trades))
@@ -1378,14 +1904,20 @@ if (!function_exists('mt_get_trades_count_for_day')) {
       $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
       if ($ct === '')
         continue;
-      $ct_ymd = function_exists('mt_utc_to_eastern_ymd_cutoff') ? mt_utc_to_eastern_ymd_cutoff($ct, 18) : (function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10));
+
+      $ct_ymd = function_exists('mt_utc_to_eastern_ymd_cutoff')
+        ? mt_utc_to_eastern_ymd_cutoff($ct, 18)
+        : (function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10));
+
       if ($ct_ymd === $day_iso_eastern) {
         $cnt++;
       }
     }
     return $cnt;
   }
+
 }
+
 
 /* === DAILY JOURNAL: construir payload (con mapeos nuevos y fees desde trades) === */
 if (!function_exists('mt_accounts_build_daily_journal')) {
@@ -1393,6 +1925,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
   {
     $accountId = (string) $accountId;
     $rows = [];
+
     if ($accountId === '' || !function_exists('mt_trades_fetch_by_shortcode')) {
       if (defined('WP_DEBUG') && WP_DEBUG)
         error_log('[DJ] early-exit: missing accountId or mt_trades_fetch_by_shortcode');
@@ -1402,6 +1935,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     // ==== Utilidades ====
     $tzUTC = new DateTimeZone('UTC');
     $tzNY = new DateTimeZone('America/New_York');
+
     $toNY = function (?string $iso) use ($tzUTC, $tzNY): ?DateTime {
       if (!$iso)
         return null;
@@ -1411,32 +1945,73 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
         return $dt;
       } catch (\Throwable $e) {
         if (defined('WP_DEBUG') && WP_DEBUG)
-          error_log('[DJ] toNY error: ' . $e->getMessage());
+          error_log('[DJ] toNY error: ' . $e->getMessage() . ' iso=' . $iso);
         return null;
       }
     };
 
+    $fmtHMS = function (int $secs): string {
+      if ($secs <= 0)
+        return '00:00:00';
+      $h = (int) floor($secs / 3600);
+      $m = (int) floor(($secs % 3600) / 60);
+      $s = (int) ($secs % 60);
+      return sprintf('%02d:%02d:%02d', $h, $m, $s);
+    };
 
-    // ==== 1) Fetch (trae todos, asumiendo max 10000 en 10 páginas) ====
-    $all = [];
+    // ==== 1) Traer TODOS los trades CLOSED (paginado) ====
+    $perPageFetch = 500;
     $pageFetch = 1;
-    $perPageFetch = 1000; // max por llamada
+    $all = [];
 
-    // Cuidado con bucle infinito, max 10 calls
-    for ($i = 0; $i < 10; $i++) {
-      $chunk = mt_trades_fetch_by_shortcode($accountId, $pageFetch, $perPageFetch);
-      $items = is_array($chunk['data'] ?? null) ? $chunk['data'] : [];
+    if (defined('WP_DEBUG') && WP_DEBUG)
+      error_log('[DJ] fetch start account=' . $accountId);
+
+    while (true) {
+      $chunk = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', $pageFetch, $perPageFetch);
+
+      if (is_wp_error($chunk)) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] fetch error page=' . $pageFetch . ' msg=' . $chunk->get_error_message());
+        break;
+      }
+      if (empty($chunk)) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] fetch empty page=' . $pageFetch);
+        break;
+      }
+
+      // Normalizar: lista plana o {meta,data}
+      $items = [];
+      if (isset($chunk['data']) && is_array($chunk['data'])) {
+        $items = $chunk['data'];
+      } elseif (is_array($chunk)) {
+        $items = $chunk;
+      }
+
+      if (defined('WP_DEBUG') && WP_DEBUG) {
+        $pc = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : 0;
+        $tc = isset($chunk['meta']['totalCount']) ? (int) $chunk['meta']['totalCount'] : 0;
+        error_log('[DJ] fetch page=' . $pageFetch . ' got=' . count($items) . ' pagesCount=' . $pc . ' totalCount=' . $tc);
+      }
+
+      if (empty($items))
+        break;
+
       foreach ($items as $it) {
         if (is_array($it))
           $all[] = $it;
       }
+
       $pagesCount = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : null;
       if ($pagesCount && $pageFetch >= $pagesCount)
         break;
       if (count($items) < $perPageFetch)
         break;
+
       $pageFetch++;
     }
+
     if (defined('WP_DEBUG') && WP_DEBUG)
       error_log('[DJ] total trades fetched=' . count($all));
 
@@ -1449,9 +2024,9 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     foreach ($all as $t) {
       $cIso = isset($t['closeTime']) ? (string) $t['closeTime'] : null;
       $oIso = isset($t['openTime']) ? (string) $t['openTime'] : null;
+
       $closeNY = $toNY($cIso);
       $openNY = $toNY($oIso);
-
       if (!$closeNY || !$openNY) {
         if (defined('WP_DEBUG') && WP_DEBUG)
           error_log('[DJ] skip trade (bad times) open=' . $oIso . ' close=' . $cIso);
@@ -1460,64 +2035,88 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
 
       // Día clave = closeTime en EST (YYYY-MM-DD)
       // Antes: $day = $closeNY->format('Y-m-d');
-      $day = function_exists('mt_utc_to_eastern_ymd_cutoff') ? mt_utc_to_eastern_ymd_cutoff((string) $t['closeTime'], 18) : $closeNY->format('Y-m-d'); // fallback sin cutoff
+      $day = function_exists('mt_utc_to_eastern_ymd_cutoff')
+        ? mt_utc_to_eastern_ymd_cutoff((string) $t['closeTime'], 18)
+        : $closeNY->format('Y-m-d'); // fallback sin cutoff
+
 
       $pnl = (float) ($t['pnl'] ?? 0);
       $lots = (int) ($t['lots'] ?? 0);
-      $fees = (float) ($t['fees'] ?? 0);
-      $durationSecs = $closeNY->getTimestamp() - $openNY->getTimestamp();
+      $commission = (float) ($t['commission'] ?? 0); // negativa (gasto)
+      $durSecs = max(0, (int) round($closeNY->getTimestamp() - $openNY->getTimestamp()));
+
+      if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log(sprintf(
+          '[DJ] trade day=%s pnl=%.2f comm=%.4f lots=%d dur=%ds open=%s close=%s',
+          $day,
+          $pnl,
+          $commission,
+          $lots,
+          $durSecs,
+          $oIso,
+          $cIso
+        ));
+      }
 
       if (!isset($byDay[$day])) {
         $byDay[$day] = [
-          'date' => $day,
           'net' => 0.0,
-          'fees' => 0.0,
-          'hi' => $pnl, // max pnl
-          'lo' => $pnl, // min pnl
+          'hi' => null,
+          'lo' => null,
+          'ct' => 0,
           'trades' => 0,
-          'ct' => 0, // contract count
+          'fees' => 0.0,
           'wins' => 0,
           'losses' => 0,
           'sumWin' => 0.0,
           'sumLoss' => 0.0,
           'durWinSecs' => 0,
           'durLossSecs' => 0,
-          '_seq' => [], // para max consecutivos
+          '_seq' => []
         ];
       }
 
-      $D = &$byDay[$day];
-      $D['net'] += $pnl;
-      $D['fees'] += $fees;
+      $D =& $byDay[$day];
+
       $D['trades'] += 1;
-      $D['ct'] += $lots;
-      $D['hi'] = max($D['hi'], $pnl);
-      $D['lo'] = min($D['lo'], $pnl);
+      $D['ct'] += max(0, $lots);
+      $D['fees'] += $commission;
+      $D['net'] += ($pnl + $commission);
+
+      // === NUEVA LÓGICA DE HIGH/LOW ===
+      if ($pnl > 0) {
+        // High = máximo solo entre positivos
+        $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl);
+      } elseif ($pnl < 0) {
+        // Low = mínimo (más negativo) solo entre negativos
+        $D['lo'] = is_null($D['lo']) ? $pnl : min($D['lo'], $pnl);
+      }
+      // si pnl == 0, no afecta hi/lo
 
       if ($pnl > 0) {
         $D['wins'] += 1;
         $D['sumWin'] += $pnl;
-        $D['durWinSecs'] += $durationSecs;
+        $D['durWinSecs'] += $durSecs;
       } elseif ($pnl < 0) {
         $D['losses'] += 1;
         $D['sumLoss'] += $pnl;
-        $D['durLossSecs'] += $durationSecs;
+        $D['durLossSecs'] += $durSecs;
       }
 
-      // Para max consecutivos:
       $D['_seq'][] = [
-        'pnl' => $pnl,
         'openTs' => $openNY->getTimestamp(),
+        'pnl' => $pnl
       ];
       unset($D);
     }
+
+    unset($D);
 
     // ==== 3) Reducir a filas (usar $agg para no reusar $D por referencia) ====
     foreach ($byDay as $day => $agg) {
       usort($agg['_seq'], function ($a, $b) {
         return $a['openTs'] <=> $b['openTs'];
       });
-
       $curW = $curL = $maxW = $maxL = 0;
       foreach ($agg['_seq'] as $e) {
         if ($e['pnl'] > 0) {
@@ -1537,9 +2136,9 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $wins = (int) $agg['wins'];
       $loss = (int) $agg['losses'];
       $tot = max(1, (int) $agg['trades']);
+
       $awin = $wins > 0 ? ($agg['sumWin'] / $wins) : '-';
       $aloss = $loss > 0 ? ($agg['sumLoss'] / $loss) : '-';
-
       $winPct = round(($wins * 100.0) / $tot, 2);
       $losPct = round(100.0 - $winPct, 2);
 
@@ -1547,59 +2146,61 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $avgLosDur = $loss > 0 ? (int) floor($agg['durLossSecs'] / $loss) : 0;
 
       $rows[] = [
+
         'date' => $day,
         'openTime' => $day,
         'net' => (float) $agg['net'],
-        'fees' => (float) $agg['fees'],
-        'hi' => (float) $agg['hi'],
-        'lo' => (float) $agg['lo'],
+        'hi' => is_null($agg['hi']) ? '-' : (float) $agg['hi'],
+        'lo' => is_null($agg['lo']) ? '-' : (float) $agg['lo'],
         'ct' => (int) $agg['ct'],
-        'trades' => $tot,
-        'awin' => is_numeric($awin) ? (float) $awin : $awin,
-        'aloss' => is_numeric($aloss) ? (float) $aloss : $aloss,
+        'trades' => (int) $agg['trades'],
+        'fees' => (float) $agg['fees'],
+        'awin' => $awin,
+        'aloss' => $aloss,
         'win' => $winPct,
         'loss' => $losPct,
-        'max' => "W{$maxW}/L{$maxL}",
-        'dur' => mt_format_duration($avgWinDur + $avgLosDur),
-        'durWin' => mt_format_duration($avgWinDur),
-        'durLoss' => mt_format_duration($avgLosDur),
+        'max' => $maxW . '/' . $maxL,
+        'dur' => $fmtHMS($avgWinDur) . '/' . $fmtHMS($avgLosDur),
       ];
     }
 
-    // ==== 4) Paginación (si aplica) ====
-    $offset = ($page - 1) * $perPage;
-    $total = count($rows);
-    $rows = array_slice($rows, $offset, $perPage);
-    $totalPages = (int) ceil($total / $perPage);
+    // ==== 4) Orden descendente por fecha + log final ====
+    usort($rows, function ($a, $b) {
+      $ta = strtotime((string) ($a['openTime'] ?? $a['date'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['openTime'] ?? $b['date'] ?? '')) ?: 0;
+      return $tb <=> $ta;
+    });
 
-    return [
-      'rows' => $rows,
-      'per_page' => (int) $perPage,
-      'total_rows' => $total,
-      'total_pages' => $totalPages,
-      'current_page' => (int) $page,
-    ];
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      foreach ($rows as $rr) {
+        error_log(sprintf(
+          '[DJ] ROW day=%s net=%s hi=%s lo=%s ct=%d trades=%d fees=%s max=%s dur=%s',
+          (string) $rr['openTime'],
+          is_numeric($rr['net']) ? number_format((float) $rr['net'], 2, '.', '') : (string) $rr['net'],
+          (string) $rr['hi'],
+          (string) $rr['lo'],
+          (int) $rr['ct'],
+          (int) $rr['trades'],
+          is_numeric($rr['fees']) ? number_format((float) $rr['fees'], 2, '.', '') : (string) $rr['fees'],
+          (string) $rr['max'],
+          (string) $rr['dur']
+        ));
+      }
+    }
+
+    return ['rows' => $rows, 'per_page' => (int) $perPage];
   }
+
 }
 
-// Formato HH:MM:SS para duraciones
-if (!function_exists('mt_format_duration')) {
-  function mt_format_duration(int $seconds): string
-  {
-    if ($seconds < 0)
-      return '—';
-    $h = floor($seconds / 3600);
-    $m = floor(($seconds % 3600) / 60);
-    $s = $seconds % 60;
-    return sprintf('%02d:%02d:%02d', $h, $m, $s);
-  }
-}
 
-/* === DAILY JOURNAL: Generar el HTML de las filas para la tabla === */
-if (!function_exists('mt_accounts_daily_journal_html')) {
-  function mt_accounts_daily_journal_html(array $rows, int $per_page, $acc_id): string
+
+/* === DAILY JOURNAL: render SOLO filas (para AJAX) === */
+if (!function_exists('mt_daily_journal_rows_html')) {
+  function mt_daily_journal_rows_html(array $rows, int $per_page, $acc_id): string
   {
     $user_id = get_current_user_id();
+
     $fmt_money = function ($v) {
       if ($v === '-' || $v === null || $v === '')
         return '-';
@@ -1616,11 +2217,8 @@ if (!function_exists('mt_accounts_daily_journal_html')) {
     $fmt_pct = function ($v) {
       return ($v === '-' ? '-' : (number_format((float) $v, 2) . '%'));
     };
-    $fmt_duration = function ($v) {
-      return (is_numeric($v) && (int) $v >= 0) ? mt_format_duration((int) $v) : (string) $v;
-    };
-    ob_start();
 
+    ob_start();
     foreach ($rows as $i => $r) {
       $page = (int) floor($i / max(1, $per_page)) + 1;
 
@@ -1638,55 +2236,56 @@ if (!function_exists('mt_accounts_daily_journal_html')) {
         $day_label = '-';
       }
 
-      $fb = ($acc_id && $day_iso && function_exists('mt_get_daily_feedback')) ? mt_get_daily_feedback($user_id, (int) $acc_id, $day_iso) : null;
+      $fb = ($acc_id && $day_iso && function_exists('mt_get_daily_feedback'))
+        ? mt_get_daily_feedback($user_id, (int) $acc_id, $day_iso) : null;
+
       $has_fb = !empty($fb);
       $mood = $has_fb ? (int) ($fb['mood'] ?? 0) : 0;
-      $notes = $has_fb ? (string) ($fb['notes'] ?? '') : '';
+      $follow = $has_fb ? ((int) ($fb['followed_plan'] ?? 0) ? 1 : 0) : 0;
+      $note = $has_fb ? (string) ($fb['note'] ?? '') : '';
 
-      $net = $r['net'] ?? null;
-      $net_class = mt_value_color_class($net, 'text-default');
-
-      $mood_icon = ($mood === 1) ? 'mt-icon_happy' : (($mood === 2) ? 'mt-icon_neutral' : (($mood === 3) ? 'mt-icon_sad' : 'mt-icon_notes'));
-      $mood_class = ($mood === 1) ? 'text-success' : (($mood === 3) ? 'text-error' : (($mood === 2) ? 'text-default' : 'text-gray'));
+      $net = $r['net'] ?? '-';
+      $net_class = (is_numeric($net) ? ($net > 0 ? 'text-success' : ($net < 0 ? 'text-danger' : '')) : '');
 
       ?>
-            <div class="dj-row" data-page="<?php echo esc_attr($page); ?>" data-date="<?php echo esc_attr($day_iso); ?>">
-                <div class="dj-cell">
-                    <span class="dj-feedback-btn <?php echo esc_attr($mood > 0 ? 'is-active' : ''); ?>"
-                        data-bs-toggle="modal"
-                        data-bs-target="#daily-journal-modal"
-                        data-account-id="<?php echo esc_attr($acc_id); ?>"
-                        data-date-iso="<?php echo esc_attr($day_iso); ?>"
-                        data-mood="<?php echo esc_attr($mood); ?>"
-                        data-notes="<?php echo esc_attr($notes); ?>"
-                        role="button"
-                        title="<?php echo esc_attr($notes ?: 'Add feedback'); ?>">
-                        <i class="<?php echo esc_attr($mood_icon); ?> <?php echo esc_attr($mood_class); ?>" aria-hidden="true"></i>
-                    </span>
-                </div>
-                <div class="dj-cell is-right"><?php echo esc_html($day_label); ?></div>
-                <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html($fmt_money($net)); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['hi'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['lo'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['ct'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['fees'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['trades'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['loss'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
-                <div class="dj-cell is-right"><?php echo esc_html($fmt_duration($r['dur'] ?? '-')); ?></div>
-            </div>
-        <?php
+      <div class="dj-grid dj-row" id="dj-row-<?php echo esc_attr($day_iso); ?>" data-page="<?php echo esc_attr($page); ?>"
+        data-trade-date="<?php echo esc_attr($day_iso); ?>" data-has-fb="<?php echo $has_fb ? '1' : '0'; ?>"
+        data-mood="<?php echo $has_fb ? (int) $mood : ''; ?>" data-followed="<?php echo $has_fb ? (int) $follow : ''; ?>"
+        data-note="<?php echo $has_fb ? esc_attr($note) : ''; ?>" style="<?php echo $page === 1 ? '' : 'display:none'; ?>">
+        <div class="dj-cell is-left">
+          <span class="mt-dj-visibility" role="button" tabindex="0" aria-label="Add daily feedback" title="Daily feedback">
+            <i class="mt-icon mt-icon-white <?php echo $has_fb ? 'mt-icon_visibility' : 'mt-icon_pencil'; ?>"
+              aria-hidden="true"></i>
+          </span>
+        </div>
+
+        <div class="dj-cell is-right"><?php echo esc_html($day_label); ?></div>
+        <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html($fmt_money($net)); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['hi'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['lo'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['ct'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['fees'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['trades'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['loss'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['dur'] ?? '-')); ?></div>
+      </div>
+      <?php
     }
     return trim(ob_get_clean());
   }
 }
 
+
+
+
 // === Profile (My Profile modal) ============================================
 // Helpers + AJAX para cargar/guardar BILLING del usuario logueado.
 // No colisiona con nada existente.
+
 if (!function_exists('mt_get_current_user_profile')) {
   function mt_get_current_user_profile(): array
   {
@@ -1694,113 +2293,84 @@ if (!function_exists('mt_get_current_user_profile')) {
       return array('ok' => false, 'msg' => 'Not logged in');
     $uid = get_current_user_id();
     $u = wp_get_current_user();
+
     $data = array(
       'first_name' => get_user_meta($uid, 'first_name', true),
       'last_name' => get_user_meta($uid, 'last_name', true),
+      'email' => $u ? $u->user_email : '',
       'billing_address_1' => get_user_meta($uid, 'billing_address_1', true),
-      'billing_address_2' => get_user_meta($uid, 'billing_address_2', true),
       'billing_city' => get_user_meta($uid, 'billing_city', true),
       'billing_state' => get_user_meta($uid, 'billing_state', true),
       'billing_postcode' => get_user_meta($uid, 'billing_postcode', true),
       'billing_country' => get_user_meta($uid, 'billing_country', true),
       'billing_phone' => get_user_meta($uid, 'billing_phone', true),
-      'billing_email' => get_user_meta($uid, 'billing_email', true),
-      'email' => $u->user_email,
     );
     return array('ok' => true, 'data' => $data);
   }
 }
 
 if (!function_exists('mt_update_current_user_billing')) {
-  function mt_update_current_user_billing(array $data): array
+  function mt_update_current_user_billing(array $in): array
   {
     if (!is_user_logged_in())
       return array('ok' => false, 'msg' => 'Not logged in');
     $uid = get_current_user_id();
 
-    $fields = [
-      'first_name',
-      'last_name',
+    $fields = array(
       'billing_address_1',
-      'billing_address_2',
       'billing_city',
       'billing_state',
       'billing_postcode',
       'billing_country',
-      'billing_phone',
-      'billing_email'
-    ];
-    // Saneamiento de datos
-    $sane = [];
-    foreach ($fields as $field) {
-      $value = $data[$field] ?? null;
-      if ($value !== null) {
-        $sane[$field] = sanitize_text_field($value);
+      'billing_phone'
+    );
+    foreach ($fields as $k) {
+      if (array_key_exists($k, $in)) {
+        $v = is_string($in[$k]) ? wp_strip_all_tags($in[$k]) : '';
+        update_user_meta($uid, $k, $v);
       }
     }
-
-    // Validación mínima
-    if (empty($sane['first_name']))
-      return array('ok' => false, 'msg' => 'Missing first name');
-    if (empty($sane['last_name']))
-      return array('ok' => false, 'msg' => 'Missing last name');
-    if (!is_email($sane['billing_email'] ?? ''))
-      return array('ok' => false, 'msg' => 'Invalid billing email');
-
-    // Actualizar nombre (no se usa billing_first/last en el perfil, sino first/last_name)
-    update_user_meta($uid, 'first_name', $sane['first_name']);
-    update_user_meta($uid, 'last_name', $sane['last_name']);
-
-    // Actualizar campos de facturación
-    foreach ($sane as $key => $value) {
-      if (strpos($key, 'billing_') === 0) {
-        update_user_meta($uid, $key, $value);
-      }
-    }
-
     return array('ok' => true);
   }
 }
 
-if (!function_exists('mt_accounts_ajax_profile_get')) {
-  add_action('wp_ajax_mt_accounts_profile_get', 'mt_accounts_ajax_profile_get');
-  function mt_accounts_ajax_profile_get()
-  {
-    check_ajax_referer('mt-acc-nonce', 'nonce');
-    $r = mt_get_current_user_profile();
-    if (!$r['ok'])
-      wp_send_json_error(array('msg' => $r['msg'] ?? 'Error'), 401);
-    wp_send_json_success($r['data']);
-  }
-}
+// Obtener perfil (si luego quieres refrescar dinámicamente desde el front)
+add_action('wp_ajax_mt_get_profile', function () {
+  check_ajax_referer('mt_profile_nonce', 'nonce');
+  $res = mt_get_current_user_profile();
+  if (!$res['ok'])
+    wp_send_json_error(array('msg' => $res['msg']), 401);
+  wp_send_json_success($res['data']);
+});
 
-if (!function_exists('mt_accounts_ajax_profile_save')) {
-  add_action('wp_ajax_mt_accounts_profile_save', function () {
-    check_ajax_referer('mt-acc-nonce', 'nonce');
-    $payload = array(
-      'first_name' => $_POST['first_name'] ?? '',
-      'last_name' => $_POST['last_name'] ?? '',
-      'billing_address_1' => $_POST['billing_address_1'] ?? '',
-      'billing_address_2' => $_POST['billing_address_2'] ?? '',
-      'billing_city' => $_POST['billing_city'] ?? '',
-      'billing_state' => $_POST['billing_state'] ?? '',
-      'billing_postcode' => $_POST['billing_postcode'] ?? '',
-      'billing_country' => $_POST['billing_country'] ?? '',
-      'billing_phone' => $_POST['billing_phone'] ?? '',
-      'billing_email' => $_POST['billing_email'] ?? '',
-    );
-    // Validación mínima server
-    foreach (array_keys($payload) as $k) {
-      if (strpos($k, 'address_2') === false && empty(trim((string) $payload[$k]))) {
-        wp_send_json_error(array('msg' => "Missing field: $k"), 400);
-      }
+// Guardar solo BILLING
+add_action('wp_ajax_mt_save_billing_profile', function () {
+  check_ajax_referer('mt_profile_nonce', 'nonce');
+  if (!is_user_logged_in())
+    wp_send_json_error(array('msg' => 'Not logged in'), 401);
+
+  $payload = array(
+    'billing_address_1' => $_POST['billing_address_1'] ?? '',
+    'billing_city' => $_POST['billing_city'] ?? '',
+    'billing_state' => $_POST['billing_state'] ?? '',
+    'billing_postcode' => $_POST['billing_postcode'] ?? '',
+    'billing_country' => $_POST['billing_country'] ?? '',
+    'billing_phone' => $_POST['billing_phone'] ?? '',
+  );
+
+  // Validación mínima server
+  foreach (array_keys($payload) as $k) {
+    if (empty(trim((string) $payload[$k]))) {
+      wp_send_json_error(array('msg' => "Missing field: $k"), 400);
     }
-    $r = mt_update_current_user_billing($payload);
-    if (!$r['ok'])
-      wp_send_json_error(array('msg' => $r['msg'] ?? 'Error'), 500);
-    wp_send_json_success(array('msg' => 'Saved'));
-  });
-}
+  }
+
+  $r = mt_update_current_user_billing($payload);
+  if (!$r['ok'])
+    wp_send_json_error(array('msg' => $r['msg'] ?? 'Error'), 500);
+
+  wp_send_json_success(array('msg' => 'Saved'));
+});
 
 // inc/mt-accounts-helpers.php
 if (!function_exists('mt_money_fmt')) {
@@ -1815,7 +2385,9 @@ if (!function_exists('mt_parse_open_time')) {
   function mt_parse_open_time($openTime)
   {
     try {
-      $dt = !empty($openTime) ? new DateTime($openTime, new DateTimeZone('UTC')) : new DateTime('now', new DateTimeZone('UTC'));
+      $dt = !empty($openTime)
+        ? new DateTime($openTime, new DateTimeZone('UTC'))
+        : new DateTime('now', new DateTimeZone('UTC'));
     } catch (Exception $e) {
       $dt = new DateTime('now', new DateTimeZone('UTC'));
     }
@@ -1843,54 +2415,247 @@ if (!function_exists('mt_subscription_id_for_order')) {
         return '';
     }
 
-    // WooCommerce Subscriptions
+    // WooCommerce Subscriptions disponible
     if (function_exists('wcs_get_subscriptions_for_order')) {
-      $subscriptions = wcs_get_subscriptions_for_order($order_id, array('order_type' => 'any'));
-      if (!empty($subscriptions)) {
-        // Devuelve el primer ID encontrado
-        foreach ($subscriptions as $subscription) {
-          return (string) $subscription->get_id();
+      $subs = wcs_get_subscriptions_for_order($order_id, array('order_type' => array('parent', 'renewal', 'switch')));
+      if (is_array($subs) && !empty($subs)) {
+        // Elige primero activo si existe, si no, el primero
+        $pick = null;
+        foreach ($subs as $sub) {
+          if (is_object($sub) && method_exists($sub, 'get_id')) {
+            $status = method_exists($sub, 'get_status') ? (string) $sub->get_status() : '';
+            if (in_array($status, array('active', 'on-hold', 'pending-cancel'), true)) {
+              $pick = $sub;
+              break;
+            }
+            if ($pick === null)
+              $pick = $sub;
+          }
         }
+        if ($pick)
+          return (string) $pick->get_id();
       }
     }
+
+    // Fallback: intenta por meta (algunos plugins guardan _subscription_renewal o similares)
+    $maybe = get_post_meta($order_id, '_subscription_id', true);
+    if (is_scalar($maybe) && (string) $maybe !== '')
+      return (string) $maybe;
+
     return '';
   }
 }
 
-// ============== SHORTCODE UTILS (desde el final de v3.x) ======================
-
-if (!function_exists('mt_shortcode_extract_json_data')) {
-  /**
-   * Ejecuta un shortcode y trata de extraer el JSON de forma robusta.
-   * Elimina BOM, decode de entidades, y soporta JSON crudo o JSON limpiado de tags.
-   * @param string $shortcode
-   * @return array|null
-   */
-  function mt_shortcode_extract_json_data(string $shortcode): ?array
+/* === Prepare accounts list for payout UI (with balances & limits) === */
+if (!function_exists('mt_prepare_ui_payout')) {
+  function mt_prepare_ui_payout(string $email): array
   {
-    if (!function_exists('do_shortcode'))
-      return null;
+    $out = ['items' => [], 'selected' => null];
 
-    $raw = do_shortcode($shortcode);
-    if (!is_string($raw) || $raw === '')
-      return null;
+    // ---- small helpers ----
+    $clean_json = static function (string $raw) {
+      $decoded = html_entity_decode($raw, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+      $stripped = trim(wp_strip_all_tags($decoded));
+      if (preg_match('/(\{.*\}|\[.*\])/s', $stripped, $m)) $stripped = $m[1];
+      $arr = json_decode($stripped, true);
+      return (json_last_error() === JSON_ERROR_NONE && is_array($arr)) ? $arr : null;
+    };
 
-    $raw = trim(wp_unslash($raw));
-    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
-      $raw = substr($raw, 3);
-    if ($raw !== '')
-      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $aget = static function (array $a, array $path, $def = null) {
+      $v = $a;
+      foreach ($path as $k) {
+        if (is_array($v) && array_key_exists($k, $v)) $v = $v[$k]; else return $def;
+      }
+      return $v;
+    };
 
-    // 1. Intento con JSON crudo
-    $data = json_decode($raw, true);
-    if (is_array($data))
-      return $data;
+    $b = static function ($v): bool {
+      if (is_bool($v)) return $v;
+      if (is_numeric($v)) return ((int)$v) !== 0;
+      if (is_string($v)) {
+        $t = strtolower(trim($v));
+        if (in_array($t, ['1','true','yes','on'], true)) return true;
+        if (in_array($t, ['0','false','no','off',''], true)) return false;
+      }
+      return !empty($v);
+    };
 
-    // 2. Fallback limpiando tags (por si el shortcode envuelve el JSON en p/divs)
-    $data = json_decode(trim(wp_strip_all_tags($raw)), true);
-    if (is_array($data))
-      return $data;
+    $endsFunded = static function ($s) {
+      return (bool) preg_match('/\bFunded\s*$/i', (string)$s);
+    };
 
-    return null;
+    $extract_account_size = static function (?string $label, ?string $desc): string {
+      $src = trim((string)($label ?: $desc ?: ''));
+      if ($src === '') return '';
+      $parts = explode('|', $src, 2);
+      return trim($parts[0]); // e.g. "25k Elite Plan"
+    };
+
+    // ---- input ----
+    $email = sanitize_email($email);
+    if (!$email) return $out;
+
+    // 1) fetch all accounts (shortcode)
+    $sc_accounts = sprintf('[mega_accounts_data email="%s" page="1" perpage="50" output="json"]', esc_attr($email));
+    $raw = (string) do_shortcode($sc_accounts);
+    $acc = $clean_json($raw);
+    if (!$acc) return $out;
+
+    // normalize to list
+    $list = null;
+    foreach ([['data','items'], ['items'], ['results'], ['data'], []] as $p) {
+      $cand = $p ? $aget($acc, $p, null) : $acc;
+      if (is_array($cand) && $cand && array_keys($cand) === range(0, count($cand)-1)) { $list = $cand; break; }
+    }
+    if (!$list) return $out;
+
+    // 2) filter ACTIVE + “…Funded” in description or label
+    $filtered = [];
+    foreach ($list as $row) {
+      if (!is_array($row)) continue;
+      $st = strtoupper(trim((string)($row['status'] ?? '')));
+      if ($st !== 'ACTIVE') continue;
+      $desc  = (string) $aget($row, ['program','description'], '');
+      $label = (string) $aget($row, ['program','label'], '');
+      if (!$endsFunded($desc) && !$endsFunded($label)) continue;
+      $row['_createdAt'] = (string) ($row['createdAt'] ?? '');
+      // guarda early para size
+      $row['_programDesc']  = $desc;
+      $row['_programLabel'] = $label;
+      $row['_accountSize']  = $extract_account_size($label, $desc);
+      $filtered[] = $row;
+    }
+    if (!$filtered) return $out;
+
+    // sort by created desc and preselect newest
+    usort($filtered, static function ($a, $b) {
+      $ta = strtotime((string)($a['_createdAt'] ?? '')) ?: 0;
+      $tb = strtotime((string)($b['_createdAt'] ?? '')) ?: 0;
+      return $tb <=> $ta;
+    });
+    $out['selected'] = (string) ($filtered[0]['id'] ?? '');
+
+    // helpers
+    $resolve_by_id = static function (string $id) use ($clean_json) {
+      if (function_exists('mt_accounts_resolve_account_by_id')) {
+        try { $acc = mt_accounts_resolve_account_by_id($id); if (is_array($acc)) return $acc; } catch (\Throwable $e) {}
+      }
+      $sc = sprintf('[mega_account_data id="%s" page="1" perpage="50" output="json"]', esc_attr($id));
+      $raw = (string) do_shortcode($sc);
+      return $clean_json($raw) ?: null;
+    };
+
+    $fetch_elig = static function (string $internalId) {
+      $data = mega_api_get_payout_eligibility($internalId);
+      return is_wp_error($data) ? null : (is_array($data) ? $data : null);
+    };
+
+    $resolve_logo = static function (?array $byId, array $row) use ($aget) {
+      $platformRaw = (string)(
+        $aget($byId ?? [], ['platform','platform'], '') ?:
+        $aget($row,  ['program','platform'], '') ?:
+        ($row['platform'] ?? '')
+      );
+      $DEFAULT_LOGO = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
+      $PLATFORM_LOGOS = [
+        'megatrader' => $DEFAULT_LOGO,
+        'ninjatrader' => '/wp-content/uploads/2025/02/icon_ninjatrader.svg',
+        'tradovate'   => '/wp-content/uploads/2025/02/icon_tradovate.svg',
+        'quantower'   => '/wp-content/uploads/2025/02/icon_quantower.svg',
+      ];
+      $key = strtolower(trim(preg_replace('/\s+/', ' ', $platformRaw)));
+      return $PLATFORM_LOGOS[$key] ?? $DEFAULT_LOGO;
+    };
+
+    $STATUS_KEYS = [
+      'amountAvailable','userKYCVerified','accountIsFlat','accountHasMetMinTradingDays',
+      'accountHasProfitShare','accountIsActive','accountHasProfit','accountHasWithdrawalAmount',
+      'accountIsFunded','accountHasPendingPayout','accountConsistencyMet',
+      'payoutHasMetMinTradingDays','payoutCycleCheckPassed',
+    ];
+
+    // 3) build items
+    foreach ($filtered as $row) {
+      $id = (string)($row['id'] ?? '');
+      if (!$id) continue;
+
+      $byId = $resolve_by_id($id);
+      if (!is_array($byId)) continue;
+
+      // accountName (platform.accountId) – badge secundario
+      $accountName = (string) $aget($byId, ['platform','accountId'], '');
+      if ($accountName === '') continue;
+
+      // ---- balances ----
+      $currentBalance  = (float) ($aget($byId, ['metrics','currentBalance'], 0) ?: 0);
+      $startingBalance = (float) ($aget($byId, ['program','startingBalance'], 0) ?: 0);
+
+      $minMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : [];
+      $minimumBalance = isset($minMap[$startingBalance]) ? (float)$minMap[$startingBalance] : 0.0;
+
+      $minWMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
+      $minimumWithdrawal = isset($minWMap[$startingBalance]) ? (float)$minWMap[$startingBalance] : 0.0;
+
+      $withdrawalRoom = max(0.0, $currentBalance - $minimumBalance);
+
+      $elig = $fetch_elig($id) ?: [];
+      $enabled      = $b($aget($elig, ['payoutCycle','enabled'], null));
+      $targetPassed = $b($aget($elig, ['payoutCycle','targetPassed'], null));
+      $status       = (array) $aget($elig, ['accountStatus'], []);
+
+      $allStatusOK = true;
+      foreach ($STATUS_KEYS as $k) { if (!$b($status[$k] ?? false)) { $allStatusOK = false; break; } }
+
+      $maxWithdrawalApi = (float) $aget($elig, ['payoutCycle','maxWithdrawal'], null);
+      if (!$maxWithdrawalApi && is_array($byId)) {
+        $maxWithdrawalApi = (float) $aget($byId, ['payout','payoutCycle','maxWithdrawal'], 0);
+      }
+
+      $eligibleBase      = ($enabled && $targetPassed && $allStatusOK);
+      $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= $minimumWithdrawal));
+
+      $maxWithdrawalUI = $eligibleForPayout ? max(0.0, min($withdrawalRoom, (float)$maxWithdrawalApi)) : 0.0;
+
+      $badge = $eligibleForPayout
+        ? ['text' => 'Eligible',   'class' => 'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
+        : ['text' => 'Ineligible', 'class' => 'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
+
+      $logo = $resolve_logo($byId, $row);
+
+      // NUEVOS CAMPOS: accountSize + copias de label/description por si quieres usarlas luego
+      $accountSize = (string) ($row['_accountSize'] ?? '');
+      $programLabel = (string) ($row['_programLabel'] ?? '');
+      $programDesc  = (string) ($row['_programDesc'] ?? '');
+
+      $out['items'][] = [
+        'id' => $id,
+        'logo' => $logo,
+
+        'accountSize' => $accountSize,      // ← nuevo: "25k Elite Plan"
+        'accountName' => $accountName,      // ← ahora lo usarás como badge
+        'platformAccountId' => $accountName,
+
+        'programLabel' => $programLabel,
+        'programDescription' => $programDesc,
+
+        'eligible' => $eligibleBase,
+        'eligibleForPayout' => $eligibleForPayout,
+
+        'meta' => [
+          'maxWithdrawal'     => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalApi'  => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalUI'   => $maxWithdrawalUI,
+          'currentBalance'    => $currentBalance,
+          'startingBalance'   => $startingBalance,
+          'minimumBalance'    => $minimumBalance,
+          'withdrawalRoom'    => $withdrawalRoom,
+          'minWithdrawal'     => $minimumWithdrawal,
+        ],
+
+        'badge' => $badge,
+      ];
+    }
+
+    return $out;
   }
 }
