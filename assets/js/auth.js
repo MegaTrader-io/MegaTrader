@@ -17,58 +17,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // window.history.replaceState({}, document.title, url.toString());
     }
 
-    function setStateWhenReady(stateCode) {
-        if (!stateCode) return;
-        const wrapper = document.getElementById("billing_state_wrapper");
-
-        const tryApply = () => {
-            const select = document.getElementById("billing_state");
-            if (!select) return false;
-
-            const match = [...select.options].find(o => o.value === stateCode);
-            if (!match) return false;
-
-            select.value = stateCode;
-            select.dispatchEvent(new Event("change"));
-            select.dataset.googleSet = "true";
-            return true;
-        };
-
-        if (tryApply()) return;
-
-        const obs = new MutationObserver(() => {
-            if (tryApply()) obs.disconnect();
-        });
-        obs.observe(wrapper, {childList: true, subtree: true});
-    }
-
-    function lockStateSelection(stateCode, ttlMs = 7000) {
-        if (!stateCode) return;
-        const wrapper = document.getElementById("billing_state_wrapper");
-        if (!wrapper) return;
-
-        const start = Date.now();
-        const apply = () => {
-            const select = document.getElementById("billing_state");
-            if (!select) return;
-            const opt = [...select.options].find(o => o.value === stateCode);
-            if (opt) {
-                select.value = stateCode;
-                select.dataset.googleSet = "true";
-            }
-        };
-
-        apply();
-
-        const obs = new MutationObserver(() => {
-            apply();
-            if (Date.now() - start > ttlMs) {
-                obs.disconnect();
-            }
-        });
-        obs.observe(wrapper, {childList: true, subtree: true});
-    }
-
     // Initialize Slider
     function initializeSwiper() {
         (new Swiper('.swiper', {
@@ -242,6 +190,132 @@ document.addEventListener('DOMContentLoaded', function () {
             fallbackToIP();
         }
     }
+
+    document.querySelector('.auth-form__form-wrapper')
+        .addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const form = e.currentTarget;
+            const usernameEl = form.querySelector('#username');
+            const passwordEl = form.querySelector('#password');
+            const rememberEl = form.querySelector('#rememberme');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const inputs = form.querySelectorAll('input, button, select, textarea');
+
+            // ✅ detectar redirect_to en la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectTo = urlParams.get('redirect_to') || '';
+
+            // ✅ limpiar mensajes previos
+            form.querySelectorAll('.auth-form__error_message').forEach(el => el.remove());
+            usernameEl.classList.remove('auth-form--error-message');
+            passwordEl.classList.remove('auth-form--error-message');
+
+            // ✅ eliminar avisos globales previos
+            const globalNotice = document.querySelector('.woocommerce-notices-wrapper');
+            if (globalNotice) globalNotice.remove();
+
+            // ✅ bloquear inputs y submit
+            inputs.forEach(el => el.readOnly = true);
+            submitBtn.classList.add('btn--loading');
+
+            try {
+                $.preloader.show();
+
+                const response = await fetch(MG_GLOBAL.loginAjaxApi, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-WP-Nonce': MG_GLOBAL.loginProcessNonce,
+                    },
+                    body: new URLSearchParams({
+                        username: usernameEl.value.trim(),
+                        password: passwordEl.value,
+                        rememberme: rememberEl.checked ? '1' : '',
+                        redirect_to: redirectTo, // <--- enviado al backend
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = data.redirect || '/';
+                    return;
+                }
+
+                // --- handle field errors dynamically ---
+                const createOrUpdateError = (inputEl, id, message) => {
+                    inputEl.classList.add('auth-form--error-message');
+                    let span = form.querySelector(`#${id}`);
+                    if (!span) {
+                        span = document.createElement('span');
+                        span.id = id;
+                        span.className = 'auth-form__error_message';
+                        inputEl.parentNode.insertBefore(span, inputEl.nextSibling);
+                    }
+                    span.textContent = message;
+                };
+
+                let firstErrorField = null;
+
+                if (data.errors) {
+                    if (data.errors.username) {
+                        createOrUpdateError(usernameEl, 'error-username', data.errors.username);
+                        if (!firstErrorField) firstErrorField = usernameEl;
+                    }
+                    if (data.errors.password) {
+                        createOrUpdateError(passwordEl, 'error-password', data.errors.password);
+                        if (!firstErrorField) firstErrorField = passwordEl;
+                    }
+
+                    // --- show general errors like WooCommerce ---
+                    if (data.errors.general) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'woocommerce-notices-wrapper';
+                        const msg = document.createElement('div');
+                        msg.className = 'woocommerce-message';
+                        msg.setAttribute('role', 'alert');
+                        msg.setAttribute('tabindex', '-1');
+                        msg.textContent = data.errors.general;
+                        wrapper.appendChild(msg);
+                        form.parentNode.insertBefore(wrapper, form);
+                    }
+
+                    // ✅ focus on first error field
+                    if (firstErrorField) {
+                        firstErrorField.focus();
+                        firstErrorField.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    }
+
+                    // ✅ desbloquear inputs y botón
+                    $.preloader.hide();
+                    inputs.forEach(el => el.readOnly = false);
+                    submitBtn.classList.remove('btn--loading');
+                }
+            } catch (err) {
+                console.error('Login request failed:', err);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'woocommerce-notices-wrapper';
+                const msg = document.createElement('div');
+                msg.className = 'woocommerce-message';
+                msg.textContent = 'An unexpected error occurred. Please try again later.';
+                wrapper.appendChild(msg);
+                form.parentNode.insertBefore(wrapper, form);
+
+                // ✅ desbloquear inputs y botón
+                $.preloader.hide();
+                inputs.forEach(el => el.readOnly = false);
+                submitBtn.classList.remove('btn--loading');
+            }
+        });
+
+    const form = document.querySelector('.auth-form__form-wrapper');
+    const usernameEl = form?.querySelector('#username');
+    setTimeout(() => {
+        usernameEl.focus();
+    }, 0);
+
 });
 
 window.addEventListener("pageshow", function (event) {

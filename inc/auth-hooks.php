@@ -6,102 +6,107 @@
  */
 function mt_enqueue_auth_script_on_login_form(): void
 {
-    if (!is_user_logged_in()) {
+  if (!is_user_logged_in()) {
 
-        $css_path = get_template_directory() . '/assets/css/';
-        $js_path = get_template_directory() . '/assets/js/';
-        $css_uri = get_template_directory_uri() . '/assets/css/';
-        $js_uri = get_template_directory_uri() . '/assets/js/';
+    $css_path = get_template_directory() . '/assets/css/';
+    $js_path = get_template_directory() . '/assets/js/';
+    $css_uri = get_template_directory_uri() . '/assets/css/';
+    $js_uri = get_template_directory_uri() . '/assets/js/';
 
-        $css_version = file_exists($css_path . 'swiper-bundle.min.css') ? filemtime($css_path . 'swiper-bundle.min.css') : null;
-        $js_version = file_exists($js_path . 'swiper-bundle.min.js') ? filemtime($js_path . 'swiper-bundle.min.js') : null;
+    $css_version = file_exists($css_path . 'swiper-bundle.min.css') ? filemtime($css_path . 'swiper-bundle.min.css') : null;
+    $js_version = file_exists($js_path . 'swiper-bundle.min.js') ? filemtime($js_path . 'swiper-bundle.min.js') : null;
 
-        wp_enqueue_style('swiper-bundle', $css_uri . 'swiper-bundle.min.css', [], $css_version);
-        wp_enqueue_script('swiper-bundle-style', $js_uri . 'swiper-bundle.min.js', [], $js_version, true);
+    wp_enqueue_style('swiper-bundle', $css_uri . 'swiper-bundle.min.css', [], $css_version);
+    wp_enqueue_script('swiper-bundle-style', $js_uri . 'swiper-bundle.min.js', [], $js_version, true);
 
-        mt_intl_tel_input_assets();
+    mt_intl_tel_input_assets();
 
-        wp_enqueue_script(
-            'mt-auth',
-            get_stylesheet_directory_uri() . '/assets/js/auth.js',
-            [],
-            filemtime(get_stylesheet_directory() . '/assets/js/auth.js'), // Cache busting with file mtime
-            true
-        );
+    wp_enqueue_script(
+      'mt-auth',
+      get_stylesheet_directory_uri() . '/assets/js/auth.js',
+      [],
+      filemtime(get_stylesheet_directory() . '/assets/js/auth.js'), // Cache busting with file mtime
+      true
+    );
 
-        wp_enqueue_style(
-            'mt-auth-style',
-            get_stylesheet_directory_uri() . '/assets/css/mgt-theme.css',
-            [],
-            filemtime(get_stylesheet_directory() . '/assets/css/mgt-theme.css')
-        );
+    wp_localize_script('mt-auth', 'MG_GLOBAL', [
+      'loginAjaxApi' => esc_url(rest_url('login-process/callback')),
+      'loginProcessNonce' => wp_create_nonce('wp_rest'),
+    ]);
 
-        $selling_location = get_option('woocommerce_allowed_countries');
-        $my_post_language_details = apply_filters('wpml_post_language_details', null);
-        $google_map_api_key = get_option('google_map_api_key', null);
-        $mapJS = 'map-script.js';
-        if (!empty($my_post_language_details) && !empty($my_post_language_details['language_code'])) {
-            $current_language = $my_post_language_details['language_code'];
-            wp_enqueue_script('google-map', '//maps.googleapis.com/maps/api/js?key=' . trim($google_map_api_key) . '&language=' . $current_language . '&libraries=places,geometry', array(), SHIPPING_WORKSHOP_VERSION, false);
-        } else {
-            wp_enqueue_script('google-map', '//maps.googleapis.com/maps/api/js?key=' . trim($google_map_api_key) . '&libraries=places,geometry', array(), SHIPPING_WORKSHOP_VERSION, false);
-        }
-        wp_enqueue_script('map-script', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/js/' . $mapJS . '?rand=' . wp_rand(), array('google-map'), SHIPPING_WORKSHOP_VERSION, true);
-        wp_localize_script(
-            'map-script',
-            'countries',
-            array(
-                'countries' => [],
-                'map_display' => get_option('aafw_enable_map', 1),
-                'map_validation' => get_option('aafw_allow_manual_address'),
-                'enable_restriction' => get_option('aafw_enable_restriction'),
-                'aafw_enable_map' => get_option('aafw_enable_map'),
-                'map_style' => get_option('map_style', 1),
-                'custom_msg' => '',
-                'custom_zoom_map' => get_option('custom_zoom_map', 8),
-                'selling_location' => $selling_location,
-            )
-        );
+    wp_enqueue_style(
+      'mt-auth-style',
+      get_stylesheet_directory_uri() . '/assets/css/mgt-theme.css',
+      [],
+      filemtime(get_stylesheet_directory() . '/assets/css/mgt-theme.css')
+    );
 
-        $woo_default_country = explode(':', get_option('woocommerce_default_country'));
-        $woocommerce_default_country = WC()->countries->countries[$woo_default_country[0]];
-        $back_end_map = array();
-        $billing_data = array();
-        $shipping_data = array();
-        $fieldsettings = array(
-            'Postalcc' => get_option('Postalcc', 1),
-            'Countryaddr' => get_option('Countryaddr', 1),
-            'administrative_area_level_1addr' => get_option('administrative_area_level_1addr', 1),
-            'administrative_area_level_2addr' => get_option('administrative_area_level_2addr', 1),
-            'localityaddr' => get_option('localityaddr', 1),
-            'neighborhoodaddr' => get_option('neighborhoodaddr', 1),
-            'routeaddr' => get_option('routeaddr', 1),
-            'street_numberrouteaddr' => get_option('street_numberrouteaddr', 1),
-        );
-
-        wp_localize_script(
-            'map-script',
-            'map_data',
-            array(
-                wp_json_encode(
-                    array(
-                        'billing_data' => $billing_data,
-                        'shipping_data' => $shipping_data,
-                        'fieldsettings' => $fieldsettings,
-                    )
-                ),
-            )
-        );
-        wp_localize_script('map-script', 'back_end_map', $back_end_map);
-        wp_localize_script('map-script', 'woocommerce_default_country', array('woocommerce_country' => $woocommerce_default_country));
-
-        wp_enqueue_style('map-style', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/css/map-style.css', array(), SHIPPING_WORKSHOP_VERSION, false);
-
-        remove_action('admin_menu', 'add_intercom_settings_page');
-        remove_action('network_admin_menu', 'add_intercom_settings_page');
-        remove_action('admin_init', 'intercom_settings');
-        remove_action('wp_footer', 'add_intercom_snippet', 999);
+    $selling_location = get_option('woocommerce_allowed_countries');
+    $my_post_language_details = apply_filters('wpml_post_language_details', null);
+    $google_map_api_key = get_option('google_map_api_key', null);
+    $mapJS = 'map-script.js';
+    if (!empty($my_post_language_details) && !empty($my_post_language_details['language_code'])) {
+      $current_language = $my_post_language_details['language_code'];
+      wp_enqueue_script('google-map', '//maps.googleapis.com/maps/api/js?key=' . trim($google_map_api_key) . '&language=' . $current_language . '&libraries=places,geometry', array(), SHIPPING_WORKSHOP_VERSION, false);
+    } else {
+      wp_enqueue_script('google-map', '//maps.googleapis.com/maps/api/js?key=' . trim($google_map_api_key) . '&libraries=places,geometry', array(), SHIPPING_WORKSHOP_VERSION, false);
     }
+    wp_enqueue_script('map-script', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/js/' . $mapJS . '?rand=' . wp_rand(), array('google-map'), SHIPPING_WORKSHOP_VERSION, true);
+    wp_localize_script(
+      'map-script',
+      'countries',
+      array(
+        'countries' => [],
+        'map_display' => get_option('aafw_enable_map', 1),
+        'map_validation' => get_option('aafw_allow_manual_address'),
+        'enable_restriction' => get_option('aafw_enable_restriction'),
+        'aafw_enable_map' => get_option('aafw_enable_map'),
+        'map_style' => get_option('map_style', 1),
+        'custom_msg' => '',
+        'custom_zoom_map' => get_option('custom_zoom_map', 8),
+        'selling_location' => $selling_location,
+      )
+    );
+
+    $woo_default_country = explode(':', get_option('woocommerce_default_country'));
+    $woocommerce_default_country = WC()->countries->countries[$woo_default_country[0]];
+    $back_end_map = array();
+    $billing_data = array();
+    $shipping_data = array();
+    $fieldsettings = array(
+      'Postalcc' => get_option('Postalcc', 1),
+      'Countryaddr' => get_option('Countryaddr', 1),
+      'administrative_area_level_1addr' => get_option('administrative_area_level_1addr', 1),
+      'administrative_area_level_2addr' => get_option('administrative_area_level_2addr', 1),
+      'localityaddr' => get_option('localityaddr', 1),
+      'neighborhoodaddr' => get_option('neighborhoodaddr', 1),
+      'routeaddr' => get_option('routeaddr', 1),
+      'street_numberrouteaddr' => get_option('street_numberrouteaddr', 1),
+    );
+
+    wp_localize_script(
+      'map-script',
+      'map_data',
+      array(
+        wp_json_encode(
+          array(
+            'billing_data' => $billing_data,
+            'shipping_data' => $shipping_data,
+            'fieldsettings' => $fieldsettings,
+          )
+        ),
+      )
+    );
+    wp_localize_script('map-script', 'back_end_map', $back_end_map);
+    wp_localize_script('map-script', 'woocommerce_default_country', array('woocommerce_country' => $woocommerce_default_country));
+
+    wp_enqueue_style('map-style', WC_ADDRESS_AUTOCOMPLETE_URL . 'assets/Public/css/map-style.css', array(), SHIPPING_WORKSHOP_VERSION, false);
+
+    remove_action('admin_menu', 'add_intercom_settings_page');
+    remove_action('network_admin_menu', 'add_intercom_settings_page');
+    remove_action('admin_init', 'intercom_settings');
+    remove_action('wp_footer', 'add_intercom_snippet', 999);
+  }
 }
 
 add_action('wp', function () {
@@ -118,18 +123,126 @@ add_action('wp', function () {
   }
 });
 
-add_action('woocommerce_login_form', 'mt_enqueue_auth_script_on_login_form', );
+add_action('woocommerce_login_form', 'mt_enqueue_auth_script_on_login_form');
 
 add_action('init', function () {
-    remove_action('woocommerce_before_customer_login_form', 'woocommerce_output_all_notices', 10);
+  remove_action('woocommerce_before_customer_login_form', 'woocommerce_output_all_notices', 10);
 }, 10);
 
 add_action('init', function () {
-    if (class_exists('WC_Form_Handler')) {
-        remove_action('wp_loaded', ['WC_Form_Handler', 'process_login'], 20);
-        add_action('wp_loaded', 'mt_process_login', 20);
-    }
+  if (class_exists('WC_Form_Handler')) {
+    remove_action('wp_loaded', ['WC_Form_Handler', 'process_login'], 20);
+    add_action('wp_loaded', 'mt_process_login', 20);
+  }
 }, 11);
+
+add_action('rest_api_init', function () {
+  register_rest_route('login-process', '/callback', [
+    'methods' => 'POST',
+    'callback' => 'mt_process_callback_login',
+    'permission_callback' => '__return_true',
+  ]);
+});
+
+function mt_process_callback_login(WP_REST_Request $request): WP_REST_Response
+{
+  $username = trim((string)$request->get_param('username'));
+  $password = (string)$request->get_param('password');
+  $remember = (bool)$request->get_param('rememberme');
+  $nonce    = $request->get_header('x-wp-nonce');
+  $raw_redirect = (string)$request->get_param('redirect_to');
+
+  if (!wp_verify_nonce($nonce, 'wp_rest')) {
+    return new WP_REST_Response([
+      'success' => false,
+      'errors'  => ['general' => 'Security check failed. Please refresh the page and try again.'],
+    ], 403);
+  }
+
+  $errors = [];
+
+  // --- Username validation ---
+  if ($username === '') {
+    $errors['username'] = 'Email is required.';
+  } elseif (!is_email($username)) {
+    $errors['username'] = 'Enter a valid email address.';
+  }
+
+  // --- Password validation ---
+  if ($password === '') {
+    $errors['password'] = 'Password is required.';
+  }
+
+  if (!empty($errors)) {
+    return new WP_REST_Response([
+      'success' => false,
+      'errors'  => $errors,
+      'values'  => ['username' => $username],
+    ], 400);
+  }
+
+  // --- Try authentication ---
+  $user = wp_signon([
+    'user_login'    => $username,
+    'user_password' => $password,
+    'remember'      => $remember,
+  ], is_ssl());
+
+  if (is_wp_error($user)) {
+    foreach ($user->get_error_codes() as $code) {
+      $field = match ($code) {
+        'empty_username', 'invalid_username', 'invalid_email' => 'username',
+        'empty_password', 'incorrect_password'                => 'password',
+        default                                               => 'general',
+      };
+      foreach ($user->get_error_messages($code) as $msg) {
+        if ($code === 'incorrect_password') {
+          $msg = 'Incorrect password.';
+        } elseif ($code === 'invalid_email') {
+          $msg = 'Invalid username or email.';
+        }
+        $errors[$field] = $msg;
+      }
+    }
+
+    return new WP_REST_Response([
+      'success' => false,
+      'errors'  => $errors,
+      'values'  => ['username' => $username],
+    ], 401);
+  }
+
+  // --- Determine redirect URL ---
+  $default_redirect = home_url('/my-account/overview/');
+  $redirect = $raw_redirect ?: $default_redirect;
+  $redirect = wp_unslash($redirect);
+
+  $parsed_redirect = wp_parse_url($redirect);
+  $current_host = wp_parse_url(home_url(), PHP_URL_HOST);
+
+  // Validar dominio y prevenir escapes a otros hosts
+  if (
+    empty($parsed_redirect['host']) ||
+    $parsed_redirect['host'] === $current_host
+  ) {
+    if (strpos($parsed_redirect['path'] ?? '', '/wp-admin') === 0 && !current_user_can('manage_options')) {
+      $redirect = home_url('/');
+    }
+  } else {
+    $redirect = $default_redirect;
+  }
+
+  return new WP_REST_Response([
+    'success'  => true,
+    'message'  => 'Login successful.',
+    'user'     => [
+      'id'    => $user->ID,
+      'email' => $user->user_email,
+      'name'  => $user->display_name,
+    ],
+    'redirect' => $redirect,
+  ], 200);
+}
 
 function mt_process_login(): void
 {
@@ -240,22 +353,21 @@ function mt_process_login(): void
 }
 
 
-
 add_action('wp_enqueue_scripts', function () {
-    // Obtén la ruta relativa de la URL actual
-    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+  // Obtén la ruta relativa de la URL actual
+  $request_uri = $_SERVER['REQUEST_URI'] ?? '';
 
-    // Solo aplica si la URL empieza con /auth/
-    if (strpos($request_uri, '/auth/') !== 0) {
-        return;
-    }
+  // Solo aplica si la URL empieza con /auth/
+  if (strpos($request_uri, '/auth/') !== 0) {
+    return;
+  }
 
-    wp_enqueue_script('mt-auth', get_stylesheet_directory_uri() . '/assets/js/auth.js', [], '1.0.1', true);
+  wp_enqueue_script('mt-auth', get_stylesheet_directory_uri() . '/assets/js/auth.js', [], '1.0.1', true);
 
-    $inline = <<<JS
+  $inline = <<<JS
 (function cleanResetPassParam(){'use strict';try{if(!('URL'in window)||!('history'in window)||typeof history.replaceState!=='function'){return}const url=new URL(window.location.href);const PARAM='reset-pass';const removeIfExists=true;const onlyWhenTrue=false;const hasParam=url.searchParams.has(PARAM);if(!hasParam)return;if(onlyWhenTrue){const value=url.searchParams.get(PARAM);if(value!=='true')return}url.searchParams.delete(PARAM);const newUrl=url.origin+url.pathname+(url.search?url.search:'')+(url.hash||'');history.replaceState(null,document.title,newUrl)}catch(err){console.warn('[cleanResetPassParam] Failed:',err)}})();
 JS;
-    wp_add_inline_script('mt-auth', $inline, 'after');
+  wp_add_inline_script('mt-auth', $inline, 'after');
 });
 
 /**
@@ -265,112 +377,112 @@ JS;
  * - Preserva redirect_to con la URL original.
  */
 add_action('template_redirect', function () {
-    if (isset($_GET['logged_out']) && $_GET['logged_out'] == 1) {
-        nocache_headers();
+  if (isset($_GET['logged_out']) && $_GET['logged_out'] == 1) {
+    nocache_headers();
 
-        if (function_exists('wc_add_notice')) {
-            wc_add_notice(__('You have successfully logged out.', 'your-td'), 'success');
-        }
+    if (function_exists('wc_add_notice')) {
+      wc_add_notice(__('You have successfully logged out.', 'your-td'), 'success');
+    }
+  }
+
+  if (!function_exists('is_account_page') || !function_exists('wc_get_page_permalink')) {
+    return;
+  }
+
+  // Ruta solicitada (sin query ni hash)
+  $path = (string)wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+  $path = trailingslashit($path);
+
+  // ¿Es una ruta /auth/* ?
+  $is_auth_route = (strpos($path, '/auth/') === 0);
+
+  // URL absoluta actual (para redirect_to)
+  $current_url = (is_ssl() ? 'https://' : 'http://') .
+    ($_SERVER['HTTP_HOST'] ?? '') .
+    ($_SERVER['REQUEST_URI'] ?? '/');
+
+  // 1) Ya logueado en /auth/* => manda al dashboard
+  if (is_user_logged_in() && $is_auth_route) {
+    wp_safe_redirect(wc_get_page_permalink('myaccount'), 302);
+    exit;
+  }
+
+  // 2) No logueado en /my-account o endpoints => manda a /auth/*
+  if (!is_user_logged_in() && !$is_auth_route && (is_account_page() || is_wc_endpoint_url())) {
+
+    // Mapea endpoint -> ruta de auth
+    $target = '/auth/login';
+    if (is_wc_endpoint_url('lost-password') || get_query_var('lost-password')) {
+      $target = '/auth/lost-password';
+    } elseif (is_wc_endpoint_url('register') || (isset($_GET['action']) && $_GET['action'] === 'register')) {
+      $target = '/auth/register';
     }
 
-    if (!function_exists('is_account_page') || !function_exists('wc_get_page_permalink')) {
-        return;
+    // Solo agrega redirect_to si NO existe (evita nesting infinito)
+    $redir = home_url($target);
+    if (!isset($_GET['redirect_to']) && !isset($_POST['redirect_to'])) {
+      $redir = add_query_arg('redirect_to', rawurlencode($current_url), $redir);
     }
 
-    // Ruta solicitada (sin query ni hash)
-    $path = (string) wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    $path = trailingslashit($path);
-
-    // ¿Es una ruta /auth/* ?
-    $is_auth_route = (strpos($path, '/auth/') === 0);
-
-    // URL absoluta actual (para redirect_to)
-    $current_url = (is_ssl() ? 'https://' : 'http://') .
-        ($_SERVER['HTTP_HOST'] ?? '') .
-        ($_SERVER['REQUEST_URI'] ?? '/');
-
-    // 1) Ya logueado en /auth/* => manda al dashboard
-    if (is_user_logged_in() && $is_auth_route) {
-        wp_safe_redirect(wc_get_page_permalink('myaccount'), 302);
-        exit;
-    }
-
-    // 2) No logueado en /my-account o endpoints => manda a /auth/*
-    if (!is_user_logged_in() && !$is_auth_route && (is_account_page() || is_wc_endpoint_url())) {
-
-        // Mapea endpoint -> ruta de auth
-        $target = '/auth/login';
-        if (is_wc_endpoint_url('lost-password') || get_query_var('lost-password')) {
-            $target = '/auth/lost-password';
-        } elseif (is_wc_endpoint_url('register') || (isset($_GET['action']) && $_GET['action'] === 'register')) {
-            $target = '/auth/register';
-        }
-
-        // Solo agrega redirect_to si NO existe (evita nesting infinito)
-        $redir = home_url($target);
-        if (!isset($_GET['redirect_to']) && !isset($_POST['redirect_to'])) {
-            $redir = add_query_arg('redirect_to', rawurlencode($current_url), $redir);
-        }
-
-        wp_safe_redirect($redir, 302);
-        exit;
-    }
+    wp_safe_redirect($redir, 302);
+    exit;
+  }
 }, 9); // prioridad baja para que ocurra antes de elegir plantilla
 
 /**
  * Post-login: respeta ?redirect_to si es mismo host, si no, manda a /my-account.
  */
 add_filter('woocommerce_login_redirect', function ($redirect, $user) {
-    $requested = isset($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : '';
-    if ($requested) {
-        $homeHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
-        $reqHost = wp_parse_url($requested, PHP_URL_HOST);
-        if ($homeHost && $homeHost === $reqHost) {
-            return $requested;
-        }
+  $requested = isset($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : '';
+  if ($requested) {
+    $homeHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
+    $reqHost = wp_parse_url($requested, PHP_URL_HOST);
+    if ($homeHost && $homeHost === $reqHost) {
+      return $requested;
     }
-    return wc_get_account_endpoint_url('orders');
+  }
+  return wc_get_account_endpoint_url('orders');
 }, 10, 2);
 
 /**
  * Post-register: igual que login.
  */
 add_filter('woocommerce_registration_redirect', function ($redirect) {
-    $requested = isset($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : '';
-    if ($requested) {
-        $homeHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
-        $reqHost = wp_parse_url($requested, PHP_URL_HOST);
-        if ($homeHost && $homeHost === $reqHost) {
-            return $requested;
-        }
+  $requested = isset($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : '';
+  if ($requested) {
+    $homeHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
+    $reqHost = wp_parse_url($requested, PHP_URL_HOST);
+    if ($homeHost && $homeHost === $reqHost) {
+      return $requested;
     }
-    return wc_get_account_endpoint_url('orders');
+  }
+  return wc_get_account_endpoint_url('orders');
 }, 10);
 
 add_action('wp_head', function () {
-    $path = (string) wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if (strpos(trailingslashit($path), '/auth/') === 0) {
-        echo "<meta name=\"robots\" content=\"noindex,nofollow\" />\n";
-    }
+  $path = (string)wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+  if (strpos(trailingslashit($path), '/auth/') === 0) {
+    echo "<meta name=\"robots\" content=\"noindex,nofollow\" />\n";
+  }
 }, 1);
 
 add_action('init', function () {
-    // Obtiene el path real (soporta jerarquías si algún día "Auth" tiene padre)
-    $auth = get_page_by_path('auth');
+  // Obtiene el path real (soporta jerarquías si algún día "Auth" tiene padre)
+  $auth = get_page_by_path('auth');
 
-    if (!$auth instanceof WP_Post) {
-        return;
-    }
-    $auth_path = trim(get_page_uri($auth->ID), '/'); // ej: 'auth'
-    $re = preg_quote($auth_path, '/');
+  if (!$auth instanceof WP_Post) {
+    return;
+  }
+  $auth_path = trim(get_page_uri($auth->ID), '/'); // ej: 'auth'
+  $re = preg_quote($auth_path, '/');
 
-    // IMPORTANTE: 'top' para que quede antes que las reglas de endpoints
-    add_rewrite_rule('^' . $re . '/login/?$', 'index.php?pagename=' . $auth_path . '/login', 'top');
-    add_rewrite_rule('^' . $re . '/register/?$', 'index.php?pagename=' . $auth_path . '/register', 'top');
-    add_rewrite_rule('^' . $re . '/lost-password/?$', 'index.php?pagename=' . $auth_path . '/lost-password', 'top');
+  // IMPORTANTE: 'top' para que quede antes que las reglas de endpoints
+  add_rewrite_rule('^' . $re . '/login/?$', 'index.php?pagename=' . $auth_path . '/login', 'top');
+  add_rewrite_rule('^' . $re . '/register/?$', 'index.php?pagename=' . $auth_path . '/register', 'top');
+  add_rewrite_rule('^' . $re . '/lost-password/?$', 'index.php?pagename=' . $auth_path . '/lost-password', 'top');
 }, 1);
 
 // Haz flush una vez (cambia tema o guarda permalinks) o deja este hook de una sola ejecución.
 add_action('after_switch_theme', function () {
-    flush_rewrite_rules(false);
+  flush_rewrite_rules(false);
 });

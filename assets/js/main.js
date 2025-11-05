@@ -377,7 +377,9 @@ const $ = jQuery; //TODO: remove, temp for dev mode
 //
 // })
 
-MT_Tabs.init();
+if (!!window.MT_Tabs) {
+    MT_Tabs.init();
+}
 
 window.addEventListener("pageshow", function (event) {
     if (event.persisted) {
