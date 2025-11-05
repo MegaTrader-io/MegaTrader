@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-WP-Nonce': MG_GLOBAL.loginProcessNonce,
+                    'X-WP-Nonce': MG_GLOBAL.authNonce,
                 },
                 body: new URLSearchParams({
                     username: usernameEl.value.trim(),
@@ -317,6 +317,114 @@ document.addEventListener('DOMContentLoaded', function () {
             usernameEl.focus();
         }, 0);
     }
+
+    const registerForm = document.getElementById('register-form');
+
+    registerForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const form = e.currentTarget;
+        const inputs = form.querySelectorAll('input, select, button');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        // limpiar errores previos
+        form.querySelectorAll('.auth-form__error_message').forEach(el => el.remove());
+        form.querySelectorAll('.auth-form--error-message').forEach(el => el.classList.remove('auth-form--error-message'));
+
+        // ✅ eliminar avisos globales previos
+        const globalNotice = document.querySelector('.woocommerce-notices-wrapper');
+        if (globalNotice) globalNotice.remove();
+
+        const formData = new FormData(form);
+        const payload = new URLSearchParams();
+
+        for (const [key, value] of formData.entries()) {
+            payload.append(key, value.trim?.() ?? value);
+        }
+
+        inputs.forEach(el => el.readOnly = true);
+        submitBtn.classList.add('btn--loading');
+        $.preloader.show();
+
+        try {
+            const response = await fetch(MG_GLOBAL.registerAjaxApi, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-WP-Nonce': MG_GLOBAL.authNonce,
+                },
+                body: payload,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.href = data.redirect || '/my-account/overview/';
+                return;
+            }
+
+            const createOrUpdateError = (inputEl, id, message) => {
+                inputEl.classList.add('auth-form--error-message');
+                let span = form.querySelector(`#${id}`);
+                if (!span) {
+                    span = document.createElement('span');
+                    span.id = id;
+                    span.className = 'auth-form__error_message';
+                    if (id === 'error-privacy_policy') {
+                        inputEl.parentNode.insertAdjacentElement('beforeend', span)
+                    } else {
+                        inputEl.parentNode.insertBefore(span, inputEl.nextSibling);
+                    }
+                }
+                span.textContent = message;
+            };
+
+            let firstErrorField = null;
+
+            if (data.errors) {
+                Object.entries(data.errors).forEach(([field, message]) => {
+                    const inputEl = form.querySelector(`[name="${field}"]`);
+                    if (inputEl) {
+                        createOrUpdateError(inputEl, `error-${field}`, message);
+                        if (!firstErrorField) firstErrorField = inputEl;
+                    } else {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'woocommerce-notices-wrapper';
+                        const msg = document.createElement('div');
+                        msg.className = 'woocommerce-error';
+                        msg.setAttribute('role', 'alert');
+                        msg.textContent = message || 'An unexpected error occurred.';
+                        wrapper.appendChild(msg);
+                        form.parentNode.insertBefore(wrapper, form);
+
+                        $.preloader.hide();
+                        inputs.forEach(el => el.readOnly = false);
+                        submitBtn.classList.remove('btn--loading');
+                    }
+                });
+            }
+
+            if (firstErrorField) {
+                firstErrorField.focus();
+                firstErrorField.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }
+
+        } catch (err) {
+            console.error('Register request failed:', err);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'woocommerce-notices-wrapper';
+            const msg = document.createElement('div');
+            msg.className = 'woocommerce-message';
+            msg.textContent = 'An unexpected error occurred. Please try again later.';
+            wrapper.appendChild(msg);
+            form.parentNode.insertBefore(wrapper, form);
+
+            $.preloader.hide();
+            inputs.forEach(el => el.readOnly = false);
+            submitBtn.classList.remove('btn--loading');
+        }
+    });
 });
 
 window.addEventListener("pageshow", function (event) {

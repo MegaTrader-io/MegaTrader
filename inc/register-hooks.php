@@ -28,6 +28,140 @@ add_action('init', function () {
     }
 }, 11);
 
+add_action('rest_api_init', function () {
+  register_rest_route('register-process', '/callback', [
+    'methods'  => 'POST',
+    'callback' => 'mt_process_callback_register',
+    'permission_callback' => '__return_true',
+  ]);
+});
+
+function mt_process_callback_register(WP_REST_Request $request): WP_REST_Response
+{
+  $nonce = $request->get_header('x-wp-nonce');
+  if (!wp_verify_nonce($nonce, 'wp_rest')) {
+    return new WP_REST_Response([
+      'success' => false,
+      'errors'  => ['general' => 'Security check failed. Please refresh and try again.'],
+    ], 403);
+  }
+
+  $firstname = sanitize_text_field($request->get_param('firstname'));
+  $lastname  = sanitize_text_field($request->get_param('lastname'));
+  $email     = sanitize_email($request->get_param('email'));
+  $phone     = sanitize_text_field($request->get_param('phone'));
+  $country   = sanitize_text_field($request->get_param('billing_country'));
+  $password  = (string)$request->get_param('password');
+  $confirm   = (string)$request->get_param('confirm_password');
+  $privacy   = (string)$request->get_param('privacy_policy');
+
+  $errors = [];
+
+  if ($firstname === '') {
+    $errors['firstname'] = 'First Name is required.';
+  }
+
+  if ($lastname === '') {
+    $errors['lastname'] = 'Last Name is required.';
+  }
+
+  if ($email === '') {
+    $errors['email'] = 'Email is required.';
+  } elseif (!is_email($email)) {
+    $errors['email'] = 'Enter a valid email address.';
+  } elseif (email_exists($email)) {
+    $errors['email'] = 'This email is already registered.';
+  }
+
+  if ($phone === '') {
+    $errors['phone'] = 'Phone number is required.';
+  } elseif (!preg_match('/^[0-9+\-\s().]{7,}$/', $phone)) {
+    $errors['phone'] = 'Enter a valid phone number.';
+  }
+
+  if ($country === '') {
+    $errors['billing_country'] = 'Country is required.';
+  }
+
+  if (get_option('woocommerce_registration_generate_password') !== 'yes') {
+    if ($password === '') {
+      $errors['password'] = 'Password is required.';
+    } elseif (strlen(trim($password)) < 8) {
+      $errors['password'] = 'Use at least 8 characters.';
+    } elseif (preg_match('/\s/', $password)) {
+      $errors['password'] = 'Password cannot contain spaces.';
+    }
+
+    if ($confirm === '') {
+      $errors['confirm_password'] = 'Please confirm your password.';
+    } elseif ($password !== $confirm) {
+      $errors['confirm_password'] = 'Passwords do not match.';
+    }
+  }
+
+  if ($privacy !== '1') {
+    $errors['privacy_policy'] = 'You must accept the Terms and Privacy Policy.';
+  }
+
+  if (!empty($errors)) {
+    return new WP_REST_Response([
+      'success' => false,
+      'errors'  => $errors,
+    ], 400);
+  }
+
+  $generate_username = get_option('woocommerce_registration_generate_username') === 'yes';
+  if ($generate_username) {
+    $username = '';
+  } else {
+    $username = isset($_POST['username']) && is_string($_POST['username'])
+      ? sanitize_user(wp_unslash($_POST['username']), true)
+      : '';
+    if ($username === '') {
+      $username = strstr($email, '@', true) ?: $email;
+    }
+  }
+  $final_password = get_option('woocommerce_registration_generate_password') === 'yes' ? wp_generate_password() : $password;
+
+  $new_customer = wc_create_new_customer($email, wc_clean($username), $final_password);
+
+  if (is_wp_error($new_customer)) {
+    foreach ($new_customer->get_error_codes() as $code) {
+      $field = match ($code) {
+        'registration-error-invalid-email', 'registration-error-email-exists' => 'email',
+        default => 'general',
+      };
+      foreach ($new_customer->get_error_messages($code) as $msg) {
+        $errors[$field] = $msg;
+      }
+    }
+    return new WP_REST_Response([
+      'success' => false,
+      'errors'  => $errors
+    ], 400);
+  }
+
+  update_user_meta($new_customer, 'billing_first_name', $firstname);
+  update_user_meta($new_customer, 'billing_last_name', $lastname);
+  update_user_meta($new_customer, 'billing_phone', $phone);
+  update_user_meta($new_customer, 'billing_country', $country);
+
+  wp_update_user([
+    'ID' => $new_customer,
+    'first_name' => $firstname,
+    'last_name'  => $lastname,
+    'display_name' => $firstname . ' ' . $lastname,
+  ]);
+
+  wc_set_customer_auth_cookie($new_customer);
+
+  return new WP_REST_Response([
+    'success' => true,
+    'message' => 'Account created successfully.',
+    'redirect' => home_url('/my-account/overview/'),
+  ], 200);
+}
+
 function mt_process_registration(): void
 {
     // 1) Gate: solo procesa cuando viene el submit correcto + nonce válido.

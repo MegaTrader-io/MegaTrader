@@ -31,7 +31,8 @@ function mt_enqueue_auth_script_on_login_form(): void
 
     wp_localize_script('mt-auth', 'MG_GLOBAL', [
       'loginAjaxApi' => esc_url(rest_url('login-process/callback')),
-      'loginProcessNonce' => wp_create_nonce('wp_rest'),
+      'registerAjaxApi' => esc_url(rest_url('register-process/callback')),
+      'authNonce' => wp_create_nonce('wp_rest'),
     ]);
 
     wp_enqueue_style(

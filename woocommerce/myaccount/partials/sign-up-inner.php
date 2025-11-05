@@ -26,7 +26,7 @@ $valid_states = WC()->countries->get_states($default_country);
         started!</p>
 </div>
 
-<form class="auth-form__form-wrapper" method="post"
+<form id="register-form" class="auth-form__form-wrapper" method="post"
       novalidate>
 
     <?php do_action('woocommerce_register_form_start'); ?>
