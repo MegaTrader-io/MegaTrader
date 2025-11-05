@@ -46,24 +46,12 @@ function mt_process_callback_register(WP_REST_Request $request): WP_REST_Respons
     ], 403);
   }
 
-  $firstname = sanitize_text_field($request->get_param('firstname'));
-  $lastname  = sanitize_text_field($request->get_param('lastname'));
   $email     = sanitize_email($request->get_param('email'));
-  $phone     = sanitize_text_field($request->get_param('phone'));
-  $country   = sanitize_text_field($request->get_param('billing_country'));
   $password  = (string)$request->get_param('password');
   $confirm   = (string)$request->get_param('confirm_password');
   $privacy   = (string)$request->get_param('privacy_policy');
 
   $errors = [];
-
-  if ($firstname === '') {
-    $errors['firstname'] = 'First Name is required.';
-  }
-
-  if ($lastname === '') {
-    $errors['lastname'] = 'Last Name is required.';
-  }
 
   if ($email === '') {
     $errors['email'] = 'Email is required.';
@@ -71,16 +59,6 @@ function mt_process_callback_register(WP_REST_Request $request): WP_REST_Respons
     $errors['email'] = 'Enter a valid email address.';
   } elseif (email_exists($email)) {
     $errors['email'] = 'This email is already registered.';
-  }
-
-  if ($phone === '') {
-    $errors['phone'] = 'Phone number is required.';
-  } elseif (!preg_match('/^[0-9+\-\s().]{7,}$/', $phone)) {
-    $errors['phone'] = 'Enter a valid phone number.';
-  }
-
-  if ($country === '') {
-    $errors['billing_country'] = 'Country is required.';
   }
 
   if (get_option('woocommerce_registration_generate_password') !== 'yes') {
@@ -140,18 +118,6 @@ function mt_process_callback_register(WP_REST_Request $request): WP_REST_Respons
       'errors'  => $errors
     ], 400);
   }
-
-  update_user_meta($new_customer, 'billing_first_name', $firstname);
-  update_user_meta($new_customer, 'billing_last_name', $lastname);
-  update_user_meta($new_customer, 'billing_phone', $phone);
-  update_user_meta($new_customer, 'billing_country', $country);
-
-  wp_update_user([
-    'ID' => $new_customer,
-    'first_name' => $firstname,
-    'last_name'  => $lastname,
-    'display_name' => $firstname . ' ' . $lastname,
-  ]);
 
   wc_set_customer_auth_cookie($new_customer);
 

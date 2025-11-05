@@ -31,38 +31,6 @@ $valid_states = WC()->countries->get_states($default_country);
 
     <?php do_action('woocommerce_register_form_start'); ?>
 
-    <div class="full-name-wrapper">
-        <div class="full-name-wrapper__field">
-            <input type="text"
-                   class="form-control <?= MT_WC_Error::has_error('firstname') ? 'auth-form--error-message' : '' ?>"
-                   name="firstname" id="firstname"
-                   autocomplete="firstname"
-                   placeholder="First Name"
-                   value="<?php echo (!empty($_POST['firstname']) && is_string($_POST['firstname'])) ? esc_attr(wp_unslash($_POST['firstname'])) : ''; ?>"
-                   required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
-
-            <?php if (MT_WC_Error::has_error('firstname')): ?>
-                <span id="error-firstname"
-                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('firstname') ?></span>
-            <?php endif; ?>
-        </div>
-
-        <div class="full-name-wrapper__field">
-            <input type="text"
-                   class="form-control <?= MT_WC_Error::has_error('lastname') ? 'auth-form--error-message' : '' ?>"
-                   name="lastname" id="lastname"
-                   autocomplete="lastname"
-                   placeholder="Last Name"
-                   value="<?php echo (!empty($_POST['lastname']) && is_string($_POST['lastname'])) ? esc_attr(wp_unslash($_POST['lastname'])) : ''; ?>"
-                   required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
-
-            <?php if (MT_WC_Error::has_error('lastname')): ?>
-                <span id="error-lastname"
-                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('lastname') ?></span>
-            <?php endif; ?>
-        </div>
-    </div>
-
     <div>
         <input type="text"
                class="form-control <?= MT_WC_Error::has_error('email') ? 'auth-form--error-message' : '' ?>"
@@ -76,37 +44,6 @@ $valid_states = WC()->countries->get_states($default_country);
             <span id="error-email"
                   class="auth-form__error_message"> <?= MT_WC_Error::get_error('email') ?></span>
         <?php endif; ?>
-    </div>
-
-    <div class="form-group auth-form__phone-wrapper">
-        <input type="tel"
-               class="form-control <?= MT_WC_Error::has_error('phone') ? 'auth-form--error-message' : '' ?>"
-               name="phone" id="phone"
-               autocomplete="phone"
-               placeholder="Phone Number"
-               value="<?php echo (!empty($_POST['phone']) && is_string($_POST['phone'])) ? esc_attr(wp_unslash($_POST['phone'])) : ''; ?>"
-               required aria-required="true"/><?php // @codingStandardsIgnoreLine ?>
-
-        <?php if (MT_WC_Error::has_error('phone')): ?>
-            <span id="error-phone"
-                  class="auth-form__error_message"> <?= MT_WC_Error::get_error('phone') ?></span>
-        <?php endif; ?>
-    </div>
-
-    <div class="auth-form__container">
-        <div class="col">
-            <select name="billing_country" id="billing_country"
-                    class="form-select form-control woocommerce-select <?= MT_WC_Error::has_error('billing_country') ? 'auth-form--error-message' : '' ?>">
-                <option value="" disabled>Country</option>
-                <?php foreach (WC()->countries->get_allowed_countries() as $key => $value): ?>
-                    <option value="<?= esc_attr($key) ?>" <?= selected($default_country, $key, false) ?> ><?= esc_html($value) ?></option>
-                <?php endforeach; ?>
-            </select>
-            <?php if (MT_WC_Error::has_error('billing_country')): ?>
-                <span id="error-billing_country"
-                      class="auth-form__error_message"> <?= MT_WC_Error::get_error('billing_country') ?></span>
-            <?php endif; ?>
-        </div>
     </div>
 
     <?php if ('no' === get_option('woocommerce_registration_generate_password')) : ?>
@@ -183,8 +120,14 @@ $valid_states = WC()->countries->get_states($default_country);
     <div class="auth-form__footer-dont-have-an-account">
         Already have an account?
     </div>
+    <?php
+    $url = home_url('/auth/login');
+    if (isset($_GET['redirect_to'])) {
+        $url = add_query_arg('redirect_to', rawurlencode($_GET['redirect_to']), $url);
+    }
+    ?>
     <a class="btn w-100 mega-btn-md mega-btn-secondary-md w-100"
-       href="<?= home_url('/auth/login') ?>">
+       href="<?= $url ?>">
         <div class="text-neutral-50 text-base font-medium uppercase leading-normal">
             GO TO LOGIN
         </div>
