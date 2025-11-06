@@ -6,37 +6,6 @@
   const clamp = (n, min, max) =>
     Math.max(min, Math.min(max, parseInt(n, 10) || 0));
 
-// ===== Boot Timers (primera carga) =====
-window.__MT_TIMING = window.__MT_TIMING || {};
-performance.mark('mt:boot:start');
-
-(function setupBootObserver(){
-  // Long tasks (>120ms)
-  try {
-    const lt = new PerformanceObserver((list)=>{
-      for (const e of list.getEntries()) {
-        if (e.duration >= 120) {
-          console.log(`[perf][long-task] ${Math.round(e.duration)}ms @ ${Math.round(e.startTime)}ms`);
-        }
-      }
-    });
-    lt.observe({ entryTypes:['longtask'] });
-  } catch(_) {}
-
-  // Recursos lentos (js/css/xhr/fetch) (>300ms)
-  try {
-    const ro = new PerformanceObserver((list)=>{
-      for (const r of list.getEntries()) {
-        if (r.duration >= 300) {
-          console.log(`[perf][res] ${r.initiatorType} ${r.name} → ${Math.round(r.duration)}ms`);
-        }
-      }
-    });
-    ro.observe({ entryTypes:['resource'] });
-  } catch(_) {}
-})();
-
-
 
   /* ========= Donuts ========= */
   function initDonuts(root = document) {
@@ -832,7 +801,6 @@ window.mtOverlay = (function () {
     body.set("nonce", nonce);
     body.set("accountId", String(accountId || ""));
 
-    // 🔒 Cerrar tooltips antes del replace
     if (window.mtTooltips && typeof window.mtTooltips.closeAll === "function") {
       window.mtTooltips.closeAll();
     }
@@ -845,10 +813,9 @@ window.mtOverlay = (function () {
       .then(function (j) {
         if (!j || !j.success || !j.data || j.data.html == null) return;
 
-        wrap.innerHTML = j.data.html; // ⬅️ reemplaza el bloque
-        initFeatureContent(wrap); // ♻️ re-init visual (donuts/barras)
+        wrap.innerHTML = j.data.html; 
+        initFeatureContent(wrap); 
 
-        // ✅ Re-inicializa tooltips en el NUEVO contenido
         if (
           window.mtTooltips &&
           typeof window.mtTooltips.refresh === "function"
@@ -867,10 +834,9 @@ window.mtOverlay = (function () {
 
 // ===== Performance Chart (AJAX refresh) =====
 (function () {
-  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
-    return;
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function") return;
 
-  // Ejecuta <script> inline dentro del contenedor (evita colisiones globales)
+  // Ejecuta <script> inline dentro del contenedor
   function runInlineScripts(container) {
     container.querySelectorAll("script:not([src])").forEach(function (old) {
       var s = document.createElement("script");
@@ -883,13 +849,10 @@ window.mtOverlay = (function () {
     if (sel && sel.options.length === 1) sel.disabled = true;
   }
 
-  // Asegura ApexCharts antes de ejecutar los inline
+  // Asegura ApexCharts antes de ejecutar inline
   function ensureApexThen(container, cb) {
     if (window.ApexCharts) return cb();
-    var url =
-      container
-        .querySelector('script[src*="apexcharts"]')
-        ?.getAttribute("src") || "https://cdn.jsdelivr.net/npm/apexcharts";
+    var url = container.querySelector('script[src*="apexcharts"]')?.getAttribute("src") || "https://cdn.jsdelivr.net/npm/apexcharts";
     var tag = document.createElement("script");
     tag.src = url;
     tag.onload = cb;
@@ -897,39 +860,10 @@ window.mtOverlay = (function () {
     document.head.appendChild(tag);
   }
 
-  // Inyecta CSS una sola vez para que el follower tenga control total
-  function ensureTipCSS() {
-    if (window.__mtTipFollowerCSS) return;
-    const css = `
-      .apexcharts-tooltip{
-        position:absolute !important;
-        left:0 !important; top:0 !important;            /* neutraliza el posicionamiento de Apex */
-        transition:none !important;
-        pointer-events:none !important;
-        background:transparent !important;
-        border:0 !important; box-shadow:none !important; padding:0 !important;
-        z-index:10;
-      }
-      .apexcharts-tooltip.mt-tip-hidden{
-        transform: translate3d(-9999px, -9999px, 0) !important;
-        opacity:0 !important; visibility:hidden !important;
-      }
-    `;
-    const style = document.createElement("style");
-    style.textContent = css;
-    document.head.appendChild(style);
-    window.__mtTipFollowerCSS = true;
-  }
-
-  // === REEMPLAZO: lógica de datos del chart con regla de mínimos ===
+  // Overlay
   function chartDataInfo(wrap) {
-    const carrier =
-      wrap.querySelector(
-        "[data-has-series],[data-has-data],[data-points],[data-min-points]"
-      ) || wrap;
-    const rawHas =
-      carrier.getAttribute("data-has-series") ??
-      carrier.getAttribute("data-has-data");
+    const carrier = wrap.querySelector("[data-has-series],[data-has-data],[data-points],[data-min-points]") || wrap;
+    const rawHas = carrier.getAttribute("data-has-series") ?? carrier.getAttribute("data-has-data");
     const rawPts = carrier.getAttribute("data-points");
     const rawMin = carrier.getAttribute("data-min-points");
 
@@ -940,46 +874,23 @@ window.mtOverlay = (function () {
       else if (v === "false" || v === "0") hasSeries = false;
     }
 
-    let points = Number.isFinite(parseInt(rawPts, 10))
-      ? parseInt(rawPts, 10)
-      : null;
+    let points = Number.isFinite(parseInt(rawPts, 10)) ? parseInt(rawPts, 10) : null;
 
-    if (
-      points == null &&
-      window.__mtChartInstance &&
-      window.__mtChartInstance.w &&
-      window.__mtChartInstance.w.globals
-    ) {
+    if (points == null && window.__mtChartInstance && window.__mtChartInstance.w && window.__mtChartInstance.w.globals) {
       const g = window.__mtChartInstance.w.globals;
       try {
-        const series0 =
-          (g.seriesXvalues && g.seriesXvalues[0]) ||
-          (g.series && g.series[0]) ||
-          [];
-        points = Array.isArray(series0)
-          ? series0.length
-          : Number.isFinite(series0)
-          ? series0
-          : 0;
+        const series0 = (g.seriesXvalues && g.seriesXvalues[0]) || (g.series && g.series[0]) || [];
+        points = Array.isArray(series0) ? series0.length : (Number.isFinite(series0) ? series0 : 0);
         if (hasSeries == null) hasSeries = points > 0;
       } catch (_) {}
     }
 
     if (hasSeries == null) {
-      hasSeries = !!wrap.querySelector(
-        ".apexcharts-series path, .apexcharts-series rect, .apexcharts-series circle"
-      );
+      hasSeries = !!wrap.querySelector(".apexcharts-series path, .apexcharts-series rect, .apexcharts-series circle");
     }
 
-    let minPoints = Number.isFinite(parseInt(rawMin, 10))
-      ? parseInt(rawMin, 10)
-      : 7;
-
-    return {
-      hasSeries: Boolean(hasSeries),
-      points: points == null ? null : Math.max(0, points),
-      minPoints,
-    };
+    let minPoints = Number.isFinite(parseInt(rawMin, 10)) ? parseInt(rawMin, 10) : 7;
+    return { hasSeries: Boolean(hasSeries), points: points == null ? null : Math.max(0, points), minPoints };
   }
 
   function applyChartOverlay(wrap) {
@@ -987,159 +898,13 @@ window.mtOverlay = (function () {
     if (overlay && overlay.getAttribute("data-autotoggle") === "off") return;
 
     const info = chartDataInfo(wrap);
-
-    const enoughPoints =
-      info.points == null ? true : info.points >= info.minPoints;
+    const enoughPoints = info.points == null ? true : info.points >= info.minPoints;
     const shouldShow = !(info.hasSeries && enoughPoints);
 
     if (window.mtOverlay) window.mtOverlay.toggle(wrap, shouldShow);
   }
 
-  // ---------- TIP FOLLOWER ----------
-  function makeTipFollower(root) {
-    try {
-      root.__tipFollowerCleanup && root.__tipFollowerCleanup();
-    } catch (_) {}
-    try {
-      root.__tipFollowerObserver && root.__tipFollowerObserver.disconnect();
-    } catch (_) {}
-
-    ensureTipCSS();
-
-    function attach() {
-      const canvas = root.querySelector(".apexcharts-canvas");
-      const svg = root.querySelector(".apexcharts-svg");
-      if (!canvas || !svg) return;
-
-      const base = root.querySelector(".apexcharts-inner") || canvas;
-      const tipEl = () => root.querySelector(".apexcharts-tooltip");
-
-      let rafId = 0,
-        wantX = -9999,
-        wantY = -9999;
-
-      function render() {
-        rafId = 0;
-        const tip = tipEl();
-        if (!tip) return;
-
-        const r = base.getBoundingClientRect
-          ? base.getBoundingClientRect()
-          : { left: 0, top: 0, width: 0, height: 0 };
-        const tw = tip.offsetWidth || 220;
-        const th = tip.offsetHeight || 60;
-
-        let x = Math.max(6, Math.min(wantX, r.width - tw - 6));
-        let y = Math.max(6, Math.min(wantY, r.height - th - 6));
-
-        tip.classList.remove("mt-tip-hidden");
-        tip.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(
-          y
-        )}px, 0)`;
-        tip.style.opacity = "1";
-        tip.style.visibility = "visible";
-        tip.style.left = "0px";
-        tip.style.top = "0px";
-      }
-
-      function queue(x, y) {
-        wantX = x;
-        wantY = y;
-        if (!rafId) rafId = requestAnimationFrame(render);
-      }
-
-      function posFrom(ev) {
-        const tip = tipEl();
-        const r = base.getBoundingClientRect
-          ? base.getBoundingClientRect()
-          : { left: 0, top: 0 };
-        const mx = ev.clientX - r.left;
-        const my = ev.clientY - r.top;
-        const tw = tip ? tip.offsetWidth || 220 : 220;
-        const th = tip ? tip.offsetHeight || 60 : 60;
-
-        let x = mx + 12;
-        let y = my - th - 12;
-
-        return { x, y };
-      }
-
-      function onMove(ev) {
-        const p = posFrom(ev);
-        queue(p.x, p.y);
-      }
-      function onEnter(ev) {
-        const p = posFrom(ev);
-        queue(p.x, p.y);
-      }
-      function onLeave() {
-        const tip = tipEl();
-        if (!tip) return;
-        tip.classList.add("mt-tip-hidden");
-        tip.style.opacity = "0";
-        tip.style.visibility = "hidden";
-        tip.style.transform = "translate3d(-9999px, -9999px, 0)";
-      }
-
-      const target = svg || canvas;
-      target.addEventListener("pointermove", onMove, { passive: true });
-      target.addEventListener("mousemove", onMove, { passive: true });
-      target.addEventListener("pointerenter", onEnter, { passive: true });
-      target.addEventListener("mouseenter", onEnter, { passive: true });
-      target.addEventListener("pointerleave", onLeave, { passive: true });
-      target.addEventListener("mouseleave", onLeave, { passive: true });
-
-      onLeave();
-
-      requestAnimationFrame(() => {
-        const r = base.getBoundingClientRect
-          ? base.getBoundingClientRect()
-          : null;
-        if (!r) return;
-        onEnter({ clientX: r.left + 24, clientY: r.top + 24 });
-      });
-
-      root.__tipFollowerCleanup = function () {
-        target.removeEventListener("pointermove", onMove);
-        target.removeEventListener("mousemove", onMove);
-        target.removeEventListener("pointerenter", onEnter);
-        target.removeEventListener("mouseenter", onEnter);
-        target.removeEventListener("pointerleave", onLeave);
-        target.removeEventListener("mouseleave", onLeave);
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = 0;
-      };
-    }
-
-    const obs = new MutationObserver(() => {
-      if (
-        root.querySelector(".apexcharts-canvas") &&
-        root.querySelector(".apexcharts-svg")
-      ) {
-        attach();
-        obs.disconnect();
-      }
-    });
-    obs.observe(root, { childList: true, subtree: true });
-    root.__tipFollowerObserver = obs;
-  }
-
-  function hookFollower(root) {
-    if (!root) return;
-    makeTipFollower(root);
-    requestAnimationFrame(() => makeTipFollower(root));
-    setTimeout(() => makeTipFollower(root), 150);
-  }
-
-  (function bootInitialFollower() {
-    const wrap =
-      document.querySelector(".mt-account-performance-chart-content") ||
-      document;
-    const root =
-      wrap.querySelector("#account-performance-chart")?.parentElement || wrap;
-    hookFollower(root);
-  })();
-
+  // === AJAX ===
   let ctrl = null;
   let reqToken = 0;
 
@@ -1147,13 +912,10 @@ window.mtOverlay = (function () {
     var wrap = document.querySelector(".mt-account-performance-chart-content");
     if (!wrap) return;
 
-    var url =
-      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+    var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce)  || "";
 
-    try {
-      ctrl?.abort();
-    } catch (_) {}
+    try { ctrl?.abort(); } catch (_) {}
     ctrl = new AbortController();
     const myToken = ++reqToken;
 
@@ -1168,93 +930,54 @@ window.mtOverlay = (function () {
       body: body,
       signal: ctrl.signal,
     })
-      .then((j) => {
-        if (myToken !== reqToken) return; // respuesta vieja
+    .then((j) => {
+      if (myToken !== reqToken) return;
 
-        const ok = !!(
-          j &&
-          j.success &&
-          j.data &&
-          typeof j.data.html === "string"
-        );
-
-        if (!ok) {
-          const msg =
-            (j && j.data && (j.data.message || j.data.error)) ||
-            "Unable to load the performance chart.";
-          window.MEGATRADER?.showError?.("Chart Error", msg, {
-            iconSrc:
-              "/wp-content/themes/megatrader-addons/assets/img/error.svg",
-            headline: "Oops!",
-          });
-          return;
-        }
-
-        try {
-          if (
-            window.__mtChartInstance &&
-            typeof window.__mtChartInstance.destroy === "function"
-          ) {
-            window.__mtChartInstance.destroy();
-            window.__mtChartInstance = null;
-          }
-        } catch (e) {
-          console.warn("[MT][Chart] destroy prev error", e);
-        }
-
-        document
-          .querySelectorAll(
-            ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs"
-          )
-          .forEach((n) => {
-            try {
-              n.remove();
-            } catch (_) {}
-          });
-
-        wrap
-          .querySelectorAll(
-            ".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas"
-          )
-          .forEach((n) => {
-            try {
-              n.remove();
-            } catch (_) {}
-          });
-
-        wrap.innerHTML = j.data.html;
-        applyChartOverlay(wrap);
-
-        ensureApexThen(wrap, function () {
-          runInlineScripts(wrap);
-          applyChartOverlay(wrap);
-          setTimeout(function () {
-            applyChartOverlay(wrap);
-          }, 150);
-          const root =
-            wrap.querySelector("#account-performance-chart")?.parentElement ||
-            wrap;
-          hookFollower(root);
-        });
-      })
-      .catch(function (err) {
-        if (err?.name === "AbortError") {
-          console.warn("[MT] chart AJAX aborted");
-          return;
-        }
-        console.error("[MT] chart AJAX error:", err);
-
-        const msg =
-          (err && (err.message || err.statusText)) ||
-          "Network or server error while loading the performance chart.";
-
+      const ok = !!(j && j.success && j.data && typeof j.data.html === "string");
+      if (!ok) {
+        const msg = (j && j.data && (j.data.message || j.data.error)) || "Unable to load the performance chart.";
         window.MEGATRADER?.showError?.("Chart Error", msg, {
           iconSrc: "/wp-content/themes/megatrader-addons/assets/img/error.svg",
           headline: "Oops!",
         });
+        return;
+      }
+
+      try {
+        if (window.__mtChartInstance && typeof window.__mtChartInstance.destroy === "function") {
+          window.__mtChartInstance.destroy();
+          window.__mtChartInstance = null;
+        }
+      } catch (e) { console.warn("[MT][Chart] destroy prev error", e); }
+
+      document.querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs")
+        .forEach((n) => { try { n.remove(); } catch (_) {} });
+
+      wrap.querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas")
+        .forEach((n) => { try { n.remove(); } catch (_) {} });
+
+      wrap.innerHTML = j.data.html;
+      applyChartOverlay(wrap);
+
+      ensureApexThen(wrap, function () {
+        runInlineScripts(wrap);
+        applyChartOverlay(wrap);
+        setTimeout(function () { applyChartOverlay(wrap); }, 150);
       });
+    })
+    .catch(function (err) {
+      if (err?.name === "AbortError") { console.warn("[MT] chart AJAX aborted"); return; }
+      console.error("[MT] chart AJAX error:", err);
+      const msg = (err && (err.message || err.statusText)) || "Network or server error while loading the performance chart.";
+      window.MEGATRADER?.showError?.("Chart Error", msg, {
+        iconSrc: "/wp-content/themes/megatrader-addons/assets/img/error.svg",
+        headline: "Oops!",
+      });
+    });
   });
 })();
+
+
 
 // ===== Account Data (AJAX refresh) =====
 (function () {
@@ -3067,46 +2790,310 @@ if (document.readyState === "loading") {
   else document.addEventListener("DOMContentLoaded", init);
 })();
 
+
+// load picker + modal account selection (hydrate desde MT_DATA)
 (function(){
   const MODAL_ID = 'changeSubcriptionModal';
-  const PICKER_SRC = '/wp-content/themes/megatrader-addons/assets/js/mt-account-picker.js';
+  const PICKER_SRC = (window.MT_ASSETS && MT_ASSETS.picker_src) || '/wp-content/themes/megatrader-addons/assets/js/mt-account-picker.js';
+  const FALLBACK_LOGO = '/wp-content/themes/megatrader-addons/assets/svg/icon_megatrader.svg';
+  const ric = window.requestIdleCallback || function(cb){ return setTimeout(()=>cb({didTimeout:false,timeRemaining:()=>0}), 1); };
 
+  // ---- Cookie helpers ----
+  function getLastAccountKey(){
+    try{
+      var uid = (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) || '';
+      return 'mt:lastAccountId' + (uid ? ':'+String(uid) : '');
+    }catch(_){ return 'mt:lastAccountId'; }
+  }
+  function loadLastAccountId(){
+    try{
+      var key = getLastAccountKey().replace(/[-[\]/{}()*+?.\\^$|]/g,'\\$&');
+      var m = document.cookie.match(new RegExp('(?:^|;)\\s*'+key+'=([^;]+)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }catch(_){ return ''; }
+  }
+
+  // ---- Util ----
+  function esc(s){return String(s||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+  function normalizeStatus(s){
+    var st = String(s||'').trim().toUpperCase();
+    return (st === 'ACTIVATION_PENDING') ? 'PENDING_ACTIVATION' : st;
+  }
+  function statusToBucket(st){
+    st = normalizeStatus(st);
+    if (st==='ACTIVE') return 'ACTIVE';
+    if (st==='PENDING_ACTIVATION') return 'PENDING_ACTIVATION';
+    if (st==='PASSED' || st==='UPGRADED') return 'PASSED';
+    if (st==='BREACHED') return 'BREACHED';
+    return 'ACTIVE';
+  }
+
+  // ---- Render del grid ----
+  function renderGridFromData(accounts, currentId){
+    const grid = document.getElementById('mt-accounts-grid');
+    if (!grid) return;
+    if (!accounts || !accounts.length){
+      grid.innerHTML = '<p class="text-a8a29e m-3"><em>No accounts found for this user.</em></p>';
+      grid.removeAttribute('data-grid-empty');
+      return;
+    }
+    let html = '';
+    for (const a of accounts){
+      const aid = String(a.id||'');
+      const platId = String(a.accountId||'');
+      const isCur = aid === String(currentId||'');
+      const cls = 'subscription-card position-relative flex-column gap-2'+(isCur?' active':'');
+      const statusRaw = String(a.status||'').trim();
+      const statusKey = statusRaw.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+      const dotClass  = 'dot-status-'+statusKey;
+      const logo = String(a.logo||'') || FALLBACK_LOGO;
+
+      html += `
+      <div class="${cls}" role="button"
+        data-account-id="${esc(aid)}"
+        data-status="${esc(statusRaw)}"
+        data-platform-account-id="${esc(platId)}"
+        data-size="${esc(a.size||'')}"
+        data-reset-id="${esc(a.resetProductId||'')}"
+        data-activation-id="${esc(a.activationProductId||'')}"
+        data-name="${esc(a.name||'Account')}"
+        data-account-type="${esc(a.programTypeText||'')}"
+        data-logo="${esc(logo)}"
+        data-main-id="${esc(a.mainProductId||'')}"
+        data-order-id="${esc(a.order||0)}"
+        data-has-subscription="${(a.subscriptionId||a.hasSubscription)?'1':'0'}"
+        data-subscription-id="${esc(a.subscriptionId||'')}">
+        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${isCur?'':'display:none;'}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" fill="#FFB34A" />
+            <path d="M10.6 16.6L17.65 9.55L16.25 8.15L10.6 13.8L7.75 10.95L6.35 12.35L10.6 16.6Z" fill="black"/>
+          </svg>
+        </div>
+        <div class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
+          <div class="logo-container position-relative d-inline-block">
+            <img src="${esc(logo)}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(FALLBACK_LOGO)}'">
+            <div class="dot-indicator ${esc(dotClass)}" title="${esc(statusRaw)}" style="position:absolute;right:-1px;bottom:-1px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <circle cx="6" cy="6" r="6" fill="white" />
+                <circle cx="6" cy="6" r="4" fill="currentColor" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="subscription-card__body text-center">
+          <div class="subscription-card__name fw-medium text-base text-white">
+            ${esc((a.size||'')+' '+(a.name||'Account'))}
+          </div>
+          <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">#${esc(platId || aid)}</div>
+          ${(a.programTypeText && a.programTypeClass)
+            ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(a.programTypeClass)}">${esc(a.programTypeText)}</div>` : ''}
+        </div>
+      </div>`;
+    }
+    grid.innerHTML = html;
+    grid.removeAttribute('data-grid-empty');
+    ric(()=>{ try{ window.mtTooltips && window.mtTooltips.refresh(grid); }catch(_){}});
+
+    markActiveInGrid(); 
+    forceFilterForActive();
+    enableSelectIfAny();
+  }
+
+  // ---- Helpers de UI ----
+  function cssEscapePoly(s){ return String(s).replace(/[^a-zA-Z0-9_\-]/g,'\\$&'); }
+  const cssEscape = (window.CSS && CSS.escape) ? CSS.escape : cssEscapePoly;
+
+  function markActiveInGrid(){
+    var grid = document.getElementById('mt-accounts-grid');
+    if (!grid) return;
+
+    var cookieId = loadLastAccountId();
+    var currentId = (cookieId || (window.MT_DATA && MT_DATA.currentId) || '');
+    if (!currentId){
+      var opener = document.querySelector('[data-bs-target="#'+MODAL_ID+'"][data-account-id]');
+      if (opener) currentId = opener.getAttribute('data-account-id') || '';
+    }
+
+    grid.querySelectorAll('.subscription-card.active').forEach(function(el){ el.classList.remove('active'); });
+    grid.querySelectorAll('.subscription-card .checkmark-icon').forEach(function(el){ el.style.display = 'none'; });
+
+    if (currentId){
+      var card = grid.querySelector('.subscription-card[data-account-id="'+cssEscape(currentId)+'"]');
+      if (card){
+        card.classList.add('active');
+        var ck = card.querySelector('.checkmark-icon');
+        if (ck) ck.style.display = 'block';
+      }
+    }
+  }
+
+  function forceFilterForActive(){
+    var grid = document.getElementById('mt-accounts-grid');
+    if (!grid) return;
+    var active = grid.querySelector('.subscription-card.active');
+    var wantBucket = 'ACTIVE';
+    if (active){
+      var st = active.getAttribute('data-status') || '';
+      wantBucket = statusToBucket(st);
+    } else {
+      var sel = document.getElementById('mt-acc-filter');
+      wantBucket = (sel && sel.value) ? sel.value : 'ACTIVE';
+    }
+
+    var map = {ACTIVE:'Active', BREACHED:'Breached', PASSED:'Passed', PENDING_ACTIVATION:'Pending activation'};
+    var lbl = document.getElementById('mt-acc-filter-label');
+    if (lbl) lbl.textContent = map[wantBucket] || 'Active';
+
+    grid.querySelectorAll('.subscription-card').forEach(function(card){
+      var st = statusToBucket(card.getAttribute('data-status')||'');
+      var match =
+        (wantBucket==='ACTIVE' && st==='ACTIVE') ||
+        (wantBucket==='BREACHED' && st==='BREACHED') ||
+        (wantBucket==='PASSED' && st==='PASSED') ||
+        (wantBucket==='PENDING_ACTIVATION' && st==='PENDING_ACTIVATION');
+      if (match){
+        card.classList.add('d-flex');
+        card.classList.remove('d-none');
+        card.style.removeProperty('display');
+      } else {
+        card.classList.remove('d-flex');
+        card.classList.add('d-none');
+        card.style.setProperty('display','none');
+      }
+    });
+  }
+
+  function enableSelectIfAny(){
+    var grid = document.getElementById('mt-accounts-grid');
+    var btn  = document.getElementById('select-subscription-btn');
+    if (!grid || !btn) return;
+    var hasAny = !!grid.querySelector('.subscription-card:not(.d-none)');
+    btn.disabled = !hasAny;
+    btn.classList.toggle('disabled', !hasAny);
+  }
+
+  // ---- Hidratación al abrir ----
+  function hydrateOnOpen(){
+    const grid = document.getElementById('mt-accounts-grid');
+    if (!grid || !grid.dataset.gridEmpty) return;
+    const data = window.MT_DATA || {};
+    const accounts = data.accounts || [];
+
+    var cur = loadLastAccountId();
+    if (!cur){
+      cur = data.currentId || '';
+    } else {
+      var exists = accounts.some(a => String(a.id||'') === String(cur));
+      if (!exists) cur = data.currentId || '';
+    }
+
+    performance.mark('mt-hydrate-start');
+    ric(()=>{
+      renderGridFromData(accounts, cur);
+      performance.mark('mt-hydrate-end');
+      performance.measure('mt-hydrate', 'mt-hydrate-start','mt-hydrate-end');
+      const m = performance.getEntriesByName('mt-hydrate').pop();
+      if (m && m.duration && m.duration > 0) console.log('[MT] hydrate modal ms:', Math.round(m.duration));
+    });
+  }
+
+  // ---- Carga on-demand del picker ----
   let loadingPicker = false;
-
   function loadPickerOnce(cb){
     if (window.mtPicker) { cb && cb(); return; }
     if (loadingPicker) return;
     loadingPicker = true;
-
     const s = document.createElement('script');
     s.id = 'mt-picker-js';
     s.src = PICKER_SRC;
-    s.defer = true;
+    s.async = true;
     s.onload = function(){
       loadingPicker = false;
       if (window.mtPreloader) window.mtPreloader.hide();
-      if (window.mtPicker && typeof window.mtPicker.init === 'function') window.mtPicker.init();
       cb && cb();
     };
-    s.onerror = function(){ loadingPicker = false; if (window.mtPreloader) window.mtPreloader.hide(); };
+    s.onerror = function(){
+      loadingPicker = false;
+      if (window.mtPreloader) window.mtPreloader.hide();
+      console.error('[MT] failed to load picker:', PICKER_SRC);
+    };
     if (window.mtPreloader) window.mtPreloader.show();
     document.head.appendChild(s);
   }
 
-  // 1) si hacen click en el botón que abre el modal → prepara el JS
+  // abrir por click del opener
   document.addEventListener('click', function(e){
     const btn = e.target.closest('[data-bs-target="#'+MODAL_ID+'"]');
-    if (btn) loadPickerOnce();
+    if (!btn) return;
+    hydrateOnOpen();
+    loadPickerOnce(function(){
+      markActiveInGrid();
+      forceFilterForActive();
+      enableSelectIfAny();
+    });
   });
 
-  // 2) si el modal se va a mostrar por cualquier vía → garantiza el JS
+  // abrir por otros triggers
   const modal = document.getElementById(MODAL_ID);
-  if (modal) {
+  if (modal){
     modal.addEventListener('show.bs.modal', function(){
-      loadPickerOnce();
+      hydrateOnOpen();
+      loadPickerOnce(function(){
+        markActiveInGrid();
+        forceFilterForActive();
+        enableSelectIfAny();
+      });
     });
   }
+
+  // ======= Seed inicial breach + texto =========
+  function seedBreachFromOpener() {
+    var opener = document.querySelector('[data-bs-target="#' + MODAL_ID + '"][data-account-id]');
+    var breach = document.getElementById('mt-breach-alert-modal');
+    if (!opener || !breach) return;
+    var accId   = opener.getAttribute('data-account-id') || '';
+    var mainId  = opener.getAttribute('data-main-id') || '';
+    var resetId = opener.getAttribute('data-reset-id') || '';
+    var accType = opener.getAttribute('data-account-type') || '';
+    if (accId)   breach.setAttribute('data-account-id', accId);
+    if (mainId)  breach.setAttribute('data-main-id', mainId);
+    if (resetId) breach.setAttribute('data-reset-id', resetId);
+    if (accType) breach.setAttribute('data-account-type', accType);
+    syncBreachText();
+  }
+  function syncBreachText() {
+    var breach = document.getElementById('mt-breach-alert-modal');
+    var span   = document.getElementById('mtbreach-desc');
+    if (!breach || !span) return;
+    var tFunded = breach.getAttribute('data-funded-title') || '';
+    var tEval   = breach.getAttribute('data-evaluation-title') || '';
+    var accType = (breach.getAttribute('data-account-type') || '').trim();
+    if (!accType) return;
+    span.textContent = (accType === 'FUNDED') ? tFunded : tEval;
+  }
+
+  document.addEventListener('mt:accountSelected', seedBreachFromOpener);
+  document.addEventListener('mt:hasSubscriptionChanged', syncBreachText);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      seedBreachFromOpener();
+      syncBreachText();
+    }, { once: true });
+  } else {
+    seedBreachFromOpener();
+    syncBreachText();
+  }
 })();
+
+
+
+
+
+
 
 
 

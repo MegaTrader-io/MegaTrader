@@ -1,128 +1,98 @@
 <?php
 defined('ABSPATH') || exit;
 
-$prepared = isset($args['prepared']) && is_array($args['prepared']) ? $args['prepared'] : null;
-$current = $prepared['current'] ?? null;
-$accounts = $prepared['accounts'] ?? [];
-
-
-$checkout = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
-$reset_url = $hasReset ? ($checkout . '?add-to-cart=' . urlencode($resetId)) : '';
-$activation_url = $hasActivation ? ($checkout . '?add-to-cart=' . urlencode($activationId)) : '';
-
-
+$prepared  = isset($args['prepared']) && is_array($args['prepared']) ? $args['prepared'] : null;
+$current   = $prepared['current'] ?? null;
+$accounts  = $prepared['accounts'] ?? [];
 
 if (!$prepared || empty($accounts)) {
   echo '<p class="text-a8a29e"><em>No accounts found for this user.</em></p>';
   return;
 }
-
-if (!$current && !empty($accounts)) {
-  $current = $accounts[0];
-}
+if (!$current && !empty($accounts)) { $current = $accounts[0]; }
 
 /* OVERRIDE desde Overview (cookie/selectedId) */
-$selectedIdArg = isset($args['selectedId']) ? (string) $args['selectedId'] : '';
+$selectedIdArg = isset($args['selectedId']) ? (string)$args['selectedId'] : '';
 if ($selectedIdArg !== '') {
   foreach ($accounts as $row) {
-    if ((string) ($row['id'] ?? '') === $selectedIdArg) {
-      $current = $row;
-      break;
-    }
+    if ((string)($row['id'] ?? '') === $selectedIdArg) { $current = $row; break; }
   }
 }
 
-$resetId = (string) ($current['resetProductId'] ?? '');
-$activationId = (string) ($current['activationProductId'] ?? '');
-$mainId = (string) ($current['mainProductId'] ?? '');
-$ord = (string) ($current['order'] ?? '');
-$subscriptionIdCurrent = (string) ($current['subscriptionId'] ?? '');
+$checkout = function_exists('wc_get_checkout_url') ? wc_get_checkout_url() : '/checkout';
 
-$hasReset = ($resetId !== '');
-$hasActivation = ($activationId !== '');
+/* Datos del current */
+$currentId           = (string)($current['id'] ?? '');
+$currentStat         = (string)($current['status'] ?? 'unknown');
+$sizeSlug            = (string)($current['size'] ?? '');
+$productName         = (string)($current['name'] ?? 'Account');
+$curProgText         = (string)($current['programTypeText'] ?? '');
+$curProgClass        = (string)($current['programTypeClass'] ?? '');
+$resetId             = (string)($current['resetProductId'] ?? '');
+$activationId        = (string)($current['activationProductId'] ?? '');
+$mainId              = (string)($current['mainProductId'] ?? '');
+$ord                 = (string)($current['order'] ?? '');
+$subscriptionIdCurrent = (string)($current['subscriptionId'] ?? '');
+$hasReset            = ($resetId !== '');
+$hasActivation       = ($activationId !== '');
+$account_id          = $selectedIdArg !== '' ? $selectedIdArg : $currentId;
 
-$currentId = (string) ($current['id'] ?? '');
-$currentStat = (string) ($current['status'] ?? 'unknown');
-$sizeSlug = (string) ($current['size'] ?? '');
-$productName = (string) ($current['name'] ?? 'Account');
-$currentLogo = (string) ($current['logo'] ?? '');
-$curProgText = (string) ($current['programTypeText'] ?? '');
-$curProgClass = (string) ($current['programTypeClass'] ?? '');
+/* Logo actual SIEMPRE vía helper central */
+$theme_uri     = get_stylesheet_directory_uri();
+$fallback_logo = $theme_uri . '/assets/svg/icon_megatrader.svg';
+$curPlatform   = (string)($current['platform'] ?? ($current['program']['platform'] ?? ''));
+$currentLogo   = class_exists('MT_Accounts') ? MT_Accounts::platform_logo($curPlatform) : $fallback_logo;
 
-$account_id = $selectedIdArg !== '' ? $selectedIdArg : $currentId;
-
-
-$status_key = strtolower(trim($currentStat));
-$status_key = preg_replace('/[^a-z0-9]+/', '-', $status_key);
-$badgeBase = class_exists('MT_Accounts') ? MT_Accounts::badge_class($currentStat) : 'badge-mega-default';
-$badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
+/* Badge de estado */
+$status_key  = preg_replace('/[^a-z0-9]+/','-', strtolower(trim($currentStat)));
+$badgeBase   = class_exists('MT_Accounts') ? MT_Accounts::badge_class($currentStat) : 'badge-mega-default';
+$badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
 ?>
 
 <div class="mt-picker-wrap position-relative">
-  <div class="mega-btn-md mega-btn-dark-md w-100" role="button" tabindex="0" data-bs-toggle="modal"
-    data-bs-target="#changeSubcriptionModal" data-account-id="<?php echo esc_attr($account_id); ?>"
-    data-main-id="<?php echo esc_attr($mainId); ?>" data-reset-id="<?php echo esc_attr($resetId); ?>"
-    data-order-id="<?php echo esc_attr($ord); ?>" data-activation-id="<?php echo esc_attr($activationId); ?>"
-    data-account-type="<?php echo esc_attr($curProgText); ?>"
-    data-subscription-id="<?php echo esc_attr($subscriptionIdCurrent); ?>">
+  <div class="mega-btn-md mega-btn-dark-md w-100" role="button" tabindex="0"
+       data-bs-toggle="modal" data-bs-target="#changeSubcriptionModal"
+       data-account-id="<?php echo esc_attr($account_id); ?>"
+       data-main-id="<?php echo esc_attr($mainId); ?>"
+       data-reset-id="<?php echo esc_attr($resetId); ?>"
+       data-order-id="<?php echo esc_attr($ord); ?>"
+       data-activation-id="<?php echo esc_attr($activationId); ?>"
+       data-account-type="<?php echo esc_attr($curProgText); ?>"
+       data-subscription-id="<?php echo esc_attr($subscriptionIdCurrent); ?>">
 
     <div class="d-flex align-items-center gap-2 w-100">
       <span class="svg-button mt-icon mt-icon_caret-down mt-icon-white"></span>
       <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-2 row-gap-2">
         <div class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md"></div>
         <div class="d-flex gap-2 align-items-center flex-fill">
-          <img id="mt-platform-logo" src="<?php echo esc_url($currentLogo); ?>" alt="Platform logo" width="30"
-            height="30" style="width:30px;height:30px;object-fit:contain;border-radius:6px;" />
+          <img id="mt-platform-logo"
+               src="<?php echo esc_url($currentLogo ?: $fallback_logo); ?>"
+               alt="Platform logo" width="30" height="30"
+               loading="lazy" decoding="async" fetchpriority="low"
+               style="width:30px;height:30px;object-fit:contain;border-radius:6px;"
+               onerror="this.onerror=null;this.src='<?php echo esc_js($fallback_logo); ?>';" />
+                     <div id="mt-account-id-badge" class="mt-badge mt-badge-light mt-badge-rounded-sm">
+  <?php echo esc_html(($current['accountId'] ?? $currentId)); ?>
+</div>
           <div class="fw-medium plan-name text-uppercase text-white text-2xl leading-7">
             <span id="mt-size"><?php echo esc_html($sizeSlug); ?></span>
             <span id="mt-name"><?php echo esc_html($productName); ?></span>
           </div>
-          <div id="mt-account-id-badge" class="mt-badge mt-badge-light mt-badge-rounded-sm"></div>
+
+
         </div>
       </div>
     </div>
-    <?php /* ?>
-<?php if (!empty($resetId) && $resetId !== '0'): ?>
- <!-- DESKTOP/TABLET: botón dentro del picker -->
- <a class="mt-btn mt-btn--xs mt-btn--secondary account-reset-button account-reset-button--inside d-none d-md-inline-flex"
-    href="<?php echo esc_url($checkout . '?add-to-cart=' . urlencode($resetId)); ?>"
-    data-account-id="<?php echo esc_attr($account_id); ?>"
-    data-main-id="<?php echo esc_attr($mainId); ?>"
-    data-reset-id="<?php echo esc_attr($resetId); ?>">
-   <span class="mt-icon mt-icon_reset-fee mt-icon-white mt-icon-sm"></span>
-   <span><?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?></span>
- </a>
-<?php endif; ?>
-<?php */ ?>
-
   </div>
 </div>
 
-<?php /* ?>
-<?php if (!empty($resetId) && $resetId !== '0'): ?>
-<!-- MOBILE: botón fuera del picker -->
-<a class="mt-btn mt-btn--xs mt-btn--secondary account-reset-button account-reset-button--outside d-inline-flex d-md-none"
-href="<?php echo esc_url($checkout . '?add-to-cart=' . urlencode($resetId)); ?>"
-data-account-id="<?php echo esc_attr($account_id); ?>"
-data-main-id="<?php echo esc_attr($mainId); ?>"
-data-reset-id="<?php echo esc_attr($resetId); ?>">
-<span class="mt-icon mt-icon_reset-fee mt-icon-white mt-icon-sm"></span>
-<span><?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_button']; ?></span>
-</a>
-<?php endif; ?>
-<?php */ ?>
-
-
-
-
 <div class="modal modal-subcription fade" id="changeSubcriptionModal" tabindex="-1"
-  aria-labelledby="changeSubcriptionModalLabel" aria-hidden="true">
+     aria-labelledby="changeSubcriptionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down" style="--bs-modal-width: 450px;">
     <div class="modal-content gap-4">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <span class="modal-title text-white heading-sm-medium" id="changeSubcriptionModalLabel">Select account</span>
-        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
-          aria-label="Close">
+        <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">
             <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width:24px;height:24px;" />
           </span>
@@ -133,49 +103,33 @@ data-reset-id="<?php echo esc_attr($resetId); ?>">
         <div class="mb-4">
           <div class="dropdown w-100">
             <button id="mt-acc-filter-btn"
-              class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12" type="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+                    class="btn btn-dark w-100 d-flex justify-content-between align-items-center rounded-12"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
               <span id="mt-acc-filter-label">Active</span>
               <span class="mt-icon mt-icon_caret-down mt-icon-white"></span>
             </button>
 
             <?php
-            $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false, 'PENDING_ACTIVATION' => false];
+            $present = ['ACTIVE'=>false,'BREACHED'=>false,'PASSED'=>false,'PENDING_ACTIVATION'=>false];
             foreach ($accounts as $row) {
-              $st = strtoupper(trim((string) ($row['status'] ?? '')));
-              if ($st === 'ACTIVE')
-                $present['ACTIVE'] = true;
-              if ($st === 'BREACHED' || $st === 'RESET')
-                $present['BREACHED'] = true;
-              if ($st === 'PASSED' || $st === 'UPGRADED')
-                $present['PASSED'] = true;
-              if ($st === 'PENDING_ACTIVATION')
-                $present['PENDING_ACTIVATION'] = true;
+              $st = strtoupper(trim((string)($row['status'] ?? '')));
+              if ($st === 'ACTIVE') $present['ACTIVE'] = true;
+              if ($st === 'BREACHED' || $st === 'RESET') $present['BREACHED'] = true;
+              if ($st === 'PASSED' || $st === 'UPGRADED') $present['PASSED'] = true;
+              if ($st === 'PENDING_ACTIVATION') $present['PENDING_ACTIVATION'] = true;
             }
-
-            $curStatus = strtoupper(trim((string) ($current['status'] ?? '')));
+            $curStatus = strtoupper(trim((string)($current['status'] ?? '')));
             switch ($curStatus) {
-              case 'ACTIVE':
-                $curFilter = 'ACTIVE';
-                break;
-              case 'BREACHED':
-              case 'RESET':
-                $curFilter = 'BREACHED';
-                break;
-              case 'PASSED':
-              case 'UPGRADED':
-                $curFilter = 'PASSED';
-                break;
-              case 'PENDING_ACTIVATION':
-                $curFilter = 'PENDING_ACTIVATION';
-                break;
+              case 'ACTIVE': $curFilter='ACTIVE'; break;
+              case 'BREACHED': case 'RESET': $curFilter='BREACHED'; break;
+              case 'PASSED': case 'UPGRADED': $curFilter='PASSED'; break;
+              case 'PENDING_ACTIVATION': $curFilter='PENDING_ACTIVATION'; break;
               default:
-                $curFilter = $present['ACTIVE'] ? 'ACTIVE'
-                  : ($present['BREACHED'] ? 'BREACHED'
-                    : ($present['PASSED'] ? 'PASSED'
-                      : ($present['PENDING_ACTIVATION'] ? 'PENDING_ACTIVATION' : 'ACTIVE')));
+                $curFilter = $present['ACTIVE'] ? 'ACTIVE' :
+                  ($present['BREACHED'] ? 'BREACHED' :
+                  ($present['PASSED'] ? 'PASSED' :
+                  ($present['PENDING_ACTIVATION'] ? 'PENDING_ACTIVATION' : 'ACTIVE')));
             }
-
             $firstOpt = !empty($present[$curFilter]) ? $curFilter
               : ($present['ACTIVE'] ? 'ACTIVE'
                 : ($present['BREACHED'] ? 'BREACHED'
@@ -185,120 +139,35 @@ data-reset-id="<?php echo esc_attr($resetId); ?>">
 
             <ul class="dropdown-menu w-100 p-0 overflow-hidden rounded-12 mt-1" id="mt-acc-filter-menu">
               <?php if ($present['ACTIVE']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="ACTIVE">Active</button>
-                </li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="ACTIVE">Active</button></li>
               <?php endif; ?>
               <?php if ($present['BREACHED']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option"
-                    data-value="BREACHED">Breached</button></li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="BREACHED">Breached</button></li>
               <?php endif; ?>
               <?php if ($present['PASSED']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button>
-                </li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button></li>
               <?php endif; ?>
               <?php if ($present['PENDING_ACTIVATION']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option"
-                    data-value="PENDING_ACTIVATION">Pending activation</button></li>
+                <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PENDING_ACTIVATION">Pending activation</button></li>
               <?php endif; ?>
             </ul>
 
             <select id="mt-acc-filter" class="d-none" aria-hidden="true">
-              <?php if ($present['ACTIVE']): ?>
-                <option value="ACTIVE" <?php selected($firstOpt, 'ACTIVE'); ?>>Active</option>
-              <?php endif; ?>
-              <?php if ($present['BREACHED']): ?>
-                <option value="BREACHED" <?php selected($firstOpt, 'BREACHED'); ?>>Breached</option>
-              <?php endif; ?>
-              <?php if ($present['PASSED']): ?>
-                <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option>
-              <?php endif; ?>
-              <?php if ($present['PENDING_ACTIVATION']): ?>
-                <option value="PENDING_ACTIVATION" <?php selected($firstOpt, 'PENDING_ACTIVATION'); ?>>Pending activation
-                </option>
-              <?php endif; ?>
+              <?php if ($present['ACTIVE']): ?><option value="ACTIVE" <?php selected($firstOpt,'ACTIVE'); ?>>Active</option><?php endif; ?>
+              <?php if ($present['BREACHED']): ?><option value="BREACHED" <?php selected($firstOpt,'BREACHED'); ?>>Breached</option><?php endif; ?>
+              <?php if ($present['PASSED']): ?><option value="PASSED" <?php selected($firstOpt,'PASSED'); ?>>Passed</option><?php endif; ?>
+              <?php if ($present['PENDING_ACTIVATION']): ?><option value="PENDING_ACTIVATION" <?php selected($firstOpt,'PENDING_ACTIVATION'); ?>>Pending activation</option><?php endif; ?>
             </select>
           </div>
         </div>
 
         <!-- Grid -->
+       
+        
+
         <div class="subscription-scroll-area px-lg-3 p-0">
-          <div class="subscription-grid" id="mt-accounts-grid">
-            <?php foreach ($accounts as $a): ?>
-              <?php
-              $aid = (string) ($a['id'] ?? '');
-              $accPlatId = (string) ($a['accountId'] ?? '');
-              $isCur = ($aid === $currentId);
-
-              $card_class = 'subscription-card position-relative flex-column gap-2';
-              if ($isCur)
-                $card_class .= ' active';
-
-              $status_raw = (string) ($a['status'] ?? '');
-              $status_key = preg_replace('/[^a-z0-9]+/', '-', strtolower(trim($status_raw)));
-              $dot_class = 'dot-status-' . $status_key;
-
-              $logo_src = (string) ($a['logo'] ?? '');
-              $ord = (int) ($a['order'] ?? 0);
-              $subIdCard = (string) ($a['subscriptionId'] ?? '');
-              $hasSubCard = ($subIdCard !== '') || !empty($a['hasSubscription']);
-
-              $progText = (string) ($a['programTypeText'] ?? '');
-              $progClass = (string) ($a['programTypeClass'] ?? '');
-              ?>
-              <div class="<?php echo esc_attr($card_class); ?>" role="button"
-                data-account-id="<?php echo esc_attr($aid); ?>" data-status="<?php echo esc_attr($a['status'] ?? ''); ?>"
-                data-platform-account-id="<?php echo esc_attr($accPlatId); ?>"
-                data-size="<?php echo esc_attr($a['size'] ?? ''); ?>"
-                data-reset-id="<?php echo esc_attr($a['resetProductId'] ?? ''); ?>"
-                data-activation-id="<?php echo esc_attr($a['activationProductId'] ?? ''); ?>"
-                data-name="<?php echo esc_attr($a['name'] ?? 'Account'); ?>"
-                data-account-type="<?php echo esc_attr($progText); ?>" data-logo="<?php echo esc_url($logo_src); ?>"
-                data-main-id="<?php echo esc_attr($a['mainProductId'] ?? ''); ?>"
-                data-order-id="<?php echo esc_attr($ord); ?>"
-                data-has-subscription="<?php echo $hasSubCard ? '1' : '0'; ?>"
-                data-subscription-id="<?php echo esc_attr($subIdCard); ?>" style="display:none;">
-
-                <div class="checkmark-icon position-absolute"
-                  style="top:10px;right:10px;<?php echo $isCur ? '' : 'display:none;'; ?>">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" fill="#FFB34A" />
-                    <path d="M10.6 16.6L17.65 9.55L16.25 8.15L10.6 13.8L7.75 10.95L6.35 12.35L10.6 16.6Z" fill="black" />
-                  </svg>
-                </div>
-
-                <div
-                  class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
-                  <div class="logo-container position-relative d-inline-block">
-                    <img src="<?php echo esc_url($logo_src); ?>"
-                      alt="<?php echo esc_attr(($a['platform'] ?? '') ?: 'platform'); ?> logo" style="max-height:40px;">
-                    <div class="dot-indicator <?php echo esc_attr($dot_class); ?>"
-                      title="<?php echo esc_attr($a['status'] ?? ''); ?>"
-                      style="position:absolute;right:-1px;bottom:-1px;">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <circle cx="6" cy="6" r="6" fill="white" />
-                        <circle cx="6" cy="6" r="4" fill="currentColor" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="subscription-card__body text-center">
-                  <div class="subscription-card__name fw-medium text-base text-white">
-                    <?php echo esc_html(($a['size'] ?? '') . ' ' . ($a['name'] ?? 'Account')); ?>
-                  </div>
-                  <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">
-                    #<?php echo esc_html($accPlatId ?: $aid); ?>
-                  </div>
-                  <?php if ($progText !== '' && $progClass !== ''): ?>
-                    <div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content <?php echo esc_attr($progClass); ?>">
-                      <?php echo esc_html($progText); ?>
-                    </div>
-                  <?php endif; ?>
-                </div>
-              </div>
-            <?php endforeach; ?>
-          </div>
-        </div>
+  <div class="subscription-grid" id="mt-accounts-grid" data-grid-empty="1"></div>
+</div>
 
       </div>
 
@@ -317,12 +186,12 @@ data-reset-id="<?php echo esc_attr($resetId); ?>">
 <?php
 $handle = 'mt-account-picker';
 $js_path = get_stylesheet_directory() . '/assets/js/mt-account-picker.js';
-$js_url = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
+$js_url  = get_stylesheet_directory_uri() . '/assets/js/mt-account-picker.js';
 wp_enqueue_script($handle, $js_url, [], (file_exists($js_path) ? filemtime($js_path) : null), true);
 
 $payload = [
   'currentId' => $currentId,
-  'accounts' => $accounts,
+  'accounts'  => $accounts,
   'selectionClass' => 'active',
   'selectors' => [
     'grid' => '#mt-accounts-grid',
@@ -337,20 +206,16 @@ $payload = [
     'performance' => '.mt-account-performance',
   ],
   'ajax' => [
-    'url' => admin_url('admin-ajax.php'),
+    'url'   => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('mt-acc-nonce'),
-    'action' => 'mt_accounts_performance',
+    'action'=> 'mt_accounts_performance',
   ],
   'checkoutBase' => $checkout,
-  'debug' => true,
+  'debug' => false,
 ];
-
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
 
-
-wp_add_inline_script(
-  $handle,
-  <<<'JS'
+wp_add_inline_script($handle, <<<'JS'
 (function(){
   var filterSel = document.getElementById('mt-acc-filter');
   var filterLbl = document.getElementById('mt-acc-filter-label');

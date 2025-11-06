@@ -1550,6 +1550,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $pnl = (float) ($t['pnl'] ?? 0);
       $lots = (int) ($t['lots'] ?? 0);
       $commission = (float) ($t['commission'] ?? 0);
+      $commission = $commission * 2;
       $durSecs = max(0, (int) round($closeNY->getTimestamp() - $openNY->getTimestamp()));
 
       if (!isset($byDay[$day])) {

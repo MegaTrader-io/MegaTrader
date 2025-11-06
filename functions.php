@@ -121,50 +121,121 @@ add_action( 'widgets_init', 'megatrader_widgets_init' );
  * Enqueue scripts and styles.
  */
 function megatrader_scripts() {
+  /* ===== CSS ===== */
+  wp_enqueue_style('bootstrap',        MEGATRADER_CSS.'bootstrap.min.css', [], _MEGATRADER_VERSION);
+  wp_enqueue_style('megatrader-main',  MEGATRADER_CSS.'style.css',         [], REALTIME_VERSION);
+  wp_enqueue_style('megatrader-style', get_stylesheet_uri(),               [], _MEGATRADER_VERSION);
+  wp_enqueue_style('mt-components',    MEGATRADER_CSS.'mt-components.css', [], REALTIME_VERSION);
+  wp_enqueue_style('mt-navbar-style',  MEGATRADER_CSS.'mt-navbar.css',     [], REALTIME_VERSION);
+  wp_enqueue_style('megatrader-dev',   MEGATRADER_CSS.'megatrader-dev.css', ['megatrader-style'], REALTIME_VERSION);
 
-	/* ===== CSS ===== */
-	wp_enqueue_style( 'bootstrap',           MEGATRADER_CSS . 'bootstrap.min.css',  array(), _MEGATRADER_VERSION );
-	// wp_enqueue_style( 'scrollCue-css',    MEGATRADER_CSS . 'scrollCue.min.css',  array(), _MEGATRADER_VERSION );
-	wp_enqueue_style( 'megatrader-main',     MEGATRADER_CSS . 'style.css',          array(), REALTIME_VERSION );
-	wp_enqueue_style( 'megatrader-style',    get_stylesheet_uri(),                  array(), _MEGATRADER_VERSION );
-	wp_enqueue_style( 'megatrader-dev',      MEGATRADER_CSS . 'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION );
-	wp_enqueue_style( 'mt-components',       MEGATRADER_CSS . 'mt-components.css',  array(), REALTIME_VERSION );
-	wp_enqueue_style( 'mt-navbar-style',     MEGATRADER_CSS . 'mt-navbar.css',      array(), REALTIME_VERSION );
+  /* ===== JS base ===== */
+  wp_enqueue_script('bootstrap-bundle', MEGATRADER_JS.'bootstrap.bundle.min.js', ['jquery'], _MEGATRADER_VERSION, true);
+  wp_enqueue_script('megatrader-modal', MEGATRADER_JS.'modal.js', ['jquery','bootstrap-bundle'], REALTIME_VERSION, true);
 
-	/* ===== JS ===== */
-	wp_enqueue_script( 'bootstrap-bundle',       MEGATRADER_JS . 'bootstrap.bundle.min.js', array('jquery'), _MEGATRADER_VERSION, true );
-	// wp_enqueue_script( 'scrollCue',           MEGATRADER_JS . 'scrollCue.min.js',        array('jquery'), _MEGATRADER_VERSION, true );
-	// wp_enqueue_script( 'smoothscroll',        MEGATRADER_JS . 'smoothscroll.min.js',     array('jquery'), _MEGATRADER_VERSION, true );
-	wp_enqueue_script( 'megatrader-modal',       MEGATRADER_JS . 'modal.js',                array('jquery','bootstrap-bundle'), REALTIME_VERSION, true );
-	wp_enqueue_script( 'mt-tabs',                MEGATRADER_JS . 'mt-tabs.js',              array(), REALTIME_VERSION, true );
-	wp_enqueue_script( 'mt-addons',              MEGATRADER_JS . 'mt-addons.js',            array(), REALTIME_VERSION, true );
-	wp_enqueue_script( 'mt-payment',             MEGATRADER_JS . 'payment-methods.js',      array(), REALTIME_VERSION, true );
-	wp_enqueue_script( 'mt-account-picker',      MEGATRADER_JS . 'mt-account-picker.js',    array(), REALTIME_VERSION, true );
+  // utilidades
+  wp_enqueue_script('mt-tabs',     MEGATRADER_JS.'mt-tabs.js',     [], REALTIME_VERSION, true);
+  wp_enqueue_script('mt-addons',   MEGATRADER_JS.'mt-addons.js',   [], REALTIME_VERSION, true);
+  wp_enqueue_script('mt-payment',  MEGATRADER_JS.'payment-methods.js', [], REALTIME_VERSION, true);
 
-/*
-	wp_enqueue_script( 'mt-account-payout',      MEGATRADER_JS . 'mt-account-payout.js',    array('bootstrap-bundle'), REALTIME_VERSION, true );
-	wp_localize_script( 'mt-account-payout', 'MT_PAYOUT_VARS', array(
-		'ajaxurl' => admin_url('admin-ajax.php'),
-		'nonce'   => wp_create_nonce('mt_payouts'), // NO CAMBIAR
-	));
-     */
+  // ⚠️ SOLO registrar el picker (carga on-demand con JS)
+  wp_register_script('mt-account-picker', MEGATRADER_JS.'mt-account-picker.js', [], REALTIME_VERSION, true);
 
-	wp_enqueue_script( 'mt-navbar-js',           MEGATRADER_JS . 'mt-navbar.js',            array(), REALTIME_VERSION, true );
-	wp_enqueue_script( 'mt-tooltips-js',         MEGATRADER_JS . 'mt-tooltips.js',          array(), REALTIME_VERSION, true );
-	wp_enqueue_script( 'mt-billing-validation-js', MEGATRADER_JS . 'billing-validation.js', array(), REALTIME_VERSION, true );
-	wp_enqueue_script( 'mt-sidebar-js',          MEGATRADER_JS . 'mt-sidebar.js',           array(), REALTIME_VERSION, true );
+  wp_enqueue_script('mt-navbar-js',            MEGATRADER_JS.'mt-navbar.js',            [], REALTIME_VERSION, true);
+  wp_enqueue_script('mt-tooltips-js',          MEGATRADER_JS.'mt-tooltips.js',          [], REALTIME_VERSION, true);
+  wp_enqueue_script('mt-billing-validation-js',MEGATRADER_JS.'billing-validation.js',   [], REALTIME_VERSION, true);
+  wp_enqueue_script('mt-sidebar-js',           MEGATRADER_JS.'mt-sidebar.js',           [], REALTIME_VERSION, true);
 
-	wp_enqueue_script( 'megatrader-main',        MEGATRADER_JS . 'main.js',                 array('jquery','mt-tabs'), REALTIME_VERSION, true );
-	
-    wp_localize_script( 'megatrader-main', 'theme_ajax', array(
-		'ajax_url' => admin_url('admin-ajax.php'),
-	));
+  // entrypoint del tema
+  wp_enqueue_script('megatrader-main', MEGATRADER_JS.'main.js', ['mt-tabs'], REALTIME_VERSION, true);
 
-	/* comment-reply para posts con comentarios anidados */
-	if ( is_singular() && comments_open() && get_option('thread_comments') ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
+  // Pasar la URL versionada del picker para el loader dinámico
+  wp_localize_script('megatrader-main', 'MT_ASSETS', [
+    'picker_src' => wp_scripts()->registered['mt-account-picker']->src,
+  ]);
+
+  // AJAX genérico del tema (si lo usas)
+  wp_localize_script('megatrader-main', 'theme_ajax', [
+    'ajax_url' => admin_url('admin-ajax.php'),
+  ]);
+
+  if (is_singular() && comments_open() && get_option('thread_comments')) {
+    wp_enqueue_script('comment-reply');
+  }
 }
+
+add_action('wp_enqueue_scripts', function () {
+  $handles = [
+    'mt-tabs','mt-addons','mt-payment','mt-navbar-js',
+    'mt-tooltips-js','mt-billing-validation-js','mt-sidebar-js','megatrader-main'
+  ];
+  foreach ($handles as $h) {
+    if (wp_script_is($h, 'enqueued') || wp_script_is($h, 'registered')) {
+      wp_script_add_data($h, 'strategy', 'defer');
+    }
+  }
+}, 99);
+
+
+// helpers: detectar /my-account/overview (soporta endpoint WC o URL directa)
+function mt_is_overview_page(): bool {
+  // 1) Si usas endpoints de WooCommerce:
+  if (function_exists('is_account_page') && is_account_page()
+      && function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('overview')) {
+    return true;
+  }
+  // 2) Fallback por URL exacta (por si NO es endpoint WC)
+  $req = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+  return (bool) preg_match('#/my-account/overview/?$#', $req);
+}
+
+/**
+ * 1) Desencolar y desregistrar por HANDLE (lo más limpio)
+ *    Ajusta los handles a los reales en tu sitio.
+ */
+add_action('wp_enqueue_scripts', function () {
+  if (!mt_is_overview_page()) return;
+
+  $handles = [
+    'main-js',            // ← cambia por el handle real de main.js
+    'mt-addons',          // ← mt-addons.js
+    'mt-tabs',            // ← mt-tabs.js
+    'billing-validation', // ← billing-validation.js
+    'payment-methods',    // ← payment-methods.js
+  ];
+
+  foreach ($handles as $h) {
+    wp_dequeue_script($h);
+    wp_deregister_script($h);
+  }
+}, 100);
+
+/**
+ * 2) “Red de seguridad” por SRC (por si algún plugin los imprime sin handle conocido).
+ *    Si el src contiene estas rutas, NO se imprime la etiqueta <script>.
+ */
+add_filter('script_loader_tag', function ($tag, $handle, $src) {
+  if (!mt_is_overview_page()) return $tag;
+
+  $block_list = [
+    '/assets/js/main.js',
+    '/assets/js/mt-addons.js',
+    '/assets/js/mt-tabs.js',
+    '/assets/js/billing-validation.js',
+    '/assets/js/payment-methods.js',
+  ];
+
+  foreach ($block_list as $needle) {
+    if (strpos($src, $needle) !== false) {
+      return ''; // no imprime el <script>
+    }
+  }
+  return $tag;
+}, 10, 3);
+
+
+
+
 
 
 // === BLOQUEA el CSS inexistente del plugin Address Autocomplete (blocks) ===

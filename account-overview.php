@@ -9,33 +9,16 @@ if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
   require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
 }
 
-/* === Benchmark mínimo (sin plugins) === */
-$t0 = microtime(true);
-if (!function_exists('mt_bench')) {
-  function mt_bench($label, $t0) {
-    $ms = number_format((microtime(true) - $t0) * 1000, 1);
-    // Log temporal (debug)
-    error_log('[MT BENCH] ' . $label . ' +' . $ms . 'ms');
-    // Server-Timing (visible en DevTools → Network → Headers)
-    $metric = preg_replace('/[^a-z0-9_]/i', '_', (string)$label);
-    header(sprintf('Server-Timing: %s;dur=%s', $metric, $ms), false);
-  }
-}
-register_shutdown_function(function() use ($t0){
-  mt_bench('TOTAL_PAGE', $t0);
-});
-
-/* === Utilidades de caché (temporales) === */
+/* === Utilidades de caché (ligeras) === */
 if (!function_exists('mt_fetch_accounts_cached')) {
   /**
    * Trae cuentas con cache 30s y fallback plain->encoded.
    * Devuelve array [$accounts, $variant] donde $variant es 'plain' o 'encoded'.
    */
-  function mt_fetch_accounts_cached(string $email_plain, string $email_api, float $t0): array {
+  function mt_fetch_accounts_cached(string $email_plain, string $email_api): array {
     $cache_key = 'mt_acc_' . md5($email_plain ?: $email_api);
     $cached = get_transient($cache_key);
     if ($cached !== false && is_array($cached) && isset($cached['data'], $cached['variant'])) {
-      mt_bench('accounts_from_cache_'.$cached['variant'], $t0);
       return [$cached['data'], $cached['variant']];
     }
 
@@ -44,37 +27,29 @@ if (!function_exists('mt_fetch_accounts_cached')) {
 
     try {
       $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_plain, 1, 50) : [];
-    } catch (Throwable $e) {
-      if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][accounts_plain][EX] '.$e->getMessage());
-    }
+    } catch (Throwable $e) {}
 
     if (empty($accounts)) {
       try {
         $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_api, 1, 50) : [];
         $variant  = 'encoded';
-      } catch (Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][accounts_enc][EX] '.$e->getMessage());
-      }
+      } catch (Throwable $e) {}
     }
 
     set_transient($cache_key, ['data' => $accounts, 'variant' => $variant], 30); // 30s
-    mt_bench('accounts_fetched_'.$variant, $t0);
     return [$accounts, $variant];
   }
 }
 
 if (!function_exists('mt_get_agreement_status_cached')) {
-  /**
-   * Cachea el estado del acuerdo por 5 min.
-   */
-  function mt_get_agreement_status_cached(string $email_api, float $t0) {
+  /** Cachea el estado del acuerdo por 5 min. */
+  function mt_get_agreement_status_cached(string $email_api) {
     if ($email_api === '') return null;
     $k = 'mt_agreement_' . md5($email_api);
     $cached = get_transient($k);
-    if ($cached !== false) { mt_bench('agreement_from_cache', $t0); return $cached; }
+    if ($cached !== false) return $cached;
     $data = (function_exists('mt_get_agreement_status_by_email')) ? mt_get_agreement_status_by_email($email_api, 0) : null;
     set_transient($k, $data, 5 * MINUTE_IN_SECONDS);
-    mt_bench('agreement_fetched', $t0);
     return $data;
   }
 }
@@ -115,19 +90,14 @@ if (is_user_logged_in()) {
     if (!empty($san['ok'])) {
       $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
       $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
-      mt_bench('email_sanitized', $t0);
 
       /* === 1) Traer cuentas (cache 30s, plain -> encoded) === */
-      list($accounts, $mt_fetch_variant) = mt_fetch_accounts_cached($mt_user_email, $mt_user_email_api, $t0);
+      list($accounts, $mt_fetch_variant) = mt_fetch_accounts_cached($mt_user_email, $mt_user_email_api);
       $mt_cnt_plain   = ($mt_fetch_variant === 'plain')   ? (is_array($accounts) ? count($accounts) : 0) : 0;
       $mt_cnt_encoded = ($mt_fetch_variant === 'encoded') ? (is_array($accounts) ? count($accounts) : 0) : 0;
 
-      if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('[MT][email] plain='.$mt_user_email.' | encoded='.$mt_user_email_api.' | variant='.$mt_fetch_variant.' | cnt='.count((array)$accounts));
-      }
-
       // === Agreement Modal (con caché 5min) ===
-      $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api, $t0);
+      $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api);
 
       $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
         ? (string) $__mt_agreement['agreementURL']
@@ -136,20 +106,18 @@ if (is_user_logged_in()) {
       $__mt_agreement_show = (is_array($__mt_agreement)
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
-      mt_bench('agreement_status_checked', $t0);
 
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
       }
-      mt_bench('prepare_ui_done', $t0);
 
       /* === Preferencia de cookie para cuenta seleccionada (si existe y es válida) === */
       $cookie_selected_id = '';
       if (is_user_logged_in()) {
         $uid = get_current_user_id();
         $cookie_keys = array(
-          'mt:lastAccountId' . ($uid ? (':' . $uid) : ''), // nombre con sufijo uid
+          'mt:lastAccountId' . ($uid ? (':' . $uid) : ''),
           'mt:lastAccountId',
         );
         foreach ($cookie_keys as $ck) {
@@ -182,7 +150,6 @@ if (is_user_logged_in()) {
       } else {
         $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
       }
-      mt_bench('selected_id_resolved', $t0);
 
       /* === 3) Resolver cuenta seleccionada === */
       if ($mt_selected_id === '') {
@@ -193,39 +160,33 @@ if (is_user_logged_in()) {
       $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
         ? mt_accounts_resolve_account_by_id($mt_selected_id)
         : null;
-      mt_bench('account_resolved', $t0);
 
       if ($resolved) {
         // Performance
         if (function_exists('mt_accounts_build_performance')) {
           $mt_performance = mt_accounts_build_performance($resolved);
         }
-        mt_bench('performance_payload', $t0);
 
         // Feature Content (account + apiData)
         $mt_feature_content['account'] = $resolved;
         if (function_exists('mt_accounts_build_feature_content')) {
           $mt_feature_content['apiData'] = mt_accounts_build_feature_content($resolved);
         }
-        mt_bench('feature_payload', $t0);
 
         // Daily Journal payload
         if (!empty($mt_selected_id) && function_exists('mt_accounts_build_daily_journal')) {
           $mt_daily_journal = mt_accounts_build_daily_journal($mt_selected_id, 1, 30);
         }
-        mt_bench('daily_journal_payload', $t0);
 
         // Performance Chart
         if (!empty($resolved) && function_exists('mt_accounts_build_performance_chart')) {
           $mt_chart = mt_accounts_build_performance_chart($resolved);
         }
-        mt_bench('chart_payload', $t0);
 
         // Account data (re-usa $resolved, evita resolve duplicado)
         if ($resolved && function_exists('mt_accounts_build_account_data')) {
           $mt_account_data = mt_accounts_build_account_data($resolved);
         }
-        mt_bench('account_data_payload', $t0);
       }
 
       /* === Mapa id => order y order activo === */
@@ -402,16 +363,6 @@ if (empty($mt_account_ui['accounts'])) {
 }
 
 get_header();
-
-
-// --- early flush para romper buffering (Cloudflare/Nginx suelen requerir >1KB) ---
-@ini_set('zlib.output_compression', '0');
-while (ob_get_level() > 0) { @ob_end_flush(); }
-echo str_repeat("<!-- mt-preflush -->", 80); // ~2KB
-flush();
-// ------------------------------------------------------------------------------
-
-mt_bench('header_sent', $t0);
 ?>
 <?php wp_body_open(); ?>
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
@@ -435,6 +386,7 @@ mt_bench('header_sent', $t0);
           <?php echo Label::META_ACCOUNT_OVERVIEW['page_subtitle_overview']; ?>
         </span>
       </div>
+
       <div class="mt-account-navigation mega-navigation">
         <?php
           if (function_exists('account_navigation_render')) {
@@ -466,7 +418,6 @@ mt_bench('header_sent', $t0);
         );
         ?>
       </div>
-      <?php mt_bench('selection_rendered', $t0); ?>
 
       <div class="d-flex flex-column gap-32" data-fit-main>
         <div class="mt-account-data" id="mt-account-data">
@@ -483,7 +434,6 @@ mt_bench('header_sent', $t0);
           }
           ?>
         </div>
-        <?php mt_bench('account_data_rendered', $t0); ?>
 
         <div class="mt-account-performance" id="mt-performance-container">
           <?php
@@ -499,7 +449,6 @@ mt_bench('header_sent', $t0);
           }
           ?>
         </div>
-        <?php mt_bench('performance_rendered', $t0); ?>
 
         <div class="mt-account-feature-content">
           <?php
@@ -515,7 +464,6 @@ mt_bench('header_sent', $t0);
           }
           ?>
         </div>
-        <?php mt_bench('feature_rendered', $t0); ?>
 
         <div class="mt-account-performance-chart-content">
           <?php
@@ -531,7 +479,6 @@ mt_bench('header_sent', $t0);
           }
           ?>
         </div>
-        <?php mt_bench('chart_rendered', $t0); ?>
 
         <div class="mt-account-daily-journal">
           <?php
@@ -547,7 +494,6 @@ mt_bench('header_sent', $t0);
           }
           ?>
         </div>
-        <?php mt_bench('daily_journal_rendered', $t0); ?>
       </div>
     </div>
   </div>
@@ -670,9 +616,16 @@ mt_bench('header_sent', $t0);
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_title']; ?>
         </span>
-        <span id="mtbreach-desc" class="text-white fw-medium text-uppercase text-2xl leading-7">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description']; ?>
-        </span>
+       <?php
+$is_funded = (strtolower($mt_account_data['type'] ?? '') === 'funded');
+$breach_desc_init = $is_funded
+  ? Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_funded']
+  : Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_evaluation'];
+?>
+<span id="mtbreach-desc" class="text-white fw-medium text-uppercase text-2xl leading-7">
+  <?php echo esc_html($breach_desc_init); ?>
+</span>
+
         <span class="fw-medium text-a8a29e text-base">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>
         </span>
