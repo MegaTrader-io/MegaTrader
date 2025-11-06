@@ -148,10 +148,13 @@ HTML;
             }
         });
 
-        // const authLayout = document.querySelector('.auth');
-        //
-        // authLayout.style.height = '100%';
-        // authLayout.style.maxHeight = '100%';
+        const authLayout = document.querySelector('.auth');
+
+        authLayout.style.height = 'auto';
+        authLayout.style.maxHeight = 'none';
+
+        document.querySelector('.auth-form').style.paddingTop = '17px'
+        document.querySelector('.auth-form').style.paddingBottom = '17px';
     </script>
 
   <?php
