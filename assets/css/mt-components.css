@@ -2464,10 +2464,12 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 .plan-detail-selection__card {
     margin: 8px 0 16px 0;
     gap: 0;
+    border-radius: 16px;
+    outline: 1px #404040 solid;
 }
 
 .plan-detail-selection__card:has:not(.btn-plan-detail--active) .plan-detail-selection__body {
-    margin-top: 0px;
+    margin-top: 0;
 }
 
 .plan-detail-selection__header {
@@ -2505,8 +2507,12 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     opacity: 1;
 }
 
-.plan-detail-selection__header.btn-plan-detail--active .mt-icon_caret-up-solid {
+.plan-detail-selection__header .mt-icon_caret-up-solid {
     transform: rotate(180deg);
+}
+
+.plan-detail-selection__header.btn-plan-detail--active .mt-icon_caret-up-solid {
+    transform: rotate(0deg);
 }
 
 .plan-detail-selection__account-icon {

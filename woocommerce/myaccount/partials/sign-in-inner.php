@@ -42,15 +42,15 @@ if (isset($_GET['redirect_to'])) {
     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/logo-mt.svg"
          width="72" height="72" alt="Logo MegaTraderX"/>
 
-<?php if (!empty($product_id)) : ?>
-    <?php get_template_part('template-parts/plan-detail-selection', null, ['card_product_id' => $product_id]); ?>
-<?php endif; ?>
-
     <div>
         <h2 class="auth-form__title"><?php esc_html_e('SIGN IN', 'woocommerce'); ?></h2>
         <p class="auth-form__subtitle auth-form__subtitle--mb-none">Welcome back! Please enter your
             details.</p>
     </div>
+
+    <?php if (!empty($product_id)) : ?>
+        <?php get_template_part('template-parts/plan-detail-selection', null, ['card_product_id' => $product_id]); ?>
+    <?php endif; ?>
 
     <form id="form-login" class="auth-form__form-wrapper" method="post"
           novalidate <?php do_action('woocommerce_register_form_tag'); ?>>
