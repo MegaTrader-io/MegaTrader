@@ -148,10 +148,10 @@ HTML;
             }
         });
 
-        const authLayout = document.querySelector('.auth');
-
-        authLayout.style.height = '100%';
-        authLayout.style.maxHeight = '100%';
+        // const authLayout = document.querySelector('.auth');
+        //
+        // authLayout.style.height = '100%';
+        // authLayout.style.maxHeight = '100%';
     </script>
 
   <?php
