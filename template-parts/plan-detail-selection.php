@@ -23,6 +23,11 @@ function render_plan_detail_selection($card_product_id): void
   }
 
   $product = wc_get_product($card_product_id);
+
+  if (!$product) {
+    return;
+  }
+
   $attributes = $product->get_attributes();
 
   $account_size = $attributes['pa_account-size'];
