@@ -265,9 +265,9 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
             $mt_is_most_popular = $mt_scan_product && $mt_scan_product['variation_id'] == $mt_id;
 
             $CHECKOUT_URL = home_url('/checkout/?add-to-cart=' . $mt_id);
-            $LOGIN_URL = home_url('/auth/login/?redirect_to=');
+            $URL_GO_TO = home_url('/auth/register/?redirect_to=');
 
-            $mt_get_plan_url = $LOGIN_URL . $CHECKOUT_URL;
+            $mt_get_plan_url = $URL_GO_TO . $CHECKOUT_URL;
             if (is_user_logged_in()) {
                 $mt_get_plan_url = $CHECKOUT_URL;
             }
