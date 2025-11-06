@@ -6,7 +6,6 @@
   const clamp = (n, min, max) =>
     Math.max(min, Math.min(max, parseInt(n, 10) || 0));
 
-
   /* ========= Donuts ========= */
   function initDonuts(root = document) {
     $$(".mt-donut", root).forEach((d) => {
@@ -813,8 +812,8 @@ window.mtOverlay = (function () {
       .then(function (j) {
         if (!j || !j.success || !j.data || j.data.html == null) return;
 
-        wrap.innerHTML = j.data.html; 
-        initFeatureContent(wrap); 
+        wrap.innerHTML = j.data.html;
+        initFeatureContent(wrap);
 
         if (
           window.mtTooltips &&
@@ -849,59 +848,24 @@ window.mtOverlay = (function () {
     if (sel && sel.options.length === 1) sel.disabled = true;
   }
 
-  // Asegura ApexCharts antes de ejecutar inline
-  function ensureApexThen(container, cb) {
-    if (window.ApexCharts) return cb();
-    var url = container.querySelector('script[src*="apexcharts"]')?.getAttribute("src") || "https://cdn.jsdelivr.net/npm/apexcharts";
-    var tag = document.createElement("script");
-    tag.src = url;
-    tag.onload = cb;
-    tag.onerror = cb;
-    document.head.appendChild(tag);
-  }
-
-  // Overlay
+  // (Compat) Info para overlay: usa solo data-attrs
   function chartDataInfo(wrap) {
-    const carrier = wrap.querySelector("[data-has-series],[data-has-data],[data-points],[data-min-points]") || wrap;
-    const rawHas = carrier.getAttribute("data-has-series") ?? carrier.getAttribute("data-has-data");
-    const rawPts = carrier.getAttribute("data-points");
-    const rawMin = carrier.getAttribute("data-min-points");
-
-    let hasSeries = null;
-    if (rawHas != null) {
-      const v = String(rawHas).trim().toLowerCase();
-      if (v === "true" || v === "1") hasSeries = true;
-      else if (v === "false" || v === "0") hasSeries = false;
-    }
-
-    let points = Number.isFinite(parseInt(rawPts, 10)) ? parseInt(rawPts, 10) : null;
-
-    if (points == null && window.__mtChartInstance && window.__mtChartInstance.w && window.__mtChartInstance.w.globals) {
-      const g = window.__mtChartInstance.w.globals;
-      try {
-        const series0 = (g.seriesXvalues && g.seriesXvalues[0]) || (g.series && g.series[0]) || [];
-        points = Array.isArray(series0) ? series0.length : (Number.isFinite(series0) ? series0 : 0);
-        if (hasSeries == null) hasSeries = points > 0;
-      } catch (_) {}
-    }
-
-    if (hasSeries == null) {
-      hasSeries = !!wrap.querySelector(".apexcharts-series path, .apexcharts-series rect, .apexcharts-series circle");
-    }
-
-    let minPoints = Number.isFinite(parseInt(rawMin, 10)) ? parseInt(rawMin, 10) : 7;
-    return { hasSeries: Boolean(hasSeries), points: points == null ? null : Math.max(0, points), minPoints };
+    const carrier = wrap.querySelector("[data-points],[data-min-points]") || wrap;
+    const rawPts  = carrier.getAttribute("data-points");
+    const rawMin  = carrier.getAttribute("data-min-points");
+    const points  = Number.isFinite(parseInt(rawPts,10)) ? parseInt(rawPts,10) : null;
+    const minPts  = Number.isFinite(parseInt(rawMin,10)) ? parseInt(rawMin,10) : 7;
+    return { points, minPoints: minPts };
   }
 
   function applyChartOverlay(wrap) {
-    const overlay = wrap.querySelector(".account-performance-chart__overlay");
-    if (overlay && overlay.getAttribute("data-autotoggle") === "off") return;
-
+    const overlay = document.querySelector(".account-performance-chart__overlay");
+    if (!overlay) return;
     const info = chartDataInfo(wrap);
-    const enoughPoints = info.points == null ? true : info.points >= info.minPoints;
-    const shouldShow = !(info.hasSeries && enoughPoints);
-
-    if (window.mtOverlay) window.mtOverlay.toggle(wrap, shouldShow);
+    const enough = info.points == null ? true : info.points >= info.minPoints;
+    const show = !enough;
+    overlay.hidden = !show;
+    if (window.mtOverlay) window.mtOverlay.toggle(wrap, show);
   }
 
   // === AJAX ===
@@ -909,9 +873,7 @@ window.mtOverlay = (function () {
   let reqToken = 0;
 
   window.mtRefresh.register("performanceChart", function (accountId) {
-    var wrap = document.querySelector(".mt-account-performance-chart-content");
-    if (!wrap) return;
-
+    var wrap = document.querySelector(".mt-account-performance-chart-content") || document;
     var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
     var nonce = (window.mtAccounts && mtAccounts.nonce)  || "";
 
@@ -943,27 +905,18 @@ window.mtOverlay = (function () {
         return;
       }
 
-      try {
-        if (window.__mtChartInstance && typeof window.__mtChartInstance.destroy === "function") {
-          window.__mtChartInstance.destroy();
-          window.__mtChartInstance = null;
-        }
-      } catch (e) { console.warn("[MT][Chart] destroy prev error", e); }
+      // Sustituye el HTML y deja que el inline se auto-inicialice (con su loader LWC)
+      const host = document.querySelector('.account-performance-chart.mt-card')?.parentElement || document;
+      host.innerHTML = j.data.html;
 
-      document.querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs")
-        .forEach((n) => { try { n.remove(); } catch (_) {} });
+      const newWrap = document.querySelector(".mt-account-performance-chart-content") || host;
+      applyChartOverlay(newWrap);
 
-      wrap.querySelectorAll(".apexcharts-tooltip, .apexcharts-xcrosshairs, .apexcharts-ycrosshairs, .apexcharts-canvas")
-        .forEach((n) => { try { n.remove(); } catch (_) {} });
+      // Ejecuta scripts inline
+      runInlineScripts(newWrap);
 
-      wrap.innerHTML = j.data.html;
-      applyChartOverlay(wrap);
-
-      ensureApexThen(wrap, function () {
-        runInlineScripts(wrap);
-        applyChartOverlay(wrap);
-        setTimeout(function () { applyChartOverlay(wrap); }, 150);
-      });
+      // Reevalúa overlay por si el init actualiza data-points
+      setTimeout(function () { applyChartOverlay(newWrap); }, 150);
     })
     .catch(function (err) {
       if (err?.name === "AbortError") { console.warn("[MT] chart AJAX aborted"); return; }
@@ -976,7 +929,6 @@ window.mtOverlay = (function () {
     });
   });
 })();
-
 
 
 // ===== Account Data (AJAX refresh) =====
@@ -2790,83 +2742,114 @@ if (document.readyState === "loading") {
   else document.addEventListener("DOMContentLoaded", init);
 })();
 
-
 // load picker + modal account selection (hydrate desde MT_DATA)
-(function(){
-  const MODAL_ID = 'changeSubcriptionModal';
-  const PICKER_SRC = (window.MT_ASSETS && MT_ASSETS.picker_src) || '/wp-content/themes/megatrader-addons/assets/js/mt-account-picker.js';
-  const FALLBACK_LOGO = '/wp-content/themes/megatrader-addons/assets/svg/icon_megatrader.svg';
-  const ric = window.requestIdleCallback || function(cb){ return setTimeout(()=>cb({didTimeout:false,timeRemaining:()=>0}), 1); };
+(function () {
+  const MODAL_ID = "changeSubcriptionModal";
+  const PICKER_SRC =
+    (window.MT_ASSETS && MT_ASSETS.picker_src) ||
+    "/wp-content/themes/megatrader-addons/assets/js/mt-account-picker.js";
+  const FALLBACK_LOGO =
+    "/wp-content/themes/megatrader-addons/assets/svg/icon_megatrader.svg";
+  const ric =
+    window.requestIdleCallback ||
+    function (cb) {
+      return setTimeout(
+        () => cb({ didTimeout: false, timeRemaining: () => 0 }),
+        1
+      );
+    };
 
   // ---- Cookie helpers ----
-  function getLastAccountKey(){
-    try{
-      var uid = (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) || '';
-      return 'mt:lastAccountId' + (uid ? ':'+String(uid) : '');
-    }catch(_){ return 'mt:lastAccountId'; }
+  function getLastAccountKey() {
+    try {
+      var uid =
+        (window.MT_DATA && (MT_DATA.userId || MT_DATA.user || MT_DATA.uid)) ||
+        "";
+      return "mt:lastAccountId" + (uid ? ":" + String(uid) : "");
+    } catch (_) {
+      return "mt:lastAccountId";
+    }
   }
-  function loadLastAccountId(){
-    try{
-      var key = getLastAccountKey().replace(/[-[\]/{}()*+?.\\^$|]/g,'\\$&');
-      var m = document.cookie.match(new RegExp('(?:^|;)\\s*'+key+'=([^;]+)'));
-      return m ? decodeURIComponent(m[1]) : '';
-    }catch(_){ return ''; }
+  function loadLastAccountId() {
+    try {
+      var key = getLastAccountKey().replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&");
+      var m = document.cookie.match(
+        new RegExp("(?:^|;)\\s*" + key + "=([^;]+)")
+      );
+      return m ? decodeURIComponent(m[1]) : "";
+    } catch (_) {
+      return "";
+    }
   }
 
   // ---- Util ----
-  function esc(s){return String(s||'')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-
-  function normalizeStatus(s){
-    var st = String(s||'').trim().toUpperCase();
-    return (st === 'ACTIVATION_PENDING') ? 'PENDING_ACTIVATION' : st;
+  function esc(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
-  function statusToBucket(st){
+
+  function normalizeStatus(s) {
+    var st = String(s || "")
+      .trim()
+      .toUpperCase();
+    return st === "ACTIVATION_PENDING" ? "PENDING_ACTIVATION" : st;
+  }
+  function statusToBucket(st) {
     st = normalizeStatus(st);
-    if (st==='ACTIVE') return 'ACTIVE';
-    if (st==='PENDING_ACTIVATION') return 'PENDING_ACTIVATION';
-    if (st==='PASSED' || st==='UPGRADED') return 'PASSED';
-    if (st==='BREACHED') return 'BREACHED';
-    return 'ACTIVE';
+    if (st === "ACTIVE") return "ACTIVE";
+    if (st === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
+    if (st === "PASSED" || st === "UPGRADED") return "PASSED";
+    if (st === "BREACHED") return "BREACHED";
+    return "ACTIVE";
   }
 
   // ---- Render del grid ----
-  function renderGridFromData(accounts, currentId){
-    const grid = document.getElementById('mt-accounts-grid');
+  function renderGridFromData(accounts, currentId) {
+    const grid = document.getElementById("mt-accounts-grid");
     if (!grid) return;
-    if (!accounts || !accounts.length){
-      grid.innerHTML = '<p class="text-a8a29e m-3"><em>No accounts found for this user.</em></p>';
-      grid.removeAttribute('data-grid-empty');
+    if (!accounts || !accounts.length) {
+      grid.innerHTML =
+        '<p class="text-a8a29e m-3"><em>No accounts found for this user.</em></p>';
+      grid.removeAttribute("data-grid-empty");
       return;
     }
-    let html = '';
-    for (const a of accounts){
-      const aid = String(a.id||'');
-      const platId = String(a.accountId||'');
-      const isCur = aid === String(currentId||'');
-      const cls = 'subscription-card position-relative flex-column gap-2'+(isCur?' active':'');
-      const statusRaw = String(a.status||'').trim();
-      const statusKey = statusRaw.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-      const dotClass  = 'dot-status-'+statusKey;
-      const logo = String(a.logo||'') || FALLBACK_LOGO;
+    let html = "";
+    for (const a of accounts) {
+      const aid = String(a.id || "");
+      const platId = String(a.accountId || "");
+      const isCur = aid === String(currentId || "");
+      const cls =
+        "subscription-card position-relative flex-column gap-2" +
+        (isCur ? " active" : "");
+      const statusRaw = String(a.status || "").trim();
+      const statusKey = statusRaw.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const dotClass = "dot-status-" + statusKey;
+      const logo = String(a.logo || "") || FALLBACK_LOGO;
 
       html += `
       <div class="${cls}" role="button"
         data-account-id="${esc(aid)}"
         data-status="${esc(statusRaw)}"
         data-platform-account-id="${esc(platId)}"
-        data-size="${esc(a.size||'')}"
-        data-reset-id="${esc(a.resetProductId||'')}"
-        data-activation-id="${esc(a.activationProductId||'')}"
-        data-name="${esc(a.name||'Account')}"
-        data-account-type="${esc(a.programTypeText||'')}"
+        data-size="${esc(a.size || "")}"
+        data-reset-id="${esc(a.resetProductId || "")}"
+        data-activation-id="${esc(a.activationProductId || "")}"
+        data-name="${esc(a.name || "Account")}"
+        data-account-type="${esc(a.programTypeText || "")}"
         data-logo="${esc(logo)}"
-        data-main-id="${esc(a.mainProductId||'')}"
-        data-order-id="${esc(a.order||0)}"
-        data-has-subscription="${(a.subscriptionId||a.hasSubscription)?'1':'0'}"
-        data-subscription-id="${esc(a.subscriptionId||'')}">
-        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${isCur?'':'display:none;'}">
+        data-main-id="${esc(a.mainProductId || "")}"
+        data-order-id="${esc(a.order || 0)}"
+        data-has-subscription="${
+          a.subscriptionId || a.hasSubscription ? "1" : "0"
+        }"
+        data-subscription-id="${esc(a.subscriptionId || "")}">
+        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${
+          isCur ? "" : "display:none;"
+        }">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" fill="#FFB34A" />
             <path d="M10.6 16.6L17.65 9.55L16.25 8.15L10.6 13.8L7.75 10.95L6.35 12.35L10.6 16.6Z" fill="black"/>
@@ -2874,8 +2857,14 @@ if (document.readyState === "loading") {
         </div>
         <div class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
           <div class="logo-container position-relative d-inline-block">
-            <img src="${esc(logo)}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(FALLBACK_LOGO)}'">
-            <div class="dot-indicator ${esc(dotClass)}" title="${esc(statusRaw)}" style="position:absolute;right:-1px;bottom:-1px;">
+            <img src="${esc(
+              logo
+            )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
+        FALLBACK_LOGO
+      )}'">
+            <div class="dot-indicator ${esc(dotClass)}" title="${esc(
+        statusRaw
+      )}" style="position:absolute;right:-1px;bottom:-1px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <circle cx="6" cy="6" r="6" fill="white" />
                 <circle cx="6" cy="6" r="4" fill="currentColor" />
@@ -2885,151 +2874,183 @@ if (document.readyState === "loading") {
         </div>
         <div class="subscription-card__body text-center">
           <div class="subscription-card__name fw-medium text-base text-white">
-            ${esc((a.size||'')+' '+(a.name||'Account'))}
+            ${esc((a.size || "") + " " + (a.name || "Account"))}
           </div>
-          <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">#${esc(platId || aid)}</div>
-          ${(a.programTypeText && a.programTypeClass)
-            ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(a.programTypeClass)}">${esc(a.programTypeText)}</div>` : ''}
+          <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">#${esc(
+            platId || aid
+          )}</div>
+          ${
+            a.programTypeText && a.programTypeClass
+              ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(
+                  a.programTypeClass
+                )}">${esc(a.programTypeText)}</div>`
+              : ""
+          }
         </div>
       </div>`;
     }
     grid.innerHTML = html;
-    grid.removeAttribute('data-grid-empty');
-    ric(()=>{ try{ window.mtTooltips && window.mtTooltips.refresh(grid); }catch(_){}});
+    grid.removeAttribute("data-grid-empty");
+    ric(() => {
+      try {
+        window.mtTooltips && window.mtTooltips.refresh(grid);
+      } catch (_) {}
+    });
 
-    markActiveInGrid(); 
+    markActiveInGrid();
     forceFilterForActive();
     enableSelectIfAny();
   }
 
   // ---- Helpers de UI ----
-  function cssEscapePoly(s){ return String(s).replace(/[^a-zA-Z0-9_\-]/g,'\\$&'); }
-  const cssEscape = (window.CSS && CSS.escape) ? CSS.escape : cssEscapePoly;
+  function cssEscapePoly(s) {
+    return String(s).replace(/[^a-zA-Z0-9_\-]/g, "\\$&");
+  }
+  const cssEscape = window.CSS && CSS.escape ? CSS.escape : cssEscapePoly;
 
-  function markActiveInGrid(){
-    var grid = document.getElementById('mt-accounts-grid');
+  function markActiveInGrid() {
+    var grid = document.getElementById("mt-accounts-grid");
     if (!grid) return;
 
     var cookieId = loadLastAccountId();
-    var currentId = (cookieId || (window.MT_DATA && MT_DATA.currentId) || '');
-    if (!currentId){
-      var opener = document.querySelector('[data-bs-target="#'+MODAL_ID+'"][data-account-id]');
-      if (opener) currentId = opener.getAttribute('data-account-id') || '';
+    var currentId = cookieId || (window.MT_DATA && MT_DATA.currentId) || "";
+    if (!currentId) {
+      var opener = document.querySelector(
+        '[data-bs-target="#' + MODAL_ID + '"][data-account-id]'
+      );
+      if (opener) currentId = opener.getAttribute("data-account-id") || "";
     }
 
-    grid.querySelectorAll('.subscription-card.active').forEach(function(el){ el.classList.remove('active'); });
-    grid.querySelectorAll('.subscription-card .checkmark-icon').forEach(function(el){ el.style.display = 'none'; });
+    grid.querySelectorAll(".subscription-card.active").forEach(function (el) {
+      el.classList.remove("active");
+    });
+    grid
+      .querySelectorAll(".subscription-card .checkmark-icon")
+      .forEach(function (el) {
+        el.style.display = "none";
+      });
 
-    if (currentId){
-      var card = grid.querySelector('.subscription-card[data-account-id="'+cssEscape(currentId)+'"]');
-      if (card){
-        card.classList.add('active');
-        var ck = card.querySelector('.checkmark-icon');
-        if (ck) ck.style.display = 'block';
+    if (currentId) {
+      var card = grid.querySelector(
+        '.subscription-card[data-account-id="' + cssEscape(currentId) + '"]'
+      );
+      if (card) {
+        card.classList.add("active");
+        var ck = card.querySelector(".checkmark-icon");
+        if (ck) ck.style.display = "block";
       }
     }
   }
 
-  function forceFilterForActive(){
-    var grid = document.getElementById('mt-accounts-grid');
+  function forceFilterForActive() {
+    var grid = document.getElementById("mt-accounts-grid");
     if (!grid) return;
-    var active = grid.querySelector('.subscription-card.active');
-    var wantBucket = 'ACTIVE';
-    if (active){
-      var st = active.getAttribute('data-status') || '';
+    var active = grid.querySelector(".subscription-card.active");
+    var wantBucket = "ACTIVE";
+    if (active) {
+      var st = active.getAttribute("data-status") || "";
       wantBucket = statusToBucket(st);
     } else {
-      var sel = document.getElementById('mt-acc-filter');
-      wantBucket = (sel && sel.value) ? sel.value : 'ACTIVE';
+      var sel = document.getElementById("mt-acc-filter");
+      wantBucket = sel && sel.value ? sel.value : "ACTIVE";
     }
 
-    var map = {ACTIVE:'Active', BREACHED:'Breached', PASSED:'Passed', PENDING_ACTIVATION:'Pending activation'};
-    var lbl = document.getElementById('mt-acc-filter-label');
-    if (lbl) lbl.textContent = map[wantBucket] || 'Active';
+    var map = {
+      ACTIVE: "Active",
+      BREACHED: "Breached",
+      PASSED: "Passed",
+      PENDING_ACTIVATION: "Pending activation",
+    };
+    var lbl = document.getElementById("mt-acc-filter-label");
+    if (lbl) lbl.textContent = map[wantBucket] || "Active";
 
-    grid.querySelectorAll('.subscription-card').forEach(function(card){
-      var st = statusToBucket(card.getAttribute('data-status')||'');
+    grid.querySelectorAll(".subscription-card").forEach(function (card) {
+      var st = statusToBucket(card.getAttribute("data-status") || "");
       var match =
-        (wantBucket==='ACTIVE' && st==='ACTIVE') ||
-        (wantBucket==='BREACHED' && st==='BREACHED') ||
-        (wantBucket==='PASSED' && st==='PASSED') ||
-        (wantBucket==='PENDING_ACTIVATION' && st==='PENDING_ACTIVATION');
-      if (match){
-        card.classList.add('d-flex');
-        card.classList.remove('d-none');
-        card.style.removeProperty('display');
+        (wantBucket === "ACTIVE" && st === "ACTIVE") ||
+        (wantBucket === "BREACHED" && st === "BREACHED") ||
+        (wantBucket === "PASSED" && st === "PASSED") ||
+        (wantBucket === "PENDING_ACTIVATION" && st === "PENDING_ACTIVATION");
+      if (match) {
+        card.classList.add("d-flex");
+        card.classList.remove("d-none");
+        card.style.removeProperty("display");
       } else {
-        card.classList.remove('d-flex');
-        card.classList.add('d-none');
-        card.style.setProperty('display','none');
+        card.classList.remove("d-flex");
+        card.classList.add("d-none");
+        card.style.setProperty("display", "none");
       }
     });
   }
 
-  function enableSelectIfAny(){
-    var grid = document.getElementById('mt-accounts-grid');
-    var btn  = document.getElementById('select-subscription-btn');
+  function enableSelectIfAny() {
+    var grid = document.getElementById("mt-accounts-grid");
+    var btn = document.getElementById("select-subscription-btn");
     if (!grid || !btn) return;
-    var hasAny = !!grid.querySelector('.subscription-card:not(.d-none)');
+    var hasAny = !!grid.querySelector(".subscription-card:not(.d-none)");
     btn.disabled = !hasAny;
-    btn.classList.toggle('disabled', !hasAny);
+    btn.classList.toggle("disabled", !hasAny);
   }
 
   // ---- Hidratación al abrir ----
-  function hydrateOnOpen(){
-    const grid = document.getElementById('mt-accounts-grid');
+  function hydrateOnOpen() {
+    const grid = document.getElementById("mt-accounts-grid");
     if (!grid || !grid.dataset.gridEmpty) return;
     const data = window.MT_DATA || {};
     const accounts = data.accounts || [];
 
     var cur = loadLastAccountId();
-    if (!cur){
-      cur = data.currentId || '';
+    if (!cur) {
+      cur = data.currentId || "";
     } else {
-      var exists = accounts.some(a => String(a.id||'') === String(cur));
-      if (!exists) cur = data.currentId || '';
+      var exists = accounts.some((a) => String(a.id || "") === String(cur));
+      if (!exists) cur = data.currentId || "";
     }
 
-    performance.mark('mt-hydrate-start');
-    ric(()=>{
+    performance.mark("mt-hydrate-start");
+    ric(() => {
       renderGridFromData(accounts, cur);
-      performance.mark('mt-hydrate-end');
-      performance.measure('mt-hydrate', 'mt-hydrate-start','mt-hydrate-end');
-      const m = performance.getEntriesByName('mt-hydrate').pop();
-      if (m && m.duration && m.duration > 0) console.log('[MT] hydrate modal ms:', Math.round(m.duration));
+      performance.mark("mt-hydrate-end");
+      performance.measure("mt-hydrate", "mt-hydrate-start", "mt-hydrate-end");
+      const m = performance.getEntriesByName("mt-hydrate").pop();
+      if (m && m.duration && m.duration > 0)
+        console.log("[MT] hydrate modal ms:", Math.round(m.duration));
     });
   }
 
   // ---- Carga on-demand del picker ----
   let loadingPicker = false;
-  function loadPickerOnce(cb){
-    if (window.mtPicker) { cb && cb(); return; }
+  function loadPickerOnce(cb) {
+    if (window.mtPicker) {
+      cb && cb();
+      return;
+    }
     if (loadingPicker) return;
     loadingPicker = true;
-    const s = document.createElement('script');
-    s.id = 'mt-picker-js';
+    const s = document.createElement("script");
+    s.id = "mt-picker-js";
     s.src = PICKER_SRC;
     s.async = true;
-    s.onload = function(){
+    s.onload = function () {
       loadingPicker = false;
       if (window.mtPreloader) window.mtPreloader.hide();
       cb && cb();
     };
-    s.onerror = function(){
+    s.onerror = function () {
       loadingPicker = false;
       if (window.mtPreloader) window.mtPreloader.hide();
-      console.error('[MT] failed to load picker:', PICKER_SRC);
+      console.error("[MT] failed to load picker:", PICKER_SRC);
     };
     if (window.mtPreloader) window.mtPreloader.show();
     document.head.appendChild(s);
   }
 
   // abrir por click del opener
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('[data-bs-target="#'+MODAL_ID+'"]');
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest('[data-bs-target="#' + MODAL_ID + '"]');
     if (!btn) return;
     hydrateOnOpen();
-    loadPickerOnce(function(){
+    loadPickerOnce(function () {
       markActiveInGrid();
       forceFilterForActive();
       enableSelectIfAny();
@@ -3038,10 +3059,10 @@ if (document.readyState === "loading") {
 
   // abrir por otros triggers
   const modal = document.getElementById(MODAL_ID);
-  if (modal){
-    modal.addEventListener('show.bs.modal', function(){
+  if (modal) {
+    modal.addEventListener("show.bs.modal", function () {
       hydrateOnOpen();
-      loadPickerOnce(function(){
+      loadPickerOnce(function () {
         markActiveInGrid();
         forceFilterForActive();
         enableSelectIfAny();
@@ -3051,49 +3072,46 @@ if (document.readyState === "loading") {
 
   // ======= Seed inicial breach + texto =========
   function seedBreachFromOpener() {
-    var opener = document.querySelector('[data-bs-target="#' + MODAL_ID + '"][data-account-id]');
-    var breach = document.getElementById('mt-breach-alert-modal');
+    var opener = document.querySelector(
+      '[data-bs-target="#' + MODAL_ID + '"][data-account-id]'
+    );
+    var breach = document.getElementById("mt-breach-alert-modal");
     if (!opener || !breach) return;
-    var accId   = opener.getAttribute('data-account-id') || '';
-    var mainId  = opener.getAttribute('data-main-id') || '';
-    var resetId = opener.getAttribute('data-reset-id') || '';
-    var accType = opener.getAttribute('data-account-type') || '';
-    if (accId)   breach.setAttribute('data-account-id', accId);
-    if (mainId)  breach.setAttribute('data-main-id', mainId);
-    if (resetId) breach.setAttribute('data-reset-id', resetId);
-    if (accType) breach.setAttribute('data-account-type', accType);
+    var accId = opener.getAttribute("data-account-id") || "";
+    var mainId = opener.getAttribute("data-main-id") || "";
+    var resetId = opener.getAttribute("data-reset-id") || "";
+    var accType = opener.getAttribute("data-account-type") || "";
+    if (accId) breach.setAttribute("data-account-id", accId);
+    if (mainId) breach.setAttribute("data-main-id", mainId);
+    if (resetId) breach.setAttribute("data-reset-id", resetId);
+    if (accType) breach.setAttribute("data-account-type", accType);
     syncBreachText();
   }
   function syncBreachText() {
-    var breach = document.getElementById('mt-breach-alert-modal');
-    var span   = document.getElementById('mtbreach-desc');
+    var breach = document.getElementById("mt-breach-alert-modal");
+    var span = document.getElementById("mtbreach-desc");
     if (!breach || !span) return;
-    var tFunded = breach.getAttribute('data-funded-title') || '';
-    var tEval   = breach.getAttribute('data-evaluation-title') || '';
-    var accType = (breach.getAttribute('data-account-type') || '').trim();
+    var tFunded = breach.getAttribute("data-funded-title") || "";
+    var tEval = breach.getAttribute("data-evaluation-title") || "";
+    var accType = (breach.getAttribute("data-account-type") || "").trim();
     if (!accType) return;
-    span.textContent = (accType === 'FUNDED') ? tFunded : tEval;
+    span.textContent = accType === "FUNDED" ? tFunded : tEval;
   }
 
-  document.addEventListener('mt:accountSelected', seedBreachFromOpener);
-  document.addEventListener('mt:hasSubscriptionChanged', syncBreachText);
+  document.addEventListener("mt:accountSelected", seedBreachFromOpener);
+  document.addEventListener("mt:hasSubscriptionChanged", syncBreachText);
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      seedBreachFromOpener();
-      syncBreachText();
-    }, { once: true });
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+        seedBreachFromOpener();
+        syncBreachText();
+      },
+      { once: true }
+    );
   } else {
     seedBreachFromOpener();
     syncBreachText();
   }
 })();
-
-
-
-
-
-
-
-
-

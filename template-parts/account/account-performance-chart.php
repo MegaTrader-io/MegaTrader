@@ -1,41 +1,47 @@
 <?php
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH'))
+  exit;
 
-if (!isset($args) || !is_array($args) || empty($args)) return;
+if (!isset($args) || !is_array($args) || empty($args))
+  return;
 
 $chart = isset($args['chart']) && is_array($args['chart']) ? $args['chart'] : [];
-$accountId    = $chart['accountId'] ?? (isset($args['meta']['accountId']) ? (string)$args['meta']['accountId'] : '');
-$chart_title  = $chart['title'] ?? (($args['title'] ?? '') ?: 'Account');
-$plan_revenue = $chart['plan_revenue'] ?? ($chart['series'] ?? []); // [{date,value}] o [{x,y}]
-$upper_bound  = $chart['upper_bound'] ?? null; // Profit Target
-$lower_bound  = $chart['lower_bound'] ?? null; // Max Drawdown
+$accountId = $chart['accountId'] ?? (isset($args['meta']['accountId']) ? (string) $args['meta']['accountId'] : '');
+$chart_title = $chart['title'] ?? (($args['title'] ?? '') ?: 'Account');
+$plan_revenue = $chart['plan_revenue'] ?? ($chart['series'] ?? []);
+$max_drawdown = is_numeric($chart['max_drawdown'] ?? null) ? (float) $chart['max_drawdown'] : null;
+$profit_target_eval = is_numeric($chart['profit_target'] ?? null) ? (float) $chart['profit_target'] : null;
+$funded_target_amount = is_numeric($chart['funded_target_amount'] ?? null) ? (float) $chart['funded_target_amount'] : null;
+$label = $chart['label'] ?? ($args['label'] ?? ($args['meta']['label'] ?? ''));
+
 $periods = $chart['periods'] ?? [
-  ['value' => 7,  'text' => 'LAST 7 DAYS'],
+  ['value' => 7, 'text' => 'LAST 7 DAYS'],
   ['value' => 14, 'text' => 'LAST 14 DAYS'],
   ['value' => 30, 'text' => 'LAST 30 DAYS'],
 ];
 
-// Normaliza la serie para el JS: {date: 'YYYY-MM-DD', value: float}
+$isFunded = function_exists('mt_is_funded') ? mt_is_funded((string) $label) : false;
+
+$effective_target = $isFunded ? $funded_target_amount : $profit_target_eval;
+
+
 $js_series = [];
 if (is_array($plan_revenue)) {
   foreach ($plan_revenue as $r) {
-    $d = substr((string)($r['date'] ?? $r['x'] ?? ''), 0, 10);
-    $v = isset($r['value']) ? (float)$r['value'] : (isset($r['y']) ? (float)$r['y'] : null);
-    if ($d && $v !== null) $js_series[] = ['date' => $d, 'value' => $v];
+    $d = substr((string) ($r['date'] ?? $r['x'] ?? ''), 0, 10);
+    $v = isset($r['value']) ? (float) $r['value'] : (isset($r['y']) ? (float) $r['y'] : null);
+    if ($d && $v !== null)
+      $js_series[] = ['date' => $d, 'value' => $v];
   }
 }
 
 $MIN_POINTS = 7;
 $points_count = count($js_series);
-$has_enough_points = ($points_count >= $MIN_POINTS);
-$card_class = 'account-performance-chart mt-card' . ($has_enough_points ? '' : ' is-empty');
-
-$overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/graph-empty.svg';
+$has_enough = ($points_count >= $MIN_POINTS);
+$card_class = 'account-performance-chart mt-card' . ($has_enough ? '' : ' is-empty');
 ?>
-
-<!-- HTML -->
 <div class="<?= esc_attr($card_class) ?>" data-account-id="<?php echo esc_attr($accountId); ?>">
-  <div class="account-performance-chart__overlay" <?= $has_enough_points ? 'hidden' : '' ?>>
+  <div class="account-performance-chart__overlay" <?= $has_enough ? 'hidden' : '' ?>>
     <span class="apc-overlay__text">
       <?= esc_html(Label::META_ACCOUNT_OVERVIEW['account_chart_overlay_no_data']); ?>
     </span>
@@ -49,250 +55,212 @@ $overlay_img = trailingslashit(get_stylesheet_directory_uri()) . 'assets/img/gra
         </div>
       </div>
 
-      <select id="lastDaysSelect" class="form-select w-fit w-sm-100" name="last-days-select" <?= $has_enough_points ? '' : 'disabled' ?>>
+      <select id="lastDaysSelect" class="form-select w-fit w-sm-100" name="last-days-select" <?= $has_enough ? '' : 'disabled' ?>>
         <?php foreach ($periods as $period): ?>
-          <option value="<?= (int)$period['value']; ?>"><?= esc_html($period['text']); ?></option>
+          <option value="<?= (int) $period['value']; ?>"><?= esc_html($period['text']); ?></option>
         <?php endforeach; ?>
       </select>
     </div>
   </div>
 
   <div class="account-performance-chart__header">
-    <div id="account-performance-chart" style="margin-left: -20px;"></div>
+    <div class="mt-account-performance-chart-content" data-min-points="<?= (int) $MIN_POINTS; ?>"
+      data-points="<?= (int) $points_count; ?>">
+      <div id="account-performance-chart" style="height:505px;"></div>
+    </div>
   </div>
 </div>
 
-<!-- Estilos del contenido del tooltip (no tocan el contenedor de Apex) -->
-<style>
-.apexcharts-tooltip .mt-apex-tip{
-  background:#111; color:#fff; padding:8px 10px; border-radius:8px;
-  font-size:12px; line-height:1.3; min-width:200px;
-}
-.mt-apex-tip__date{ opacity:.8; margin-bottom:4px }
-.mt-apex-tip__row{ display:flex; justify-content:space-between; gap:12px; margin-top:4px }
-.mt-apex-tip__marker{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-2px }
-</style>
 
 <script>
-  // ===== Datos base desde PHP =====
-  const RAW_SERIES   = <?php echo wp_json_encode($js_series); ?>; // [{date,value}]
-  const PERIODS      = <?php echo wp_json_encode($periods); ?>;
-  const UPPER_BOUND  = <?php echo ($upper_bound !== null) ? json_encode((float)$upper_bound) : 'null'; ?>;
-  const LOWER_BOUND  = <?php echo ($lower_bound !== null) ? json_encode((float)$lower_bound) : 'null'; ?>;
-  const MIN_POINTS   = <?php echo (int)$MIN_POINTS; ?>;
+(function () {
+  // ===== Datos desde PHP =====
+  const RAW_SERIES  = <?php echo wp_json_encode($js_series, JSON_UNESCAPED_SLASHES); ?>; // [{date,value}]
+  const PERIODS     = <?php echo wp_json_encode($periods, JSON_UNESCAPED_SLASHES); ?>;
+  const PASS_LEVEL  = <?php echo ($effective_target !== null) ? json_encode((float) $effective_target) : 'null'; ?>;
+  const MAX_LOSS    = <?php echo ($max_drawdown !== null) ? json_encode((float) $max_drawdown) : 'null'; ?>;
+  const MIN_POINTS  = <?php echo (int) $MIN_POINTS; ?>;
 
-  // ===== Lazy-load de ApexCharts =====
-  let __apexPromise;
-  function loadApex() {
-    if (window.ApexCharts) return Promise.resolve(window.ApexCharts);
-    if (__apexPromise)     return __apexPromise;
-    __apexPromise = new Promise(function(resolve, reject){
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/apexcharts';
-      s.async = true; s.defer = true;
-      s.onload = () => resolve(window.ApexCharts);
-      s.onerror = () => reject(new Error('Failed to load ApexCharts'));
-      document.head.appendChild(s);
-    });
-    return __apexPromise;
-  }
+  const container = document.getElementById('account-performance-chart');
+  const rootWrap  = container?.closest('.mt-account-performance-chart-content');
+  const overlayEl = document.querySelector('.account-performance-chart__overlay');
+  const selectEl  = document.getElementById('lastDaysSelect');
+  if (!container) return;
 
-  // ===== Utilidades =====
-  const constLine = (val, len) => (Number.isFinite(val) ? Array(len).fill(val) : Array(len).fill(null));
-  const toMoney = (v) => `$ ${Number(v).toFixed(2)}`;
-  function hasEnoughPoints(arr){ return Array.isArray(arr) && arr.length >= MIN_POINTS; }
-
-  function setOverlay(shouldHide){
-    const card = document.querySelector('.account-performance-chart.mt-card');
-    const ov   = document.querySelector('.account-performance-chart__overlay');
-    if (!card || !ov) return;
-    if (shouldHide) { ov.hidden = true; card.classList.remove('is-empty'); }
-    else            { ov.hidden = false; card.classList.add('is-empty');   }
-  }
-
-  function hardClean(container) {
-    try { if (window.__mtChartInstance?.destroy) window.__mtChartInstance.destroy(); } catch(e){}
-    window.__mtChartInstance = null;
-    (container || document).querySelectorAll(
-      '.apexcharts-tooltip,.apexcharts-xcrosshairs,.apexcharts-ycrosshairs,.apexcharts-canvas'
-    ).forEach(n => n.remove());
-  }
-
-  function hideTip(){
-  const t = document.querySelector('.apexcharts-tooltip');
-  if (!t) return;
-  t.style.opacity = 0;
-  t.style.visibility = 'hidden';
-  t.style.transform = 'translate3d(-9999px,-9999px,0)';
-}
-
-  function customTip({ series, dataPointIndex }) {
-    const d  = (window.__DATE_LABELS__?.[dataPointIndex]) || '';
-    const val= (series?.[0]?.[dataPointIndex] ?? null);
-    const ub = window.__UB__; const lb = window.__LB__;
-    return `
-      <div class="mt-apex-tip">
-        <div class="mt-apex-tip__date"><b>Date:</b> ${d}</div>
-        <div class="mt-apex-tip__row"><span><i class="mt-apex-tip__marker" style="background:#FFE7B8"></i>Current Balance:</span><b>${val!=null?toMoney(val):'-'}</b></div>
-        ${Number.isFinite(ub)?`<div class="mt-apex-tip__row"><span><i class="mt-apex-tip__marker" style="background:#24b8a6"></i>Profit Target:</span><b>${toMoney(ub)}</b></div>`:''}
-        ${Number.isFinite(lb)?`<div class="mt-apex-tip__row"><span><i class="mt-apex-tip__marker" style="background:#FF4D4D"></i>Max Drawdown:</span><b>${toMoney(lb)}</b></div>`:''}
-      </div>`;
-  }
-
-  function getChartConfig(){
-    return {
-      height: '100%',
-      chart: {
-        toolbar: { show: false },
-        parentHeightOffset: 0,
-        animations: { enabled: true },
-        events: { mounted(){ setTimeout(()=>{ try{ window.__mtChartInstance?.updateOptions({}, false, true);}catch(e){} },0); } }
-      },
-      dataLabels: { enabled: false },
-      colors: ["#FFE7B8", "#24b8a6", "#FF4D4D"],
-      stroke: { lineCap: "round", curve: "smooth", width: [2,2,2] },
-      markers:{ size:[0,5,5], colors:["#FF4D4D","#24b8a6"], strokeColors:'transparent', strokeWidth:0 },
-      legend: { show: false },
-      xaxis: { categories: [], axisTicks:{show:false}, axisBorder:{show:false},
-        labels:{ style:{ colors:"#A8A29E", fontSize:"12px", fontFamily:"inherit", fontWeight:400 } } },
-      yaxis: { labels:{ formatter:(v)=>`$ ${Number(v).toFixed(2)}`, style:{ colors:"#A8A29E", fontSize:"12px", fontFamily:"inherit", fontWeight:400 } } },
-      grid:  { show:true, borderColor:"#374151", strokeDashArray:5 },
-      fill:  { opacity:0.8 },
-      // IMPORTANTE: follower externo requiere followCursor:false
-      tooltip:{ enabled:true, shared:false, followCursor:false, intersect:false, fixed:{enabled:false}, custom: customTip }
-    };
-  }
-
-  function sliceData(series, days) {
-    const n = Math.max(1, parseInt(days || series.length || 7));
-    const slice = series.slice(-n);
-    const dateLabels = slice.map(p => p.date);
-    const categories = Array.from({ length: slice.length }, (_, i) => i + 1);
-    const main = slice.map(p => Number(p.value));
-    return { categories, dateLabels, main };
-  }
-
-  function getOptions(series, days){
-    const s = sliceData(series, days);
-    window.__DATE_LABELS__ = s.dateLabels;
-    const cfg = getChartConfig();
-    cfg.xaxis.categories = s.categories;
-    cfg.series = [
-      { name: "Current Balance", data: s.main },
-      { name: "Profit Target",   data: constLine(window.__UB__, s.categories.length) },
-      { name: "Max Drawdown",    data: constLine(window.__LB__, s.categories.length) },
+  // ===== Carga LWC =====
+  function loadLWC() {
+    if (window.LightweightCharts) return Promise.resolve();
+    if (window.__LWC_LOADING__)   return window.__LWC_LOADING__;
+    const urls = [
+      "https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js",
+      "https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"
     ];
-    return cfg;
+    window.__LWC_LOADING__ = new Promise((res, rej) => {
+      let i = 0; (function next(){
+        const u = urls[i++]; if (!u) return rej(new Error("CDNs failed"));
+        const s = document.createElement('script'); s.src = u; s.async = true;
+        s.onload = () => res(); s.onerror = next; document.head.appendChild(s);
+      })();
+    });
+    return window.__LWC_LOADING__;
   }
 
-  function attachInlineTipFollower(root) {
-    const base   = root.querySelector('.apexcharts-inner') || root;
-    const target = root.querySelector('.apexcharts-svg') || root.querySelector('.apexcharts-canvas') || root;
-    const tipEl  = () => root.querySelector('.apexcharts-tooltip');
-    if (!target) return;
-    let raf = 0, want = { x:-9999, y:-9999, mx:0 };
-    function render(){
-      raf = 0;
-      const tip = tipEl(); if (!tip) return;
-      const tw = tip.offsetWidth || 240, th = tip.offsetHeight || 60;
-      const r  = base.getBoundingClientRect();
-      let x = Math.max(6, Math.min(want.x, r.width - tw - 6));
-      let y = Math.max(6, Math.min(want.y, r.height - th - 6));
-      tip.classList.remove('mt-tip-hidden');
-      tip.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
-      tip.style.opacity = 1; tip.style.visibility = 'visible';
-      const arrowX = Math.max(12, Math.min(want.mx - x, tw - 12));
-      tip.style.setProperty('--arrow-x', Math.round(arrowX) + 'px');
-    }
-    function queue(nx,ny,mx){ want.x=nx; want.y=ny; want.mx=mx; if(!raf) raf=requestAnimationFrame(render); }
-    function pos(ev){
-      const r = base.getBoundingClientRect();
-      const tip = tipEl(); const th = tip ? (tip.offsetHeight||60) : 60; const tw = tip ? (tip.offsetWidth||240) : 240;
-      const mx = ev.clientX - r.left, my = ev.clientY - r.top;
-      return { x: mx - tw/2, y: my - th - 14, mx };
-    }
-    function onMove(ev){ const p = pos(ev); queue(p.x,p.y,p.mx); }
-    function onEnter(ev){ const p = pos(ev); queue(p.x,p.y,p.mx); }
-    function onLeave(){ const tip = tipEl(); if (!tip) return; tip.classList.add('mt-tip-hidden'); tip.style.transform='translate3d(-9999px,-9999px,0)'; tip.style.opacity=0; tip.style.visibility='hidden'; }
-    target.addEventListener('pointermove', onMove, {passive:true});
-    target.addEventListener('mousemove',  onMove, {passive:true});
-    target.addEventListener('pointerenter', onEnter,{passive:true});
-    target.addEventListener('mouseenter',   onEnter,{passive:true});
-    target.addEventListener('pointerleave', onLeave);
-    target.addEventListener('mouseleave',   onLeave);
-    onLeave();
-    requestAnimationFrame(()=>{ const r = base.getBoundingClientRect(); onEnter({ clientX:r.left+24, clientY:r.top+24 }); });
+  // ===== Utils =====
+  const COLORS = { balance:'#FFE7B8', profit:'#24b8a6', drawdown:'#FF4D4D' };
+  const toSecOrIso = (t) => (typeof t === 'string') ? t : (isFinite(Date.parse(t)) ? t : null);
+  function fmtMoney(n){
+    const sign = n < 0 ? '-' : ''; const abs = Math.abs(n);
+    if (abs >= 1000){ const k = abs/1000; const num = (Number.isInteger(k)?k.toFixed(0):k.toFixed(2)).replace(/\.?0+$/,''); return `${sign}$${num}k`; }
+    const num = abs.toFixed(2).replace(/\.?0+$/,''); return `${sign}$${num}`;
   }
+  function normSeries(arr){ return (arr||[]).map(p=>{const d=toSecOrIso(p.date); const v=Number(p.value)||0; return d?{time:d,value:v}:null;}).filter(Boolean); }
+  function lastN(data,n){ if(!n||n<=0) return data; return data.slice(-n); }
+  function setOverlayByCount(n){
+    if (!rootWrap || !overlayEl) return;
+    const min = parseInt(rootWrap.getAttribute('data-min-points'),10) || MIN_POINTS;
+    rootWrap.setAttribute('data-points', String(n));
+    const show = n < min;
+    overlayEl.hidden = !show;
+    window.mtOverlay?.toggle?.(rootWrap, show);
+    if (selectEl) selectEl.disabled = show || (selectEl.options.length === 1);
+  }
+  const addDaysISO = (iso, d) => {
+    if (!iso) return iso;
+    const dt = new Date(iso); dt.setDate(dt.getDate()+d);
+    return dt.toISOString().slice(0,10);
+  };
 
-  // ===== Montaje / actualización central =====
-  (function ChartController(){
-    const container = document.getElementById("account-performance-chart");
-    const lastDays  = document.getElementById("lastDaysSelect");
+  loadLWC().then(() => {
+    const all = normSeries(RAW_SERIES);
+    setOverlayByCount(all.length);
 
-    window.__UB__ = UPPER_BOUND;
-    window.__LB__ = LOWER_BOUND;
+    const chart = LightweightCharts.createChart(container, {
+      layout: { background:{ type:'Solid', color:'transparent' }, textColor:'#dcdcdc' },
+      rightPriceScale: { borderVisible:false, scaleMargins:{ top:0.12, bottom:0.10 } },
+      timeScale: { borderVisible:false, rightOffset:0, fixLeftEdge:true, barSpacing:10, timeVisible:false, secondsVisible:false },
+      grid: { vertLines:{ visible:false }, horzLines:{ visible:false } },
+      crosshair: { mode: 1 },
+    });
 
-    function mount(series){
-      if (!series?.length){ setOverlay(false); hardClean(container); return; }
-      setOverlay(hasEnoughPoints(series));
-      const initialDays = lastDays ? lastDays.value : (PERIODS?.[0]?.value || series.length || 7);
-      hardClean(container);
-      loadApex().then(function(ApexCharts){
-        window.__mtChartInstance = new ApexCharts(container, getOptions(series, initialDays));
-        window.__mtChartInstance.render();
-        setTimeout(()=>{ try{ window.__mtChartInstance?.updateOptions({}, false, true);}catch(e){} }, 50);
-        // Si usas follower externo, lo enganchas aquí:
-        attachInlineTipFollower(container?.parentElement || document);
-      }).catch(console.error);
+    const FILL_ON  = {
+      topFillColor1:'rgba(255,231,184,0.32)', topFillColor2:'rgba(255,231,184,0.08)',
+      bottomFillColor1:'rgba(255,231,184,0.18)', bottomFillColor2:'rgba(255,231,184,0.00)',
+    };
+    const FILL_OFF = {
+      topFillColor1:'rgba(0,0,0,0)', topFillColor2:'rgba(0,0,0,0)',
+      bottomFillColor1:'rgba(0,0,0,0)', bottomFillColor2:'rgba(0,0,0,0)',
+    };
+
+    const baseline = chart.addBaselineSeries({
+      baseValue:{ type:'price', price: Number.isFinite(PASS_LEVEL) ? PASS_LEVEL : 0 },
+      priceFormat:{ type:'price', precision:2, minMove:0.01 },
+      topLineColor:COLORS.balance, bottomLineColor:COLORS.balance, ...FILL_ON, lineWidth:1,
+    });
+
+    // series “fantasma” para fijar eje/labels
+    const ghostOpts = { color:'rgba(0,0,0,0)', lineWidth:0, lastValueVisible:false, priceLineVisible:false, crosshairMarkerVisible:false };
+    const ghostPass = Number.isFinite(PASS_LEVEL) ? chart.addLineSeries(ghostOpts) : null;
+    const ghostLoss = Number.isFinite(MAX_LOSS)   ? chart.addLineSeries(ghostOpts) : null;
+
+    let passPL=null, lossPL=null;
+    function setPriceLines(){
+      if (passPL) { baseline.removePriceLine(passPL); passPL=null; }
+      if (lossPL) { baseline.removePriceLine(lossPL); lossPL=null; }
+      if (Number.isFinite(PASS_LEVEL)){
+        passPL = baseline.createPriceLine({ price:PASS_LEVEL, color:COLORS.profit, lineWidth:1, lineStyle:0, axisLabelVisible:true, title:'Profit Target' });
+      }
+      if (Number.isFinite(MAX_LOSS)){
+        lossPL = baseline.createPriceLine({ price:MAX_LOSS, color:COLORS.drawdown, lineWidth:1, lineStyle:0, axisLabelVisible:true, title:'Max Drawdown' });
+      }
     }
 
-    // Lazy la primera vez
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach((e)=>{
-          if (e.isIntersecting){
-            mount(RAW_SERIES);
-            io.unobserve(e.target);
-          }
-        });
-      }, {rootMargin:'200px 0px'});
-      if (container) io.observe(container);
+    let overlayActive = false;
 
-      // Si cambia de cuenta antes de intersectar, montamos ya
-      window.addEventListener('mt:account-switched', function(ev){
-        window.__UB__ = Number.isFinite(ev.detail?.upper) ? ev.detail.upper : UPPER_BOUND;
-        window.__LB__ = Number.isFinite(ev.detail?.lower) ? ev.detail.lower : LOWER_BOUND;
-        mount(ev.detail?.series || []);
-      });
+    function applyData(days){
+      const data = lastN(all, days);
+      baseline.setData(data);
+      setPriceLines();
 
-    } else {
-      // Fallback
-      const ric = window.requestIdleCallback || function(cb){ return setTimeout(cb,1); };
-      ric(()=> mount(RAW_SERIES));
-      window.addEventListener('mt:account-switched', function(ev){
-        window.__UB__ = Number.isFinite(ev.detail?.upper) ? ev.detail.upper : UPPER_BOUND;
-        window.__LB__ = Number.isFinite(ev.detail?.lower) ? ev.detail.lower : LOWER_BOUND;
-        mount(ev.detail?.series || []);
-      });
+      const min = parseInt(rootWrap?.getAttribute('data-min-points') || MIN_POINTS, 10);
+      const few = data.length < min;
+      overlayActive = few;
+
+      // gradiente on/off
+      baseline.applyOptions(few ? FILL_OFF : FILL_ON);
+
+      // mantener labels del tiempo cuando hay pocos puntos
+      const left  = data[0]?.time ?? all[0]?.time;
+      const right = data[data.length-1]?.time ?? all[all.length-1]?.time;
+
+      // Estira el rango con puntos invisibles +/-2 días para forzar ticks abajo
+      if (ghostPass && left && right) {
+        ghostPass.setData([
+          { time:addDaysISO(left, -2),  value:PASS_LEVEL },
+          { time:left,                  value:PASS_LEVEL },
+          { time:right,                 value:PASS_LEVEL },
+          { time:addDaysISO(right, 2),  value:PASS_LEVEL },
+        ]);
+      }
+      if (ghostLoss && left && right) {
+        ghostLoss.setData([
+          { time:addDaysISO(left, -2),  value:MAX_LOSS },
+          { time:right,                 value:MAX_LOSS },
+          { time:addDaysISO(right, 2),  value:MAX_LOSS },
+        ]);
+      }
+
+      // spacing y offsets para que se vean los números del eje inferior
+      chart.timeScale().applyOptions(few
+        ? { barSpacing:18, rightOffset:2, fixLeftEdge:false }
+        : { barSpacing:10, rightOffset:0, fixLeftEdge:true }
+      );
+
+      chart.timeScale().fitContent();
+      setOverlayByCount(data.length);
     }
+
+    const initialDays = (selectEl && !selectEl.disabled) ? parseInt(selectEl.value, 10) : 0;
+    applyData(initialDays || all.length);
+
+    // === Tooltip (off si overlay activo) ===
+    const tip = document.createElement('div');
+    tip.className = 'mt-chart-tip';
+    document.body.appendChild(tip);
+    function hideTip(){ tip.style.opacity = '0'; }
+    const chip = (c)=>`<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${c};margin-right:6px;vertical-align:-1px"></span>`;
+    const toISO = (t)=> (typeof t==='object' && t?.year)
+      ? `${t.year}-${String(t.month).padStart(2,'0')}-${String(t.day).padStart(2,'0')}`
+      : (typeof t==='number' ? new Date(t*1000).toISOString().slice(0,10) : String(t));
+
+    chart.subscribeCrosshairMove((param) => {
+      if (overlayActive || !param?.time || !param.point) { hideTip(); return; }
+      const sd = param.seriesData.get(baseline);
+      if (!sd) { hideTip(); return; }
+
+      tip.innerHTML =
+        `<div style="opacity:.8;margin-bottom:4px;"><b>${toISO(param.time)}</b></div>` +
+        `<div style="display:flex;justify-content:space-between;gap:12px;"><span>${chip('#FFE7B8')}Balance</span><b>${fmtMoney(sd.value)}</b></div>` +
+        (Number.isFinite(PASS_LEVEL) ? `<div style="display:flex;justify-content:space-between;gap:12px;"><span>${chip('#24b8a6')}Profit Target</span><b>${fmtMoney(PASS_LEVEL)}</b></div>` : '') +
+        (Number.isFinite(MAX_LOSS)   ? `<div style="display:flex;justify-content:space-between;gap:12px;"><span>${chip('#FF4D4D')}Max Drawdown</span><b>${fmtMoney(MAX_LOSS)}</b></div>` : '');
+
+      const rect = container.getBoundingClientRect();
+      const tw = tip.offsetWidth || 220, th = tip.offsetHeight || 60, m = 8;
+      const cx = rect.left + (param.point?.x ?? 0);
+      const cy = rect.top  + (param.point?.y ?? 0);
+      let x = cx - tw/2, y = cy - th - 12;
+      if (y < m) y = cy + 12;
+      x = Math.max(m, Math.min(x, window.innerWidth  - tw - m));
+      y = Math.max(m, Math.min(y, window.innerHeight - th - m));
+      tip.style.left = `${x}px`; tip.style.top = `${y}px`; tip.style.opacity = '1';
+    });
+    container.addEventListener('mouseleave', hideTip, { passive:true });
 
     // Cambio de período
-    lastDays?.addEventListener('change', function(e){
-      if (!window.__mtChartInstance) return;
-      const current = window.__mtChartInstance.w.config.series?.[0]?.data?.map((v,i)=>({ date: window.__DATE_LABELS__?.[i]||'', value: v })) || RAW_SERIES;
-      window.__mtChartInstance.updateOptions( getOptions(current, e.target.value) );
-      attachInlineTipFollower(container?.parentElement || document);
+    selectEl?.addEventListener('change', (e) => {
+      const days = parseInt(e.target.value, 10) || 0;
+      applyData(days);
     });
-
-    // API pública
-    window.MT_OV_CHART = {
-      update: function(series, bounds){
-        if (bounds){
-          window.__UB__ = Number.isFinite(bounds.upper)?bounds.upper:window.__UB__;
-          window.__LB__ = Number.isFinite(bounds.lower)?bounds.lower:window.__LB__;
-        }
-        mount(series || []);
-      }
-    };
-  })();
+  }).catch(err => console.error('[LWC] load error:', err));
+})();
 </script>
+

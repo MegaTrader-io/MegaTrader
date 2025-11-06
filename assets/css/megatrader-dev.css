@@ -4659,6 +4659,46 @@ textarea.mtfb-note {
   cursor: not-allowed;
 }
 
+/* Normaliza la estructura interna que renderiza LWC (tabla/canvas) */
+#account-performance-chart .tv-lightweight-charts,
+#account-performance-chart table {
+  margin:0 !important;
+  border:0 !important;             
+
+}
+
+#account-performance-chart table td {
+  padding: 0 !important;
+  border: 0 !important;            /* quita TODOS los bordes de celdas */
+}
+
+#account-performance-chart table tr:first-child td:nth-child(2){
+  border-right:1px solid var(--ot-border-color) !important;   /* separador vertical */
+}
+#account-performance-chart table tr:last-child  td:nth-child(2){
+  border-top:1px solid var(--ot-border-color) !important;     /* separador horizontal inferior */
+}
+
+.mt-chart-tip{
+  position:fixed;               /* fuera del contenedor */
+  pointer-events:none;
+  background:#111; 
+  color:#fff;
+  padding:8px 10px; 
+  border-radius:8px;
+  font:12px/1.25 system-ui;
+  box-shadow:0 4px 16px rgba(0,0,0,.35);
+  opacity:0;                    /* se muestra desde JS */
+  transition:opacity .12s ease;
+  z-index:9999;
+  max-width:260px;
+  word-break:normal;
+  white-space:nowrap;
+}
+
+
+
+
 /* Account Selection */
 
 .account-reset-button--inside {

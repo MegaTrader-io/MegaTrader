@@ -850,27 +850,30 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
   function mt_accounts_build_performance_chart(array $account): array
   {
     $tz = new DateTimeZone('UTC');
-    $todayDt = new DateTime('now', $tz); $todayDt->setTime(0,0,0);
+    $todayDt = new DateTime('now', $tz);
+    $todayDt->setTime(0, 0, 0);
 
-    $firstRawTop   = (string)($account['firstTradeDate'] ?? '');
-    $firstRawMetric= (string)($account['metrics']['firstTradeDate'] ?? $account['metric']['firstTradeDate'] ?? '');
-    $firstRawAlt1  = (string)($account['createdAt'] ?? '');
-    $firstRawAlt2  = (string)($account['owner']['account']['createdAt'] ?? '');
+    $firstRawTop = (string) ($account['firstTradeDate'] ?? '');
+    $firstRawMetric = (string) ($account['metrics']['firstTradeDate'] ?? $account['metric']['firstTradeDate'] ?? '');
+    $firstRawAlt1 = (string) ($account['createdAt'] ?? '');
+    $firstRawAlt2 = (string) ($account['owner']['account']['createdAt'] ?? '');
     $firstRaw = $firstRawTop ?: ($firstRawMetric ?: ($firstRawAlt1 ?: $firstRawAlt2));
 
-    $firstDt = $firstRaw ? new DateTime($firstRaw,$tz) : clone $todayDt;
-    $firstDt->setTime(0,0,0);
-    if ($firstDt > $todayDt) $firstDt = clone $todayDt;
+    $firstDt = $firstRaw ? new DateTime($firstRaw, $tz) : clone $todayDt;
+    $firstDt->setTime(0, 0, 0);
+    if ($firstDt > $todayDt)
+      $firstDt = clone $todayDt;
 
-    $accountId = (string)($account['accountId'] ?? $account['id'] ?? '');
-    $totalSinceStart = (int)$firstDt->diff($todayDt)->days + 1;
+    $accountId = (string) ($account['accountId'] ?? $account['id'] ?? '');
+    $totalSinceStart = (int) $firstDt->diff($todayDt)->days + 1;
     $pointsToLoad = min(30, max(1, $totalSinceStart));
 
-    $startDt = (clone $todayDt)->modify('-'.($pointsToLoad-1).' days');
-    $from = $startDt->format('Y-m-d'); $to = $todayDt->format('Y-m-d');
+    $startDt = (clone $todayDt)->modify('-' . ($pointsToLoad - 1) . ' days');
+    $from = $startDt->format('Y-m-d');
+    $to = $todayDt->format('Y-m-d');
 
     $resp = function_exists('mt_metrics_fetch_by_shortcode')
-      ? mt_metrics_fetch_by_shortcode($accountId, ['from'=>$from,'to'=>$to,'perpage'=>200,'ttl'=>30])
+      ? mt_metrics_fetch_by_shortcode($accountId, ['from' => $from, 'to' => $to, 'perpage' => 200, 'ttl' => 30])
       : null;
 
     $rows = (is_array($resp) && isset($resp['data']) && is_array($resp['data'])) ? $resp['data'] : [];
@@ -879,75 +882,96 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
     foreach ($rows as $row) {
       $metrics = isset($row['metrics']) && is_array($row['metrics']) ? $row['metrics'] : [];
       $cb = $metrics['currentBalance'] ?? null;
-      if (!is_numeric($cb)) continue;
+      if (!is_numeric($cb))
+        continue;
       $ts = strtotime($row['updatedAt'] ?? $row['createdAt'] ?? '') ?: 0;
-      $ymd = substr((string)($row['date'] ?? $row['fromDate'] ?? $row['toDate'] ?? ''),0,10);
-      if (!preg_match('/^\d{4}-\d{2}-\d{2}$/',$ymd)) {
-        $ymd = $ts ? gmdate('Y-m-d',$ts) : '';
+      $ymd = substr((string) ($row['date'] ?? $row['fromDate'] ?? $row['toDate'] ?? ''), 0, 10);
+      if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $ymd)) {
+        $ymd = $ts ? gmdate('Y-m-d', $ts) : '';
       }
-      if ($ymd==='') continue;
+      if ($ymd === '')
+        continue;
       if (!isset($byDay[$ymd]) || $ts >= $byDay[$ymd]['ts']) {
-        $byDay[$ymd] = ['ts'=>$ts, 'value'=>(float)$cb];
+        $byDay[$ymd] = ['ts' => $ts, 'value' => (float) $cb];
       }
     }
 
     $series = [];
     $cursor = new DateTime($from, $tz);
     $carry = null;
-    for ($i=0; $i<$pointsToLoad; $i++) {
+    for ($i = 0; $i < $pointsToLoad; $i++) {
       $ymd = $cursor->format('Y-m-d');
-      if (isset($byDay[$ymd])) $carry = $byDay[$ymd]['value'];
-      if ($carry !== null) $series[] = ['date'=>$ymd,'value'=>(float)$carry];
+      if (isset($byDay[$ymd]))
+        $carry = $byDay[$ymd]['value'];
+      if ($carry !== null)
+        $series[] = ['date' => $ymd, 'value' => (float) $carry];
       $cursor->modify('+1 day');
     }
     if (empty($series)) {
       $m = $account['metrics'] ?? $account['metric'] ?? [];
-      $cb = is_numeric($m['currentBalance'] ?? null) ? (float)$m['currentBalance'] : null;
-      if ($cb !== null) $series[] = ['date'=>$todayDt->format('Y-m-d'), 'value'=>$cb];
+      $cb = is_numeric($m['currentBalance'] ?? null) ? (float) $m['currentBalance'] : null;
+      if ($cb !== null)
+        $series[] = ['date' => $todayDt->format('Y-m-d'), 'value' => $cb];
     }
 
     $m = $account['metrics'] ?? $account['metric'] ?? [];
-    $upper_bound = is_numeric($m['equityPassLevel'] ?? null) ? (float)$m['equityPassLevel'] : null;
-    $lower_bound = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float)$m['maxLossLimitEquityLevel'] : null;
+
+    $profit_target = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
+    $max_drawdown = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
+
+    $payoutCycle = $account['payout']['payoutCycle'] ?? ($account['payoutCycle'] ?? null);
+
+    $fta = null;
+    if (is_array($payoutCycle)) {
+      $raw = $payoutCycle['targetAmountFromStartBalance'] ?? ($payoutCycle['targetAmount'] ?? null);
+      if (is_numeric($raw))
+        $fta = (float) $raw;
+    }
+    $funded_target_amount = $fta;
+
 
     $periods = [];
     $sinceTextDays = $totalSinceStart;
     $sinceValue = $pointsToLoad;
     if ($sinceTextDays < 7) {
-      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
     } elseif ($sinceTextDays < 14) {
-      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
-      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+      $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
+      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
     } elseif ($sinceTextDays < 30) {
-      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
-      $periods[] = ['value'=>14,'text'=>'LAST 14 DAYS'];
-      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+      $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
+      $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
+      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
     } else {
-      $periods[] = ['value'=>7,'text'=>'LAST 7 DAYS'];
-      $periods[] = ['value'=>14,'text'=>'LAST 14 DAYS'];
-      $periods[] = ['value'=>30,'text'=>'LAST 30 DAYS'];
-      $periods[] = ['value'=>$sinceValue,'text'=>"SINCE START ({$sinceTextDays} DAYS)"];
+      $periods[] = ['value' => 7, 'text' => 'LAST 7 DAYS'];
+      $periods[] = ['value' => 14, 'text' => 'LAST 14 DAYS'];
+      $periods[] = ['value' => 30, 'text' => 'LAST 30 DAYS'];
+      $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
     }
 
     $program = $account['program'] ?? null;
-    $plabel  = (string)($program['label'] ?? $program['description'] ?? 'Account');
-    $sb      = $program['startingBalance'] ?? null;
-    $size=''; $name=$plabel ?: 'Account';
-    if (class_exists('MT_Accounts') && method_exists('MT_Accounts','parse_program_label')) {
-      [$size,$name] = MT_Accounts::parse_program_label($plabel,$sb);
-    } elseif (is_numeric($sb) && $sb>0) {
-      $k=(int)round($sb/1000); $size = $k>0 ? ($k.'k') : (string)$sb;
+    $plabel = (string) ($program['label'] ?? $program['description'] ?? 'Account');
+    $sb = $program['startingBalance'] ?? null;
+    $size = '';
+    $name = $plabel ?: 'Account';
+    if (class_exists('MT_Accounts') && method_exists('MT_Accounts', 'parse_program_label')) {
+      [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
+    } elseif (is_numeric($sb) && $sb > 0) {
+      $k = (int) round($sb / 1000);
+      $size = $k > 0 ? ($k . 'k') : (string) $sb;
     }
-    $title = trim(($size ? $size.' ' : '').$name);
+    $title = trim(($size ? $size . ' ' : '') . $name);
 
     return [
-      'accountId'=>$accountId,
-      'title'=>$title,
-      'plan_revenue'=>$series,
-      'series'=>$series,
-      'upper_bound'=>$upper_bound,
-      'lower_bound'=>$lower_bound,
-      'periods'=>$periods,
+      'accountId' => $accountId,
+      'title' => $title,
+      'label' => $plabel,
+      'plan_revenue' => $series,
+      'series' => $series,
+      'profit_target' => $profit_target,
+      'max_drawdown' => $max_drawdown,
+      'funded_target_amount' => $funded_target_amount,
+      'periods' => $periods,
     ];
   }
 }
