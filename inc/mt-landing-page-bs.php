@@ -85,7 +85,7 @@ add_action('wp_enqueue_scripts', function () {
     'productMetaLabel' => Label::PRODUCT_META,
     'isUserLoggedIn' => is_user_logged_in(),
     'CHECKOUT_URL' => home_url('/checkout/?add-to-cart=PRODUCT_ID'),
-    'LOGIN_URL' => home_url('/auth/login/?redirect_to='),
+    'GO_TO_URL' => home_url('/auth/register/?redirect_to='),
     'bestProducts' => mt_most_popular_products()
   ]);
 }, 20);

@@ -17,12 +17,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function buildProductUrl(productId) {
         const CHECKOUT_URL = MG_GLOBAL.CHECKOUT_URL;
-        const LOGIN_URL = MG_GLOBAL.LOGIN_URL;
+        const GO_TO_URL = MG_GLOBAL.GO_TO_URL;
         const isUserLoggedIn = Number(MG_GLOBAL.isUserLoggedIn);
         const checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', productId);
 
         if (!isUserLoggedIn) {
-            return LOGIN_URL + encodeURIComponent(checkoutUrl);
+            return GO_TO_URL + encodeURIComponent(checkoutUrl);
         }
 
         return checkoutUrl;
