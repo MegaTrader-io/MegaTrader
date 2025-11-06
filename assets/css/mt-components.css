@@ -2463,6 +2463,11 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 
 .plan-detail-selection__card {
     margin: 8px 0 16px 0;
+    gap: 0;
+}
+
+.plan-detail-selection__card:has:not(.btn-plan-detail--active) .plan-detail-selection__body {
+    margin-top: 0px;
 }
 
 .plan-detail-selection__header {
@@ -2470,7 +2475,38 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     justify-content: flex-start;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
+    transition: display 0.2s ease-in-out;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.plan-detail-selection__features-title {
+    padding-top: 16px;
     align-self: stretch;
+    color: #FFB34A;
+    font-size: 20px;
+    font-weight: 700;
+    word-wrap: break-word
+}
+
+.plan-detail-selection__body {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: height 0.35s ease, opacity 0.35s ease;
+    will-change: height, opacity;
+}
+
+.plan-detail-selection__header.btn-plan-detail--active + .plan-detail-selection__body {
+    opacity: 1;
+}
+
+.plan-detail-selection__header.btn-plan-detail--active .mt-icon_caret-up-solid {
+    transform: rotate(180deg);
 }
 
 .plan-detail-selection__account-icon {
@@ -2513,7 +2549,12 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 .plan-detail-selection__features-item {
     display: flex;
     align-items: center;
+    color: #A8A29E;
     gap: 8px;
+    padding: 8px 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
 }
 
 .plan-detail-selection__features-text {

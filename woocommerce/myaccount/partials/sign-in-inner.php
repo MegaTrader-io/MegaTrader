@@ -42,10 +42,9 @@ if (isset($_GET['redirect_to'])) {
     <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/logo-mt.svg"
          width="72" height="72" alt="Logo MegaTraderX"/>
 
-<?php if ($product_id !== null): ?>
+<?php if (!empty($product_id)) : ?>
     <?php get_template_part('template-parts/plan-detail-selection', null, ['card_product_id' => $product_id]); ?>
 <?php endif; ?>
-
 
     <div>
         <h2 class="auth-form__title"><?php esc_html_e('SIGN IN', 'woocommerce'); ?></h2>
