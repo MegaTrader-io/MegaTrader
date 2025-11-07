@@ -305,6 +305,8 @@ if (!function_exists('mt_accounts_build_performance')) {
       'consistency' => mt__get($account, ['rules', 'consistency']),
       'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmountFromStartBalance']),
       'consistencyCurrentTopDayProfit' => $metrics['consistencyCurrentTopDayProfit'] ?? null,
+      'consistencyResetBalanceMark' => $metrics['consistencyResetBalanceMark'] ?? null,
+
     ];
     foreach ($payload as $k => $v) {
       if (is_string($v) && is_numeric($v))

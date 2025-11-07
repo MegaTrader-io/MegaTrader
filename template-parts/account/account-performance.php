@@ -56,6 +56,7 @@ $defaults = [
     'consistency' => null,
     'consistencyCurrentBestWorstDayProfit' => null,
     'targetAmount' => null,
+    'consistencyResetBalanceMark' => null,
 ];
 $performance = array_merge($defaults, (array) $performance);
 
@@ -65,6 +66,7 @@ $balance = $performance['currentBalance'];
 $equity = $performance['currentEquity'];
 $highestProfitDay = $performance['highestProfitDay'];
 $profit = $performance['currentProfit'];
+$resetMark = $performance['consistencyResetBalanceMark'];
 $profitPct = $performance['currentProfitPercent'];
 $daysTraded = (int) $performance['activeTradingDays'];
 $dailyPnL = $performance['dailyTotalPnL'];
@@ -96,6 +98,24 @@ $daysProgressPct = ($minDays > 0)
 $profitRemaining = (is_numeric($profitTarget) && is_numeric($profit))
     ? max(0, $profitTarget - max(0, $profit))
     : null;
+
+/* ========= Profit Goal ========= */
+
+$profitGoal = $isFunded
+    ? ((is_numeric($balance) && is_numeric($resetMark)) ? (float) $balance - (float) $resetMark : null)
+    : ($performance['currentProfit'] ?? null);
+
+$profitGoalText = mt_format_signed_money($profitGoal);
+$profitGoalColorClass = mt_value_color_class($profitGoal);
+
+$profitGoalNum = is_numeric($profitGoal) ? (float) $profitGoal : null;
+$targetNum = (is_numeric($profitTarget) && $profitTarget > 0) ? (float) $profitTarget : null;
+
+$profitGoalFillPct = 0;
+if ($profitGoalNum !== null && $targetNum !== null) {
+    $profitGoalFillPct = max(0, min(100, (max(0, $profitGoalNum) / $targetNum) * 100));
+}
+$profitGoalFillPctInt = (int) round($profitGoalFillPct);
 
 
 /* ========= Flag para saber si hay data real ========= */
@@ -164,7 +184,6 @@ $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
 
 $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyLoss) : 0;
 
-/* Title Right Column */
 if ($isFunded) {
     $titleRight = Label::META_ACCOUNT_OVERVIEW['performance_title_right_funded'] ?? '';
     $titleTarget = Label::META_ACCOUNT_OVERVIEW['performance_payout_target'] ?? '';
@@ -300,20 +319,20 @@ if ($isFunded) {
                             <?php echo esc_html($titleTarget); ?>
                         </div>
                         <div class="mt-card__item-value text-white">
-                            <span class="<?php echo esc_attr($profitColorClass); ?>">
-                                <?php echo esc_html($profitText); ?>
-                            </span>
-                            /
-                            <?php echo esc_html(mt_format_money($profitTarget)); ?>
+                             <span class="mt-profit-inline">
+    <span class="<?php echo esc_attr($profitColorClass); ?>"><?php echo esc_html($profitText); ?></span>
+    <span class="mt-profit-sep">/</span>
+    <span><?php echo esc_html(mt_format_money($profitTarget)); ?></span>
+  </span>
 
                             <div class="mt-progress-bar mt-progress-bar--md mt-progress-bar--success" role="progressbar"
-                                aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo $profitFillPctInt; ?>"
-                                data-progress="<?php echo $profitFillPctInt; ?>"
-                                style="--mt-progress-value: <?php echo $profitFillPctInt; ?>%;">
+                                aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo $profitGoalFillPctInt; ?>"
+                                data-progress="<?php echo $profitGoalFillPctInt; ?>"
+                                style="--mt-progress-value: <?php echo $profitGoalFillPctInt; ?>%;">
                                 <span class="mt-progress-bar__fill"></span>
                             </div>
-
                         </div>
+
                     </div>
 
                     <?php if ($hasDays): ?>
@@ -402,7 +421,8 @@ if ($isFunded) {
                                 <span
                                     class="text-white text-base fw-500"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_progress_text']); ?></span>
                                 <span class="text-base fw-500">
-                                    <span class="<?php echo esc_attr($topTextClass); ?>"><?php echo esc_html($consistencyCurrentTop); ?></span>
+                                    <span
+                                        class="<?php echo esc_attr($topTextClass); ?>"><?php echo esc_html($consistencyCurrentTop); ?></span>
                                     <span class="text-white"> / <?php echo esc_html($consistency); ?></span>
                                 </span>
                             </div>

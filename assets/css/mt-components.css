@@ -401,6 +401,7 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
 
 }
 
+
 .mt-card .mt-card__item .mt-card__item-value.failed {
     color: var(--Error-500, #F43F5E);
 
@@ -408,6 +409,25 @@ input[type="radio"]:checked + .radio__label__wrapper > label.mt-card-radio .mt-c
 
 .mt-card .mt-card__item .mt-card__item-value.in-progress {
     color: var(--Text-Success, #2DD4BF);
+}
+
+.mt-card .mt-card__item .mt-card__item-value .mt-profit-inline{
+  display:inline-flex;
+  align-items:baseline;
+  gap:.375rem;
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+.mt-card .mt-card__item .mt-card__item-value .mt-profit-sep{
+  padding:0 .125rem;
+}
+
+@supports (text-wrap:balance){
+  .mt-card .mt-card__item .mt-card__item-value .mt-profit-inline{
+    text-wrap:nowrap;
+  }
 }
 
 
