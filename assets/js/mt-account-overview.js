@@ -368,7 +368,6 @@ window.mtRefresh = (function () {
         track(
           Promise.resolve(fn(id)).finally(() => {
             const t1 = performance.now();
-            console.log(`[mtRefresh][${key}] → ${Math.round(t1 - t0)}ms`);
           })
         );
       });
@@ -385,7 +384,6 @@ window.mtRefresh = (function () {
         seq.push(
           Promise.resolve(handlers[prime](id)).finally(() => {
             const t1 = performance.now();
-            console.log(`[mtRefresh][${prime}] → ${Math.round(t1 - t0)}ms`);
           })
         );
       }
@@ -396,7 +394,6 @@ window.mtRefresh = (function () {
         const t0 = performance.now();
         return Promise.resolve(handlers[key](id)).finally(() => {
           const t1 = performance.now();
-          console.log(`[mtRefresh][${key}] → ${Math.round(t1 - t0)}ms`);
         });
       });
 
@@ -833,7 +830,8 @@ window.mtOverlay = (function () {
 
 // ===== Performance Chart (AJAX refresh) =====
 (function () {
-  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function") return;
+  if (!window.mtRefresh || typeof window.mtRefresh.register !== "function")
+    return;
 
   // Ejecuta <script> inline dentro del contenedor
   function runInlineScripts(container) {
@@ -850,16 +848,23 @@ window.mtOverlay = (function () {
 
   // (Compat) Info para overlay: usa solo data-attrs
   function chartDataInfo(wrap) {
-    const carrier = wrap.querySelector("[data-points],[data-min-points]") || wrap;
-    const rawPts  = carrier.getAttribute("data-points");
-    const rawMin  = carrier.getAttribute("data-min-points");
-    const points  = Number.isFinite(parseInt(rawPts,10)) ? parseInt(rawPts,10) : null;
-    const minPts  = Number.isFinite(parseInt(rawMin,10)) ? parseInt(rawMin,10) : 7;
+    const carrier =
+      wrap.querySelector("[data-points],[data-min-points]") || wrap;
+    const rawPts = carrier.getAttribute("data-points");
+    const rawMin = carrier.getAttribute("data-min-points");
+    const points = Number.isFinite(parseInt(rawPts, 10))
+      ? parseInt(rawPts, 10)
+      : null;
+    const minPts = Number.isFinite(parseInt(rawMin, 10))
+      ? parseInt(rawMin, 10)
+      : 7;
     return { points, minPoints: minPts };
   }
 
   function applyChartOverlay(wrap) {
-    const overlay = document.querySelector(".account-performance-chart__overlay");
+    const overlay = document.querySelector(
+      ".account-performance-chart__overlay"
+    );
     if (!overlay) return;
     const info = chartDataInfo(wrap);
     const enough = info.points == null ? true : info.points >= info.minPoints;
@@ -873,11 +878,16 @@ window.mtOverlay = (function () {
   let reqToken = 0;
 
   window.mtRefresh.register("performanceChart", function (accountId) {
-    var wrap = document.querySelector(".mt-account-performance-chart-content") || document;
-    var url   = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-    var nonce = (window.mtAccounts && mtAccounts.nonce)  || "";
+    var wrap =
+      document.querySelector(".mt-account-performance-chart-content") ||
+      document;
+    var url =
+      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
-    try { ctrl?.abort(); } catch (_) {}
+    try {
+      ctrl?.abort();
+    } catch (_) {}
     ctrl = new AbortController();
     const myToken = ++reqToken;
 
@@ -892,44 +902,62 @@ window.mtOverlay = (function () {
       body: body,
       signal: ctrl.signal,
     })
-    .then((j) => {
-      if (myToken !== reqToken) return;
+      .then((j) => {
+        if (myToken !== reqToken) return;
 
-      const ok = !!(j && j.success && j.data && typeof j.data.html === "string");
-      if (!ok) {
-        const msg = (j && j.data && (j.data.message || j.data.error)) || "Unable to load the performance chart.";
+        const ok = !!(
+          j &&
+          j.success &&
+          j.data &&
+          typeof j.data.html === "string"
+        );
+        if (!ok) {
+          const msg =
+            (j && j.data && (j.data.message || j.data.error)) ||
+            "Unable to load the performance chart.";
+          window.MEGATRADER?.showError?.("Chart Error", msg, {
+            iconSrc:
+              "/wp-content/themes/megatrader-addons/assets/img/error.svg",
+            headline: "Oops!",
+          });
+          return;
+        }
+
+        // Sustituye el HTML y deja que el inline se auto-inicialice (con su loader LWC)
+        const host =
+          document.querySelector(".account-performance-chart.mt-card")
+            ?.parentElement || document;
+        host.innerHTML = j.data.html;
+
+        const newWrap =
+          document.querySelector(".mt-account-performance-chart-content") ||
+          host;
+        applyChartOverlay(newWrap);
+
+        // Ejecuta scripts inline
+        runInlineScripts(newWrap);
+
+        // Reevalúa overlay por si el init actualiza data-points
+        setTimeout(function () {
+          applyChartOverlay(newWrap);
+        }, 150);
+      })
+      .catch(function (err) {
+        if (err?.name === "AbortError") {
+          console.warn("[MT] chart AJAX aborted");
+          return;
+        }
+        console.error("[MT] chart AJAX error:", err);
+        const msg =
+          (err && (err.message || err.statusText)) ||
+          "Network or server error while loading the performance chart.";
         window.MEGATRADER?.showError?.("Chart Error", msg, {
           iconSrc: "/wp-content/themes/megatrader-addons/assets/img/error.svg",
           headline: "Oops!",
         });
-        return;
-      }
-
-      // Sustituye el HTML y deja que el inline se auto-inicialice (con su loader LWC)
-      const host = document.querySelector('.account-performance-chart.mt-card')?.parentElement || document;
-      host.innerHTML = j.data.html;
-
-      const newWrap = document.querySelector(".mt-account-performance-chart-content") || host;
-      applyChartOverlay(newWrap);
-
-      // Ejecuta scripts inline
-      runInlineScripts(newWrap);
-
-      // Reevalúa overlay por si el init actualiza data-points
-      setTimeout(function () { applyChartOverlay(newWrap); }, 150);
-    })
-    .catch(function (err) {
-      if (err?.name === "AbortError") { console.warn("[MT] chart AJAX aborted"); return; }
-      console.error("[MT] chart AJAX error:", err);
-      const msg = (err && (err.message || err.statusText)) || "Network or server error while loading the performance chart.";
-      window.MEGATRADER?.showError?.("Chart Error", msg, {
-        iconSrc: "/wp-content/themes/megatrader-addons/assets/img/error.svg",
-        headline: "Oops!",
       });
-    });
   });
 })();
-
 
 // ===== Account Data (AJAX refresh) =====
 (function () {
@@ -3013,8 +3041,7 @@ if (document.readyState === "loading") {
       performance.mark("mt-hydrate-end");
       performance.measure("mt-hydrate", "mt-hydrate-start", "mt-hydrate-end");
       const m = performance.getEntriesByName("mt-hydrate").pop();
-      if (m && m.duration && m.duration > 0)
-        console.log("[MT] hydrate modal ms:", Math.round(m.duration));
+      if (m && m.duration && m.duration > 0) Math.round(m.duration);
     });
   }
 
