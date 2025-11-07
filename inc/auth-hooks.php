@@ -484,7 +484,7 @@ add_filter('woocommerce_login_redirect', function ($redirect, $user) {
       return $requested;
     }
   }
-  return wc_get_account_endpoint_url('orders');
+  return $redirect;
 }, 10, 2);
 
 /**
