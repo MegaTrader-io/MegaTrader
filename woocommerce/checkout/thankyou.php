@@ -735,14 +735,14 @@ if (isset($order) && $order && !$order->has_status('failed')):
                     </h5>
                     <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
                         aria-label="Close">
-                        <img src="wp-content/uploads/2025/05/cancel-circle-1.png'); ?>" alt="Close"
+                        <img src="wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
                             style="width:24px;height:24px;" />
                     </button>
                 </div>
 
                 <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-3 w-100">
 
-                    <!-- Imágenes -->
+                    <!-- Imágenes v2-->
                     <div class="text-center w-100">
                         <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block"
                             src="<?php echo esc_url(home_url('/wp-content/themes/megatrader-addons/assets/img/thank-you.png')); ?>"

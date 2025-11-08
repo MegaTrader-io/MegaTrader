@@ -47,6 +47,8 @@ $defaults = [
     'currentProfit' => null,
     'currentProfitPercent' => null,
     'activeTradingDays' => null,
+    'activeTradingDaysSinceLastPayout' => null,
+    'highestProfitDay' => null,
     'dailyTotalPnL' => null,
     'minTradingDays' => null,
     'maxLossLimitEquityLevel' => null,
@@ -57,11 +59,13 @@ $defaults = [
     'consistencyCurrentBestWorstDayProfit' => null,
     'targetAmount' => null,
     'consistencyResetBalanceMark' => null,
+    'currentCycle' => null,
 ];
 $performance = array_merge($defaults, (array) $performance);
 
 /* ========= Aliases de uso en HTML ========= */
 $account_id = isset($meta['accountId']) ? (string) $meta['accountId'] : ($performance['accountId'] ?? '');
+$currentCycle = $performance['currentCycle'] ?? null;
 $balance = $performance['currentBalance'];
 $equity = $performance['currentEquity'];
 $highestProfitDay = $performance['highestProfitDay'];
@@ -69,6 +73,7 @@ $profit = $performance['currentProfit'];
 $resetMark = $performance['consistencyResetBalanceMark'];
 $profitPct = $performance['currentProfitPercent'];
 $daysTraded = (int) $performance['activeTradingDays'];
+$daysSinceLastPayout = (int) $performance['activeTradingDaysSinceLastPayout'];
 $dailyPnL = $performance['dailyTotalPnL'];
 $minDays = (int) $performance['minTradingDays'];
 $maxLossEq = $performance['maxLossLimitEquityLevel'];
@@ -83,6 +88,7 @@ $profitTarget = $isFunded
     : ($performance['target'] ?? null);
 $consistencyCurrentTop = $performance['consistencyCurrentTopDayProfit'] ?? null;
 $consistency = $performance['consistency'] ?? null;
+$currentCycle = $performance['currentCycle'] ?? null;
 $consistencyUrl = Label::PLAN_RULES_URLS['Consistency'] ?? '';
 
 
@@ -98,6 +104,11 @@ $daysProgressPct = ($minDays > 0)
 $profitRemaining = (is_numeric($profitTarget) && is_numeric($profit))
     ? max(0, $profitTarget - max(0, $profit))
     : null;
+
+// Trade Days to show
+$daysShown = ($isFunded && (int)($currentCycle ?? 1) !== 1)
+  ? (int)$daysSinceLastPayout
+  : (int)$daysTraded;
 
 /* ========= Profit Goal ========= */
 
@@ -132,15 +143,15 @@ $profitFillPct = 0; // 0..100, nunca null
 if ($profitNum !== null && $targetNum !== null) {
     $profitFillPct = max(0, min(100, (max(0, $profitNum) / $targetNum) * 100));
 }
-// === Days Trade(compute once + guard) ===
-$hasDays = is_numeric($minDays) && (int) $minDays > 0;
+// === Days Trade (compute once + guard) ===
+$hasDays = is_numeric($minDays) && (int)$minDays > 0;
 
 if ($hasDays) {
     $daysFillPctInt = (int) round(
-        min(100, max(0, ((int) $daysTraded / (float) $minDays) * 100))
+        min(100, max(0, ($daysShown / (float)$minDays) * 100))
     );
-    $daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays);
-    $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
+    $daysIconClass  = mt_value_compare_icon_classes($daysShown, $minDays);
+    $daysColorClass = ($daysShown > 0) ? 'text-success' : 'text-white';
 }
 
 $profitFillPctInt = (int) round((float) $profitFillPct);
@@ -319,11 +330,13 @@ if ($isFunded) {
                             <?php echo esc_html($titleTarget); ?>
                         </div>
                         <div class="mt-card__item-value text-white">
-                             <span class="mt-profit-inline">
-    <span class="<?php echo esc_attr($profitColorClass); ?>"><?php echo esc_html($profitText); ?></span>
-    <span class="mt-profit-sep">/</span>
-    <span><?php echo esc_html(mt_format_money($profitTarget)); ?></span>
-  </span>
+                            <span class="mt-profit-inline">
+                                <span class="<?php echo esc_attr($profitGoalColorClass); ?>">
+                                    <?php echo esc_html($profitGoalText); ?>
+                                </span>
+                                <span class="mt-profit-sep">/</span>
+                                <?php echo esc_html(mt_format_money($profitTarget)); ?>
+                            </span>
 
                             <div class="mt-progress-bar mt-progress-bar--md mt-progress-bar--success" role="progressbar"
                                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo $profitGoalFillPctInt; ?>"
@@ -344,7 +357,7 @@ if ($isFunded) {
 
                             <div class="mt-card__item-value text-white">
                                 <span class="<?php echo esc_attr($daysColorClass); ?>">
-                                    <?php echo esc_html($daysTraded); ?>
+                                    <?php echo esc_html($daysShown); ?>
                                 </span>
                                 /
                                 <?php echo esc_html($minDays); ?>

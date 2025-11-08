@@ -4,15 +4,22 @@ defined('ABSPATH') || exit;
 
 /* ======================= Cache utils ======================= */
 if (!function_exists('mt_cache_key')) {
-  function mt_cache_key(string $ns, array $parts): string {
+  function mt_cache_key(string $ns, array $parts): string
+  {
     return $ns . ':' . md5(implode('|', array_map('strval', $parts)));
   }
 }
 if (!function_exists('mt_cache_get')) {
-  function mt_cache_get(string $key) { return get_transient($key); }
+  function mt_cache_get(string $key)
+  {
+    return get_transient($key);
+  }
 }
 if (!function_exists('mt_cache_set')) {
-  function mt_cache_set(string $key, $value, int $ttl = 120) { return set_transient($key, $value, $ttl); }
+  function mt_cache_set(string $key, $value, int $ttl = 120)
+  {
+    return set_transient($key, $value, $ttl);
+  }
 }
 
 /* ======================= Core: Accounts ======================= */
@@ -23,54 +30,75 @@ class MT_Accounts
   private const PLATFORM_LOGOS = [
     'megatrader' => self::DEFAULT_LOGO,
     'ninjatrader' => '/wp-content/uploads/2025/02/icon_ninjatrader.svg',
-    'tradovate'   => '/wp-content/uploads/2025/02/icon_tradovate.svg',
-    'quantower'   => '/wp-content/uploads/2025/02/icon_quantower.svg',
+    'tradovate' => '/wp-content/uploads/2025/02/icon_tradovate.svg',
+    'quantower' => '/wp-content/uploads/2025/02/icon_quantower.svg',
   ];
 
   /* ---- Helpers de estado/normalización ---- */
-  public static function is_active_status($status): bool {
+  public static function is_active_status($status): bool
+  {
     $s = strtolower(trim((string) $status));
-    return in_array($s, ['active','approved','open','enabled','running','live','activated'], true);
+    return in_array($s, ['active', 'approved', 'open', 'enabled', 'running', 'live', 'activated'], true);
   }
-  public static function badge_class(string $status): string {
+  public static function badge_class(string $status): string
+  {
     $s = strtolower(trim($status));
-    if (in_array($s, ['active','approved','open','enabled','running','live','activated'], true)) return 'badge-mega-active';
-    if (in_array($s, ['pending','pending-cancel','paused','submitted'], true))              return 'badge-mega-pending';
-    if (in_array($s, ['rejected','closed','disabled','cancelled','failed','expired'], true))return 'badge-mega-danger';
+    if (in_array($s, ['active', 'approved', 'open', 'enabled', 'running', 'live', 'activated'], true))
+      return 'badge-mega-active';
+    if (in_array($s, ['pending', 'pending-cancel', 'paused', 'submitted'], true))
+      return 'badge-mega-pending';
+    if (in_array($s, ['rejected', 'closed', 'disabled', 'cancelled', 'failed', 'expired'], true))
+      return 'badge-mega-danger';
     return 'badge-mega-default';
   }
-  public static function dot_class(string $status): string {
+  public static function dot_class(string $status): string
+  {
     $s = strtolower(trim($status));
-    if (in_array($s, ['active','approved','open','enabled','running','live','activated'], true)) return 'dot-status-active';
-    if (in_array($s, ['pending','pending-cancel','paused','submitted','on-hold','refunded'], true)) return 'dot-status-pending';
-    if (in_array($s, ['rejected','closed','disabled','cancelled','failed','expired'], true)) return 'dot-status-danger';
+    if (in_array($s, ['active', 'approved', 'open', 'enabled', 'running', 'live', 'activated'], true))
+      return 'dot-status-active';
+    if (in_array($s, ['pending', 'pending-cancel', 'paused', 'submitted', 'on-hold', 'refunded'], true))
+      return 'dot-status-pending';
+    if (in_array($s, ['rejected', 'closed', 'disabled', 'cancelled', 'failed', 'expired'], true))
+      return 'dot-status-danger';
     return 'dot-status-default';
   }
-  private static function norm($s): string { return preg_replace('/[^a-z0-9]+/','', strtolower((string)$s)); }
+  private static function norm($s): string
+  {
+    return preg_replace('/[^a-z0-9]+/', '', strtolower((string) $s));
+  }
 
   /* ---- Logos centralizados ---- */
-  public static function platform_logo($platformRaw): string {
+  public static function platform_logo($platformRaw): string
+  {
     $key = self::norm($platformRaw);
     return self::PLATFORM_LOGOS[$key] ?? self::DEFAULT_LOGO;
   }
 
   /* ---- Etiquetas de programa ---- */
-  public static function parse_program_label(string $label, $startingBalance = null): array {
-    $head = ($p = strpos($label,'|')) !== false ? substr($label,0,$p) : $label;
+  public static function parse_program_label(string $label, $startingBalance = null): array
+  {
+    $head = ($p = strpos($label, '|')) !== false ? substr($label, 0, $p) : $label;
     $head = trim($head);
-    $size = ''; $name = $head !== '' ? $head : 'Account';
+    $size = '';
+    $name = $head !== '' ? $head : 'Account';
     if (preg_match('/^\s*([0-9]+k)\b/i', $head, $m)) {
-      $size = strtoupper($m[1]); $name = trim(substr($head, strlen($m[1])));
+      $size = strtoupper($m[1]);
+      $name = trim(substr($head, strlen($m[1])));
     } elseif (is_numeric($startingBalance)) {
-      $k = round(((int)$startingBalance)/1000); if ($k>0) $size = strtoupper($k.'k');
+      $k = round(((int) $startingBalance) / 1000);
+      if ($k > 0)
+        $size = strtoupper($k . 'k');
     }
-    if ($name==='') $name='Account';
-    return [$size,$name];
+    if ($name === '')
+      $name = 'Account';
+    return [$size, $name];
   }
 
-  public static function extract_platform(array $acc): string {
+  public static function extract_platform(array $acc): string
+  {
     $p = trim((string) ($acc['program']['platform'] ?? ''));
-    if ($p !== '') return $p;
+    if ($p !== '')
+      return $p;
     $label = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? ''));
     $parts = array_map('trim', explode('|', $label));
     return $parts[1] ?? '';
@@ -79,41 +107,53 @@ class MT_Accounts
   /* ---- Builder de UI (sin mapas locales duplicados) ---- */
   public static function prepare_ui(array $accounts): array
   {
-    if (isset($accounts['data']))       $accounts = is_array($accounts['data']) ? $accounts['data'] : [];
-    elseif (isset($accounts['results']))$accounts = $accounts['results'];
-    elseif (isset($accounts['items']))  $accounts = $accounts['items'];
-    elseif (isset($accounts['id']))     $accounts = [$accounts];
+    if (isset($accounts['data']))
+      $accounts = is_array($accounts['data']) ? $accounts['data'] : [];
+    elseif (isset($accounts['results']))
+      $accounts = $accounts['results'];
+    elseif (isset($accounts['items']))
+      $accounts = $accounts['items'];
+    elseif (isset($accounts['id']))
+      $accounts = [$accounts];
 
-    if (!empty($accounts) && array_keys($accounts)!==range(0,count($accounts)-1)) $accounts = array_values($accounts);
+    if (!empty($accounts) && array_keys($accounts) !== range(0, count($accounts) - 1))
+      $accounts = array_values($accounts);
 
-    $pool = array_values(array_filter((array)$accounts, 'is_array'));
-    usort($pool, function($a,$b){
-      $ta = strtotime((string)($a['createdAt'] ?? '')) ?: 0;
-      $tb = strtotime((string)($b['createdAt'] ?? '')) ?: 0;
+    $pool = array_values(array_filter((array) $accounts, 'is_array'));
+    usort($pool, function ($a, $b) {
+      $ta = strtotime((string) ($a['createdAt'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['createdAt'] ?? '')) ?: 0;
       return $tb <=> $ta;
     });
-    if (empty($pool)) return ['current'=>null,'accounts'=>[]];
+    if (empty($pool))
+      return ['current' => null, 'accounts' => []];
 
     $cur = $pool[0];
-    foreach ($pool as $row) { if (self::is_active_status($row['status'] ?? '')) { $cur = $row; break; } }
+    foreach ($pool as $row) {
+      if (self::is_active_status($row['status'] ?? '')) {
+        $cur = $row;
+        break;
+      }
+    }
 
-    $mapAccount = function(array $acc) {
-      $id = (string)($acc['id'] ?? '');
-      $plabel = (string)($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
+    $mapAccount = function (array $acc) {
+      $id = (string) ($acc['id'] ?? '');
+      $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
       $sb = $acc['program']['startingBalance'] ?? null;
-      [$size,$name] = MT_Accounts::parse_program_label($plabel, $sb);
+      [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
 
       // platform text
       $platformRaw = '';
       if (isset($acc['platform'])) {
-        $platformRaw = is_array($acc['platform']) ? (string)($acc['platform']['platform'] ?? $acc['platform']['name'] ?? '') : (string)$acc['platform'];
+        $platformRaw = is_array($acc['platform']) ? (string) ($acc['platform']['platform'] ?? $acc['platform']['name'] ?? '') : (string) $acc['platform'];
       }
-      if ($platformRaw==='' && isset($acc['program']['platform'])) $platformRaw = (string)$acc['program']['platform'];
+      if ($platformRaw === '' && isset($acc['program']['platform']))
+        $platformRaw = (string) $acc['program']['platform'];
       $logo = MT_Accounts::platform_logo($platformRaw);
 
-      $status = (string)($acc['status'] ?? '');
-      $rules  = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
-      $plat   = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
+      $status = (string) ($acc['status'] ?? '');
+      $rules = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
+      $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
       $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
       $order = (string) ($acc['order'] ?? '');
 
@@ -122,27 +162,34 @@ class MT_Accounts
         try {
           $full = mt_accounts_resolve_account_by_id($id);
           if (is_array($full)) {
-            if ($order === '') $order = (string)($full['order'] ?? $order);
+            if ($order === '')
+              $order = (string) ($full['order'] ?? $order);
             if ($platformRaw === '' && isset($full['platform']) && is_array($full['platform'])) {
-              $platformRaw = (string)($full['platform']['platform'] ?? $full['platform']['name'] ?? $platformRaw);
+              $platformRaw = (string) ($full['platform']['platform'] ?? $full['platform']['name'] ?? $platformRaw);
               $logo = MT_Accounts::platform_logo($platformRaw);
             }
-            if ($platAccountId === '') $platAccountId = (string)($full['platform']['accountId'] ?? $full['accountId'] ?? $platAccountId);
+            if ($platAccountId === '')
+              $platAccountId = (string) ($full['platform']['accountId'] ?? $full['accountId'] ?? $platAccountId);
           }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
       }
 
       // programType badge
-      $ptypeLabel=''; $ptypeClass='badge-mega-default';
+      $ptypeLabel = '';
+      $ptypeClass = 'badge-mega-default';
       if ($plabel !== '') {
-        $parts = array_map('trim', explode('|', $plabel)); $last = $parts ? trim(end($parts)) : '';
-        $ptypeLabel = $last; $key = strtolower(preg_replace('/\s+/', '-', $last));
-        $ptypeClass = $key==='evaluation' ? 'badge-mega-evaluation' : ($key==='funded' ? 'badge-mega-funded' : 'badge-mega-default');
+        $parts = array_map('trim', explode('|', $plabel));
+        $last = $parts ? trim(end($parts)) : '';
+        $ptypeLabel = $last;
+        $key = strtolower(preg_replace('/\s+/', '-', $last));
+        $ptypeClass = $key === 'evaluation' ? 'badge-mega-evaluation' : ($key === 'funded' ? 'badge-mega-funded' : 'badge-mega-default');
       }
 
-      $subscriptionId=''; $user_id = get_current_user_id();
-      if (is_numeric($order) && (int)$order>0 && function_exists('mt_subscription_id_for_order')) {
-        $subscriptionId = (string) mt_subscription_id_for_order((int)$order, (int)$user_id);
+      $subscriptionId = '';
+      $user_id = get_current_user_id();
+      if (is_numeric($order) && (int) $order > 0 && function_exists('mt_subscription_id_for_order')) {
+        $subscriptionId = (string) mt_subscription_id_for_order((int) $order, (int) $user_id);
       }
 
       return [
@@ -166,7 +213,7 @@ class MT_Accounts
       ];
     };
 
-    return ['current'=>$mapAccount($cur), 'accounts'=>array_map($mapAccount, $pool)];
+    return ['current' => $mapAccount($cur), 'accounts' => array_map($mapAccount, $pool)];
   }
 }
 
@@ -211,20 +258,30 @@ if (!function_exists('mt_program_stage')) {
     $last = end($parts);
     $key = strtolower(preg_replace('/[^a-z]/i', '', $last));
 
-    if ($key === 'funded') return 'Funded';
-    if ($key === 'evaluation') return 'Evaluation';
+    if ($key === 'funded')
+      return 'Funded';
+    if ($key === 'evaluation')
+      return 'Evaluation';
 
-    if (stripos($label, 'Funded') !== false) return 'Funded';
-    if (stripos($label, 'Evaluation') !== false) return 'Evaluation';
+    if (stripos($label, 'Funded') !== false)
+      return 'Funded';
+    if (stripos($label, 'Evaluation') !== false)
+      return 'Evaluation';
 
     return $default;
   }
 }
 if (!function_exists('mt_is_funded')) {
-  function mt_is_funded($programOrLabel) { return mt_program_stage($programOrLabel) === 'Funded'; }
+  function mt_is_funded($programOrLabel)
+  {
+    return mt_program_stage($programOrLabel) === 'Funded';
+  }
 }
 if (!function_exists('mt_is_evaluation')) {
-  function mt_is_evaluation($programOrLabel) { return mt_program_stage($programOrLabel) === 'Evaluation'; }
+  function mt_is_evaluation($programOrLabel)
+  {
+    return mt_program_stage($programOrLabel) === 'Evaluation';
+  }
 }
 
 /* ==== Helper: detectar plan (Funded|Elite|Growth) desde el label ==== */
@@ -238,9 +295,12 @@ if (!function_exists('mt_program_plan')) {
     if ($label === '')
       return $default;
 
-    if (stripos($label, 'Funded') !== false) return 'Funded';
-    if (stripos($label, 'Elite') !== false)  return 'Elite';
-    if (stripos($label, 'Growth') !== false) return 'Growth';
+    if (stripos($label, 'Funded') !== false)
+      return 'Funded';
+    if (stripos($label, 'Elite') !== false)
+      return 'Elite';
+    if (stripos($label, 'Growth') !== false)
+      return 'Growth';
     return $default;
   }
 }
@@ -296,6 +356,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'currentProfit' => $metrics['currentProfit'] ?? $metrics['profit'] ?? null,
       'currentProfitPercent' => $metrics['currentProfitPercent'] ?? $metrics['profitPercent'] ?? null,
       'activeTradingDays' => $metrics['activeTradingDays'] ?? $metrics['tradingDays'] ?? null,
+      'activeTradingDaysSinceLastPayout' => $metrics['activeTradingDaysSinceLastPayout'] ?? null,
       'dailyTotalPnL' => $metrics['dailyTotalPnL'] ?? $metrics['dailyPnL'] ?? null,
       'minTradingDays' => $metrics['minTradingDays'] ?? null,
       'maxLossLimitEquityLevel' => $metrics['maxLossLimitEquityLevel'] ?? $metrics['maxLossLimit'] ?? null,
@@ -306,6 +367,8 @@ if (!function_exists('mt_accounts_build_performance')) {
       'targetAmount' => mt__get($account, ['payout', 'payoutCycle', 'targetAmountFromStartBalance']),
       'consistencyCurrentTopDayProfit' => $metrics['consistencyCurrentTopDayProfit'] ?? null,
       'consistencyResetBalanceMark' => $metrics['consistencyResetBalanceMark'] ?? null,
+      'currentCycle' => mt__get($account, ['payout', 'payoutCycle', 'currentCycle']),
+
 
     ];
     foreach ($payload as $k => $v) {
@@ -342,8 +405,10 @@ if (!function_exists('mt_accounts_build_feature_content')) {
     $winRate = is_numeric($winRate) ? (float) $winRate : 0.0;
     $lossRate = is_numeric($lossRate) ? (float) $lossRate : 0.0;
 
-    if ($winRate > 1)  $winRate /= 100;
-    if ($lossRate > 1) $lossRate /= 100;
+    if ($winRate > 1)
+      $winRate /= 100;
+    if ($lossRate > 1)
+      $lossRate /= 100;
     $winRate = max(0.0, min(1.0, $winRate));
     $lossRate = max(0.0, min(1.0, $lossRate));
 
@@ -477,20 +542,28 @@ if (!function_exists('mt_accounts_resolve_account_by_id')) {
   function mt_accounts_resolve_account_by_id(string $accountId)
   {
     static $memo = [];
-    $accountId = trim((string)$accountId);
-    if ($accountId === '') return null;
+    $accountId = trim((string) $accountId);
+    if ($accountId === '')
+      return null;
 
-    if (isset($memo[$accountId])) return $memo[$accountId];
+    if (isset($memo[$accountId]))
+      return $memo[$accountId];
 
     $tkey = mt_cache_key('mt:acc_by_id', [$accountId]);
     $cached = mt_cache_get($tkey);
-    if (is_array($cached)) { $memo[$accountId] = $cached; return $cached; }
+    if (is_array($cached)) {
+      $memo[$accountId] = $cached;
+      return $cached;
+    }
 
     $acc = null;
 
-    if (class_exists('MT_Api') && method_exists('MT_Api','fetch_account_by_id')) {
-      try { $acc = MT_Api::fetch_account_by_id($accountId); } catch (\Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][by_id] '.$e->getMessage());
+    if (class_exists('MT_Api') && method_exists('MT_Api', 'fetch_account_by_id')) {
+      try {
+        $acc = MT_Api::fetch_account_by_id($accountId);
+      } catch (\Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[MT][acc_resolve][by_id] ' . $e->getMessage());
       }
     }
 
@@ -501,13 +574,15 @@ if (!function_exists('mt_accounts_resolve_account_by_id')) {
           $acc = mt_accounts_pick_account_from_json($json, $accountId);
         }
       } catch (\Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[MT][acc_resolve][shortcode] '.$e->getMessage());
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[MT][acc_resolve][shortcode] ' . $e->getMessage());
       }
     }
 
     $acc = (is_array($acc) && !empty($acc)) ? $acc : null;
 
-    if ($acc) mt_cache_set($tkey, $acc, 90);
+    if ($acc)
+      mt_cache_set($tkey, $acc, 90);
     $memo[$accountId] = $acc;
     return $acc;
   }
@@ -558,7 +633,8 @@ if (!function_exists('mt_format_signed_money')) {
       $currency = mt_money_symbol('$', $context);
     $num = (float) $value;
     $abs = abs($num);
-    if (abs($num) < 1e-9) $num = 0.0;
+    if (abs($num) < 1e-9)
+      $num = 0.0;
     $formatted = number_format($abs, 2, '.', ',');
     $sign = ($num > 0) ? '+' : (($num < 0) ? '-' : '');
     return $sign . $currency . $formatted;
@@ -572,7 +648,8 @@ if (!function_exists('mt_format_percent')) {
     $num = (float) $value;
     $abs = abs($num);
     $formatted = number_format($abs, 2, '.', ',') . '%';
-    if (!$signed) return $formatted;
+    if (!$signed)
+      return $formatted;
     $sign = $num >= 0 ? '+' : '-';
     return $sign . $formatted;
   }
@@ -645,7 +722,8 @@ if (!function_exists('mt_value_icon_classes')) {
     if ($value === null || $value === '' || !is_numeric($value))
       return $neutral;
     $n = (float) $value;
-    if (abs($n) < 1e-9) return $zero;
+    if (abs($n) < 1e-9)
+      return $zero;
     return $n > 0 ? $pos : $neg;
   }
 }
@@ -661,15 +739,20 @@ if (!function_exists('mt_value_compare_icon_classes')) {
     }
     $v = (float) $value;
 
-    if ($v < 0) return $cls_neg;
-    if (abs($v) < 1e-9) return $cls_neutral;
+    if ($v < 0)
+      return $cls_neg;
+    if (abs($v) < 1e-9)
+      return $cls_neutral;
 
-    if ($target === null || $target === '' || !is_numeric($target)) return $cls_neutral;
+    if ($target === null || $target === '' || !is_numeric($target))
+      return $cls_neutral;
     $t = (float) $target;
 
-    if ($t <= 0) return $cls_pos;
+    if ($t <= 0)
+      return $cls_pos;
 
-    if (abs($v - $t) < 1e-9) return $cls_pos;
+    if (abs($v - $t) < 1e-9)
+      return $cls_pos;
 
     return ($v > $t) ? $cls_pos : $cls_neutral;
   }
@@ -825,14 +908,25 @@ if (!function_exists('mt_email_for_api')) {
   function mt_email_for_api(string $email): string
   {
     $parts = explode('@', $email, 2);
-    if (count($parts) !== 2) return '';
+    if (count($parts) !== 2)
+      return '';
     [$local, $domain] = $parts;
     $replacements = [
-      ' ' => '%20','?' => '%3F','/' => '%2F','#' => '%23','&' => '%26','=' => '%3D',
-      '+' => '%2B','(' => '%28',')' => '%29',',' => '%2C',':' => '%3A',
+      ' ' => '%20',
+      '?' => '%3F',
+      '/' => '%2F',
+      '#' => '%23',
+      '&' => '%26',
+      '=' => '%3D',
+      '+' => '%2B',
+      '(' => '%28',
+      ')' => '%29',
+      ',' => '%2C',
+      ':' => '%3A',
     ];
     $needsEncoding = strpbrk($local, " ?/#&=+(),:") !== false;
-    if ($needsEncoding) $local = strtr($local, $replacements);
+    if ($needsEncoding)
+      $local = strtr($local, $replacements);
     return $local . '@' . $domain;
   }
 }
@@ -840,8 +934,10 @@ if (!function_exists('mt_sanitize_email')) {
   function mt_sanitize_email(?string $raw): array
   {
     $normalized = mt_normalize_email($raw);
-    if ($normalized === '') return ['ok' => false, 'email' => '', 'api' => '', 'error' => 'Email vacío.'];
-    if (!mt_validate_email($normalized)) return ['ok' => false, 'email' => $normalized, 'api' => '', 'error' => 'Email inválido.'];
+    if ($normalized === '')
+      return ['ok' => false, 'email' => '', 'api' => '', 'error' => 'Email vacío.'];
+    if (!mt_validate_email($normalized))
+      return ['ok' => false, 'email' => $normalized, 'api' => '', 'error' => 'Email inválido.'];
     $apiSafe = mt_email_for_api($normalized);
     return ['ok' => true, 'email' => $normalized, 'api' => $apiSafe, 'error' => ''];
   }
@@ -920,6 +1016,9 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
 
     $profit_target = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
     $max_drawdown = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
+    $consistencyResetBalanceMark = is_numeric($m['consistencyResetBalanceMark'] ?? null)
+      ? (float) $m['consistencyResetBalanceMark']
+      : null;
 
     $payoutCycle = $account['payout']['payoutCycle'] ?? ($account['payoutCycle'] ?? null);
 
@@ -973,6 +1072,7 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
       'profit_target' => $profit_target,
       'max_drawdown' => $max_drawdown,
       'funded_target_amount' => $funded_target_amount,
+      'consistency_reset_balance_mark' => $consistencyResetBalanceMark,
       'periods' => $periods,
     ];
   }
@@ -1119,7 +1219,10 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
 
     $agreement_url = null;
     foreach (['agreementURL', 'agreementUrl', 'agreement_url', 'url'] as $k) {
-      if (!empty($data[$k]) && is_string($data[$k])) { $agreement_url = $data[$k]; break; }
+      if (!empty($data[$k]) && is_string($data[$k])) {
+        $agreement_url = $data[$k];
+        break;
+      }
     }
 
     $signed_raw = $data['agreementSigned'] ?? ($data['signed'] ?? null);
@@ -1134,16 +1237,21 @@ if (!function_exists('mt_get_agreement_status_by_email')) {
 
     $status_bool = null;
     if ($status_lc !== null) {
-      if (in_array($status_lc, $status_true_set, true)) $status_bool = true;
-      if (in_array($status_lc, $status_false_set, true)) $status_bool = false;
+      if (in_array($status_lc, $status_true_set, true))
+        $status_bool = true;
+      if (in_array($status_lc, $status_false_set, true))
+        $status_bool = false;
       if ($status_bool === null) {
         $tmp = filter_var($status_lc, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if ($tmp !== null) $status_bool = $tmp;
+        if ($tmp !== null)
+          $status_bool = $tmp;
       }
     }
 
-    if ($signed === null && $status_bool !== null) $signed = $status_bool;
-    if ($signed === false && $status_bool === true) $signed = true;
+    if ($signed === null && $status_bool !== null)
+      $signed = $status_bool;
+    if ($signed === false && $status_bool === true)
+      $signed = true;
 
     if (defined('WP_DEBUG') && WP_DEBUG) {
       error_log('[MT Agreement][final] signed_raw=' . var_export($signed_raw, true)
@@ -1177,10 +1285,16 @@ function mt_accounts_ajax_status()
   $found = null;
 
   if (!$found && function_exists('mt_accounts_resolve_account_by_id')) {
-    try { $found = mt_accounts_resolve_account_by_id($accountId); } catch (Throwable $e) {}
+    try {
+      $found = mt_accounts_resolve_account_by_id($accountId);
+    } catch (Throwable $e) {
+    }
   }
   if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_account_by_id')) {
-    try { $found = MT_Accounts::get_account_by_id($accountId); } catch (Throwable $e) {}
+    try {
+      $found = MT_Accounts::get_account_by_id($accountId);
+    } catch (Throwable $e) {
+    }
   }
   if (!$found && class_exists('MT_Accounts') && method_exists('MT_Accounts', 'get_accounts')) {
     try {
@@ -1188,10 +1302,14 @@ function mt_accounts_ajax_status()
       if (is_array($all)) {
         foreach ($all as $row) {
           $rid = (string) ($row['id'] ?? $row['accountId'] ?? $row['account_id'] ?? '');
-          if ($rid === (string) $accountId) { $found = $row; break; }
+          if ($rid === (string) $accountId) {
+            $found = $row;
+            break;
+          }
         }
       }
-    } catch (Throwable $e) {}
+    } catch (Throwable $e) {
+    }
   }
 
   if (!$found || !is_array($found)) {
@@ -1204,7 +1322,8 @@ function mt_accounts_ajax_status()
       $ui = MT_Accounts::prepare_ui([$found]);
       if (is_array($ui))
         $status = (string) ($ui['current']['status'] ?? '');
-    } catch (Throwable $e) {}
+    } catch (Throwable $e) {
+    }
   }
   if ($status === '')
     $status = (string) ($found['status'] ?? '');
@@ -1221,48 +1340,66 @@ function mt_accounts_ajax_status()
 if (!function_exists('mt_metrics_fetch_by_shortcode')) {
   function mt_metrics_fetch_by_shortcode($accountId, $arg2 = 1, $perPage = 30, $ttl = 15)
   {
-    $accountId = trim((string)$accountId);
-    if ($accountId === '') return null;
+    $accountId = trim((string) $accountId);
+    if ($accountId === '')
+      return null;
 
-    $page=1; $per=50; $from=''; $to=''; $ttlVal=15;
+    $page = 1;
+    $per = 50;
+    $from = '';
+    $to = '';
+    $ttlVal = 15;
     if (is_array($arg2)) {
-      $page = isset($arg2['page']) ? (int)$arg2['page'] : 1;
-      $per  = isset($arg2['perpage']) ? (int)$arg2['perpage'] : (isset($arg2['perPage']) ? (int)$arg2['perPage'] : 50);
-      $from = isset($arg2['from']) ? (string)$arg2['from'] : '';
-      $to   = isset($arg2['to'])   ? (string)$arg2['to']   : '';
-      $ttlVal = isset($arg2['ttl'])? (int)$arg2['ttl'] : 15;
+      $page = isset($arg2['page']) ? (int) $arg2['page'] : 1;
+      $per = isset($arg2['perpage']) ? (int) $arg2['perpage'] : (isset($arg2['perPage']) ? (int) $arg2['perPage'] : 50);
+      $from = isset($arg2['from']) ? (string) $arg2['from'] : '';
+      $to = isset($arg2['to']) ? (string) $arg2['to'] : '';
+      $ttlVal = isset($arg2['ttl']) ? (int) $arg2['ttl'] : 15;
     } else {
-      $page = (int)$arg2; $per = (int)$perPage; $ttlVal = (int)$ttl;
+      $page = (int) $arg2;
+      $per = (int) $perPage;
+      $ttlVal = (int) $ttl;
     }
 
-    $tkey = mt_cache_key('mt:metrics_sc', [$accountId,$page,$per,$from,$to]);
-    $hit  = mt_cache_get($tkey);
-    if (is_array($hit)) return $hit;
+    $tkey = mt_cache_key('mt:metrics_sc', [$accountId, $page, $per, $from, $to]);
+    $hit = mt_cache_get($tkey);
+    if (is_array($hit))
+      return $hit;
 
     $attrs = [
-      'id'=>esc_attr($accountId),
-      'page'=>max(1,$page),
-      'perpage'=>max(1,$per),
-      'output'=>'json',
-      'ttl'=>max(0,$ttlVal),
+      'id' => esc_attr($accountId),
+      'page' => max(1, $page),
+      'perpage' => max(1, $per),
+      'output' => 'json',
+      'ttl' => max(0, $ttlVal),
     ];
-    if ($from!=='') $attrs['from']=$from;
-    if ($to  !=='') $attrs['to']=$to;
+    if ($from !== '')
+      $attrs['from'] = $from;
+    if ($to !== '')
+      $attrs['to'] = $to;
 
-    $parts=[]; foreach ($attrs as $k=>$v){ $parts[]=$k.'="'.$v.'"'; }
-    $sc='[mega_metrics_data '.implode(' ',$parts).']';
+    $parts = [];
+    foreach ($attrs as $k => $v) {
+      $parts[] = $k . '="' . $v . '"';
+    }
+    $sc = '[mega_metrics_data ' . implode(' ', $parts) . ']';
 
     $raw = do_shortcode($sc);
-    if (!is_string($raw) || $raw==='') return null;
+    if (!is_string($raw) || $raw === '')
+      return null;
     $raw = trim(wp_unslash($raw));
-    if ($raw!=='' && substr($raw,0,3)==="\xEF\xBB\xBF") $raw=substr($raw,3);
-    if ($raw!=='') $raw=html_entity_decode($raw, ENT_QUOTES|ENT_HTML5,'UTF-8');
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
+      $raw = substr($raw, 3);
+    if ($raw !== '')
+      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-    $data = json_decode($raw,true);
-    if (!is_array($data)) $data = json_decode(trim(wp_strip_all_tags($raw)), true);
+    $data = json_decode($raw, true);
+    if (!is_array($data))
+      $data = json_decode(trim(wp_strip_all_tags($raw)), true);
 
     $out = is_array($data) ? $data : null;
-    if ($out) mt_cache_set($tkey, $out, 60);
+    if ($out)
+      mt_cache_set($tkey, $out, 60);
     return $out;
   }
 }
@@ -1271,31 +1408,43 @@ if (!function_exists('mt_metrics_fetch_by_shortcode')) {
 if (!function_exists('mt_trades_fetch_by_shortcode')) {
   function mt_trades_fetch_by_shortcode(string $accountId, string $type = 'CLOSED', int $page = 1, int $perPage = 500)
   {
-    $accountId = trim((string)$accountId);
-    if ($accountId === '') return null;
+    $accountId = trim((string) $accountId);
+    if ($accountId === '')
+      return null;
 
-    $tkey = mt_cache_key('mt:trades_sc', [$accountId,$type,$page,$perPage]);
-    $hit  = mt_cache_get($tkey);
-    if (is_array($hit)) return $hit;
+    $tkey = mt_cache_key('mt:trades_sc', [$accountId, $type, $page, $perPage]);
+    $hit = mt_cache_get($tkey);
+    if (is_array($hit))
+      return $hit;
 
     $sc = sprintf(
       '[mega_trades_data id="%s" type="%s" page="%d" perpage="%d" output="json"]',
-      esc_attr($accountId), esc_attr($type), (int)$page, (int)$perPage
+      esc_attr($accountId),
+      esc_attr($type),
+      (int) $page,
+      (int) $perPage
     );
     $raw = do_shortcode($sc);
     $raw = is_string($raw) ? trim(wp_unslash($raw)) : '';
-    if ($raw!=='' && substr($raw,0,3)==="\xEF\xBB\xBF") $raw=substr($raw,3);
-    if ($raw!=='') $raw=html_entity_decode($raw, ENT_QUOTES|ENT_HTML5,'UTF-8');
+    if ($raw !== '' && substr($raw, 0, 3) === "\xEF\xBB\xBF")
+      $raw = substr($raw, 3);
+    if ($raw !== '')
+      $raw = html_entity_decode($raw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-    $json = json_decode($raw,true);
-    if (!is_array($json)) $json = json_decode(trim(wp_strip_all_tags($raw)), true);
-    if (!is_array($json)) return null;
+    $json = json_decode($raw, true);
+    if (!is_array($json))
+      $json = json_decode(trim(wp_strip_all_tags($raw)), true);
+    if (!is_array($json))
+      return null;
 
     $out = null;
-    if (isset($json['data']) && is_array($json['data'])) $out = $json['data'];
-    elseif (isset($json[0]) && is_array($json[0]))       $out = $json;
+    if (isset($json['data']) && is_array($json['data']))
+      $out = $json['data'];
+    elseif (isset($json[0]) && is_array($json[0]))
+      $out = $json;
 
-    if ($out) mt_cache_set($tkey, $out,25);
+    if ($out)
+      mt_cache_set($tkey, $out, 25);
     return $out;
   }
 }
@@ -1316,7 +1465,8 @@ if (!function_exists('mt_trades_day_stats')) {
     $trades = $cache[$accountId];
 
     $dayTrades = array_values(array_filter($trades, function ($t) use ($day_iso) {
-      if (empty($t['closeTime'])) return false;
+      if (empty($t['closeTime']))
+        return false;
       $ct = (string) $t['closeTime'];
       $ct_ymd = function_exists('mt_utc_to_eastern_ymd_cutoff')
         ? mt_utc_to_eastern_ymd_cutoff($ct, 18)
@@ -1344,15 +1494,26 @@ if (!function_exists('mt_trades_day_stats')) {
       if (!empty($t['openTime']) && !empty($t['closeTime'])) {
         $o = strtotime((string) $t['openTime']);
         $c = strtotime((string) $t['closeTime']);
-        if ($o && $c && $c >= $o) $durSec = $c - $o;
+        if ($o && $c && $c >= $o)
+          $durSec = $c - $o;
       }
 
       if (is_numeric($pnl) && $pnl > 0) {
-        $runW++; $runL = 0; $maxW = max($maxW, $runW);
-        if ($durSec !== null) { $sumW += $durSec; $cntW++; }
+        $runW++;
+        $runL = 0;
+        $maxW = max($maxW, $runW);
+        if ($durSec !== null) {
+          $sumW += $durSec;
+          $cntW++;
+        }
       } elseif (is_numeric($pnl) && $pnl < 0) {
-        $runL++; $runW = 0; $maxL = max($maxL, $runL);
-        if ($durSec !== null) { $sumL += $durSec; $cntL++; }
+        $runL++;
+        $runW = 0;
+        $maxL = max($maxL, $runL);
+        if ($durSec !== null) {
+          $sumL += $durSec;
+          $cntL++;
+        }
       } else {
         $runW = $runL = 0;
       }
@@ -1377,9 +1538,12 @@ if (!function_exists('mt_utc_to_eastern_ymd')) {
   function mt_utc_to_eastern_ymd($utcString)
   {
     $src = is_string($utcString) ? trim($utcString) : '';
-    if ($src === '') return '';
+    if ($src === '')
+      return '';
     try {
-      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src)) { $src .= ' 00:00:00'; }
+      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src)) {
+        $src .= ' 00:00:00';
+      }
       $utc = new DateTimeZone('UTC');
       $ny = new DateTimeZone('America/New_York');
       $dt = new DateTime($src, $utc);
@@ -1394,14 +1558,18 @@ if (!function_exists('mt_utc_to_eastern_ymd_cutoff')) {
   function mt_utc_to_eastern_ymd_cutoff($utcString, $cutoffHour = 18)
   {
     $src = is_string($utcString) ? trim($utcString) : '';
-    if ($src === '') return '';
+    if ($src === '')
+      return '';
     try {
       $utc = new DateTimeZone('UTC');
       $ny = new DateTimeZone('America/New_York');
-      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src)) $src .= ' 00:00:00';
+      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $src))
+        $src .= ' 00:00:00';
       $dt = new DateTime($src, $utc);
       $dt->setTimezone($ny);
-      if ((int) $dt->format('G') >= (int) $cutoffHour) { $dt->modify('+1 day'); }
+      if ((int) $dt->format('G') >= (int) $cutoffHour) {
+        $dt->modify('+1 day');
+      }
       return $dt->format('Y-m-d');
     } catch (\Throwable $e) {
       return '';
@@ -1416,21 +1584,26 @@ if (!function_exists('mt_sum_commissions_for_day')) {
     static $cache = [];
     $accountId = trim((string) $accountId);
     $day_iso_eastern = substr((string) $day_iso_eastern, 0, 10);
-    if ($accountId === '' || $day_iso_eastern === '') return '-';
+    if ($accountId === '' || $day_iso_eastern === '')
+      return '-';
 
     $toEasternYmdCutoff = function (?string $iso, int $cutoffHour = 18): string {
       $iso = is_string($iso) ? trim($iso) : '';
-      if ($iso === '') return '';
+      if ($iso === '')
+        return '';
       if (function_exists('mt_utc_to_eastern_ymd_cutoff')) {
         return mt_utc_to_eastern_ymd_cutoff($iso, $cutoffHour);
       }
       try {
         $utc = new DateTimeZone('UTC');
         $ny = new DateTimeZone('America/New_York');
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $iso)) $iso .= ' 00:00:00';
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $iso))
+          $iso .= ' 00:00:00';
         $dt = new DateTime($iso, $utc);
         $dt->setTimezone($ny);
-        if ((int) $dt->format('G') >= $cutoffHour) { $dt->modify('+1 day'); }
+        if ((int) $dt->format('G') >= $cutoffHour) {
+          $dt->modify('+1 day');
+        }
         return $dt->format('Y-m-d');
       } catch (\Throwable $e) {
         return substr($iso, 0, 10);
@@ -1445,14 +1618,16 @@ if (!function_exists('mt_sum_commissions_for_day')) {
     }
 
     $trades = $cache[$accountId];
-    if (empty($trades)) return '-';
+    if (empty($trades))
+      return '-';
 
     $sum = 0.0;
     $found = false;
 
     foreach ($trades as $t) {
       $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
-      if ($ct === '') continue;
+      if ($ct === '')
+        continue;
       $ct_ymd = $toEasternYmdCutoff($ct, 18);
       if ($ct_ymd === $day_iso_eastern) {
         if (isset($t['commission']) && is_numeric($t['commission'])) {
@@ -1470,23 +1645,28 @@ if (!function_exists('mt_count_trades_for_day')) {
     static $cache = [];
     $accountId = trim((string) $accountId);
     $day_iso_eastern = substr((string) $day_iso_eastern, 0, 10);
-    if ($accountId === '' || $day_iso_eastern === '') return 0;
+    if ($accountId === '' || $day_iso_eastern === '')
+      return 0;
 
     if (!isset($cache[$accountId])) {
       $trades = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', 1, 500);
       $cache[$accountId] = is_array($trades) ? $trades : [];
     }
     $trades = $cache[$accountId];
-    if (empty($trades)) return 0;
+    if (empty($trades))
+      return 0;
 
     $cnt = 0;
     foreach ($trades as $t) {
       $ct = isset($t['closeTime']) ? (string) $t['closeTime'] : '';
-      if ($ct === '') continue;
+      if ($ct === '')
+        continue;
       $ct_ymd = function_exists('mt_utc_to_eastern_ymd_cutoff')
         ? mt_utc_to_eastern_ymd_cutoff($ct, 18)
         : (function_exists('mt_utc_to_eastern_ymd') ? mt_utc_to_eastern_ymd($ct) : substr($ct, 0, 10));
-      if ($ct_ymd === $day_iso_eastern) { $cnt++; }
+      if ($ct_ymd === $day_iso_eastern) {
+        $cnt++;
+      }
     }
     return $cnt;
   }
@@ -1509,16 +1689,22 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     $tzNY = new DateTimeZone('America/New_York');
 
     $toNY = function (?string $iso) use ($tzUTC, $tzNY): ?DateTime {
-      if (!$iso) return null;
-      try { $dt = new DateTime($iso, $tzUTC); $dt->setTimezone($tzNY); return $dt; }
-      catch (\Throwable $e) {
-        if (defined('WP_DEBUG') && WP_DEBUG) error_log('[DJ] toNY error: ' . $e->getMessage() . ' iso=' . $iso);
+      if (!$iso)
+        return null;
+      try {
+        $dt = new DateTime($iso, $tzUTC);
+        $dt->setTimezone($tzNY);
+        return $dt;
+      } catch (\Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] toNY error: ' . $e->getMessage() . ' iso=' . $iso);
         return null;
       }
     };
 
     $fmtHMS = function (int $secs): string {
-      if ($secs <= 0) return '00:00:00';
+      if ($secs <= 0)
+        return '00:00:00';
       $h = (int) floor($secs / 3600);
       $m = (int) floor(($secs % 3600) / 60);
       $s = (int) ($secs % 60);
@@ -1529,16 +1715,28 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     $pageFetch = 1;
     $all = [];
 
-    if (defined('WP_DEBUG') && WP_DEBUG) error_log('[DJ] fetch start account=' . $accountId);
+    if (defined('WP_DEBUG') && WP_DEBUG)
+      error_log('[DJ] fetch start account=' . $accountId);
 
     while (true) {
       $chunk = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', $pageFetch, $perPageFetch);
-      if (is_wp_error($chunk)) { if (defined('WP_DEBUG') && WP_DEBUG) error_log('[DJ] fetch error page=' . $pageFetch . ' msg=' . $chunk->get_error_message()); break; }
-      if (empty($chunk)) { if (defined('WP_DEBUG') && WP_DEBUG) error_log('[DJ] fetch empty page=' . $pageFetch); break; }
+      if (is_wp_error($chunk)) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] fetch error page=' . $pageFetch . ' msg=' . $chunk->get_error_message());
+        break;
+      }
+      if (empty($chunk)) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] fetch empty page=' . $pageFetch);
+        break;
+      }
 
       $items = [];
-      if (isset($chunk['data']) && is_array($chunk['data'])) { $items = $chunk['data']; }
-      elseif (is_array($chunk)) { $items = $chunk; }
+      if (isset($chunk['data']) && is_array($chunk['data'])) {
+        $items = $chunk['data'];
+      } elseif (is_array($chunk)) {
+        $items = $chunk;
+      }
 
       if (defined('WP_DEBUG') && WP_DEBUG) {
         $pc = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : 0;
@@ -1546,19 +1744,28 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
         error_log('[DJ] fetch page=' . $pageFetch . ' got=' . count($items) . ' pagesCount=' . $pc . ' totalCount=' . $tc);
       }
 
-      if (empty($items)) break;
+      if (empty($items))
+        break;
 
-      foreach ($items as $it) { if (is_array($it)) $all[] = $it; }
+      foreach ($items as $it) {
+        if (is_array($it))
+          $all[] = $it;
+      }
 
       $pagesCount = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : null;
-      if ($pagesCount && $pageFetch >= $pagesCount) break;
-      if (count($items) < $perPageFetch) break;
+      if ($pagesCount && $pageFetch >= $pagesCount)
+        break;
+      if (count($items) < $perPageFetch)
+        break;
 
       $pageFetch++;
     }
 
-    if (defined('WP_DEBUG') && WP_DEBUG) error_log('[DJ] total trades fetched=' . count($all));
-    if (empty($all)) { return ['rows' => $rows, 'per_page' => (int) $perPage]; }
+    if (defined('WP_DEBUG') && WP_DEBUG)
+      error_log('[DJ] total trades fetched=' . count($all));
+    if (empty($all)) {
+      return ['rows' => $rows, 'per_page' => (int) $perPage];
+    }
 
     $byDay = [];
     foreach ($all as $t) {
@@ -1567,7 +1774,11 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
 
       $closeNY = $toNY($cIso);
       $openNY = $toNY($oIso);
-      if (!$closeNY || !$openNY) { if (defined('WP_DEBUG') && WP_DEBUG) error_log('[DJ] skip trade (bad times) open=' . $oIso . ' close=' . $cIso); continue; }
+      if (!$closeNY || !$openNY) {
+        if (defined('WP_DEBUG') && WP_DEBUG)
+          error_log('[DJ] skip trade (bad times) open=' . $oIso . ' close=' . $cIso);
+        continue;
+      }
 
       $day = function_exists('mt_utc_to_eastern_ymd_cutoff')
         ? mt_utc_to_eastern_ymd_cutoff((string) $t['closeTime'], 18)
@@ -1581,8 +1792,19 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
 
       if (!isset($byDay[$day])) {
         $byDay[$day] = [
-          'net' => 0.0,'hi' => null,'lo' => null,'ct' => 0,'trades' => 0,'fees' => 0.0,
-          'wins' => 0,'losses' => 0,'sumWin' => 0.0,'sumLoss' => 0.0,'durWinSecs' => 0,'durLossSecs' => 0,'_seq' => []
+          'net' => 0.0,
+          'hi' => null,
+          'lo' => null,
+          'ct' => 0,
+          'trades' => 0,
+          'fees' => 0.0,
+          'wins' => 0,
+          'losses' => 0,
+          'sumWin' => 0.0,
+          'sumLoss' => 0.0,
+          'durWinSecs' => 0,
+          'durLossSecs' => 0,
+          '_seq' => []
         ];
       }
 
@@ -1592,11 +1814,21 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $D['fees'] += $commission;
       $D['net'] += ($pnl + $commission);
 
-      if ($pnl > 0) { $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl); }
-      elseif ($pnl < 0) { $D['lo'] = is_null($D['lo']) ? $pnl : min($D['lo'], $pnl); }
+      if ($pnl > 0) {
+        $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl);
+      } elseif ($pnl < 0) {
+        $D['lo'] = is_null($D['lo']) ? $pnl : min($D['lo'], $pnl);
+      }
 
-      if ($pnl > 0) { $D['wins'] += 1; $D['sumWin'] += $pnl; $D['durWinSecs'] += $durSecs; }
-      elseif ($pnl < 0) { $D['losses'] += 1; $D['sumLoss'] += $pnl; $D['durLossSecs'] += $durSecs; }
+      if ($pnl > 0) {
+        $D['wins'] += 1;
+        $D['sumWin'] += $pnl;
+        $D['durWinSecs'] += $durSecs;
+      } elseif ($pnl < 0) {
+        $D['losses'] += 1;
+        $D['sumLoss'] += $pnl;
+        $D['durLossSecs'] += $durSecs;
+      }
 
       $D['_seq'][] = ['openTs' => $openNY->getTimestamp(), 'pnl' => $pnl];
       unset($D);
@@ -1604,13 +1836,23 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     unset($D);
 
     foreach ($byDay as $day => $agg) {
-      usort($agg['_seq'], function ($a, $b) { return $a['openTs'] <=> $b['openTs']; });
+      usort($agg['_seq'], function ($a, $b) {
+        return $a['openTs'] <=> $b['openTs'];
+      });
       $curW = $curL = $maxW = $maxL = 0;
       foreach ($agg['_seq'] as $e) {
-        if ($e['pnl'] > 0) { $curW += 1; $curL = 0; }
-        elseif ($e['pnl'] < 0) { $curL += 1; $curW = 0; }
-        else { $curW = 0; $curL = 0; }
-        $maxW = max($maxW, $curW); $maxL = max($maxL, $curL);
+        if ($e['pnl'] > 0) {
+          $curW += 1;
+          $curL = 0;
+        } elseif ($e['pnl'] < 0) {
+          $curL += 1;
+          $curW = 0;
+        } else {
+          $curW = 0;
+          $curL = 0;
+        }
+        $maxW = max($maxW, $curW);
+        $maxL = max($maxL, $curL);
       }
 
       $wins = (int) $agg['wins'];
@@ -1677,15 +1919,21 @@ if (!function_exists('mt_daily_journal_rows_html')) {
     $user_id = get_current_user_id();
 
     $fmt_money = function ($v) {
-      if ($v === '-' || $v === null || $v === '') return '-';
-      if (!is_numeric($v)) return '-';
+      if ($v === '-' || $v === null || $v === '')
+        return '-';
+      if (!is_numeric($v))
+        return '-';
       $n = (float) $v;
       $sign = $n < 0 ? '-' : '';
       $abs = abs($n);
       return $sign . '$' . number_format($abs, 2, '.', ',');
     };
-    $fmt_int = function ($v) { return ($v === '-' ? '-' : number_format((int) $v)); };
-    $fmt_pct = function ($v) { return ($v === '-' ? '-' : (number_format((float) $v, 2) . '%')); };
+    $fmt_int = function ($v) {
+      return ($v === '-' ? '-' : number_format((int) $v));
+    };
+    $fmt_pct = function ($v) {
+      return ($v === '-' ? '-' : (number_format((float) $v, 2) . '%'));
+    };
 
     ob_start();
     foreach ($rows as $i => $r) {
@@ -1775,7 +2023,12 @@ if (!function_exists('mt_update_current_user_billing')) {
     $uid = get_current_user_id();
 
     $fields = array(
-      'billing_address_1','billing_city','billing_state','billing_postcode','billing_country','billing_phone'
+      'billing_address_1',
+      'billing_city',
+      'billing_state',
+      'billing_postcode',
+      'billing_country',
+      'billing_phone'
     );
     foreach ($fields as $k) {
       if (array_key_exists($k, $in)) {
@@ -1847,13 +2100,16 @@ if (!function_exists('mt_parse_open_time')) {
 if (!function_exists('mt_subscription_id_for_order')) {
   function mt_subscription_id_for_order(int $order_id, int $user_id = 0): string
   {
-    if ($order_id <= 0) return '';
+    if ($order_id <= 0)
+      return '';
 
     if ($user_id > 0) {
       $order = function_exists('wc_get_order') ? wc_get_order($order_id) : null;
-      if (!$order) return '';
+      if (!$order)
+        return '';
       $belongs = ((int) $order->get_user_id() === (int) $user_id);
-      if (!$belongs) return '';
+      if (!$belongs)
+        return '';
     }
 
     if (function_exists('wcs_get_subscriptions_for_order')) {
@@ -1863,15 +2119,21 @@ if (!function_exists('mt_subscription_id_for_order')) {
         foreach ($subs as $sub) {
           if (is_object($sub) && method_exists($sub, 'get_id')) {
             $status = method_exists($sub, 'get_status') ? (string) $sub->get_status() : '';
-            if (in_array($status, array('active', 'on-hold', 'pending-cancel'), true)) { $pick = $sub; break; }
-            if ($pick === null) $pick = $sub;
+            if (in_array($status, array('active', 'on-hold', 'pending-cancel'), true)) {
+              $pick = $sub;
+              break;
+            }
+            if ($pick === null)
+              $pick = $sub;
           }
         }
-        if ($pick) return (string) $pick->get_id();
+        if ($pick)
+          return (string) $pick->get_id();
       }
     }
     $maybe = get_post_meta($order_id, '_subscription_id', true);
-    if (is_scalar($maybe) && (string) $maybe !== '') return (string) $maybe;
+    if (is_scalar($maybe) && (string) $maybe !== '')
+      return (string) $maybe;
     return '';
   }
 }
@@ -1885,62 +2147,101 @@ if (!function_exists('mt_prepare_ui_payout')) {
     $clean_json = static function (string $raw) {
       $decoded = html_entity_decode($raw, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
       $stripped = trim(wp_strip_all_tags($decoded));
-      if (preg_match('/(\{.*\}|\[.*\])/s', $stripped, $m)) $stripped = $m[1];
+      if (preg_match('/(\{.*\}|\[.*\])/s', $stripped, $m))
+        $stripped = $m[1];
       $arr = json_decode($stripped, true);
       return (json_last_error() === JSON_ERROR_NONE && is_array($arr)) ? $arr : null;
     };
     $aget = static function (array $a, array $path, $def = null) {
-      $v = $a; foreach ($path as $k) { if (is_array($v) && array_key_exists($k,$v)) $v = $v[$k]; else return $def; } return $v;
+      $v = $a;
+      foreach ($path as $k) {
+        if (is_array($v) && array_key_exists($k, $v))
+          $v = $v[$k];
+        else
+          return $def;
+      }return $v;
     };
     $b = static function ($v): bool {
-      if (is_bool($v)) return $v;
-      if (is_numeric($v)) return ((int)$v)!==0;
-      if (is_string($v)) { $t=strtolower(trim($v)); if (in_array($t,['1','true','yes','on'],true)) return true; if (in_array($t,['0','false','no','off',''],true)) return false; }
+      if (is_bool($v))
+        return $v;
+      if (is_numeric($v))
+        return ((int) $v) !== 0;
+      if (is_string($v)) {
+        $t = strtolower(trim($v));
+        if (in_array($t, ['1', 'true', 'yes', 'on'], true))
+          return true;
+        if (in_array($t, ['0', 'false', 'no', 'off', ''], true))
+          return false;
+      }
       return !empty($v);
     };
-    $endsFunded = static function ($s) { return (bool) preg_match('/\bFunded\s*$/i', (string)$s); };
+    $endsFunded = static function ($s) {
+      return (bool) preg_match('/\bFunded\s*$/i', (string) $s);
+    };
     $extract_account_size = static function (?string $label, ?string $desc): string {
-      $src = trim((string)($label ?: $desc ?: '')); if ($src==='') return ''; $parts = explode('|',$src,2); return trim($parts[0]);
+      $src = trim((string) ($label ?: $desc ?: ''));
+      if ($src === '')
+        return '';
+      $parts = explode('|', $src, 2);
+      return trim($parts[0]);
     };
 
     $email = sanitize_email($email);
-    if (!$email) return $out;
+    if (!$email)
+      return $out;
 
     $sc_accounts = sprintf('[mega_accounts_data email="%s" page="1" perpage="50" output="json"]', esc_attr($email));
     $raw = (string) do_shortcode($sc_accounts);
     $acc = $clean_json($raw);
-    if (!$acc) return $out;
+    if (!$acc)
+      return $out;
 
     $list = null;
-    foreach ([['data','items'],['items'],['results'],['data'],[]] as $p) { $cand = $p ? $aget($acc,$p,null) : $acc; if (is_array($cand) && $cand && array_keys($cand)===range(0,count($cand)-1)) { $list=$cand; break; } }
-    if (!$list) return $out;
+    foreach ([['data', 'items'], ['items'], ['results'], ['data'], []] as $p) {
+      $cand = $p ? $aget($acc, $p, null) : $acc;
+      if (is_array($cand) && $cand && array_keys($cand) === range(0, count($cand) - 1)) {
+        $list = $cand;
+        break;
+      }
+    }
+    if (!$list)
+      return $out;
 
     $filtered = [];
     foreach ($list as $row) {
-      if (!is_array($row)) continue;
-      $st = strtoupper(trim((string)($row['status'] ?? '')));
-      if ($st!=='ACTIVE') continue;
-      $desc  = (string) $aget($row, ['program','description'], '');
-      $label = (string) $aget($row, ['program','label'], '');
-      if (!$endsFunded($desc) && !$endsFunded($label)) continue;
-      $row['_createdAt']    = (string) ($row['createdAt'] ?? '');
-      $row['_programDesc']  = $desc;
+      if (!is_array($row))
+        continue;
+      $st = strtoupper(trim((string) ($row['status'] ?? '')));
+      if ($st !== 'ACTIVE')
+        continue;
+      $desc = (string) $aget($row, ['program', 'description'], '');
+      $label = (string) $aget($row, ['program', 'label'], '');
+      if (!$endsFunded($desc) && !$endsFunded($label))
+        continue;
+      $row['_createdAt'] = (string) ($row['createdAt'] ?? '');
+      $row['_programDesc'] = $desc;
       $row['_programLabel'] = $label;
-      $row['_accountSize']  = $extract_account_size($label, $desc);
+      $row['_accountSize'] = $extract_account_size($label, $desc);
       $filtered[] = $row;
     }
-    if (!$filtered) return $out;
+    if (!$filtered)
+      return $out;
 
-    usort($filtered, static function ($a,$b){
-      $ta = strtotime((string)($a['_createdAt'] ?? '')) ?: 0;
-      $tb = strtotime((string)($b['_createdAt'] ?? '')) ?: 0;
+    usort($filtered, static function ($a, $b) {
+      $ta = strtotime((string) ($a['_createdAt'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['_createdAt'] ?? '')) ?: 0;
       return $tb <=> $ta;
     });
     $out['selected'] = (string) ($filtered[0]['id'] ?? '');
 
     $resolve_by_id = static function (string $id) use ($clean_json) {
       if (function_exists('mt_accounts_resolve_account_by_id')) {
-        try { $acc = mt_accounts_resolve_account_by_id($id); if (is_array($acc)) return $acc; } catch (\Throwable $e) {}
+        try {
+          $acc = mt_accounts_resolve_account_by_id($id);
+          if (is_array($acc))
+            return $acc;
+        } catch (\Throwable $e) {
+        }
       }
       $sc = sprintf('[mega_account_data id="%s" page="1" perpage="50" output="json"]', esc_attr($id));
       $raw = (string) do_shortcode($sc);
@@ -1952,55 +2253,72 @@ if (!function_exists('mt_prepare_ui_payout')) {
     };
 
     $STATUS_KEYS = [
-      'amountAvailable','userKYCVerified','accountIsFlat','accountHasMetMinTradingDays',
-      'accountHasProfitShare','accountIsActive','accountHasProfit','accountHasWithdrawalAmount',
-      'accountIsFunded','accountHasPendingPayout','accountConsistencyMet',
-      'payoutHasMetMinTradingDays','payoutCycleCheckPassed',
+      'amountAvailable',
+      'userKYCVerified',
+      'accountIsFlat',
+      'accountHasMetMinTradingDays',
+      'accountHasProfitShare',
+      'accountIsActive',
+      'accountHasProfit',
+      'accountHasWithdrawalAmount',
+      'accountIsFunded',
+      'accountHasPendingPayout',
+      'accountConsistencyMet',
+      'payoutHasMetMinTradingDays',
+      'payoutCycleCheckPassed',
     ];
 
     foreach ($filtered as $row) {
-      $id = (string)($row['id'] ?? '');
-      if (!$id) continue;
+      $id = (string) ($row['id'] ?? '');
+      if (!$id)
+        continue;
 
       $byId = $resolve_by_id($id);
-      if (!is_array($byId)) continue;
+      if (!is_array($byId))
+        continue;
 
       $accountName = (string) ($byId['platform']['accountId'] ?? $byId['accountId'] ?? '');
-      if ($accountName==='') continue;
+      if ($accountName === '')
+        continue;
 
-      $platformRaw = (string)(
+      $platformRaw = (string) (
         ($byId['platform']['platform'] ?? $byId['platform']['name'] ?? '') ?:
         ($row['program']['platform'] ?? ($row['platform'] ?? ''))
       );
       $logo = MT_Accounts::platform_logo($platformRaw);
 
-      $currentBalance  = (float) (($byId['metrics']['currentBalance'] ?? 0) ?: 0);
+      $currentBalance = (float) (($byId['metrics']['currentBalance'] ?? 0) ?: 0);
       $startingBalance = (float) (($byId['program']['startingBalance'] ?? 0) ?: 0);
 
       $minMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : [];
-      $minimumBalance = isset($minMap[$startingBalance]) ? (float)$minMap[$startingBalance] : 0.0;
+      $minimumBalance = isset($minMap[$startingBalance]) ? (float) $minMap[$startingBalance] : 0.0;
 
       $minWMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
-      $minimumWithdrawal = isset($minWMap[$startingBalance]) ? (float)$minWMap[$startingBalance] : 0.0;
+      $minimumWithdrawal = isset($minWMap[$startingBalance]) ? (float) $minWMap[$startingBalance] : 0.0;
 
       $withdrawalRoom = max(0.0, $currentBalance - $minimumBalance);
 
       $elig = $fetch_elig($id) ?: [];
-      $enabled      = (bool) ($elig['payoutCycle']['enabled'] ?? false);
+      $enabled = (bool) ($elig['payoutCycle']['enabled'] ?? false);
       $targetPassed = (bool) ($elig['payoutCycle']['targetPassed'] ?? false);
-      $status       = (array) ($elig['accountStatus'] ?? []);
+      $status = (array) ($elig['accountStatus'] ?? []);
 
       $allStatusOK = true;
-      foreach ($STATUS_KEYS as $k) { if (!($status[$k] ?? false)) { $allStatusOK = false; break; } }
+      foreach ($STATUS_KEYS as $k) {
+        if (!($status[$k] ?? false)) {
+          $allStatusOK = false;
+          break;
+        }
+      }
 
       $maxWithdrawalApi = (float) ($elig['payoutCycle']['maxWithdrawal'] ?? ($byId['payout']['payoutCycle']['maxWithdrawal'] ?? 0));
-      $eligibleBase      = ($enabled && $targetPassed && $allStatusOK);
+      $eligibleBase = ($enabled && $targetPassed && $allStatusOK);
       $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= $minimumWithdrawal));
-      $maxWithdrawalUI   = $eligibleForPayout ? max(0.0, min($withdrawalRoom, (float)$maxWithdrawalApi)) : 0.0;
+      $maxWithdrawalUI = $eligibleForPayout ? max(0.0, min($withdrawalRoom, (float) $maxWithdrawalApi)) : 0.0;
 
       $badge = $eligibleForPayout
-        ? ['text'=>'Eligible','class'=>'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
-        : ['text'=>'Ineligible','class'=>'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
+        ? ['text' => 'Eligible', 'class' => 'badge-mega badge-mega-fit-content badge-mega-funded badge-mega-sm']
+        : ['text' => 'Ineligible', 'class' => 'badge-mega badge-mega-error badge-mega-fit-content badge-mega-sm'];
 
       $out['items'][] = [
         'id' => $id,
@@ -2013,14 +2331,14 @@ if (!function_exists('mt_prepare_ui_payout')) {
         'eligible' => $eligibleBase,
         'eligibleForPayout' => $eligibleForPayout,
         'meta' => [
-          'maxWithdrawal'   => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
-          'maxWithdrawalApi'=> is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawal' => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
+          'maxWithdrawalApi' => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
           'maxWithdrawalUI' => $maxWithdrawalUI,
-          'currentBalance'  => $currentBalance,
+          'currentBalance' => $currentBalance,
           'startingBalance' => $startingBalance,
-          'minimumBalance'  => $minimumBalance,
-          'withdrawalRoom'  => $withdrawalRoom,
-          'minWithdrawal'   => $minimumWithdrawal,
+          'minimumBalance' => $minimumBalance,
+          'withdrawalRoom' => $withdrawalRoom,
+          'minWithdrawal' => $minimumWithdrawal,
         ],
         'badge' => $badge,
       ];
