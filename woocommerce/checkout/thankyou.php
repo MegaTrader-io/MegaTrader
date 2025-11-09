@@ -9,6 +9,8 @@
 
 defined('ABSPATH') || exit;
 
+$v2 = isset($_GET['v2']);
+
 /* =========================================================
  * Helpers
  * =======================================================*/
@@ -265,6 +267,13 @@ if (!function_exists('mt_get_order_card_brand_last4')) {
 }
 ?>
 
+
+<?php if($v2): ?>
+
+<h1>Hola Pepillo</h1>
+<?php get_template_part('template-parts/order-success-modal'); ?>
+<h1>after get_template</h1>
+<?php else : ?>
 <div class="woocommerce-order pb-30 pt-32">
     <div class="container">
         <div class="top-menu">
@@ -634,7 +643,7 @@ if (!function_exists('mt_get_order_card_brand_last4')) {
 // =====================
 //  MODAL (Bootstrap)
 // =====================
-if (isset($order) && $order && !$order->has_status('failed')):
+if ( isset($order) && $order && !$order->has_status('failed')):
 
     // Datos básicos para modal
     $order_number = $order->get_order_number();
@@ -870,6 +879,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            return;
             const DEST = '/my-account/overview/';
             const modalEl = document.getElementById('orderSuccessModal');
             if (!modalEl) return;
@@ -1071,5 +1081,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
 
 
 
+
+<?php endif; ?>
 
 <?php endif; ?>

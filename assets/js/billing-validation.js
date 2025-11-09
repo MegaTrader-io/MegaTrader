@@ -1664,8 +1664,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const v2 = urlParams.get('v2') ?? false; 
   // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
-  if (typeof jQuery !== "undefined") {
+  if (!v2 && typeof jQuery !== "undefined") {
     jQuery.ajaxPrefilter(function (options, originalOptions, jqXHR) {
       const url = String(options.url || "");
       if (url.indexOf("wc-ajax=checkout") !== -1) {

@@ -265,11 +265,19 @@ if (!function_exists('mt_get_order_card_brand_last4')) {
 }
 ?>
 
+<?php
+
+echo '<h2>Any orders?</h3>';
+if (isset($order)){
+    echo '<h3>Aquí pinchando</h3>';
+}
+?>
 
 <?php
 // =====================
 //  MODAL (Bootstrap)
 // =====================
+
 if (isset($order) && $order && !$order->has_status('failed')):
 
     // Datos básicos para modal
