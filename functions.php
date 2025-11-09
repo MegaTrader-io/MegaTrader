@@ -2055,6 +2055,38 @@ function mt_ajax_accounts_performance() {
     }
 }
 
+/* === Utilidades de caché (ligeras) === */
+if (!function_exists('mt_fetch_accounts_cached')) {
+    /**
+     * Trae cuentas con cache 30s y fallback plain->encoded.
+     * Devuelve array [$accounts, $variant] donde $variant es 'plain' o 'encoded'.
+     */
+    function mt_fetch_accounts_cached(string $email_plain, string $email_api): array {
+        $cache_key = 'mt_acc_' . md5($email_plain ?: $email_api);
+        $cached = get_transient($cache_key);
+        if ($cached !== false && is_array($cached) && isset($cached['data'], $cached['variant'])) {
+            return [$cached['data'], $cached['variant']];
+        }
+
+        $accounts = [];
+        $variant  = 'plain';
+
+        try {
+            $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_plain, 1, 50) : [];
+        } catch (Throwable $e) {}
+
+        if (empty($accounts)) {
+            try {
+                $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_api, 1, 50) : [];
+                $variant  = 'encoded';
+            } catch (Throwable $e) {}
+        }
+
+        set_transient($cache_key, ['data' => $accounts, 'variant' => $variant], 30); // 30s
+        return [$accounts, $variant];
+    }
+}
+
 // === Performance Chart AJAX ===
 add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
 add_action('wp_ajax_nopriv_mt_account_performance_chart', 'mt_ajax_account_performance_chart');

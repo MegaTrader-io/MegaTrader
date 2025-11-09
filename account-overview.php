@@ -9,38 +9,6 @@ if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
   require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
 }
 
-/* === Utilidades de caché (ligeras) === */
-if (!function_exists('mt_fetch_accounts_cached')) {
-  /**
-   * Trae cuentas con cache 30s y fallback plain->encoded.
-   * Devuelve array [$accounts, $variant] donde $variant es 'plain' o 'encoded'.
-   */
-  function mt_fetch_accounts_cached(string $email_plain, string $email_api): array {
-    $cache_key = 'mt_acc_' . md5($email_plain ?: $email_api);
-    $cached = get_transient($cache_key);
-    if ($cached !== false && is_array($cached) && isset($cached['data'], $cached['variant'])) {
-      return [$cached['data'], $cached['variant']];
-    }
-
-    $accounts = [];
-    $variant  = 'plain';
-
-    try {
-      $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_plain, 1, 50) : [];
-    } catch (Throwable $e) {}
-
-    if (empty($accounts)) {
-      try {
-        $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_api, 1, 50) : [];
-        $variant  = 'encoded';
-      } catch (Throwable $e) {}
-    }
-
-    set_transient($cache_key, ['data' => $accounts, 'variant' => $variant], 30); // 30s
-    return [$accounts, $variant];
-  }
-}
-
 if (!function_exists('mt_get_agreement_status_cached')) {
   /** Cachea el estado del acuerdo por 5 min. */
   function mt_get_agreement_status_cached(string $email_api) {
@@ -97,7 +65,7 @@ if (is_user_logged_in()) {
       $mt_cnt_encoded = ($mt_fetch_variant === 'encoded') ? (is_array($accounts) ? count($accounts) : 0) : 0;
 
       // === Agreement Modal (con caché 5min) ===
-      $__mt_agreement = null;//mt_get_agreement_status_cached($mt_user_email_api);
+      $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api);
 
       $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
         ? (string) $__mt_agreement['agreementURL']
@@ -125,7 +93,7 @@ if (is_user_logged_in()) {
 
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
-         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts, $cookie_selected_id);
+         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts, cookie_selected_id: $cookie_selected_id);
       }
 
       /* IDs válidos (de prepare_ui) */

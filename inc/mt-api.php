@@ -97,4 +97,35 @@ class MT_Api {
 
     return $response;
   }
+
+  public static function fetch_accounts_bulk(array $accountIds): array {
+    if (empty($accountIds)) {
+      return [];
+    }
+
+    $key = 'mt_bulk_acc_' . md5(implode('|', $accountIds));
+    $cached = get_transient($key);
+    if ($cached !== false) {
+      return $cached;
+    }
+
+    // Construye el shortcode
+    $ids_str = implode(',', array_map('esc_attr', $accountIds));
+    $sc = sprintf('[mega_bulk_accounts_data ids="%s" output="json"]', $ids_str);
+
+    // Ejecuta y decodifica
+    $raw = do_shortcode($sc);
+    $data = json_decode($raw, true);
+
+    if (!is_array($data)) {
+      $data = [];
+    }
+    if (isset($data['error'])) {
+      error_log('[MT][fetch_accounts_bulk] ' . $data['error']);
+      $data = [];
+    }
+
+    set_transient($key, $data, 30); // cache 30s (ajusta si quieres)
+    return $data;
+  }
 }

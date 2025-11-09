@@ -735,40 +735,53 @@
 
     // ===== Auto first loader =====
       if (window?.MT_DATA?.autoloadAccountOverview) {
-          window.MT_DATA.autoloadAccountOverview = false;
+          (async () => {
+              const MODAL_ID = 'changeSubcriptionModal';
+              const modalEl = document.getElementById(MODAL_ID);
 
-          const MODAL_ID = 'changeSubcriptionModal';
-          const modalEl = document.getElementById(MODAL_ID);
+              const result = await fetchFullData();
 
-          if (modalEl) {
-              // Usa la API de Bootstrap para abrirlo
-              const modalInstance = new bootstrap.Modal(modalEl);
-              modalInstance.show();
+              if (!result.success) {
+                  console.info('error loading accounts');
+                  return;
+              }
 
-              console.log(`✅ Modal #${MODAL_ID} abierto automáticamente`);
+              const {accounts} = result.data;
 
-              // Espera a que la animación termine antes de hacer click en el botón
-              modalEl.addEventListener('shown.bs.modal', () => {
-                  const btn = document.getElementById('select-subscription-btn');
-                  if (btn) {
-                      btn.dispatchEvent(new CustomEvent('click', {
-                          bubbles: true,
-                          cancelable: true,
-                          detail: { source: 'auto-select', customAction: true }
-                      }));
+              MT_DATA.accounts = accounts;
 
-                      setTimeout(() => {
-                          document.activeElement?.blur?.(); // quita el foco del actual
-                          document.body.focus({ preventScroll: true }); // devuelve el foco al body
-                      }, 0);
-                      console.log('✅ Click automático en el botón después de abrir el modal');
-                  } else {
-                      console.warn('⚠️ No se encontró el botón select-subscription-btn');
-                  }
-              }, { once: true });
-          } else {
-              console.warn(`⚠️ No se encontró el modal con id ${MODAL_ID}`);
-          }
+              if (modalEl) {
+                  // Usa la API de Bootstrap para abrirlo
+                  const modalInstance = new bootstrap.Modal(modalEl);
+                  modalInstance.show();
+
+                  console.log(`✅ Modal #${MODAL_ID} abierto automáticamente`);
+
+                  // Espera a que la animación termine antes de hacer click en el botón
+                  modalEl.addEventListener('shown.bs.modal', () => {
+                      const btn = document.getElementById('select-subscription-btn');
+                      if (btn) {
+                          btn.dispatchEvent(new CustomEvent('click', {
+                              bubbles: true,
+                              cancelable: true,
+                              detail: { source: 'auto-select', customAction: true }
+                          }));
+
+                          setTimeout(() => {
+                              document.activeElement?.blur?.(); // quita el foco del actual
+                              document.body.focus({ preventScroll: true }); // devuelve el foco al body
+                          }, 0);
+                          console.log('✅ Click automático en el botón después de abrir el modal');
+                      } else {
+                          console.warn('⚠️ No se encontró el botón select-subscription-btn');
+                      }
+                  }, { once: true });
+              } else {
+                  console.warn(`⚠️ No se encontró el modal con id ${MODAL_ID}`);
+              }
+
+              window.MT_DATA.autoloadAccountOverview = false;
+          })();
       }
 
     // ===== Exportar helpers (opcional, por si un día necesitas llamarlos desde otro inline) =====

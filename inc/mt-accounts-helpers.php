@@ -105,7 +105,7 @@ class MT_Accounts
   }
 
   /* ---- Builder de UI (sin mapas locales duplicados) ---- */
-  public static function prepare_ui(array $accounts, $cookie_selected_id = null): array
+  public static function prepare_ui(array $accounts, $forceFullData = false, $cookie_selected_id = null): array
   {
     if (isset($accounts['data']))
       $accounts = is_array($accounts['data']) ? $accounts['data'] : [];
@@ -140,9 +140,9 @@ class MT_Accounts
         $cookie_selected_id = $cur['id'];
     }
 
-    $mapAccount = function (array $acc, bool $fullData = false) use ($cookie_selected_id) {
+    $mapAccount = function (array $acc, bool $fullData = false) use ($cookie_selected_id, $forceFullData) {
       $id = (string) ($acc['id'] ?? '');
-      $fullData = $cookie_selected_id && $id == $cookie_selected_id ? true : $fullData;
+      $fullData = $forceFullData || $cookie_selected_id && $id == $cookie_selected_id || $fullData;
       $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
       $sb = $acc['program']['startingBalance'] ?? null;
       [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
@@ -219,6 +219,99 @@ class MT_Accounts
     };
 
     return ['current' => $mapAccount($cur, fullData: true), 'accounts' => array_map($mapAccount, $pool)];
+  }
+
+  public static function prepare_ui_v2(array $accounts): array
+  {
+    if (isset($accounts['data']))
+      $accounts = is_array($accounts['data']) ? $accounts['data'] : [];
+    elseif (isset($accounts['results']))
+      $accounts = $accounts['results'];
+    elseif (isset($accounts['items']))
+      $accounts = $accounts['items'];
+    elseif (isset($accounts['id']))
+      $accounts = [$accounts];
+
+    if (!empty($accounts) && array_keys($accounts) !== range(0, count($accounts) - 1))
+      $accounts = array_values($accounts);
+
+    $pool = array_values(array_filter((array) $accounts, 'is_array'));
+    usort($pool, function ($a, $b) {
+      $ta = strtotime((string) ($a['createdAt'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['createdAt'] ?? '')) ?: 0;
+      return $tb <=> $ta;
+    });
+    if (empty($pool))
+      return ['current' => null, 'accounts' => []];
+
+    $cur = $pool[0];
+    foreach ($pool as $row) {
+      if (self::is_active_status($row['status'] ?? '')) {
+        $cur = $row;
+        break;
+      }
+    }
+
+    $mapAccount = function (array $acc) {
+      $id = (string) ($acc['id'] ?? '');
+      $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
+      $sb = $acc['program']['startingBalance'] ?? null;
+      [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
+
+      // platform text
+      $platformRaw = '';
+      if (isset($acc['platform'])) {
+        $platformRaw = is_array($acc['platform']) ? (string) ($acc['platform']['platform'] ?? $acc['platform']['name'] ?? '') : (string) $acc['platform'];
+      }
+      if ($platformRaw === '' && isset($acc['program']['platform']))
+        $platformRaw = (string) $acc['program']['platform'];
+      $logo = MT_Accounts::platform_logo($platformRaw);
+
+      $status = (string) ($acc['status'] ?? '');
+      $rules = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
+      $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
+      $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
+      $order = (string) ($acc['order'] ?? '');
+
+      // programType badge
+      $ptypeLabel = '';
+      $ptypeClass = 'badge-mega-default';
+      if ($plabel !== '') {
+        $parts = array_map('trim', explode('|', $plabel));
+        $last = $parts ? trim(end($parts)) : '';
+        $ptypeLabel = $last;
+        $key = strtolower(preg_replace('/\s+/', '-', $last));
+        $ptypeClass = $key === 'evaluation' ? 'badge-mega-evaluation' : ($key === 'funded' ? 'badge-mega-funded' : 'badge-mega-default');
+      }
+
+      $subscriptionId = '';
+      $user_id = get_current_user_id();
+      if (is_numeric($order) && (int) $order > 0 && function_exists('mt_subscription_id_for_order')) {
+        $subscriptionId = (string) mt_subscription_id_for_order((int) $order, (int) $user_id);
+      }
+
+      return [
+        'id' => $id,
+        'status' => $status,
+        'badgeClass' => MT_Accounts::badge_class($status),
+        'size' => $size,
+        'name' => $name ?: 'Account',
+        'platform' => $platformRaw,
+        'logo' => $logo,
+        'createdAt' => (string) ($acc['createdAt'] ?? ''),
+        'mainProductId' => (string) ($rules['mainProductId'] ?? ''),
+        'resetProductId' => (string) ($rules['resetProductId'] ?? ''),
+        'activationProductId' => (string) ($rules['activationProductId'] ?? ''),
+        'accountId' => (string) $platAccountId,
+        'order' => $order,
+        'subscriptionId' => $subscriptionId,
+        'hasSubscription' => $subscriptionId !== '',
+        'programTypeText' => $ptypeLabel,
+        'programTypeClass' => $ptypeClass,
+      ];
+    };
+
+    return ['current' => $mapAccount($cur), 'accounts' => array_map($mapAccount, $pool)];
   }
 }
 
@@ -1339,6 +1432,41 @@ function mt_accounts_ajax_status()
   }
 
   wp_send_json_success(['status' => $status]);
+}
+
+add_action('wp_ajax_mt_accounts_full_data', 'mt_accounts_full_data_ajax');
+add_action('wp_ajax_nopriv_mt_accounts_full_data', 'mt_accounts_full_data_ajax');
+
+function mt_accounts_full_data_ajax() {
+    check_ajax_referer('mt-acc-nonce', 'nonce');
+
+    $accountIds = isset($_POST['accountId'])
+            ? array_map('sanitize_text_field', (array) $_POST['accountId'])
+            : [];
+
+    if (empty($accountIds)) {
+        wp_send_json_error(['message' => 'Missing accountIds']);
+    }
+
+    // 1️⃣ Obtener todas las cuentas (válidas y con error)
+    $accounts = MT_Api::fetch_accounts_bulk($accountIds);
+
+    // 2️⃣ Crear un nuevo array solo con las válidas
+    $valid_accounts = [];
+    foreach ($accounts as $id => $account) {
+        if (is_array($account) && !isset($account['error'])) {
+            $valid_accounts[$id] = $account;
+        }
+    }
+
+    // 3️⃣ Procesar solo las válidas
+    $mt_account_ui = ['current' => null, 'accounts' => []];
+    if (class_exists('MT_Accounts') && !empty($valid_accounts)) {
+        $mt_account_ui = MT_Accounts::prepare_ui_v2($valid_accounts);
+    }
+
+    // 4️⃣ Retornar solo las válidas
+    wp_send_json_success($mt_account_ui);
 }
 
 /* === MÉTRICS vía shortcode (JSON) === */

@@ -1669,6 +1669,28 @@ function fetchStatus(accountId) {
   });
 }
 
+function fetchFullData() {
+    var url =
+        (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+    var body = new URLSearchParams();
+    body.set("action", "mt_accounts_full_data");
+    if (nonce) body.set("nonce", nonce);
+
+    MT_DATA.accounts.forEach(function (account) {
+        body.append("accountId[]", account.id);
+    })
+
+    return window.MEGATRADER.fetchJSON(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body,
+    }).catch(function () {
+        return null;
+    });
+}
+
 /* === breachGuard: consulta estado y abre el modal si está BREACHED === */
 var __breachGuard = { pending: false, lastId: null, lastAt: 0 };
 
