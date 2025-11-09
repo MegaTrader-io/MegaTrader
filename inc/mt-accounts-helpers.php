@@ -1452,7 +1452,7 @@ function mt_account_overview_data_ajax() {
             accountIds: $accountIds
     );
 
-    if ($result['error']) {
+    if (isset($result['error'])) {
         wp_send_json_error($result);
     }
 
