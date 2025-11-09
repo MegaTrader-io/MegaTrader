@@ -2087,6 +2087,19 @@ if (!function_exists('mt_fetch_accounts_cached')) {
     }
 }
 
+if (!function_exists('mt_get_agreement_status_cached')) {
+    /** Cachea el estado del acuerdo por 5 min. */
+    function mt_get_agreement_status_cached(string $email_api) {
+        if ($email_api === '') return null;
+        $k = 'mt_agreement_' . md5($email_api);
+        $cached = get_transient($k);
+        if ($cached !== false) return $cached;
+        $data = (function_exists('mt_get_agreement_status_by_email')) ? mt_get_agreement_status_by_email($email_api, 0) : null;
+        set_transient($k, $data, 5 * MINUTE_IN_SECONDS);
+        return $data;
+    }
+}
+
 // === Performance Chart AJAX ===
 add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
 add_action('wp_ajax_nopriv_mt_account_performance_chart', 'mt_ajax_account_performance_chart');

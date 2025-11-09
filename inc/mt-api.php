@@ -128,4 +128,98 @@ class MT_Api {
     set_transient($key, $data, 30); // cache 30s (ajusta si quieres)
     return $data;
   }
+
+  /**
+   * Realiza múltiples solicitudes GET concurrentes usando cURL multi.
+   *
+   * @param array $endpoints Lista de endpoints relativos o URLs completas.
+   * @param array $extraHeaders (opcional) Headers adicionales.
+   * @param int $cache_ttl (opcional) Tiempo de cache en segundos (default: 30s).
+   * @return array Resultados por URL.
+   */
+  public static function get_bulk(array $endpoints, array $extraHeaders = [], int $cache_ttl = 30): array
+  {
+    if (empty($endpoints)) {
+      return ['error' => 'No endpoints provided'];
+    }
+
+    // Cache key única
+    $cache_key = 'mt_get_bulk_' . md5(implode('|', $endpoints));
+    $cached = get_transient($cache_key);
+    if ($cached !== false) {
+      return $cached;
+    }
+
+    // Configuración base y headers
+    $opts = function_exists('mega_api_options') ? mega_api_options() : [];
+    $base_url = isset($opts['base_url']) ? rtrim($opts['base_url'], '/') : '';
+    $api_key  = isset($opts['api_key']) ? $opts['api_key'] : '';
+
+    $headers = array_merge([
+      'X-API-KEY: ' . $api_key,
+      'Accept: application/json',
+    ], $extraHeaders);
+
+    $multiHandle = curl_multi_init();
+    $curlHandles = [];
+    $results = [];
+
+    // Crear handles concurrentes
+    foreach ($endpoints as $key => $endpoint) {
+      $url = preg_match('/^https?:\/\//', $endpoint)
+        ? $endpoint
+        : "{$base_url}/" . ltrim($endpoint, '/');
+
+      $ch = curl_init();
+      curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_HTTPHEADER => $headers,
+      ]);
+
+      curl_multi_add_handle($multiHandle, $ch);
+      $curlHandles[$key] = $ch;
+    }
+
+    // Ejecutar concurrentemente
+    $running = null;
+    do {
+      $status = curl_multi_exec($multiHandle, $running);
+      if ($status > 0) {
+        error_log('[MT][get_bulk] MultiCurl error: ' . curl_multi_strerror($status));
+      }
+      curl_multi_select($multiHandle);
+    } while ($running > 0);
+
+    // Procesar respuestas
+    foreach ($curlHandles as $key => $ch) {
+      $response = curl_multi_getcontent($ch);
+      $error = curl_error($ch);
+      $info = curl_getinfo($ch);
+
+      if ($error) {
+        $results[$key] = [
+          'error' => $error,
+          'url'   => $info['url'] ?? null,
+        ];
+      } else {
+        $decoded = json_decode($response, true);
+        $results[$key] = json_last_error() === JSON_ERROR_NONE
+          ? $decoded
+          : ['error' => 'Invalid JSON', 'raw' => $response];
+      }
+
+      curl_multi_remove_handle($multiHandle, $ch);
+      curl_close($ch);
+    }
+
+    curl_multi_close($multiHandle);
+
+    // Cachear resultado para evitar exceso de requests
+    set_transient($cache_key, $results, $cache_ttl);
+
+    return $results;
+  }
 }

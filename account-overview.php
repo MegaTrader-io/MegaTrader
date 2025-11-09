@@ -9,19 +9,6 @@ if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
   require_once get_stylesheet_directory() . '/inc/mt-accounts-helpers.php';
 }
 
-if (!function_exists('mt_get_agreement_status_cached')) {
-  /** Cachea el estado del acuerdo por 5 min. */
-  function mt_get_agreement_status_cached(string $email_api) {
-    if ($email_api === '') return null;
-    $k = 'mt_agreement_' . md5($email_api);
-    $cached = get_transient($k);
-    if ($cached !== false) return $cached;
-    $data = (function_exists('mt_get_agreement_status_by_email')) ? mt_get_agreement_status_by_email($email_api, 0) : null;
-    set_transient($k, $data, 5 * MINUTE_IN_SECONDS);
-    return $data;
-  }
-}
-
 /* === Estado base === */
 $mt_user_email = '';
 $mt_user_email_api = '';
@@ -93,7 +80,7 @@ if (is_user_logged_in()) {
 
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
-         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts, cookie_selected_id: $cookie_selected_id);
+         $mt_account_ui = MT_Accounts::prepare_ui(accounts: (array) $accounts, cookie_selected_id: $cookie_selected_id);
       }
 
       /* IDs válidos (de prepare_ui) */
@@ -375,7 +362,6 @@ get_header();
                   [
                           'meta' => ['accountId' => $mt_selected_id],
                           'data' => $mt_account_data,
-                          'firstLoad' => true
                   ]
           );
           ?>
@@ -646,5 +632,8 @@ $breach_desc_init = $is_funded
     </div>
   </div>
 </div>
+
+
+
 
 <?php get_footer(); ?>

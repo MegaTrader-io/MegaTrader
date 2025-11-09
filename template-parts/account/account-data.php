@@ -19,17 +19,6 @@ $user_email = ($current_user && $current_user->exists()) ? (string) $current_use
 
 $data = isset($args['data']) && is_array($args['data']) ? $args['data'] : [];
 
-$skeletonClass = isset($args['firstLoad']) && $args['firstLoad'] ? 'mt-skeleton-pulse' : '';
-
-if (!empty($skeletonClass)) {
-    $mask = MT_MASK::getMask();
-    $data = [
-            'login' => $mask,
-            'server' => $mask,
-            'password' => $mask,
-    ];
-}
-
 $login = $data['login'] ?? null;
 $server = $data['server'] ?? null;
 $pwd = $data['password'] ?? null;
@@ -44,7 +33,7 @@ $link_appstore = 'https://apps.apple.com/us/app/megatraderx/id6753067261';
 $link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderxt.mobile';
 ?>
 
-<div class="mt-card <?= $skeletonClass ?>" data-account-id="<?php echo esc_attr($account_id); ?>">
+<div class="mt-card" data-account-id="<?php echo esc_attr($account_id); ?>">
   <div class="d-flex align-items-center gap-3 w-100 justify-content-between flex-column flex-lg-row flex-md-row">
     <div class="d-flex flex-column gap-1 flex-wrap flex-shrink-0">
       <div class="text-white fw-500 text-2xl text-uppercase"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_data_title']); ?></div>
@@ -88,13 +77,13 @@ $link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderx
           <div class="text-white flex-shrink-0"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_login']); ?></div>
 
           <div class="flex-grow-1 text-truncate pe-2 min-w-0">
-            <span class=" text-base text-a8a29e fw-medium <?= $skeletonClass ?>" title="<?php echo esc_attr($login); ?>">
+            <span class=" text-base text-a8a29e fw-medium" title="<?php echo esc_attr($login); ?>">
             <?php echo $login ? esc_html($login) : '--'; ?>
             </span>
           </div>
 
           <?php if ($login): ?>
-            <span class="d-inline-flex align-items-center justify-content-center flex-shrink-0 <?= $skeletonClass ?>"
+            <span class="d-inline-flex align-items-center justify-content-center flex-shrink-0"
               data-copy="<?php echo esc_attr($login); ?>" role="button" tabindex="0"
               aria-label="<?php esc_attr_e('Copy login', 'megatrader'); ?>"
               title="<?php esc_attr_e('Copy login', 'megatrader'); ?>">
@@ -106,14 +95,14 @@ $link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderx
         <div class="d-flex align-items-center flex-nowrap min-w-0 gap-3" data-pwd-row>
           <div class="text-white flex-shrink-0"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_password']); ?></div>
 
-          <div class="flex-grow-1 text-truncate pe-2 min-w-0 <?= $skeletonClass ?>">
+          <div class="flex-grow-1 text-truncate pe-2 min-w-0">
             <span class="text-base text-a8a29e fw-medium js-pwd-mask"
               title="<?php esc_attr_e('Hidden password', 'megatrader'); ?>">
               ••••••••••••
             </span>
           </div>
 
-          <div class="d-flex align-items-center gap-2 ms-1 flex-shrink-0 <?= $skeletonClass ?>">
+          <div class="d-flex align-items-center gap-2 ms-1 flex-shrink-0">
             <span class="d-inline-flex align-items-center justify-content-center js-pwd-toggle"
               data-pwd="<?php echo esc_attr($pwd); ?>" role="button" tabindex="0" aria-expanded="false"
               aria-label="<?php esc_attr_e('Show/Hide password', 'megatrader'); ?>"
@@ -121,7 +110,7 @@ $link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderx
               <i class="mt-icon mt-icon-white mt-icon_visibility" aria-hidden="true"></i>
             </span>
 
-            <span class="d-inline-flex align-items-center justify-content-center <?= $skeletonClass ?>"
+            <span class="d-inline-flex align-items-center justify-content-center"
               data-copy="<?php echo esc_attr($pwd); ?>" role="button" tabindex="0"
               aria-label="<?php esc_attr_e('Copy password', 'megatrader'); ?>"
               title="<?php esc_attr_e('Copy password', 'megatrader'); ?>">
@@ -132,7 +121,7 @@ $link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderx
 
         <div class="d-flex align-items-center flex-nowrap min-w-0 gap-3">
           <div class="text-white flex-shrink-0"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_server']); ?></div>
-          <div class="text-base text-a8a29e fw-medium text-truncate min-w-0 <?= $skeletonClass ?>">
+          <div class="text-base text-a8a29e fw-medium text-truncate min-w-0">
             <?php echo esc_html($server); ?>
           </div>
         </div>

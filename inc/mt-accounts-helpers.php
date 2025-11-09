@@ -142,7 +142,7 @@ class MT_Accounts
 
     $mapAccount = function (array $acc, bool $fullData = false) use ($cookie_selected_id, $forceFullData) {
       $id = (string) ($acc['id'] ?? '');
-      $fullData = $forceFullData || $cookie_selected_id && $id == $cookie_selected_id || $fullData;
+      $fullData = $forceFullData || ($cookie_selected_id && $id == $cookie_selected_id) || $fullData;
       $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
       $sb = $acc['program']['startingBalance'] ?? null;
       [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
@@ -492,7 +492,7 @@ if (!function_exists('mt_accounts_build_feature_content')) {
   {
     $m = $account['metrics'] ?? $account['metric'] ?? [];
 
-    $accountId = $m['accountId'];
+    $accountId = isset($m['accountId']) && $m['accountId'] ? $m['accountId'] : '';
     $avgWin = $m['averageWin'] ?? 0;
     $avgLoss = $m['averageLoss'] ?? 0;
     $winRate = $m['winRate'] ?? 0;
@@ -1464,6 +1464,23 @@ function mt_accounts_full_data_ajax() {
     if (class_exists('MT_Accounts') && !empty($valid_accounts)) {
         $mt_account_ui = MT_Accounts::prepare_ui_v2($valid_accounts);
     }
+
+    $endpoints = [
+            '/accounts/123',
+            '/accounts/456',
+            'https://api.mega.com/v2/users',
+    ];
+
+    $results = MT_Api::get_bulk($endpoints);
+
+    foreach ($results as $key => $data) {
+        if (isset($data['error'])) {
+            error_log("❌ Error en [$key]: " . $data['error']);
+        } else {
+            error_log("✅ [$key] OK: " . json_encode($data));
+        }
+    }
+
 
     // 4️⃣ Retornar solo las válidas
     wp_send_json_success($mt_account_ui);
@@ -2479,4 +2496,88 @@ if (!function_exists('mt_prepare_ui_payout')) {
 
     return $out;
   }
+}
+
+if (!function_exists('mega_api_get_bulk')) {
+    /**
+     * Realiza múltiples solicitudes GET concurrentes usando cURL multi.
+     *
+     * @param array $endpoints Lista de endpoints relativos o URLs completas.
+     * @param array $extraHeaders (opcional) Headers adicionales.
+     * @return array Resultados por URL.
+     */
+    function mega_api_get_bulk(array $endpoints, array $extraHeaders = []): array
+    {
+        if (empty($endpoints)) {
+            return ['error' => 'No endpoints provided'];
+        }
+
+        // Obtener configuración base y API key
+        $opts = function_exists('mega_api_options') ? mega_api_options() : [];
+        $base_url = isset($opts['base_url']) ? rtrim($opts['base_url'], '/') : '';
+        $api_key  = isset($opts['api_key']) ? $opts['api_key'] : '';
+
+        // Construir headers comunes
+        $headers = array_merge([
+                'X-API-KEY: ' . $api_key,
+                'Accept: application/json',
+        ], $extraHeaders);
+
+        $multiHandle = curl_multi_init();
+        $curlHandles = [];
+        $results = [];
+
+        foreach ($endpoints as $key => $endpoint) {
+            // Soporta tanto URLs completas como relativas
+            $url = preg_match('/^https?:\/\//', $endpoint)
+                    ? $endpoint
+                    : "{$base_url}/" . ltrim($endpoint, '/');
+
+            $ch = curl_init();
+            curl_setopt_array($ch, [
+                    CURLOPT_URL => $url,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_TIMEOUT => 10,
+                    CURLOPT_HTTPHEADER => $headers,
+            ]);
+
+            curl_multi_add_handle($multiHandle, $ch);
+            $curlHandles[$key] = $ch;
+        }
+
+        $running = null;
+        do {
+            $status = curl_multi_exec($multiHandle, $running);
+            if ($status > 0) {
+                error_log('Mega API MultiCurl error: ' . curl_multi_strerror($status));
+            }
+            curl_multi_select($multiHandle);
+        } while ($running > 0);
+
+        foreach ($curlHandles as $key => $ch) {
+            $response = curl_multi_getcontent($ch);
+            $error = curl_error($ch);
+            $info = curl_getinfo($ch);
+
+            if ($error) {
+                $results[$key] = [
+                        'error' => $error,
+                        'url'   => $info['url'] ?? null,
+                ];
+            } else {
+                $decoded = json_decode($response, true);
+                $results[$key] = json_last_error() === JSON_ERROR_NONE
+                        ? $decoded
+                        : ['error' => 'Invalid JSON', 'raw' => $response];
+            }
+
+            curl_multi_remove_handle($multiHandle, $ch);
+            curl_close($ch);
+        }
+
+        curl_multi_close($multiHandle);
+
+        return $results;
+    }
 }
