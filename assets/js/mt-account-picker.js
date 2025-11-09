@@ -734,64 +734,72 @@
     }
 
     // ===== Auto first loader =====
-      if (window?.MT_DATA?.autoloadAccountOverview) {
-          (async () => {
-              // const MODAL_ID = 'changeSubcriptionModal';
-              // const modalEl = document.getElementById(MODAL_ID);
+    if (window?.MT_DATA?.autoloadAccountOverview) {
+      (async () => {
+          const result = await fetchAccountOverview();
 
-              const result = await fetchFullData();
+          if (!result.success) {
+              console.info('error loading accounts');
+              return;
+          }
 
-              if (!result.success) {
-                  console.info('error loading accounts');
-                  return;
-              }
+          const {mt_account_ui} = result.data;
+          const {accounts} = mt_account_ui;
 
-              const {accounts} = result.data;
+          var selectedId = loadLastAccountId() || CFG.currentId || null;
 
-              var selectedId = loadLastAccountId() || CFG.currentId || null;
+          MT_DATA.accounts = accounts;
+          const current = accounts.find(a => a.accountId === selectedId) || {};
 
-              MT_DATA.accounts = accounts;
-              const current = accounts.find(a => a.accountId === selectedId) || {};
+          document.dispatchEvent(
+              new CustomEvent("mt:renderGridFromData", {
+                  detail: {
+                      accounts: accounts,
+                      currentId: selectedId,
+                      callback: function () {
+                          var orderId = parseInt(current.order || "0", 10) || 0;
+                          var root = document.getElementById("mt-account-overview");
+                          if (root)
+                              root.setAttribute(
+                                  "data-order-id",
+                                  orderId ? String(orderId) : ""
+                              );
 
-              var orderId = parseInt(current.order || "0", 10) || 0;
-              var root = document.getElementById("mt-account-overview");
-              if (root)
-                  root.setAttribute(
-                      "data-order-id",
-                      orderId ? String(orderId) : ""
-                  );
+                          const __selected_subscription_id = current.subscriptionId || '';
+                          const hasSubLegacy = !!current.hasSubscription;
+                          const __can_manage_subscription = (__selected_subscription_id !== '' || hasSubLegacy);
 
-              const __selected_subscription_id = current.subscriptionId || '';
-              const hasSubLegacy = !!current.hasSubscription;
-              const __can_manage_subscription = (__selected_subscription_id !== '' || hasSubLegacy);
+                          document.dispatchEvent(
+                              new CustomEvent("mt:accountSelected", {
+                                  detail: {
+                                      accountId: selectedId,
+                                      id: selectedId,
+                                      order: orderId,
+                                      orderId: orderId,
+                                      hasSubscription: __can_manage_subscription,
+                                      subscriptionId: __selected_subscription_id || "",
+                                  },
+                              })
+                          );
 
-              document.dispatchEvent(
-                  new CustomEvent("mt:accountSelected", {
-                      detail: {
-                          accountId: selectedId,
-                          id: selectedId,
-                          order: orderId,
-                          orderId: orderId,
-                          hasSubscription: __can_manage_subscription,
-                          subscriptionId: __selected_subscription_id || "",
-                      },
-                  })
-              );
+                          try {
+                              if (typeof window.passedGuardCheck === "function")
+                                  window.passedGuardCheck(selectedId);
+                              if (typeof window.breachGuardCheck === "function")
+                                  window.breachGuardCheck(selectedId);
+                          } catch (e) {
+                              log("guards error", e);
+                          }
 
-              try {
-                  if (typeof window.passedGuardCheck === "function")
-                      window.passedGuardCheck(selectedId);
-                  if (typeof window.breachGuardCheck === "function")
-                      window.breachGuardCheck(selectedId);
-              } catch (e) {
-                  log("guards error", e);
-              }
+                          document.querySelectorAll('.mt-skeleton-pulse').forEach(el => { el.classList.remove('mt-skeleton-pulse');});
 
-              document.querySelectorAll('.mt-skeleton-pulse').forEach(el => { el.classList.remove('mt-skeleton-pulse');});
-
-              window.MT_DATA.autoloadAccountOverview = false;
-          })();
-      }
+                          window.MT_DATA.autoloadAccountOverview = false;
+                      }
+                  }
+              })
+          );
+      })();
+     }
 
     // ===== Exportar helpers (opcional, por si un día necesitas llamarlos desde otro inline) =====
     window.mtPicker = {

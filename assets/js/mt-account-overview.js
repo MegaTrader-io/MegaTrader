@@ -162,6 +162,7 @@
   }
 
   if (document.readyState === "loading") {
+      console.info('DOM not ready, waiting for it...');
     document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
@@ -1669,13 +1670,13 @@ function fetchStatus(accountId) {
   });
 }
 
-function fetchFullData() {
+function fetchAccountOverview() {
     var url =
         (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
     var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
     var body = new URLSearchParams();
-    body.set("action", "mt_accounts_full_data");
+    body.set("action", "mt_account_overview_data");
     if (nonce) body.set("nonce", nonce);
 
     MT_DATA.accounts.forEach(function (account) {
@@ -2859,6 +2860,7 @@ if (document.readyState === "loading") {
 
   // ---- Render del grid ----
   function renderGridFromData(accounts, currentId) {
+    console.info("renderGridFromData", accounts, currentId);
     const grid = document.getElementById("mt-accounts-grid");
     if (!grid) return;
     if (!accounts || !accounts.length) {
@@ -3148,6 +3150,10 @@ if (document.readyState === "loading") {
   }
 
   document.addEventListener("mt:accountSelected", seedBreachFromOpener);
+  document.addEventListener("mt:renderGridFromData", function (e) {
+      e.detail && renderGridFromData(e.detail.accounts, e.detail.currentId);
+      e.detail && e.detail.callback();
+  });
   document.addEventListener("mt:hasSubscriptionChanged", syncBreachText);
 
   if (document.readyState === "loading") {
