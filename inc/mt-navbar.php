@@ -20,9 +20,7 @@ final class Mt_Navbar
     get_template_part('template-parts/navbar/mt-navbar-bs', null, [
       'links' => self::$method(),
       'classes_navbar' => $classes_navbar,
-      'navbar_actions' => function () use ($section, $template_action) {
-        get_template_part($template_action);
-      }
+      'navbar_actions_template' => $template_action
     ]);
   }
 
@@ -30,26 +28,15 @@ final class Mt_Navbar
   {
     $method = str_replace('-', '_', $section) . '_nav';
 
-    $template_action = "template-parts/navbar/actions/{$section}-actions";
-
     if (!method_exists(self::class, $method)) {
       echo 'No navbar found for section: ' . $section;
-      return;
-    }
-
-    $template = locate_template("{$template_action}.php", false, false);
-
-    if (!$template) {
-      echo 'No template found for section: ' . $section;
       return;
     }
 
     get_template_part('template-parts/navbar/mt-navbar', null, [
       'links' => self::$method(),
       'classes_navbar' => $classes_navbar,
-      'navbar_actions' => function () use ($section) {
-        get_template_part("template-parts/navbar/actions/{$section}-actions");
-      }
+      'navbar_actions_template' => "template-parts/navbar/actions/{$section}-actions"
     ]);
   }
 

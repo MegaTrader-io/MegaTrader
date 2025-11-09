@@ -19,14 +19,12 @@ $class = $args['class'] ?? '';
 /** @var string|null $classes_navbar */
 $classes_navbar = $args['classes_navbar'] ?? '';
 
-$navbar_actions = $args['navbar_actions'] ?? function () {
-};
+$navbar_actions_template = $args['navbar_actions_template'] ?? '';
 
 ?>
 
 <header class="mt-navbar <?= $classes_navbar ?>">
     <div class="mt-navbar__wrapper">
-        <?php do_action('mega_sticky_promo_render_banner'); ?>
         <div class="mt-navbar__links">
             <div class="mt-navbar__container">
                 <div class="mt-navbar__logo">
@@ -43,7 +41,7 @@ $navbar_actions = $args['navbar_actions'] ?? function () {
                 <nav class="mt-navbar__nav" aria-label="<?= $aria_label ?>">
                     <?php foreach ($links as $index => $link): ?>
                         <a href="<?= $link['href'] ?>"
-                                <?= $link['wrapper_attributes'] ? ' ' . implode(' ', array_map(function ($key, $value) {
+                                <?= isset($link['wrapper_attributes']) && $link['wrapper_attributes'] ? ' ' . implode(' ', array_map(function ($key, $value) {
                                             return $key . '="' . $value . '"';
                                         }, array_keys($link['wrapper_attributes']), $link['wrapper_attributes'])) : '' ?>
                            class="mt-navbar__nav-link <?= $index === 0 ? 'mt-navbar__nav-link--active' : '' ?> <?= $class ?: '' ?>">
@@ -53,8 +51,8 @@ $navbar_actions = $args['navbar_actions'] ?? function () {
                 </nav>
 
                 <div class="mt-navbar__actions">
-                    <?php if ($navbar_actions && is_callable($navbar_actions)): ?>
-                        <?php $navbar_actions(); ?>
+                    <?php if ($navbar_actions_template): ?>
+                        <?php get_template_part($navbar_actions_template); ?>
                     <?php endif; ?>
 
                     <?php if ($classes_navbar === 'mt-navbar--landing-page'): ?>

@@ -30,7 +30,7 @@ if (!function_exists('mt_user_has_payout_accounts')) {
 /* get email from the use login */
 $current_user = wp_get_current_user();
 $user_email = ($current_user && !empty($current_user->user_email)) ? sanitize_email($current_user->user_email) : '';
-$can_request_payout = $user_email ? mt_user_has_payout_accounts($user_email, true) : false;
+//$can_request_payout = $user_email ? mt_user_has_payout_accounts($user_email, true) : false;
 
 
 $mt_current_account_section = static function (): string {

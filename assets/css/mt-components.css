@@ -2597,3 +2597,30 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     line-height: 24px;
     word-wrap: break-word;
 }
+
+.mt-skeleton-pulse {
+    background-color: #1e293bb3;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    color: transparent !important;
+    user-select: none;
+    cursor: default;
+    animation: mt-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.mt-skeleton-pulse i,
+.mt-skeleton-pulse * {
+    color: transparent !important;
+    visibility: hidden;
+}
+
+/* Animación tipo “respiración” */
+@keyframes mt-skeleton-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}

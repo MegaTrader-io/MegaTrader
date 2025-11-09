@@ -11,6 +11,14 @@ final class CACHE_KEY
     public const USER_INFO = 'mt_user_%s';
 }
 
+final class MT_MASK
+{
+    public static function getMask($char = '*', $length = 20)
+    {
+      return str_repeat($char, $length);
+    }
+}
+
 final class MT_PAYOUT
 {
     /** Map: startingBalance => minimumBalance (absolute) */

@@ -97,7 +97,7 @@ if (is_user_logged_in()) {
       $mt_cnt_encoded = ($mt_fetch_variant === 'encoded') ? (is_array($accounts) ? count($accounts) : 0) : 0;
 
       // === Agreement Modal (con caché 5min) ===
-      $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api);
+      $__mt_agreement = null;//mt_get_agreement_status_cached($mt_user_email_api);
 
       $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
         ? (string) $__mt_agreement['agreementURL']
@@ -106,11 +106,6 @@ if (is_user_logged_in()) {
       $__mt_agreement_show = (is_array($__mt_agreement)
         && array_key_exists('agreementSigned', $__mt_agreement)
         && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
-
-      /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
-      if (class_exists('MT_Accounts')) {
-        $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts);
-      }
 
       /* === Preferencia de cookie para cuenta seleccionada (si existe y es válida) === */
       $cookie_selected_id = '';
@@ -126,6 +121,11 @@ if (is_user_logged_in()) {
             break;
           }
         }
+      }
+
+      /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
+      if (class_exists('MT_Accounts')) {
+         $mt_account_ui = MT_Accounts::prepare_ui((array) $accounts, $cookie_selected_id);
       }
 
       /* IDs válidos (de prepare_ui) */
@@ -157,9 +157,11 @@ if (is_user_logged_in()) {
       }
 
       // === Resolver la cuenta una sola vez y construir payloads ===
-      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
-        ? mt_accounts_resolve_account_by_id($mt_selected_id)
-        : null;
+//      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
+//        ? mt_accounts_resolve_account_by_id($mt_selected_id)
+//        : null;
+
+      $resolved = null;
 
       if ($resolved) {
         // Performance
@@ -422,76 +424,71 @@ get_header();
       <div class="d-flex flex-column gap-32" data-fit-main>
         <div class="mt-account-data" id="mt-account-data">
           <?php
-          if (!empty($mt_selected_id) && !empty($mt_account_data)) {
-            get_template_part(
-              'template-parts/account/account-data',
-              null,
-              [
-                'meta' => ['accountId' => $mt_selected_id],
-                'data' => $mt_account_data,
-              ]
-            );
-          }
+          get_template_part(
+                  'template-parts/account/account-data',
+                  null,
+                  [
+                          'meta' => ['accountId' => $mt_selected_id],
+                          'data' => $mt_account_data,
+                          'firstLoad' => true
+                  ]
+          );
           ?>
         </div>
 
         <div class="mt-account-performance" id="mt-performance-container">
           <?php
-          if (!empty($mt_performance)) {
-            get_template_part(
-              'template-parts/account/account-performance',
-              null,
-              [
-                'performance' => $mt_performance,
-                'meta' => ['accountId' => $mt_selected_id],
-              ]
-            );
-          }
+          get_template_part(
+                  'template-parts/account/account-performance',
+                  null,
+                  [
+                          'performance' => $mt_performance,
+                          'meta' => ['accountId' => $mt_selected_id],
+                          'firstLoad' => true
+                  ]
+          );
           ?>
         </div>
 
         <div class="mt-account-feature-content">
           <?php
-          if (!empty($mt_selected_id)) {
-            get_template_part(
-              'template-parts/account/account-feature-content',
-              null,
-              [
-                'meta' => ['accountId' => $mt_selected_id],
-                'feature' => $mt_feature_content,
-              ]
-            );
-          }
+          get_template_part(
+                  'template-parts/account/account-feature-content',
+                  null,
+                  [
+                          'feature' => $mt_feature_content,
+                          'meta' => ['accountId' => $mt_selected_id],
+                          'firstLoad' => true
+                  ]
+          );
           ?>
         </div>
 
-        <div class="mt-account-performance-chart-content">
+        <div class="mt-account-performance-chart-content mt-skeleton-pulse">
           <?php
-          if (!empty($mt_selected_id)) {
-            get_template_part(
-              'template-parts/account/account-performance-chart',
-              null,
-              [
-                'meta' => ['accountId' => $mt_selected_id],
-                'chart' => $mt_chart ?? [],
-              ]
-            );
-          }
+          get_template_part(
+                  'template-parts/account/account-performance-chart',
+                  null,
+                  [
+                          'chart' => $mt_chart ?? [],
+                          'meta' => ['accountId' => $mt_selected_id],
+                          'firstLoad' => true
+                  ]
+          );
           ?>
         </div>
 
-        <div class="mt-account-daily-journal">
+        <div class="mt-account-daily-journal mt-skeleton-pulse">
           <?php
-          if (!empty($mt_selected_id)) {
-            get_template_part(
-              'template-parts/account/account-daily-journal',
-              null,
-              [
-                'meta' => ['accountId' => $mt_selected_id],
-                'data' => $mt_daily_journal,
-              ]
-            );
-          }
+          get_template_part(
+                  'template-parts/account/account-daily-journal',
+                  null,
+                  [
+                          'data' => $mt_daily_journal,
+                          'meta' => ['accountId' => $mt_selected_id],
+                          'firstLoad' => true
+                  ]
+          );
           ?>
         </div>
       </div>

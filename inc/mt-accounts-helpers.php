@@ -105,7 +105,7 @@ class MT_Accounts
   }
 
   /* ---- Builder de UI (sin mapas locales duplicados) ---- */
-  public static function prepare_ui(array $accounts): array
+  public static function prepare_ui(array $accounts, $cookie_selected_id = null): array
   {
     if (isset($accounts['data']))
       $accounts = is_array($accounts['data']) ? $accounts['data'] : [];
@@ -136,8 +136,13 @@ class MT_Accounts
       }
     }
 
-    $mapAccount = function (array $acc) {
+    if (!$cookie_selected_id) {
+        $cookie_selected_id = $cur['id'];
+    }
+
+    $mapAccount = function (array $acc, bool $fullData = false) use ($cookie_selected_id) {
       $id = (string) ($acc['id'] ?? '');
+      $fullData = $cookie_selected_id && $id == $cookie_selected_id ? true : $fullData;
       $plabel = (string) ($acc['program']['label'] ?? ($acc['program']['description'] ?? 'Account'));
       $sb = $acc['program']['startingBalance'] ?? null;
       [$size, $name] = MT_Accounts::parse_program_label($plabel, $sb);
@@ -158,7 +163,7 @@ class MT_Accounts
       $order = (string) ($acc['order'] ?? '');
 
       $needById = ($order === '' || $platformRaw === '' || $platAccountId === '');
-      if ($id !== '' && $needById && function_exists('mt_accounts_resolve_account_by_id')) {
+      if ($fullData && $id !== '' && $needById && function_exists('mt_accounts_resolve_account_by_id')) {
         try {
           $full = mt_accounts_resolve_account_by_id($id);
           if (is_array($full)) {
@@ -188,7 +193,7 @@ class MT_Accounts
 
       $subscriptionId = '';
       $user_id = get_current_user_id();
-      if (is_numeric($order) && (int) $order > 0 && function_exists('mt_subscription_id_for_order')) {
+      if ($fullData && is_numeric($order) && (int) $order > 0 && function_exists('mt_subscription_id_for_order')) {
         $subscriptionId = (string) mt_subscription_id_for_order((int) $order, (int) $user_id);
       }
 
@@ -213,7 +218,7 @@ class MT_Accounts
       ];
     };
 
-    return ['current' => $mapAccount($cur), 'accounts' => array_map($mapAccount, $pool)];
+    return ['current' => $mapAccount($cur, fullData: true), 'accounts' => array_map($mapAccount, $pool)];
   }
 }
 

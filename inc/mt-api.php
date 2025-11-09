@@ -8,7 +8,7 @@ class MT_Api {
   public static function fetch_accounts_by_email(string $email, int $page = 1, int $perPage = 50): array {
     if (!$email) return [];
 
-    $key = 'mt_acc_' . md5(strtolower($email) . "_$page_$perPage");
+    $key = 'mt_acc_' . md5(strtolower($email) . "_{$page}_{$perPage}");
     $cached = get_transient($key);
     if ($cached !== false) return $cached;
 

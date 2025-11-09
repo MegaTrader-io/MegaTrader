@@ -728,8 +728,43 @@
             hidePreloader();
             enableBtn(true);
           });
+
+          document.querySelectorAll('.mt-skeleton-pulse').forEach(el => { el.classList.remove('mt-skeleton-pulse');});
       });
     }
+
+    // ===== Auto first loader =====
+      if (window?.MT_DATA?.autoloadAccountOverview) {
+          window.MT_DATA.autoloadAccountOverview = false;
+
+          const MODAL_ID = 'changeSubcriptionModal';
+          const modalEl = document.getElementById(MODAL_ID);
+
+          if (modalEl) {
+              // Usa la API de Bootstrap para abrirlo
+              const modalInstance = new bootstrap.Modal(modalEl);
+              modalInstance.show();
+
+              console.log(`✅ Modal #${MODAL_ID} abierto automáticamente`);
+
+              // Espera a que la animación termine antes de hacer click en el botón
+              modalEl.addEventListener('shown.bs.modal', () => {
+                  const btn = document.getElementById('select-subscription-btn');
+                  if (btn) {
+                      btn.dispatchEvent(new CustomEvent('click', {
+                          bubbles: true,
+                          cancelable: true,
+                          detail: { source: 'auto-select', customAction: true }
+                      }));
+                      console.log('✅ Click automático en el botón después de abrir el modal');
+                  } else {
+                      console.warn('⚠️ No se encontró el botón select-subscription-btn');
+                  }
+              }, { once: true });
+          } else {
+              console.warn(`⚠️ No se encontró el modal con id ${MODAL_ID}`);
+          }
+      }
 
     // ===== Exportar helpers (opcional, por si un día necesitas llamarlos desde otro inline) =====
     window.mtPicker = {

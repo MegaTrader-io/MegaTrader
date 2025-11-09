@@ -212,6 +212,7 @@ $payload = [
   ],
   'checkoutBase' => $checkout,
   'debug' => false,
+  'autoloadAccountOverview' => true
 ];
 wp_add_inline_script($handle, 'window.MT_DATA = ' . wp_json_encode($payload) . ';', 'before');
 
