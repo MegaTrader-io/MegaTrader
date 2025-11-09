@@ -5,7 +5,6 @@ if (!defined('ABSPATH'))
 if (!isset($args) || !is_array($args) || empty($args))
   return;
 
-$skeletonClass = isset($args['firstLoad']) && $args['firstLoad'] ? 'mt-skeleton-pulse' : '';
 $chart = isset($args['chart']) && is_array($args['chart']) ? $args['chart'] : [];
 $accountId = $chart['accountId'] ?? (isset($args['meta']['accountId']) ? (string) $args['meta']['accountId'] : '');
 $chart_title = $chart['title'] ?? (($args['title'] ?? '') ?: 'Account');

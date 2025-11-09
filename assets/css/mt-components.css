@@ -2598,15 +2598,19 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     word-wrap: break-word;
 }
 
+.mt-card.mt-skeleton-pulse {
+    border-radius: 16px;
+}
+
 .mt-skeleton-pulse {
-    background-color: #1e293bb3;
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-    color: transparent !important;
-    user-select: none;
-    cursor: default;
-    animation: mt-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    align-self: stretch;
+    border-radius: 16px;
+    background:
+            linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%),
+            linear-gradient(90deg, #2f2f2f 0%, #3a3a3a 25%, #1e1e1e 50%, #3a3a3a 75%, #2f2f2f 100%);
+    background-size: 300% 100%;
+    background-position: 200% 0;
+    animation: mtPulse 3.5s cubic-bezier(0.4, 0.0, 0.2, 1) infinite; /* más lento y fluido */
 }
 
 .mt-skeleton-pulse i,
@@ -2615,12 +2619,11 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     visibility: hidden;
 }
 
-/* Animación tipo “respiración” */
-@keyframes mt-skeleton-pulse {
-    0%, 100% {
-        opacity: 1;
+@keyframes mtPulse {
+    0% {
+        background-position: 200% 0;
     }
-    50% {
-        opacity: 0.4;
+    100% {
+        background-position: -200% 0;
     }
 }

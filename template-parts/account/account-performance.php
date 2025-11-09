@@ -14,7 +14,6 @@ defined('ABSPATH') || exit;
 $performance = [];
 $meta = [];
 $source = 'unknown';
-$skeletonClass = '';
 
 if (isset($args) && is_array($args)) {
     if (isset($args['performance']) && is_array($args['performance'])) {
@@ -24,8 +23,6 @@ if (isset($args) && is_array($args)) {
     if (isset($args['meta']) && is_array($args['meta'])) {
         $meta = $args['meta'];
     }
-
-    $skeletonClass = isset($args['firstLoad']) && $args['firstLoad'] ? 'mt-skeleton-pulse' : '';
 }
 
 if (empty($performance)) {
@@ -223,13 +220,13 @@ if ($isFunded) {
                         <div class="mt-card__item-text">
                             <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_account_balance']); ?>
                         </div>
-                        <div class="mt-card__item-value text-white <?= $skeletonClass ?>"><?php echo esc_html(mt_format_money($balance)); ?></div>
+                        <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($balance)); ?></div>
                     </div>
                     <div class="mt-card__item">
                         <div class="mt-card__item-text">
                             <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_total_profit']); ?>
                         </div>
-                        <div class="mt-card__item-value d-flex align-items-center gap-2 justify-content-end <?= $skeletonClass ?>"> <span
+                        <div class="mt-card__item-value d-flex align-items-center gap-2 justify-content-end"> <span
                                     class="<?php echo esc_attr($profitColorClass); ?>">
                                 <?php echo esc_html($profitText); ?>
                             </span>
@@ -248,7 +245,7 @@ if ($isFunded) {
                         <div class="mt-card__item-text">
                             <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_trading_days']); ?>
                         </div>
-                        <div class="mt-card__item-value text-white <?= $skeletonClass ?>">
+                        <div class="mt-card__item-value text-white">
                             <?php echo esc_html($daysTraded); ?>
                         </div>
                     </div>
@@ -259,7 +256,7 @@ if ($isFunded) {
                             <div class="mt-card__item-text">
                                 <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_daily_loss_limit']); ?>
                             </div>
-                            <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end <?= $skeletonClass ?>">
+                            <div class="mt-card__item-value text-white d-flex gap-1 align-items-center justify-content-end">
                                 <?php echo esc_html(mt_format_money_no_cents($maxDailyLossFormat)); ?>
                                 <span class="mt-tooltip">
                                     <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0"
@@ -281,14 +278,14 @@ if ($isFunded) {
                         <div class="mt-card__item-text">
                             <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_current_equity']); ?>
                         </div>
-                        <div class="mt-card__item-value text-white <?= $skeletonClass ?>"><?php echo esc_html(mt_format_money($equity)); ?></div>
+                        <div class="mt-card__item-value text-white"><?php echo esc_html(mt_format_money($equity)); ?></div>
                     </div>
                     <?php if ($highestProfitDay !== null): ?>
                         <div class="mt-card__item">
                             <div class="mt-card__item-text">
                                 <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_highest_profit_day'] ?? 'Highest Profit Day'); ?>
                             </div>
-                            <div class="mt-card__item-value text-white <?= $skeletonClass ?>">
+                            <div class="mt-card__item-value text-white">
                                 <?php echo esc_html(mt_format_money($highestProfitDay)); ?>
                             </div>
                         </div>
@@ -310,7 +307,7 @@ if ($isFunded) {
                                 </span>
                             </span>
                         </div>
-                        <div class="mt-card__item-value <?= $skeletonClass ?>">
+                        <div class="mt-card__item-value">
                             <span class="<?php echo esc_attr($dailyColorClass); ?>">
                                 <?php echo esc_html($dailyText); ?>
                             </span>
@@ -330,7 +327,7 @@ if ($isFunded) {
                             <span class="mt-icon <?php echo esc_attr($profitIconClass); ?>"></span>
                             <?php echo esc_html($titleTarget); ?>
                         </div>
-                        <div class="mt-card__item-value text-white <?= $skeletonClass ?>">
+                        <div class="mt-card__item-value text-white ">
                             <span class="mt-profit-inline">
                                 <span class="<?php echo esc_attr($profitGoalColorClass); ?>">
                                     <?php echo esc_html($profitGoalText); ?>
@@ -356,7 +353,7 @@ if ($isFunded) {
                                 <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_days_traded']); ?>
                             </div>
 
-                            <div class="mt-card__item-value text-white <?= $skeletonClass ?>">
+                            <div class="mt-card__item-value text-white ">
                                 <span class="<?php echo esc_attr($daysColorClass); ?>">
                                     <?php echo esc_html($daysShown); ?>
                                 </span>
@@ -380,7 +377,7 @@ if ($isFunded) {
                 <div class="mt-card__title__text fw-medium text-uppercase">
                     <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_rules']); ?>
                 </div>
-                <div class="d-flex align-items-center gap-2 <?= $skeletonClass ?>">
+                <div class="d-flex align-items-center gap-2 ">
                     <span class="mt-icon <?php
                     echo (is_numeric($balance) && is_numeric($maxLossEq))
                             ? (((float) $balance < (float) $maxLossEq)

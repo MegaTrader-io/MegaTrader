@@ -422,7 +422,7 @@ get_header();
       </div>
 
       <div class="d-flex flex-column gap-32" data-fit-main>
-        <div class="mt-account-data" id="mt-account-data">
+        <div class="mt-account-data mt-skeleton-pulse" id="mt-account-data">
           <?php
           get_template_part(
                   'template-parts/account/account-data',
@@ -436,29 +436,27 @@ get_header();
           ?>
         </div>
 
-        <div class="mt-account-performance" id="mt-performance-container">
+        <div class="mt-account-performance mt-skeleton-pulse" id="mt-performance-container">
           <?php
           get_template_part(
                   'template-parts/account/account-performance',
                   null,
                   [
                           'performance' => $mt_performance,
-                          'meta' => ['accountId' => $mt_selected_id],
-                          'firstLoad' => true
+                          'meta' => ['accountId' => $mt_selected_id]
                   ]
           );
           ?>
         </div>
 
-        <div class="mt-account-feature-content">
+        <div class="mt-account-feature-content mt-skeleton-pulse">
           <?php
           get_template_part(
                   'template-parts/account/account-feature-content',
                   null,
                   [
                           'feature' => $mt_feature_content,
-                          'meta' => ['accountId' => $mt_selected_id],
-                          'firstLoad' => true
+                          'meta' => ['accountId' => $mt_selected_id]
                   ]
           );
           ?>
@@ -471,8 +469,7 @@ get_header();
                   null,
                   [
                           'chart' => $mt_chart ?? [],
-                          'meta' => ['accountId' => $mt_selected_id],
-                          'firstLoad' => true
+                          'meta' => ['accountId' => $mt_selected_id]
                   ]
           );
           ?>
@@ -486,7 +483,6 @@ get_header();
                   [
                           'data' => $mt_daily_journal,
                           'meta' => ['accountId' => $mt_selected_id],
-                          'firstLoad' => true
                   ]
           );
           ?>

@@ -756,6 +756,11 @@
                           cancelable: true,
                           detail: { source: 'auto-select', customAction: true }
                       }));
+
+                      setTimeout(() => {
+                          document.activeElement?.blur?.(); // quita el foco del actual
+                          document.body.focus({ preventScroll: true }); // devuelve el foco al body
+                      }, 0);
                       console.log('✅ Click automático en el botón después de abrir el modal');
                   } else {
                       console.warn('⚠️ No se encontró el botón select-subscription-btn');

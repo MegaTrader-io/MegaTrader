@@ -13,7 +13,6 @@ $accountId = isset($args['meta']['accountId']) ? sanitize_text_field((string) $a
 $feature = isset($args['feature']) && is_array($args['feature']) ? $args['feature'] : [];
 $account = $feature['account'] ?? null;
 
-$skeletonClass = isset($args['firstLoad']) && $args['firstLoad'] ? 'mt-skeleton-pulse' : '';
 
 $apiData = isset($feature['apiData']) && is_array($feature['apiData']) ? $feature['apiData'] : null;
 
@@ -154,18 +153,18 @@ $tabs = [
                     <div class="mt-summary__title">
                         <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_winning_trades']); ?></div>
 
-                    <div class="mt-donut <?php echo $winPct ? 'is-success' : 'is-empty'; ?> <?= $skeletonClass ?>"
+                    <div class="mt-donut <?php echo $winPct ? 'is-success' : 'is-empty'; ?>"
                         data-donut-value="<?php echo $winPct; ?>">
                         <svg class="mt-donut__svg" viewBox="0 0 100 100" aria-hidden="true">
                             <circle class="mt-donut__track" cx="50" cy="50" r="45" pathLength="99"></circle>
                             <circle class="mt-donut__value" cx="50" cy="50" r="45" pathLength="99"></circle>
                         </svg>
                         <div class="mt-donut__center">
-                            <span class="mt-donut__percent <?= $skeletonClass ?>"><?php echo $winPct ? $winPct . '%' : '--'; ?></span>
+                            <span class="mt-donut__percent"><?php echo $winPct ? $winPct . '%' : '--'; ?></span>
                         </div>
                     </div>
 
-                    <div class="mt-summary__avg <?= $skeletonClass ?>">
+                    <div class="mt-summary__avg">
                         <div class="mt-summary__avg-label">
                             <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_avg_winning_trade']); ?></div>
                         <div class="mt-summary__avg-value mt-summary__avg-value--success">
@@ -177,7 +176,7 @@ $tabs = [
                 <div class="mt-summary__divider" aria-hidden="true"></div>
 
                 <!-- Col centro -->
-                <div class="mt-summary__col <?= $skeletonClass ?>">
+                <div class="mt-summary__col">
                     <div class="mt-summary__title mt-summary__title--center">
                         <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_risk_reward_ratio']); ?>
                         <span class="mt-tooltip">
@@ -228,7 +227,7 @@ $tabs = [
                 <div class="mt-summary__divider" aria-hidden="true"></div>
 
                 <!-- Col derecha -->
-                <div class="mt-summary__col <?= $skeletonClass ?>">
+                <div class="mt-summary__col">
                     <div class="mt-summary__title">
                         <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['feature_content_losing_trades']); ?></div>
 
