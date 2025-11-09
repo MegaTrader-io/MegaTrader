@@ -736,8 +736,8 @@
     // ===== Auto first loader =====
       if (window?.MT_DATA?.autoloadAccountOverview) {
           (async () => {
-              const MODAL_ID = 'changeSubcriptionModal';
-              const modalEl = document.getElementById(MODAL_ID);
+              // const MODAL_ID = 'changeSubcriptionModal';
+              // const modalEl = document.getElementById(MODAL_ID);
 
               const result = await fetchFullData();
 
@@ -748,37 +748,46 @@
 
               const {accounts} = result.data;
 
+              var selectedId = loadLastAccountId() || CFG.currentId || null;
+
               MT_DATA.accounts = accounts;
+              const current = accounts.find(a => a.accountId === selectedId) || {};
 
-              if (modalEl) {
-                  // Usa la API de Bootstrap para abrirlo
-                  const modalInstance = new bootstrap.Modal(modalEl);
-                  modalInstance.show();
+              var orderId = parseInt(current.order || "0", 10) || 0;
+              var root = document.getElementById("mt-account-overview");
+              if (root)
+                  root.setAttribute(
+                      "data-order-id",
+                      orderId ? String(orderId) : ""
+                  );
 
-                  console.log(`✅ Modal #${MODAL_ID} abierto automáticamente`);
+              const __selected_subscription_id = current.subscriptionId || '';
+              const hasSubLegacy = !!current.hasSubscription;
+              const __can_manage_subscription = (__selected_subscription_id !== '' || hasSubLegacy);
 
-                  // Espera a que la animación termine antes de hacer click en el botón
-                  modalEl.addEventListener('shown.bs.modal', () => {
-                      const btn = document.getElementById('select-subscription-btn');
-                      if (btn) {
-                          btn.dispatchEvent(new CustomEvent('click', {
-                              bubbles: true,
-                              cancelable: true,
-                              detail: { source: 'auto-select', customAction: true }
-                          }));
+              document.dispatchEvent(
+                  new CustomEvent("mt:accountSelected", {
+                      detail: {
+                          accountId: selectedId,
+                          id: selectedId,
+                          order: orderId,
+                          orderId: orderId,
+                          hasSubscription: __can_manage_subscription,
+                          subscriptionId: __selected_subscription_id || "",
+                      },
+                  })
+              );
 
-                          setTimeout(() => {
-                              document.activeElement?.blur?.(); // quita el foco del actual
-                              document.body.focus({ preventScroll: true }); // devuelve el foco al body
-                          }, 0);
-                          console.log('✅ Click automático en el botón después de abrir el modal');
-                      } else {
-                          console.warn('⚠️ No se encontró el botón select-subscription-btn');
-                      }
-                  }, { once: true });
-              } else {
-                  console.warn(`⚠️ No se encontró el modal con id ${MODAL_ID}`);
+              try {
+                  if (typeof window.passedGuardCheck === "function")
+                      window.passedGuardCheck(selectedId);
+                  if (typeof window.breachGuardCheck === "function")
+                      window.breachGuardCheck(selectedId);
+              } catch (e) {
+                  log("guards error", e);
               }
+
+              document.querySelectorAll('.mt-skeleton-pulse').forEach(el => { el.classList.remove('mt-skeleton-pulse');});
 
               window.MT_DATA.autoloadAccountOverview = false;
           })();

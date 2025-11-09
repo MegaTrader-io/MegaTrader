@@ -125,36 +125,13 @@ if (is_user_logged_in()) {
       }
 
       // === Resolver la cuenta una sola vez y construir payloads ===
-//      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
-//        ? mt_accounts_resolve_account_by_id($mt_selected_id)
-//        : null;
-
-      $resolved = null;
+      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
+        ? mt_accounts_resolve_account_by_id($mt_selected_id)
+        : null;
 
       if ($resolved) {
-        // Performance
-        if (function_exists('mt_accounts_build_performance')) {
-          $mt_performance = mt_accounts_build_performance($resolved);
-        }
-
-        // Feature Content (account + apiData)
-        $mt_feature_content['account'] = $resolved;
-        if (function_exists('mt_accounts_build_feature_content')) {
-          $mt_feature_content['apiData'] = mt_accounts_build_feature_content($resolved);
-        }
-
-        // Daily Journal payload
-        if (!empty($mt_selected_id) && function_exists('mt_accounts_build_daily_journal')) {
-          $mt_daily_journal = mt_accounts_build_daily_journal($mt_selected_id, 1, 30);
-        }
-
-        // Performance Chart
-        if (!empty($resolved) && function_exists('mt_accounts_build_performance_chart')) {
-          $mt_chart = mt_accounts_build_performance_chart($resolved);
-        }
-
         // Account data (re-usa $resolved, evita resolve duplicado)
-        if ($resolved && function_exists('mt_accounts_build_account_data')) {
+        if (function_exists('mt_accounts_build_account_data')) {
           $mt_account_data = mt_accounts_build_account_data($resolved);
         }
       }
@@ -376,7 +353,7 @@ get_header();
         </form>
       </div>
 
-      <div class="mt-account-selection" data-fit-main>
+      <div class="mt-account-selection mt-skeleton-pulse" data-fit-main>
         <?php
         get_template_part(
           'template-parts/account/account-selection',
