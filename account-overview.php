@@ -52,7 +52,7 @@ if (is_user_logged_in()) {
       $mt_cnt_encoded = ($mt_fetch_variant === 'encoded') ? (is_array($accounts) ? count($accounts) : 0) : 0;
 
       // === Agreement Modal (con caché 5min) ===
-      $__mt_agreement = null;//mt_get_agreement_status_cached($mt_user_email_api);
+      $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api);
 
       $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
         ? (string) $__mt_agreement['agreementURL']
