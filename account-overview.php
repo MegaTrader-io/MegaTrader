@@ -112,9 +112,9 @@ if (is_user_logged_in()) {
       }
 
       // === Resolver la cuenta una sola vez y construir payloads ===
-      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
-        ? mt_accounts_resolve_account_by_id($mt_selected_id)
-        : null;
+//      $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
+//        ? mt_accounts_resolve_account_by_id($mt_selected_id)
+//        : null;
       $resolved = null;
 
       if ($resolved) {
