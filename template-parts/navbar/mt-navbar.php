@@ -25,6 +25,7 @@ $navbar_actions_template = $args['navbar_actions_template'] ?? '';
 
 <header class="mt-navbar <?= $classes_navbar ?>">
     <div class="mt-navbar__wrapper">
+        <?php do_action('mega_sticky_promo_render_banner'); ?>
         <div class="mt-navbar__links">
             <div class="mt-navbar__container">
                 <div class="mt-navbar__logo">
