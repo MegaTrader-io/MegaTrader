@@ -819,6 +819,14 @@ function empty_cart_redirection(){
     }
 }
 
+add_action('template_redirect', function() {
+    if (is_page('cart')) {
+        wp_redirect(home_url('/subscriptions/'));
+        exit;
+    }
+});
+
+
 add_filter( 'woocommerce_add_cart_item_data', 'wdm_empty_cart', 10,  3);
 function wdm_empty_cart( $cart_item_data, $product_id, $variation_id )
 {

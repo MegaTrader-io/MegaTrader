@@ -51,7 +51,7 @@ get_header();
         </div>
         <div class="mt-page__main">
             <div class="mt-subscriptions">
-                <?php render_step_selector(0); ?>
+                <?php render_step_selector(1); ?>
                 <?php render_tabs($tabs); ?>
             </div>
         </div>

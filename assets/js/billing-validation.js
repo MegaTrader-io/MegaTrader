@@ -74,12 +74,12 @@ function lockStateSelection(stateCode, ttlMs = 7000) {
 
 document.addEventListener("DOMContentLoaded", function () {
   // --- DEBUG LOGGER ---
-  const MT_DBG = true;
+  // const MT_DBG = true;
   function mtNow() {
     return `[MT ${performance.now().toFixed(1)}ms]`;
   }
   function mtLog() {
-    if (!MT_DBG) return;
+    if (!window.MT_DBG) return;
     try {
       console.log.apply(console, [mtNow(), ...arguments]);
     } catch (e) {}
@@ -91,9 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
     jQuery(document).ajaxSend(function (_e, _xhr, o) {
       const mark = (o.url || "") + " " + (o.data || "");
       if (
-        mark.includes("wc-ajax=checkout") ||
-        mark.includes("mt_render_order_success_modal")
+        mark.includes("wc-ajax=checkout")
+        // ||
+        // mark.includes("mt_render_order_success_modal")
       ) {
+        $.preloader.show();
         mtLog(
           "ajaxSend →",
           o.type || "POST",
@@ -105,8 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
     jQuery(document).ajaxComplete(function (_e, xhr, o) {
       const mark = (o.url || "") + " " + (o.data || "");
       if (
-        mark.includes("wc-ajax=checkout") ||
-        mark.includes("mt_render_order_success_modal")
+        mark.includes("wc-ajax=checkout") 
+        // ||
+        // mark.includes("mt_render_order_success_modal")
       ) {
         mtLog("ajaxComplete ✓", xhr.status, o.url || "(admin-ajax)");
       }
@@ -1528,6 +1531,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   */
 
+  /* TODO: Code Block for Order Success Modal (Thank You)
   function renderOrderSuccessModal(orderId, redirectUrl, orderKey) {
     const holder = document.getElementById("mt-order-success-nonce");
     const ajaxUrl =
@@ -1664,10 +1668,9 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const v2 = urlParams.get('v2') ?? false; 
   // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
-  if (!v2 && typeof jQuery !== "undefined") {
+  
+  if (typeof jQuery !== "undefined") {
     jQuery.ajaxPrefilter(function (options, originalOptions, jqXHR) {
       const url = String(options.url || "");
       if (url.indexOf("wc-ajax=checkout") !== -1) {
@@ -1730,4 +1733,5 @@ document.addEventListener("DOMContentLoaded", function () {
       };
     });
   }
+  */
 });

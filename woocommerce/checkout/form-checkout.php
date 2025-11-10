@@ -243,7 +243,7 @@ if (function_exists('WC') && WC()->session) {
             <?php render_sidebar(); ?>
         </div>
         <div class="mt-page__main">
-            <?php render_step_selector(true); ?>
+            <?php render_step_selector(2); ?>
             <form id="checkout-form" name="checkout" method="post"
                 class="checkout woocommerce-checkout d-flex flex-column gap-32" novalidate
                 action="<?php echo esc_url(wc_get_checkout_url()); ?>" enctype="multipart/form-data">
