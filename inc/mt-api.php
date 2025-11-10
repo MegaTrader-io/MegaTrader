@@ -98,12 +98,12 @@ class MT_Api {
     return $response;
   }
 
-  public static function fetch_accounts_bulk(array $accountIds): array {
+  public static function fetch_accounts_bulk($email, array $accountIds): array {
     if (empty($accountIds)) {
       return [];
     }
 
-    $key = 'mt_bulk_acc_' . md5(implode('|', $accountIds));
+    $key = 'mt_bulk_acc_' . md5(implode('|', $accountIds).strtolower($email));
     $cached = get_transient($key);
     if ($cached !== false) {
       return $cached;

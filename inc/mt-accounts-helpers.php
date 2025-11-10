@@ -2626,7 +2626,7 @@ function mt_account_overview_business_logic($accountIds = [])
         }
 
         // 1️⃣ Obtener todas las cuentas (válidas y con error)
-        $accounts = MT_Api::fetch_accounts_bulk($accountIds);
+        $accounts = MT_Api::fetch_accounts_bulk($raw_email, $accountIds);
 
         // 2️⃣ Crear un nuevo array solo con las válidas
         $valid_accounts = [];
