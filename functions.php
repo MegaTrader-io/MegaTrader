@@ -2727,3 +2727,9 @@ add_filter('woocommerce_webhook_payload', function ($payload, $resource, $resour
   return $payload;
 }, 10, 4);
 
+if (!function_exists('normalize_email')) {
+    function normalize_email($email): string
+    {
+        return trim(strtolower(sanitize_email($email)));
+    }
+}
