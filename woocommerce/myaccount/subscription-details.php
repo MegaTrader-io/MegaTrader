@@ -353,9 +353,7 @@ function change_payment_modal_should_show() {
 
 				<?php elseif (in_array($status, ['cancelled', 'expired'], true)): ?>
 
-					<a href="#" class="btn w-100 mega-btn-md mega-btn-primary-md disabled" aria-disabled="true">
-						Reset
-					</a>
+				
 					<a href="#" class="btn w-100 mega-btn-md mega-btn-secondary-md change_payment_method disabled"
 						aria-disabled="true">
 						Change Payment
@@ -364,15 +362,7 @@ function change_payment_modal_should_show() {
 						Cancel
 					</a>
 
-				<?php else: ?>
-
-					<?php
-					if ('active' === $status): ?>
-						<a id="custom_reset_btn" href="<?php echo esc_url($reset_url ?: '#'); ?>"
-							class="mega-btn-md mega-btn-primary-md w-100" <?php echo $reset_url ? '' : 'onclick="alert(\'Reset product not found.\'); return false;"'; ?>>
-							Reset
-						</a>
-					<?php endif; ?>
+				<?php else: ?>					
 
 					<?php
 					foreach ($sorted_actions as $key => $action):
