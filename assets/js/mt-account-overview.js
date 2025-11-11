@@ -1480,6 +1480,7 @@ window.mtOverlay = (function () {
       }
 
       var resetId = normalizeId(ds.resetId);
+      var accountId = normalizeId(ds.accountId);
       var mainId = normalizeId(ds.mainId);
       var accType = normalizeType(ds.accountType);
 
@@ -1510,7 +1511,7 @@ window.mtOverlay = (function () {
 
       if (resetId) {
         // Con reset: checkout + label default
-        btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId);
+        btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId)+ "&account_id=" + encodeURIComponent(accountId);
         if (btnDefault) btn.textContent = btnDefault;
       } else if (mainId) {
         // Sin reset + con mainId: ir a /subscriptions/{mainId} + label no_reset
