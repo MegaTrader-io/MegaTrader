@@ -137,7 +137,7 @@ class MT_Accounts
     }
 
     if (!$cookie_selected_id) {
-        $cookie_selected_id = $cur['id'];
+      $cookie_selected_id = $cur['id'];
     }
 
     $mapAccount = function (array $acc, bool $fullData = false) use ($cookie_selected_id, $forceFullData) {
@@ -1049,6 +1049,7 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
     $todayDt = new DateTime('now', $tz);
     $todayDt->setTime(0, 0, 0);
 
+    // --- fechas base (first date) ---
     $firstRawTop = (string) ($account['firstTradeDate'] ?? '');
     $firstRawMetric = (string) ($account['metrics']['firstTradeDate'] ?? $account['metric']['firstTradeDate'] ?? '');
     $firstRawAlt1 = (string) ($account['createdAt'] ?? '');
@@ -1057,16 +1058,44 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
 
     $firstDt = $firstRaw ? new DateTime($firstRaw, $tz) : clone $todayDt;
     $firstDt->setTime(0, 0, 0);
+
+    // --- si first > today, normaliza ---
     if ($firstDt > $todayDt)
       $firstDt = clone $todayDt;
 
-    $accountId = (string) ($account['accountId'] ?? $account['id'] ?? '');
-    $totalSinceStart = (int) $firstDt->diff($todayDt)->days + 1;
+    // --- corte por BREACHED ---
+    $status = strtoupper((string) ($account['status'] ?? ''));
+    $breachDt = null;
+    if ($status === 'BREACHED') {
+      $breachRaw = (string) ($account['breachedAt'] ?? '');
+      if ($breachRaw) {
+        $breachDt = new DateTime($breachRaw, $tz);
+        $breachDt->setTime(0, 0, 0); // incluir el día de breach
+      }
+    }
+
+    // endDt = min(today, breachedAt si aplica)
+    $endDt = clone $todayDt;
+    if ($breachDt && $breachDt < $endDt) {
+      $endDt = clone $breachDt;
+    }
+
+    // si por algún motivo first > end, ajusta
+    if ($firstDt > $endDt)
+      $firstDt = clone $endDt;
+
+    // --- ventana y fetch ---
+    $totalSinceStart = (int) $firstDt->diff($endDt)->days + 1;         // inclusivo
     $pointsToLoad = min(30, max(1, $totalSinceStart));
 
-    $startDt = (clone $todayDt)->modify('-' . ($pointsToLoad - 1) . ' days');
+    $startDt = (clone $endDt)->modify('-' . ($pointsToLoad - 1) . ' days');
+    if ($startDt < $firstDt)
+      $startDt = clone $firstDt;
+
     $from = $startDt->format('Y-m-d');
-    $to = $todayDt->format('Y-m-d');
+    $to = $endDt->format('Y-m-d');
+
+    $accountId = (string) ($account['accountId'] ?? $account['id'] ?? '');
 
     $resp = function_exists('mt_metrics_fetch_by_shortcode')
       ? mt_metrics_fetch_by_shortcode($accountId, ['from' => $from, 'to' => $to, 'perpage' => 200, 'ttl' => 30])
@@ -1074,12 +1103,14 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
 
     $rows = (is_array($resp) && isset($resp['data']) && is_array($resp['data'])) ? $resp['data'] : [];
 
+    // --- compactar por día (último valor del día) ---
     $byDay = [];
     foreach ($rows as $row) {
       $metrics = isset($row['metrics']) && is_array($row['metrics']) ? $row['metrics'] : [];
       $cb = $metrics['currentBalance'] ?? null;
       if (!is_numeric($cb))
         continue;
+
       $ts = strtotime($row['updatedAt'] ?? $row['createdAt'] ?? '') ?: 0;
       $ymd = substr((string) ($row['date'] ?? $row['fromDate'] ?? $row['toDate'] ?? ''), 0, 10);
       if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $ymd)) {
@@ -1087,15 +1118,21 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
       }
       if ($ymd === '')
         continue;
+
+      // Ignora cualquier dato posterior al corte (seguro extra)
+      if ($ymd > $to)
+        continue;
+
       if (!isset($byDay[$ymd]) || $ts >= $byDay[$ymd]['ts']) {
         $byDay[$ymd] = ['ts' => $ts, 'value' => (float) $cb];
       }
     }
 
+    // --- construir serie continua desde $from hasta $to (incl.) ---
     $series = [];
     $cursor = new DateTime($from, $tz);
     $carry = null;
-    for ($i = 0; $i < $pointsToLoad; $i++) {
+    while ($cursor <= $endDt) {
       $ymd = $cursor->format('Y-m-d');
       if (isset($byDay[$ymd]))
         $carry = $byDay[$ymd]['value'];
@@ -1103,35 +1140,37 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
         $series[] = ['date' => $ymd, 'value' => (float) $carry];
       $cursor->modify('+1 day');
     }
+
+    // fallback si no hubo datos: usa balance actual, fechado al endDt (no a hoy)
     if (empty($series)) {
       $m = $account['metrics'] ?? $account['metric'] ?? [];
       $cb = is_numeric($m['currentBalance'] ?? null) ? (float) $m['currentBalance'] : null;
-      if ($cb !== null)
-        $series[] = ['date' => $todayDt->format('Y-m-d'), 'value' => $cb];
+      if ($cb !== null) {
+        $series[] = ['date' => $endDt->format('Y-m-d'), 'value' => $cb];
+      }
     }
 
+    // --- metas / límites ---
     $m = $account['metrics'] ?? $account['metric'] ?? [];
-
     $profit_target = is_numeric($m['equityPassLevel'] ?? null) ? (float) $m['equityPassLevel'] : null;
     $max_drawdown = is_numeric($m['maxLossLimitEquityLevel'] ?? null) ? (float) $m['maxLossLimitEquityLevel'] : null;
     $consistencyResetBalanceMark = is_numeric($m['consistencyResetBalanceMark'] ?? null)
       ? (float) $m['consistencyResetBalanceMark']
       : null;
 
+    // --- payout ---
     $payoutCycle = $account['payout']['payoutCycle'] ?? ($account['payoutCycle'] ?? null);
-
-    $fta = null;
+    $funded_target_amount = null;
     if (is_array($payoutCycle)) {
       $raw = $payoutCycle['targetAmountFromStartBalance'] ?? ($payoutCycle['targetAmount'] ?? null);
       if (is_numeric($raw))
-        $fta = (float) $raw;
+        $funded_target_amount = (float) $raw;
     }
-    $funded_target_amount = $fta;
 
-
+    // --- periods (basado en endDt real) ---
     $periods = [];
     $sinceTextDays = $totalSinceStart;
-    $sinceValue = $pointsToLoad;
+    $sinceValue = min($pointsToLoad, $totalSinceStart);
     if ($sinceTextDays < 7) {
       $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
     } elseif ($sinceTextDays < 14) {
@@ -1148,6 +1187,7 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
       $periods[] = ['value' => $sinceValue, 'text' => "SINCE START ({$sinceTextDays} DAYS)"];
     }
 
+    // --- título / starting balance ---
     $program = $account['program'] ?? null;
     $plabel = (string) ($program['label'] ?? $program['description'] ?? 'Account');
     $sb = $program['startingBalance'] ?? null;
@@ -1172,6 +1212,8 @@ if (!function_exists('mt_accounts_build_performance_chart')) {
       'funded_target_amount' => $funded_target_amount,
       'consistency_reset_balance_mark' => $consistencyResetBalanceMark,
       'periods' => $periods,
+      'starting_balance' => is_numeric($sb) ? (float) $sb : null,
+      // opcional para debug: 'cutoff_to' => $to,
     ];
   }
 }
@@ -1437,26 +1479,27 @@ function mt_accounts_ajax_status()
 add_action('wp_ajax_mt_account_overview_data', 'mt_account_overview_data_ajax');
 add_action('wp_ajax_nopriv_mt_account_overview_data', 'mt_account_overview_data_ajax');
 
-function mt_account_overview_data_ajax() {
-    check_ajax_referer('mt-acc-nonce', 'nonce');
+function mt_account_overview_data_ajax()
+{
+  check_ajax_referer('mt-acc-nonce', 'nonce');
 
-    $accountIds = isset($_POST['accountId'])
-            ? array_map('sanitize_text_field', (array) $_POST['accountId'])
-            : [];
+  $accountIds = isset($_POST['accountId'])
+    ? array_map('sanitize_text_field', (array) $_POST['accountId'])
+    : [];
 
-    if (empty($accountIds)) {
-        wp_send_json_error(['message' => 'Missing accountIds']);
-    }
+  if (empty($accountIds)) {
+    wp_send_json_error(['message' => 'Missing accountIds']);
+  }
 
-    $result = mt_account_overview_business_logic(
-            accountIds: $accountIds
-    );
+  $result = mt_account_overview_business_logic(
+    accountIds: $accountIds
+  );
 
-    if (isset($result['error'])) {
-        wp_send_json_error($result);
-    }
+  if (isset($result['error'])) {
+    wp_send_json_error($result);
+  }
 
-    wp_send_json_success($result);
+  wp_send_json_success($result);
 }
 
 /* === MÉTRICS vía shortcode (JSON) === */
@@ -1910,7 +1953,6 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $pnl = (float) ($t['pnl'] ?? 0);
       $lots = (int) ($t['lots'] ?? 0);
       $commission = (float) ($t['commission'] ?? 0);
-      $commission = $commission * 2;
       $durSecs = max(0, (int) round($closeNY->getTimestamp() - $openNY->getTimestamp()));
 
       if (!isset($byDay[$day])) {
@@ -1935,7 +1977,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $D['trades'] += 1;
       $D['ct'] += max(0, $lots);
       $D['fees'] += $commission;
-      $D['net'] += ($pnl + $commission);
+      $D['net'] += $pnl - $commission;
 
       if ($pnl > 0) {
         $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl);
@@ -2084,32 +2126,32 @@ if (!function_exists('mt_daily_journal_rows_html')) {
       $net_class = (is_numeric($net) ? ($net > 0 ? 'text-success' : ($net < 0 ? 'text-danger' : '')) : '');
 
       ?>
-      <div class="dj-grid dj-row" id="dj-row-<?php echo esc_attr($day_iso); ?>" data-page="<?php echo esc_attr($page); ?>"
-        data-trade-date="<?php echo esc_attr($day_iso); ?>" data-has-fb="<?php echo $has_fb ? '1' : '0'; ?>"
-        data-mood="<?php echo $has_fb ? (int) $mood : ''; ?>" data-followed="<?php echo $has_fb ? (int) $follow : ''; ?>"
-        data-note="<?php echo $has_fb ? esc_attr($note) : ''; ?>" style="<?php echo $page === 1 ? '' : 'display:none'; ?>">
-        <div class="dj-cell is-left">
-          <span class="mt-dj-visibility" role="button" tabindex="0" aria-label="Add daily feedback" title="Daily feedback">
-            <i class="mt-icon mt-icon-white <?php echo $has_fb ? 'mt-icon_visibility' : 'mt-icon_pencil'; ?>"
-              aria-hidden="true"></i>
-          </span>
-        </div>
+            <div class="dj-grid dj-row" id="dj-row-<?php echo esc_attr($day_iso); ?>" data-page="<?php echo esc_attr($page); ?>"
+              data-trade-date="<?php echo esc_attr($day_iso); ?>" data-has-fb="<?php echo $has_fb ? '1' : '0'; ?>"
+              data-mood="<?php echo $has_fb ? (int) $mood : ''; ?>" data-followed="<?php echo $has_fb ? (int) $follow : ''; ?>"
+              data-note="<?php echo $has_fb ? esc_attr($note) : ''; ?>" style="<?php echo $page === 1 ? '' : 'display:none'; ?>">
+              <div class="dj-cell is-left">
+                <span class="mt-dj-visibility" role="button" tabindex="0" aria-label="Add daily feedback" title="Daily feedback">
+                  <i class="mt-icon mt-icon-white <?php echo $has_fb ? 'mt-icon_visibility' : 'mt-icon_pencil'; ?>"
+                    aria-hidden="true"></i>
+                </span>
+              </div>
 
-        <div class="dj-cell is-right"><?php echo esc_html($day_label); ?></div>
-        <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html($fmt_money($net)); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['hi'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['lo'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['ct'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['fees'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['trades'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['loss'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
-        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['dur'] ?? '-')); ?></div>
-      </div>
-      <?php
+              <div class="dj-cell is-right"><?php echo esc_html($day_label); ?></div>
+              <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html($fmt_money($net)); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['hi'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['lo'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['ct'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['fees'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['trades'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['loss'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
+              <div class="dj-cell is-right"><?php echo esc_html((string) ($r['dur'] ?? '-')); ?></div>
+            </div>
+            <?php
     }
     return trim(ob_get_clean());
   }
@@ -2472,367 +2514,370 @@ if (!function_exists('mt_prepare_ui_payout')) {
 }
 
 if (!function_exists('mega_api_get_bulk')) {
-    /**
-     * Realiza múltiples solicitudes GET concurrentes usando cURL multi.
-     *
-     * @param array $endpoints Lista de endpoints relativos o URLs completas.
-     * @param array $extraHeaders (opcional) Headers adicionales.
-     * @return array Resultados por URL.
-     */
-    function mega_api_get_bulk(array $endpoints, array $extraHeaders = []): array
-    {
-        if (empty($endpoints)) {
-            return ['error' => 'No endpoints provided'];
-        }
-
-        // Obtener configuración base y API key
-        $opts = function_exists('mega_api_options') ? mega_api_options() : [];
-        $base_url = isset($opts['base_url']) ? rtrim($opts['base_url'], '/') : '';
-        $api_key  = isset($opts['api_key']) ? $opts['api_key'] : '';
-
-        // Construir headers comunes
-        $headers = array_merge([
-                'X-API-KEY: ' . $api_key,
-                'Accept: application/json',
-        ], $extraHeaders);
-
-        $multiHandle = curl_multi_init();
-        $curlHandles = [];
-        $results = [];
-
-        foreach ($endpoints as $key => $endpoint) {
-            // Soporta tanto URLs completas como relativas
-            $url = preg_match('/^https?:\/\//', $endpoint)
-                    ? $endpoint
-                    : "{$base_url}/" . ltrim($endpoint, '/');
-
-            $ch = curl_init();
-            curl_setopt_array($ch, [
-                    CURLOPT_URL => $url,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_TIMEOUT => 10,
-                    CURLOPT_HTTPHEADER => $headers,
-            ]);
-
-            curl_multi_add_handle($multiHandle, $ch);
-            $curlHandles[$key] = $ch;
-        }
-
-        $running = null;
-        do {
-            $status = curl_multi_exec($multiHandle, $running);
-            if ($status > 0) {
-                error_log('Mega API MultiCurl error: ' . curl_multi_strerror($status));
-            }
-            curl_multi_select($multiHandle);
-        } while ($running > 0);
-
-        foreach ($curlHandles as $key => $ch) {
-            $response = curl_multi_getcontent($ch);
-            $error = curl_error($ch);
-            $info = curl_getinfo($ch);
-
-            if ($error) {
-                $results[$key] = [
-                        'error' => $error,
-                        'url'   => $info['url'] ?? null,
-                ];
-            } else {
-                $decoded = json_decode($response, true);
-                $results[$key] = json_last_error() === JSON_ERROR_NONE
-                        ? $decoded
-                        : ['error' => 'Invalid JSON', 'raw' => $response];
-            }
-
-            curl_multi_remove_handle($multiHandle, $ch);
-            curl_close($ch);
-        }
-
-        curl_multi_close($multiHandle);
-
-        return $results;
+  /**
+   * Realiza múltiples solicitudes GET concurrentes usando cURL multi.
+   *
+   * @param array $endpoints Lista de endpoints relativos o URLs completas.
+   * @param array $extraHeaders (opcional) Headers adicionales.
+   * @return array Resultados por URL.
+   */
+  function mega_api_get_bulk(array $endpoints, array $extraHeaders = []): array
+  {
+    if (empty($endpoints)) {
+      return ['error' => 'No endpoints provided'];
     }
+
+    // Obtener configuración base y API key
+    $opts = function_exists('mega_api_options') ? mega_api_options() : [];
+    $base_url = isset($opts['base_url']) ? rtrim($opts['base_url'], '/') : '';
+    $api_key = isset($opts['api_key']) ? $opts['api_key'] : '';
+
+    // Construir headers comunes
+    $headers = array_merge([
+      'X-API-KEY: ' . $api_key,
+      'Accept: application/json',
+    ], $extraHeaders);
+
+    $multiHandle = curl_multi_init();
+    $curlHandles = [];
+    $results = [];
+
+    foreach ($endpoints as $key => $endpoint) {
+      // Soporta tanto URLs completas como relativas
+      $url = preg_match('/^https?:\/\//', $endpoint)
+        ? $endpoint
+        : "{$base_url}/" . ltrim($endpoint, '/');
+
+      $ch = curl_init();
+      curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_HTTPHEADER => $headers,
+      ]);
+
+      curl_multi_add_handle($multiHandle, $ch);
+      $curlHandles[$key] = $ch;
+    }
+
+    $running = null;
+    do {
+      $status = curl_multi_exec($multiHandle, $running);
+      if ($status > 0) {
+        error_log('Mega API MultiCurl error: ' . curl_multi_strerror($status));
+      }
+      curl_multi_select($multiHandle);
+    } while ($running > 0);
+
+    foreach ($curlHandles as $key => $ch) {
+      $response = curl_multi_getcontent($ch);
+      $error = curl_error($ch);
+      $info = curl_getinfo($ch);
+
+      if ($error) {
+        $results[$key] = [
+          'error' => $error,
+          'url' => $info['url'] ?? null,
+        ];
+      } else {
+        $decoded = json_decode($response, true);
+        $results[$key] = json_last_error() === JSON_ERROR_NONE
+          ? $decoded
+          : ['error' => 'Invalid JSON', 'raw' => $response];
+      }
+
+      curl_multi_remove_handle($multiHandle, $ch);
+      curl_close($ch);
+    }
+
+    curl_multi_close($multiHandle);
+
+    return $results;
+  }
 }
 
 function mt_account_overview_business_logic($accountIds = [])
 {
-    /* === Estado base === */
-    $mt_user_email = '';
-    $mt_user_email_api = '';
-    $mt_account_ui = ['current' => null, 'accounts' => []];
-    $mt_selected_id = '';
-    $mt_performance = [];
-    $mt_fetch_variant = '';
-    $mt_cnt_plain = 0;
-    $mt_cnt_encoded = 0;
-    $mt_feature_content = [];
-    $mt_account_data = [];
-    $mt_daily_journal = [];
-    $__selected_subscription_id = '';
-    $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
-    $__can_manage_subscription = true;
-    $mt_chart = [];
+  /* === Estado base === */
+  $mt_user_email = '';
+  $mt_user_email_api = '';
+  $mt_account_ui = ['current' => null, 'accounts' => []];
+  $mt_selected_id = '';
+  $mt_performance = [];
+  $mt_fetch_variant = '';
+  $mt_cnt_plain = 0;
+  $mt_cnt_encoded = 0;
+  $mt_feature_content = [];
+  $mt_account_data = [];
+  $mt_daily_journal = [];
+  $__selected_subscription_id = '';
+  $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
+  $__can_manage_subscription = true;
+  $mt_chart = [];
 
-    if (!is_user_logged_in()) {
-        return ['error' => 'You must be logged in to access this page.'];
+  if (!is_user_logged_in()) {
+    return ['error' => 'You must be logged in to access this page.'];
+  }
+
+  $u = wp_get_current_user();
+  $raw_email = (string) ($u->user_email ?? '');
+
+  // Saneado (lowercase, trim, validación, urlencode para API)
+  $san = function_exists('mt_sanitize_email')
+    ? mt_sanitize_email($raw_email)
+    : [
+      'ok' => true,
+      'email' => strtolower(trim($raw_email)),
+      'api' => rawurlencode(strtolower(trim($raw_email))),
+      'error' => '',
+    ];
+
+  if (!empty($san['ok'])) {
+    $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
+    $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
+
+    /* === 1) Traer cuentas (cache 30s, plain -> encoded) === */
+    list($accounts, $mt_fetch_variant) = mt_fetch_accounts_cached($mt_user_email, $mt_user_email_api);
+
+    // === Agreement Modal (con caché 5min) ===
+    $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api);
+
+    $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
+      ? (string) $__mt_agreement['agreementURL']
+      : '';
+
+    $__mt_agreement_show = (is_array($__mt_agreement)
+      && array_key_exists('agreementSigned', $__mt_agreement)
+      && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+
+    /* === Preferencia de cookie para cuenta seleccionada (si existe y es válida) === */
+    $cookie_selected_id = '';
+    if (is_user_logged_in()) {
+      $uid = get_current_user_id();
+      $cookie_keys = array(
+        'mt:lastAccountId' . ($uid ? (':' . $uid) : ''),
+        'mt:lastAccountId',
+      );
+      foreach ($cookie_keys as $ck) {
+        if (!empty($_COOKIE[$ck])) {
+          $cookie_selected_id = sanitize_text_field(wp_unslash($_COOKIE[$ck]));
+          break;
+        }
+      }
     }
 
-    $u = wp_get_current_user();
-    $raw_email = (string) ($u->user_email ?? '');
+    // 1️⃣ Obtener todas las cuentas (válidas y con error)
+    $accounts = MT_Api::fetch_accounts_bulk($raw_email, $accountIds);
 
-    // Saneado (lowercase, trim, validación, urlencode para API)
-    $san = function_exists('mt_sanitize_email')
-            ? mt_sanitize_email($raw_email)
-            : [
-                    'ok' => true,
-                    'email' => strtolower(trim($raw_email)),
-                    'api' => rawurlencode(strtolower(trim($raw_email))),
-                    'error' => '',
-            ];
+    // 2️⃣ Crear un nuevo array solo con las válidas
+    $valid_accounts = [];
+    foreach ($accounts as $id => $account) {
+      if (is_array($account) && !isset($account['error'])) {
+        $valid_accounts[$id] = $account;
+      }
+    }
 
-    if (!empty($san['ok'])) {
-        $mt_user_email = (string) ($san['email'] ?? ''); // plain, normalizado
-        $mt_user_email_api = (string) ($san['api'] ?? '');   // encoded (%2B, %40, ...)
+    /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
+    if (class_exists('MT_Accounts')) {
+      $mt_account_ui = MT_Accounts::prepare_ui_v2(accounts: $valid_accounts);
+    }
 
-        /* === 1) Traer cuentas (cache 30s, plain -> encoded) === */
-        list($accounts, $mt_fetch_variant) = mt_fetch_accounts_cached($mt_user_email, $mt_user_email_api);
+    /* IDs válidos (de prepare_ui) */
+    $__valid_ids = array();
+    if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
+      foreach ($mt_account_ui['accounts'] as $row) {
+        if (!empty($row['id']))
+          $__valid_ids[(string) $row['id']] = true;
+      }
+    }
+    if (!empty($mt_account_ui['current']['id'])) {
+      $__valid_ids[(string) $mt_account_ui['current']['id']] = true;
+    }
 
-        // === Agreement Modal (con caché 5min) ===
-        $__mt_agreement = mt_get_agreement_status_cached($mt_user_email_api);
+    /* Resolver seleccionado con prioridad: ?acc → cookie → current */
+    $param_acc = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
 
-        $__mt_agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
-                ? (string) $__mt_agreement['agreementURL']
-                : '';
-
-        $__mt_agreement_show = (is_array($__mt_agreement)
-                && array_key_exists('agreementSigned', $__mt_agreement)
-                && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
-
-        /* === Preferencia de cookie para cuenta seleccionada (si existe y es válida) === */
-        $cookie_selected_id = '';
-        if (is_user_logged_in()) {
-            $uid = get_current_user_id();
-            $cookie_keys = array(
-                    'mt:lastAccountId' . ($uid ? (':' . $uid) : ''),
-                    'mt:lastAccountId',
-            );
-            foreach ($cookie_keys as $ck) {
-                if (!empty($_COOKIE[$ck])) {
-                    $cookie_selected_id = sanitize_text_field(wp_unslash($_COOKIE[$ck]));
-                    break;
-                }
-            }
-        }
-
-        // 1️⃣ Obtener todas las cuentas (válidas y con error)
-        $accounts = MT_Api::fetch_accounts_bulk($raw_email, $accountIds);
-
-        // 2️⃣ Crear un nuevo array solo con las válidas
-        $valid_accounts = [];
-        foreach ($accounts as $id => $account) {
-            if (is_array($account) && !isset($account['error'])) {
-                $valid_accounts[$id] = $account;
-            }
-        }
-
-        /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
-        if (class_exists('MT_Accounts')) {
-            $mt_account_ui = MT_Accounts::prepare_ui_v2(accounts: $valid_accounts);
-        }
-
-        /* IDs válidos (de prepare_ui) */
-        $__valid_ids = array();
-        if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
-            foreach ($mt_account_ui['accounts'] as $row) {
-                if (!empty($row['id'])) $__valid_ids[(string) $row['id']] = true;
-            }
-        }
-        if (!empty($mt_account_ui['current']['id'])) {
-            $__valid_ids[(string) $mt_account_ui['current']['id']] = true;
-        }
-
-        /* Resolver seleccionado con prioridad: ?acc → cookie → current */
-        $param_acc = isset($_GET['acc']) ? sanitize_text_field((string) $_GET['acc']) : '';
-
-        if ($param_acc && isset($__valid_ids[$param_acc])) {
-            $mt_selected_id = $param_acc;
-        } elseif ($cookie_selected_id && isset($__valid_ids[$cookie_selected_id])) {
-            $mt_selected_id = $cookie_selected_id;
-        } else {
-            $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
-        }
-
-        /* === 3) Resolver cuenta seleccionada === */
-        if ($mt_selected_id === '') {
-            $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
-        }
-
-        // === Resolver la cuenta una sola vez y construir payloads ===
-        $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
-                ? mt_accounts_resolve_account_by_id($mt_selected_id)
-                : null;
-
-        if ($resolved) {
-            // Account data (re-usa $resolved, evita resolve duplicado)
-            if (function_exists('mt_accounts_build_account_data')) {
-                $mt_account_data = mt_accounts_build_account_data($resolved);
-            }
-        }
-
-        /* === Mapa id => order y order activo === */
-        $__orders_map_by_id = [];
-
-        if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
-            foreach ($mt_account_ui['accounts'] as $row) {
-                $id = (string) ($row['id'] ?? '');
-                $ord = (int) ($row['order'] ?? $row['orderId'] ?? $row['orderID'] ?? 0);
-                if ($id !== '') $__orders_map_by_id[$id] = $ord;
-            }
-        }
-        if (!empty($mt_account_ui['current']['id'])) {
-            $cid = (string) $mt_account_ui['current']['id'];
-            if (!isset($__orders_map_by_id[$cid])) {
-                $__orders_map_by_id[$cid] = (int) ($mt_account_ui['current']['order'] ?? $mt_account_ui['current']['orderId'] ?? $mt_account_ui['current']['orderID'] ?? 0);
-            }
-        }
-
-        $__active_order_id = 0;
-        if ($mt_selected_id !== '') {
-            $__active_order_id = (int) ($__orders_map_by_id[$mt_selected_id] ?? 0);
-            if (!$__active_order_id && !empty($mt_account_ui['current']) && (string) $mt_account_ui['current']['id'] === (string) $mt_selected_id) {
-                $__active_order_id = (int) ($mt_account_ui['current']['order'] ?? 0);
-            }
-        }
-
-        $__mt_selected_status = (string) (
-                $resolved['status']
-                ?? ($mt_account_ui['current']['status'] ?? '')
-        );
-
-        $__breach_key = 'BREACHED';
-        if (class_exists('Label')) {
-            $__breach_key = \Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED';
-        }
-
-        $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
-        $__breach_reset_url = '/my-account/reset';
-        $__reset_product_id = (string) (
-                $resolved['rules']['resetProductId']
-                ?? ($mt_account_ui['current']['resetProductId'] ?? '')
-        );
-
-        if ($__reset_product_id !== '' && function_exists('wc_get_checkout_url')) {
-            $__breach_reset_url = wc_get_checkout_url() . '?add-to-cart=' . urlencode($__reset_product_id);
-        }
-
-        /* ==== Passed/Activation meta & helpers ==== */
-
-        $__normalize_id = function ($v) {
-            if ($v === null) return '';
-            $s = trim((string) $v);
-            $sl = strtolower($s);
-            return ($s === '' || $s === '0' || $sl === 'null') ? '' : $s;
-        };
-
-        $__status_raw = (string) ($resolved['status'] ?? ($mt_account_ui['current']['status'] ?? ''));
-        $__status_norm = strtoupper(trim($__status_raw));
-
-        $__activation_product_id = (string) (
-                $resolved['rules']['activationProductId'] ??
-                ($mt_account_ui['current']['activationProductId'] ?? '')
-        );
-
-        $__has_activation_id = ($__normalize_id($__activation_product_id) !== '');
-
-        $__activation_url = ($__has_activation_id && function_exists('wc_get_checkout_url'))
-                ? wc_get_checkout_url() . '?add-to-cart=' . urlencode($__activation_product_id)
-                : '#';
-
-        $__mt_account_passed_show = (in_array($__status_norm, ['PENDING_ACTIVATION', 'PASSED'], true)) ? '1' : '0';
-
-        $__note_passed_with_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
-        $__note_passed_no_id    = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
-
-        $__body_subtitle                 = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_default'];
-        $__body_subtitle_w_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_w_activation_id'];
-        $__body_subtitle_no_activation_id= Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
-
-        $__note_text = '';
-        $__show_note = false;
-        $__body_text = $__body_subtitle;
-
-        if ($__status_norm === 'ACTIVATION_PENDING') {
-            $__status_norm = 'PENDING_ACTIVATION';
-        }
-
-        if ($__status_norm === 'PASSED' && $__has_activation_id) {
-            $__show_note = true;
-            $__note_text = $__note_passed_with_id;
-        } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
-            $__show_note = true;
-            $__note_text = $__note_passed_no_id;
-        }
-
-        if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
-            $__body_text = $__body_subtitle;
-        } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
-            $__body_text = $__body_subtitle_w_activation_id;
-        } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
-            $__body_text = $__body_subtitle_no_activation_id;
-        }
-
-        $__btn_classes = [];
-        if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
-            // botón activo
-        } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
-            $__btn_classes[] = 'disabled';
-        } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
-            $__btn_classes[] = 'd-none';
-        } else {
-            $__btn_classes[] = 'd-none';
-        }
-        $__btn_classes_attr = implode(' ', $__btn_classes);
-
-        $__main_product_id = (string) (
-                $resolved['rules']['mainProductId']
-                ?? ($mt_account_ui['current']['mainProductId'] ?? '')
-        );
-
-        if (!empty($mt_account_ui['accounts']) || !empty($mt_account_ui['current'])) {
-            $selRow = null;
-
-            if (!empty($mt_selected_id) && !empty($mt_account_ui['accounts'])) {
-                foreach ($mt_account_ui['accounts'] as $row) {
-                    if ((string) ($row['id'] ?? '') === (string) $mt_selected_id) {
-                        $selRow = $row;
-                        break;
-                    }
-                }
-            }
-            if (
-                    !$selRow && !empty($mt_account_ui['current']) &&
-                    (empty($mt_selected_id) || (string) $mt_account_ui['current']['id'] === (string) $mt_selected_id)
-            ) {
-                $selRow = $mt_account_ui['current'];
-            }
-
-            if (is_array($selRow)) {
-                $__selected_subscription_id = (string) ($selRow['subscriptionId'] ?? '');
-                $hasSubLegacy = !empty($selRow['hasSubscription']);
-                $__can_manage_subscription = $__selected_subscription_id !== '' || $hasSubLegacy;
-            }
-        }
+    if ($param_acc && isset($__valid_ids[$param_acc])) {
+      $mt_selected_id = $param_acc;
+    } elseif ($cookie_selected_id && isset($__valid_ids[$cookie_selected_id])) {
+      $mt_selected_id = $cookie_selected_id;
     } else {
-        return ['error' => 'Invalid email'];
+      $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
     }
 
-    return [
-        'mt_user_email' => $mt_user_email,
-        'mt_account_ui' => $mt_account_ui,
-        'mt_user_email_api' => $mt_user_email_api,
-        'mt_selected_id' => $mt_selected_id,
-//        '$__mt_breach_show' => $__mt_breach_show,
+    /* === 3) Resolver cuenta seleccionada === */
+    if ($mt_selected_id === '') {
+      $mt_selected_id = (string) ($mt_account_ui['current']['id'] ?? '');
+    }
+
+    // === Resolver la cuenta una sola vez y construir payloads ===
+    $resolved = (!empty($mt_selected_id) && function_exists('mt_accounts_resolve_account_by_id'))
+      ? mt_accounts_resolve_account_by_id($mt_selected_id)
+      : null;
+
+    if ($resolved) {
+      // Account data (re-usa $resolved, evita resolve duplicado)
+      if (function_exists('mt_accounts_build_account_data')) {
+        $mt_account_data = mt_accounts_build_account_data($resolved);
+      }
+    }
+
+    /* === Mapa id => order y order activo === */
+    $__orders_map_by_id = [];
+
+    if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
+      foreach ($mt_account_ui['accounts'] as $row) {
+        $id = (string) ($row['id'] ?? '');
+        $ord = (int) ($row['order'] ?? $row['orderId'] ?? $row['orderID'] ?? 0);
+        if ($id !== '')
+          $__orders_map_by_id[$id] = $ord;
+      }
+    }
+    if (!empty($mt_account_ui['current']['id'])) {
+      $cid = (string) $mt_account_ui['current']['id'];
+      if (!isset($__orders_map_by_id[$cid])) {
+        $__orders_map_by_id[$cid] = (int) ($mt_account_ui['current']['order'] ?? $mt_account_ui['current']['orderId'] ?? $mt_account_ui['current']['orderID'] ?? 0);
+      }
+    }
+
+    $__active_order_id = 0;
+    if ($mt_selected_id !== '') {
+      $__active_order_id = (int) ($__orders_map_by_id[$mt_selected_id] ?? 0);
+      if (!$__active_order_id && !empty($mt_account_ui['current']) && (string) $mt_account_ui['current']['id'] === (string) $mt_selected_id) {
+        $__active_order_id = (int) ($mt_account_ui['current']['order'] ?? 0);
+      }
+    }
+
+    $__mt_selected_status = (string) (
+      $resolved['status']
+      ?? ($mt_account_ui['current']['status'] ?? '')
+    );
+
+    $__breach_key = 'BREACHED';
+    if (class_exists('Label')) {
+      $__breach_key = \Label::ACCOUNT_STATUS_MAP['BREACHED'] ?? 'BREACHED';
+    }
+
+    $__mt_breach_show = (strcasecmp($__mt_selected_status, $__breach_key) === 0) ? '1' : '0';
+    $__breach_reset_url = '/my-account/reset';
+    $__reset_product_id = (string) (
+      $resolved['rules']['resetProductId']
+      ?? ($mt_account_ui['current']['resetProductId'] ?? '')
+    );
+
+    if ($__reset_product_id !== '' && function_exists('wc_get_checkout_url')) {
+      $__breach_reset_url = wc_get_checkout_url() . '?add-to-cart=' . urlencode($__reset_product_id);
+    }
+
+    /* ==== Passed/Activation meta & helpers ==== */
+
+    $__normalize_id = function ($v) {
+      if ($v === null)
+        return '';
+      $s = trim((string) $v);
+      $sl = strtolower($s);
+      return ($s === '' || $s === '0' || $sl === 'null') ? '' : $s;
+    };
+
+    $__status_raw = (string) ($resolved['status'] ?? ($mt_account_ui['current']['status'] ?? ''));
+    $__status_norm = strtoupper(trim($__status_raw));
+
+    $__activation_product_id = (string) (
+      $resolved['rules']['activationProductId'] ??
+      ($mt_account_ui['current']['activationProductId'] ?? '')
+    );
+
+    $__has_activation_id = ($__normalize_id($__activation_product_id) !== '');
+
+    $__activation_url = ($__has_activation_id && function_exists('wc_get_checkout_url'))
+      ? wc_get_checkout_url() . '?add-to-cart=' . urlencode($__activation_product_id)
+      : '#';
+
+    $__mt_account_passed_show = (in_array($__status_norm, ['PENDING_ACTIVATION', 'PASSED'], true)) ? '1' : '0';
+
+    $__note_passed_with_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
+    $__note_passed_no_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
+
+    $__body_subtitle = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_default'];
+    $__body_subtitle_w_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_w_activation_id'];
+    $__body_subtitle_no_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
+
+    $__note_text = '';
+    $__show_note = false;
+    $__body_text = $__body_subtitle;
+
+    if ($__status_norm === 'ACTIVATION_PENDING') {
+      $__status_norm = 'PENDING_ACTIVATION';
+    }
+
+    if ($__status_norm === 'PASSED' && $__has_activation_id) {
+      $__show_note = true;
+      $__note_text = $__note_passed_with_id;
+    } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
+      $__show_note = true;
+      $__note_text = $__note_passed_no_id;
+    }
+
+    if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
+      $__body_text = $__body_subtitle;
+    } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
+      $__body_text = $__body_subtitle_w_activation_id;
+    } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
+      $__body_text = $__body_subtitle_no_activation_id;
+    }
+
+    $__btn_classes = [];
+    if ($__status_norm === 'PENDING_ACTIVATION' && $__has_activation_id) {
+      // botón activo
+    } elseif ($__status_norm === 'PASSED' && $__has_activation_id) {
+      $__btn_classes[] = 'disabled';
+    } elseif ($__status_norm === 'PASSED' && !$__has_activation_id) {
+      $__btn_classes[] = 'd-none';
+    } else {
+      $__btn_classes[] = 'd-none';
+    }
+    $__btn_classes_attr = implode(' ', $__btn_classes);
+
+    $__main_product_id = (string) (
+      $resolved['rules']['mainProductId']
+      ?? ($mt_account_ui['current']['mainProductId'] ?? '')
+    );
+
+    if (!empty($mt_account_ui['accounts']) || !empty($mt_account_ui['current'])) {
+      $selRow = null;
+
+      if (!empty($mt_selected_id) && !empty($mt_account_ui['accounts'])) {
+        foreach ($mt_account_ui['accounts'] as $row) {
+          if ((string) ($row['id'] ?? '') === (string) $mt_selected_id) {
+            $selRow = $row;
+            break;
+          }
+        }
+      }
+      if (
+        !$selRow && !empty($mt_account_ui['current']) &&
+        (empty($mt_selected_id) || (string) $mt_account_ui['current']['id'] === (string) $mt_selected_id)
+      ) {
+        $selRow = $mt_account_ui['current'];
+      }
+
+      if (is_array($selRow)) {
+        $__selected_subscription_id = (string) ($selRow['subscriptionId'] ?? '');
+        $hasSubLegacy = !empty($selRow['hasSubscription']);
+        $__can_manage_subscription = $__selected_subscription_id !== '' || $hasSubLegacy;
+      }
+    }
+  } else {
+    return ['error' => 'Invalid email'];
+  }
+
+  return [
+    'mt_user_email' => $mt_user_email,
+    'mt_account_ui' => $mt_account_ui,
+    'mt_user_email_api' => $mt_user_email_api,
+    'mt_selected_id' => $mt_selected_id,
+    //        '$__mt_breach_show' => $__mt_breach_show,
 //        '$__mt_account_passed_show' => $__mt_account_passed_show,
 //        '$__selected_subscription_id' => $__selected_subscription_id,
 //        '$__can_manage_subscription' => $__can_manage_subscription,
@@ -2854,7 +2899,7 @@ function mt_account_overview_business_logic($accountIds = [])
 //        '$__status_norm' => $__status_norm,
 //        '$__activation_url' => $__activation_url,
 //        '$__btn_classes_attr' => $__btn_classes_attr,
-        'mt_account_data' => $mt_account_data,
-        'mt_active_order_id' => isset($__active_order_id) ? (int) $__active_order_id : 0,
-    ];
+    'mt_account_data' => $mt_account_data,
+    'mt_active_order_id' => isset($__active_order_id) ? (int) $__active_order_id : 0,
+  ];
 }
