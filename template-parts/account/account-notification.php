@@ -85,13 +85,13 @@ if (!function_exists('mt_notif_meta_from_type')) {
 
 
 // 2) Traer lote: primero desde BD (sync), si no existe fallback al helper antiguo
-if ($user_email) {
-  if (function_exists('mt_user_notifs_sync_for_user')) {
-    $notifications = mt_user_notifs_sync_for_user((int) $user->ID, (string) $user_email, 100);
-  } elseif (function_exists('mt_notifications_payload_for_email')) {
-    $notifications = mt_notifications_payload_for_email($user_email, 1, 100);
-  }
-}
+//if ($user_email) {
+//  if (function_exists('mt_user_notifs_sync_for_user')) {
+//    $notifications = mt_user_notifs_sync_for_user((int) $user->ID, (string) $user_email, 100);
+//  } elseif (function_exists('mt_notifications_payload_for_email')) {
+//    $notifications = mt_notifications_payload_for_email($user_email, 1, 100);
+//  }
+//}
 
 // Render
 ?>
