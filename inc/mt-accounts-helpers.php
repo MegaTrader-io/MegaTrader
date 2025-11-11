@@ -1976,8 +1976,8 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
       $D =& $byDay[$day];
       $D['trades'] += 1;
       $D['ct'] += max(0, $lots);
-      $D['fees'] += $commission * 2;
-      $D['net'] += ($pnl + ($commission * 2));
+      $D['fees'] += $commission;
+      $D['net'] += $pnl - $commission;
 
       if ($pnl > 0) {
         $D['hi'] = is_null($D['hi']) ? $pnl : max($D['hi'], $pnl);

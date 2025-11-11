@@ -169,7 +169,6 @@ $card_class = 'account-performance-chart mt-card' . ($has_enough ? '' : ' is-emp
       setOverlayByCount(all.length);
 
       if (!Number.isFinite(REFERENCE_VALUE)) {
-        console.warn('[APC] reference_value inválido:', REFERENCE_VALUE);
         return;
       }
 
