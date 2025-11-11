@@ -68,6 +68,10 @@
   display: none;
 }
 
+[hidden] { display: none !important; }
+
+
+
 /*
 * MODAL
 */

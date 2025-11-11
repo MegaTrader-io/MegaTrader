@@ -8,6 +8,7 @@ add_filter('woocommerce_account_menu_items', function ($items) {
     $new_items = [];
 
     $new_items['trade-area']    = __('Account Metrics', 'woocommerce');
+    $new_items['trading-journal']   = __('Trading Journal', 'woocommerce');
     $new_items['subscriptions'] = __('Manage Subscription', 'woocommerce');
 
     /*
@@ -27,26 +28,23 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 add_filter('woocommerce_get_endpoint_url', function ($url, $endpoint, $value, $permalink) {
 
     if ($endpoint === 'trade-area') {
-        return site_url('/my-account/overview');
+        // métrica como vista “metrics”
+        return site_url('/my-account/overview?view=metrics');
+    }
+
+    if ($endpoint === 'trading-journal') {
+        // misma página, vista “journal”
+        return site_url('/my-account/overview?view=journal');
     }
 
     if ($endpoint === 'subscriptions') {
         $base = trailingslashit(home_url('my-account/orders'));
-
-        // Tomamos el orderId calculado en account-overview.php
-        $oid = isset($GLOBALS['mt_active_order_id']) ? (int)$GLOBALS['mt_active_order_id'] : 0;
-
-        // Si no hay global (p.ej. otras pantallas), dejamos el base sin query
-        if ($oid > 0) {
-            // Evita duplicados si algo ya trae query
-            $base = add_query_arg(['orderId' => $oid], $base);
-        }
-
+        $oid  = isset($GLOBALS['mt_active_order_id']) ? (int) $GLOBALS['mt_active_order_id'] : 0;
+        if ($oid > 0) $base = add_query_arg(['orderId' => $oid], $base);
         return $base;
     }
 
     return $url;
-
 }, 10, 4);
 
 /**
@@ -68,46 +66,37 @@ function items_navigation_get_args($menu_items = [], $aria_label = '', $select_i
 
     $items    = [];
     $req_path = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
+    $req_view = isset($_GET['view']) ? strtolower(sanitize_text_field($_GET['view'])) : 'metrics';
 
     foreach ($menu_items as $endpoint => $label) {
-        // wc_get_account_endpoint_url ya pasa por el filtro de arriba
         $url      = wc_get_account_endpoint_url($endpoint);
         $url_path = rtrim(parse_url($url, PHP_URL_PATH), '/');
 
         $is_active = ($req_path === $url_path);
 
-        // Marcar activo cuando estamos en orders / view-subscription
-        if (!$is_active && $label === 'Manage Subscription') {
-            $current_endpoint = function_exists('WC') ? WC()->query->get_current_endpoint() : '';
-            $is_active = in_array($current_endpoint, ['view-order', 'view-subscription', 'orders', 'subscriptions'], true)
-                      || strpos($req_path, '/my-account/view-subscription') !== false
-                      || strpos($req_path, '/my-account/orders') !== false;
+        // activar por ?view=*
+        if (in_array($endpoint, ['trade-area','trading-journal'], true)) {
+            $want = $endpoint === 'trade-area' ? 'metrics' : 'journal';
+            $is_active = ($req_view === $want);
         }
 
         $item = [
-            'label'  => $label,
-            'url'    => $url,
-            'active' => (bool) $is_active,
+            'label'   => $label,
+            'url'     => $url,
+            'active'  => (bool) $is_active,
+            // data-view para el JS (tabs)
+            'view'    => ($endpoint === 'trade-area' ? 'metrics' : ($endpoint === 'trading-journal' ? 'journal' : '')),
+            'item_id' => ($endpoint === 'subscriptions' ? 'mt-nav-manage-subscription' : '')
         ];
-
-        // >>> ÚNICO EXTRA: pasar item_id para el li de "Manage Subscription"
-        if ($endpoint === 'subscriptions') {
-            $item['item_id'] = 'mt-nav-manage-subscription';
-        }
 
         $items[] = $item;
     }
 
-    // Fallback: si ninguno quedó activo, activa el primero
     if (!array_filter($items, fn($i) => !empty($i['active'])) && !empty($items[0])) {
         $items[0]['active'] = true;
     }
 
-    return [
-        'items'      => $items,
-        'aria_label' => $aria_label,
-        'select_id'  => $select_id,
-    ];
+    return ['items'=>$items,'aria_label'=>$aria_label,'select_id'=>$select_id];
 }
 
 /**

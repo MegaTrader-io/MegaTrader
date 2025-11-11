@@ -29,49 +29,54 @@
  * ];
  */
 
-if ( ! defined('ABSPATH') ) exit;
-
-if ( empty($args['items']) || ! is_array($args['items']) ) {
-  return;
-}
+if (!defined('ABSPATH')) exit;
+if (empty($args['items']) || !is_array($args['items'])) return;
 
 $items      = $args['items'];
 $aria_label = $args['aria_label'] ?? __('Account pages');
-$select_id  = $args['select_id'] ?? 'account-navigation-select';
+$select_id  = $args['select_id']  ?? 'account-navigation-select';
 ?>
 
-<div class="mega-navigation">
+<div class="mega-navigation" data-nav="overview">
   <nav class="woocommerce-MyAccount-navigation d-none d-md-block" aria-label="<?php echo esc_attr($aria_label); ?>">
-      <ul class="mega-navigation-list text-capitalize">
-        <?php foreach ( $items as $item ) : ?>
-          <li
-            class="<?php echo !empty($item['active']) ? 'is-active' : ''; ?>"
-            <?php if ( !empty($item['item_id']) ) : ?>
-              id="<?php echo esc_attr($item['item_id']); ?>"
+    <ul class="mega-navigation-list text-capitalize" role="tablist">
+      <?php foreach ($items as $it): 
+        $is_tab = !empty($it['view']); // metrics | journal
+      ?>
+        <li
+          class="<?php echo !empty($it['active']) ? 'is-active' : ''; ?>"
+          <?php if (!empty($it['item_id'])) : ?> id="<?php echo esc_attr($it['item_id']); ?>"<?php endif; ?>
+          role="presentation"
+        >
+          <a
+            href="<?php echo esc_url($it['url']); ?>"
+            <?php echo !empty($it['active']) ? 'aria-current="page"' : ''; ?>
+            <?php if ($is_tab): ?>
+              role="tab"
+              data-action="switch-view"
+              data-view="<?php echo esc_attr($it['view']); ?>"
+              aria-selected="<?php echo !empty($it['active']) ? 'true' : 'false'; ?>"
             <?php endif; ?>
           >
-            <a
-              href="<?php echo esc_url($item['url']); ?>"
-              <?php echo !empty($item['active']) ? 'aria-current="page"' : ''; ?>
-            >
-              <?php echo esc_html($item['label']); ?>
-            </a>
-          </li>
-        <?php endforeach; ?>
-      </ul>
+            <?php echo esc_html($it['label']); ?>
+          </a>
+        </li>
+      <?php endforeach; ?>
+    </ul>
   </nav>
 
   <select
     id="<?php echo esc_attr($select_id); ?>"
     class="mega-navigation-select d-block d-md-none form-select text-a8a29e"
-    onchange="if (this.value) window.location.href=this.value;"
+    data-action="switch-view-select"
   >
-    <?php foreach ( $items as $item ) : ?>
+    <?php foreach ($items as $it): ?>
       <option
-        value="<?php echo esc_url($item['url']); ?>"
-        <?php selected( !empty($item['active']) ); ?>
+        value="<?php echo esc_url($it['url']); ?>"
+        data-view="<?php echo esc_attr($it['view'] ?? ''); ?>"
+        <?php selected(!empty($it['active'])); ?>
       >
-        <?php echo esc_html($item['label']); ?>
+        <?php echo esc_html($it['label']); ?>
       </option>
     <?php endforeach; ?>
   </select>

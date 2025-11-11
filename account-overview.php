@@ -48,7 +48,7 @@ if (is_user_logged_in()) {
 
       /* === 1) Traer cuentas (cache 30s, plain -> encoded) === */
       list($accounts, $mt_fetch_variant) = mt_fetch_accounts_cached($mt_user_email, $mt_user_email_api);
-      $mt_cnt_plain   = ($mt_fetch_variant === 'plain')   ? (is_array($accounts) ? count($accounts) : 0) : 0;
+      $mt_cnt_plain = ($mt_fetch_variant === 'plain') ? (is_array($accounts) ? count($accounts) : 0) : 0;
       $mt_cnt_encoded = ($mt_fetch_variant === 'encoded') ? (is_array($accounts) ? count($accounts) : 0) : 0;
 
       // === Agreement Modal (con caché 5min) ===
@@ -80,14 +80,15 @@ if (is_user_logged_in()) {
 
       /* === 2) Preparar UI SIEMPRE (todas las cuentas; Active y no Active) === */
       if (class_exists('MT_Accounts')) {
-         $mt_account_ui = MT_Accounts::prepare_ui(accounts: (array) $accounts, cookie_selected_id: $cookie_selected_id);
+        $mt_account_ui = MT_Accounts::prepare_ui(accounts: (array) $accounts, cookie_selected_id: $cookie_selected_id);
       }
 
       /* IDs válidos (de prepare_ui) */
       $__valid_ids = array();
       if (!empty($mt_account_ui['accounts']) && is_array($mt_account_ui['accounts'])) {
         foreach ($mt_account_ui['accounts'] as $row) {
-          if (!empty($row['id'])) $__valid_ids[(string) $row['id']] = true;
+          if (!empty($row['id']))
+            $__valid_ids[(string) $row['id']] = true;
         }
       }
       if (!empty($mt_account_ui['current']['id'])) {
@@ -131,7 +132,8 @@ if (is_user_logged_in()) {
         foreach ($mt_account_ui['accounts'] as $row) {
           $id = (string) ($row['id'] ?? '');
           $ord = (int) ($row['order'] ?? $row['orderId'] ?? $row['orderID'] ?? 0);
-          if ($id !== '') $__orders_map_by_id[$id] = $ord;
+          if ($id !== '')
+            $__orders_map_by_id[$id] = $ord;
         }
       }
       if (!empty($mt_account_ui['current']['id'])) {
@@ -173,7 +175,8 @@ if (is_user_logged_in()) {
       /* ==== Passed/Activation meta & helpers ==== */
 
       $__normalize_id = function ($v) {
-        if ($v === null) return '';
+        if ($v === null)
+          return '';
         $s = trim((string) $v);
         $sl = strtolower($s);
         return ($s === '' || $s === '0' || $sl === 'null') ? '' : $s;
@@ -196,11 +199,11 @@ if (is_user_logged_in()) {
       $__mt_account_passed_show = (in_array($__status_norm, ['PENDING_ACTIVATION', 'PASSED'], true)) ? '1' : '0';
 
       $__note_passed_with_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_w_activation_id'];
-      $__note_passed_no_id    = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
+      $__note_passed_no_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_note_status_passed_no_activation_id'];
 
-      $__body_subtitle                 = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_default'];
+      $__body_subtitle = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_default'];
       $__body_subtitle_w_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_w_activation_id'];
-      $__body_subtitle_no_activation_id= Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
+      $__body_subtitle_no_activation_id = Label::META_ACCOUNT_OVERVIEW['passed_modal_body_subtitle_no_activation_id'];
 
       $__note_text = '';
       $__show_note = false;
@@ -297,10 +300,20 @@ if (empty($mt_account_ui['accounts'])) {
   exit;
 }
 
+// --- Vista inicial (server-side) ---
+$req_view = isset($_GET['view']) ? strtolower(sanitize_text_field($_GET['view'])) : 'metrics';
+$is_metrics = ($req_view === 'journal') ? false : true;
+$is_journal = !$is_metrics;
+
+// helpers de accesibilidad
+$aria_metrics = $is_metrics ? 'false' : 'true';
+$aria_journal = $is_journal ? 'false' : 'true';
+
 get_header();
 ?>
 <?php wp_body_open(); ?>
 <div id="mt-account-overview" class="container" data-email="<?php echo esc_attr($mt_user_email); ?>"
+  data-current-view="<?php echo $is_metrics ? 'metrics' : 'journal'; ?>"
   data-email-api="<?php echo esc_attr($mt_user_email_api); ?>"
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
   data-subscription-id="<?php echo esc_attr($__selected_subscription_id ?? ''); ?>"
@@ -309,7 +322,9 @@ get_header();
 
   <div class="mt-page">
     <div class="mt-page__sidebar">
-      <?php if (function_exists('render_sidebar')) { render_sidebar(); } ?>
+      <?php if (function_exists('render_sidebar')) {
+        render_sidebar();
+      } ?>
     </div>
     <div class="mt-page__main d-flex flex-column gap-3">
 
@@ -324,15 +339,15 @@ get_header();
 
       <div class="mt-account-navigation mega-navigation">
         <?php
-          if (function_exists('account_navigation_render')) {
-            account_navigation_render();
-          } else {
-            get_template_part(
-              'template-parts/account/account-navigation',
-              null,
-              function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
-            );
-          }
+        if (function_exists('account_navigation_render')) {
+          account_navigation_render();
+        } else {
+          get_template_part(
+            'template-parts/account/account-navigation',
+            null,
+            function_exists('account_navigation_get_args') ? account_navigation_get_args() : []
+          );
+        }
         ?>
         <form id="mt-manage-subs-form" action="<?php echo esc_url(trailingslashit(home_url('my-account/orders'))); ?>"
           method="post" class="d-none">
@@ -355,70 +370,93 @@ get_header();
       </div>
 
       <div class="d-flex flex-column gap-32" data-fit-main>
-        <div class="mt-account-data mt-skeleton-pulse" id="mt-account-data">
-          <?php
-          get_template_part(
-                  'template-parts/account/account-data',
-                  null,
-                  [
-                          'meta' => ['accountId' => $mt_selected_id],
-                          'data' => $mt_account_data,
-                  ]
-          );
-          ?>
-        </div>
 
-        <div class="mt-account-performance mt-skeleton-pulse" id="mt-performance-container">
-          <?php
-          get_template_part(
-                  'template-parts/account/account-performance',
-                  null,
-                  [
-                          'performance' => $mt_performance,
-                          'meta' => ['accountId' => $mt_selected_id]
-                  ]
-          );
-          ?>
-        </div>
+        <section id="mt-metrics" class="mt-metrics-wrapper d-flex flex-column gap-32"
+          aria-hidden="<?php echo $aria_metrics; ?>" <?php echo $is_metrics ? '' : 'hidden'; ?>>
 
-        <div class="mt-account-feature-content mt-skeleton-pulse">
-          <?php
-          get_template_part(
-                  'template-parts/account/account-feature-content',
-                  null,
-                  [
-                          'feature' => $mt_feature_content,
-                          'meta' => ['accountId' => $mt_selected_id]
-                  ]
-          );
-          ?>
-        </div>
+          <div class="mt-account-data mt-skeleton-pulse" id="mt-account-data">
+            <?php
+            get_template_part(
+              'template-parts/account/account-data',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'data' => $mt_account_data,
+              ]
+            );
+            ?>
+          </div>
 
-        <div class="mt-account-performance-chart-content mt-skeleton-pulse">
-          <?php
-          get_template_part(
-                  'template-parts/account/account-performance-chart',
-                  null,
-                  [
-                          'chart' => $mt_chart ?? [],
-                          'meta' => ['accountId' => $mt_selected_id]
-                  ]
-          );
-          ?>
-        </div>
+          <div class="mt-account-performance mt-skeleton-pulse" id="mt-performance-container">
+            <?php
+            get_template_part(
+              'template-parts/account/account-performance',
+              null,
+              [
+                'performance' => $mt_performance,
+                'meta' => ['accountId' => $mt_selected_id]
+              ]
+            );
+            ?>
+          </div>
 
-        <div class="mt-account-daily-journal mt-skeleton-pulse">
-          <?php
-          get_template_part(
-                  'template-parts/account/account-daily-journal',
-                  null,
-                  [
-                          'data' => $mt_daily_journal,
-                          'meta' => ['accountId' => $mt_selected_id],
-                  ]
-          );
-          ?>
-        </div>
+          <div class="mt-account-feature-content mt-skeleton-pulse">
+            <?php
+            get_template_part(
+              'template-parts/account/account-feature-content',
+              null,
+              [
+                'feature' => $mt_feature_content,
+                'meta' => ['accountId' => $mt_selected_id]
+              ]
+            );
+            ?>
+          </div>
+
+          <div class="mt-account-performance-chart-content mt-skeleton-pulse">
+            <?php
+            get_template_part(
+              'template-parts/account/account-performance-chart',
+              null,
+              [
+                'chart' => $mt_chart ?? [],
+                'meta' => ['accountId' => $mt_selected_id]
+              ]
+            );
+            ?>
+          </div>
+
+          <div class="mt-account-daily-journal mt-skeleton-pulse">
+            <?php
+            get_template_part(
+              'template-parts/account/account-daily-journal',
+              null,
+              [
+                'data' => $mt_daily_journal,
+                'meta' => ['accountId' => $mt_selected_id],
+              ]
+            );
+            ?>
+          </div>
+        </section>
+
+        <!-- ======= JOURNAL (TAB NUEVA) ======= -->
+        <section id="mt-journal" class="mt-journal-wrapper d-flex flex-column gap-32"
+          aria-hidden="<?php echo $aria_journal; ?>" <?php echo $is_journal ? '' : 'hidden'; ?>>
+
+          <div class="mt-account-data-global mt-skeleton-pulse" id="mt-account-data-global">
+            <?php
+            get_template_part(
+              'template-parts/account/account-data-global',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'data' => $mt_account_data_global,
+              ]
+            );
+            ?>
+          </div>
+        </section>
       </div>
     </div>
   </div>
@@ -541,15 +579,15 @@ get_header();
         <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_title']; ?>
         </span>
-       <?php
-$is_funded = (strtolower($mt_account_data['type'] ?? '') === 'funded');
-$breach_desc_init = $is_funded
-  ? Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_funded']
-  : Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_evaluation'];
-?>
-<span id="mtbreach-desc" class="text-white fw-medium text-uppercase text-2xl leading-7">
-  <?php echo esc_html($breach_desc_init); ?>
-</span>
+        <?php
+        $is_funded = (strtolower($mt_account_data['type'] ?? '') === 'funded');
+        $breach_desc_init = $is_funded
+          ? Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_funded']
+          : Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_evaluation'];
+        ?>
+        <span id="mtbreach-desc" class="text-white fw-medium text-uppercase text-2xl leading-7">
+          <?php echo esc_html($breach_desc_init); ?>
+        </span>
 
         <span class="fw-medium text-a8a29e text-base">
           <?php echo Label::META_ACCOUNT_OVERVIEW['breach_modal_body_subtitle']; ?>

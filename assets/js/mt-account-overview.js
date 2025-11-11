@@ -162,7 +162,7 @@
   }
 
   if (document.readyState === "loading") {
-      console.info('DOM not ready, waiting for it...');
+    console.info("DOM not ready, waiting for it...");
     document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
@@ -1511,7 +1511,12 @@ window.mtOverlay = (function () {
 
       if (resetId) {
         // Con reset: checkout + label default
-        btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId)+ "&account_id=" + encodeURIComponent(accountId);
+        btn.href =
+          base +
+          "?add-to-cart=" +
+          encodeURIComponent(resetId) +
+          "&account_id=" +
+          encodeURIComponent(accountId);
         if (btnDefault) btn.textContent = btnDefault;
       } else if (mainId) {
         // Sin reset + con mainId: ir a /subscriptions/{mainId} + label no_reset
@@ -1672,25 +1677,25 @@ function fetchStatus(accountId) {
 }
 
 function fetchAccountOverview() {
-    var url =
-        (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+  var url =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+  var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
-    var body = new URLSearchParams();
-    body.set("action", "mt_account_overview_data");
-    if (nonce) body.set("nonce", nonce);
+  var body = new URLSearchParams();
+  body.set("action", "mt_account_overview_data");
+  if (nonce) body.set("nonce", nonce);
 
-    MT_DATA.accounts.forEach(function (account) {
-        body.append("accountId[]", account.id);
-    })
+  MT_DATA.accounts.forEach(function (account) {
+    body.append("accountId[]", account.id);
+  });
 
-    return window.MEGATRADER.fetchJSON(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body,
-    }).catch(function () {
-        return null;
-    });
+  return window.MEGATRADER.fetchJSON(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body,
+  }).catch(function () {
+    return null;
+  });
 }
 
 /* === breachGuard: consulta estado y abre el modal si está BREACHED === */
@@ -3152,8 +3157,8 @@ if (document.readyState === "loading") {
 
   document.addEventListener("mt:accountSelected", seedBreachFromOpener);
   document.addEventListener("mt:renderGridFromData", function (e) {
-      e.detail && renderGridFromData(e.detail.accounts, e.detail.currentId);
-      e.detail && e.detail.callback();
+    e.detail && renderGridFromData(e.detail.accounts, e.detail.currentId);
+    e.detail && e.detail.callback();
   });
   document.addEventListener("mt:hasSubscriptionChanged", syncBreachText);
 
@@ -3169,5 +3174,185 @@ if (document.readyState === "loading") {
   } else {
     seedBreachFromOpener();
     syncBreachText();
+  }
+})();
+
+// ======= Overview & Journal Tab (estable, sin AJAX, preloader 500ms) =======
+(function () {
+  "use strict";
+
+  const root = document.getElementById("mt-account-overview");
+  const nav = document.querySelector(".mega-navigation");
+  const elMet = document.querySelector("#mt-metrics");
+  const elJour = document.querySelector("#mt-journal");
+  const selMob = document.querySelector(
+    'select[data-action="switch-view-select"]'
+  );
+
+  if (!root) return;
+
+  // --- Preloader helpers ---
+  let preloaderTimer = null;
+  function preloaderShow() {
+    try {
+      if (
+        window.jQuery &&
+        window.jQuery.preloader &&
+        typeof window.jQuery.preloader.show === "function"
+      ) {
+        window.jQuery.preloader.show();
+        return;
+      }
+      if (
+        window.jQuery &&
+        window.$ &&
+        $.preloader &&
+        typeof $.preloader.show === "function"
+      ) {
+        $.preloader.show();
+        return;
+      }
+    } catch (_) {}
+    const el = document.querySelector(".preloader");
+    if (el) el.style.display = "block";
+  }
+  function preloaderHide() {
+    try {
+      if (
+        window.jQuery &&
+        window.jQuery.preloader &&
+        typeof window.jQuery.preloader.hide === "function"
+      ) {
+        window.jQuery.preloader.hide();
+        return;
+      }
+      if (
+        window.jQuery &&
+        window.$ &&
+        $.preloader &&
+        typeof $.preloader.hide === "function"
+      ) {
+        $.preloader.hide();
+        return;
+      }
+    } catch (_) {}
+    const el = document.querySelector(".preloader");
+    if (el) el.style.display = "none";
+  }
+  function blinkPreloader(ms = 500) {
+    clearTimeout(preloaderTimer);
+    preloaderShow();
+    preloaderTimer = setTimeout(preloaderHide, ms);
+  }
+
+  function viewFromURL(href) {
+    try {
+      const u = new URL(href, location.origin);
+      const v = (u.searchParams.get("view") || "").toLowerCase();
+      if (v === "metrics" || v === "journal") return v;
+      if (/trading-journal/i.test(u.pathname)) return "journal";
+      if (/trade-area|overview/i.test(u.pathname)) return "metrics";
+    } catch (_) {}
+    return "";
+  }
+
+  let hydrated = false;
+  let currentView = (
+    new URLSearchParams(location.search).get("view") || "metrics"
+  ).toLowerCase();
+  applyView(currentView, false, false);
+  hydrated = true;
+
+  nav?.addEventListener(
+    "click",
+    function (e) {
+      const a = e.target.closest("a");
+      if (!a) return;
+      if (
+        a.target === "_blank" ||
+        e.metaKey ||
+        e.ctrlKey ||
+        e.altKey ||
+        e.shiftKey
+      )
+        return;
+
+      const href = a.getAttribute("href") || "";
+      const dataView = (a.getAttribute("data-view") || "").toLowerCase();
+      const nextView = (dataView || viewFromURL(href)).toLowerCase();
+      if (!nextView || (nextView !== "metrics" && nextView !== "journal"))
+        return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      applyView(nextView, true, true);
+    },
+    { capture: true, passive: false }
+  );
+
+  // Select móvil
+  selMob?.addEventListener("change", (ev) => {
+    const opt = ev.target.options[ev.target.selectedIndex];
+    const view = (opt?.getAttribute("data-view") || "").toLowerCase();
+    if (!view) {
+      location.href = ev.target.value;
+      return;
+    }
+    applyView(view, true, true);
+  });
+
+  // Back/forward
+  window.addEventListener("popstate", () => {
+    const v = (
+      new URLSearchParams(location.search).get("view") || "metrics"
+    ).toLowerCase();
+    applyView(v, false, false);
+  });
+
+  function applyView(view, push, doBlink) {
+    view = (view || "metrics").toLowerCase();
+    if (view !== "metrics" && view !== "journal") view = "metrics";
+    if (view === currentView && hydrated) return;
+
+    root.setAttribute("data-current-view", view);
+    fastToggle(elMet, view === "metrics");
+    fastToggle(elJour, view === "journal");
+    updateActiveInMenu(view);
+    syncMobileSelect(view);
+
+    if (push) {
+      const url = new URL(location.href);
+      url.searchParams.set("view", view);
+      history.pushState({ view }, "", url);
+    }
+    if (doBlink) blinkPreloader(500);
+    currentView = view;
+  }
+
+  function fastToggle(el, show) {
+    if (!el) return;
+    el.hidden = !show;
+    el.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+
+  function updateActiveInMenu(view) {
+    nav?.querySelectorAll("a").forEach((a) => {
+      const li = a.closest("li");
+      const v = (
+        a.getAttribute("data-view") || viewFromURL(a.getAttribute("href") || "")
+      ).toLowerCase();
+      const on = v === view && li?.id !== "mt-nav-manage-subscription";
+      a.setAttribute("aria-selected", on ? "true" : "false");
+      if (li) li.classList.toggle("is-active", !!on);
+    });
+  }
+
+  function syncMobileSelect(view) {
+    if (!selMob) return;
+    const idx = Array.from(selMob.options).findIndex(
+      (o) => (o.getAttribute("data-view") || "").toLowerCase() === view
+    );
+    if (idx >= 0 && selMob.selectedIndex !== idx) selMob.selectedIndex = idx;
   }
 })();
