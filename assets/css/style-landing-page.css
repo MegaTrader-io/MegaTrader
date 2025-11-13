@@ -194,10 +194,6 @@
   right: 1rem;
 }
 
-.tw-right-\[8px\]{
-  right: 8px;
-}
-
 .tw-top-1{
   top: 0.25rem;
 }
@@ -212,10 +208,6 @@
 
 .tw-top-\[13px\]{
   top: 13px;
-}
-
-.tw-top-\[8px\]{
-  top: 8px;
 }
 
 .tw-z-\[2000\]{
@@ -236,14 +228,6 @@
 
 .tw-order-2{
   order: 2;
-}
-
-.tw-col-auto{
-  grid-column: auto;
-}
-
-.tw-col-span-1{
-  grid-column: span 1 / span 1;
 }
 
 .tw-col-span-2{
@@ -276,11 +260,6 @@
 .tw-my-1{
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
-}
-
-.tw-my-3{
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
 }
 
 .tw-my-8{
@@ -372,10 +351,6 @@
   display: flex;
 }
 
-.\!tw-inline-flex{
-  display: inline-flex !important;
-}
-
 .tw-inline-flex{
   display: inline-flex;
 }
@@ -462,10 +437,6 @@
 
 .tw-max-h-dvh{
   max-height: 100dvh;
-}
-
-.tw-min-h-\[140px\]{
-  min-height: 140px;
 }
 
 .tw-min-h-dvh{
@@ -678,10 +649,6 @@
   align-items: center;
 }
 
-.\!tw-justify-start{
-  justify-content: flex-start !important;
-}
-
 .tw-justify-start{
   justify-content: flex-start;
 }
@@ -834,10 +801,6 @@
   border-left-width: 2px;
 }
 
-.tw-border-r-2{
-  border-right-width: 2px;
-}
-
 .tw-border-t-\[0\.5px\]{
   border-top-width: 0.5px;
 }
@@ -862,11 +825,6 @@
 .tw-border-neutral-700{
   --tw-border-opacity: 1;
   border-color: rgb(64 64 64 / var(--tw-border-opacity, 1));
-}
-
-.tw-border-stone-800{
-  --tw-border-opacity: 1;
-  border-color: rgb(41 37 36 / var(--tw-border-opacity, 1));
 }
 
 .tw-border-transparent{
@@ -984,11 +942,6 @@
   padding-right: 1rem;
 }
 
-.tw-px-6{
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
 .tw-px-8{
   padding-left: 2rem;
   padding-right: 2rem;
@@ -1004,19 +957,9 @@
   padding-bottom: 0.5rem;
 }
 
-.tw-py-2\.5{
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
-}
-
 .tw-py-3{
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-}
-
-.tw-py-6{
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
 }
 
 .tw-py-8{
@@ -1095,11 +1038,6 @@
 .tw-text-2xl{
   font-size: 1.5rem;
   line-height: 2rem;
-}
-
-.tw-text-4xl{
-  font-size: 2.25rem;
-  line-height: 2.5rem;
 }
 
 .tw-text-6xl{
@@ -1232,11 +1170,6 @@
   color: rgb(156 163 175 / var(--tw-text-opacity, 1));
 }
 
-.tw-text-red-500{
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity, 1));
-}
-
 .tw-text-rose-500{
   --tw-text-opacity: 1;
   color: rgb(244 63 94 / var(--tw-text-opacity, 1));
@@ -1264,10 +1197,6 @@
 
 .tw-underline{
   text-decoration-line: underline;
-}
-
-.tw-line-through{
-  text-decoration-line: line-through;
 }
 
 .tw-no-underline{
@@ -2389,54 +2318,9 @@ body[data-scroll-locked] {
   right: -40px;
 }
 
-.first\:tw-border-t:first-child{
-  border-top-width: 1px;
-}
-
-.first\:tw-border-neutral-700:first-child{
-  --tw-border-opacity: 1;
-  border-color: rgb(64 64 64 / var(--tw-border-opacity, 1));
-}
-
-.tw-group.account-active .group-\[\.account-active\]\:tw-block{
-  display: block;
-}
-
-.tw-group.account-active .group-\[\.account-active\]\:tw-text-black{
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
-}
-
 .tw-group.active .group-\[\.active\]\:tw-text-\[\#131210\]{
   --tw-text-opacity: 1;
   color: rgb(19 18 16 / var(--tw-text-opacity, 1));
-}
-
-.tw-group.plan-selected .group-\[\.plan-selected\]\:tw-text-black{
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
-}
-
-.tw-group.account-active .group-\[\.account-active\]\:tw-opacity-60{
-  opacity: 0.6;
-}
-
-.tw-group.plan-selected .group-\[\.plan-selected\]\:tw-opacity-60{
-  opacity: 0.6;
-}
-
-.tw-group.account-active .group-\[\.account-active\]\:tw-brightness-\[5\]{
-  --tw-brightness: brightness(5);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
-.tw-group.account-active .group-\[\.account-active\]\:tw-invert{
-  --tw-invert: invert(100%);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
-.tw-group.account-active .group-\[\.account-active\]\:tw-filter{
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
 .tw-peer\/faq-question:checked ~ .peer-checked\/faq-question\:tw-block{
