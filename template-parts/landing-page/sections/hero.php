@@ -14,7 +14,7 @@
         </div>
 
         <div class="tw-block">
-            <div class="tw-py-5 tw-text-center tw-justify-start tw-text-white tw-text-[44px] tw-font-medium tw-uppercase tw-leading-[44px]">
+            <div class="tw-py-5 tw-tracking-tighter tw-text-center tw-justify-start tw-text-white tw-text-[44px] tw-font-medium tw-uppercase tw-leading-[44px]">
                 Futures Funding Starts Here.
             </div>
             <div class="tw-w-full tw-max-w-[748px] tw-text-center tw-justify-start tw-text-stone-400 tw-text-lg tw-font-normal tw-leading-6 tw-tracking-tight">
