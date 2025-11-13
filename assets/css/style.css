@@ -630,7 +630,7 @@ h6 {
 /*------------------- Input -------------------*/
 
 :root {
-    --form-select-neutral-bg-position-right-offset: 25px;
+    --form-select-neutral-bg-position-right-offset: 20px;
     --form-control-neutral-padding-right: 20px;
     --form-control-neutral-padding: 0 var(--form-control-neutral-padding-right) 0 20px;
     --form-select-neutral-padding: 0 calc(var(--form-control-neutral-padding-right) + var(--form-select-neutral-bg-position-right-offset)) 0 20px;

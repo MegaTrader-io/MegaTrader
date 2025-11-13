@@ -456,6 +456,18 @@ get_header();
             );
             ?>
           </div>
+          <div class="mt-account-journal-calendar mt-skeleton-pulse" id="mt-account-journal-calendar">
+            <?php
+            get_template_part(
+              'template-parts/account/account-journal-calendar',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'data' => $mt_account_journal_calendar,
+              ]
+            );
+            ?>
+          </div>
         </section>
       </div>
     </div>
