@@ -41,10 +41,16 @@ body.admin-bar {
     transition-duration: 300ms;
     background: transparent;
     box-shadow: none;
-    border-bottom: 1px solid #FFB34A;
+    border-bottom: 2px solid #FFB34A;
     transition: background 0.3s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
+        background: var(--black-color);
+    }
 }
 
 .mt-navbar__links--scrolled {
