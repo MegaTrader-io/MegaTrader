@@ -4674,6 +4674,26 @@ textarea.mtfb-note {
   color: #000;
 }
 
+@media (max-width: 575.98px) {
+  /* Oculta el icono del diamante solo si es descendiente directo 
+    del contenedor con la clase .mt-account-selection.
+  */
+  .mt-account-selection #mt-selection-icon_diamond {
+    display: none !important;
+  }
+
+  /* Oculta el logo de la plataforma solo si es descendiente directo 
+    del contenedor con la clase .mt-account-selection.
+  */
+  .mt-account-selection #mt-platform-logo {
+    display: none !important;
+  }
+
+  .mt-account-selection #mt-account-id-badge{
+    display: none !important;
+  }
+}
+
 /***** Account Notifications *****/
 
 .mt-account-notifications {

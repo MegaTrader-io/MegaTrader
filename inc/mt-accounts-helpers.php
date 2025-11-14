@@ -2903,3 +2903,103 @@ function mt_account_overview_business_logic($accountIds = [])
     'mt_active_order_id' => isset($__active_order_id) ? (int) $__active_order_id : 0,
   ];
 }
+
+
+// ================= TRADES: fetch liviano para tabla (OPEN/CLOSED) =================
+if (!function_exists('mt_trades_history_fetch')) {
+  function mt_trades_history_fetch(string $accountId, string $type = 'CLOSED', int $page = 1, int $perPage = 25): array
+  {
+    $accountId = trim($accountId);
+    $type = strtoupper(trim($type)) === 'OPEN' ? 'OPEN' : 'CLOSED';
+    $page = max(1, (int) $page);
+    $perPage = max(1, (int) $perPage);
+
+    // Usa tu flujo existente vía shortcode (rápido y cacheado).
+    // Debe retornar algo como: ["meta"=>..., "data"=>[ ...items... ]]
+    $resp = mt_trades_fetch_by_shortcode($accountId, $type, $page, $perPage);
+    $meta = isset($resp['meta']) && is_array($resp['meta']) ? $resp['meta'] : ['page' => $page, 'perPage' => $perPage, 'totalCount' => 0, 'pagesCount' => 0];
+    $rows = isset($resp['data']) && is_array($resp['data']) ? $resp['data'] : [];
+
+    // Helpers locales
+    $fmt_date_label = function (string $ymd) {
+      // Y-m-d -> m/d/Y (sin depender de otros helpers para mantenerlo acotado)
+      if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $ymd)) {
+        [$Y, $m, $d] = explode('-', $ymd);
+        return sprintf('%02d/%02d/%04d', (int) $m, (int) $d, (int) $Y);
+      }
+      return '-';
+    };
+
+    $fmt_duration = function (int $secs) {
+      if ($secs < 0)
+        $secs = 0;
+      $h = intdiv($secs, 3600);
+      $m = intdiv($secs % 3600, 60);
+      $s = $secs % 60;
+      return $h > 0 ? sprintf('%dh %02dm %02ds', $h, $m, $s) : sprintf('%dm %02ds', $m, $s);
+    };
+
+    $out = [];
+    foreach ($rows as $it) {
+      // === Mapeo exacto del JSON que enviaste ===
+      $symbol = (string) $it['symbol'];        // e.g. "/NQZ25:XCME"
+      $openPrice = (float) $it['openPrice'];
+      $closePrice = (float) $it['closePrice'];
+      $openTime = (string) $it['openTime'];      // ISO UTC
+      $closeTime = (string) $it['closeTime'];     // ISO UTC
+      $side = (string) $it['side'];          // BUY | SELL
+      $pnl = (float) $it['pnl'];            // bruto
+      $commission = (float) $it['commission'];     // comisión
+
+      // net = pnl - commission
+      $net = $pnl - $commission;
+
+      // Duración (segundos) con time-only label
+      $tsOpen = strtotime($openTime);
+      $tsClose = strtotime($closeTime);
+      $durationSec = ($tsOpen && $tsClose) ? max(0, $tsClose - $tsOpen) : 0;
+      $durationLbl = $fmt_duration($durationSec);
+
+      // Cutoff (usa tu helper para ubicar la fecha correcta)
+      // Asumimos que estas funciones existen en tu helper:
+      // - mt_utc_to_eastern_ymd_cutoff($iso, $hourCutoff) -> "YYYY-MM-DD"
+      $ymdOpen = function_exists('mt_utc_to_eastern_ymd_cutoff') ? mt_utc_to_eastern_ymd_cutoff($openTime, 18) : '';
+      $ymdClose = function_exists('mt_utc_to_eastern_ymd_cutoff') ? mt_utc_to_eastern_ymd_cutoff($closeTime, 18) : '';
+      $openDateLabel = $ymdOpen ? $fmt_date_label($ymdOpen) : '-';
+      $closeDateLabel = $ymdClose ? $fmt_date_label($ymdClose) : '-';
+
+      // status por net
+      $status = ($net < 0) ? 'LOSS' : 'WIN';
+
+      // ROI: sin datos de base (coste/margen/multiplicador) no es fiable.
+      $netRoi = null; // idea: si luego pasas "contractMultiplier" y "marginUsed", ROI = net / marginUsed * 100
+
+      $out[] = [
+        'symbol' => $symbol,
+        'side' => $side,
+        'avgEntry' => $openPrice,
+        'avgExit' => $closePrice,
+        'openTime' => $openTime,
+        'closeTime' => $closeTime,
+        'openDateIso' => $ymdOpen,
+        'closeDateIso' => $ymdClose,
+        'openDate' => $openDateLabel,   // m/d/Y display
+        'closeDate' => $closeDateLabel,  // m/d/Y display
+        'durationSec' => $durationSec,
+        'duration' => $durationLbl,
+        'net' => $net,
+        'netRoi' => $netRoi,          // null por ahora
+        'status' => $status,
+      ];
+    }
+
+    return [
+      'type' => $type,
+      'page' => (int) ($meta['page'] ?? $page),
+      'perPage' => (int) ($meta['perPage'] ?? $perPage),
+      'total' => (int) ($meta['totalCount'] ?? count($out)),
+      'pages' => (int) ($meta['pagesCount'] ?? 1),
+      'records' => $out,
+    ];
+  }
+}

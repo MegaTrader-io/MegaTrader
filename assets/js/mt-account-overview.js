@@ -3177,7 +3177,7 @@ if (document.readyState === "loading") {
   }
 })();
 
-// ======= Overview & Journal Tab (estable, sin AJAX, preloader 500ms) =======
+// ======= Overview & Journal Tab (Metric & Journal) =======
 (function () {
   "use strict";
 
@@ -3356,3 +3356,245 @@ if (document.readyState === "loading") {
     if (idx >= 0 && selMob.selectedIndex !== idx) selMob.selectedIndex = idx;
   }
 })();
+
+/* =========================
+   TRADES FETCHER (AJAX + cache + eventos)
+   ========================= */
+(function () {
+  const WRAP_ID = "mt-account-trades-history";   // contenedor externo
+  const COMP_ID = "mt-trades";                    // root del componente
+  const wrap = document.getElementById(WRAP_ID);
+  const comp = document.getElementById(COMP_ID);
+  if (!wrap || !comp) return;
+
+  const ajaxUrl = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+  const nonce   = (window.mtAccounts && mtAccounts.nonce)   || "";
+
+  let currentAccId = comp.getAttribute("data-account-id") || wrap.getAttribute("data-account-id") || "";
+  const perPageAttr = parseInt(comp.getAttribute("data-per-page") || wrap.getAttribute("data-per-page") || "25", 10);
+  const perPage = Number.isFinite(perPageAttr) && perPageAttr > 0 ? perPageAttr : 25;
+
+  // cache por (accountId:type:page:perPage)
+  const cache = new Map();
+  const key = (acc, t, p, pp) => `${acc}:${t}:${p}:${pp}`;
+
+  function setLoading(on) {
+    wrap.setAttribute("aria-busy", on ? "true" : "false");
+    wrap.classList.toggle("mt-skeleton-pulse", !!on);
+  }
+
+  async function fetchTrades(type = "CLOSED", page = 1, force = false) {
+    const t = type === "OPEN" ? "OPEN" : "CLOSED";
+    const k = key(currentAccId, t, page, perPage);
+    if (!force && cache.has(k)) return cache.get(k);
+
+    const body = new URLSearchParams();
+    body.set("action", "mt_trades_history");
+    body.set("nonce", nonce);
+    body.set("accountId", currentAccId);
+    body.set("type", t);
+    body.set("page", String(page));
+    body.set("perPage", String(perPage));
+
+    setLoading(true);
+    try {
+      const res = await fetch(ajaxUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body
+      });
+      const json = await res.json();
+      if (!json || !json.success) throw new Error(json?.data?.message || "Trades fetch failed");
+
+      const data = json.data || { records: [], page, perPage, total: 0, pages: 1, type: t };
+      cache.set(k, data);
+
+      // Notifica al renderer
+      window.dispatchEvent(new CustomEvent("mt:trades:loaded", {
+        detail: { accountId: currentAccId, type: t, page, perPage, payload: data }
+      }));
+      return data;
+    } catch (err) {
+      window.dispatchEvent(new CustomEvent("mt:trades:error", {
+        detail: { accountId: currentAccId, type: t, message: err?.message || String(err) }
+      }));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Cambio de cuenta (bus interno)
+  if (window.mtRefresh && typeof window.mtRefresh.register === "function") {
+    window.mtRefresh.register("tradesHistory", function (newAccountId) {
+      if (!newAccountId || newAccountId === currentAccId) return;
+
+      currentAccId = newAccountId;
+      comp.setAttribute("data-account-id", newAccountId);
+      // invalida todo el cache
+      cache.clear();
+
+      // vuelve a CLOSED page 1
+      window.dispatchEvent(new CustomEvent("mt:trades:filter", { detail: { type: "CLOSED", page: 1 } }));
+      fetchTrades("CLOSED", 1, /*force*/ true).catch(() => {});
+    });
+  }
+
+  // API mínima expuesta
+  window.mtTradesAPI = {
+    refresh(type = "CLOSED", page = 1) {
+      return fetchTrades(type, page, /*force*/ true);
+    },
+    getCached(type = "CLOSED", page = 1) {
+      const t = type === "OPEN" ? "OPEN" : "CLOSED";
+      const k = key(currentAccId, t, page, perPage);
+      return cache.get(k) || null;
+    },
+  };
+
+  // Primer fetch por defecto
+  fetchTrades("CLOSED", 1).catch(() => {});
+})();
+
+/* =========================
+   TRADES RENDERER (pinta la tabla y maneja UI)
+   ========================= */
+(function () {
+  const COMP_ID = "mt-trades";
+  const comp = document.getElementById(COMP_ID);
+  if (!comp) return;
+
+  // refs UI
+  const viewport = comp.querySelector(".dj-viewport");
+  const rowsWrap = comp.querySelector(".dj-rows");
+  const pager    = comp.querySelector(".dj-pager");
+  const showing  = pager?.querySelector(".js-showing");
+  const totalEl  = pager?.querySelector(".js-total");
+  const btnPrev  = pager?.querySelector(".js-prev");
+  const btnNext  = pager?.querySelector(".js-next");
+  const segBtns  = comp.querySelectorAll(".tr-seg__btn"); // botones con data-type="CLOSED|OPEN"
+
+  // estado local UI
+  let currentType = "CLOSED";
+  let currentPage = 1;
+  const perPageAttr = parseInt(comp.getAttribute("data-per-page") || "25", 10);
+  const perPage = Number.isFinite(perPageAttr) && perPageAttr > 0 ? perPageAttr : 25;
+
+  const setBusy = (on) => viewport?.setAttribute("aria-busy", on ? "true" : "false");
+
+  // formatters
+  const fmtMoney = (v) => (v==null || v==='' || isNaN(v)) ? '-' : ((v<0?'-':'') + '$' + Math.abs(+v).toFixed(2));
+  const fmtPct   = (v) => (v==null || v==='' || isNaN(v)) ? '-' : (Number(v).toFixed(2) + '%');
+  const fmtDate  = (s) => (s && /^\d{2}\/\d{2}\/\d{4}$/.test(s)) ? s : (s || '-'); // ya viene MM/DD/YYYY
+  const fmtDur   = (sec) => {
+    if(sec==null || isNaN(sec)) return '-';
+    sec = Math.floor(sec);
+    const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+    return h>0 ? `${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`
+               : `${m}m ${String(s).padStart(2,'0')}s`;
+  };
+  const pill = (txt, kind) => `<span class="mt-pill ${kind==='err'?'mt-pill--err':'mt-pill--sec'}">${txt}</span>`;
+
+  // fila (ya contempla columna Side y sin Account Name)
+  function buildRow(r, isLast=false){
+    const netCls = (typeof r.net === 'number') ? (r.net>0?'text-success':(r.net<0?'text-danger':'')) : '';
+    const roiCls = (typeof r.netRoi==='number') ? (r.netRoi>0?'text-success':(r.netRoi<0?'text-danger':'')) : '';
+    const status = String(r.status||'').toUpperCase();
+    let statusHtml = '-';
+    if (status==='WIN')  statusHtml = pill('Win','sec');
+    if (status==='LOSS') statusHtml = pill('Loss','err');
+    if (status==='OPEN') statusHtml = pill('Open','sec');
+
+    return `
+      <div class="dj-grid dj-row${isLast?' is-last':''}" style="--cols:10;">
+        <div class="dj-cell is-left">${r.symbol ?? '-'}</div>
+        <div class="dj-cell is-left">${r.side ?? '-'}</div>
+        <div class="dj-cell is-right">${fmtDate(r.closeDate)}</div>
+        <div class="dj-cell is-right ${netCls}">${fmtMoney(r.net)}</div>
+        <div class="dj-cell is-right ${roiCls}">${fmtPct(r.netRoi)}</div>
+        <div class="dj-cell is-right">${fmtDur(r.durationSec)}</div>
+        <div class="dj-cell is-right">${fmtMoney(r.avgEntry)}</div>
+        <div class="dj-cell is-right">${fmtMoney(r.avgExit)}</div>
+        <div class="dj-cell is-right">${fmtDate(r.openDate)}</div>
+        <div class="dj-cell is-right">${statusHtml}</div>
+      </div>`;
+  }
+
+  function render(payload){
+    const recs  = Array.isArray(payload.records) ? payload.records : [];
+    const page  = Number(payload.page || 1);
+    const total = Number(payload.total || recs.length);
+    const pages = Number(payload.pages || Math.ceil(total / Math.max(1, perPage)));
+
+    const start = (page-1)*perPage;
+    const end   = Math.min(start+perPage, recs.length);
+    const slice = recs.slice(start, end);
+
+    rowsWrap.innerHTML = slice.map((r,i)=>buildRow(r, i===slice.length-1)).join('');
+
+    if (pager){
+      pager.hidden = total===0;
+      showing.textContent = String(end);
+      totalEl.textContent = String(total);
+      btnPrev.disabled = page<=1;
+      btnNext.disabled = page>=pages;
+
+      btnPrev.onclick = () => {
+        if (page > 1) {
+          currentPage = page - 1;
+          setBusy(true);
+          window.mtTradesAPI?.refresh(currentType, currentPage).catch(() => setBusy(false));
+        }
+      };
+      btnNext.onclick = () => {
+        if (page < pages) {
+          currentPage = page + 1;
+          setBusy(true);
+          window.mtTradesAPI?.refresh(currentType, currentPage).catch(() => setBusy(false));
+        }
+      };
+    }
+    setBusy(false);
+  }
+
+  // botones Close/Open (data-type="CLOSED|OPEN")
+  segBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const t = (btn.getAttribute("data-type") || "").toUpperCase();
+      if (t !== "CLOSED" && t !== "OPEN") return;
+      if (t === currentType) return;
+      currentType = t;
+      currentPage = 1;
+      segBtns.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      setBusy(true);
+      window.mtTradesAPI?.refresh(currentType, currentPage).catch(() => setBusy(false));
+    });
+  });
+
+  // primer paint desde cache o fetch inicial
+  (function init() {
+    const cached = window.mtTradesAPI?.getCached?.("CLOSED", 1);
+    setBusy(true);
+    if (cached) render(cached);
+    else window.mtTradesAPI?.refresh("CLOSED", 1).catch(() => setBusy(false));
+  })();
+
+  // eventos desde el fetcher
+  window.addEventListener("mt:trades:loaded", (ev) => {
+    const { type, page, payload } = ev.detail || {};
+    if (!payload) return;
+    currentType = type || currentType;
+    currentPage = Number(page || currentPage);
+    segBtns.forEach((b) => {
+      const t = (b.getAttribute("data-type") || "").toUpperCase();
+      b.setAttribute("aria-pressed", String(t === currentType));
+    });
+    render(payload);
+  });
+
+  window.addEventListener("mt:trades:error", () => {
+    setBusy(false);
+    rowsWrap.innerHTML = "";
+  });
+})();
+
