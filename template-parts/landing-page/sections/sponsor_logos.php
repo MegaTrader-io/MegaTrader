@@ -21,7 +21,7 @@ foreach ($attributes as $attr) {
 }
 ?>
 
-<section id="sponsor" class="tw-hidden tw:d-block tw-space-y-4 tw-px-8">
+<section id="sponsor" class="tw-hidden md:tw-block tw-space-y-4 tw-px-8">
     <div class="tw-self-stretch tw-text-center tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
         Trusted Platforms
     </div>
