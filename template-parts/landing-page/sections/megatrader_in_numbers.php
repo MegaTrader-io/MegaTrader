@@ -109,9 +109,9 @@ $mt_in_numbers = [
                 <?php endforeach; ?>
             </ul>
             <div class="tw-absolute tw-bottom-[20px] tw-w-full tw-m-auto">
-                <div class="tw-flex tw-justify-center tw-px-5 tw-py-2.5 tw-full" data-glide-el="controls[nav]">
+                <div class="mt-in-numbers tw-flex tw-justify-center tw-px-5 tw-py-2.5 tw-full" data-glide-el="controls[nav]">
                     <?php foreach ($mt_in_numbers as $key => $mt_number) : ?>
-                        <button class="slider__bullet glide__bullet !tw-w-[15px] !tw-h-[15px]" data-glide-dir="=<?= $key ?>"></button>
+                        <button class="mt-in-numbers__pointer slider__bullet glide__bullet !tw-w-[15px] !tw-h-[15px]" data-glide-dir="=<?= $key ?>"></button>
                     <?php endforeach; ?>
                 </div>
             </div>

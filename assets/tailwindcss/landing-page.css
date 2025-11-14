@@ -470,3 +470,11 @@ body[data-scroll-locked] {
         @apply tw-hidden;
     }
 }
+
+.mt-in-numbers .mt-in-numbers__pointer.glide__bullet--active {
+    background-color: #8c8c8c;
+}
+
+.mt-in-numbers .mt-in-numbers__pointer:not(.glide__bullet--active) {
+    background-color: #3d3d3d;
+}
