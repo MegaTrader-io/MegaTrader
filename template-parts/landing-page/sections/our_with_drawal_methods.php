@@ -1,15 +1,27 @@
-<section id="feature-our-with-drawal-methods" class="tw-px-4 tw-py-12">
-    <div class="tw-pb-4 tw-text-center tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
-        Our withdrawal Methods
+<section id="feature-our-with-drawal-methods" class="tw-px-4 md:tw-py-12">
+    <div class="tw-block md:tw-hidden">
+        <h2 class="tw-flex tw-mb-0 tw-flex-col tw-text-[40px] tw-text-center tw-text-white">
+            <span class="tw-font-light tw-leading-[48px] tw-uppercase">PAYOUT METHODS</span>
+        </h2>
+
+        <p class="tw-m-auto tw-pt-4 tw-mb-0 tw-max-w-[325px] tw-text-center tw-justify-start text-stone-400 tw-text-lg tw-font-normal tw-leading-6 tw-tracking-tight">
+            Withdraw profits securely using RiseWorks, Bitcoin, or Ethereum, with a 90% split on all earnings and fast, reliable processing.
+        </p>
     </div>
 
-    <div
-            class="tw-mx-auto  tw-max-w-[612px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium tw-text-stone-400 md:tw-max-w-[860px]">
-        Withdraw profits securely using RiseWorks, Bitcoin, or Ethereum, with a 90% split on all earnings and
-        fast, reliable processing to support your trading success.
+    <div class="tw-hidden md:tw-block">
+        <h2 class="tw-pb-4 tw-text-center tw-mb-0 tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
+            Our withdrawal Methods
+        </h2>
+
+        <p
+                class="tw-mx-auto tw-mb-0 tw-max-w-[612px] tw-text-center tw-text-xl tw-leading-8 tw-font-medium tw-text-stone-400 md:tw-max-w-[860px]">
+            Withdraw profits securely using RiseWorks, Bitcoin, or Ethereum, with a 90% split on all earnings and
+            fast, reliable processing to support your trading success.
+        </p>
     </div>
 
-    <div class="tw-mt-12 tw-space-y-4 md:tw-space-y-0 md:tw-flex tw-gap-4">
+    <div class="tw-mt-6 md:tw-mt-12 tw-space-y-4 md:tw-space-y-0 md:tw-flex tw-gap-4">
         <div class="tw-px-4 tw-w-full tw-space-y-2 tw-py-8 tw-bg-mgt-dark tw-rounded-2xl">
             <div
                     class="tw-text-center tw-justify-start tw-text-white tw-text-xl tw-font-medium tw-uppercase tw-leading-6">
