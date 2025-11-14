@@ -1,10 +1,16 @@
 <?php
-$verified_payouts_base_url = get_template_directory_uri() . '/assets/img/landing-page/verified-payouts';
-$certifies = [
-        ['img' => $verified_payouts_base_url . '/Certificate-passed-1.png', 'title' => 'Mega Certified Trader'],
-        ['img' => $verified_payouts_base_url . '/Certificate-passed-2.png', 'title' => 'Mega Certified Trader'],
-        ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-3.png', 'title' => 'Mega Certified Trader'],
-        ['img' => $verified_payouts_base_url . '/Certificate-widthdrawal-4.png', 'title' => 'Mega Certified Trader'],
+$verified_payouts_base_url = get_template_directory_uri() . '/assets/img/landing-page/certificates';
+$certificates = [
+        ['img' => $verified_payouts_base_url . '/Certificate-1.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-2.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-3.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-4.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-5.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-6.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-7.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-8.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-9.png', 'title' => 'Mega Certified Trader'],
+        ['img' => $verified_payouts_base_url . '/Certificate-10.png', 'title' => 'Mega Certified Trader'],
 ]
 
 ?>
@@ -20,18 +26,22 @@ $certifies = [
         possible with MegaTrader.
     </div>
 
-    <div id="verified-bs-carousel" class="splide">
-        <div class="splide__track">
-            <ul class="splide__list">
-                <?php foreach ($certifies as $key => $certify) : ?>
-                    <li class="splide__slide">
-                        <img src="<?php echo esc_url($certify['img']); ?>"
-                             alt="Mega Certified Trader Badge"
-                             class="verified-bs__image"
-                             loading="lazy">
+    <div id="certifications-id" class="glide tw-mt-10 tw-mb-2.5">
+        <div class="slider__track glide__track tw-mx-4" data-glide-el="track">
+            <ul class="slider__slides glide__slides">
+                <?php foreach ($certificates as $key => $certificate) : ?>
+                    <li class="md:tw-w-[calc(100vw-64px)]] tw-flex">
+                        <img class="tw-w-full"
+                             src="<?php echo esc_url($certificate['img']); ?>"/>
                     </li>
                 <?php endforeach; ?>
             </ul>
+        </div>
+
+        <div class="tw-flex tw-justify-center tw-px-5 tw-mt-5 tw-py-2.5" data-glide-el="controls[nav]">
+            <?php foreach ($certificates as $key => $certify) : ?>
+                <button class="slider__bullet glide__bullet" data-glide-dir="=<?= $key ?>"></button>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>

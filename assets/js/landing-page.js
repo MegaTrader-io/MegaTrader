@@ -637,6 +637,13 @@ document.addEventListener('DOMContentLoaded', function () {
     loadPlatformSelection();
     loadSubscriptionForm();
     loadFooterModals();
+
+    (new Glide('#certifications-id', {
+        type: 'carousel',
+        perView: 1,
+        gap: 16,
+        autoplay: 3000,
+    })).mount()
 });
 
 window.addEventListener("pageshow", function (event) {

@@ -32,6 +32,15 @@ if (!function_exists('megatrader_landing_page_scripts')) {
         wp_enqueue_script('tw-modal', $js_uri . 'tw-modal.js', [], $tw_modal_js_version, true);
         wp_enqueue_script('megatrader-main', $js_uri . 'landing-page.js', ['mt-tabs'], $landing_js_version, true);
 
+        $css_version = file_exists($css_path . 'glide.core.min.css') ? filemtime($css_path . 'glide.core.min.css') : null;
+        $js_version = file_exists($js_path . 'glide.js') ? filemtime($js_path . 'glide.js') : null;
+
+        wp_enqueue_style('glide-style', $css_uri . 'glide.core.min.css', [], $css_version);
+        wp_enqueue_script('glide-js', $js_uri . 'glide.js', [], $js_version, true);
+
+        $css_version = file_exists($css_path . 'glide.theme.min.css') ? filemtime($css_path . 'glide.theme.min.css') : null;
+        wp_enqueue_style('glide-theme-style', $css_uri . 'glide.theme.min.css', [], $css_version);
+
         error_log('[LV] after load assets megatrader_landing_page_scripts');
 
         error_log('[LV] before load get_products_with_attributes');
