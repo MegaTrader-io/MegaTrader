@@ -471,6 +471,11 @@ body[data-scroll-locked] {
     }
 }
 
+.mt-in-numbers {
+    gap: 5px;
+    margin: 0;
+}
+
 .mt-in-numbers .mt-in-numbers__pointer.glide__bullet--active {
     background-color: #8c8c8c;
 }
