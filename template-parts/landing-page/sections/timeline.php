@@ -16,9 +16,9 @@
             <span class="tw-font-light tw-uppercase tw-leading-[48px] tw-tracking-tighter">SIMPLE HERE</span>
         </h2>
 
-        <div class="tw-m-auto tw-pt-5 tw-pb-[31px] tw-max-w-[325px] tw-text-center tw-justify-start text-stone-400 tw-text-lg tw-font-normal tw-leading-6 tw-tracking-tight">
+        <p class="tw-m-auto tw-pt-5 tw-mb-0 tw-pb-[31px] tw-max-w-[325px] tw-text-center tw-justify-start text-stone-400 tw-text-lg tw-font-normal tw-leading-6 tw-tracking-tight">
             Guiding traders through a simple, step-by-step process to secure funding, prove their skills, and start earning with confidence.
-        </div>
+        </p>
     </div>
 
     <div class="tw-ml-2 sm:tw-ml-auto">

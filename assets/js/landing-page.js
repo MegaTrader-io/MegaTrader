@@ -644,6 +644,13 @@ document.addEventListener('DOMContentLoaded', function () {
         gap: 16,
         autoplay: 3000,
     })).mount();
+
+    (new Glide('#megatrader-in-numbers', {
+        type: 'carousel',
+        perView: 1,
+        gap: 16,
+        autoplay: 3000,
+    })).mount();
 });
 
 window.addEventListener("pageshow", function (event) {
