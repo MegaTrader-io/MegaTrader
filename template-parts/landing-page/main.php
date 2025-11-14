@@ -3,8 +3,12 @@
     <?php require 'sections/achievements_from_real_traders.php'; ?>
     <?php require 'sections/market_overview.php'; ?>
     <?php require 'sections/sponsor_logos.php'; ?>
-    <?php require 'sections/megatrader_in_numbers.php'; ?>
-    <?php require 'sections/timeline.php'; ?>
+
+    <div class="tw-flex tw-flex-col md:tw-block md:tw-space-y-12">
+        <?php require 'sections/megatrader_in_numbers.php'; ?>
+        <?php require 'sections/timeline.php'; ?>
+    </div>
+
     <?php require 'sections/price_table.php'; ?>
     <?php require 'sections/smarter_tools_for_confident_trading.php'; ?>
     <?php require 'sections/your_path_to_profitable.php'; ?>

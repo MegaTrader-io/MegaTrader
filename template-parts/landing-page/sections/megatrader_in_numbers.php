@@ -29,7 +29,7 @@ $items = [
 ];
 ?>
 
-<section id="megatrader-numbers" class="tw-space-y-4 tw-px-4 tw-pb-12">
+<section id="megatrader-numbers" class="tw-order-2 tw-space-y-4 tw-px-4 tw-pb-12">
     <div class="tw-text-center tw-text-white tw-text-[40px] tw-font-light tw-uppercase tw-leading-[48px]">
         Megatrader in numbers
     </div>

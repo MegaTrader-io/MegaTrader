@@ -638,12 +638,12 @@ document.addEventListener('DOMContentLoaded', function () {
     loadSubscriptionForm();
     loadFooterModals();
 
-    (new Glide('#certifications-id', {
+    (new Glide('#certifications', {
         type: 'carousel',
         perView: 1,
         gap: 16,
         autoplay: 3000,
-    })).mount()
+    })).mount();
 });
 
 window.addEventListener("pageshow", function (event) {
