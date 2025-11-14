@@ -15,7 +15,7 @@ $certificates = [
 
 ?>
 
-<section class="md:tw-hidden tw-my-6 tw-mb-5">
+<section id="certifications" class="md:tw-hidden tw-my-6 tw-mb-5">
     <h2 class="tw-flex tw-mb-0 tw-flex-col tw-text-[40px] tw-text-center tw-text-white">
         <span class="tw-font-light tw-leading-[48px]">ACHIEVEMENTS</span>
         <span class="tw-font-light tw-uppercase tw-leading-[48px] tw-tracking-tighter">FROM REAL TRADERS</span>
@@ -26,7 +26,7 @@ $certificates = [
         possible with MegaTrader.
     </div>
 
-    <div id="certifications" class="glide tw-mt-10">
+    <div id="certifications-slider" class="glide tw-mt-10">
         <div class="slider__track glide__track tw-mx-4" data-glide-el="track">
             <ul class="slider__slides glide__slides">
                 <?php foreach ($certificates as $key => $certificate) : ?>

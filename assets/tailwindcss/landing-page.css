@@ -483,3 +483,38 @@ body[data-scroll-locked] {
 .mt-in-numbers .mt-in-numbers__pointer:not(.glide__bullet--active) {
     background-color: #3d3d3d;
 }
+
+.mt-landing-sections { display: flex; flex-direction: column; }
+#hero-section { order: 1; }
+#certifications { order: 2; }
+#market-data { order: 3; }
+#sponsor { order: 4; }
+#megatrader-numbers { order: 5; }
+#how-it-works { order: 6; }
+#pricing { order: 7; }
+#features { order: 8; }
+#feature-your-path { order: 9; }
+#feature-earn-more-throuch { order: 10; }
+#feature-discover-the-platforms { order: 11; }
+#feature-our-with-drawal-methods { order: 12; }
+#feature-trusted-by-leadres { order: 13; }
+#our-team { order: 14; }
+#faq { order: 15; }
+
+@media (max-width: 767px) {
+    #hero-section { order: 1; }
+    #pricing { order: 2; }
+    #certifications { order: 3; }
+    #how-it-works { order: 4; }
+    #megatrader-numbers { order: 5; }
+    #feature-our-with-drawal-methods { order: 6; }
+    #features { order: 7; }
+    #feature-trusted-by-leadres { order: 8; }
+    #market-data { order: 9; display: none; }
+    #sponsor { order: 10; display: none; }
+    #feature-your-path { order: 11; display: none; }
+    #feature-earn-more-throuch { order: 12; display: none; }
+    #feature-discover-the-platforms { order: 13; display: none; }
+    #our-team { order: 14; display: none; }
+    #faq { order: 15; display: none; }
+}

@@ -1,4 +1,4 @@
-<div id="hero-section" class="tw-px-4">
+<section id="hero-section" class="tw-px-4">
     <div class="md:tw-hidden tw-pt-10 tw-pb-3">
         <div class="tw-flex tw-justify-center md:tw-hidden">
             <div class="tw-pl-1.5 tw-pr-4 tw-py-1.5 tw-rounded-[64px] tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-teal-500 tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
@@ -150,4 +150,4 @@
 
         <?php require 'partials/feature_highlights.php'; ?>
     </div>
-</div>
+</section>

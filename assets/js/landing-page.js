@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loadSubscriptionForm();
     loadFooterModals();
 
-    (new Glide('#certifications', {
+    (new Glide('#certifications-slider', {
         type: 'carousel',
         perView: 1,
         gap: 16,
