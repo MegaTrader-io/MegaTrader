@@ -2209,6 +2209,41 @@ function mt_ajax_account_daily_journal() {
   ]);
 }
 
+
+// ================= AJAX: mt_trades_history =================
+add_action('wp_ajax_mt_trades_history', 'mt_ajax_trades_history');
+add_action('wp_ajax_nopriv_mt_trades_history', 'mt_ajax_trades_history'); // opcional, si público
+
+function mt_ajax_trades_history() {
+  try {
+    // Nonce (ya existe en tu enqueue)
+    $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+    if (!wp_verify_nonce($nonce, 'mt-acc-nonce')) {
+      wp_send_json_error(['message' => 'Invalid nonce'], 403);
+    }
+
+    $accountId = isset($_POST['accountId']) ? sanitize_text_field(wp_unslash($_POST['accountId'])) : '';
+    $type      = isset($_POST['type']) ? sanitize_text_field(wp_unslash($_POST['type'])) : 'CLOSED';
+    $page      = isset($_POST['page']) ? intval($_POST['page']) : 1;
+    $perPage   = isset($_POST['perPage']) ? intval($_POST['perPage']) : 25;
+
+    if ($accountId === '') {
+      wp_send_json_error(['message' => 'Missing accountId'], 400);
+    }
+
+    if (!function_exists('mt_trades_history_fetch')) {
+      // Asegúrate de tener incluido el helper
+      require_once get_template_directory() . '/inc/mt-accounts-helpers.php';
+    }
+
+    $data = mt_trades_history_fetch($accountId, $type, $page, $perPage);
+    wp_send_json_success($data, 200);
+  } catch (\Throwable $e) {
+    wp_send_json_error(['message' => 'Trades fetch error', 'detail' => $e->getMessage()], 500);
+  }
+}
+
+
 // == AJAX: prepara UI de payout desde email ==
 add_action('wp_ajax_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
 add_action('wp_ajax_nopriv_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
