@@ -2080,12 +2080,12 @@ if (!function_exists('mt_fetch_accounts_cached')) {
         $variant  = 'plain';
 
         try {
-            $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_plain, 1, 50) : [];
+            $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_plain, 1, 1000) : [];
         } catch (Throwable $e) {}
 
         if (empty($accounts)) {
             try {
-                $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_api, 1, 50) : [];
+                $accounts = class_exists('MT_Api') ? MT_Api::fetch_accounts_by_email($email_api, 1, 1000) : [];
                 $variant  = 'encoded';
             } catch (Throwable $e) {}
         }
