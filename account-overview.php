@@ -468,6 +468,19 @@ get_header();
             );
             ?>
           </div>
+
+          <div class="mt-account-trades-history mt-skeleton-pulse" id="mt-account-trades-history">
+            <?php
+            get_template_part(
+              'template-parts/account/account-trades-history',
+              null,
+              [
+                'meta' => ['accountId' => $mt_selected_id],
+                'data' => $mt_account_trades_history,
+              ]
+            );
+            ?>
+          </div>
         </section>
       </div>
     </div>
