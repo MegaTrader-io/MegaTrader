@@ -101,7 +101,7 @@ $mt_in_numbers = [
                                 <?= esc_html($item['subtitle']) ?>
                             </div>
 
-                            <p class="tw-self-stretch tw-mb-0 tw-text-center tw-justify-start text-stone-400 tw-text-xl tw-font-medium font-['Roboto'] leading-[29.33px]">
+                            <p class="tw-self-stretch tw-mb-0 tw-text-center tw-justify-start text-stone-400 tw-text-xl tw-font-medium leading-[29.33px]">
                                 <?= $item['detail'] ?>
                             </p>
                         </div>

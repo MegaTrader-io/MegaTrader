@@ -76,7 +76,7 @@ $items = [
 ];
 
 ?>
-<section id="features" class="tw-px-4 tw-py-6 md:tw-py-12">
+<section id="features" class="tw-px-4 tw-py-12">
     <h2 class="tw-text-center tw-text-white tw-font-light tw-mb-5 md:tw-mb-4 tw-uppercase tw-leading-[48px] tw-tracking-tighter md:tw-tracking-normal tw-text-[40px] md:tw-uppercase">
         Smarter Tools for Confident Trading
     </h2>

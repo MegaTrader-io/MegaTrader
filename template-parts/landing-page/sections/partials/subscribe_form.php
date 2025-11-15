@@ -44,8 +44,7 @@
                 </svg>
             </span>
         </span>
-            <span class="tw-select-none tw-w-full tw-text-white tw-text-base tw-font-medium tw-leading-normal">I consent to the use of my email
-            address to receive news, updates, and important notifications.
+            <span class="tw-select-none tw-w-full tw-text-white tw-text-base tw-font-medium tw-leading-normal">I consent to the use of my email address to receive news, updates, and important notifications.
         </span>
         </label>
     </div>

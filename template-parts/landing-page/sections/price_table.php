@@ -138,16 +138,30 @@ $tabs = array_map(function ($item) {
 
 ?>
 
-<section id="pricing" class="tw-order-[2] pricing-table-container">
-    <h2 class="pricing-table-container__title">
-        Choose your account size
-    </h2>
+<section id="pricing" class="tw-order-[2] pricing-table-container tw-mt-3">
+    <div class="tw-hidden md:tw-block">
+        <h2 class="pricing-table-container__title">
+            Choose your account size
+        </h2>
 
-    <p class="pricing-table-container__subtitle">
-        Choose from flexible account sizes and plans tailored to your trading style—whether you're growing your
-        skills
-        or ready to trade real capital with confidence
-    </p>
+        <p class="pricing-table-container__subtitle">
+            Choose from flexible account sizes and plans tailored to your trading style—whether you're growing your
+            skills
+            or ready to trade real capital with confidence
+        </p>
+    </div>
+    <div class="tw-block md:tw-hidden tw-justify-center">
+        <h2 class="self-stretch tw-mb-4 tw-text-center tw-justify-start tw-text-white tw-text-2xl tw-font-medium tw-uppercase tw-leading-9">
+            Choose your account size
+        </h2>
+
+        <div class="tw-w-full tw-flex tw-justify-center">
+            <p class="tw-mx-5 tw-w-[362px] tw-mb-0 tw-text-center tw-justify-start text-stone-400 tw-text-lg tw-font-normal tw-leading-6 tw-tracking-tight">
+                Choose from tw-flexible account sizes and plans tailored to your style—whether you're learning or ready to trade with confidence.
+            </p>
+        </div>
+
+    </div>
 
     <div class="pricing-table-panel <?php echo $classes; ?>">
         <div class="pricing-table-panel__tabs mt-tabs-no-border">
@@ -158,7 +172,8 @@ $tabs = array_map(function ($item) {
                 <div class="pricing-table-panel__plan_summary_container">
                     <div class="plan-summary">
                         <img class="plan-summary__plan-icon" src="<?= $accountThumbnailUrl; ?>" alt="Plan Icon">
-                        <img class="plan-summary__platform-icon" src="<?= $platformThumbnailUrl; ?>" alt="Platform Icon">
+                        <img class="plan-summary__platform-icon" src="<?= $platformThumbnailUrl; ?>"
+                             alt="Platform Icon">
                         <div class="plan-summary__name">
                             <?= $defaultPlanName ?>
                         </div>
@@ -187,7 +202,8 @@ $tabs = array_map(function ($item) {
                         <div class="mt-pricing-card__header">
                             <div class="mt-pricing-card__header-text mt-pricing-card--discount_total">
                                 Save
-                                <span><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span> with code
+                                <span><?= $has_coupon ? mt_price_plain($coupon['discount_total']) : 0 ?></span> with
+                                code
                             </div>
 
                             <div class="mt-pricing-card__code-container">

@@ -25,7 +25,7 @@
         </div>
 
         <div class="tw-flex tw-justify-center tw-mt-6">
-            <a href="#get-funded"
+            <a href="<?= home_url('/auth/register') ?>"
                class="tw-h-[59px] tw-px-6 tw-bg-[#ffb34a] tw-rounded-xl tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
                 <div class="tw-w-11 tw-h-[43px] tw-relative">
                     <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
