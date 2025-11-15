@@ -68,7 +68,9 @@
   display: none;
 }
 
-[hidden] { display: none !important; }
+[hidden] {
+  display: none !important;
+}
 
 
 
@@ -4588,38 +4590,43 @@ textarea.mtfb-note {
 /* Normaliza la estructura interna que renderiza LWC (tabla/canvas) */
 #account-performance-chart .tv-lightweight-charts,
 #account-performance-chart table {
-  margin:0 !important;
-            
+  margin: 0 !important;
+
 
 }
 
 #account-performance-chart table td {
   padding: 0 !important;
-  border: 0 !important;            
+  border: 0 !important;
 }
 
-#account-performance-chart table tr:first-child td:nth-child(2){
-  border-right:1px solid var(--ot-border-color) !important;   /* separador vertical */
-}
-#account-performance-chart table tr:last-child  td:nth-child(2){
-  border-top:1px solid var(--ot-border-color) !important;     /* separador horizontal inferior */
+#account-performance-chart table tr:first-child td:nth-child(2) {
+  border-right: 1px solid var(--ot-border-color) !important;
+  /* separador vertical */
 }
 
-.mt-chart-tip{
-  position:fixed;               /* fuera del contenedor */
-  pointer-events:none;
-  background:#111; 
-  color:#fff;
-  padding:8px 10px; 
-  border-radius:8px;
-  font:12px/1.25 system-ui;
-  box-shadow:0 4px 16px rgba(0,0,0,.35);
-  opacity:0;                    /* se muestra desde JS */
-  transition:opacity .12s ease;
-  z-index:9999;
-  max-width:260px;
-  word-break:normal;
-  white-space:nowrap;
+#account-performance-chart table tr:last-child td:nth-child(2) {
+  border-top: 1px solid var(--ot-border-color) !important;
+  /* separador horizontal inferior */
+}
+
+.mt-chart-tip {
+  position: fixed;
+  /* fuera del contenedor */
+  pointer-events: none;
+  background: #111;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font: 12px/1.25 system-ui;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .35);
+  opacity: 0;
+  /* se muestra desde JS */
+  transition: opacity .12s ease;
+  z-index: 9999;
+  max-width: 260px;
+  word-break: normal;
+  white-space: nowrap;
 }
 
 
@@ -4675,6 +4682,7 @@ textarea.mtfb-note {
 }
 
 @media (max-width: 575.98px) {
+
   /* Oculta el icono del diamante solo si es descendiente directo 
     del contenedor con la clase .mt-account-selection.
   */
@@ -4689,7 +4697,7 @@ textarea.mtfb-note {
     display: none !important;
   }
 
-  .mt-account-selection #mt-account-id-badge{
+  .mt-account-selection #mt-account-id-badge {
     display: none !important;
   }
 }
@@ -4910,13 +4918,181 @@ button#mt-payout-acc-btn:active {
 
 @media (min-width: 992px) {
   .mt-acc-menu {
-     max-height:230px;
-    overflow-y:auto ;
-    overflow-x:hidden ;
-  
+    max-height: 230px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
   }
 }
 
 
 /***** End Modal Payout **/
 
+
+/***** Trade History **/
+/* ===== Trades History (mismas columnas fijas tipo Daily Journal) ===== */
+#mt-trades {
+  --cols: 10;
+  --colw: 100px;
+  --bg: var(--Surface-Page, #1E1E1E);
+}
+
+#mt-trades .dj-viewport {
+  max-inline-size: 100%
+}
+
+#mt-trades .dj-clip {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--bg)
+}
+
+#mt-trades .dj-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--bg);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .15) transparent;
+}
+
+#mt-trades .dj-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--colw));
+  inline-size: max-content
+}
+
+#mt-trades .dj-headrow {
+  border-bottom: 1px solid rgba(255, 255, 255, .12)
+}
+
+#mt-trades .dj-row {
+  border-bottom: 1px solid var(--Colors-Gray-800, #292524)
+}
+
+#mt-trades .dj-head {
+  color: #fff;
+  font-weight: 700;
+  font-size: .875rem;
+  line-height: 1.25;
+  padding: 16px 8px;
+}
+
+#mt-trades .dj-cell {
+  color: var(--Text-Body, #A8A29E);
+  font-weight: 500;
+  font-size: .875rem;
+   padding: 8px;
+  white-space: normal
+}
+
+#mt-trades .is-right {
+  text-align: right
+}
+
+#mt-trades .is-left {
+  text-align: left
+}
+
+/* Empty-state (alias para cualquiera de los dos) */
+#mt-trades .dj-rows>.dj-empty,
+#mt-trades .dj-rows>.mt-empty {
+  text-align: center;
+  padding: 16px;
+  margin: 16px auto;
+  max-width: 520px;
+  color: var(--Text-Body, #A8A29E);
+  font: 500 14px/20px Roboto, system-ui, sans-serif;
+  border: 1px dashed rgba(255, 255, 255, .12);
+  border-radius: 12px;
+  background: #1e1e1e;
+}
+
+/* Header & segmented buttons */
+#mt-trades .tr-headbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between
+}
+
+#mt-trades .tr-title {
+  color: var(--Text-Body, #A8A29E);
+  font: 500 16px/24px Roboto, system-ui, sans-serif
+}
+
+#mt-trades .tr-seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+  border-radius: 8px;
+  background: var(--Surface-Page, #1E1E1E)
+}
+
+#mt-trades .tr-seg__btn {
+  color: #fff;
+  background: transparent;
+}
+
+#mt-trades .tr-seg__btn[aria-pressed="true"] {
+  background: #fff;
+  color: #292524
+}
+
+/* Pills */
+#mt-trades .mt-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: .75rem;
+  line-height: 16px
+}
+
+#mt-trades .mt-pill--sec {
+  background: var(--Secondary-500, #14B8A6);
+  color: var(--Surface-Body, #131210)
+}
+
+#mt-trades .mt-pill--err {
+  background: var(--Error-500, #F43F5E);
+  color: var(--Surface-Body, #131210)
+}
+
+/* Pager */
+#mt-trades .dj-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px
+}
+
+#mt-trades .dj-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: var(--Surface-Dark, #292524);
+  border: 1px solid var(--Colors-Gray-700, #404040);
+  border-radius: 4px
+}
+
+#mt-trades .dj-pages {
+  color: var(--Text-Body, #A8A29E);
+  font: 500 14px/20px Roboto, system-ui, sans-serif
+}
+
+#mt-trades .dj-empty {
+  text-align: center;
+  padding: 16px;
+  color: var(--Text-Body, #A8A29E);
+  font: 500 14px/20px Roboto, system-ui, sans-serif;
+}
+
+
+/***** Trade History **/

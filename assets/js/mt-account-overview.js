@@ -3361,18 +3361,28 @@ if (document.readyState === "loading") {
    TRADES FETCHER (AJAX + cache + eventos)
    ========================= */
 (function () {
-  const WRAP_ID = "mt-account-trades-history";   // contenedor externo
-  const COMP_ID = "mt-trades";                    // root del componente
+  const WRAP_ID = "mt-account-trades-history"; // contenedor externo
+  const COMP_ID = "mt-trades"; // root del componente
   const wrap = document.getElementById(WRAP_ID);
   const comp = document.getElementById(COMP_ID);
   if (!wrap || !comp) return;
 
-  const ajaxUrl = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-  const nonce   = (window.mtAccounts && mtAccounts.nonce)   || "";
+  const ajaxUrl =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+  const nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
-  let currentAccId = comp.getAttribute("data-account-id") || wrap.getAttribute("data-account-id") || "";
-  const perPageAttr = parseInt(comp.getAttribute("data-per-page") || wrap.getAttribute("data-per-page") || "25", 10);
-  const perPage = Number.isFinite(perPageAttr) && perPageAttr > 0 ? perPageAttr : 25;
+  let currentAccId =
+    comp.getAttribute("data-account-id") ||
+    wrap.getAttribute("data-account-id") ||
+    "";
+  const perPageAttr = parseInt(
+    comp.getAttribute("data-per-page") ||
+      wrap.getAttribute("data-per-page") ||
+      "25",
+    10
+  );
+  const perPage =
+    Number.isFinite(perPageAttr) && perPageAttr > 0 ? perPageAttr : 25;
 
   // cache por (accountId:type:page:perPage)
   const cache = new Map();
@@ -3401,23 +3411,45 @@ if (document.readyState === "loading") {
       const res = await fetch(ajaxUrl, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body
+        body,
       });
       const json = await res.json();
-      if (!json || !json.success) throw new Error(json?.data?.message || "Trades fetch failed");
+      if (!json || !json.success)
+        throw new Error(json?.data?.message || "Trades fetch failed");
 
-      const data = json.data || { records: [], page, perPage, total: 0, pages: 1, type: t };
+      const data = json.data || {
+        records: [],
+        page,
+        perPage,
+        total: 0,
+        pages: 1,
+        type: t,
+      };
       cache.set(k, data);
 
       // Notifica al renderer
-      window.dispatchEvent(new CustomEvent("mt:trades:loaded", {
-        detail: { accountId: currentAccId, type: t, page, perPage, payload: data }
-      }));
+      window.dispatchEvent(
+        new CustomEvent("mt:trades:loaded", {
+          detail: {
+            accountId: currentAccId,
+            type: t,
+            page,
+            perPage,
+            payload: data,
+          },
+        })
+      );
       return data;
     } catch (err) {
-      window.dispatchEvent(new CustomEvent("mt:trades:error", {
-        detail: { accountId: currentAccId, type: t, message: err?.message || String(err) }
-      }));
+      window.dispatchEvent(
+        new CustomEvent("mt:trades:error", {
+          detail: {
+            accountId: currentAccId,
+            type: t,
+            message: err?.message || String(err),
+          },
+        })
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -3435,7 +3467,11 @@ if (document.readyState === "loading") {
       cache.clear();
 
       // vuelve a CLOSED page 1
-      window.dispatchEvent(new CustomEvent("mt:trades:filter", { detail: { type: "CLOSED", page: 1 } }));
+      window.dispatchEvent(
+        new CustomEvent("mt:trades:filter", {
+          detail: { type: "CLOSED", page: 1 },
+        })
+      );
       fetchTrades("CLOSED", 1, /*force*/ true).catch(() => {});
     });
   }
@@ -3467,48 +3503,104 @@ if (document.readyState === "loading") {
   // refs UI
   const viewport = comp.querySelector(".dj-viewport");
   const rowsWrap = comp.querySelector(".dj-rows");
-  const pager    = comp.querySelector(".dj-pager");
-  const showing  = pager?.querySelector(".js-showing");
-  const totalEl  = pager?.querySelector(".js-total");
-  const btnPrev  = pager?.querySelector(".js-prev");
-  const btnNext  = pager?.querySelector(".js-next");
-  const segBtns  = comp.querySelectorAll(".tr-seg__btn"); // botones con data-type="CLOSED|OPEN"
+  const pager = comp.querySelector(".dj-pager");
+  const showing = pager?.querySelector(".js-showing");
+  const totalEl = pager?.querySelector(".js-total");
+  const btnPrev = pager?.querySelector(".js-prev");
+  const btnNext = pager?.querySelector(".js-next");
+  const segBtns = comp.querySelectorAll(".tr-seg__btn"); // botones con data-type="CLOSED|OPEN"
 
   // estado local UI
   let currentType = "CLOSED";
   let currentPage = 1;
   const perPageAttr = parseInt(comp.getAttribute("data-per-page") || "25", 10);
-  const perPage = Number.isFinite(perPageAttr) && perPageAttr > 0 ? perPageAttr : 25;
+  const perPage =
+    Number.isFinite(perPageAttr) && perPageAttr > 0 ? perPageAttr : 25;
 
-  const setBusy = (on) => viewport?.setAttribute("aria-busy", on ? "true" : "false");
+  const setBusy = (on) =>
+    viewport?.setAttribute("aria-busy", on ? "true" : "false");
+
+  // ---------- helpers ----------
+const symbolPostColon = (raw) => {
+  if (raw == null) return "-";
+  const s = String(raw);
+  const slash = s.lastIndexOf("/");            // después del último "/"
+  if (slash === -1) {
+    // fallback: si no hay "/", toma lo que esté antes del primer ":" o todo
+    const beforeColon = s.split(":")[0];
+    return (beforeColon || "-").trim() || "-";
+  }
+  const colon = s.indexOf(":", slash + 1);     // hasta el primer ":" luego del "/"
+  const end = colon === -1 ? s.length : colon;
+  const sym = s.slice(slash + 1, end).trim();
+  return sym || "-";
+};
 
   // formatters
-  const fmtMoney = (v) => (v==null || v==='' || isNaN(v)) ? '-' : ((v<0?'-':'') + '$' + Math.abs(+v).toFixed(2));
-  const fmtPct   = (v) => (v==null || v==='' || isNaN(v)) ? '-' : (Number(v).toFixed(2) + '%');
-  const fmtDate  = (s) => (s && /^\d{2}\/\d{2}\/\d{4}$/.test(s)) ? s : (s || '-'); // ya viene MM/DD/YYYY
-  const fmtDur   = (sec) => {
-    if(sec==null || isNaN(sec)) return '-';
+  const fmtMoney = (v) =>
+    v == null || v === "" || isNaN(v)
+      ? "-"
+      : (v < 0 ? "-" : "") + "$" + Math.abs(+v).toFixed(2);
+  const fmtPct = (v) =>
+    v == null || v === "" || isNaN(v) ? "-" : Number(v).toFixed(2) + "%";
+  const fmtDate = (s) => (s && /^\d{2}\/\d{2}\/\d{4}$/.test(s) ? s : s || "-"); // ya viene MM/DD/YYYY
+  const fmtDur = (sec) => {
+    if (sec == null || isNaN(sec)) return "-";
     sec = Math.floor(sec);
-    const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
-    return h>0 ? `${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`
-               : `${m}m ${String(s).padStart(2,'0')}s`;
+    const h = Math.floor(sec / 3600),
+      m = Math.floor((sec % 3600) / 60),
+      s = sec % 60;
+    return h > 0
+      ? `${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`
+      : `${m}m ${String(s).padStart(2, "0")}s`;
   };
-  const pill = (txt, kind) => `<span class="mt-pill ${kind==='err'?'mt-pill--err':'mt-pill--sec'}">${txt}</span>`;
+  const pill = (txt, kind) =>
+    `<span class="mt-pill ${
+      kind === "err" ? "mt-pill--err" : "mt-pill--sec"
+    }">${txt}</span>`;
 
-  // fila (ya contempla columna Side y sin Account Name)
-  function buildRow(r, isLast=false){
-    const netCls = (typeof r.net === 'number') ? (r.net>0?'text-success':(r.net<0?'text-danger':'')) : '';
-    const roiCls = (typeof r.netRoi==='number') ? (r.netRoi>0?'text-success':(r.netRoi<0?'text-danger':'')) : '';
-    const status = String(r.status||'').toUpperCase();
-    let statusHtml = '-';
-    if (status==='WIN')  statusHtml = pill('Win','sec');
-    if (status==='LOSS') statusHtml = pill('Loss','err');
-    if (status==='OPEN') statusHtml = pill('Open','sec');
+  // empty-state
+  const renderEmpty = () => {
+    rowsWrap.innerHTML = `
+      <div class="dj-empty">
+    <div>No trades to show</div>
+    <div>When you place trades, they’ll appear here.</div>
+  </div>
+    `;
+    if (pager) pager.hidden = true;
+  };
+
+  // fila (símbolo post-colon)
+  function buildRow(r, isLast = false) {
+    const netCls =
+      typeof r.net === "number"
+        ? r.net > 0
+          ? "text-success"
+          : r.net < 0
+          ? "text-danger"
+          : ""
+        : "";
+    const roiCls =
+      typeof r.netRoi === "number"
+        ? r.netRoi > 0
+          ? "text-success"
+          : r.netRoi < 0
+          ? "text-danger"
+          : ""
+        : "";
+    const status = String(r.status || "").toUpperCase();
+    let statusHtml = "-";
+    if (status === "WIN") statusHtml = pill("Win", "sec");
+    if (status === "LOSS") statusHtml = pill("Loss", "err");
+    if (status === "OPEN") statusHtml = pill("Open", "sec");
+
+    const symRaw = r.symbol ?? r.instrument ?? r.ticker ?? "-";
+    const sym = symbolPostColon(symRaw); // <-- aquí tomamos lo que viene después de los “:”
 
     return `
-      <div class="dj-grid dj-row${isLast?' is-last':''}" style="--cols:10;">
-        <div class="dj-cell is-left">${r.symbol ?? '-'}</div>
-        <div class="dj-cell is-left">${r.side ?? '-'}</div>
+      <div class="dj-grid dj-row${isLast ? " is-last" : ""}" style="--cols:10;">
+        <div class="dj-cell is-left">${r.side ?? "-"}</div>
+        <div class="dj-cell is-left">${sym}</div>      
         <div class="dj-cell is-right">${fmtDate(r.closeDate)}</div>
         <div class="dj-cell is-right ${netCls}">${fmtMoney(r.net)}</div>
         <div class="dj-cell is-right ${roiCls}">${fmtPct(r.netRoi)}</div>
@@ -3520,39 +3612,56 @@ if (document.readyState === "loading") {
       </div>`;
   }
 
-  function render(payload){
-    const recs  = Array.isArray(payload.records) ? payload.records : [];
-    const page  = Number(payload.page || 1);
-    const total = Number(payload.total || recs.length);
-    const pages = Number(payload.pages || Math.ceil(total / Math.max(1, perPage)));
+  function render(payload) {
+    const recs = Array.isArray(payload.records) ? payload.records : [];
+    const page = Number(payload.page || 1);
+    const total = Number(payload.total ?? recs.length ?? 0);
+    const pages = Number(
+      payload.pages || Math.ceil(total / Math.max(1, perPage))
+    );
 
-    const start = (page-1)*perPage;
-    const end   = Math.min(start+perPage, recs.length);
+    // EMPTY STATE
+    if (!recs.length || total === 0) {
+      renderEmpty();
+      setBusy(false);
+      return;
+    }
+
+    const start = (page - 1) * perPage;
+    const end = Math.min(start + perPage, recs.length);
     const slice = recs.slice(start, end);
 
-    rowsWrap.innerHTML = slice.map((r,i)=>buildRow(r, i===slice.length-1)).join('');
+    rowsWrap.innerHTML = slice
+      .map((r, i) => buildRow(r, i === slice.length - 1))
+      .join("");
 
-    if (pager){
-      pager.hidden = total===0;
-      showing.textContent = String(end);
-      totalEl.textContent = String(total);
-      btnPrev.disabled = page<=1;
-      btnNext.disabled = page>=pages;
+    if (pager) {
+      pager.hidden = total === 0;
+      if (showing) showing.textContent = String(end);
+      if (totalEl) totalEl.textContent = String(total);
+      if (btnPrev) btnPrev.disabled = page <= 1;
+      if (btnNext) btnNext.disabled = page >= pages;
 
-      btnPrev.onclick = () => {
-        if (page > 1) {
-          currentPage = page - 1;
-          setBusy(true);
-          window.mtTradesAPI?.refresh(currentType, currentPage).catch(() => setBusy(false));
-        }
-      };
-      btnNext.onclick = () => {
-        if (page < pages) {
-          currentPage = page + 1;
-          setBusy(true);
-          window.mtTradesAPI?.refresh(currentType, currentPage).catch(() => setBusy(false));
-        }
-      };
+      if (btnPrev)
+        btnPrev.onclick = () => {
+          if (page > 1) {
+            currentPage = page - 1;
+            setBusy(true);
+            window.mtTradesAPI
+              ?.refresh(currentType, currentPage)
+              .catch(() => setBusy(false));
+          }
+        };
+      if (btnNext)
+        btnNext.onclick = () => {
+          if (page < pages) {
+            currentPage = page + 1;
+            setBusy(true);
+            window.mtTradesAPI
+              ?.refresh(currentType, currentPage)
+              .catch(() => setBusy(false));
+          }
+        };
     }
     setBusy(false);
   }
@@ -3567,7 +3676,9 @@ if (document.readyState === "loading") {
       currentPage = 1;
       segBtns.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
       setBusy(true);
-      window.mtTradesAPI?.refresh(currentType, currentPage).catch(() => setBusy(false));
+      window.mtTradesAPI
+        ?.refresh(currentType, currentPage)
+        .catch(() => setBusy(false));
     });
   });
 
@@ -3594,7 +3705,15 @@ if (document.readyState === "loading") {
 
   window.addEventListener("mt:trades:error", () => {
     setBusy(false);
-    rowsWrap.innerHTML = "";
+    // muestra empty-state también en error
+    if (rowsWrap) {
+      rowsWrap.innerHTML = `
+        <div class="mt-empty">
+          <div class="mt-empty__title">No trades to show</div>
+          <div class="mt-empty__hint">Try again in a moment.</div>
+        </div>
+      `;
+    }
+    if (pager) pager.hidden = true;
   });
 })();
-
