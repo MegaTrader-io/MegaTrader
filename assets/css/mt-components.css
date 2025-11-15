@@ -2106,6 +2106,53 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     padding-right: 1rem;
 }
 
+@media (max-width: 767px) {
+
+    #pricing .mt-tabs__container {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .plan-detail-selection__features-item .mega-info-row__label {
+        white-space: pre-line;
+    }
+
+    .mt-pricing-card__header-text,
+    .mt-pricing-card__code {
+        font-size: 18px;
+        color: #131210;
+    }
+
+    .pricing-table-container {
+        padding-bottom: 0;
+    }
+
+    #pricing .mt-pricing-card__header {
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+    }
+
+
+    .pricing-table-panel> :not([hidden])~ :not([hidden]) {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .pricing-table-panel {
+        padding: 24px 0 12px 0;
+    }
+
+    .pricing-table-panel__wrapper_area {
+        margin-top: 0;
+    }
+
+    .pricing-table-panel__meta_info,
+    .pricing-table-panel__summary_title,
+    .pricing-table-panel__plan_summary_container {
+        display: none;
+    }
+}
+
 .pricing-table-panel__summary_card {
     width: 100%;
     border-radius: 1rem;
@@ -2543,6 +2590,49 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     align-self: stretch;
     color: white;
     font-family: inherit;
+}
+
+#pricing .plan-detail-selection.plan-detail-selection--landing-page {
+    display: block;
+    margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+    #pricing .plan-detail-selection.plan-detail-selection--landing-page {
+        display: none;
+        margin-bottom: 0;
+    }
+}
+
+.plan-detail-selection--landing-page .plan-detail-selection__name {
+    align-self: stretch;
+    color: white;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 40px;
+    word-wrap: break-word
+}
+
+.plan-detail-selection--landing-page .plan-detail-selection__card.mt-card {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.plan-detail-selection--landing-page .plan-detail-selection__features-title {
+    height: auto;
+    padding-top: 0;
+    margin-top: 10px;
+    color: #FFB34A;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 32px;
+    word-wrap: break-word;
+    letter-spacing: -0.05em;
+}
+
+.plan-detail-selection--landing-page .plan-detail-selection__features-item > div {
+    color: #A8A29E;
+    word-wrap: break-word
 }
 
 .plan-detail-selection__title {

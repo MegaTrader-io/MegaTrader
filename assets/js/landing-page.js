@@ -489,6 +489,7 @@ document.addEventListener('DOMContentLoaded', function () {
     void loadChooseYourAccountSize(
         async (params) => {
             const metaInfoElement = document.querySelector('.metaInfo');
+            const planDetailSelection = document.querySelector('.plan-detail-selection');
             metaInfoElement.innerHTML = '';
 
             const {product: productionSelected, values} = params;
@@ -549,15 +550,34 @@ document.addEventListener('DOMContentLoaded', function () {
             const template = document.querySelector(`.template-metaInfo`);
 
 
+            const features = planDetailSelection.querySelector('.plan-detail-selection__features-list');
+            features.innerHTML = '';
             metaInfoList.forEach(metaInfo => {
                 const row = template.cloneNode(true);
                 row.classList.remove('template-metaInfo', 'd-none');
                 const labelHTML = row.querySelector('.mega-info-row__label');
                 labelHTML.dataset.key = metaInfo.key;
                 labelHTML.innerText = metaInfo.label;
+                const value = productionSelected['meta-info'][metaInfo.key];
 
-                row.querySelector('.mega-info-row__value').innerText = productionSelected['meta-info'][metaInfo.key];
+                row.querySelector('.mega-info-row__value').innerText = value;
                 metaInfoElement.appendChild(row)
+
+                const li = document.createElement('li');
+                li.classList.add('plan-detail-selection__features-item');
+
+                const img = document.createElement('img');
+                img.src = `/wp-content/themes/megatrader-addons/assets/img/landing-page/check.svg`;
+
+                li.appendChild(img);
+
+                const div = document.createElement('div');
+                div.classList.add('mega-info-row__label');
+                div.innerText = metaInfo.label + ': ' + value;
+
+                li.appendChild(div);
+
+                features.appendChild(li);
             });
 
             const priceCard = document.querySelector(`.mt-pricing-card`);
@@ -587,7 +607,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            document.querySelector('.plan-summary__name').innerText = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
+            const planTitle = values['account-size'].toUpperCase() + ' ' + values['account-type'].replace('-', ' ');
+            document.querySelector('.plan-summary__name').innerText = planTitle;
+            planDetailSelection.querySelector('.plan-detail-selection__name').innerText = planTitle.toUpperCase();
 
             const couponURL = `/wp-json/custom/v1/best-coupon?id=${productionSelected.id}`;
             if (!couponCache[couponURL]) {
@@ -651,6 +673,133 @@ document.addEventListener('DOMContentLoaded', function () {
         gap: 16,
         autoplay: 3000,
     })).mount();
+
+    function pricingTable() {
+        const futuresForm = document.getElementById("futures-form");
+        const glideRoot = document.querySelector("#account-type-glide");
+        if (!glideRoot) return;
+
+        const slidesContainer = glideRoot.querySelector(".product-section__list");
+        if (!slidesContainer) return;
+
+        let glideInstance = null;
+        let isMobile = false;
+        const originalSlides = Array.from(slidesContainer.children);
+
+        const initGlide = () => {
+            if (glideInstance) return;
+            try {
+                const reversed = [...slidesContainer.children].reverse();
+                slidesContainer.innerHTML = "";
+                reversed.forEach(slide => slidesContainer.appendChild(slide));
+
+                glideInstance = new Glide(glideRoot, {
+                    type: "slider",
+                    perView: 1,
+                    gap: 16,
+                    peek: {before: 0, after: 60},
+                    autoplay: false,
+                    hoverpause: true,
+                    animationDuration: 600,
+                    rewind: false,
+                    bound: true,
+                });
+
+                glideInstance.mount();
+                console.log("✅ Glide inicializado (modo móvil)");
+            } catch (err) {
+                console.error("❌ Error al inicializar Glide:", err);
+            }
+        };
+
+        const destroyGlide = () => {
+            if (!glideInstance) return;
+            try {
+                glideInstance.destroy();
+                glideInstance = null;
+                slidesContainer.innerHTML = "";
+                originalSlides.forEach(slide => slidesContainer.appendChild(slide));
+                console.log("🧹 Glide destruido (modo escritorio)");
+            } catch (err) {
+                console.error("❌ Error al destruir Glide:", err);
+            }
+        };
+
+        let pointsNavRoot;
+        const buildPointsControlsNav = () => {
+            const mtAccountTypePoints = document.createElement("div");
+            mtAccountTypePoints.classList.add("mt-account-type-points");
+            mtAccountTypePoints.dataset.glideEl = 'controls[nav]';
+
+            for (let i = 0; i < 3; i++) {
+                const button = document.createElement("button");
+                button.classList.add('mt-account-type-points__pointer', 'glide__bullet', 'slider__bullet');
+                button.type = 'button';
+                button.dataset.glideDir = `=${i}`;
+
+                mtAccountTypePoints.appendChild(button);
+            }
+
+            slidesContainer.parentNode.insertBefore(
+                mtAccountTypePoints,
+                slidesContainer.nextSibling
+            );
+
+            return mtAccountTypePoints;
+        }
+
+
+        const applyMode = (mobile) => {
+            const btnFundedPlan = document.querySelector('[name="account-type"][value="funded-plan"]');
+
+            if (mobile && !isMobile) {
+                glideRoot.classList.add("glide--slider");
+                const track = glideRoot.querySelector('[data-glide-el="track"]');
+                if (track) track.classList.add("glide__track");
+                slidesContainer.classList.add("glide__slides");
+                slidesContainer.querySelectorAll("li").forEach(li => li.classList.add("glide__slide"));
+                isMobile = true;
+
+                pointsNavRoot = buildPointsControlsNav();
+                setTimeout(() => {
+                    btnFundedPlan.checked = true;
+                    if (futuresForm) {
+                        futuresForm.dispatchEvent(new Event('change'));
+                    }
+                }, 0);
+                initGlide();
+            } else if (!mobile && isMobile) {
+                glideRoot.classList.remove("glide--slider");
+                if (!!pointsNavRoot) {
+                    pointsNavRoot?.remove();
+                    pointsNavRoot = null;
+                }
+
+                const track = glideRoot.querySelector('[data-glide-el="track"]');
+                if (track) track.classList.remove("glide__track");
+                slidesContainer.classList.remove("glide__slides");
+                slidesContainer.querySelectorAll("li").forEach(li => li.classList.remove("glide__slide", "glide__slide--active"));
+                isMobile = false;
+                destroyGlide();
+            }
+        };
+
+        // 📱 Detecta ancho con media query
+        const media = window.matchMedia("(max-width: 767px)");
+
+        const checkMode = () => applyMode(media.matches);
+
+        // 🧭 Escucha cambios de tamaño u orientación
+        media.addEventListener("change", checkMode);
+        window.addEventListener("orientationchange", () => {
+            setTimeout(checkMode, 250);
+        });
+
+        // 🚀 Ejecuta una vez al cargar
+        checkMode();
+    }
+
+    pricingTable();
 });
 
 window.addEventListener("pageshow", function (event) {

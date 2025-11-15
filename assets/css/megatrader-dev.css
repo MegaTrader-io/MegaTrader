@@ -3078,6 +3078,38 @@ a.pagination-number {
   gap: 8px;
 }
 
+ul.product-section__list > li {
+    list-style: none;
+}
+
+ul.product-section__list li:not(.glide__slide) {
+    display: inherit;
+}
+
+ul.product-section__list {
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.mt-account-type-points {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.mt-account-type-points__pointer {
+    width: 15px !important;
+    height: 15px !important;
+}
+
+.mt-account-type-points__pointer.glide__bullet--active {
+    background-color: #8c8c8c !important;
+}
+
+.mt-account-type-points__pointer:not(.glide__bullet--active) {
+    background-color: #3d3d3d !important;
+}
+
 @media (max-width: 768px) {
   .product-section__list {
     grid-auto-flow: row;

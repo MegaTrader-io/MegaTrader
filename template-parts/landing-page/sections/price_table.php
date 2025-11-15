@@ -160,7 +160,6 @@ $tabs = array_map(function ($item) {
                 Choose from tw-flexible account sizes and plans tailored to your style—whether you're learning or ready to trade with confidence.
             </p>
         </div>
-
     </div>
 
     <div class="pricing-table-panel <?php echo $classes; ?>">
@@ -250,7 +249,12 @@ $tabs = array_map(function ($item) {
 
                             <a href="#" id="proceed-to-checkout-btn"
                                class="mega-btn-md mega-btn-secondary-md pricing-table-panel__checkout_btn">
-                                GET FUNDED
+                                <span class="tw-hidden md:tw-inline">
+                                    GET FUNDED
+                                </span>
+                                <span class="tw-inline md:tw-hidden">
+                                    CONTINUE
+                                </span>
                             </a>
                         </div>
                     </div>

@@ -84,6 +84,7 @@ body.admin-bar {
         padding-top: 0;
         padding-bottom: 0;
         border-bottom: transparent;
+        height: 100px;
     }
 
     .mt-navbar__links--scrolled {

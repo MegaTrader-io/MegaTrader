@@ -39,7 +39,7 @@ $mt_in_numbers = [
             See how our commitment to excellence delivers real payouts, consistent performance, and trader success.
         </p>
     </div>
-    <div class="tw-hidden md:tw-block tw-bg-mgt-dark tw-rounded-2xl md:tw-grid md:tw-grid-cols-12 lg:tw-grid lg:tw-grid-cols-5 !tw-mt-12 lg:tw-items-start lg:tw-justify-between tw-gap-3 tw-px-4 tw-py-8">
+    <div class="tw-hidden tw-bg-mgt-dark tw-rounded-2xl md:tw-grid md:tw-grid-cols-12 lg:tw-grid lg:tw-grid-cols-5 !tw-mt-12 lg:tw-items-start lg:tw-justify-between tw-gap-3 tw-px-4 tw-py-8">
         <?php foreach ($mt_in_numbers as $index => $item): ?>
             <?php
             $colClasses = 'tw-flex-col tw-justify-start tw-items-center tw-gap-2 lg:tw-col-auto';
