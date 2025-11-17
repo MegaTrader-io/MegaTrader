@@ -268,7 +268,7 @@ function render_platforms($platforms) {
         <div id="account-type-glide">
             <div data-glide-el="track">
                 <ul class="product-section__list">
-                    <?php render_account_types($account_types); ?>
+                    <?php render_account_types(array_reverse($account_types)); ?>
                 </ul>
             </div>
         </div>

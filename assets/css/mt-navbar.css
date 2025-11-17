@@ -45,8 +45,14 @@ body.admin-bar {
     border-bottom: 2px solid #FFB34A;
 }
 
+@media (max-width: 1024px) {
+    .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
+        background: rgba(18, 18, 18, 0.95);
+    }
+}
+
 .mt-navbar__links--scrolled {
-    background: rgba(18, 18, 18, 0.95);
+    background: rgba(18, 18, 18, 0.95) !important;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
