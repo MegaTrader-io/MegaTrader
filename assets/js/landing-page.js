@@ -689,15 +689,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const initGlide = () => {
             if (glideInstance) return;
             try {
+                // Revertir orden
                 const reversed = [...slidesContainer.children].reverse();
                 slidesContainer.innerHTML = "";
                 reversed.forEach(slide => slidesContainer.appendChild(slide));
 
-                glideInstance = new Glide(glideRoot, {
+                glideInstance = new Glide("#account-type-glide", {
                     type: "slider",
                     perView: 1,
                     gap: 16,
-                    peek: {before: 0, after: 60},
+                    peek: { before: 0, after: 60 },
                     autoplay: false,
                     hoverpause: true,
                     animationDuration: 600,
@@ -717,6 +718,7 @@ document.addEventListener('DOMContentLoaded', function () {
             try {
                 glideInstance.destroy();
                 glideInstance = null;
+
                 slidesContainer.innerHTML = "";
                 originalSlides.forEach(slide => slidesContainer.appendChild(slide));
                 console.log("🧹 Glide destruido (modo escritorio)");
@@ -729,73 +731,90 @@ document.addEventListener('DOMContentLoaded', function () {
         const buildPointsControlsNav = () => {
             const mtAccountTypePoints = document.createElement("div");
             mtAccountTypePoints.classList.add("mt-account-type-points");
-            mtAccountTypePoints.dataset.glideEl = 'controls[nav]';
+            mtAccountTypePoints.dataset.glideEl = "controls[nav]";
 
             for (let i = 0; i < 3; i++) {
                 const button = document.createElement("button");
-                button.classList.add('mt-account-type-points__pointer', 'glide__bullet', 'slider__bullet');
-                button.type = 'button';
+                button.classList.add("mt-account-type-points__pointer", "glide__bullet", "slider__bullet");
+                button.type = "button";
                 button.dataset.glideDir = `=${i}`;
-
                 mtAccountTypePoints.appendChild(button);
             }
 
-            slidesContainer.parentNode.insertBefore(
-                mtAccountTypePoints,
-                slidesContainer.nextSibling
-            );
-
+            slidesContainer.parentNode.insertBefore(mtAccountTypePoints, slidesContainer.nextSibling);
             return mtAccountTypePoints;
-        }
-
+        };
 
         const applyMode = (mobile) => {
             const btnFundedPlan = document.querySelector('[name="account-type"][value="funded-plan"]');
 
             if (mobile && !isMobile) {
                 glideRoot.classList.add("glide--slider");
+
                 const track = glideRoot.querySelector('[data-glide-el="track"]');
                 if (track) track.classList.add("glide__track");
+
                 slidesContainer.classList.add("glide__slides");
-                slidesContainer.querySelectorAll("li").forEach(li => li.classList.add("glide__slide"));
+
+                // ✅ solo los <li> de primer nivel
+                slidesContainer.querySelectorAll(":scope > li").forEach(li => li.classList.add("glide__slide"));
+
                 isMobile = true;
 
                 pointsNavRoot = buildPointsControlsNav();
+
+                const doesExistsPreviousPriceTableSelection = !!localStorage.getItem('content-futures-storage');
+
                 setTimeout(() => {
-                    btnFundedPlan.checked = true;
-                    if (futuresForm) {
-                        futuresForm.dispatchEvent(new Event('change'));
+                    if (doesExistsPreviousPriceTableSelection) {
+                        const radios = Array.from(document.querySelectorAll('[name="account-type"]'));
+                        const checked = document.querySelector('[name="account-type"]:checked');
+
+                        if (checked) {
+                            const index = radios.indexOf(checked);
+                            console.log("🔢 Índice del radio seleccionado:", index);
+                            glideInstance.go(`=${index}`);
+                        } else {
+                            console.log("⚠️ Ningún radio seleccionado.");
+                        }
+
+                        return;
+                    }
+
+                    if (btnFundedPlan) {
+                        btnFundedPlan.checked = true;
+                        if (futuresForm) futuresForm.dispatchEvent(new Event("change"));
                     }
                 }, 0);
+
                 initGlide();
             } else if (!mobile && isMobile) {
                 glideRoot.classList.remove("glide--slider");
-                if (!!pointsNavRoot) {
-                    pointsNavRoot?.remove();
+
+                if (pointsNavRoot) {
+                    pointsNavRoot.remove();
                     pointsNavRoot = null;
                 }
 
                 const track = glideRoot.querySelector('[data-glide-el="track"]');
                 if (track) track.classList.remove("glide__track");
+
                 slidesContainer.classList.remove("glide__slides");
-                slidesContainer.querySelectorAll("li").forEach(li => li.classList.remove("glide__slide", "glide__slide--active"));
+
+                // ✅ solo remover del primer nivel
+                slidesContainer.querySelectorAll(":scope > li").forEach(li => li.classList.remove("glide__slide", "glide__slide--active"));
+
                 isMobile = false;
                 destroyGlide();
             }
         };
 
-        // 📱 Detecta ancho con media query
         const media = window.matchMedia("(max-width: 767px)");
-
         const checkMode = () => applyMode(media.matches);
 
-        // 🧭 Escucha cambios de tamaño u orientación
         media.addEventListener("change", checkMode);
-        window.addEventListener("orientationchange", () => {
-            setTimeout(checkMode, 250);
-        });
+        window.addEventListener("orientationchange", () => setTimeout(checkMode, 250));
 
-        // 🚀 Ejecuta una vez al cargar
         checkMode();
     }
 
