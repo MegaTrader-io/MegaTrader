@@ -268,7 +268,7 @@ function render_platforms($platforms) {
         <div id="account-type-glide">
             <div data-glide-el="track">
                 <ul class="product-section__list">
-                    <?php render_account_types($account_types); ?>
+                    <?php render_account_types(array_reverse($account_types)); ?>
                 </ul>
             </div>
         </div>
@@ -309,6 +309,7 @@ function render_platforms($platforms) {
         <div class="plan-detail-selection plan-detail-selection--landing-page">
             <div class="plan-detail-selection__card mt-card">
                 <div class="btn-plan-detail plan-detail-selection__header btn-plan-detail--active">
+                    <img class="plan-detail-selection__account-icon" alt="Plan Icon">
                     <div class="plan-detail-selection__name"></div>
                     <div class="plan-detail-selection__checked-wrapper">
                         <i class="mt-icon mt-icon-white mt-icon_caret-up-solid" style="width: 30px;height: 30px;"></i>

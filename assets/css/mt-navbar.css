@@ -41,25 +41,18 @@ body.admin-bar {
     z-index: 50;
     display: flex;
     height: 90px;
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
-    background: transparent;
     box-shadow: none;
     border-bottom: 2px solid #FFB34A;
-    transition: background 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
 }
 
 @media (max-width: 1024px) {
     .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
-        background: var(--black-color);
+        background: rgba(18, 18, 18, 0.95);
     }
 }
 
 .mt-navbar__links--scrolled {
-    background: rgba(18, 18, 18, 0.95);
+    background: rgba(18, 18, 18, 0.95) !important;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
