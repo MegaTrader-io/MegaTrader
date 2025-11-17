@@ -31,13 +31,13 @@ class MT_Api {
   public static function fetch_user_by_email(string $email): array|null
   {
     if (!$email) return [];
-
-    $key = sprintf(CACHE_KEY::USER_INFO, md5(strtolower($email)));
+    $email_lowercase = strtolower($email);
+    $key = sprintf(CACHE_KEY::USER_INFO, md5($email_lowercase));
     $cached = get_transient($key);
     if ($cached !== false) return $cached;
 
     // Ejecuta el shortcode en modo consulta (json vacío)
-    $sc = sprintf('[mega_user_update email="%s" output="json"]', esc_attr($email));
+    $sc = sprintf('[mega_user_update email="%s" output="json"]', esc_attr($email_lowercase));
 
     $raw = do_shortcode($sc);
 

@@ -63,7 +63,7 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
     <div class="d-flex align-items-center gap-2 w-100">
       <span class="svg-button mt-icon mt-icon_caret-down mt-icon-white"></span>
       <div class="align-items-center d-flex flex-wrap column-gap-2 column-gap-sm-2 row-gap-2">
-        <div class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md"></div>
+        <div id="mt-selection-icon_diamond"class="mt-icon mt-icon-primary mt-icon_diamond mt-icon-md"></div>
         <div class="d-flex gap-2 align-items-center flex-fill">
           <img id="mt-platform-logo"
                src="<?php echo esc_url($currentLogo ?: $fallback_logo); ?>"

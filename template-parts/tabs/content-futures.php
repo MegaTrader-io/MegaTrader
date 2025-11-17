@@ -116,40 +116,42 @@ function render_account_types($account_types) {
             $is_active_assigned = true;
         }
         ?>
-        <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
-        <div class="radio__label__wrapper">
-            <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
-                   for="<?= $radio_id ?>"
-                   data-value="<?= $slug ?>"
-                   title="<?= $description ?>"
-            >
-                <div class="mt-card__header">
-                    <i class="mt-card__radio disabled-target"></i>
-                    <?php if ($badge):
-                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
-                        ?>
-                        <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
+        <li>
+            <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
+            <div class="radio__label__wrapper">
+                <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
+                       for="<?= $radio_id ?>"
+                       data-value="<?= $slug ?>"
+                       title="<?= $description ?>"
+                >
+                    <div class="mt-card__header">
+                        <i class="mt-card__radio disabled-target"></i>
+                        <?php if ($badge):
+                            $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                            $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+                            ?>
+                            <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="mt-card__title disabled-target">
+                        <?php if ($thumbnail): ?>
+                            <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
+                        <?php endif; ?>
+                        <span class="mt-card__title__text"><?= $name; ?></span>
+                    </div>
+                    <?php if (!empty($parsed['data'])): ?>
+                        <ul class="mt-card__check-list disabled-target">
+                            <?php foreach ($parsed['data'] as $text): ?>
+                                <li class="mt-card__check-list__item">
+                                    <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
+                                    <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
                     <?php endif; ?>
-                </div>
-                <div class="mt-card__title disabled-target">
-                    <?php if ($thumbnail): ?>
-                        <img class="mt-card__title__icon" src="<?= $thumbnail; ?>" alt="Icon">
-                    <?php endif; ?>
-                    <span class="mt-card__title__text"><?= $name; ?></span>
-                </div>
-                <?php if (!empty($parsed['data'])): ?>
-                    <ul class="mt-card__check-list disabled-target">
-                        <?php foreach ($parsed['data'] as $text): ?>
-                            <li class="mt-card__check-list__item">
-                                <i class="mt-icon mt-icon_checkmark mt-icon-primary"></i>
-                                <span class="mt-card_check-list__item__text"><?= esc_html($text); ?></span>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
-            </label>
-        </div>
+                </label>
+            </div>
+        </li>
         <?php
     }
 }
@@ -262,8 +264,13 @@ function render_platforms($platforms) {
             <i class="mt-icon mt-icon_lightning mt-icon-md mt-icon-primary" aria-hidden="true"></i>
             <span class="product-section__title"><?= Label::FUTURES['plan_section_title']; ?></span>
         </h2>
-        <div class="product-section__list">
-            <?php render_account_types($account_types); ?>
+
+        <div id="account-type-glide">
+            <div data-glide-el="track">
+                <ul class="product-section__list">
+                    <?php render_account_types($account_types); ?>
+                </ul>
+            </div>
         </div>
     </section>
     <section class="product-section" id="account-platform">
@@ -298,9 +305,55 @@ function render_platforms($platforms) {
             <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn"
                href="/checkout/"><?= Label::FUTURES['submit_btn_text'] ?></a>
         </section>
+    <?php else: ?>
+        <div class="plan-detail-selection plan-detail-selection--landing-page">
+            <div class="plan-detail-selection__card mt-card">
+                <div class="btn-plan-detail plan-detail-selection__header btn-plan-detail--active">
+                    <div class="plan-detail-selection__name"></div>
+                    <div class="plan-detail-selection__checked-wrapper">
+                        <i class="mt-icon mt-icon-white mt-icon_caret-up-solid" style="width: 30px;height: 30px;"></i>
+                    </div>
+                </div>
+                <div class="plan-detail-selection__body" style="height: auto;">
+                    <div class="plan-detail-selection__features-title">
+                        Objectives and Rules
+                    </div>
+                    <ul class="plan-detail-selection__features-list mt-card__check-list disabled-target">
+                        <li class="plan-detail-selection__features-item">
+                            <img src="/wp-content/themes/megatrader-addons/assets/img/landing-page/check.svg"
+                                 alt="check">
+                            <div class="mega-info-row__label">---</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const header = document.querySelector('.btn-plan-detail');
+            const body = header.nextElementSibling;
+
+            header.addEventListener('click', (e) => {
+                const el = e.currentTarget;
+                const isActive = el.classList.toggle('btn-plan-detail--active');
+
+                if (isActive) {
+                    body.style.height = body.scrollHeight + 'px';
+                    body.addEventListener(
+                        'transitionend',
+                        () => (body.style.height = 'auto'),
+                        {once: true}
+                    );
+                } else {
+                    body.style.height = body.scrollHeight + 'px';
+                    requestAnimationFrame(() => {
+                        body.style.height = '0';
+                    });
+                }
+            });
+        </script>
     <?php endif; ?>
 </form>
-
 
 <script>
     const PAGE_KEY = '<?= $page_slug ?>-storage';

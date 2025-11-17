@@ -1,5 +1,44 @@
-<div id="hero-section" class="tw-px-4">
-    <div class="tw-py-12 tw-space-y-12">
+<section id="hero-section" class="tw-px-4">
+    <div class="md:tw-hidden tw-pt-10 tw-pb-3">
+        <div class="tw-flex tw-justify-center md:tw-hidden">
+            <div class="tw-pl-1.5 tw-pr-4 tw-py-1.5 tw-rounded-[64px] tw-outline tw-outline-2 tw-outline-offset-[-2px] tw-outline-teal-500 tw-inline-flex tw-justify-start tw-items-center tw-gap-2">
+                <div class="tw-px-3 tw-py-2 tw-bg-teal-500 tw-rounded-[64px] tw-flex tw-justify-start tw-items-center tw-gap-2 tw-overflow-hidden">
+                    <div class="tw-justify-start tw-text-slate-950 tw-text-sm tw-font-medium tw-leading-5">TRADE
+                        BIG
+                    </div>
+                </div>
+                <div class="tw-justify-start tw-text-white tw-text-sm tw-font-bold tw-leading-5">Reach Your Next
+                    Level.
+                </div>
+            </div>
+        </div>
+
+        <div class="tw-block">
+            <div class="tw-py-5 tw-tracking-tighter tw-text-center tw-justify-start tw-text-white tw-text-[44px] tw-font-medium tw-uppercase tw-leading-[44px]">
+                Futures Funding Starts Here.
+            </div>
+
+            <p class="tw-m-auto tw-mb-0 tw-w-[362px] tw-max-w-[748px] tw-text-center tw-justify-start text-stone-400 tw-text-lg tw-font-normal tw-leading-6">
+                Innovative solutions, unmatched reliability, and tools designed to elevate your trading journey to new
+                heights. This is MegaTrader.
+            </p>
+        </div>
+
+        <div class="tw-flex tw-justify-center tw-mt-6">
+            <a href="<?= home_url('/auth/register') ?>"
+               class="tw-h-[59px] tw-px-6 tw-bg-[#ffb34a] tw-rounded-xl tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
+                <div class="tw-w-11 tw-h-[43px] tw-relative">
+                    <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
+                         width="44" height="43">
+                </div>
+                <div class="tw-text-[#3d2900] tw-text-2xl tw-font-medium tw-uppercase tw-leading-7">
+                    Get funded now
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="tw-hidden md:tw-block tw-py-12 tw-space-y-12">
         <div class="tw-px-4 tw-space-y-12 tw-relative">
             <div class="tw-flex tw-justify-center">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/megatraderX-blue.svg"
@@ -111,4 +150,4 @@
 
         <?php require 'partials/feature_highlights.php'; ?>
     </div>
-</div>
+</section>

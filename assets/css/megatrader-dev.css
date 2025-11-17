@@ -68,6 +68,12 @@
   display: none;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+
+
 /*
 * MODAL
 */
@@ -485,6 +491,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .w-24 {
   width: 6rem;
+}
+
+.w-140px {
+  width: 140px;
 }
 
 .w-170px {
@@ -3068,6 +3078,38 @@ a.pagination-number {
   gap: 8px;
 }
 
+ul.product-section__list > li {
+    list-style: none;
+}
+
+ul.product-section__list li:not(.glide__slide) {
+    display: inherit;
+}
+
+ul.product-section__list {
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.mt-account-type-points {
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.mt-account-type-points__pointer {
+    width: 15px !important;
+    height: 15px !important;
+}
+
+.mt-account-type-points__pointer.glide__bullet--active {
+    background-color: #8c8c8c !important;
+}
+
+.mt-account-type-points__pointer:not(.glide__bullet--active) {
+    background-color: #3d3d3d !important;
+}
+
 @media (max-width: 768px) {
   .product-section__list {
     grid-auto-flow: row;
@@ -4513,89 +4555,7 @@ textarea.mtfb-note {
 }
 
 /* ======= APEX TOOLTIP CONTAINER - GRAPGIC CHART ======= */
-.apexcharts-tooltip {
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
-  overflow: visible !important;
-  transition: none !important;
-  will-change: transform, opacity;
-  pointer-events: none !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  z-index: 10;
-}
 
-.apexcharts-tooltip.mt-tip-hidden {
-  transform: translate3d(-9999px, -9999px, 0) !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-}
-
-/* ======= TOOLTIP CUSTOM ======= */
-.mt-apex-tip {
-  position: relative;
-  background: #000;
-  color: #fff;
-  border: 1px solid var(--Colors-Gray-700, #404040);
-  border-radius: 8px;
-  padding: 10px 12px;
-  min-width: 220px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-}
-
-.mt-apex-tip::before,
-.mt-apex-tip::after {
-  content: "";
-  position: absolute;
-  left: var(--arrow-x, 22px);
-  pointer-events: none;
-  border-style: solid;
-  top: 100%;
-}
-
-.mt-apex-tip::before {
-  border-width: 7px;
-  border-color: var(--Colors-Gray-700, #404040) transparent transparent transparent;
-}
-
-.mt-apex-tip::after {
-  border-width: 7px;
-  border-color: #000 transparent transparent transparent;
-  margin-top: -1px;
-}
-
-.mt-apex-tip__date {
-  color: #fff;
-  font-size: 14px;
-  line-height: 20px;
-  margin-bottom: 8px;
-}
-
-.mt-apex-tip__row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--Text-Body, #a8a29e);
-}
-
-.mt-apex-tip__row b {
-  font-weight: 600;
-  color: #fff;
-}
-
-.mt-apex-tip__marker {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  margin-right: 8px;
-  vertical-align: middle;
-}
 
 .account-performance-chart.is-empty {
   min-height: 505px;
@@ -4662,38 +4622,43 @@ textarea.mtfb-note {
 /* Normaliza la estructura interna que renderiza LWC (tabla/canvas) */
 #account-performance-chart .tv-lightweight-charts,
 #account-performance-chart table {
-  margin:0 !important;
-  border:0 !important;             
+  margin: 0 !important;
+
 
 }
 
 #account-performance-chart table td {
   padding: 0 !important;
-  border: 0 !important;            /* quita TODOS los bordes de celdas */
+  border: 0 !important;
 }
 
-#account-performance-chart table tr:first-child td:nth-child(2){
-  border-right:1px solid var(--ot-border-color) !important;   /* separador vertical */
-}
-#account-performance-chart table tr:last-child  td:nth-child(2){
-  border-top:1px solid var(--ot-border-color) !important;     /* separador horizontal inferior */
+#account-performance-chart table tr:first-child td:nth-child(2) {
+  border-right: 1px solid var(--ot-border-color) !important;
+  /* separador vertical */
 }
 
-.mt-chart-tip{
-  position:fixed;               /* fuera del contenedor */
-  pointer-events:none;
-  background:#111; 
-  color:#fff;
-  padding:8px 10px; 
-  border-radius:8px;
-  font:12px/1.25 system-ui;
-  box-shadow:0 4px 16px rgba(0,0,0,.35);
-  opacity:0;                    /* se muestra desde JS */
-  transition:opacity .12s ease;
-  z-index:9999;
-  max-width:260px;
-  word-break:normal;
-  white-space:nowrap;
+#account-performance-chart table tr:last-child td:nth-child(2) {
+  border-top: 1px solid var(--ot-border-color) !important;
+  /* separador horizontal inferior */
+}
+
+.mt-chart-tip {
+  position: fixed;
+  /* fuera del contenedor */
+  pointer-events: none;
+  background: #111;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font: 12px/1.25 system-ui;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .35);
+  opacity: 0;
+  /* se muestra desde JS */
+  transition: opacity .12s ease;
+  z-index: 9999;
+  max-width: 260px;
+  word-break: normal;
+  white-space: nowrap;
 }
 
 
@@ -4746,6 +4711,27 @@ textarea.mtfb-note {
 #changeSubcriptionModal #mt-acc-filter-menu .dropdown-item:active {
   background: #ffb34a;
   color: #000;
+}
+
+@media (max-width: 575.98px) {
+
+  /* Oculta el icono del diamante solo si es descendiente directo 
+    del contenedor con la clase .mt-account-selection.
+  */
+  .mt-account-selection #mt-selection-icon_diamond {
+    display: none !important;
+  }
+
+  /* Oculta el logo de la plataforma solo si es descendiente directo 
+    del contenedor con la clase .mt-account-selection.
+  */
+  .mt-account-selection #mt-platform-logo {
+    display: none !important;
+  }
+
+  .mt-account-selection #mt-account-id-badge {
+    display: none !important;
+  }
 }
 
 /***** Account Notifications *****/
@@ -4964,13 +4950,181 @@ button#mt-payout-acc-btn:active {
 
 @media (min-width: 992px) {
   .mt-acc-menu {
-     max-height:230px;
-    overflow-y:auto ;
-    overflow-x:hidden ;
-  
+    max-height: 230px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
   }
 }
 
 
 /***** End Modal Payout **/
 
+
+/***** Trade History **/
+/* ===== Trades History (mismas columnas fijas tipo Daily Journal) ===== */
+#mt-trades {
+  --cols: 10;
+  --colw: 100px;
+  --bg: var(--Surface-Page, #1E1E1E);
+}
+
+#mt-trades .dj-viewport {
+  max-inline-size: 100%
+}
+
+#mt-trades .dj-clip {
+  position: relative;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--bg)
+}
+
+#mt-trades .dj-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--bg);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .15) transparent;
+}
+
+#mt-trades .dj-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--colw));
+  inline-size: max-content
+}
+
+#mt-trades .dj-headrow {
+  border-bottom: 1px solid rgba(255, 255, 255, .12)
+}
+
+#mt-trades .dj-row {
+  border-bottom: 1px solid var(--Colors-Gray-800, #292524)
+}
+
+#mt-trades .dj-head {
+  color: #fff;
+  font-weight: 700;
+  font-size: .875rem;
+  line-height: 1.25;
+  padding: 16px 8px;
+}
+
+#mt-trades .dj-cell {
+  color: var(--Text-Body, #A8A29E);
+  font-weight: 500;
+  font-size: .875rem;
+   padding: 8px;
+  white-space: normal
+}
+
+#mt-trades .is-right {
+  text-align: right
+}
+
+#mt-trades .is-left {
+  text-align: left
+}
+
+/* Empty-state (alias para cualquiera de los dos) */
+#mt-trades .dj-rows>.dj-empty,
+#mt-trades .dj-rows>.mt-empty {
+  text-align: center;
+  padding: 16px;
+  margin: 16px auto;
+  max-width: 520px;
+  color: var(--Text-Body, #A8A29E);
+  font: 500 14px/20px Roboto, system-ui, sans-serif;
+  border: 1px dashed rgba(255, 255, 255, .12);
+  border-radius: 12px;
+  background: #1e1e1e;
+}
+
+/* Header & segmented buttons */
+#mt-trades .tr-headbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between
+}
+
+#mt-trades .tr-title {
+  color: var(--Text-Body, #A8A29E);
+  font: 500 16px/24px Roboto, system-ui, sans-serif
+}
+
+#mt-trades .tr-seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+  border-radius: 8px;
+  background: var(--Surface-Page, #1E1E1E)
+}
+
+#mt-trades .tr-seg__btn {
+  color: #fff;
+  background: transparent;
+}
+
+#mt-trades .tr-seg__btn[aria-pressed="true"] {
+  background: #fff;
+  color: #292524
+}
+
+/* Pills */
+#mt-trades .mt-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: .75rem;
+  line-height: 16px
+}
+
+#mt-trades .mt-pill--sec {
+  background: var(--Secondary-500, #14B8A6);
+  color: var(--Surface-Body, #131210)
+}
+
+#mt-trades .mt-pill--err {
+  background: var(--Error-500, #F43F5E);
+  color: var(--Surface-Body, #131210)
+}
+
+/* Pager */
+#mt-trades .dj-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px
+}
+
+#mt-trades .dj-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: var(--Surface-Dark, #292524);
+  border: 1px solid var(--Colors-Gray-700, #404040);
+  border-radius: 4px
+}
+
+#mt-trades .dj-pages {
+  color: var(--Text-Body, #A8A29E);
+  font: 500 14px/20px Roboto, system-ui, sans-serif
+}
+
+#mt-trades .dj-empty {
+  text-align: center;
+  padding: 16px;
+  color: var(--Text-Body, #A8A29E);
+  font: 500 14px/20px Roboto, system-ui, sans-serif;
+}
+
+
+/***** Trade History **/

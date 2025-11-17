@@ -46,7 +46,7 @@ function mt_process_callback_register(WP_REST_Request $request): WP_REST_Respons
     ], 403);
   }
 
-  $email = sanitize_email($request->get_param('email'));
+  $email = normalize_email($request->get_param('email'));
   $password = (string)$request->get_param('password');
   $confirm = (string)$request->get_param('confirm_password');
   $privacy = (string)$request->get_param('privacy_policy');

@@ -13,7 +13,13 @@ html {
     position: sticky;
     top: 0;
     left: 0;
-    margin-bottom: 14px;
+    margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+    .mt-navbar {
+        margin-bottom: 14px;
+    }
 }
 
 body.admin-bar {
@@ -34,22 +40,27 @@ body.admin-bar {
 .mt-navbar__links {
     z-index: 50;
     display: flex;
-    height: 100px;
+    height: 90px;
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
     background: transparent;
     box-shadow: none;
-    border-bottom: 1px solid transparent;
+    border-bottom: 2px solid #FFB34A;
     transition: background 0.3s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
 }
 
+@media (max-width: 1024px) {
+    .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
+        background: var(--black-color);
+    }
+}
+
 .mt-navbar__links--scrolled {
     background: rgba(18, 18, 18, 0.95);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    border-bottom: 1px rgba(0, 0, 0, 0.95) solid;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .mt-navbar__container {
@@ -60,14 +71,26 @@ body.admin-bar {
     max-width: 80rem;
     align-items: center;
     justify-content: space-between;
-    padding-left: 1rem;
-    padding-right: 1rem
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 @media (min-width: 1024px) {
     .mt-navbar__container {
         height: 100px
     }
+
+    .mt-navbar__links {
+        padding-top: 0;
+        padding-bottom: 0;
+        border-bottom: transparent;
+        height: 100px;
+    }
+
+    .mt-navbar__links--scrolled {
+        border-bottom: 1px rgba(0, 0, 0, 0.95) solid;
+    }
+
 }
 
 @media (min-width: 1536px) {
@@ -84,12 +107,16 @@ body.admin-bar {
 .mt-navbar__logo-link {
     display: flex;
     align-items: center;
-    gap: 1rem
+    gap: 8px
 }
 
 .mt-navbar__logo-icon {
-    height: 60px;
-    width: 60px
+    height: 30px;
+    width: 30px
+}
+
+.mt-navbar__actions .mt-my-profile {
+    gap: 7px;
 }
 
 .mt-navbar__logo-icon-bs {
@@ -98,9 +125,7 @@ body.admin-bar {
 }
 
 .mt-navbar__logo-text {
-    display: none;
-    height: 45px;
-    width: 250px
+
 }
 
 .mt-navbar__logo-text-bs {
@@ -108,6 +133,10 @@ body.admin-bar {
 }
 
 @media (min-width: 1280px) {
+    .mt-navbar__logo-link {
+        gap: 16px
+    }
+
     .mt-navbar__logo-text {
         display: block
     }
@@ -118,8 +147,8 @@ body.admin-bar {
 }
 
 .mt-navbar__logo-wordmark {
-    height: 47px;
-    width: 170px
+    height: 22px;
+    width: 123px
 }
 
 .mt-navbar__logo-wordmark-bs {
@@ -128,6 +157,15 @@ body.admin-bar {
 }
 
 @media (min-width: 1024px) {
+    .mt-navbar__actions .mt-my-profile {
+        gap: 16px;
+    }
+
+    .mt-navbar__logo-icon {
+        height: 60px;
+        width: 60px
+    }
+
     .mt-navbar__logo-wordmark {
         height: 45px;
         width: 250px
@@ -214,12 +252,36 @@ body.admin-bar {
     gap: 0.875rem
 }
 
-.mt-navbar__auth-link {
-    height: 3rem;
-    text-decoration: none;
-    border-radius: 0.75rem;
-    padding-left: 12px;
-    padding-right: 12px;
+.mt-navbar__auth .mt-navbar__auth-link {
+    padding: 10.39px 13.85px;
+    background: #131210;
+    border-radius: 10.39px;
+    justify-content: center;
+    align-items: center;
+    gap: 6.93px;
+    min-height: auto;
+    display: inline-flex;
+    border: 1px solid var(--colors-gray-700);
+}
+
+.mt-navbar__auth-link .mt-navbar__auth-link-text {
+    color: #fafafa;
+    font-size: 13.85px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 21px;
+    word-wrap: break-word
+}
+
+.mt-menu-container__btn-burger {
+    display: block;
+    padding: 10.39px;
+    border-radius: 10.39px;
+    min-height: 40px;
+}
+
+.mt-menu-container__btn-burger::after {
+    content: none;
 }
 
 /* My Account Variant */
@@ -259,20 +321,11 @@ body.admin-bar {
 
 .mt-navbar__actions {
     display: flex;
-    gap: 16px;
+    gap: 7px;
 }
 
 .mt-menu-container {
     position: relative;
-}
-
-.mt-menu-container__btn-burger {
-    display: block;
-    padding: 12px;
-}
-
-.mt-menu-container__btn-burger::after {
-    content: none;
 }
 
 .mt-menu-container__menu {
