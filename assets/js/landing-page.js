@@ -698,7 +698,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     type: "slider",
                     perView: 1,
                     gap: 16,
-                    peek: { before: 0, after: 60 },
+                    peek: {before: 0, after: 60},
                     autoplay: false,
                     hoverpause: true,
                     animationDuration: 600,
@@ -707,6 +707,33 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 glideInstance.mount();
+
+                // 👇 Click para centrar el slide
+                const topLevelSlides = slidesContainer.querySelectorAll(":scope > li.glide__slide");
+                topLevelSlides.forEach((slide, index) => {
+                    slide.addEventListener("click", (e) => {
+                        if (!glideInstance) return;
+                        const currentIndex = glideInstance.index;
+                        if (index !== currentIndex) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            glideInstance.go(`=${index}`);
+
+                            document.querySelectorAll('[name="account-type"]')
+                                .forEach((accountType, indexAccountType) => {
+                                    if (indexAccountType === index) {
+                                        accountType.checked = true;
+                                        if (futuresForm) futuresForm.dispatchEvent(new Event("change"));
+                                    }
+                                })
+
+                            console.log(`🎯 Slide ${index} centrado por click`);
+                        } else {
+                            console.log(`✅ Slide ${index} ya está centrado`);
+                        }
+                    });
+                });
+
                 console.log("✅ Glide inicializado (modo móvil)");
             } catch (err) {
                 console.error("❌ Error al inicializar Glide:", err);
