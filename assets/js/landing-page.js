@@ -596,6 +596,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const img = planTypeInputRadio.nextElementSibling.querySelector('.mt-card__title__icon');
                 if (img) {
                     document.querySelector('.plan-summary__plan-icon').src = img.src;
+                    planDetailSelection.querySelector('.plan-detail-selection__account-icon').src =  img.src;
                 }
             }
 

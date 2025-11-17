@@ -85,6 +85,10 @@ HTML;
 
         <div class="plan-detail-selection__card mt-card">
             <div class="btn-plan-detail plan-detail-selection__header">
+                <img class="plan-detail-selection__account-icon"
+                     src="<?= esc_url($account_thumbnail_url); ?>"
+                     alt="Plan Icon">
+
                 <div class="plan-detail-selection__name">
                   <?= strtoupper($account_size . ' ' . $account_type['name']); ?>
                 </div>
