@@ -690,11 +690,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const initGlide = () => {
             if (glideInstance) return;
             try {
-                // Revertir orden
-                // const reversed = [...slidesContainer.children].reverse();
-                // slidesContainer.innerHTML = "";
-                // reversed.forEach(slide => slidesContainer.appendChild(slide));
-
                 glideInstance = new Glide("#account-type-glide", {
                     type: "slider",
                     perView: 1,
