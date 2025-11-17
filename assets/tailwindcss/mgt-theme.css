@@ -124,6 +124,10 @@
     transition: none;
 }
 
+.mgt-theme .checkbox-container__label {
+    @apply text-[91%] text-nowrap md:text-base tracking-tighter;
+}
+
 .mgt-theme .checkbox-container__input:checked ~ label::before {
     content: '';
     background-image: url(/wp-content/themes/megatrader-addons/assets/img/checked.svg);

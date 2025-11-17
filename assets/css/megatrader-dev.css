@@ -2823,7 +2823,7 @@ ul.woocommerce-SavedPaymentMethods li input[type="radio"]~label::before {
 }
 
 .google-signin-btn:after {
-  content: "Continue in with Google";
+  content: "Continue with Google";
 
   color: var(--Text-Action-Light-Solid, #292524);
   font-family: var(--Type-Font-Family-Body, Roboto);

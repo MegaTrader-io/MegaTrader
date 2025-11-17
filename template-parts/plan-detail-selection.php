@@ -88,9 +88,6 @@ HTML;
                 <img class="plan-detail-selection__account-icon"
                      src="<?= esc_url($account_thumbnail_url); ?>"
                      alt="Plan Icon">
-                <img class="plan-detail-selection__platform-icon"
-                     src="<?= esc_url($platform_url); ?>"
-                     alt="Platform Icon">
 
                 <div class="plan-detail-selection__name">
                   <?= strtoupper($account_size . ' ' . $account_type['name']); ?>
