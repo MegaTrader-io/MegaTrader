@@ -2605,12 +2605,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
 }
 
 .plan-detail-selection--landing-page .plan-detail-selection__name {
-    align-self: stretch;
-    color: white;
-    font-size: 25px;
-    font-weight: 700;
-    line-height: 40px;
-    word-wrap: break-word
 }
 
 .plan-detail-selection--landing-page .plan-detail-selection__card.mt-card {
