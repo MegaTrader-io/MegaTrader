@@ -566,6 +566,10 @@ html, body {
   margin-bottom: 0.5rem;
 }
 
+.mb-3{
+  margin-bottom: 0.75rem;
+}
+
 .mt-4{
   margin-top: 1rem;
 }
@@ -642,6 +646,10 @@ html, body {
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
+.text-nowrap{
+  text-wrap: nowrap;
+}
+
 .rounded-2xl{
   border-radius: 1rem;
 }
@@ -696,6 +704,10 @@ html, body {
 
 .text-\[3rem\]{
   font-size: 3rem;
+}
+
+.text-\[91\%\]{
+  font-size: 91%;
 }
 
 .text-base{
@@ -1140,6 +1152,19 @@ html, body {
   transition: none;
 }
 
+.mgt-theme .checkbox-container__label{
+  text-wrap: nowrap;
+  font-size: 91%;
+  letter-spacing: -0.05em;
+}
+
+@media (min-width: 768px){
+  .mgt-theme .checkbox-container__label{
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+}
+
 .mgt-theme .checkbox-container__input:checked ~ label::before {
   content: '';
   background-image: url(/wp-content/themes/megatrader-addons/assets/img/checked.svg);
@@ -1308,6 +1333,11 @@ html, body {
   .md\:px-\[52px\]{
     padding-left: 52px;
     padding-right: 52px;
+  }
+
+  .md\:text-base{
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 }
 

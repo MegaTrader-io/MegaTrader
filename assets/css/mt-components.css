@@ -2604,9 +2604,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     }
 }
 
-.plan-detail-selection--landing-page .plan-detail-selection__name {
-}
-
 .plan-detail-selection--landing-page .plan-detail-selection__card.mt-card {
     margin-top: 0;
     margin-bottom: 0;
