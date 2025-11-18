@@ -19,8 +19,7 @@ $class = $args['class'] ?? '';
 /** @var string|null $classes_navbar */
 $classes_navbar = $args['classes_navbar'] ?? '';
 
-$navbar_actions = $args['navbar_actions'] ?? function () {
-};
+$navbar_actions_template = $args['navbar_actions_template'] ?? '';
 
 ?>
 
@@ -53,8 +52,8 @@ $navbar_actions = $args['navbar_actions'] ?? function () {
                 </nav>
 
                 <div class="mt-navbar__actions">
-                    <?php if ($navbar_actions && is_callable($navbar_actions)): ?>
-                        <?php $navbar_actions(); ?>
+                    <?php if ($navbar_actions_template): ?>
+                        <?php get_template_part($navbar_actions_template); ?>
                     <?php endif; ?>
 
                     <a href="/auth/login" class="btn w-100 mega-btn-md mega-btn-primary-md w-100">
