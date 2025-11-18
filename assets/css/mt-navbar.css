@@ -245,7 +245,7 @@ body.admin-bar {
     gap: 0.875rem
 }
 
-.mt-navbar__auth .mt-navbar__auth-link {
+.mt-navbar:not(.mt-navbar--landing-page-bs) .mt-navbar__auth .mt-navbar__auth-link {
     padding: 10.39px 13.85px;
     background: #131210;
     border-radius: 10.39px;
@@ -346,3 +346,25 @@ body.admin-bar {
     gap: 32px;
 }
 
+/** LANDING PAGE BS **/
+
+.mt-navbar--landing-page-bs .mt-navbar__links {
+    z-index: 50;
+    display: flex;
+    box-shadow: none;
+    background: #131210;
+    border-bottom: 2px solid #FFB34A;
+}
+
+@media (max-width: 1024px) {
+    .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
+        background: rgba(18, 18, 18, 0.95);
+    }
+}
+
+.mt-navbar__links--scrolled {
+    background: rgba(18, 18, 18, 0.95) !important;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/** LANDING PAGE BS **/
