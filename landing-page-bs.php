@@ -110,11 +110,11 @@ get_header('landing-page-bs');
                 ],
                 [
                         'title' => 'Trade 5 days',
-                        'description' => 'Scale your futures trading with your<br> simulated funds'
+                        'description' => 'Scale your futures trading with your simulated funds'
                 ],
                 [
                         'title' => 'Get paid',
-                        'description' => 'Request your payout. We’ll pay in ~4 hours.'
+                        'description' => 'Request your payout. We’ll pay in ~1 hour.'
                 ],
         ];
 

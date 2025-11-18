@@ -255,7 +255,8 @@
     justify-content: flex-start;
     align-items: flex-start;
     gap: 8px;
-    display: inline-flex
+    display: inline-flex;
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.10) 0%, rgba(23.35, 110, 99.10, 0.10) 97%);
 }
 
 .payout-bs__item-title {
