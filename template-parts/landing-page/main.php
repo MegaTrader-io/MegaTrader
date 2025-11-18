@@ -1,8 +1,6 @@
 <main class="mt-landing-sections tw-min-h-dvh tw-relative lg:tw-h-full tw-w-full lg:tw-max-w-7xl md:tw-space-y-12 lg:tw-mx-auto tw-mb-6 md:tw-mb-24">
     <?php require 'sections/hero.php'; ?>
     <?php require 'sections/achievements_from_real_traders.php'; ?>
-    <?php require 'sections/market_overview.php'; ?>
-    <?php require 'sections/sponsor_logos.php'; ?>
     <?php require 'sections/megatrader_in_numbers.php'; ?>
     <?php require 'sections/timeline.php'; ?>
     <?php require 'sections/price_table.php'; ?>

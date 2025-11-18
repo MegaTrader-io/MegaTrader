@@ -146,8 +146,5 @@
                      alt="window tablet" class="tw-max-w-full lg:tw-w-[194px] tw-h-auto tw-rounded lg:tw-rounded-lg"/>
             </div>
         </div>
-
-
-        <?php require 'partials/feature_highlights.php'; ?>
     </div>
 </section>

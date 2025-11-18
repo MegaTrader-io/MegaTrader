@@ -80,106 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
     }
 
-    async function loadMarkerCarousel() {
-        async function getMarketData() {
-            try {
-                const response = await fetch(window.MG_GLOBAL.baseApi + '/markets', {
-                    headers: {'Content-Type': 'application/json'},
-                });
-
-                if (!response.ok) throw new Error(`Status ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                console.error('Error al cargar mercados:', error.message);
-                return [];
-            }
-        }
-
-        const marketList = await getMarketData();
-        const marketWrapper = document.querySelector('.market-wrapper');
-        if (!marketWrapper) return;
-
-        const carousel = document.createElement('div');
-        carousel.classList.add('carousel', 'tw-flex', 'tw-gap-4', 'animate-carousel');
-
-        const changeValue = (value) => {
-            const symbol = value > 0 ? "+" : "-";
-            return `${symbol} $ ${Math.abs(value).toFixed(2)}`;
-        };
-
-        marketList.forEach((instrument) => {
-            const card = document.createElement('div');
-            card.classList.add('tw-p-3', 'tw-rounded-lg', 'tw-inline-table', 'tw-bg-mgt-dark');
-
-            const grid = document.createElement('div');
-            grid.classList.add('tw-grid', 'tw-grid-cols-[1fr_auto]', 'tw-gap-4');
-
-            // Instrument name and price
-            const left = document.createElement('div');
-
-            const h3 = document.createElement('h3');
-            h3.classList.add('tw-text-white', 'mb-0', 'tw-text-base', 'tw-font-bold', 'tw-leading-normal', 'tw-text-nowrap');
-            h3.textContent = instrument.name;
-
-            const price = document.createElement('p');
-            price.classList.add('tw-text-stone-400', 'mb-0', 'tw-text-base', 'tw-font-medium', 'tw-leading-normal');
-            price.textContent = instrument.price.toLocaleString();
-
-            left.appendChild(h3);
-            left.appendChild(price);
-
-            // Change value and arrow
-            const right = document.createElement('div');
-            right.classList.add('tw-flex', 'tw-justify-center', 'tw-items-center', 'tw-text-nowrap');
-
-            const change = document.createElement('p');
-            change.classList.add('tw-flex', 'mb-0', 'tw-gap-2', 'tw-text-base', 'tw-font-bold', 'tw-leading-normal');
-            change.classList.add(instrument.change > 0 ? 'tw-text-teal-400' : 'tw-text-rose-500');
-            change.textContent = changeValue(instrument.change);
-
-            const svg = instrument.change > 0 ? ArrowUp(true, 'tw-w-5 tw-h-5') : ArrowDown(true, 'tw-w-5 tw-h-5');
-            change.insertAdjacentHTML('beforeend', svg);
-
-            right.appendChild(change);
-
-            grid.appendChild(left);
-            grid.appendChild(right);
-            card.appendChild(grid);
-            carousel.appendChild(card);
-        });
-
-        marketWrapper.innerHTML = '';
-        marketWrapper.appendChild(carousel);
-
-        if (carousel.children.length === 0) {
-            document.getElementById('market-data').remove();
-            return
-        }
-
-        const itemWidth = carousel.children[0].clientWidth;
-        const totalWidth = itemWidth * marketList.length;
-
-        carousel.style.setProperty('--item-width', `${itemWidth}px`);
-        carousel.style.setProperty('--total-width', `${totalWidth}px`);
-
-        const clonedItemsBefore = Array.from(carousel.children).map(child => child.cloneNode(true));
-        const clonedItemsAfter = Array.from(carousel.children).map(child => child.cloneNode(true));
-        clonedItemsBefore.forEach(item => carousel.insertBefore(item, carousel.firstChild));
-        clonedItemsAfter.forEach(item => carousel.appendChild(item));
-
-        carousel.scrollLeft = totalWidth;
-
-        const handleScroll = () => {
-            if (carousel.scrollLeft <= totalWidth) {
-                carousel.scrollLeft = 2 * totalWidth;
-            } else if (carousel.scrollLeft >= 3 * totalWidth) {
-                carousel.scrollLeft = 2 * totalWidth;
-            }
-        };
-
-        carousel.addEventListener('scroll', handleScroll);
-    }
-
     async function loadChooseYourAccountSize(fn = function () {
     }) {
         /**
@@ -482,8 +382,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         })
     }
-
-    void loadMarkerCarousel();
 
     const couponCache = {};
     void loadChooseYourAccountSize(
