@@ -209,7 +209,6 @@
 
 .payout-bs__row {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     gap: 48px;
 }
@@ -252,6 +251,7 @@
     border-left: 2px #2DD4BF solid;
     flex-direction: column;
     justify-content: flex-start;
+    height: 100px;
     align-items: flex-start;
     gap: 8px;
     display: inline-flex;
@@ -297,8 +297,8 @@
    =============================== */
 
 .payout-bs__media-wrapper {
-    width: 800px;
-    height: 624px;
+    width: 840px;
+    height: 572px;
 }
 
 /* ===============================
