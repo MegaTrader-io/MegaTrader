@@ -12,68 +12,50 @@ get_header('landing-page-bs');
             <div class="container hero-bs__container">
                 <div class="hero-bs__row">
                     <div class="hero-bs__content">
+                        <div>
+                            <div class="promo-badge">
+                                <div class="promo-badge__tag">
+                                    <span class="promo-badge__tag-text">TRADE BIG</span>
+                                </div>
+                                <span class="promo-badge__text">Reach Your Next Level.</span>
+                            </div>
+                        </div>
+
                         <header class="hero-bs__header">
                             <h1 class="hero-bs__title">
-                                Supercharge your futures trading with $750k in funding
+                                Supercharge your futures trading with UP to $750k
                             </h1>
                         </header>
 
                         <ul class="hero-bs__benefits list-unstyled">
-                            <li class="hero-bs__benefit d-flex align-items-start">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_17269_3092" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                          y="0" width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_17269_3092)">
-                                        <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#FFB34A"/>
-                                    </g>
-                                </svg>
-                                <span class="hero-bs__text">Take a Challenge or get Instant Funding</span>
-                            </li>
-                            <li class="hero-bs__benefit d-flex align-items-start">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_17269_3092" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                          y="0" width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_17269_3092)">
-                                        <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#FFB34A"/>
-                                    </g>
-                                </svg>
-                                <span class="hero-bs__text">Lightning fast 1 hour payouts</span>
-                            </li>
-                            <li class="hero-bs__benefit d-flex align-items-start">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_17269_3092" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                          y="0" width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_17269_3092)">
-                                        <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#FFB34A"/>
-                                    </g>
-                                </svg>
-                                <span class="hero-bs__text">Journal to track, analyse and improve your trades</span>
-                            </li>
+                            <?php
+                            $features = [
+                                    'Start a challenge or get instant funding',
+                                    'Lightning fast payouts in just one hour',
+                                    'Journal to track and improve your trades',
+                            ]
+                            ?>
+                            <?php foreach ($features as $key => $feature): ?>
+                                <li class="hero-bs__benefit d-flex align-items-start">
+                                    <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash.svg'; ?>">
+                                    <span class="hero-bs__text"><?= $feature ?></span>
+                                </li>
+                            <?php endforeach; ?>
                         </ul>
 
                         <div class="d-flex">
                             <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md hero-bs__btn">
                                 <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
                                      width="44" height="43">
-                                Get Funded Now
-
+                                Get funded now
                             </a>
                         </div>
                     </div>
 
                     <div class="hero-bs__media">
                         <div class="hero-bs__media-wrapper">
-                            <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/pork-bills.png' ?>"
-                                 alt="pork bills" width="532" height="522">
+                            <div class="mt-card hero-bs__media-card">
+                            </div>
                         </div>
                     </div>
                 </div>

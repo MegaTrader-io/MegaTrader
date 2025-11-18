@@ -7,7 +7,7 @@
         ]); ?>
     <?php else: ?>
         <div class="mt-navbar__auth">
-            <a href="/auth/login" class="mt-navbar__auth-link mega-btn-md text-white w-100">SIGN IN</a>
+            <a href="/auth/login" class="mega-btn-md mega-btn-outline-md text-white w-100">SIGN IN</a>
         </div>
     <?php endif ?>
 </div>
