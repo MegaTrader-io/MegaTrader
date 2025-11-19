@@ -94,7 +94,6 @@ function render_account_sizes($account_sizes) {
 function render_account_types($account_types) {
     if (empty($account_types)) return;
 
-    $is_active_assigned = false;
     foreach ($account_types as $index => $item) {
         $slug = esc_attr($item['slug']);
         $name = esc_html($item['name']);
@@ -109,15 +108,9 @@ function render_account_types($account_types) {
         $disabled_class = $is_disabled ? ' disabled-within' : '';
         $radio_id = esc_attr('account-type-' . $slug);
 
-
-        $checked_attr = '';
-        if( ! $is_disabled && ! $is_active_assigned){
-            // $checked_attr = 'checked="true"';
-            $is_active_assigned = true;
-        }
         ?>
         <li>
-            <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
+            <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>"/>
             <div class="radio__label__wrapper">
                 <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
                        for="<?= $radio_id ?>"
@@ -437,9 +430,14 @@ function render_platforms($platforms) {
                 let values = getFormValues(form);
 
                 if (Object.keys(values).length < 4) {
-                    console.info('values before', values);
-                    document.querySelectorAll('form > section input:first-child').forEach(input => {
-                        input.checked = true
+                    let defaultInputChecked = {}
+                    document.querySelectorAll('form > section input[type=radio]').forEach(input => {
+                        if (defaultInputChecked[input.name]) {
+                            return;
+                        }
+
+                        defaultInputChecked[input.name] = true;
+                        input.checked = true;
                     });
                 }
             }
