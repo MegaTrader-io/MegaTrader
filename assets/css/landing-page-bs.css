@@ -419,7 +419,6 @@
 
 .journal-bs__card {
     background-color: var(--body-bg);
-    width: auto;
     height: 500px;
 }
 
@@ -564,6 +563,42 @@
 
 .slider__slides .glide__slide:not(.glide__slide--active) .journal-bs__card {
     opacity: 0.5;
+}
+
+.verified-bs__glide .glide__slide {
+    position: relative;
+}
+
+.verified-bs__glide .slider__bullets {
+    width: var(--verified-bs-slide-width);
+}
+
+.verified-bs__glide .glide__arrows {
+    position: static;
+    width: calc(var(--verified-bs-slide-width) + 64px);
+}
+
+.verified-bs__glide .glide__arrow--prev,
+.verified-bs__glide .glide__arrow--next {
+    position: absolute;
+    padding: 8px;
+    background: #1E1E1E;
+    border-radius: 64px;
+    outline: 1px #404040 solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+}
+
+.verified-bs__glide .glide__arrow--prev {
+    left: 28px;
+    top: calc(50% - 20px);
+}
+.verified-bs__glide .glide__arrow--next {
+    right: 28px;
+    top: calc(50% - 20px);
 }
 
 .verified-bs__glide .glide__bullets {

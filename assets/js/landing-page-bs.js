@@ -106,15 +106,110 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error initializing Splide carousel:', error);
         }
 
+        const verifiedBsCarouselRoot = document.getElementById('verified-bs-id');
 
-        (new Glide('#verified-bs-id', {
+        const slider = new Glide(verifiedBsCarouselRoot, {
             type: 'carousel',
             focusAt: 'center',
-            perView: 2.280599,
             gap: 16,
-            peek: {before: 100, after: 100},
-            autoplay: 3000,
-        })).mount()
+            perView: 1,
+        });
+
+        slider.mount({
+            Sizes: function CustomSizes(Glide, Components, Events) {
+
+                const Sizes = {
+
+                    setupSlides() {
+                        const width = this.slideWidth + 'px';
+                        const slides = Components.Html.slides;
+
+                        for (let i = 0; i < slides.length; i++) {
+                            slides[i].style.width = width;
+                        }
+                    },
+
+                    setupWrapper() {
+                        Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
+                    },
+
+                    remove() {
+                        const slides = Components.Html.slides;
+
+                        for (let i = 0; i < slides.length; i++) {
+                            slides[i].style.width = '';
+                        }
+
+                        Components.Html.wrapper.style.width = '';
+                    }
+                };
+
+                // ----------------------------
+                // GETTERS OBLIGATORIOS
+                // ----------------------------
+
+                Object.defineProperty(Sizes, 'length', {
+                    get() {
+                        return Components.Html.slides.length;
+                    }
+                });
+
+                Object.defineProperty(Sizes, 'width', {
+                    get() {
+                        return Components.Html.track.offsetWidth;
+                    }
+                });
+
+                Object.defineProperty(Sizes, 'wrapperSize', {
+                    get() {
+                        return (
+                            this.slideWidth * this.length +
+                            Components.Gaps.grow +
+                            Components.Clones.grow
+                        );
+                    }
+                });
+
+                // ----------------------------
+                // ⭐⭐ AQUÍ VA TU CÁLCULO ⭐⭐
+                // ----------------------------
+                Object.defineProperty(Sizes, 'slideWidth', {
+                    get() {
+                        let w;
+
+                        if (window.innerWidth <= 768) {
+                            if (window.innerWidth < 450) {
+                                w = window.innerWidth - 32;
+                            } else {
+                                w = 450;
+                            }
+                        } else {
+                            w = 800;
+                        }
+
+                        // Actualiza la variable CSS global
+                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', w + 'px');
+
+                        return w;
+                    }
+                });
+
+                // ----------------------------
+                // EVENTOS COMO EN LA LIBRERÍA
+                // ----------------------------
+
+                Events.on(['build.before', 'resize', 'update'], () => {
+                    Sizes.setupSlides();
+                    Sizes.setupWrapper();
+                });
+
+                Events.on('destroy', () => {
+                    Sizes.remove();
+                });
+
+                return Sizes;
+            }
+        });
     }
 
     function loadChooseYourAccountSize(fn) {

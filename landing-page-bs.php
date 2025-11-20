@@ -215,36 +215,26 @@ get_header('landing-page-bs');
                 </header>
             </div>
             <div class="journal-bs__content">
-                <div id="verified-bs-id" class="verified-bs__glide slider glide">
+                <div id="verified-bs-id" class="verified-bs__glide slider glide" style="--verified-bs-slide-width: 0px">
                     <div class="slider__track glide__track" data-glide-el="track">
                         <ul class="slider__slides glide__slides">
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
-                            <li class="slider__frame glide__slide">
-                                <div class="mt-card journal-bs__card"></div>
-                            </li>
-
+                            <?php for ($i = 1; $i <= 3; $i++) : ?>
+                                <li class="slider__frame glide__slide">
+                                    <div class="mt-card journal-bs__card" style="max-width: 800px;">
+                                    </div>
+                                </li>
+                            <?php endfor; ?>
                         </ul>
                     </div>
 
-                    <div data-glide-el="controls">
-                        <button class="slider__arrow slider__arrow--prev glide__arrow glide__arrow--prev" data-glide-dir="<">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                                <path d="M0 12l10.975 11 2.848-2.828-6.176-6.176H24v-3.992H7.646l6.176-6.176L10.975 1 0 12z"/>
-                            </svg>
+                    <div data-glide-el="controls" class="glide__arrows">
+                        <button class="glide__arrow glide__arrow--prev" data-glide-dir="<">
+                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-left.svg'); ?>"
+                                 alt="control left">
                         </button>
-
-                        <button class="slider__arrow slider__arrow--next glide__arrow glide__arrow--next" data-glide-dir=">">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                                <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
-                            </svg>
+                        <button class="glide__arrow glide__arrow--next" data-glide-dir=">">
+                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-right.svg'); ?>"
+                                 alt="control right">
                         </button>
                     </div>
 
