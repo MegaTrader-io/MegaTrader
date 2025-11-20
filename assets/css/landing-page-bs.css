@@ -601,6 +601,17 @@
     top: calc(50% - 28px);
 }
 
+@media (max-width: 1024px) {
+    .verified-bs__glide .glide__arrow--prev {
+        left: calc(var(--verified-bs-slide-left) + 16px);
+        top: calc(50% - 28px);
+    }
+    .verified-bs__glide .glide__arrow--next {
+        right: calc(var(--verified-bs-slide-left) + 16px);
+        top: calc(50% - 28px);
+    }
+}
+
 .verified-bs__glide .glide__bullets {
     position: relative;
     bottom: auto;
