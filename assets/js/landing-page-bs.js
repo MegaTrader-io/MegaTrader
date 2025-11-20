@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             function calculatePerPage() {
                 const width = carouselEl.clientWidth;
-                const slideWidth = 378;
+                const slideWidth = window.innerWidth <= 767 ? 276 : 378;
                 return Math.max(1, Math.floor(width / slideWidth));
             }
 
@@ -180,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-left', (points?.getBoundingClientRect().x || 0) + 'px');
 
-                        console.info('getBoundingClientRect().x', points.getBoundingClientRect().x);
                         return width;
                     }
                 });

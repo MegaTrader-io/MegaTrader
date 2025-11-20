@@ -43,8 +43,8 @@ get_header('landing-page-bs');
                             <?php endforeach; ?>
                         </ul>
 
-                        <div class="d-flex">
-                            <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md hero-bs__btn">
+                        <div class="hero-bs__get-funded-now d-flex">
+                            <a href="#get-funded" class="mega-btn-md mega-btn-primary-md hero-bs__btn">
                                 <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
                                      width="44" height="43">
                                 Get funded now
