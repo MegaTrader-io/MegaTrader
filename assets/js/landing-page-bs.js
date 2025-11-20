@@ -190,6 +190,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Actualiza la variable CSS global
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', w + 'px');
 
+                        const points = document.querySelector('.verified-bs__glide .slider__bullets');
+
+                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-left', (points?.getBoundingClientRect().x || 0) + 'px');
+
+                        console.info('getBoundingClientRect().x', points.getBoundingClientRect().x);
                         return w;
                     }
                 });

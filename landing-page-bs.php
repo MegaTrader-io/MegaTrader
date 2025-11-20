@@ -215,7 +215,7 @@ get_header('landing-page-bs');
                 </header>
             </div>
             <div class="journal-bs__content">
-                <div id="verified-bs-id" class="verified-bs__glide slider glide" style="--verified-bs-slide-width: 0px">
+                <div id="verified-bs-id" class="verified-bs__glide slider glide" style="--verified-bs-slide-width: 0px; --verified-bs-slide-left: 0px;">
                     <div class="slider__track glide__track" data-glide-el="track">
                         <ul class="slider__slides glide__slides">
                             <?php for ($i = 1; $i <= 3; $i++) : ?>
