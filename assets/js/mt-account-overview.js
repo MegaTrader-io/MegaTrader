@@ -162,11 +162,21 @@
   }
 
   if (document.readyState === "loading") {
-    console.info("DOM not ready, waiting for it...");
     document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
   }
+
+  // Exponer helpers para otros módulos (como Account Data Global)
+  window.mtOverview = window.mtOverview || {};
+  window.mtOverview.initDonuts = initDonuts;
+  window.mtOverview.initDualBars = initDualBars;
+  window.mtOverview.initProgressBars = initProgressBars;
+  window.mtOverview.initAllFor = function (root) {
+    initDonuts(root);
+    initDualBars(root);
+    initProgressBars(root);
+  };
 })();
 
 /* ======= Interacciones de cuenta (copy + toggle pwd + AJAX) ======= */
@@ -3189,7 +3199,17 @@ if (document.readyState === "loading") {
     'select[data-action="switch-view-select"]'
   );
 
-  if (!root) return;
+  if (!root) {
+    if (selMob) {
+      selMob.addEventListener("change", (ev) => {
+        const url = ev.target.value;
+        if (url) {
+          window.location.href = url;
+        }
+      });
+    }
+    return;
+  }
 
   // --- Preloader helpers ---
   let preloaderTimer = null;
@@ -3320,6 +3340,14 @@ if (document.readyState === "loading") {
     fastToggle(elJour, view === "journal");
     updateActiveInMenu(view);
     syncMobileSelect(view);
+
+    if (
+      view === "journal" &&
+      window.mtAccountDataGlobal &&
+      typeof window.mtAccountDataGlobal.onShow === "function"
+    ) {
+      window.mtAccountDataGlobal.onShow();
+    }
 
     if (push) {
       const url = new URL(location.href);
@@ -3452,6 +3480,8 @@ if (document.readyState === "loading") {
       );
       throw err;
     } finally {
+      // Dejamos que el RENDERER maneje la remoción final del skeleton
+      // Se mantiene setLoading(false) aquí para cubrir casos que el Renderer no maneje (p. ej., error de red muy temprano)
       setLoading(false);
     }
   }
@@ -3496,9 +3526,11 @@ if (document.readyState === "loading") {
    TRADES RENDERER (pinta la tabla y maneja UI)
    ========================= */
 (function () {
+  const WRAP_ID = "mt-account-trades-history"; // Necesario para quitar el skeleton
   const COMP_ID = "mt-trades";
+  const wrap = document.getElementById(WRAP_ID); // Referencia al contenedor externo
   const comp = document.getElementById(COMP_ID);
-  if (!comp) return;
+  if (!wrap || !comp) return;
 
   // refs UI
   const viewport = comp.querySelector(".dj-viewport");
@@ -3517,43 +3549,58 @@ if (document.readyState === "loading") {
   const perPage =
     Number.isFinite(perPageAttr) && perPageAttr > 0 ? perPageAttr : 25;
 
+  // recordamos la página por tipo
+  const pageByType = {
+    CLOSED: 1,
+    OPEN: 1,
+  };
+
   const setBusy = (on) =>
     viewport?.setAttribute("aria-busy", on ? "true" : "false");
 
-  // ---------- helpers ----------
-const symbolPostColon = (raw) => {
-  if (raw == null) return "-";
-  const s = String(raw);
-  const slash = s.lastIndexOf("/");            // después del último "/"
-  if (slash === -1) {
-    // fallback: si no hay "/", toma lo que esté antes del primer ":" o todo
-    const beforeColon = s.split(":")[0];
-    return (beforeColon || "-").trim() || "-";
+  // Quitar skeleton del wrapper externo
+  function removeSkeletonClasses() {
+    if (wrap) {
+      wrap.classList.remove("mt-skeleton-pulse");
+      wrap.removeAttribute("aria-busy");
+    }
   }
-  const colon = s.indexOf(":", slash + 1);     // hasta el primer ":" luego del "/"
-  const end = colon === -1 ? s.length : colon;
-  const sym = s.slice(slash + 1, end).trim();
-  return sym || "-";
-};
 
-  // formatters
+  // ---------- helpers ----------
+  const symbolPostColon = (raw) => {
+    if (raw == null) return "-";
+    const s = String(raw);
+    const slash = s.lastIndexOf("/");
+    if (slash === -1) {
+      const beforeColon = s.split(":")[0];
+      return (beforeColon || "-").trim() || "-";
+    }
+    const colon = s.indexOf(":", slash + 1);
+    const end = colon === -1 ? s.length : colon;
+    const sym = s.slice(slash + 1, end).trim();
+    return sym || "-";
+  };
+
   const fmtMoney = (v) =>
     v == null || v === "" || isNaN(v)
       ? "-"
       : (v < 0 ? "-" : "") + "$" + Math.abs(+v).toFixed(2);
-  const fmtPct = (v) =>
-    v == null || v === "" || isNaN(v) ? "-" : Number(v).toFixed(2) + "%";
-  const fmtDate = (s) => (s && /^\d{2}\/\d{2}\/\d{4}$/.test(s) ? s : s || "-"); // ya viene MM/DD/YYYY
+
+  const fmtDate = (s) => (s && /^\d{2}\/\d{2}\/\d{4}$/.test(s) ? s : s || "-");
+
+  const fmtTime = (s) => (s && /^\d{2}:\d{2}/.test(s) ? s : s || "-");
+
   const fmtDur = (sec) => {
     if (sec == null || isNaN(sec)) return "-";
     sec = Math.floor(sec);
-    const h = Math.floor(sec / 3600),
-      m = Math.floor((sec % 3600) / 60),
-      s = sec % 60;
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
     return h > 0
       ? `${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`
       : `${m}m ${String(s).padStart(2, "0")}s`;
   };
+
   const pill = (txt, kind) =>
     `<span class="mt-pill ${
       kind === "err" ? "mt-pill--err" : "mt-pill--sec"
@@ -3563,14 +3610,15 @@ const symbolPostColon = (raw) => {
   const renderEmpty = () => {
     rowsWrap.innerHTML = `
       <div class="dj-empty">
-    <div>No trades to show</div>
-    <div>When you place trades, they’ll appear here.</div>
-  </div>
+        <div>No trades to show</div>
+        <div>When you place trades, they’ll appear here.</div>
+      </div>
     `;
     if (pager) pager.hidden = true;
+    removeSkeletonClasses();
   };
 
-  // fila (símbolo post-colon)
+  // fila
   function buildRow(r, isLast = false) {
     const netCls =
       typeof r.net === "number"
@@ -3580,14 +3628,7 @@ const symbolPostColon = (raw) => {
           ? "text-danger"
           : ""
         : "";
-    const roiCls =
-      typeof r.netRoi === "number"
-        ? r.netRoi > 0
-          ? "text-success"
-          : r.netRoi < 0
-          ? "text-danger"
-          : ""
-        : "";
+
     const status = String(r.status || "").toUpperCase();
     let statusHtml = "-";
     if (status === "WIN") statusHtml = pill("Win", "sec");
@@ -3595,50 +3636,84 @@ const symbolPostColon = (raw) => {
     if (status === "OPEN") statusHtml = pill("Open", "sec");
 
     const symRaw = r.symbol ?? r.instrument ?? r.ticker ?? "-";
-    const sym = symbolPostColon(symRaw); // <-- aquí tomamos lo que viene después de los “:”
+    const sym = symbolPostColon(symRaw);
+
+    const durationLabel = (() => {
+      if (r.durationSec != null && !isNaN(r.durationSec)) {
+        return fmtDur(r.durationSec);
+      }
+      if (typeof r.duration === "string" && r.duration.trim() !== "") {
+        return r.duration;
+      }
+      return "-";
+    })();
+
+    const sideRaw = (r.side ?? "").toString().toUpperCase();
+    let sideIcon = "";
+    if (sideRaw === "BUY") {
+      sideIcon =
+        '<span class="mt-icon mt-icon-success mt-icon_arrow-up-solid" aria-hidden="true"></span>';
+    } else if (sideRaw === "SELL") {
+      sideIcon =
+        '<span class="mt-icon mt-icon-error mt-icon_arrow-down-solid" aria-hidden="true"></span>';
+    }
+    const sideLabel = sideRaw || "-";
 
     return `
-      <div class="dj-grid dj-row${isLast ? " is-last" : ""}" style="--cols:10;">
-        <div class="dj-cell is-left">${r.side ?? "-"}</div>
-        <div class="dj-cell is-left">${sym}</div>      
-        <div class="dj-cell is-right">${fmtDate(r.closeDate)}</div>
-        <div class="dj-cell is-right ${netCls}">${fmtMoney(r.net)}</div>
-        <div class="dj-cell is-right ${roiCls}">${fmtPct(r.netRoi)}</div>
-        <div class="dj-cell is-right">${fmtDur(r.durationSec)}</div>
-        <div class="dj-cell is-right">${fmtMoney(r.avgEntry)}</div>
-        <div class="dj-cell is-right">${fmtMoney(r.avgExit)}</div>
-        <div class="dj-cell is-right">${fmtDate(r.openDate)}</div>
-        <div class="dj-cell is-right">${statusHtml}</div>
-      </div>`;
+    <div class="dj-grid dj-row${isLast ? " is-last" : ""}" style="--cols:11;">
+      <div class="dj-cell is-right">${statusHtml}</div>
+      <div class="dj-cell is-right ${netCls}">${fmtMoney(r.net)}</div>  
+      <div class="dj-cell is-right">${durationLabel}</div>
+      <div class="dj-cell is-right">${sym}</div>
+    <div class="dj-cell is-right dj-cell--side">
+       
+        <span>${sideLabel}</span> ${sideIcon}
+      </div>
+      <div class="dj-cell is-right">${fmtMoney(r.avgEntry)}</div>
+      <div class="dj-cell is-right">${fmtMoney(r.avgExit)}</div>
+      <div class="dj-cell is-right">${fmtDate(r.openDate)}</div>
+      <div class="dj-cell is-right">${fmtTime(r.openTimeStr)}</div>
+      <div class="dj-cell is-right">${fmtDate(r.closeDate)}</div>
+      <div class="dj-cell is-right">${fmtTime(r.closeTimeStr)}</div>
+    </div>`;
   }
 
   function render(payload) {
     const recs = Array.isArray(payload.records) ? payload.records : [];
     const page = Number(payload.page || 1);
-    const total = Number(payload.total ?? recs.length ?? 0);
+    const total = Number(
+      payload.total ??
+        (payload.meta && payload.meta.totalCount) ??
+        recs.length ??
+        0
+    );
     const pages = Number(
       payload.pages || Math.ceil(total / Math.max(1, perPage))
     );
 
-    // EMPTY STATE
+    currentPage = page;
+    const tKey = (currentType || "CLOSED").toUpperCase();
+    if (tKey === "CLOSED" || tKey === "OPEN") {
+      pageByType[tKey] = page;
+    }
+
     if (!recs.length || total === 0) {
       renderEmpty();
       setBusy(false);
       return;
     }
 
-    const start = (page - 1) * perPage;
-    const end = Math.min(start + perPage, recs.length);
-    const slice = recs.slice(start, end);
-
-    rowsWrap.innerHTML = slice
-      .map((r, i) => buildRow(r, i === slice.length - 1))
+    rowsWrap.innerHTML = recs
+      .map((r, i) => buildRow(r, i === recs.length - 1))
       .join("");
 
     if (pager) {
       pager.hidden = total === 0;
+
+      const end = Math.min(page * perPage, total);
       if (showing) showing.textContent = String(end);
       if (totalEl) totalEl.textContent = String(total);
+
       if (btnPrev) btnPrev.disabled = page <= 1;
       if (btnNext) btnNext.disabled = page >= pages;
 
@@ -3646,6 +3721,7 @@ const symbolPostColon = (raw) => {
         btnPrev.onclick = () => {
           if (page > 1) {
             currentPage = page - 1;
+            pageByType[tKey] = currentPage;
             setBusy(true);
             window.mtTradesAPI
               ?.refresh(currentType, currentPage)
@@ -3656,6 +3732,7 @@ const symbolPostColon = (raw) => {
         btnNext.onclick = () => {
           if (page < pages) {
             currentPage = page + 1;
+            pageByType[tKey] = currentPage;
             setBusy(true);
             window.mtTradesAPI
               ?.refresh(currentType, currentPage)
@@ -3663,17 +3740,26 @@ const symbolPostColon = (raw) => {
           }
         };
     }
+    removeSkeletonClasses();
     setBusy(false);
   }
 
-  // botones Close/Open (data-type="CLOSED|OPEN")
+  // botones Close/Open
   segBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       const t = (btn.getAttribute("data-type") || "").toUpperCase();
       if (t !== "CLOSED" && t !== "OPEN") return;
       if (t === currentType) return;
+
+      const prevKey = (currentType || "CLOSED").toUpperCase();
+      if (prevKey === "CLOSED" || prevKey === "OPEN") {
+        pageByType[prevKey] = currentPage;
+      }
+
       currentType = t;
-      currentPage = 1;
+      const nextPage = pageByType[t] && pageByType[t] > 0 ? pageByType[t] : 1;
+      currentPage = nextPage;
+
       segBtns.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
       setBusy(true);
       window.mtTradesAPI
@@ -3686,16 +3772,27 @@ const symbolPostColon = (raw) => {
   (function init() {
     const cached = window.mtTradesAPI?.getCached?.("CLOSED", 1);
     setBusy(true);
-    if (cached) render(cached);
-    else window.mtTradesAPI?.refresh("CLOSED", 1).catch(() => setBusy(false));
+    if (cached) {
+      removeSkeletonClasses();
+      render(cached);
+    } else {
+      window.mtTradesAPI?.refresh("CLOSED", 1).catch(() => setBusy(false));
+    }
   })();
 
   // eventos desde el fetcher
   window.addEventListener("mt:trades:loaded", (ev) => {
     const { type, page, payload } = ev.detail || {};
     if (!payload) return;
-    currentType = type || currentType;
-    currentPage = Number(page || currentPage);
+
+    currentType = (type || currentType || "CLOSED").toUpperCase();
+    currentPage = Number(page || currentPage || 1);
+
+    const tKey = currentType;
+    if (tKey === "CLOSED" || tKey === "OPEN") {
+      pageByType[tKey] = currentPage;
+    }
+
     segBtns.forEach((b) => {
       const t = (b.getAttribute("data-type") || "").toUpperCase();
       b.setAttribute("aria-pressed", String(t === currentType));
@@ -3704,8 +3801,8 @@ const symbolPostColon = (raw) => {
   });
 
   window.addEventListener("mt:trades:error", () => {
+    removeSkeletonClasses();
     setBusy(false);
-    // muestra empty-state también en error
     if (rowsWrap) {
       rowsWrap.innerHTML = `
         <div class="mt-empty">
@@ -3716,4 +3813,879 @@ const symbolPostColon = (raw) => {
     }
     if (pager) pager.hidden = true;
   });
+})();
+
+// ===== Journal Calendar (AJAX + render + skeleton) =====
+(function () {
+  const WRAP_ID = "mt-account-journal-calendar";
+
+  function moneyCompact(n) {
+    const s = n < 0 ? "-" : "";
+    const a = Math.abs(n);
+    if (a >= 1000) {
+      const k = a / 1000;
+      const num =
+        Math.floor(k) === k ? k.toFixed(0) : k.toFixed(1).replace(/\.0$/, "");
+      return s + "$" + num + "k";
+    }
+    return s + "$" + a.toFixed(0);
+  }
+
+  function isMobile() {
+    return window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+  }
+
+  // ---- INIT + RENDER CALENDAR ----
+  function initCalendar(rootWrap) {
+    if (!rootWrap) return;
+
+    const grid = rootWrap.querySelector(".mt-trade-calendar");
+    if (!grid) return;
+
+    const btnPrev = rootWrap.querySelector("[data-cal-prev]");
+    const btnNext = rootWrap.querySelector("[data-cal-next]");
+    const btnToday = rootWrap.querySelector("[data-cal-today]");
+    const ddMonthEl = rootWrap.querySelector("[data-cal-month-dd]");
+    const ddYearEl = rootWrap.querySelector("[data-cal-year-dd]");
+    const tooltip = rootWrap.querySelector("[data-cal-tooltip]");
+    const tooltipPnl = tooltip?.querySelector("[data-tooltip-pnl]") || null;
+    const tooltipTrades =
+      tooltip?.querySelector("[data-tooltip-trades]") || null;
+
+    const MONTHS = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const now = new Date();
+    const YEARS_BACK = Math.max(
+      1,
+      parseInt(
+        grid.dataset.yearsBack || grid.getAttribute("data-years-back") || "20",
+        10
+      )
+    );
+    const START_YEAR = parseInt(
+      grid.dataset.startYear ||
+        grid.getAttribute("data-start-year") ||
+        now.getFullYear(),
+      10
+    );
+    const START_MONTH = parseInt(
+      grid.dataset.startMonth ||
+        grid.getAttribute("data-start-month") ||
+        now.getMonth(),
+      10
+    );
+
+    // ---- Parse days (del data-days del PHP) ----
+    let raw = [];
+    try {
+      raw = JSON.parse(grid.dataset.days || "[]");
+    } catch (_e) {
+      raw = [];
+    }
+
+    const byDate = Object.create(null);
+    raw.forEach((item) => {
+      if (!item) return;
+      const key = String(item.date || "").slice(0, 10);
+      if (!key) return;
+      byDate[key] = {
+        pnl: Number(item.pnl) || 0,
+        trades: parseInt(item.trades || 0, 10),
+      };
+    });
+
+    const pad = (n) => (n < 10 ? "0" + n : "" + n);
+    const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+    const daysInMonth = (y, m) =>
+      [31, isLeap(y) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m];
+
+    function buildMatrix(y, m) {
+      const first = new Date(y, m, 1);
+      const firstDow = first.getDay();
+      const total = daysInMonth(y, m);
+
+      const prevM = (m + 11) % 12;
+      const prevY = m === 0 ? y - 1 : y;
+      const prevTot = daysInMonth(prevY, prevM);
+
+      const cells = [];
+      for (let i = firstDow - 1; i >= 0; i--) {
+        cells.push({ y: prevY, m: prevM, d: prevTot - i, other: true });
+      }
+      for (let d = 1; d <= total; d++) {
+        cells.push({ y, m, d, other: false });
+      }
+      const after = 42 - cells.length;
+      const nextM = (m + 1) % 12;
+      const nextY = m === 11 ? y + 1 : y;
+      for (let d = 1; d <= after; d++) {
+        cells.push({ y: nextY, m: nextM, d, other: true });
+      }
+      return cells;
+    }
+
+    function createDropdown(ddEl, items, { formatLabel, value, onChange }) {
+      if (!ddEl) {
+        return {
+          set() {},
+          get() {
+            return undefined;
+          },
+        };
+      }
+
+      const btn = ddEl.querySelector("[data-dd-btn]");
+      const lab = ddEl.querySelector("[data-dd-label]");
+      const list = ddEl.querySelector(".mt-dd__panel");
+      if (!btn || !lab || !list) {
+        return {
+          set() {},
+          get() {
+            return undefined;
+          },
+        };
+      }
+
+      list.innerHTML = "";
+      items.forEach((it) => {
+        const opt = document.createElement("button");
+        opt.type = "button";
+        opt.className = "mt-dd__option";
+        opt.role = "option";
+        opt.dataset.value = String(it.value);
+        opt.textContent = formatLabel(it.value);
+        if (String(it.value) === String(value)) {
+          opt.setAttribute("aria-selected", "true");
+          opt.classList.add("is-active");
+        }
+        list.appendChild(opt);
+      });
+
+      function open() {
+        ddEl.setAttribute("aria-expanded", "true");
+        list.hidden = false;
+        const sel =
+          list.querySelector('.mt-dd__option[aria-selected="true"]') ||
+          list.querySelector(".mt-dd__option");
+        if (sel) {
+          sel.focus({ preventScroll: true });
+          sel.scrollIntoView({ block: "nearest" });
+        }
+        document.addEventListener("click", onDocClick);
+      }
+
+      function close() {
+        ddEl.setAttribute("aria-expanded", "false");
+        list.hidden = true;
+        btn.focus({ preventScroll: true });
+        document.removeEventListener("click", onDocClick);
+      }
+
+      function onDocClick(e) {
+        if (!ddEl.contains(e.target)) close();
+      }
+
+      function setValue(v) {
+        lab.textContent = formatLabel(v);
+        Array.prototype.forEach.call(list.children, (ch) => {
+          const sel = ch.dataset.value === String(v);
+          if (sel) {
+            ch.setAttribute("aria-selected", "true");
+            ch.classList.add("is-active");
+          } else {
+            ch.removeAttribute("aria-selected");
+            ch.classList.remove("is-active");
+          }
+        });
+        onChange(v);
+      }
+
+      btn.addEventListener("click", () => {
+        const expanded = ddEl.getAttribute("aria-expanded") === "true";
+        expanded ? close() : open();
+      });
+
+      ddEl.addEventListener("keydown", (e) => {
+        const expanded = ddEl.getAttribute("aria-expanded") === "true";
+        if (
+          !expanded &&
+          (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ")
+        ) {
+          e.preventDefault();
+          open();
+          return;
+        }
+        if (expanded) {
+          const opts = Array.prototype.slice.call(
+            list.querySelectorAll(".mt-dd__option")
+          );
+          const idx = opts.indexOf(document.activeElement);
+          if (e.key === "Escape") {
+            e.preventDefault();
+            close();
+          } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            const n = opts[Math.min(opts.length - 1, idx + 1)] || opts[0];
+            n.focus();
+            n.scrollIntoView({ block: "nearest" });
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            const p = opts[Math.max(0, idx - 1)] || opts[opts.length - 1];
+            p.focus();
+            p.scrollIntoView({ block: "nearest" });
+          } else if (e.key === "Home" || e.key === "PageUp") {
+            e.preventDefault();
+            const f = opts[0];
+            f.focus();
+            f.scrollIntoView({ block: "nearest" });
+          } else if (e.key === "End" || e.key === "PageDown") {
+            e.preventDefault();
+            const l = opts[opts.length - 1];
+            l.focus();
+            l.scrollIntoView({ block: "nearest" });
+          } else if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            const cur = document.activeElement;
+            if (cur && cur.classList.contains("mt-dd__option")) {
+              setValue(cur.dataset.value);
+              close();
+            }
+          }
+        }
+      });
+
+      list.addEventListener("click", (e) => {
+        const opt = e.target.closest(".mt-dd__option");
+        if (!opt) return;
+        setValue(opt.dataset.value);
+        close();
+      });
+
+      return {
+        set(v) {
+          setValue(v);
+        },
+        get() {
+          const sel = Array.prototype.find.call(
+            list.children,
+            (ch) => ch.getAttribute("aria-selected") === "true"
+          );
+          return sel ? sel.dataset.value : undefined;
+        },
+      };
+    }
+
+    const years = (function () {
+      const end = now.getFullYear();
+      const start = end - YEARS_BACK;
+      const arr = [];
+      for (let y = start; y <= end; y++) arr.push({ value: y });
+      return arr;
+    })();
+
+    const months = MONTHS.map((name, idx) => ({ value: idx, label: name }));
+
+    let currentYear = START_YEAR;
+    let currentMonth = START_MONTH;
+
+    const ddMonth = createDropdown(ddMonthEl, months, {
+      formatLabel: (v) => MONTHS[parseInt(v, 10)],
+      value: currentMonth,
+      onChange(v) {
+        currentMonth = parseInt(v, 10);
+        render(currentYear, currentMonth);
+      },
+    });
+
+    const ddYear = createDropdown(ddYearEl, years, {
+      formatLabel: (v) => String(v),
+      value: currentYear,
+      onChange(v) {
+        currentYear = parseInt(v, 10);
+        render(currentYear, currentMonth);
+      },
+    });
+
+    function render(y, m) {
+      const cells = buildMatrix(y, m);
+      const todayKey = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+        now.getDate()
+      )}`;
+
+      grid.innerHTML = "";
+
+      cells.forEach((c) => {
+        const key = `${c.y}-${pad(c.m + 1)}-${pad(c.d)}`;
+        const info = byDate[key];
+        const pnl = info ? info.pnl : null;
+        const tr = info ? info.trades : null;
+
+        const cell = document.createElement("button");
+        cell.type = "button";
+        cell.className = "mt-cal-cell" + (c.other ? " mt-cal-cell--other" : "");
+        cell.dataset.date = key;
+
+        if (info) {
+          cell.dataset.pnl = String(pnl);
+          cell.dataset.trades = String(tr);
+        }
+
+        cell.setAttribute(
+          "aria-label",
+          `${key}, ${pnl !== null ? "$" + pnl.toFixed(0) : "no data"}, ${
+            tr || 0
+          } trades`
+        );
+
+        const top = document.createElement("div");
+        top.className = "mt-cal-cell__day";
+        top.textContent = c.d;
+
+        const mid = document.createElement("div");
+        mid.className = "mt-cal-cell__pnl";
+        if (pnl !== null) {
+          mid.textContent = moneyCompact(pnl);
+          mid.style.color =
+            pnl > 0 ? "var(--Success-400,#2DD4BF)" : "var(--Error-300,#FDA4AF)";
+        } else {
+          mid.textContent = "";
+        }
+
+        const bot = document.createElement("div");
+        bot.className = "mt-cal-cell__trades";
+        bot.textContent = tr != null ? `${tr} Trades` : "";
+
+        if (pnl !== null) {
+          if (pnl > 0) {
+            cell.style.background = "var(--Success-800,#115E59)";
+          } else if (pnl < 0) {
+            cell.style.background = "var(--Error-900,#881337)";
+          }
+        }
+
+        if (key === todayKey) {
+          cell.style.outline = "1px solid var(--Colors-Gray-700,#404040)";
+          cell.style.outlineOffset = "-1px";
+        }
+
+        cell.appendChild(top);
+        if (pnl !== null) cell.appendChild(mid);
+        if (tr != null) cell.appendChild(bot);
+
+        grid.appendChild(cell);
+      });
+
+      if (tooltip) tooltip.hidden = true;
+    }
+
+    if (btnToday) {
+      btnToday.addEventListener("click", () => {
+        currentYear = now.getFullYear();
+        currentMonth = now.getMonth();
+        ddYear.set(currentYear);
+        ddMonth.set(currentMonth);
+        render(currentYear, currentMonth);
+      });
+    }
+
+    if (btnPrev) {
+      btnPrev.addEventListener("click", () => {
+        let y = currentYear;
+        let m = currentMonth - 1;
+        if (m < 0) {
+          m = 11;
+          y--;
+        }
+        currentYear = y;
+        currentMonth = m;
+        ddYear.set(y);
+        ddMonth.set(m);
+        render(y, m);
+      });
+    }
+
+    if (btnNext) {
+      btnNext.addEventListener("click", () => {
+        let y = currentYear;
+        let m = currentMonth + 1;
+        if (m > 11) {
+          m = 0;
+          y++;
+        }
+        currentYear = y;
+        currentMonth = m;
+        ddYear.set(y);
+        ddMonth.set(m);
+        render(y, m);
+      });
+    }
+
+    grid.addEventListener("click", (e) => {
+      const cell = e.target.closest(".mt-cal-cell");
+      if (!cell) return;
+      if (!tooltip || !isMobile()) return;
+
+      const pnlStr = cell.dataset.pnl;
+      const trStr = cell.dataset.trades;
+
+      if (!pnlStr && !trStr) {
+        tooltip.hidden = true;
+        return;
+      }
+
+      const pnl = pnlStr != null ? Number(pnlStr) : null;
+      const trades = trStr != null ? parseInt(trStr, 10) : null;
+
+      if (tooltipPnl) {
+        tooltipPnl.textContent = pnl !== null ? moneyCompact(pnl) : "$0";
+        tooltipPnl.classList.toggle("is-positive", pnl > 0);
+        tooltipPnl.classList.toggle("is-negative", pnl < 0);
+      }
+      if (tooltipTrades) {
+        tooltipTrades.textContent =
+          trades != null ? `${trades} Trades` : "0 Trades";
+      }
+
+      const bodyEl =
+        rootWrap.querySelector(".mt-account-journal-cal__body") || rootWrap;
+      const bodyRect = bodyEl.getBoundingClientRect();
+      const rect = cell.getBoundingClientRect();
+
+      const centerX = rect.left + rect.width / 2 - bodyRect.left;
+      const top = rect.top - bodyRect.top;
+
+      tooltip.style.left = `${centerX}px`;
+      tooltip.style.top = `${top}px`;
+      tooltip.hidden = false;
+    });
+
+    window.addEventListener("resize", () => {
+      if (tooltip) tooltip.hidden = true;
+    });
+
+    // primer render
+    ddYear.set(currentYear);
+    ddMonth.set(currentMonth);
+    render(currentYear, currentMonth);
+
+    // quitar skeleton si viene del SSR
+    rootWrap.classList.remove("mt-skeleton-pulse");
+    rootWrap.setAttribute("aria-busy", "false");
+  }
+
+  // ---- Skeleton helper ----
+  function setLoading(wrap, on) {
+    if (!wrap) return;
+    wrap.setAttribute("aria-busy", on ? "true" : "false");
+    wrap.classList.toggle("mt-skeleton-pulse", !!on);
+  }
+
+  // ---- AJAX REFRESH ----
+  function refreshCalendar(accountId) {
+    const wrap = document.getElementById(WRAP_ID);
+    if (!wrap) return;
+
+    const url =
+      (window.mtAccounts && window.mtAccounts.ajaxUrl) ||
+      "/wp-admin/admin-ajax.php";
+    const nonce = (window.mtAccounts && window.mtAccounts.nonce) || "";
+
+    const body = new URLSearchParams();
+    body.set("action", "mt_account_journal_calendar");
+    body.set("nonce", nonce);
+    body.set("accountId", String(accountId || ""));
+
+    setLoading(wrap, true);
+
+    return fetch(url, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      body: body.toString(),
+    })
+      .then(function (resp) {
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        return resp.json();
+      })
+      .then(function (json) {
+        if (
+          !json ||
+          !json.success ||
+          !json.data ||
+          typeof json.data.html !== "string"
+        ) {
+          console.warn("[CAL] Invalid AJAX response", json);
+          return;
+        }
+        wrap.innerHTML = json.data.html;
+        wrap.setAttribute("data-account-id", String(accountId || ""));
+        initCalendar(wrap);
+
+        try {
+          if (
+            window.mtTooltips &&
+            typeof window.mtTooltips.refresh === "function"
+          ) {
+            window.mtTooltips.refresh(wrap);
+          }
+        } catch (e) {
+          console.warn("[CAL] tooltip refresh error", e);
+        }
+      })
+      .catch(function (err) {
+        console.error("[CAL] AJAX error", err);
+      })
+      .finally(function () {
+        setLoading(wrap, false);
+      });
+  }
+
+  // Init primer load (SSR)
+  document.addEventListener("DOMContentLoaded", function () {
+    const wrap = document.getElementById(WRAP_ID);
+    if (wrap) initCalendar(wrap);
+  });
+
+  // Registro en el bus mtRefresh para cambios de cuenta
+  if (window.mtRefresh && typeof window.mtRefresh.register === "function") {
+    window.mtRefresh.register("journalCalendar", function (ctx) {
+      const accountId =
+        ctx && typeof ctx === "object" ? ctx.accountId || ctx.id || "" : ctx;
+      if (!accountId) {
+        console.warn("[CAL] no accountId in journalCalendar ctx", ctx);
+        return;
+      }
+      return refreshCalendar(accountId);
+    });
+  }
+})();
+
+// ========= Account Data Global (Net P&L baseline) =========
+(function () {
+  const WRAP_ID = "mt-account-data-global";
+
+  const wrap = document.getElementById(WRAP_ID);
+  if (!wrap) return;
+
+  const ajaxUrl =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+  const nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+  let currentAccId =
+    wrap.getAttribute("data-account-id") ||
+    (window.mtRefresh &&
+      typeof window.mtRefresh.getCurrentAccount === "function" &&
+      (mtRefresh.getCurrentAccount()?.accountId ||
+        mtRefresh.getCurrentAccount()?.id)) ||
+    "";
+
+  // --- Loader de LightweightCharts (1 sola vez global) ---
+  function loadLWC() {
+    if (window.LightweightCharts) return Promise.resolve();
+    if (window.__LWC_LOADING__) return window.__LWC_LOADING__;
+
+    const url =
+      "https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js";
+
+    window.__LWC_LOADING__ = new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = url;
+      s.async = true;
+      s.onload = () => res();
+      s.onerror = () => rej(new Error("LWC load failed"));
+      document.head.appendChild(s);
+    });
+
+    return window.__LWC_LOADING__;
+  }
+
+  // --- Skeleton helper ---
+  function setLoading(isLoading) {
+    if (!wrap) return;
+    wrap.setAttribute("aria-busy", isLoading ? "true" : "false");
+    wrap.classList.toggle("mt-skeleton-pulse", !!isLoading);
+  }
+
+  // --- Leer serie desde data-series (Net PnL acumulado) ---
+  function getSeriesFromDom(chartEl) {
+    const rawSeries = chartEl.getAttribute("data-series") || "[]";
+    let data = [];
+    try {
+      const parsed = JSON.parse(rawSeries);
+      if (Array.isArray(parsed)) {
+        data = parsed
+          .map((p) => {
+            const v = Number(p && p.value);
+            const d = String(p && p.date ? p.date : "").slice(0, 10);
+            if (!d || !Number.isFinite(v)) return null;
+            return { time: d, value: v };
+          })
+          .filter(Boolean);
+      }
+    } catch (e) {
+      console.error("[ADG] invalid data-series JSON", e);
+    }
+    return data;
+  }
+
+  // --- Pintar / re-pintar la gráfica en un chartEl concreto ---
+  function renderChart(chartEl) {
+    const data = getSeriesFromDom(chartEl);
+    if (!data.length) return;
+
+    loadLWC()
+      .then(() => {
+        if (
+          chartEl.__adgChart &&
+          typeof chartEl.__adgChart.remove === "function"
+        ) {
+          chartEl.__adgChart.remove();
+        }
+        chartEl.__adgChart = null;
+        chartEl.__adgSeries = null;
+
+        chartEl.innerHTML = "";
+
+        const chart = LightweightCharts.createChart(chartEl, {
+          layout: {
+            background: { type: "Solid", color: "transparent" },
+            textColor: "#dcdcdc",
+          },
+          leftPriceScale: { visible: false },
+          rightPriceScale: {
+            visible: false,
+            borderVisible: false,
+            scaleMargins: {
+              top: 0.05,
+              bottom: 0.05,
+            },
+          },
+          timeScale: {
+            visible: false,
+            borderVisible: false,
+            lockVisibleTimeRangeOnResize: true,
+            fixLeftEdge: true,
+            fixRightEdge: true,
+            timeVisible: false,
+            secondsVisible: false,
+          },
+          grid: {
+            vertLines: { visible: false },
+            horzLines: { visible: false },
+          },
+          crosshair: { mode: 0 },
+          handleScroll: {
+            mouseWheel: false,
+            pressedMouseMove: false,
+            horzTouchDrag: false,
+          },
+          handleScale: {
+            axisPressedMouseMove: false,
+            mouseWheel: false,
+            pinch: false,
+          },
+        });
+
+        // Serie principal baseline (PnL diario)
+        const baselineSeries = chart.addBaselineSeries({
+          baseValue: { type: "price", price: 0 },
+          priceFormat: { type: "price", precision: 2, minMove: 0.01 },
+
+          topLineColor: "#24b8a6",
+          bottomLineColor: "#FF4D4D",
+          topFillColor1: "rgba(36,184,166,0.30)",
+          topFillColor2: "rgba(36,184,166,0.05)",
+          bottomFillColor1: "rgba(255,77,77,0.30)",
+          bottomFillColor2: "rgba(255,77,77,0.05)",
+
+          lineWidth: 1,
+          lineVisible: true,
+          lastValueVisible: false,
+          priceLineVisible: false,
+        });
+
+        baselineSeries.setData(data);
+
+        // === Línea divisora en 0 (truco: segunda serie de línea plana) ===
+        const zeroLineSeries = chart.addLineSeries({
+          color: "rgba(255,255,255,0.8)", // blanca
+          lineWidth: 1,
+          lineStyle: LightweightCharts.LineStyle.Dashed,
+          priceLineVisible: false,
+          lastValueVisible: false,
+        });
+
+        const zeroData = data.map((p) => ({
+          time: p.time,
+          value: 0,
+        }));
+        zeroLineSeries.setData(zeroData);
+
+        chart.timeScale().fitContent();
+
+        chartEl.style.border = "none";
+        chartEl.style.outline = "none";
+        chartEl.style.pointerEvents = "none";
+
+        chartEl.__adgChart = chart;
+        chartEl.__adgSeries = baselineSeries;
+      })
+      .catch((e) => console.error("[ADG] LWC error", e));
+  }
+
+  // --- Hidratar desde el DOM actual (SSR o tras AJAX) ---
+  function hydrateFromDom() {
+    const chartEl = wrap.querySelector("[data-js='adg-chart']");
+    if (chartEl) {
+      renderChart(chartEl);
+    }
+
+    // Re-aplicar tooltips dentro del bloque
+    try {
+      if (
+        window.mtTooltips &&
+        typeof window.mtTooltips.refresh === "function"
+      ) {
+        window.mtTooltips.refresh(wrap);
+      }
+    } catch (e) {
+      console.warn("[ADG] tooltip refresh error", e);
+    }
+
+    // Re-aplicar donuts / dualbars / progress a este bloque
+    try {
+      if (
+        window.mtOverview &&
+        typeof window.mtOverview.initAllFor === "function"
+      ) {
+        window.mtOverview.initAllFor(wrap);
+      } else {
+        if (
+          window.mtOverview &&
+          typeof window.mtOverview.initDonuts === "function"
+        ) {
+          window.mtOverview.initDonuts(wrap);
+        }
+        if (
+          window.mtOverview &&
+          typeof window.mtOverview.initDualBars === "function"
+        ) {
+          window.mtOverview.initDualBars(wrap);
+        }
+        if (
+          window.mtOverview &&
+          typeof window.mtOverview.initProgressBars === "function"
+        ) {
+          window.mtOverview.initProgressBars(wrap);
+        }
+      }
+    } catch (e) {
+      console.warn("[ADG] init overview helpers error", e);
+    }
+
+    wrap.classList.remove("mt-skeleton-pulse");
+    wrap.setAttribute("aria-busy", "false");
+  }
+
+  // --- AJAX refresh del bloque completo (HTML + chart) ---
+  function refresh(accId) {
+    const accountId =
+      accId || currentAccId || wrap.getAttribute("data-account-id") || "";
+
+    if (!accountId) return;
+
+    currentAccId = accountId;
+    setLoading(true);
+
+    const form = new FormData();
+    form.append("action", "mt_account_data_global");
+    form.append("nonce", nonce);
+    form.append("accountId", accountId);
+
+    fetch(ajaxUrl, {
+      method: "POST",
+      body: form,
+    })
+      .then((r) => r.json())
+      .then((json) => {
+        if (!json || !json.success || !json.data || !json.data.html) {
+          console.error("[ADG] invalid response", json);
+          return;
+        }
+
+        wrap.innerHTML = json.data.html;
+
+        if (json.data.accountId) {
+          wrap.setAttribute("data-account-id", json.data.accountId);
+          currentAccId = json.data.accountId;
+        }
+
+        // Re-hidratar KPI + gráfica + barras dual + tooltips
+        hydrateFromDom();
+      })
+      .catch((e) => console.error("[ADG] ajax error", e))
+      .finally(() => setLoading(false));
+  }
+
+  // --- Primer render: HTML de PHP + data-series inicial ---
+  hydrateFromDom();
+
+  // --- Exponer hook para cuando se muestra la vista Journal ---
+  window.mtAccountDataGlobal = window.mtAccountDataGlobal || {};
+  window.mtAccountDataGlobal.onShow = function () {
+    const chartEl = wrap.querySelector("[data-js='adg-chart']");
+    if (!chartEl) return;
+
+    if (chartEl.__adgChart && typeof chartEl.__adgChart.resize === "function") {
+      const rect = chartEl.getBoundingClientRect();
+      if (rect.width && rect.height) {
+        chartEl.__adgChart.resize(rect.width, rect.height);
+      }
+      if (
+        chartEl.__adgChart.timeScale &&
+        typeof chartEl.__adgChart.timeScale().fitContent === "function"
+      ) {
+        chartEl.__adgChart.timeScale().fitContent();
+      }
+    } else {
+      renderChart(chartEl);
+    }
+
+    try {
+      if (
+        window.mtOverview &&
+        typeof window.mtOverview.initAllFor === "function"
+      ) {
+        window.mtOverview.initAllFor(wrap);
+      }
+    } catch (e) {
+      console.warn("[ADG] onShow initAllFor error", e);
+    }
+  };
+
+  // --- Hook de cambio de cuenta desde account-selection / mtRefresh ---
+  if (window.mtRefresh && typeof mtRefresh.register === "function") {
+    mtRefresh.register("accountDataGlobal", function (nextAcc) {
+      const nextId =
+        (nextAcc && (nextAcc.accountId || nextAcc.id)) ||
+        (typeof nextAcc === "string" ? nextAcc : "");
+      if (!nextId) return;
+      refresh(nextId);
+    });
+  }
 })();

@@ -1237,7 +1237,16 @@ add_action( 'wp_enqueue_scripts', 'mt_enqueue_myaccount_script' );
  */
 function mt_enqueue_overview_script_path_only() {
   $req_path = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
-  if ($req_path !== '/my-account/overview') return;
+
+  // Cargar script en:
+  // - /my-account/overview
+  // - /my-account/view-subscription/....
+  $is_overview        = ($req_path === '/my-account/overview');
+  $is_view_subscript  = (strpos($req_path, '/my-account/view-subscription') === 0);
+
+  if (!$is_overview && !$is_view_subscript) {
+    return;
+  }
 
   $candidates = [
     [ get_stylesheet_directory(), get_stylesheet_directory_uri() ],
@@ -1262,6 +1271,8 @@ function mt_enqueue_overview_script_path_only() {
     }
   }
 }
+add_action('wp_enqueue_scripts', 'mt_enqueue_overview_script_path_only', 101);
+
 add_action('wp_enqueue_scripts', 'mt_enqueue_overview_script_path_only', 101);
 
 require_once get_template_directory() . '/inc/auth-hooks.php';
@@ -2242,6 +2253,120 @@ function mt_ajax_trades_history() {
     wp_send_json_error(['message' => 'Trades fetch error', 'detail' => $e->getMessage()], 500);
   }
 }
+
+// ================= AJAX: mt-calendar-history =================
+add_action('wp_ajax_mt_account_journal_calendar', 'mt_account_journal_calendar');
+add_action('wp_ajax_nopriv_mt_account_journal_calendar', 'mt_account_journal_calendar');
+
+function mt_account_journal_calendar() {
+  try {
+    if (!defined('DOING_AJAX') || !DOING_AJAX) {
+      wp_send_json_error(['message' => 'Invalid context'], 400);
+    }
+
+    $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+    if (!wp_verify_nonce($nonce, 'mt-acc-nonce')) {
+      wp_send_json_error(['message' => 'Invalid nonce'], 403);
+    }
+
+    $account_id = isset($_POST['accountId'])
+      ? sanitize_text_field(wp_unslash($_POST['accountId']))
+      : '';
+
+    if ($account_id === '') {
+      wp_send_json_error(['message' => 'Missing accountId'], 400);
+    }
+
+    // Renderizamos el partial exactamente igual que en el primer load.
+    ob_start();
+    get_template_part(
+      'template-parts/account/account-journal-calendar',
+      null,
+      [
+        'accountId' => $account_id,
+        'meta'      => ['accountId' => $account_id],
+      ]
+    );
+    $html = ob_get_clean();
+
+    if ($html === '') {
+      wp_send_json_error(['message' => 'Empty calendar HTML'], 500);
+    }
+
+    wp_send_json_success(['html' => $html], 200);
+  } catch (\Throwable $e) {
+    wp_send_json_error(
+      [
+        'message' => 'Calendar fetch error',
+        'detail'  => $e->getMessage(),
+      ],
+      500
+    );
+  }
+}
+
+
+// ================= AJAX: mt_account_data_global (Account Data Global wrapper) =================
+add_action('wp_ajax_mt_account_data_global', 'mt_ajax_account_data_global');
+add_action('wp_ajax_nopriv_mt_account_data_global', 'mt_ajax_account_data_global'); // opcional
+
+function mt_ajax_account_data_global() {
+  try {
+    if (!defined('DOING_AJAX') || !DOING_AJAX) {
+      wp_send_json_error(['message' => 'Invalid context'], 400);
+    }
+
+    // === Nonce igual que trades/calendar ===
+    $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
+    if (!wp_verify_nonce($nonce, 'mt-acc-nonce')) {
+      wp_send_json_error(['message' => 'Invalid nonce'], 403);
+    }
+
+    $accountId = isset($_POST['accountId'])
+      ? sanitize_text_field(wp_unslash($_POST['accountId']))
+      : '';
+
+    if ($accountId === '') {
+      wp_send_json_error(['message' => 'Missing accountId'], 400);
+    }
+
+    // Renderizamos el partial exactamente igual que en el primer load
+    ob_start();
+    get_template_part(
+      'template-parts/account/account-data-global',
+      null,
+      [
+        'meta'    => ['accountId' => $accountId],
+        'account' => ['accountId' => $accountId],
+      ]
+    );
+    $html = ob_get_clean();
+
+    if ($html === '' || $html === false) {
+      wp_send_json_error(['message' => 'Empty Account Data Global HTML'], 500);
+    }
+
+    wp_send_json_success(
+      [
+        'accountId' => $accountId,
+        'html'      => $html,
+      ],
+      200
+    );
+
+  } catch (\Throwable $e) {
+    wp_send_json_error(
+      [
+        'message' => 'Account data global error',
+        'detail'  => $e->getMessage(),
+      ],
+      500
+    );
+  }
+}
+
+
+
 
 
 // == AJAX: prepara UI de payout desde email ==

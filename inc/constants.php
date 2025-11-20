@@ -15,7 +15,7 @@ final class MT_MASK
 {
     public static function getMask($char = '*', $length = 20)
     {
-      return str_repeat($char, $length);
+        return str_repeat($char, $length);
     }
 }
 
@@ -492,6 +492,28 @@ class Label
         'congratsTitle' => 'Congrats!',
         'congratsMessage' => 'Your request has been successfully submitted.',
         'congratsSubtitle' => 'You’ll be notified once your request is approved.',
+    ];
+
+    public const META_ACCOUNT_OVERVIEW_TOOLTIP = [
+        "netPLTitle" => "Net P&L",
+        "netPLBody" => "Total realized profit or loss across all closed trades.",
+        "avgWinLostTradeTitle" => "Avg. win/loss trade",
+        "avgWinLostTradeBody" => "Average dollar amount gained on winning trades vs. lost on losing trades.",
+        "tradeWinTitle" => "Trade Win %",
+        "tradeWinBody" => "Percentage of all closed trades that ended in profit.",
+        "profitFactorTitle" => "Profit Factor",
+        "profitFactorBody" => "Ratio of total winning profits to total losing losses. Above 1.0 indicates profitability.",
+        "currentDayStreakTitle" => "Current Day Streak",
+        "currentDayStreakTitleTooltip" => "Current Day Streak – Days",
+        "currentDayStreakBody" => "Number of consecutive trading days ending positive or negative.",
+        "currentDayTradesTitle" => "Current Day Trades",
+        "currentDayTradesTitleTooltip" => "Current Day Streak – Trades",
+        "currentDayTradesBody" => "Number of consecutive trades closed in profit or loss today.",
+        "tradeCalendar" => "Trade Calendar",
+        "tradeCalendarBody" => "Shows your daily trading activity, including number of trades and P&L for each day.",
+        "tradesTable" => "Trades",
+        "tradesTableBody" => "List of your recent closed trades with key details like P&L, ROI, duration, and entry/exit prices.",
+
     ];
 
 

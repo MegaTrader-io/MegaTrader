@@ -2126,32 +2126,32 @@ if (!function_exists('mt_daily_journal_rows_html')) {
       $net_class = (is_numeric($net) ? ($net > 0 ? 'text-success' : ($net < 0 ? 'text-danger' : '')) : '');
 
       ?>
-            <div class="dj-grid dj-row" id="dj-row-<?php echo esc_attr($day_iso); ?>" data-page="<?php echo esc_attr($page); ?>"
-              data-trade-date="<?php echo esc_attr($day_iso); ?>" data-has-fb="<?php echo $has_fb ? '1' : '0'; ?>"
-              data-mood="<?php echo $has_fb ? (int) $mood : ''; ?>" data-followed="<?php echo $has_fb ? (int) $follow : ''; ?>"
-              data-note="<?php echo $has_fb ? esc_attr($note) : ''; ?>" style="<?php echo $page === 1 ? '' : 'display:none'; ?>">
-              <div class="dj-cell is-left">
-                <span class="mt-dj-visibility" role="button" tabindex="0" aria-label="Add daily feedback" title="Daily feedback">
-                  <i class="mt-icon mt-icon-white <?php echo $has_fb ? 'mt-icon_visibility' : 'mt-icon_pencil'; ?>"
-                    aria-hidden="true"></i>
-                </span>
-              </div>
+      <div class="dj-grid dj-row" id="dj-row-<?php echo esc_attr($day_iso); ?>" data-page="<?php echo esc_attr($page); ?>"
+        data-trade-date="<?php echo esc_attr($day_iso); ?>" data-has-fb="<?php echo $has_fb ? '1' : '0'; ?>"
+        data-mood="<?php echo $has_fb ? (int) $mood : ''; ?>" data-followed="<?php echo $has_fb ? (int) $follow : ''; ?>"
+        data-note="<?php echo $has_fb ? esc_attr($note) : ''; ?>" style="<?php echo $page === 1 ? '' : 'display:none'; ?>">
+        <div class="dj-cell is-left">
+          <span class="mt-dj-visibility" role="button" tabindex="0" aria-label="Add daily feedback" title="Daily feedback">
+            <i class="mt-icon mt-icon-white <?php echo $has_fb ? 'mt-icon_visibility' : 'mt-icon_pencil'; ?>"
+              aria-hidden="true"></i>
+          </span>
+        </div>
 
-              <div class="dj-cell is-right"><?php echo esc_html($day_label); ?></div>
-              <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html($fmt_money($net)); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['hi'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['lo'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['ct'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['fees'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['trades'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['loss'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
-              <div class="dj-cell is-right"><?php echo esc_html((string) ($r['dur'] ?? '-')); ?></div>
-            </div>
-            <?php
+        <div class="dj-cell is-right"><?php echo esc_html($day_label); ?></div>
+        <div class="dj-cell is-right <?php echo esc_attr($net_class); ?>"><?php echo esc_html($fmt_money($net)); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['hi'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['lo'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['ct'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['fees'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_int($r['trades'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['awin'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_money($r['aloss'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['win'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html($fmt_pct($r['loss'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['max'] ?? '-')); ?></div>
+        <div class="dj-cell is-right"><?php echo esc_html((string) ($r['dur'] ?? '-')); ?></div>
+      </div>
+      <?php
     }
     return trim(ob_get_clean());
   }
@@ -2906,9 +2906,9 @@ function mt_account_overview_business_logic($accountIds = [])
 
 
 // ================= TRADES: fetch liviano para tabla (OPEN/CLOSED) =================
-// ===== Trades History: fetch + map (OPEN/CLOSED) =====
 if (!function_exists('mt_trades_history_fetch')) {
-  function mt_trades_history_fetch(string $accountId, string $type = 'CLOSED', int $page = 1, int $perPage = 25): array {
+  function mt_trades_history_fetch(string $accountId, string $type = 'CLOSED', int $page = 1, int $perPage = 25): array
+  {
     $t = strtoupper($type) === 'OPEN' ? 'OPEN' : 'CLOSED';
     // Usa el shortcode existente para minimizar latencia y reutilizar caché del plugin
     $shortcode = sprintf(
@@ -2918,37 +2918,52 @@ if (!function_exists('mt_trades_history_fetch')) {
       max(1, $page),
       max(1, $perPage)
     );
+
     $json = do_shortcode($shortcode);
     if (empty($json)) {
-      return ['type' => $t, 'page' => $page, 'perPage' => $perPage, 'total' => 0, 'pages' => 0, 'records' => []];
+      return [
+        'type' => $t,
+        'page' => $page,
+        'perPage' => $perPage,
+        'total' => 0,
+        'pages' => 0,
+        'records' => [],
+      ];
     }
 
     $payload = json_decode($json, true);
     if (!is_array($payload)) {
-      return ['type' => $t, 'page' => $page, 'perPage' => $perPage, 'total' => 0, 'pages' => 0, 'records' => []];
+      return [
+        'type' => $t,
+        'page' => $page,
+        'perPage' => $perPage,
+        'total' => 0,
+        'pages' => 0,
+        'records' => [],
+      ];
     }
 
-    $meta      = $payload['meta'] ?? [];
-    $rows      = $payload['data'] ?? [];
-    $total     = isset($meta['totalCount']) ? (int)$meta['totalCount'] : count($rows);
-    $pages     = isset($meta['pagesCount']) ? (int)$meta['pagesCount'] : (int)ceil($total / max(1, $perPage));
+    $meta = $payload['meta'] ?? [];
+    $rows = $payload['data'] ?? [];
+    $total = isset($meta['totalCount']) ? (int) $meta['totalCount'] : count($rows);
+    $pages = isset($meta['pagesCount']) ? (int) $meta['pagesCount'] : (int) ceil($total / max(1, $perPage));
 
     $records = [];
     foreach ($rows as $r) {
       // Campos crudos
-      $openPrice  = (float)($r['openPrice']  ?? 0);
-      $closePrice = (float)($r['closePrice'] ?? 0);
-      $pnl        = (float)($r['pnl']        ?? 0);
-      $comm       = (float)($r['commission'] ?? 0);
-      $openTime   = $r['openTime']  ?? null;
-      $closeTime  = $r['closeTime'] ?? null;
+      $openPrice = (float) ($r['openPrice'] ?? 0);
+      $closePrice = (float) ($r['closePrice'] ?? 0);
+      $pnl = (float) ($r['pnl'] ?? 0);
+      $comm = (float) ($r['commission'] ?? 0);
+      $openTime = $r['openTime'] ?? null;
+      $closeTime = $r['closeTime'] ?? null;
 
       // Fechas con cutoff si existe helper
-      $openDateStr  = '-';
+      $openDateStr = '-';
       $closeDateStr = '-';
       if ($openTime) {
         if (function_exists('mt_cutoff_date')) {
-          $openDateStr = mt_cutoff_date($openTime);            // esperado: MM/DD/YYYY
+          $openDateStr = mt_cutoff_date($openTime); // MM/DD/YYYY
         } else {
           $openDateStr = gmdate('m/d/Y', strtotime($openTime));
         }
@@ -2961,11 +2976,36 @@ if (!function_exists('mt_trades_history_fetch')) {
         }
       }
 
+      // Horas (HH:MM) para las nuevas columnas
+      $openTimeStr = '-';
+      $closeTimeStr = '-';
+      try {
+        if ($openTime) {
+          $dtO = new DateTime($openTime);
+          // si quieres usar la zona WP:
+          if (function_exists('wp_timezone')) {
+            $dtO->setTimezone(wp_timezone());
+          }
+          $openTimeStr = $dtO->format('H:i:s'); // 24h: 18:31
+        }
+        if ($closeTime) {
+          $dtC = new DateTime($closeTime);
+          if (function_exists('wp_timezone')) {
+            $dtC->setTimezone(wp_timezone());
+          }
+          $closeTimeStr = $dtC->format('H:i:s');
+        }
+      } catch (Exception $e) {
+        // silencioso, dejamos '-'
+      }
+
       // Duración (formateada como “Xm Ys”)
       $duration = '-';
       if ($openTime && $closeTime) {
         $sec = max(0, strtotime($closeTime) - strtotime($openTime));
-        $h = floor($sec/3600); $m = floor(($sec%3600)/60); $s = $sec%60;
+        $h = floor($sec / 3600);
+        $m = floor(($sec % 3600) / 60);
+        $s = $sec % 60;
         $duration = $h > 0 ? sprintf('%dh %02dm %02ds', $h, $m, $s) : sprintf('%dm %02ds', $m, $s);
       }
 
@@ -2974,26 +3014,29 @@ if (!function_exists('mt_trades_history_fetch')) {
       $status = $t === 'OPEN' ? 'OPEN' : ($net < 0 ? 'LOSS' : 'WIN');
 
       $records[] = [
-        'symbol'    => $r['symbol'] ?? '-',
-        'side'      => $r['side']   ?? '-',
+        'symbol' => $r['symbol'] ?? '-',
+        'side' => $r['side'] ?? '-',
         'closeDate' => $closeDateStr,
-        'net'       => $net,
-        'netRoi'    => null,              // sin base de capital (lo dejamos para luego)
-        'duration'  => $duration,
-        'avgEntry'  => $openPrice,
-        'avgExit'   => $closePrice,
-        'openDate'  => $openDateStr,
-        'status'    => $status,
+        'closeTimeStr' => $closeTimeStr,
+        'net' => $net,
+        'duration' => $duration,
+        'avgEntry' => $openPrice,
+        'avgExit' => $closePrice,
+        'openDate' => $openDateStr,
+        'openTimeStr' => $openTimeStr,
+        'status' => $status,
       ];
     }
 
+
     return [
-      'type'    => $t,
-      'page'    => $page,
+      'type' => $t,
+      'page' => $page,
       'perPage' => $perPage,
-      'total'   => $total,
-      'pages'   => $pages,
+      'total' => $total,
+      'pages' => $pages,
       'records' => $records,
     ];
   }
 }
+

@@ -68,36 +68,59 @@ function items_navigation_get_args($menu_items = [], $aria_label = '', $select_i
     $req_path = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
     $req_view = isset($_GET['view']) ? strtolower(sanitize_text_field($_GET['view'])) : 'metrics';
 
+    // base para /my-account/view-subscription/*
+    $view_sub_base = rtrim(parse_url(home_url('my-account/view-subscription'), PHP_URL_PATH), '/');
+    // base de overview (para metrics/journal)
+    $overview_path = rtrim(parse_url(home_url('my-account/overview'), PHP_URL_PATH), '/');
+
     foreach ($menu_items as $endpoint => $label) {
         $url      = wc_get_account_endpoint_url($endpoint);
         $url_path = rtrim(parse_url($url, PHP_URL_PATH), '/');
 
         $is_active = ($req_path === $url_path);
 
-        // activar por ?view=*
+        // activar por ?view=* SOLO en /my-account/overview
         if (in_array($endpoint, ['trade-area','trading-journal'], true)) {
             $want = $endpoint === 'trade-area' ? 'metrics' : 'journal';
-            $is_active = ($req_view === $want);
+
+            if ($req_path === $overview_path) {
+                // Solo aquí usamos ?view=*
+                $is_active = ($req_view === $want);
+            } else {
+                // En cualquier otra página NO marcamos activo este endpoint
+                $is_active = false;
+            }
+        }
+
+        // subscriptions activo también en /view-subscription/*
+        if ($endpoint === 'subscriptions') {
+            if ($req_path === $url_path || strpos($req_path, $view_sub_base) === 0) {
+                $is_active = true;
+            }
         }
 
         $item = [
             'label'   => $label,
             'url'     => $url,
             'active'  => (bool) $is_active,
-            // data-view para el JS (tabs)
-            'view'    => ($endpoint === 'trade-area' ? 'metrics' : ($endpoint === 'trading-journal' ? 'journal' : '')),
-            'item_id' => ($endpoint === 'subscriptions' ? 'mt-nav-manage-subscription' : '')
+            'view'    => ($endpoint === 'trade-area'
+                ? 'metrics'
+                : ($endpoint === 'trading-journal' ? 'journal' : '')),
+            'item_id' => ($endpoint === 'subscriptions' ? 'mt-nav-manage-subscription' : ''),
         ];
 
         $items[] = $item;
     }
 
+    // fallback: si nadie quedó activo, activa el primero
     if (!array_filter($items, fn($i) => !empty($i['active'])) && !empty($items[0])) {
         $items[0]['active'] = true;
     }
 
-    return ['items'=>$items,'aria_label'=>$aria_label,'select_id'=>$select_id];
+    return ['items' => $items, 'aria_label' => $aria_label, 'select_id' => $select_id];
 }
+
+
 
 /**
  * Render

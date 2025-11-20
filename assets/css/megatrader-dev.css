@@ -1234,6 +1234,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   background-color: var(--colors-gray-700);
 }
 
+.bg-a8a29e {
+  background-color: #A8A29E;
+}
+
 .back-otp-back:hover {
   background-color: rgb(41 37 36 / var(--tw-bg-opacity, 1)) !important;
 }
@@ -1535,6 +1539,10 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 
 .leading-10 {
   line-height: 2.5rem;
+}
+
+.leading-5 {
+  line-height: 1rem;
 }
 
 .leading-6 {
@@ -3078,36 +3086,36 @@ a.pagination-number {
   gap: 8px;
 }
 
-ul.product-section__list > li {
-    list-style: none;
+ul.product-section__list>li {
+  list-style: none;
 }
 
 ul.product-section__list li:not(.glide__slide) {
-    display: inherit;
+  display: inherit;
 }
 
 ul.product-section__list {
-    padding-left: 0;
-    margin-bottom: 0;
+  padding-left: 0;
+  margin-bottom: 0;
 }
 
 .mt-account-type-points {
-    display: flex;
-    justify-content: center;
-    padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
 }
 
 .mt-account-type-points__pointer {
-    width: 15px !important;
-    height: 15px !important;
+  width: 15px !important;
+  height: 15px !important;
 }
 
 .mt-account-type-points__pointer.glide__bullet--active {
-    background-color: #8c8c8c !important;
+  background-color: #8c8c8c !important;
 }
 
 .mt-account-type-points__pointer:not(.glide__bullet--active) {
-    background-color: #3d3d3d !important;
+  background-color: #3d3d3d !important;
 }
 
 @media (max-width: 768px) {
@@ -3855,7 +3863,7 @@ body.mt-placing .woocommerce-checkout {
 
 .mt-rr {
   width: 100%;
-  max-width: 250px;
+  max-width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
@@ -4958,16 +4966,16 @@ button#mt-payout-acc-btn:active {
 }
 
 
-/***** End Modal Payout **/
+/* ===== End Modal Payout ===== */
 
 
-/***** Trade History **/
 /* ===== Trades History (mismas columnas fijas tipo Daily Journal) ===== */
 #mt-trades {
-  --cols: 10;
-  --colw: 100px;
+  --cols: 11;
+  --colw: 95px;
   --bg: var(--Surface-Page, #1E1E1E);
 }
+
 
 #mt-trades .dj-viewport {
   max-inline-size: 100%
@@ -5014,9 +5022,27 @@ button#mt-payout-acc-btn:active {
   color: var(--Text-Body, #A8A29E);
   font-weight: 500;
   font-size: .875rem;
-   padding: 8px;
+  padding: 8px;
   white-space: normal
 }
+
+#mt-trades .dj-cell--side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+/* Fondo base de las filas */
+#mt-trades .dj-rows .dj-row {
+  background-color: #1E1E1E;
+}
+
+/* Zebra striping: una sí y una no */
+#mt-trades .dj-rows .dj-row:nth-child(odd) {
+  background-color: #131210;
+}
+
 
 #mt-trades .is-right {
   text-align: right
@@ -5126,5 +5152,387 @@ button#mt-payout-acc-btn:active {
   font: 500 14px/20px Roboto, system-ui, sans-serif;
 }
 
+/* ===== End Trade History ===== */
 
-/***** Trade History **/
+/* ===== Journal Calendar (Account Overview) ===== */
+.mt-account-journal-cal__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+/* Header */
+.mt-account-journal-cal__header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+
+}
+
+.mt-account-journal-cal__title-row {
+  flex: 1 1 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mt-account-journal-cal__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mt-card__title__journal {
+  color: var(--Text-Body, #A8A29E);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.mt-account-journal-cal__nav-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+
+.mt-account-journal-cal__nav-btn {
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.mt-account-journal-cal__today {
+  padding: 12px 16px;
+  background: var(--Surface-Dark, #292524);
+  border-radius: 12px;
+  outline: 1px solid var(--Colors-Gray-700, #404040);
+  outline-offset: -1px;
+  color: #FAFAFA;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Dropdowns */
+.mt-dd {
+  position: relative;
+  width: 160px;
+}
+
+.mt-dd .mt-dd__button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+  background: rgba(30, 30, 30, 0.70);
+  color: var(--Text-Body, #A8A29E);
+  font: 500 16px/24px Roboto, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.mt-dd .mt-dd__button:focus {
+  outline: 1px solid #ffb34a;
+  box-shadow: 0 0 0 2px rgba(255, 179, 74, .15);
+}
+
+.mt-dd[aria-expanded="true"] .mt-dd__button .mt-icon_caret-down {
+  transform: rotate(180deg);
+}
+
+.mt-dd .mt-dd__panel {
+  position: absolute;
+  inset: auto 0 0 0;
+  transform: translateY(calc(100% + 6px));
+  background: #1e1e1e;
+  border-radius: 12px;
+  border: 1px solid var(--Colors-Gray-700, #404040);
+  max-height: 280px;
+  overflow: auto;
+  padding: 6px;
+  z-index: 20;
+  scrollbar-color: rgba(255, 255, 255, .15) transparent;
+  scrollbar-width: thin;
+}
+
+.mt-dd .mt-dd__option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: var(--Text-Body, #A8A29E);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  font: 500 16px/24px Roboto, system-ui, sans-serif;
+}
+
+.mt-dd .mt-dd__option:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.mt-dd .mt-dd__option[aria-selected="true"],
+.mt-dd .mt-dd__option.is-active {
+  background: #ffb34a;
+  color: #000;
+}
+
+.mt-dd .mt-dd__panel::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.mt-dd .mt-dd__panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .15);
+  border-radius: 8px;
+}
+
+.mt-dd .mt-dd__panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, .25);
+}
+
+.mt-icon_caret-down {
+  mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M7 10l5 5 5-5H7z" fill="black"/></svg>');
+  background-color: currentColor;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+/* Days of week */
+.mt-cal-head {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.mt-cal-dow {
+  text-align: center;
+  color: var(--Text-Body, #A8A29E);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+/* Calendar grid */
+.mt-trade-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 92px;
+  gap: 8px;
+}
+
+/* Cells */
+.mt-cal-cell {
+  min-width: 60px;
+  min-height: 60px;
+  padding: 4px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.mt-cal-cell--other {
+  opacity: 1;
+}
+
+.mt-cal-cell__day {
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.mt-cal-cell__pnl {
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.mt-cal-cell__trades {
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+/* Positioning for tooltip */
+.mt-account-journal-cal__body {
+  position: relative;
+}
+
+/* Floating tooltip (same look as other tooltips) */
+.mt-cal-tooltip {
+  position: absolute;
+  z-index: 30;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+}
+
+.mt-cal-tooltip__panel {
+  position: relative;
+  padding: 8px 12px;
+  background: #0B0B0B;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #FAFAFA;
+  font-family: Roboto, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.mt-cal-tooltip__panel::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #0B0B0B transparent transparent transparent;
+}
+
+.mt-cal-tooltip__pnl {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.mt-cal-tooltip__pnl.is-positive {
+  color: var(--Success-400, #2DD4BF);
+}
+
+.mt-cal-tooltip__pnl.is-negative {
+  color: var(--Error-300, #FDA4AF);
+}
+
+.mt-cal-tooltip__trades {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .mt-account-journal-cal__header {
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .mt-account-journal-cal__nav-row {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .mt-account-journal-cal__today {
+    align-self: stretch;
+    width: 100%;
+    text-align: center;
+  }
+
+  .mt-trade-calendar {
+    grid-auto-rows: 40px;
+  }
+
+  .mt-cal-cell {
+    min-height: 40px !important;
+    padding: 4px !important;
+    min-width: auto !important;
+  }
+
+  .mt-cal-cell__pnl,
+  .mt-cal-cell__trades {
+    display: none;
+  }
+
+}
+
+/* Desktop: tooltip not needed */
+@media (min-width: 769px) {
+  .mt-cal-tooltip {
+    display: none;
+  }
+
+}
+
+@media (max-width:394px) {
+
+  .mt-dd__button {
+    max-width: 114px;
+  }
+
+  .mt-dd__button span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ===== Account Data Global Card ===== */
+
+
+.mt-grid--3x2 {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  /* < 576px → 1 card */
+}
+
+@media (min-width: 576px) {
+  .mt-grid--3x2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* 576–767px → 2 cards */
+  }
+}
+
+@media (min-width: 768px) {
+  .mt-grid--3x2 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* ≥ 768px → 3 cards */
+  }
+}
+
+/* Scope solo al primer card con el mini-chart */
+.mt-card.mt-card-chart .mt-card__chart {
+  margin-top: 0 !important;
+}
+
+.mt-card.mt-card-chart table {
+  border: 0 !important;
+  margin: 0 !important;
+  border-collapse: collapse;
+}
+
+.mt-card.mt-card-chart table td,
+.mt-card.mt-card-chart table th {
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0;
+}
