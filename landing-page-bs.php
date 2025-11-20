@@ -9,7 +9,7 @@ get_header('landing-page-bs');
     <main class="landing-bs">
         <!-- Hero Section -->
         <section class="hero-bs text-white">
-            <div class="container hero-bs__container">
+            <div class="landing-bs-container">
                 <div class="hero-bs__row">
                     <div class="hero-bs__content">
                         <div>
@@ -74,7 +74,7 @@ get_header('landing-page-bs');
         ?>
 
         <section class="verified-bs text-white">
-            <div class="container verified-bs__container">
+            <div class="landing-bs-container verified-bs__container">
                 <header class="verified-bs__header text-center">
                     <h2 class="verified-bs__title">
                         Verified <span>ACHIEVEMENTS</span> from Real Traders
@@ -120,12 +120,12 @@ get_header('landing-page-bs');
 
         ?>
         <section class="payout-bs text-white">
-            <div class="container payout-bs__container">
+            <div class="landing-bs-container">
                 <div class="payout-bs__row">
                     <div class="payout-bs__content">
                         <header class="payout-bs__header text-start">
                             <h2 class="payout-bs__title">
-                                Earn your first payout in 5 days
+                                EARN YOUR FIRST PAYOUT IN 5 DAYS
                             </h2>
                         </header>
 
