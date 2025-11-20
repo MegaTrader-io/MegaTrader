@@ -36,7 +36,7 @@ get_header('landing-page-bs');
                             ]
                             ?>
                             <?php foreach ($features as $key => $feature): ?>
-                                <li class="hero-bs__benefit d-flex align-items-start">
+                                <li class="hero-bs__benefit d-flex">
                                     <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash.svg'; ?>">
                                     <span class="hero-bs__text"><?= $feature ?></span>
                                 </li>
