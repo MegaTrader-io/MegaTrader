@@ -1,4 +1,6 @@
-/* Bloque principal */
+/* =========================================================
+   Global & Layout
+   ========================================================= */
 
 .landing-bs {
     margin-bottom: 64px;
@@ -7,6 +9,10 @@
 .landing-bs > * + * {
     margin-top: 48px;
 }
+
+/* =========================================================
+   Hero Section (.hero-bs)
+   ========================================================= */
 
 .hero-bs {
     color: #fff;
@@ -22,7 +28,7 @@
     gap: 48px;
 }
 
-/* Contenido izquierdo */
+/* Hero Content */
 .hero-bs__content {
     display: flex;
     flex-direction: column;
@@ -43,11 +49,15 @@
     word-wrap: break-word
 }
 
-@media (min-width: 768px) {
-    .hero-bs__title {
-    }
+.hero-bs__text {
+    color: #A8A29E;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word
 }
 
+/* Hero Benefits */
 .hero-bs__benefits {
     margin-bottom: 0;
 }
@@ -68,14 +78,7 @@
     color: #f6a20e; /* Amarillo de acento */
 }
 
-.hero-bs__text {
-    color: #A8A29E;
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 32px;
-    word-wrap: break-word
-}
-
+/* Hero CTA Button */
 .hero-bs__btn {
     display: flex;
     color: #3D2900;
@@ -91,7 +94,7 @@
     border: none;
 }
 
-/* Media */
+/* Hero Media */
 .hero-bs__media {
     text-align: center;
 }
@@ -106,8 +109,14 @@
     height: auto;
 }
 
+.hero-bs__media-card {
+    width: 600px;
+    height: 435px;
+}
+
+
 /* =========================================================
-   Verified Section (Over $70 Million Verified Payouts)
+   Verified Section (.verified-bs)
    ========================================================= */
 
 .verified-bs {
@@ -121,13 +130,8 @@
     padding: 0 var(--space-md);
 }
 
-/* Header / Title / Subtitle */
-
-.verified-bs__image {
-    width: 100%;
-}
-
-.verified-bs__title {
+/* Titles */
+.verified-bs__title, .payouts-and-comparison__title, .comparison__header {
     color: white;
     font-size: 40px;
     font-weight: 300;
@@ -137,11 +141,11 @@
     margin-bottom: 0;
 }
 
-.verified-bs__title span {
+.verified-bs__title span, .payouts-and-comparison__title span {
     color: var(--Surface-Primary);
 }
 
-.verified-bs__subtitle {
+.verified-bs__subtitle, .payouts-and-comparison__subtitle {
     max-width: 760px;
     text-align: center;
     color: var(--body-color);
@@ -156,18 +160,18 @@
     margin-bottom: 0;
 }
 
+/* Carousel / Images */
 #verified-bs-carousel {
     padding: 32px 0;
 }
 
-.splide__slide {
-    width: 378px !important; /* ✅ ancho fijo */
-    height: 260px;
-    border-radius: 16px;
+.verified-bs__cards {
+    padding: 32px 16px;
+}
+
+.verified-bs__cards .verified-bs__carousel {
+    gap: 16px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
 }
 
 .verified-bs__carousel {
@@ -178,13 +182,14 @@
     animation-play-state: paused;
 }
 
-.verified-bs__cards .verified-bs__carousel {
-    gap: 16px;
+.splide__slide {
+    width: 378px !important; /* Mantenido para slider de terceros */
+    height: 260px;
+    border-radius: 16px;
     display: flex;
-}
-
-.verified-bs__cards {
-    padding: 32px 16px;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
 }
 
 .verified-bs__image {
@@ -199,8 +204,55 @@
     border-color: #FFB34A;
 }
 
+/* Glide Slider Overrides */
+.verified-bs__glide .glide__slide {
+    position: relative;
+}
+
+.verified-bs__glide .slider__bullets {
+    width: var(--verified-bs-slide-width);
+}
+
+.verified-bs__glide .glide__arrows {
+    position: static;
+    width: calc(var(--verified-bs-slide-width) + 64px);
+}
+
+.verified-bs__glide .glide__arrow--prev,
+.verified-bs__glide .glide__arrow--next {
+    position: absolute;
+    padding: 8px;
+    background: #1E1E1E;
+    border-radius: 64px;
+    outline: 1px #404040 solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+}
+
+.verified-bs__glide .glide__arrow--prev {
+    left: calc(var(--verified-bs-slide-left) - 32px);
+    top: calc(50% - 28px);
+}
+
+.verified-bs__glide .glide__arrow--next {
+    right: calc(var(--verified-bs-slide-left) - 32px);
+    top: calc(50% - 28px);
+}
+
+.verified-bs__glide .glide__bullets {
+    position: relative;
+    bottom: auto;
+    margin-block: 16px;
+    padding-block: 8px;
+    padding-inline: 16px;
+}
+
+
 /* =========================================================
-   Payout Section (Earn Your First Payout in 5 Days)
+   Payout Section (.payout-bs)
    ========================================================= */
 
 .payout-bs {
@@ -213,14 +265,10 @@
     gap: 48px;
 }
 
-/* ===============================
-   Left Side (Text Content)
-   =============================== */
-
+/* Content */
 .payout-bs__content > * + * {
     margin-top: 32px;
 }
-
 
 .payout-bs__header {
     margin-bottom: 0;
@@ -288,67 +336,15 @@
     margin-bottom: 0
 }
 
-/* CTA button */
-.payout-bs__btn {
-}
-
-/* ===============================
-   Right Side (Media)
-   =============================== */
-
+/* Media */
 .payout-bs__media-wrapper {
     width: 840px;
     height: 572px;
 }
 
-/* ===============================
-   Responsive adjustments
-   =============================== */
-
-@media (max-width: 991.98px) {
-    .payout-bs__row {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .payout-bs__content {
-        align-items: center;
-    }
-
-    .payout-bs__title {
-        font-size: 32px;
-        line-height: 40px;
-    }
-
-    .payout-bs__list {
-        width: 100%;
-        max-width: 420px;
-    }
-
-    .payout-bs__btn {
-        align-self: center;
-    }
-
-    .payout-bs__media-wrapper {
-        max-width: 480px;
-        height: 320px;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .payout-bs__title {
-        font-size: 28px;
-        line-height: 36px;
-    }
-
-    .payout-bs__row {
-        gap: 32px;
-    }
-
-    .payout-bs__media-wrapper {
-        height: 260px;
-    }
-}
+/* =========================================================
+   Platforms Section (.platforms-bs)
+   ========================================================= */
 
 .platforms-bs {
     background: #131210;
@@ -375,7 +371,7 @@
 
 
 /* =========================================================
-   Journal Section (Journal to Find Your Winning Strategies)
+   Journal Section (.journal-bs)
    ========================================================= */
 
 .journal-bs {
@@ -411,8 +407,7 @@
     margin-bottom: 0;
 }
 
-
-/* Swiper Section */
+/* Content / Swiper */
 .journal-bs__content {
     position: relative;
     padding-top: 32px;
@@ -434,6 +429,10 @@
     object-fit: cover;
 }
 
+.slider__slides .glide__slide:not(.glide__slide--active) .journal-bs__card {
+    opacity: 0.5;
+}
+
 /* Pagination */
 .journal-bs__content .swiper-pagination {
     position: relative;
@@ -453,42 +452,9 @@
     opacity: 1;
 }
 
-/* Responsive */
-@media (max-width: 767px) {
-    .journal-bs__title {
-        font-size: 28px;
-        line-height: 36px;
-    }
-
-    .journal-bs__header {
-        text-align: left;
-    }
-
-    .journal-bs__card {
-        height: 260px;
-    }
-
-    .journal-bs__header .badge-group__text {
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        line-height: 20px;
-        word-wrap: break-word
-    }
-
-    .journal-bs__header .badge-group__item {
-        padding: 12px;
-        border-radius: 64px;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        display: inline-flex
-    }
-}
-
 
 /* =========================================================
-   Component: Badge Duo
+   Component: Badge Duo (.badge-duo)
    ========================================================= */
 
 .badge-duo {
@@ -514,7 +480,6 @@
     overflow: hidden;
 }
 
-
 .badge-duo__secondary {
     color: #14B8A6;
     font-size: 14px;
@@ -535,8 +500,9 @@
     color: var(--theme-color3);
 }
 
+
 /* =========================================================
-   Component: Badge Group (Static visual tabs)
+   Component: Badge Group (.badge-group)
    ========================================================= */
 
 .badge-group {
@@ -549,7 +515,7 @@
     border-radius: 12px;
 }
 
-/* Ítem genérico */
+/* Item */
 .badge-group__item {
     display: flex;
     justify-content: center;
@@ -560,7 +526,7 @@
     background: transparent;
 }
 
-/* Texto */
+/* Text */
 .badge-group__text {
     color: #FFB34A;
     font-size: 16px;
@@ -570,7 +536,7 @@
     word-wrap: break-word;
 }
 
-/* Estado activo */
+/* Active State */
 .badge-group__item.is-active {
     background-color: #FFB34A;
 }
@@ -579,66 +545,10 @@
     color: #020617;
 }
 
-.slider__slides .glide__slide:not(.glide__slide--active) .journal-bs__card {
-    opacity: 0.5;
-}
 
-.verified-bs__glide .glide__slide {
-    position: relative;
-}
-
-.verified-bs__glide .slider__bullets {
-    width: var(--verified-bs-slide-width);
-}
-
-.verified-bs__glide .glide__arrows {
-    position: static;
-    width: calc(var(--verified-bs-slide-width) + 64px);
-}
-
-.verified-bs__glide .glide__arrow--prev,
-.verified-bs__glide .glide__arrow--next {
-    position: absolute;
-    padding: 8px;
-    background: #1E1E1E;
-    border-radius: 64px;
-    outline: 1px #404040 solid;
-    outline-offset: -1px;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-}
-
-.verified-bs__glide .glide__arrow--prev {
-    left: calc(var(--verified-bs-slide-left) - 32px);
-    top: calc(50% - 28px);
-}
-
-.verified-bs__glide .glide__arrow--next {
-    right: calc(var(--verified-bs-slide-left) - 32px);
-    top: calc(50% - 28px);
-}
-
-@media (max-width: 1024px) {
-    .verified-bs__glide .glide__arrow--prev {
-        left: calc(var(--verified-bs-slide-left) + 16px);
-        top: calc(50% - 28px);
-    }
-
-    .verified-bs__glide .glide__arrow--next {
-        right: calc(var(--verified-bs-slide-left) + 16px);
-        top: calc(50% - 28px);
-    }
-}
-
-.verified-bs__glide .glide__bullets {
-    position: relative;
-    bottom: auto;
-    margin-block: 16px;
-    padding-block: 8px;
-    padding-inline: 16px;
-}
+/* =========================================================
+   Testimonials Section (.testimonials)
+   ========================================================= */
 
 .testimonials {
     display: flex;
@@ -712,6 +622,11 @@
     line-height: 24px;
     word-wrap: break-word;
 }
+
+
+/* =========================================================
+   Competition Section (.competition)
+   ========================================================= */
 
 .competition {
     padding: 48px;
@@ -790,9 +705,6 @@
 
 .competition__entry-note {
     margin-bottom: 0;
-}
-
-.competition__entry-note {
     color: #A8A29E;
     font-size: 20px;
     font-weight: 500;
@@ -845,11 +757,13 @@
     border-radius: 16px;
 }
 
-.payouts-and-comparison {
-    background: var(--smoke-color2);
-}
+
+/* =========================================================
+   Payouts & Comparison Section (.payouts-and-comparison)
+   ========================================================= */
 
 .payouts-and-comparison {
+    background: var(--smoke-color2);
     text-align: center;
     overflow: hidden;
 }
@@ -859,40 +773,7 @@
 }
 
 .payouts-and-comparison__image {
-    width: 100%;
-}
-
-.payouts-and-comparison__title, .comparison__header {
-    color: white;
-    font-size: 40px;
-    font-weight: 300;
-    text-transform: uppercase;
-    line-height: 48px;
-    word-wrap: break-word;
-    margin-bottom: 0;
-}
-
-.payouts-and-comparison__title span {
-    color: var(--Surface-Primary);
-}
-
-.payouts-and-comparison__subtitle {
-    max-width: 760px;
-    text-align: center;
-    color: var(--body-color);
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 32px;
-    word-wrap: break-word;
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    margin-bottom: 0;
-}
-
-.payouts-and-comparison__image {
-    width: 452px;
+    width: 452px; /* Specific dimensions */
     height: 358px;
 }
 
@@ -922,6 +803,10 @@
     padding: 8px 16px 16px 16px;
 }
 
+.payouts-and-comparison__list > * + * {
+    margin-top: 12px;
+}
+
 .payouts-and-comparison__list li {
     display: flex;
     gap: 4px;
@@ -929,10 +814,6 @@
 
 .payouts-and-comparison__list p {
     margin-bottom: 0;
-}
-
-.payouts-and-comparison__list > * + * {
-    margin-top: 12px;
 }
 
 .payouts-and-comparison__checked {
@@ -944,6 +825,10 @@
     display: flex;
     gap: 41px;
 }
+
+/* =========================================================
+   Component: Promo Badge (.promo-badge)
+   ========================================================= */
 
 .promo-badge {
     padding: 6px 16px 6px 6px;
@@ -980,7 +865,102 @@
     line-height: 20px;
 }
 
-.hero-bs__media-card {
-    width: 600px;
-    height: 435px;
+/* =========================================================
+   Responsive adjustments (Media Queries)
+   ========================================================= */
+
+/* Tablet and larger (min-width: 768px) */
+/* No hay reglas específicas para hero-bs__title */
+
+/* Medium devices (max-width: 991.98px) - Payout Section */
+@media (max-width: 991.98px) {
+    .payout-bs__row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .payout-bs__content {
+        align-items: center;
+    }
+
+    .payout-bs__title {
+        font-size: 32px;
+        line-height: 40px;
+    }
+
+    .payout-bs__list {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .payout-bs__btn {
+        align-self: center;
+    }
+
+    .payout-bs__media-wrapper {
+        max-width: 480px;
+        height: 320px;
+    }
+}
+
+/* Small devices (max-width: 575.98px) - Payout Section */
+@media (max-width: 575.98px) {
+    .payout-bs__title {
+        font-size: 28px;
+        line-height: 36px;
+    }
+
+    .payout-bs__row {
+        gap: 32px;
+    }
+
+    .payout-bs__media-wrapper {
+        height: 260px;
+    }
+}
+
+/* Small devices (max-width: 767px) - Journal Section */
+@media (max-width: 767px) {
+    .journal-bs__title {
+        font-size: 28px;
+        line-height: 36px;
+    }
+
+    .journal-bs__header {
+        text-align: left;
+    }
+
+    .journal-bs__card {
+        height: 260px;
+    }
+
+    .journal-bs__header .badge-group__text {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        line-height: 20px;
+        word-wrap: break-word
+    }
+
+    .journal-bs__header .badge-group__item {
+        padding: 12px;
+        border-radius: 64px;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        display: inline-flex
+    }
+}
+
+/* Large devices (max-width: 1024px) - Verified Glide Arrows */
+@media (max-width: 1024px) {
+    .verified-bs__glide .glide__arrow--prev {
+        left: calc(var(--verified-bs-slide-left) + 16px);
+        top: calc(50% - 28px);
+    }
+
+    .verified-bs__glide .glide__arrow--next {
+        right: calc(var(--verified-bs-slide-left) + 16px);
+        top: calc(50% - 28px);
+    }
 }

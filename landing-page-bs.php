@@ -215,7 +215,8 @@ get_header('landing-page-bs');
                 </header>
             </div>
             <div class="journal-bs__content">
-                <div id="verified-bs-id" class="verified-bs__glide slider glide" style="--verified-bs-slide-width: 0px; --verified-bs-slide-left: 0px;">
+                <div id="verified-bs-id" class="verified-bs__glide slider glide"
+                     style="--verified-bs-slide-width: 0px; --verified-bs-slide-left: 0px;">
                     <div class="slider__track glide__track" data-glide-el="track">
                         <ul class="slider__slides glide__slides">
                             <?php for ($i = 1; $i <= 3; $i++) : ?>
@@ -355,7 +356,7 @@ get_header('landing-page-bs');
 
                         <img class="payouts-and-comparison__image"
                              src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/window-popular.png'); ?>"
-                             alt="flash" width="24" height="24">
+                             alt="flash">
 
                         <div class="payouts-and-comparison__content">
                             <svg width="420" height="28" viewBox="0 0 420 28" fill="none"

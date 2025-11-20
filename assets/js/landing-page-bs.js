@@ -170,32 +170,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
-                // ----------------------------
-                // ⭐⭐ AQUÍ VA TU CÁLCULO ⭐⭐
-                // ----------------------------
                 Object.defineProperty(Sizes, 'slideWidth', {
                     get() {
-                        let w;
+                        let width = window.innerWidth <= 768 ? window.innerWidth - 32 : 800;
 
-                        if (window.innerWidth <= 768) {
-                            if (window.innerWidth < 450) {
-                                w = window.innerWidth - 32;
-                            } else {
-                                w = 450;
-                            }
-                        } else {
-                            w = 800;
-                        }
-
-                        // Actualiza la variable CSS global
-                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', w + 'px');
+                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', width + 'px');
 
                         const points = document.querySelector('.verified-bs__glide .slider__bullets');
 
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-left', (points?.getBoundingClientRect().x || 0) + 'px');
 
                         console.info('getBoundingClientRect().x', points.getBoundingClientRect().x);
-                        return w;
+                        return width;
                     }
                 });
 
