@@ -593,12 +593,12 @@
 }
 
 .verified-bs__glide .glide__arrow--prev {
-    left: 28px;
-    top: calc(50% - 20px);
+    left: calc(var(--verified-bs-slide-left) - 32px);
+    top: calc(50% - 28px);
 }
 .verified-bs__glide .glide__arrow--next {
-    right: 28px;
-    top: calc(50% - 20px);
+    right: calc(var(--verified-bs-slide-left) -  32px);
+    top: calc(50% - 28px);
 }
 
 .verified-bs__glide .glide__bullets {
