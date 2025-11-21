@@ -223,7 +223,7 @@
 }
 
 .verified-bs__glide .glide__arrow--prev, .control-arrows-bs .glide__arrow--prev,
-.verified-bs__glide .glide__arrow--next, .control-arrows-bs .glide__arrow--next{
+.verified-bs__glide .glide__arrow--next, .control-arrows-bs .glide__arrow--next {
     position: absolute;
     padding: 8px;
     background: #1E1E1E;
@@ -376,6 +376,10 @@
     display: flex;
     justify-content: space-between;
     padding-bottom: 48px;
+}
+
+.platforms-bs__first-row, .platforms-bs__second-row {
+    display: contents;
 }
 
 .platforms-bs__item {
@@ -986,6 +990,46 @@
     .payout-bs__wrapper_content p {
         width: 80dvw;
     }
+
+    .platforms-bs__list {
+        gap: 32px !important;
+    }
+
+    .platforms-bs__first-row {
+        gap: 32px;
+    }
+
+    .platforms-bs__first-row .platforms-bs__item:last-child {
+        flex: 1;
+    }
+
+    .platforms-bs__second-row {
+        gap: 32px;
+    }
+
+    .platforms-bs__second-row .platforms-bs__item {
+        flex: 1
+    }
+
+    .platforms-bs__first-row .platforms-bs__item:first-child img {
+        width: 161px;
+        height: 26px;
+    }
+
+    .platforms-bs__first-row .platforms-bs__item:last-child img {
+        width: 109px;
+        height: 33px;
+    }
+
+    .platforms-bs__second-row .platforms-bs__item:first-child img {
+        width: 116px;
+        height: 15px;
+    }
+
+    .platforms-bs__second-row .platforms-bs__item:last-child img {
+        width: 104px;
+        height: 23px;
+    }
 }
 
 /* Small devices (max-width: 767px) - Journal Section */
@@ -1046,6 +1090,17 @@
     .verified-bs {
         margin-block: 12px;
     }
+
+    .platforms-bs__list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .platforms-bs__first-row, .platforms-bs__second-row {
+        display: flex;
+        justify-content: space-around;
+        gap: 32px;
+    }
 }
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
@@ -1058,5 +1113,13 @@
     .verified-bs__glide .glide__arrow--next {
         right: calc(var(--verified-bs-slide-left) + 16px);
         top: calc(50% - 28px);
+    }
+
+    .platforms-bs__list {
+        gap: 64px;
+    }
+
+    .landing-bs-container {
+        padding: 32px;
     }
 }
