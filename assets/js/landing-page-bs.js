@@ -66,8 +66,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function initializeSwiper() {
-
         try {
+            const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
+            const heroGlideInstance = new Glide(heroBsCarouselRoot, {
+                type: 'carousel',
+                focusAt: 'center',
+                gap: 16,
+                perView: 1,
+            });
+
+            heroGlideInstance.mount();
+
             const carouselSelector = '#verified-bs-carousel';
             const carouselEl = document.querySelector(carouselSelector);
             if (!carouselEl) throw new Error('Carousel element not found.');

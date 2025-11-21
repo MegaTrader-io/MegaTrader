@@ -55,10 +55,49 @@ get_header('landing-page-bs');
                     <div class="hero-bs__media">
                         <div class="hero-bs__media-wrapper">
                             <div class="mt-card hero-bs__media-card">
+                                <?php
+                                $skews_images = [
+                                        get_template_directory_uri() . '/assets/img/landing-page/skew-01-1.png',
+                                        get_template_directory_uri() . '/assets/img/landing-page/skew-02-1.png'
+                                ];
+                                ?>
+
+                                <div id="hero-bs-carousel" class="hero-bs__glide slider glide"
+                                     style="--hero-bs-slide-width: 0px; --hero-bs-slide-left: 0px;">
+                                    <div class="slider__track glide__track" data-glide-el="track">
+                                        <ul class="slider__slides glide__slides">
+                                            <?php foreach ($skews_images as $key => $skew_image) : ?>
+                                                <li class="slider__frame glide__slide">
+                                                    <img src="<?php echo esc_url($skew_image); ?>"
+                                                         alt="control left">
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+
+                                    <div data-glide-el="controls" class="glide__arrows">
+                                        <button class="glide__arrow glide__arrow--prev" data-glide-dir="<">
+                                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-left.svg'); ?>"
+                                                 alt="control left">
+                                        </button>
+                                        <button class="glide__arrow glide__arrow--next" data-glide-dir=">">
+                                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-right.svg'); ?>"
+                                                 alt="control right">
+                                        </button>
+                                    </div>
+
+                                    <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
+                                        <button class="slider__bullet glide__bullet" data-glide-dir="=0"></button>
+                                        <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </section>
 
@@ -248,92 +287,93 @@ get_header('landing-page-bs');
             </div>
         </section>
 
-        <?php get_template_part('template-parts/landing-page/sections/pricing_table', null, ['classes' => '']); ?>
+        <?php get_template_part('template-parts/landing-page/sections/pricing_table', null, ['classes' => 'landing-bs-container']); ?>
 
-        <section id="competition" class="competition">
-            <div class="competition__wrapper">
-                <div class="competition__content">
-                    <h2 class="competition__title">
-                        Join the World’s Biggest Futures Trading Competition
-                    </h2>
+        <section id="competition">
+            <div class="competition landing-bs-container">
+                <div class="competition__wrapper ">
+                    <div class="competition__content">
+                        <h2 class="competition__title">
+                            Join the World’s Biggest Futures Trading Competition
+                        </h2>
 
-                    <div class="competition__rewards">
-                        <div class="competition__reward-card">
-                            <div class="competition__reward-header">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_17091_79275" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                          x="0" y="0" width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_17091_79275)">
-                                        <path d="M6 20C4.9 20 3.95833 19.6083 3.175 18.825C2.39167 18.0417 2 17.1 2 16V8C2 6.9 2.39167 5.95833 3.175 5.175C3.95833 4.39167 4.9 4 6 4H18C19.1 4 20.0417 4.39167 20.825 5.175C21.6083 5.95833 22 6.9 22 8V16C22 17.1 21.6083 18.0417 20.825 18.825C20.0417 19.6083 19.1 20 18 20H6ZM6 8H18C18.3667 8 18.7167 8.04167 19.05 8.125C19.3833 8.20833 19.7 8.34167 20 8.525V8C20 7.45 19.8042 6.97917 19.4125 6.5875C19.0208 6.19583 18.55 6 18 6H6C5.45 6 4.97917 6.19583 4.5875 6.5875C4.19583 6.97917 4 7.45 4 8V8.525C4.3 8.34167 4.61667 8.20833 4.95 8.125C5.28333 8.04167 5.63333 8 6 8ZM4.15 11.25L15.275 13.95C15.425 13.9833 15.575 13.9833 15.725 13.95C15.875 13.9167 16.0167 13.85 16.15 13.75L19.625 10.85C19.4417 10.6 19.2083 10.3958 18.925 10.2375C18.6417 10.0792 18.3333 10 18 10H6C5.56667 10 5.1875 10.1125 4.8625 10.3375C4.5375 10.5625 4.3 10.8667 4.15 11.25Z"
-                                              fill="#FFB34A"/>
-                                    </g>
-                                </svg>
+                        <div class="competition__rewards">
+                            <div class="competition__reward-card">
+                                <div class="competition__reward-header">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_17091_79275" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                              x="0" y="0" width="24" height="24">
+                                            <rect width="24" height="24" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_17091_79275)">
+                                            <path d="M6 20C4.9 20 3.95833 19.6083 3.175 18.825C2.39167 18.0417 2 17.1 2 16V8C2 6.9 2.39167 5.95833 3.175 5.175C3.95833 4.39167 4.9 4 6 4H18C19.1 4 20.0417 4.39167 20.825 5.175C21.6083 5.95833 22 6.9 22 8V16C22 17.1 21.6083 18.0417 20.825 18.825C20.0417 19.6083 19.1 20 18 20H6ZM6 8H18C18.3667 8 18.7167 8.04167 19.05 8.125C19.3833 8.20833 19.7 8.34167 20 8.525V8C20 7.45 19.8042 6.97917 19.4125 6.5875C19.0208 6.19583 18.55 6 18 6H6C5.45 6 4.97917 6.19583 4.5875 6.5875C4.19583 6.97917 4 7.45 4 8V8.525C4.3 8.34167 4.61667 8.20833 4.95 8.125C5.28333 8.04167 5.63333 8 6 8ZM4.15 11.25L15.275 13.95C15.425 13.9833 15.575 13.9833 15.725 13.95C15.875 13.9167 16.0167 13.85 16.15 13.75L19.625 10.85C19.4417 10.6 19.2083 10.3958 18.925 10.2375C18.6417 10.0792 18.3333 10 18 10H6C5.56667 10 5.1875 10.1125 4.8625 10.3375C4.5375 10.5625 4.3 10.8667 4.15 11.25Z"
+                                                  fill="#FFB34A"/>
+                                        </g>
+                                    </svg>
 
-                                <span class="competition__reward-amount">$1,000,000</span>
+                                    <span class="competition__reward-amount">$1,000,000</span>
+                                </div>
+                                <p class="competition__reward-label">Reward Pool</p>
                             </div>
-                            <p class="competition__reward-label">Reward Pool</p>
+
+                            <div class="competition__reward-card">
+                                <div class="competition__reward-header">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_17091_79275" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                              x="0" y="0" width="24" height="24">
+                                            <rect width="24" height="24" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_17091_79275)">
+                                            <path d="M6 20C4.9 20 3.95833 19.6083 3.175 18.825C2.39167 18.0417 2 17.1 2 16V8C2 6.9 2.39167 5.95833 3.175 5.175C3.95833 4.39167 4.9 4 6 4H18C19.1 4 20.0417 4.39167 20.825 5.175C21.6083 5.95833 22 6.9 22 8V16C22 17.1 21.6083 18.0417 20.825 18.825C20.0417 19.6083 19.1 20 18 20H6ZM6 8H18C18.3667 8 18.7167 8.04167 19.05 8.125C19.3833 8.20833 19.7 8.34167 20 8.525V8C20 7.45 19.8042 6.97917 19.4125 6.5875C19.0208 6.19583 18.55 6 18 6H6C5.45 6 4.97917 6.19583 4.5875 6.5875C4.19583 6.97917 4 7.45 4 8V8.525C4.3 8.34167 4.61667 8.20833 4.95 8.125C5.28333 8.04167 5.63333 8 6 8ZM4.15 11.25L15.275 13.95C15.425 13.9833 15.575 13.9833 15.725 13.95C15.875 13.9167 16.0167 13.85 16.15 13.75L19.625 10.85C19.4417 10.6 19.2083 10.3958 18.925 10.2375C18.6417 10.0792 18.3333 10 18 10H6C5.56667 10 5.1875 10.1125 4.8625 10.3375C4.5375 10.5625 4.3 10.8667 4.15 11.25Z"
+                                                  fill="#FFB34A"/>
+                                        </g>
+                                    </svg>
+
+                                    <span class="competition__reward-amount">$200,000</span>
+                                </div>
+                                <p class="competition__reward-label">Grand Reward</p>
+                            </div>
                         </div>
 
-                        <div class="competition__reward-card">
-                            <div class="competition__reward-header">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_17091_79275" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                          x="0" y="0" width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_17091_79275)">
-                                        <path d="M6 20C4.9 20 3.95833 19.6083 3.175 18.825C2.39167 18.0417 2 17.1 2 16V8C2 6.9 2.39167 5.95833 3.175 5.175C3.95833 4.39167 4.9 4 6 4H18C19.1 4 20.0417 4.39167 20.825 5.175C21.6083 5.95833 22 6.9 22 8V16C22 17.1 21.6083 18.0417 20.825 18.825C20.0417 19.6083 19.1 20 18 20H6ZM6 8H18C18.3667 8 18.7167 8.04167 19.05 8.125C19.3833 8.20833 19.7 8.34167 20 8.525V8C20 7.45 19.8042 6.97917 19.4125 6.5875C19.0208 6.19583 18.55 6 18 6H6C5.45 6 4.97917 6.19583 4.5875 6.5875C4.19583 6.97917 4 7.45 4 8V8.525C4.3 8.34167 4.61667 8.20833 4.95 8.125C5.28333 8.04167 5.63333 8 6 8ZM4.15 11.25L15.275 13.95C15.425 13.9833 15.575 13.9833 15.725 13.95C15.875 13.9167 16.0167 13.85 16.15 13.75L19.625 10.85C19.4417 10.6 19.2083 10.3958 18.925 10.2375C18.6417 10.0792 18.3333 10 18 10H6C5.56667 10 5.1875 10.1125 4.8625 10.3375C4.5375 10.5625 4.3 10.8667 4.15 11.25Z"
-                                              fill="#FFB34A"/>
-                                    </g>
-                                </svg>
+                        <p class="competition__entry-note">
+                            FREE entry with a Tradeify account. $35 otherwise.
+                        </p>
 
-                                <span class="competition__reward-amount">$200,000</span>
-                            </div>
-                            <p class="competition__reward-label">Grand Reward</p>
-                        </div>
-                    </div>
+                        <div class="competition__perks">
+                            <div class="competition__perk">
+                                <img class="payouts-and-comparison__checked"
+                                     src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                     alt="checked circle">
 
-                    <p class="competition__entry-note">
-                        FREE entry with a Tradeify account. $35 otherwise.
-                    </p>
-
-                    <div class="competition__perks">
-                        <div class="competition__perk">
-                            <img class="payouts-and-comparison__checked"
-                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
-                                 alt="checked circle">
-
-                            <span class="competition__perk-text">
+                                <span class="competition__perk-text">
           Top 400 traders earn Cash Rewards
         </span>
-                        </div>
-                        <div class="competition__perk">
-                            <img class="payouts-and-comparison__checked"
-                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
-                                 alt="checked circle">
+                            </div>
+                            <div class="competition__perk">
+                                <img class="payouts-and-comparison__checked"
+                                     src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                     alt="checked circle">
 
-                            <span class="competition__perk-text">
+                                <span class="competition__perk-text">
           Top 200 also get a Live Account
         </span>
+                            </div>
+                        </div>
+
+                        <div class="competition__cta">
+                            <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
+                                Get Funded Now
+                            </a>
                         </div>
                     </div>
 
-                    <div class="competition__cta">
-                        <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
-                            Get Funded Now
-                        </a>
+                    <div class="competition__image">
+                        <div class="competition__image-placeholder"></div>
                     </div>
                 </div>
-
-                <div class="competition__image">
-                    <div class="competition__image-placeholder"></div>
-                </div>
             </div>
-
         </section>
 
         <section class="payouts-and-comparison">
