@@ -248,9 +248,9 @@ get_header('landing-page-bs');
             </div>
         </section>
 
-        <?php get_template_part('template-parts/landing-page/sections/pricing_table', null, ['classes' => 'container']); ?>
+        <?php get_template_part('template-parts/landing-page/sections/pricing_table', null, ['classes' => '']); ?>
 
-        <section id="competition" class="competition container">
+        <section id="competition" class="competition">
             <div class="competition__wrapper">
                 <div class="competition__content">
                     <h2 class="competition__title">
