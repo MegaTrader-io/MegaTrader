@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 focusAt: 'center',
                 gap: 16,
                 perView: 1,
+                autoplay: 3000,
             });
 
             heroGlideInstance.mount();
@@ -117,14 +118,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const verifiedBsCarouselRoot = document.getElementById('verified-bs-id');
 
-        const slider = new Glide(verifiedBsCarouselRoot, {
+        const verifiedBsCarousel = new Glide(verifiedBsCarouselRoot, {
             type: 'carousel',
             focusAt: 'center',
             gap: 16,
             perView: 1,
+            autoplay: 3000,
         });
 
-        slider.mount({
+        verifiedBsCarousel.mount({
             Sizes: function CustomSizes(Glide, Components, Events) {
 
                 const Sizes = {

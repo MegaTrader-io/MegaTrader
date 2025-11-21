@@ -54,7 +54,7 @@ get_header('landing-page-bs');
 
                     <div class="hero-bs__media">
                         <div class="hero-bs__media-wrapper">
-                            <div class="mt-card hero-bs__media-card">
+                            <div class="hero-bs__media-card">
                                 <?php
                                 $skews_images = [
                                         get_template_directory_uri() . '/assets/img/landing-page/skew-01-1.png',
@@ -75,7 +75,7 @@ get_header('landing-page-bs');
                                         </ul>
                                     </div>
 
-                                    <div data-glide-el="controls" class="glide__arrows">
+                                    <div data-glide-el="controls" class="glide__arrows control-arrows-bs">
                                         <button class="glide__arrow glide__arrow--prev" data-glide-dir="<">
                                             <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-left.svg'); ?>"
                                                  alt="control left">
