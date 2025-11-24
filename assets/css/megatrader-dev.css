@@ -92,6 +92,12 @@
   --bs-modal-width: 600px;
 }
 
+@media (max-width: 575.98px) {
+  .modal {
+    --bs-modal-margin: 16px;
+  }
+}
+
 /* MD-DOWN */
 @media (max-width: 767.98px) {
   .modal .modal-content {
@@ -111,31 +117,34 @@
   }
 }
 
-/* MD-UP */
-@media (min-width: 768px) {
-  .modal .modal-dialog {
-    width: var(--bs-modal-width);
-    max-width: unset;
-  }
+.modal .modal-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 
-  .modal .modal-content {
-    --modal-content-padding: 16px;
-    --modal-content-border: 1px solid var(--ot-border-color);
-    --modal-content-border-radius: 16px;
-  }
+  width: var(--bs-modal-width);
+  max-width: min(var(--bs-modal-width), calc(100% - var(--bs-modal-margin) * 2));
+  max-height: calc(100% - var(--bs-modal-margin)*2);
 }
 
 .modal .modal-content {
+  --modal-content-padding: 16px;
+  --modal-content-border: 1px solid var(--ot-border-color);
+  --modal-content-border-radius: 16px;
+
   padding: var(--modal-content-padding);
   background: var(--black-color);
   border: var(--modal-content-border);
   border-radius: var(--modal-content-border-radius);
   box-shadow: 0px 8px 10px -6px rgba(0, 0, 0, 0.1),
     0px 20px 20px 20px rgba(0, 0, 0, 0.1);
+
+  overflow-y: auto;
 }
 
 .modal .modal-body {
   --bs-modal-padding: 0;
+  overflow-y: auto;
 }
 
 .modal .modal-image-warning {
@@ -149,26 +158,14 @@
   background-color: var(--bs-backdrop-bg) !important;
 }
 
-.modal-dialog.modal-mega {
-  width: 100%;
-  max-width: 800px;
-}
-
 #mt-request-payout-modal .modal-dialog {
   --bs-modal-width: 700px;
 }
 
-@media (min-width: 641px) and (max-width: 799px) {
-  .modal-dialog.modal-mega {
-    width: calc(100vw - 32px);
-  }
+.modal-dialog.modal-mega {
+  --bs-modal-width: 800px;
 }
 
-@media (min-width: 800px) {
-  .modal-dialog.modal-mega {
-    width: 800px;
-  }
-}
 
 /* SCROLL BAR --- */
 
@@ -4190,6 +4187,7 @@ body.mt-placing .woocommerce-checkout {
   gap: 4px;
   justify-content: flex-end;
   padding: 0.5rem 0 0;
+  align-items: center;
 }
 
 #mt-daily-journal .dj-btn {
@@ -5011,19 +5009,24 @@ button#mt-payout-acc-btn:active {
 }
 
 #mt-trades .dj-head {
-  color: #fff;
-  font-weight: 700;
-  font-size: .875rem;
-  line-height: 1.25;
-  padding: 16px 8px;
+     color: var(--Text-Headings, #fff);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.25;
+    background: var(--dj-bg);
+    padding: 0.75rem 0.9rem;
 }
 
 #mt-trades .dj-cell {
-  color: var(--Text-Body, #A8A29E);
-  font-weight: 500;
-  font-size: .875rem;
-  padding: 8px;
-  white-space: normal
+ color: var(--Text-Body, #a8a29e);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    background: var(--dj-bg);
+    padding: 0.75rem 0.9rem;
+    min-width: 0;
+    word-break: break-word;
+    white-space: normal;
 }
 
 #mt-trades .dj-cell--side {
@@ -5032,17 +5035,6 @@ button#mt-payout-acc-btn:active {
   justify-content: flex-end;
   gap: 4px;
 }
-
-/* Fondo base de las filas */
-#mt-trades .dj-rows .dj-row {
-  background-color: #1E1E1E;
-}
-
-/* Zebra striping: una sí y una no */
-#mt-trades .dj-rows .dj-row:nth-child(odd) {
-  background-color: #131210;
-}
-
 
 #mt-trades .is-right {
   text-align: right
@@ -5124,26 +5116,31 @@ button#mt-payout-acc-btn:active {
 /* Pager */
 #mt-trades .dj-pager {
   display: flex;
-  align-items: center;
+  gap: 4px;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px
+  padding: 0.5rem 0 0;
+  align-items: center;
 }
 
 #mt-trades .dj-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  background: var(--Surface-Dark, #292524);
-  border: 1px solid var(--Colors-Gray-700, #404040);
-  border-radius: 4px
+  background: #0f0f10;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
 }
 
-#mt-trades .dj-pages {
-  color: var(--Text-Body, #A8A29E);
-  font: 500 14px/20px Roboto, system-ui, sans-serif
+
+#mt-trades .dj-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
+
+#mt-trades .dj-btn.active {
+  background: #1f1f20;
+}
+
 
 #mt-trades .dj-empty {
   text-align: center;
@@ -5536,3 +5533,16 @@ button#mt-payout-acc-btn:active {
   margin: 0 !important;
   padding: 0;
 }
+
+/* ===== End Account Data Global Card ===== */
+
+/* =====  Account Data ===== */
+
+/* default: en desktop NO limites ancho */
+.mt-account-data-credentials{
+  flex: 1 1 auto;
+  max-width: fit-content;
+  min-width: 0; /* ya lo tienes pero lo dejo por claridad */
+}
+
+/* ===== End Account Data ===== */

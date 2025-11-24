@@ -66,7 +66,7 @@ $link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderx
     <div class="vr d-none d-md-block"></div>
     <div class="d-block d-md-none w-100 h-1px bg-404040"></div>
 
-    <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0 w-max-320px">
+    <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0 mt-account-data-credentials">
       <div class="mt-platform-avatar flex-shrink-0">
         <img src="<?php echo esc_url($platform_img); ?>" alt="DXXT logo" width="64" height="64"
           style="width:64px;height:64px;border-radius:9999px;object-fit:cover;" />

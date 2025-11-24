@@ -1148,19 +1148,6 @@ add_action('wp_enqueue_scripts', function () {
         }
     ');
 }, 100);
-function enqueue_thankyou_validation_script() {
-    if (is_checkout()) {
-        wp_enqueue_script(
-            'thankyou-modal"',
-            get_stylesheet_directory_uri() . '/assets/js/thankyou-modal.js"',
-            array(),
-            time(),
-            true
-        );
-    }
-}
-
-add_action('wp_enqueue_scripts', 'enqueue_thankyou_validation_script');
 
 function enqueue_mt_helper_script() {
     wp_enqueue_script(
@@ -1240,11 +1227,9 @@ function mt_enqueue_overview_script_path_only() {
 
   // Cargar script en:
   // - /my-account/overview
-  // - /my-account/view-subscription/....
   $is_overview        = ($req_path === '/my-account/overview');
-  $is_view_subscript  = (strpos($req_path, '/my-account/view-subscription') === 0);
 
-  if (!$is_overview && !$is_view_subscript) {
+  if (!$is_overview) {
     return;
   }
 
@@ -1922,6 +1907,8 @@ add_action('template_redirect', function () {
     '/auth/register/',   // Register Page
     '/auth/lost-password/',   // Lost Password Page
     '/landing-page-bootstrap/',   // Landing Page Bootstrap
+    '/checkout/',
+    '/subscriptions/',
   ];
 
   $public_paths = apply_filters('mt_public_paths', $public_paths, $path);

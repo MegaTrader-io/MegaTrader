@@ -531,7 +531,7 @@ get_header();
 
 <div id="mt-agreement-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtag-title"
   aria-hidden="true" data-show="<?php echo $__mt_agreement_show; ?>">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mtag-title" class="modal-title text-white heading-sm-medium">
@@ -582,7 +582,7 @@ get_header();
   data-btn-default="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button']); ?>"
   data-btn-no-reset="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button_no_reset']); ?>"
   data-subscriptions-url="/subscriptions/">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mtbreach-title" class="modal-title text-white heading-sm-medium">
@@ -647,7 +647,7 @@ get_header();
   data-body-w-id="<?php echo esc_attr($__body_subtitle_w_activation_id); ?>"
   data-body-no-id="<?php echo esc_attr($__body_subtitle_no_activation_id); ?>">
 
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mtactivation-title" class="modal-title text-white heading-sm-medium">

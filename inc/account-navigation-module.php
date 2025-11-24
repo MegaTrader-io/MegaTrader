@@ -7,15 +7,8 @@ if (!defined('ABSPATH')) exit;
 add_filter('woocommerce_account_menu_items', function ($items) {
     $new_items = [];
 
-    $new_items['trade-area']    = __('Account Metrics', 'woocommerce');
+    $new_items['trade-area']        = __('Account Metrics', 'woocommerce');
     $new_items['trading-journal']   = __('Trading Journal', 'woocommerce');
-    $new_items['subscriptions'] = __('Manage Subscription', 'woocommerce');
-
-    /*
-    if (isset($items['payment-methods'])) {
-        $new_items['payment-methods'] = $items['payment-methods'];
-    }
-    */
 
     return $new_items;
 }, 20);
@@ -23,7 +16,6 @@ add_filter('woocommerce_account_menu_items', function ($items) {
 /**
  * URLs de endpoints del menú
  * - trade-area    -> /my-account/overview
- * - subscriptions -> /my-account/orders?orderId=XXXX (si tenemos el ID activo)
  */
 add_filter('woocommerce_get_endpoint_url', function ($url, $endpoint, $value, $permalink) {
 
@@ -35,13 +27,6 @@ add_filter('woocommerce_get_endpoint_url', function ($url, $endpoint, $value, $p
     if ($endpoint === 'trading-journal') {
         // misma página, vista “journal”
         return site_url('/my-account/overview?view=journal');
-    }
-
-    if ($endpoint === 'subscriptions') {
-        $base = trailingslashit(home_url('my-account/orders'));
-        $oid  = isset($GLOBALS['mt_active_order_id']) ? (int) $GLOBALS['mt_active_order_id'] : 0;
-        if ($oid > 0) $base = add_query_arg(['orderId' => $oid], $base);
-        return $base;
     }
 
     return $url;
@@ -78,26 +63,6 @@ function items_navigation_get_args($menu_items = [], $aria_label = '', $select_i
         $url_path = rtrim(parse_url($url, PHP_URL_PATH), '/');
 
         $is_active = ($req_path === $url_path);
-
-        // activar por ?view=* SOLO en /my-account/overview
-        if (in_array($endpoint, ['trade-area','trading-journal'], true)) {
-            $want = $endpoint === 'trade-area' ? 'metrics' : 'journal';
-
-            if ($req_path === $overview_path) {
-                // Solo aquí usamos ?view=*
-                $is_active = ($req_view === $want);
-            } else {
-                // En cualquier otra página NO marcamos activo este endpoint
-                $is_active = false;
-            }
-        }
-
-        // subscriptions activo también en /view-subscription/*
-        if ($endpoint === 'subscriptions') {
-            if ($req_path === $url_path || strpos($req_path, $view_sub_base) === 0) {
-                $is_active = true;
-            }
-        }
 
         $item = [
             'label'   => $label,
@@ -144,4 +109,51 @@ function account_settings_navigation_render(): void
     ];
 
     get_template_part('template-parts/account/account-navigation', null, items_navigation_get_args($endpoints));
+}
+
+
+/**
+ * Subscriptions & Billing Navigation
+ */
+function subscriptions_billing_navigation_render(): void
+{
+    $nav_config = [
+        [
+            'label'         => Label::META_SUBSCRIPTIONS_BILLING['tab_subscriptions_label'],
+            'endpoint'      => 'orders',
+            'alt_endpoints' => ['orders', 'view-order', 'view-subscription'],
+        ],
+        [
+            'label'         => Label::META_SUBSCRIPTIONS_BILLING['tab_billing_label'],
+            'endpoint'      => 'payment-methods',
+        ],
+    ];
+
+    $items = [];
+
+    // final items builder
+    foreach ($nav_config as $item) {
+        $endpoints = $item['alt_endpoints'] ?? [$item['endpoint']];
+
+        $is_active = false;
+        foreach ($endpoints as $ep) {
+            if (is_wc_endpoint_url($ep)) {
+                $is_active = true;
+                break;
+            }
+        }
+
+        $items[] = [
+            'label'  => $item['label'],
+            'url'    => $is_active ? '#' : wc_get_account_endpoint_url($item['endpoint']),
+            'active' => $is_active,
+        ];
+    }
+
+    $args = [
+        'items'      => $items,
+        'aria_label' => Label::META_SUBSCRIPTIONS_BILLING['page_title'] . ' Nav',
+    ];
+
+    get_template_part('template-parts/account/account-navigation', null, $args);
 }

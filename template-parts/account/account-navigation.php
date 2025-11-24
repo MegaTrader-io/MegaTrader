@@ -68,6 +68,7 @@ $select_id  = $args['select_id']  ?? 'account-navigation-select';
   <select
     id="<?php echo esc_attr($select_id); ?>"
     class="mega-navigation-select d-block d-md-none form-select text-a8a29e"
+    autocomplete="off"
     data-action="switch-view-select"
   >
     <?php foreach ($items as $it): ?>
@@ -81,3 +82,20 @@ $select_id  = $args['select_id']  ?? 'account-navigation-select';
     <?php endforeach; ?>
   </select>
 </div>
+
+<script>
+
+const selectMobile = document.querySelector(
+    'select[data-action="switch-view-select"]'
+  );
+
+if (selectMobile) {
+  selectMobile.addEventListener("change", (event) => {
+    const url = event.target.value;
+    if (url) {
+      window.location.href = url;
+    }
+  });
+}
+
+</script>

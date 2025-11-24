@@ -140,7 +140,7 @@ $current_url .= "://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 			<?php	
 				echo '<button type="button" class="modal-cancel mega-btn-md mega-btn-outline-md w-100 d-none" data-bs-dismiss="modal">CANCEL</button>';
 				echo wp_kses(
-					apply_filters( 'woocommerce_change_payment_button_html', '<input type="submit" class="mega-btn-md mega-btn-primary-md w-100' . esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ) . '" id="place_order" value="' . esc_attr( $pay_order_button_text ) . '" data-value="' . esc_attr( $pay_order_button_text ) . '" />' ),
+					apply_filters( 'woocommerce_change_payment_button_html', '<input type="submit" class="mega-btn-md mega-btn-primary-md w-100 mb-0' . esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ) . '" id="place_order" value="' . esc_attr( $pay_order_button_text ) . '" data-value="' . esc_attr( $pay_order_button_text ) . '" />' ),
 					array(
 						'input' => array(
 							'type'       => array(),

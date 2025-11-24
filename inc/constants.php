@@ -234,7 +234,7 @@ class Label
         "performance_rules_link_text" => "Maximum Loss Limit",
         "performance_consistency_link_text" => "See Consistency Rule",
         "performance_consistency_progress_text" => "Current Consistency",
-        "performance_consistency_progress_text_description" => "Best Day ÷ Total PnL = Consistency %",
+        "performance_consistency_progress_text_description" => "(Best Day PnL ÷ Total PnL) x 100 = Consistency %",
         "performance_dll_tooltip_title" => "Daily Loss Limit (DLL)",
         "performance_dll_tooltip_description" => "Reaching the DLL pauses trading for the day. It’s removed once a profit milestone is met.",
         "performance_dpl_tooltip_title" => "Daily P&L (DPL)",
@@ -506,9 +506,9 @@ class Label
         "currentDayStreakTitle" => "Current Day Streak",
         "currentDayStreakTitleTooltip" => "Current Day Streak – Days",
         "currentDayStreakBody" => "Number of consecutive trading days ending positive or negative.",
-        "currentDayTradesTitle" => "Current Day Trades",
+        "currentDayTradesTitle" => "Current Trade Streak",
         "currentDayTradesTitleTooltip" => "Current Day Streak – Trades",
-        "currentDayTradesBody" => "Number of consecutive trades closed in profit or loss today.",
+        "currentDayTradesBody" => "Counts how many consecutive trades you’ve closed in profit or loss overall.",
         "tradeCalendar" => "Trade Calendar",
         "tradeCalendarBody" => "Shows your daily trading activity, including number of trades and P&L for each day.",
         "tradesTable" => "Trades",
@@ -517,4 +517,11 @@ class Label
     ];
 
 
+public const META_SUBSCRIPTIONS_BILLING = [
+        "page_title" => "Subscriptions & Billing",
+        "page_subtitle" => "Manage your plans, renewal settings, billing history, and payment preferences.",
+        "tab_subscriptions_label" => 'Manage Subscription',
+        "tab_billing_label" => 'Payment Methods',
+        "btn_order_again_label" => 'Order Again',
+    ];
 }

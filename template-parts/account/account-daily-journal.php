@@ -167,8 +167,13 @@ $fmt_durwl = function ($v) {
     </div>
   </div>
 
-  <!-- Paginación -->
+    <!-- Paginación -->
   <nav id="<?php echo esc_attr($pager_id); ?>" class="dj-pager" aria-label="Daily Journal pagination" <?php echo $has_rows ? '' : 'hidden aria-hidden="true"'; ?>>
+
+    <div class="dj-showing me-2">
+      Showing <span class="js-showing">0</span>/<span class="js-total">0</span>
+    </div>
+
     <button class="dj-btn mt-dj-prev" type="button" disabled>
       <span class="mt-icon mt-icon-white mt-icon_chevron-left"></span>
     </button>
@@ -177,4 +182,5 @@ $fmt_durwl = function ($v) {
       <span class="mt-icon mt-icon-white mt-icon_chevron-right"></span>
     </button>
   </nav>
+
 </div>

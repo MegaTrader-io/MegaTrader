@@ -549,11 +549,18 @@ window.mtOverlay = (function () {
     return qsa(".dj-row", root);
   }
 
+  function getPagerWindow(current, total) {
+    current = Math.max(1, Math.min(current, total));
+    if (total <= 3) return Array.from({ length: total }, (_, i) => i + 1);
+    if (current <= 2) return [1, 2, 3];
+    if (current >= total) return [total - 2, total - 1, total];
+    return [current - 1, current, current + 1];
+  }
+
   function rebuildNumericPager(root, st) {
     const pager = qs(".dj-pager", root);
     if (!pager) return;
 
-    const prev = qs(".mt-dj-prev", pager);
     const next = qs(".mt-dj-next", pager);
     let holder = qs(".dj-pages", pager);
     if (!holder) {
@@ -563,31 +570,44 @@ window.mtOverlay = (function () {
     }
     holder.innerHTML = "";
 
-    for (let i = 1; i <= st.totalPages; i++) {
+    const windowPages = getPagerWindow(st.currentPage, st.totalPages);
+
+    windowPages.forEach((p) => {
       const b = document.createElement("button");
       b.type = "button";
       b.className = "dj-btn dj-num";
-      b.textContent = String(i);
-      b.addEventListener("click", () => {
-        goTo(root, st, i);
-      });
+      b.textContent = String(p);
+      b.dataset.page = String(p);
+
+      b.addEventListener("click", () => goTo(root, st, p));
       holder.appendChild(b);
-    }
+    });
   }
 
   function updatePagerUI(root, st) {
     const pager = qs(".dj-pager", root);
     if (!pager) return;
+
     const prev = qs(".mt-dj-prev", pager);
     const next = qs(".mt-dj-next", pager);
 
     prev && (prev.disabled = st.currentPage <= 1);
     next && (next.disabled = st.currentPage >= st.totalPages);
 
-    const nums = qsa(".dj-pages .dj-btn", pager);
-    nums.forEach((b, i) =>
-      b.classList.toggle("active", i + 1 === st.currentPage)
-    );
+    // active por data-page
+    const nums = qsa(".dj-pages .dj-num", pager);
+    nums.forEach((b) => {
+      const p = Number(b.dataset.page || b.textContent);
+      b.classList.toggle("active", p === st.currentPage);
+    });
+
+    // Showing X / totalRows (acumulado)
+    const showingEl = qs(".js-showing", pager);
+    const totalEl = qs(".js-total", pager);
+    const endCount = Math.min(st.currentPage * st.perPage, st.totalRows);
+
+    if (showingEl) showingEl.textContent = String(endCount);
+    if (totalEl) totalEl.textContent = String(st.totalRows);
   }
 
   function applyPageVisibility(root, st) {
@@ -3585,6 +3605,8 @@ if (document.readyState === "loading") {
     v == null || v === "" || isNaN(v)
       ? "-"
       : (v < 0 ? "-" : "") + "$" + Math.abs(+v).toFixed(2);
+  const fmtPrice = (v) =>
+    v == null || v === "" || isNaN(v) ? "-" : Number(v).toFixed(2);
 
   const fmtDate = (s) => (s && /^\d{2}\/\d{2}\/\d{4}$/.test(s) ? s : s || "-");
 
@@ -3617,6 +3639,63 @@ if (document.readyState === "loading") {
     if (pager) pager.hidden = true;
     removeSkeletonClasses();
   };
+
+  // ===== ventana de 3 páginas max, actual al centro =====
+  function getPagerWindow(current, total) {
+    current = Math.max(1, Math.min(current, total));
+    if (total <= 3) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    if (current <= 2) return [1, 2, 3];
+    if (current >= total) return [total - 2, total - 1, total];
+    return [current - 1, current, current + 1];
+  }
+
+  // ===== Pager numérico (max 3 botones) =====
+  function rebuildNumericPager(pages) {
+    if (!pager) return;
+
+    let holder = pager.querySelector(".dj-pages");
+    if (!holder) {
+      holder = document.createElement("span");
+      holder.className = "dj-pages d-flex gap-1";
+      const nextBtn = pager.querySelector(".js-next");
+      nextBtn ? pager.insertBefore(holder, nextBtn) : pager.appendChild(holder);
+    }
+
+    holder.innerHTML = "";
+
+    const windowPages = getPagerWindow(currentPage, pages);
+
+    windowPages.forEach((p) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "dj-btn dj-num";
+      b.textContent = String(p);
+      b.dataset.page = String(p);
+
+      b.addEventListener("click", () => {
+        if (p === currentPage) return;
+        currentPage = p;
+        pageByType[currentType] = currentPage;
+        setBusy(true);
+        window.mtTradesAPI
+          ?.refresh(currentType, currentPage)
+          .catch(() => setBusy(false));
+      });
+
+      holder.appendChild(b);
+    });
+  }
+
+  function updateNumericPagerUI() {
+    if (!pager) return;
+    const nums = Array.from(pager.querySelectorAll(".dj-pages .dj-num"));
+    nums.forEach((b) => {
+      const p = Number(b.dataset.page || b.textContent);
+      b.classList.toggle("active", p === currentPage);
+    });
+  }
 
   // fila
   function buildRow(r, isLast = false) {
@@ -3665,12 +3744,9 @@ if (document.readyState === "loading") {
       <div class="dj-cell is-right ${netCls}">${fmtMoney(r.net)}</div>  
       <div class="dj-cell is-right">${durationLabel}</div>
       <div class="dj-cell is-right">${sym}</div>
-    <div class="dj-cell is-right dj-cell--side">
-       
-        <span>${sideLabel}</span> ${sideIcon}
-      </div>
-      <div class="dj-cell is-right">${fmtMoney(r.avgEntry)}</div>
-      <div class="dj-cell is-right">${fmtMoney(r.avgExit)}</div>
+      <div class="dj-cell is-right dj-cell--side"><span>${sideLabel}</span> ${sideIcon}</div>
+      <div class="dj-cell is-right">${fmtPrice(r.avgEntry)}</div>
+      <div class="dj-cell is-right">${fmtPrice(r.avgExit)}</div>
       <div class="dj-cell is-right">${fmtDate(r.openDate)}</div>
       <div class="dj-cell is-right">${fmtTime(r.openTimeStr)}</div>
       <div class="dj-cell is-right">${fmtDate(r.closeDate)}</div>
@@ -3710,17 +3786,21 @@ if (document.readyState === "loading") {
     if (pager) {
       pager.hidden = total === 0;
 
-      const end = Math.min(page * perPage, total);
-      if (showing) showing.textContent = String(end);
-      if (totalEl) totalEl.textContent = String(total);
-
+      // habilitar/disable prev/next igual que antes
       if (btnPrev) btnPrev.disabled = page <= 1;
       if (btnNext) btnNext.disabled = page >= pages;
 
+      const endCount = Math.min(page * perPage, total); // acumulado hasta esta página
+      if (showing) showing.textContent = String(endCount);
+      if (totalEl) totalEl.textContent = String(total);
+
+      rebuildNumericPager(pages);
+      updateNumericPagerUI();
+
       if (btnPrev)
         btnPrev.onclick = () => {
-          if (page > 1) {
-            currentPage = page - 1;
+          if (currentPage > 1) {
+            currentPage = currentPage - 1;
             pageByType[tKey] = currentPage;
             setBusy(true);
             window.mtTradesAPI
@@ -3728,10 +3808,11 @@ if (document.readyState === "loading") {
               .catch(() => setBusy(false));
           }
         };
+
       if (btnNext)
         btnNext.onclick = () => {
-          if (page < pages) {
-            currentPage = page + 1;
+          if (currentPage < pages) {
+            currentPage = currentPage + 1;
             pageByType[tKey] = currentPage;
             setBusy(true);
             window.mtTradesAPI
@@ -3740,6 +3821,7 @@ if (document.readyState === "loading") {
           }
         };
     }
+
     removeSkeletonClasses();
     setBusy(false);
   }

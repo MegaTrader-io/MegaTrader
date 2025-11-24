@@ -284,7 +284,7 @@ do_action('woocommerce_before_account_navigation');
 
 <div class="modal modal-subcription fade" id="changeSubcriptionModal" tabindex="-1"
 	aria-labelledby="changeSubcriptionModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+	<div class="modal-dialog modal-dialog-centered">
 		<div class="modal-content gap-4">
 			<div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
 				<h5 class="modal-title text-white heading-sm-medium" id="changeSubcriptionModalLabel">Select account

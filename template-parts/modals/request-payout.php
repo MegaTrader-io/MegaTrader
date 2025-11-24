@@ -10,7 +10,7 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
 ?>
 <div id="mt-request-payout-modal" class="modal modal-subcription fade modal-mt-payout" tabindex="-1"
     aria-labelledby="mtpayout-title" aria-hidden="true" data-user-email="<?php echo esc_attr($user_email); ?>">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">

@@ -20,7 +20,7 @@ $billing = [
 
 <div id="mt-profile-modal" class="modal modal-profile fade" tabindex="-1" aria-labelledby="mt-profile-title"
   aria-hidden="true" data-nonce="<?php echo esc_attr($nonce); ?>">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="background:#131210; border:1px solid #404040; border-radius:16px;">
 
       <!-- HEADER -->

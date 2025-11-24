@@ -57,7 +57,7 @@
 <!-- MT Error Modal -->
 <div id="mt-error-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mt-error-title"
   aria-hidden="true" hidden>
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mt-error-title" class="modal-title text-white heading-sm-medium">ERROR</span>
@@ -96,8 +96,8 @@ get_template_part('template-parts/modals/request-payout', null, [
 ?>
 
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down modal-mega">
-    <div class="modal-content align-items-center d-flex flex-column flex-shrink-0">
+  <div class="modal-dialog modal-dialog-centered modal-mega">
+    <div class="modal-content">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <h5 class="modal-title text-white heading-sm-medium text-uppercase" id="termsModalLabel">Terms of Service</h5>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
@@ -112,8 +112,8 @@ get_template_part('template-parts/modals/request-payout', null, [
           </span>
         </button>
       </div>
-      <div class="modal-body d-flex flex-column align-items-center justify-content-center w-100 py-35 px-0">
-        <div class="pe-3" style="max-height: 75vh; overflow-y: auto;">
+      <div class="modal-body d-flex flex-column align-items-center w-100 my-35 px-0">
+        <div class="pe-3">
           <h3 class="text-uppercase text-white leading-7 text-2xl fw-medium">MegaTrader Terms of Service</h3>
           <p>By using our services, you agree to comply with and be bound by the following Terms of Service. Please
             review the following terms carefully. If you do not agree to these terms, you should not use this site or
@@ -502,8 +502,8 @@ get_template_part('template-parts/modals/request-payout', null, [
 </div>
 
 <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down modal-mega">
-    <div class="modal-content align-items-center d-flex flex-column flex-shrink-0">
+  <div class="modal-dialog modal-dialog-centered modal-mega">
+    <div class="modal-content">
       <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
         <h5 class="modal-title text-white heading-sm-medium text-uppercase" id="privacyModalLabel">Privacy Policy</h5>
         <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
@@ -518,8 +518,8 @@ get_template_part('template-parts/modals/request-payout', null, [
           </span>
         </button>
       </div>
-      <div class="modal-body d-flex flex-column align-items-center justify-content-center w-100 py-35 px-0">
-        <div class="pe-3" style="max-height: 75vh; overflow-y: auto;">
+      <div class="modal-body d-flex flex-column align-items-center w-100 my-35 px-0">
+        <div class="pe-3">
           <h3 class="text-uppercase text-white leading-7 text-2xl fw-medium">MegaTrader Privacy Policy</h3>
           <p class="leading-normal text-base fw-medium">
             This Privacy Policy explains how MegaTrader collects, uses, stores, and protects your personal data when you

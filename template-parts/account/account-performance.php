@@ -74,7 +74,6 @@ $resetMark = $performance['consistencyResetBalanceMark'];
 $profitPct = $performance['currentProfitPercent'];
 $daysTraded = (int) $performance['activeTradingDays'];
 $daysSinceLastPayout = (int) $performance['activeTradingDaysSinceLastPayout'];
-$dailyPnL = $performance['dailyTotalPnL'];
 $minDays = (int) $performance['minTradingDays'];
 $maxLossEq = $performance['maxLossLimitEquityLevel'];
 $maxDailyLoss = $performance['maxDailyLossLimitPnLLevel'];
@@ -90,6 +89,34 @@ $consistencyCurrentTop = $performance['consistencyCurrentTopDayProfit'] ?? null;
 $consistency = $performance['consistency'] ?? null;
 $currentCycle = $performance['currentCycle'] ?? null;
 $consistencyUrl = Label::PLAN_RULES_URLS['Consistency'] ?? '';
+
+// ===== Daily Net P&L REAL (nuestro cálculo) =====
+$dailyPnL = null;
+
+if (!empty($account_id) && function_exists('mt_trades_history_fetch')) {
+
+    $closed = mt_trades_history_fetch($account_id, 'CLOSED', 1, 500);
+    $records = $closed['records'] ?? [];
+
+    if (function_exists('mt_cutoff_date')) {
+        $todayCutoff = mt_cutoff_date(gmdate('c')); 
+    } else {
+        $todayCutoff = gmdate('m/d/Y');
+    }
+
+    $sum = 0.0;
+    foreach ($records as $r) {
+        $closeDate = $r['closeDate'] ?? null;
+        $net = (float) ($r['net'] ?? 0);
+
+        if ($closeDate === $todayCutoff) {
+            $sum += $net;
+        }
+    }
+
+    $dailyPnL = $sum;
+}
+
 
 
 /* ========= Derivados (para barras / chips) ========= */

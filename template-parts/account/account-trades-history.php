@@ -77,14 +77,20 @@ $per_page = isset($args['data']['per_page']) ? (int) $args['data']['per_page'] :
 
   <!-- Pager -->
   <nav id="<?php echo esc_attr($pager_id); ?>" class="dj-pager" aria-label="Trades pagination" hidden>
-    <span class="dj-pages">Showing <span class="js-showing">0</span>/<span class="js-total">0</span></span>
-    <div class="d-flex gap-1">
-      <button class="dj-btn js-prev" type="button" disabled>
-        <span class="mt-icon mt-icon-white mt-icon_chevron-left" aria-hidden="true"></span>
-      </button>
-      <button class="dj-btn js-next" type="button" disabled>
-        <span class="mt-icon mt-icon-white mt-icon_chevron-right" aria-hidden="true"></span>
-      </button>
+
+    <div class="dj-showing me-2">
+      Showing <span class="js-showing">1</span>/<span class="js-total">1</span>
     </div>
+
+    <button class="dj-btn js-prev mt-dj-prev" type="button" disabled>
+      <span class="mt-icon mt-icon-white mt-icon_chevron-left" aria-hidden="true"></span>
+    </button>
+
+    <span class="dj-pages d-flex gap-1"></span>
+
+    <button class="dj-btn js-next mt-dj-next" type="button" disabled>
+      <span class="mt-icon mt-icon-white mt-icon_chevron-right" aria-hidden="true"></span>
+    </button>
   </nav>
+
 </div>
