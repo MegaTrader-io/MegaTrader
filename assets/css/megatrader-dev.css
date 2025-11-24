@@ -4435,7 +4435,7 @@ textarea.mtfb-note {
 }
 
 .mt-card.account-settings__section {
-  gap: 16px;
+  gap: 24px;
 }
 
 .account-settings__sections-wrapper>*+* {
@@ -4480,7 +4480,7 @@ textarea.mtfb-note {
 
 .toggle-panel__icon {
   display: flex;
-  align-items: center;
+  align-items: self-start;
 }
 
 .toggle-panel__title {
@@ -4496,12 +4496,13 @@ textarea.mtfb-note {
 
 .toggle-panel .toggle-panel__header[aria-expanded="true"] .toggle-panel__arrow {
   transform: rotate(0deg);
+  align-self: self-start;
 }
 
 .toggle-panel__arrow {
   transform: rotate(180deg);
   display: flex;
-  align-items: center;
+  align-items: end;
 }
 
 .toggle-panel__description {

@@ -10,23 +10,36 @@ foreach ($errors as $error) {
     MT_WC_Error::$field_errors[$error['data']['field']] = $error['notice'];
 }
 
-$billing_country = esc_attr(get_user_meta(get_current_user_id(), 'billing_country', true));
-if (!$billing_country) {
-    $billing_country = 'US';
+$api_billing_country = esc_attr(get_user_meta(get_current_user_id(), 'api_billing_country', true));
+if (!$api_billing_country) {
+    $api_billing_country = 'US';
 }
 
 $current_user = wp_get_current_user();
 $user_email = $current_user->user_email;
 
-$valid_states = WC()->countries->get_states($billing_country);
-$billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', true));
+$data = [
+        'address' => '',
+        'city' => '',
+        'state' => '',
+        'zipcode' => '',
+        'country' => '',
+]; //MT_Api::fetch_user_by_email(email: $user_email);
+
+$api_billing_address = $data['address'] ?? '';
+$api_billing_city = $data['city'] ?? '';
+$api_billing_state = $data['state'] ?? '';
+$api_billing_zipcode = $data['zipcode'] ?? '';
+$api_billing_country = $data['country'] ?? '';
+
+$valid_states = WC()->countries->get_states($api_billing_country);
 
 ?>
 <div>
     <?php get_template_part("template-parts/user-profile-card"); ?>
 
     <div class="space-y-3">
-        <?php wp_nonce_field('mt_save_billing_address', 'mt_billing_nonce'); ?>
+        <?php wp_nonce_field('mt_save_personal_address', 'mt_personal_nonce'); ?>
 
         <div class="row">
             <div class="col-lg-6">
@@ -62,60 +75,58 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
 
         <div class="row">
             <div class="col-lg-6">
-                <label class="mb-1" for="billing_address_1"><?php _e('Address', 'woocommerce'); ?></label>
-                <input type="text" name="billing_address_1" id="billing_address_1"
+                <label class="mb-1" for="api_billing_address_1"><?php _e('Address', 'woocommerce'); ?></label>
+                <input type="text" name="api_billing_address_1" id="api_billing_address_1"
                        class="form-control"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_address_1', true)); ?>"/>
-                <input type="hidden" name="billing_address_2" id="billing_address_2"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_address_2', true)); ?>"/>
+                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'api_billing_address_1', true)); ?>"/>
             </div>
             <div class="col-lg-6">
-                <label class="mb-1" for="billing_city"><?php _e('City', 'woocommerce'); ?></label>
-                <input type="text" name="billing_city" id="billing_city"
+                <label class="mb-1" for="api_billing_city"><?php _e('City', 'woocommerce'); ?></label>
+                <input type="text" name="api_billing_city" id="api_billing_city"
                        class="form-control"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_city', true)); ?>"/>
+                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'api_billing_city', true)); ?>"/>
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-6">
-                <label class="mb-1" for="billing_state"><?php _e('State', 'woocommerce'); ?></label>
-                <div id="billing_state_wrapper">
+                <label class="mb-1" for="api_billing_state"><?php _e('State', 'woocommerce'); ?></label>
+                <div id="api_billing_state_wrapper">
                     <?php if (!empty($valid_states)): ?>
-                        <select name="billing_state" id="billing_state"
+                        <select name="api_billing_state" id="api_billing_state"
                                 class="form-select form-control woocommerce-select">
                             <option value=""
-                                    disabled <?php echo (!empty($_POST['billing_state']) && is_string($_POST['billing_state'])) ? '' : 'selected'; ?>>
+                                    disabled <?php echo (!empty($_POST['api_billing_state']) && is_string($_POST['api_billing_state'])) ? '' : 'selected'; ?>>
                                 State
                             </option>
                             <?php foreach ($valid_states as $key => $value): ?>
-                                <option value="<?= esc_attr($key) ?>" <?php echo (!empty($billing_state) && is_string($billing_state)) ? 'selected' : ''; ?> ><?= esc_html($value) ?></option>
+                                <option value="<?= esc_attr($key) ?>" <?php echo (!empty($api_billing_state) && is_string($api_billing_state)) ? 'selected' : ''; ?> ><?= esc_html($value) ?></option>
                             <?php endforeach; ?>
                         </select>
-                    <?php elseif (is_string($billing_state)): ?>
-                        <input type="text" name="billing_state" id="billing_state"
+                    <?php elseif (is_string($api_billing_state)): ?>
+                        <input type="text" name="api_billing_state" id="api_billing_state"
                                class="form-control"
-                               value="<?php echo esc_attr($billing_state); ?>"/>
+                               value="<?php echo esc_attr($api_billing_state); ?>"/>
                     <?php endif; ?>
                 </div>
             </div>
             <div class="col-lg-6">
-                <label class="mb-1" for="billing_postcode"><?php _e('ZIP Code', 'woocommerce'); ?></label>
-                <input type="text" name="billing_postcode" id="billing_postcode"
+                <label class="mb-1" for="api_billing_postcode"><?php _e('ZIP Code', 'woocommerce'); ?></label>
+                <input type="text" name="api_billing_postcode" id="api_billing_postcode"
                        class="form-control"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_postcode', true)); ?>"/>
+                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'api_billing_postcode', true)); ?>"/>
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-6">
                 <div class="col">
-                    <label class="mb-1" for="billing_country"><?php esc_html_e('Country', 'megatrader'); ?></label>
-                    <select name="billing_country" id="billing_country"
+                    <label class="mb-1" for="api_billing_country"><?php esc_html_e('Country', 'megatrader'); ?></label>
+                    <select name="api_billing_country" id="api_billing_country"
                             class="form-select form-control woocommerce-select">
                         <option value="" disabled>Country</option>
                         <?php foreach (WC()->countries->get_allowed_countries() as $key => $value): ?>
-                            <option value="<?= esc_attr($key) ?>" <?= selected($billing_country, $key, false) ?> ><?= esc_html($value) ?></option>
+                            <option value="<?= esc_attr($key) ?>" <?= selected($api_billing_country, $key, false) ?> ><?= esc_html($value) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -223,7 +234,7 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
             var data = {
                 action: 'get_cities',
                 country: country,
-                state: '<?php echo $billing_state; ?>'
+                state: '<?php echo $api_billing_state; ?>'
             };
 
             $.post(woocommerce_params.ajax_url, data, function (response) {
