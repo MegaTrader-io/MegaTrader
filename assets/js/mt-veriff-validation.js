@@ -35,10 +35,10 @@ async function checkVerificationStatus() {
         // showMessage('Checking verification status...', 'info');
         $.preloader.show();
 
-        const response = await fetch(wpAjax.ajaxUrl, {
+        const response = await fetch(MT_AP.ajaxUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({action: 'mt_get_veriff_status', security: wpAjax.nonce}),
+            body: new URLSearchParams({action: 'mt_get_veriff_status', security: MT_AP.nonce}),
         });
 
         const result = await response.json();
@@ -71,12 +71,12 @@ document.addEventListener('DOMContentLoaded', function () {
         $.preloader.show();
 
         // Llamar tu endpoint AJAX que crea la sesión en Veriff
-        const response = await fetch(wpAjax.ajaxUrl, {
+        const response = await fetch(MT_AP.ajaxUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: new URLSearchParams({
                 action: 'mt_start_veriff_verification',
-                security: wpAjax.nonce,
+                security: MT_AP.nonce,
             }),
         });
 
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 🔹 Iniciar Veriff embebido
         const veriff = Veriff({
             host: 'https://stationapi.veriff.com',
-            apiKey: wpAjax.veriffKey,
+            apiKey: MT_AP.veriffKey,
             parentId: 'veriff-container',
             onSession: function (err, response) {
                 if (err) {

@@ -4463,14 +4463,14 @@ textarea.mtfb-note {
   cursor: not-allowed;
 }
 
-.toggle-panel__header[disabled] .toggle-panel__text,
+.toggle-panel__header[disabled] .toggle-panel__title,
 .toggle-panel__header[disabled] .toggle-panel__icon,
 .toggle-panel__header[disabled] .toggle-panel__description,
 .toggle-panel__header[disabled] .toggle-panel__arrow {
   opacity: 0.2;
 }
 
-.toggle-panel__header[disabled] .toggle-panel__text {
+.toggle-panel__header[disabled] .toggle-panel__title {
   color: white;
 }
 

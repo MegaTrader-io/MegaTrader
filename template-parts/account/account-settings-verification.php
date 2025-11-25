@@ -44,9 +44,6 @@ SVG,
         ],
 ];
 
-
-$is_verified = get_query_var('mt_is_verified');
-
 ?>
 
 <div id="veriff-container"></div>
@@ -69,7 +66,7 @@ $is_verified = get_query_var('mt_is_verified');
         </div>
 
         <div class="d-md-flex align-items-center justify-content-between">
-            <button type="button" <?= $is_verified ? 'disabled' : '' ?> id="get-verified-btn"
+            <button type="button" disabled id="get-verified-btn"
                     class="mega-btn-md mega-btn-secondary-md">
                 GET VERIFIED NOW
             </button>

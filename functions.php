@@ -2794,9 +2794,6 @@ if (!function_exists('mt_get_current_user_profile_data')) {
             }
         }
 
-        // Verified flag (from query var)
-        $is_verified = get_query_var('mt_is_verified', false);
-
         // Membership date
         $member_since = $current_user->user_registered
                 ? date_i18n('m/d/Y', strtotime($current_user->user_registered))
@@ -2810,8 +2807,7 @@ if (!function_exists('mt_get_current_user_profile_data')) {
                 'avatar_size' => $avatar_size,
                 'has_real_avatar' => $has_real_avatar,
                 'billing_country' => $billing_country,
-                'member_since' => $member_since,
-                'is_verified' => (bool)$is_verified,
+                'member_since' => $member_since
         ];
     }
 }

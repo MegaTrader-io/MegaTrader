@@ -135,8 +135,8 @@ function mt_account_settings_module()
     'nonceWpRest' => wp_create_nonce('wp_rest')
   ];
 
-  wp_localize_script('account-settings-module', 'wpAjax', $localize_data);
-  wp_localize_script('veriff-validation-module', 'wpAjax', $localize_data);
+  wp_localize_script('account-settings-module', 'MT_AP', $localize_data);
+  wp_localize_script('veriff-validation-module', 'MT_AP', $localize_data);
 }
 
 add_action('wp_enqueue_scripts', function () {
@@ -297,7 +297,7 @@ function mt_update_personal_information_callback()
   $user_id = get_current_user_id();
   $errors = [];
 
-  $required = ['billing_address_1', 'billing_city', 'billing_state', 'billing_postcode', 'billing_phone', 'billing_country'];
+  $required = ['api_billing_address_1', 'api_billing_city', 'api_billing_state', 'api_billing_postcode', 'billing_phone', 'api_billing_country'];
   foreach ($required as $field) {
     if (empty($_POST[$field])) {
       $errors[$field] = __('This field is required', 'megatrader');
@@ -311,11 +311,11 @@ function mt_update_personal_information_callback()
   $customer = new WC_Customer($user_id);
 
   $payload = [
-    "country" => sanitize_text_field($_POST['billing_country']),
-    "state" => sanitize_text_field($_POST['billing_state']),
-    "city" => sanitize_text_field($_POST['billing_city']),
-    "address" => sanitize_text_field($_POST['billing_address_1']),
-    "zipcode" => sanitize_text_field($_POST['billing_postcode']),
+    "country" => sanitize_text_field($_POST['api_billing_country']),
+    "state" => sanitize_text_field($_POST['api_billing_state']),
+    "city" => sanitize_text_field($_POST['api_billing_city']),
+    "address" => sanitize_text_field($_POST['api_billing_address_1']),
+    "zipcode" => sanitize_text_field($_POST['api_billing_postcode']),
     "phone" => sanitize_text_field($_POST['billing_phone_full'])
   ];
 
@@ -434,22 +434,28 @@ function mt_get_account_profile_data(WP_REST_Request $request)
     }
 
     $user = MT_Api::fetch_user_by_email(email: $current_user->user_email);
-    $is_verified = mt_is_user_verified();
+    $is_verified = mt_is_user_verified($current_user->ID);
 
-    $user_data = $user ? [
+    $country = 'US';
+
+    $personal_information = $user ? [
       'firstname' => $user['firstname'],
       'lastname' => $user['lastname'],
       'email' => $user['email'],
       'address' => $user['address'],
       'city' => $user['city'],
+      'phone' => $user['phone'],
       'state' => $user['state'],
       'zipcode' => $user['zipcode'],
-      'country' => $user['country'],
+      'country' => $user['country'] ?? $country,
     ] : null;
 
+    $valid_states = WC()->countries->get_states($personal_information && $personal_information['country'] ? $personal_information['country'] : $country);
+
     return rest_ensure_response([
-      'user' => $user_data,
+      'personal_information' => $personal_information,
       'is_verified' => $is_verified,
+      'valid_states' => $valid_states
     ]);
   } catch (Exception $e) {
     return new WP_Error('server_error', __('Internal server error: ', 'text-domain') . $e->getMessage(), ['status' => 500]);
