@@ -87,14 +87,6 @@
   </div>
 </div>
 
-<!-- MT Payout Modal -->
-<?php
-$__mt_user_email = wp_get_current_user()->user_email ?? '';
-get_template_part('template-parts/modals/request-payout', null, [
-  'user_email' => $__mt_user_email
-]);
-?>
-
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-mega">
     <div class="modal-content">

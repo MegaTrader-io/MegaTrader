@@ -393,6 +393,20 @@ get_header();
             ?>
           </div>
 
+              <div class="mt-account-payout mt-skeleton-pulse" id="mt-account-payout">
+            <?php
+            if (!empty($mt_selected_id)) {
+              get_template_part(
+                'template-parts/account/account-request-payout',
+                null,
+                [
+                  'account_id' => $mt_selected_id,
+                ]
+              );
+            }
+            ?>
+          </div>
+
 
           <div class="mt-account-performance mt-skeleton-pulse" id="mt-performance-container">
             <?php

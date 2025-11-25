@@ -494,6 +494,7 @@ class Label
         'congratsTitle' => 'Congrats!',
         'congratsMessage' => 'Your request has been successfully submitted.',
         'congratsSubtitle' => 'You’ll be notified once your request is approved.',
+        'paymentMethodTitle' => "Payment Methods"
     ];
 
     public const META_ACCOUNT_OVERVIEW_TOOLTIP = [

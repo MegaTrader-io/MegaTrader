@@ -14,19 +14,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php if(isset( $_GET['v2'] )): ?>
 
-<?php if ( ! empty( $subscriptions ) ) : ?>
-	<div class="d-flex flex-column gap-3">
+<?php if ( ! empty( $subscriptions ) ) : 
+	$accordion_id = 'mt-subscriptions-view';
+?>
+	<div class="d-flex flex-column gap-3" id="<?= $accordion_id ?>">
 	<?php foreach ( $subscriptions as $subscription_idx => $subscription ) :
 		$subscription_id = $subscription->get_id();
 		$related_orders = array_keys($subscription->get_related_orders());
 		$order_id = end($related_orders);
 		$order = wc_get_order($order_id);
 		$order_number = $order->get_order_number();
-		echo '<script>console.log("related_orders",' . wp_json_encode($related_orders) . ');</script>';
+
+		$item = current($subscription->get_items());
+		$product = $item ? $item->get_product() : null;
+		$product_name = $product ? $product->get_name() : '';
+
+		// Get Platform Logo and Name
+		$platform_value = $item ? $item->get_meta('pa_platform') : '';
+
+		$platform_term = get_term_by('slug', $platform_value, 'pa_platform');
+		$platform_meta = $platform_term ? get_term_meta($platform_term->term_id) : [];
+
+		$image_id = $platform_meta['attribute_image_id'][0] ?? null;
+		$platform_logo = $image_id ? wp_get_attachment_url($image_id) : '';
+		$platform_name = $platform_term->name ?? ucfirst($platform_value);
+
+		$payment_method = $subscription->get_payment_method_title();
+
+		echo '<script>console.log("subscription data",' . wp_json_encode( $subscription -> get_data() ) . ');</script>';
 		
 	?>
 		<?php get_template_part('template-parts/subscriptions/subscription-card', null, [
 			'mt_id' => $order_number,
+			'accordion_id' => $accordion_id,
+			'subscription_id' => $subscription_id,
 			'details_list' => [
 				[
 					'label' => 'Subscription ID',
@@ -34,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				],
 				[
 					'label' => 'Payment Method',
-					'value' => 'Credit Card',
+					'value' => $payment_method,
 				],
 				[
 					'label' => 'Start Date',
@@ -53,6 +74,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 					'value' 		=> '$69.00',
 					'value-class'	=> 'text-primary',
 				],
+			],
+			'related_orders' => [
+				[
+					'date' => '2025-03-12',
+					'transaction_id' => 'TDVSHND052685279SJD5',
+					'amount' => '$69.00',
+					'status' => 'Completed'
+				],
+				[
+					'date' => '2025-03-12',
+					'transaction_id' => 'TDVSHND052685279SJD5',
+					'amount' => '$69.00',
+					'status' => 'Completed'
+				],
+				[
+					'date' => '2025-03-12',
+					'transaction_id' => 'TDVSHND052685279SJD5',
+					'amount' => '$69.00',
+					'status' => 'Completed'
+				],
+				[
+					'date' => '2025-03-12',
+					'transaction_id' => 'TDVSHND052685279SJD5',
+					'amount' => '$69.00',
+					'status' => 'Completed'
+				],
+				[
+					'date' => '2025-03-12',
+					'transaction_id' => 'TDVSHND052685279SJD5',
+					'amount' => '$69.00',
+					'status' => 'Completed'
+				],
+				[
+					'date' => '2025-03-12',
+					'transaction_id' => 'TDVSHND052685279SJD5',
+					'amount' => '$69.00',
+					'status' => 'Completed'
+				]
 			]
 		]); ?>
 	<?php endforeach; ?>

@@ -11,14 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-
 $mt_id = $args['mt_id'] ?? null;
+$accordion_id = esc_attr($args['accordion_id'] ?? '');
+$subscription_id = $args['subscription_id'] ?? '';
 $details_list = $args['details_list'] ?? [];
+$related_orders = $args['related_orders'] ?? [];
 
+$collapse_id = esc_attr('collapse-' . $subscription_id);
 ?>
 
 <div class="mt-subscription-card">
-    <div class="mt-subscription-card__wrapper mt-card">
+    <div class="mt-subscription-card__wrapper mt-card gap-3">
         <div class="mt-subscription-card__section d-flex flex-column gap-3 border-bottom-gray pb-3">
             <div class="mt-subscription-card__block d-flex flex-column flex-md-row gap-3">
 
@@ -71,7 +74,53 @@ $details_list = $args['details_list'] ?? [];
             <?php endif; ?>
         </div>
         <div class="mt-subscription-card__section d-flex flex-column gap-3">
-            testing
+            
+            <!-- Auto Renew Toggle -->
+            <div class="d-flex align-items-center gap-2">
+				<span class="text-a8a29e text-sm fw-medium">Auto renew</span>
+				<div class="wcs-auto-renew-toggle">
+					<a href="#" class="subscription-auto-renew-toggle subscription-auto-renew-toggle--off" aria-label="Enable auto renew">
+						<i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i>
+					</a>
+				</div>
+			</div>
+
+            <?php if ( ! empty( $related_orders ) ) : ?>
+                <!-- Related Orders Collapse -->
+                <div class="mt-card mt-card-dark gap-0 p-0">
+                    <a class="d-flex gap-2 justify-content-between p-12" data-bs-toggle="collapse" href="#<?= $collapse_id ?>" role="button" aria-expanded="false" aria-controls="<?= $collapse_id ?>">
+                        <div class="d-flex gap-2">
+                            <div class="fw-medium text-base text-white">View Transactions</div>
+                            <div class="fw-medium text-sm text-a8a29e">(3)</div>
+                        </div>
+                        <i class="mt-details__summary__icon mt-icon mt-icon-white mt-icon_caret-down-solid"></i>
+                    </a>
+                    <div class="collapse" id="<?= $collapse_id ?>" data-bs-parent="#<?= $accordion_id ?>">
+                        <table class="border-0 m-0">
+                            <thead>
+                                <tr class="border-top-gray">
+                                    <th class="border-0">Date</th>
+                                    <th class="border-0">Transaction ID</th>
+                                    <th class="border-0">Amount</th>
+                                    <th class="border-0 text-end">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ( $related_orders as $order ) : ?>
+                                    <tr class="border-top-gray">
+                                        <td class="fw-medium text-sm text-a8a29e border-0"><?= $order['date'] ?></td>
+                                        <td class="fw-medium text-sm text-a8a29e border-0"><?= $order['transaction_id'] ?></td>
+                                        <td class="fw-medium text-sm text-a8a29e border-0 text-primary"><?= $order['amount'] ?></td>
+                                        <td class="fw-medium text-sm text-a8a29e border-0 text-end">
+                                            <span class="badge-mega badge-mega-sm badge-mega-active d-inline"><?= $order['status'] ?></span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
