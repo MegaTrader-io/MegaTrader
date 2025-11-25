@@ -126,6 +126,10 @@ function mt_process_callback_register(WP_REST_Request $request): WP_REST_Respons
 
   wc_set_customer_auth_cookie($new_customer);
 
+  $hash_user_id = md5((string) $new_customer);
+  mt_clear_account_cookies($new_customer);
+  mt_set_cookie_safe('mt:lastUserId', $hash_user_id);
+
   // --- Determine redirect URL ---
   $default_redirect = home_url('/my-account/overview/');
   $redirect = $raw_redirect ?: $default_redirect;
