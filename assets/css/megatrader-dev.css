@@ -4521,6 +4521,26 @@ textarea.mtfb-note {
   margin-bottom: 32px;
 }
 
+.mt-user-profile-card__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (max-width: 767px) {
+    .mt-user-profile-card__wrapper {
+        display: inline;
+    }
+
+    .mt-user-profile-card__details {
+        padding-left: 112px;
+    }
+
+    .mt-user-profile-card__details .mt-user-profile-card__member-since {
+        text-align: left;
+    }
+}
+
 .mt-user-profile-card__avatar-container {}
 
 .mt-user-profile-card__member-since {

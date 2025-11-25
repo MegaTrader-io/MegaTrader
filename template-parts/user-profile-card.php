@@ -3,7 +3,7 @@ $user_profile = mt_get_current_user_profile_data(avatar_size: 96);
 ?>
 
 <div class="mt-user-profile-card mt-card mt-card-dark h-auto">
-    <div class="d-flex align-items-center justify-content-between">
+    <div class="mt-user-profile-card__wrapper">
         <div class="mt-user-profile-card__avatar-container">
             <?php get_template_part('template-parts/avatar', null, [
                     'avatar_url' => $user_profile['avatar_url'],
