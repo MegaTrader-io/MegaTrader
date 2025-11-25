@@ -5009,24 +5009,24 @@ button#mt-payout-acc-btn:active {
 }
 
 #mt-trades .dj-head {
-     color: var(--Text-Headings, #fff);
-    font-size: 0.75rem;
-    font-weight: 700;
-    line-height: 1.25;
-    background: var(--dj-bg);
-    padding: 0.75rem 0.9rem;
+  color: var(--Text-Headings, #fff);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  background: var(--dj-bg);
+  padding: 0.75rem 0.9rem;
 }
 
 #mt-trades .dj-cell {
- color: var(--Text-Body, #a8a29e);
-    font-size: 0.75rem;
-    line-height: 1rem;
-    font-weight: 500;
-    background: var(--dj-bg);
-    padding: 0.75rem 0.9rem;
-    min-width: 0;
-    word-break: break-word;
-    white-space: normal;
+  color: var(--Text-Body, #a8a29e);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  background: var(--dj-bg);
+  padding: 0.75rem 0.9rem;
+  min-width: 0;
+  word-break: break-word;
+  white-space: normal;
 }
 
 #mt-trades .dj-cell--side {
@@ -5539,10 +5539,44 @@ button#mt-payout-acc-btn:active {
 /* =====  Account Data ===== */
 
 /* default: en desktop NO limites ancho */
-.mt-account-data-credentials{
+.mt-account-data-credentials {
   flex: 1 1 auto;
   max-width: fit-content;
-  min-width: 0; /* ya lo tienes pero lo dejo por claridad */
+  min-width: 0;
+  /* ya lo tienes pero lo dejo por claridad */
 }
+
+.mt-account-data .mt-card-wrapper {
+  position: relative;
+}
+
+.mt-account-data .mt-card-wrapper.mt-agrement-missing .mt-card-content {
+  filter: blur(5px);
+}
+
+.mt-account-data .mt-agreement-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.mt-account-data .mt-agreement-overlay__inner {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.mt-account-data .mt-agreement-overlay__text {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 
 /* ===== End Account Data ===== */

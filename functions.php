@@ -2101,10 +2101,41 @@ if (!function_exists('mt_get_agreement_status_cached')) {
         $cached = get_transient($k);
         if ($cached !== false) return $cached;
         $data = (function_exists('mt_get_agreement_status_by_email')) ? mt_get_agreement_status_by_email($email_api, 0) : null;
-        set_transient($k, $data, 5 * MINUTE_IN_SECONDS);
+        set_transient($k, $data, 20);
         return $data;
     }
 }
+
+add_action('wp_ajax_mt_check_agreement', 'mt_ajax_check_agreement');
+
+function mt_ajax_check_agreement() {
+  if (!check_ajax_referer('mt-acc-nonce', 'nonce', false)) {
+    wp_send_json_error(['message' => 'Invalid nonce'], 403);
+  }
+
+  if (!is_user_logged_in()) {
+    wp_send_json_error(['message' => 'Not logged'], 401);
+  }
+
+  $u = wp_get_current_user();
+  $email_api = rawurlencode(strtolower(trim((string)($u->user_email ?? ''))));
+  if (!$email_api) wp_send_json_error(['message' => 'No email'], 400);
+
+  // forzar refresh del cache
+  $k = 'mt_agreement_' . md5($email_api);
+  delete_transient($k);
+
+  $ag = mt_get_agreement_status_cached($email_api);
+
+  $signed = (is_array($ag) && !empty($ag['agreementSigned'])) ? true : false;
+
+  wp_send_json_success([
+    'agreementSigned' => $signed,
+    'agreementStatus' => $ag['agreementStatus'] ?? '',
+  ]);
+}
+
+
 
 // === Performance Chart AJAX ===
 add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
@@ -2148,6 +2179,7 @@ function mt_account_data_ajax() {
     if (!check_ajax_referer('mt-acc-nonce', 'nonce', false)) {
       wp_send_json_error(['message' => 'Invalid nonce'], 403);
     }
+
     $accountId = isset($_POST['accountId']) ? sanitize_text_field(wp_unslash($_POST['accountId'])) : '';
     if ($accountId === '') wp_send_json_error(['message' => 'Missing accountId'], 400);
 
@@ -2157,9 +2189,38 @@ function mt_account_data_ajax() {
 
     $payload = function_exists('mt_accounts_build_account_data') ? mt_accounts_build_account_data($acc) : [];
 
+    // === AGREEMENT (recalcular igual que overview) ===
+    $agreement_show = '0';
+    $agreement_url  = '#';
+
+    $email_api = '';
+    if (is_user_logged_in()) {
+      $u = wp_get_current_user();
+      if ($u && $u->exists()) {
+        $raw = strtolower(trim((string)($u->user_email ?? '')));
+        $email_api = rawurlencode($raw);
+      }
+    }
+
+    if ($email_api && function_exists('mt_get_agreement_status_cached')) {
+      $__mt_agreement = mt_get_agreement_status_cached($email_api);
+
+      $agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
+        ? (string)$__mt_agreement['agreementURL']
+        : '#';
+
+      $agreement_show = (is_array($__mt_agreement)
+        && array_key_exists('agreementSigned', $__mt_agreement)
+        && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+    }
+
     ob_start();
     get_template_part('template-parts/account/account-data', null, [
-      'meta' => ['accountId' => $accountId],
+      'meta' => [
+        'accountId'     => $accountId,
+        'agreementShow' => $agreement_show,
+        'agreementUrl'  => $agreement_url,
+      ],
       'data' => $payload,
     ]);
     $html = ob_get_clean();
@@ -2170,6 +2231,7 @@ function mt_account_data_ajax() {
     wp_send_json_error(['message' => 'Server error'], 500);
   }
 }
+
 
 // === Daily Journal AJAX (render filas) ===
 add_action('wp_ajax_mt_account_daily_journal', 'mt_ajax_account_daily_journal');

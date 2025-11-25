@@ -216,10 +216,10 @@
       anchorEl && anchorEl.getBoundingClientRect
         ? anchorEl.getBoundingClientRect()
         : {
-            left: window.innerWidth / 2,
-            top: window.innerHeight - 24,
-            width: 0,
-          };
+          left: window.innerWidth / 2,
+          top: window.innerHeight - 24,
+          width: 0,
+        };
 
     const clampNum = (n, min, max) => Math.max(min, Math.min(max, n));
     const centerX = clampNum(
@@ -261,7 +261,7 @@
       ta.select();
       try {
         document.execCommand("copy");
-      } catch (err) {}
+      } catch (err) { }
       document.body.removeChild(ta);
       onDone();
     }
@@ -425,12 +425,12 @@ document.addEventListener("mt:accountSelected", (e) => {
   // Paso 2: chequeo de breach (throttle propio)
   try {
     breachGuardCheck?.(id);
-  } catch (_) {}
+  } catch (_) { }
 
   // Paso 3: re-sincroniza Manage Subscription
   try {
     syncManageSubscription?.();
-  } catch (_) {}
+  } catch (_) { }
 
   // Paso 4/5: re-render del breach modal (si existe)
   try {
@@ -440,7 +440,7 @@ document.addEventListener("mt:accountSelected", (e) => {
       document.querySelector(".mt-breach-modal") ||
       undefined;
     refreshBreachModalUI?.(modalRef);
-  } catch (_) {}
+  } catch (_) { }
 });
 
 // ===== Overlay utils (genérico) =====
@@ -514,7 +514,7 @@ window.mtOverlay = (function () {
                 el.style.setProperty("--mt-progress-value", v + "%");
               });
           })(wrap);
-        } catch (_) {}
+        } catch (_) { }
 
         // Re-init tooltips
         if (
@@ -918,7 +918,7 @@ window.mtOverlay = (function () {
 
     try {
       ctrl?.abort();
-    } catch (_) {}
+    } catch (_) { }
     ctrl = new AbortController();
     const myToken = ++reqToken;
 
@@ -1025,8 +1025,12 @@ window.mtOverlay = (function () {
         wrap.innerHTML = j.data.html;
 
         try {
+          if (window.applyAgreementMissing) window.applyAgreementMissing();
+        } catch (_) { }
+
+        try {
           // initDonuts?.(wrap); initDualBars?.(wrap); initProgressBars?.(wrap);
-        } catch (_) {}
+        } catch (_) { }
 
         if (
           window.mtTooltips &&
@@ -1035,6 +1039,7 @@ window.mtOverlay = (function () {
           window.mtTooltips.refresh(wrap);
         }
       })
+
       .catch(function (err) {
         window.MEGATRADER?.showError?.(
           "Account Data Error",
@@ -1372,95 +1377,96 @@ window.mtOverlay = (function () {
   });
 })();
 
-// ===== Agreement Modal (centrado + backdrop con clases de Bootstrap) =====
+// ===== Agreement Missing Overlay (blur en Account Data) =====
 (function () {
-  function init() {
-    var modal = document.getElementById("mt-agreement-modal");
-    if (!modal) return;
+  function applyAgreementMissing() {
+    var root = document.getElementById("mt-account-overview");
+    if (!root) return;
 
-    var closeBtn = modal.querySelector(".mt-modal__close");
-    var actionBtn = modal.querySelector(".mt-agreement-button");
-    var withBackdrop = null;
+    var show = (root.getAttribute("data-agreement-show") || "").trim() === "1";
+    var url = root.getAttribute("data-agreement-url") || "#";
 
-    function openModal() {
-      modal.removeAttribute("hidden");
-      modal.setAttribute("aria-hidden", "false");
-      modal.classList.add("show");
+    var wrap = document.querySelector(".mt-account-data .mt-card-wrapper");
+    if (!wrap) return;
 
-      modal.style.position = "fixed";
-      modal.style.inset = "0";
-      modal.style.display = "flex";
-      modal.style.alignItems = "center";
-      modal.style.justifyContent = "center";
-      modal.style.zIndex = "1055";
+    // toggle blur class
+    wrap.classList.toggle("mt-agrement-missing", show);
 
-      withBackdrop = document.createElement("div");
-      withBackdrop.className = "modal-backdrop fade show";
-      withBackdrop.style.zIndex = "1050";
-      document.body.appendChild(withBackdrop);
+    // overlay
+    var ov = wrap.querySelector(".mt-agreement-overlay");
+    if (!ov) return;
 
-      document.body.classList.add("modal-open");
-      try {
-        modal.focus();
-      } catch (e) {}
-    }
+    var btn = ov.querySelector(".mt-agreement-button");
+    if (btn && url) btn.setAttribute("href", url);
 
-    function closeModal() {
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      modal.setAttribute("hidden", "");
-      modal.style.display = "";
-      modal.style.position = "";
-      modal.style.inset = "";
-      modal.style.alignItems = "";
-      modal.style.justifyContent = "";
-      modal.style.zIndex = "";
-
-      if (withBackdrop && withBackdrop.parentNode) {
-        withBackdrop.parentNode.removeChild(withBackdrop);
-        withBackdrop = null;
-      }
-      if (!document.querySelector(".modal.show")) {
-        document.body.classList.remove("modal-open");
-      }
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        closeModal();
-      });
-    }
-
-    if (actionBtn) {
-      actionBtn.addEventListener("click", function () {
-        var href = actionBtn.getAttribute("href") || "";
-        if (!href || href === "#") return;
-        setTimeout(closeModal, 100);
-      });
-    }
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && modal.classList.contains("show")) {
-        closeModal();
-      }
-    });
-
-    if (modal.getAttribute("data-show") === "1") {
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openModal);
-      } else {
-        openModal();
-      }
+    if (show) {
+      ov.hidden = false;
+      ov.setAttribute("aria-hidden", "false");
+    } else {
+      ov.hidden = true;
+      ov.setAttribute("aria-hidden", "true");
     }
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", applyAgreementMissing);
   } else {
-    init();
+    applyAgreementMissing();
   }
+
+  // re-aplicar cuando cambias account via AJAX
+  document.addEventListener("mt:accountSelected", function () {
+    setTimeout(applyAgreementMissing, 0);
+  });
+
+  // expón por si lo llamas manual
+  window.applyAgreementMissing = applyAgreementMissing;
 })();
+
+// ===== Auto-refresh cuando el usuario firma el Agreement =====
+(function () {
+  function checkAgreementAndReload() {
+    var root = document.getElementById("mt-account-overview");
+    if (!root) return;
+
+    // Si ya no falta el agreement, no hacemos nada
+    var show = (root.getAttribute("data-agreement-show") || "").trim() === "1";
+    if (!show) return;
+
+    // AJAX config
+    var url = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+    var body = new URLSearchParams();
+    body.set("action", "mt_check_agreement");
+    body.set("nonce", nonce);
+
+    window.MEGATRADER.fetchJSON(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body,
+    })
+      .then(function (j) {
+        if (j && j.success && j.data && j.data.agreementSigned) {
+          location.reload();
+        }
+      })
+      .catch(function (_) { });
+  }
+
+  // Se dispara cuando el usuario vuelve a la pestaña
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) checkAgreementAndReload();
+  });
+
+  // Fallback: algunos navegadores NO disparan visibilitychange
+  window.addEventListener("focus", function () {
+    checkAgreementAndReload();
+  });
+
+})();
+
+
 
 // ===== Breach Alert Modal (centrado + backdrop) =====
 (function () {
@@ -1588,7 +1594,7 @@ window.mtOverlay = (function () {
       document.body.classList.add("modal-open");
       try {
         modal.focus();
-      } catch (e) {}
+      } catch (e) { }
     }
 
     function closeModal() {
@@ -1610,7 +1616,7 @@ window.mtOverlay = (function () {
           fallback && fallback.focus({ preventScroll: true });
           if (needsTab) fallback.removeAttribute("tabindex");
         }
-      } catch (_) {}
+      } catch (_) { }
 
       modal.classList.remove("show");
       modal.setAttribute("aria-hidden", "true");
@@ -1766,8 +1772,8 @@ function breachGuardCheck(accountId) {
             (grid.querySelector(".subscription-card.active") ||
               grid.querySelector(
                 '.subscription-card[data-account-id="' +
-                  CSS.escape(String(accountId)) +
-                  '"]'
+                CSS.escape(String(accountId)) +
+                '"]'
               ));
           var resetId = card ? card.getAttribute("data-reset-id") || "" : "";
           var modal = document.getElementById("mt-breach-alert-modal");
@@ -1795,7 +1801,7 @@ function breachGuardCheck(accountId) {
               btn.setAttribute("aria-disabled", "true");
             }
           }
-        } catch (_) {}
+        } catch (_) { }
 
         var modalEl = document.getElementById("mt-breach-alert-modal");
         if (!modalEl || modalEl.classList.contains("show")) return;
@@ -1912,7 +1918,7 @@ function mtBindManageSubsNav() {
     var id = parseInt(raw, 10) || 0;
     try {
       console.debug("[MT][Orders] orderId from data-order-id =", id);
-    } catch (_) {}
+    } catch (_) { }
     return id;
   }
 
@@ -1956,8 +1962,8 @@ function mtBindManageSubsNav() {
       toUrl && toUrl.indexOf("/my-account/orders") !== -1
         ? toUrl
         : window.location.origin
-        ? window.location.origin + "/my-account/orders/"
-        : "/my-account/orders/";
+          ? window.location.origin + "/my-account/orders/"
+          : "/my-account/orders/";
     form.action = action;
 
     var inp1 = form.querySelector('input[name="orderId"]');
@@ -1967,7 +1973,7 @@ function mtBindManageSubsNav() {
 
     try {
       console.debug("[MT][Orders] POST ->", form.action, { orderId });
-    } catch (_) {}
+    } catch (_) { }
     form.submit();
   }
 
@@ -1989,7 +1995,7 @@ function mtBindManageSubsNav() {
     try {
       select.onchange = null;
       select.removeAttribute("onchange");
-    } catch (_) {}
+    } catch (_) { }
     select.addEventListener(
       "change",
       function (e) {
@@ -2257,7 +2263,7 @@ if (document.readyState === "loading") {
       document.body.classList.add("modal-open");
       try {
         modal.focus();
-      } catch (_) {}
+      } catch (_) { }
     }
 
     function closeModal() {
@@ -2279,7 +2285,7 @@ if (document.readyState === "loading") {
           fallback && fallback.focus({ preventScroll: true });
           if (needsTab) fallback.removeAttribute("tabindex");
         }
-      } catch (_) {}
+      } catch (_) { }
 
       modal.classList.remove("show");
       modal.setAttribute("aria-hidden", "true");
@@ -2345,8 +2351,8 @@ if (document.readyState === "loading") {
       document.querySelector(sel) ||
       document.querySelector(
         '.subscription-card[data-account-id="' +
-          String(accountId).replace(/"/g, "&quot;") +
-          '"]'
+        String(accountId).replace(/"/g, "&quot;") +
+        '"]'
       );
     if (!card) return "";
     return card.getAttribute("data-activation-id") || "";
@@ -2477,8 +2483,8 @@ if (document.readyState === "loading") {
       var el =
         ev.target && ev.target.closest
           ? ev.target.closest(
-              ".mt-breach-reset-button, #mt-activation-btn, .account-reset-button"
-            )
+            ".mt-breach-reset-button, #mt-activation-btn, .account-reset-button"
+          )
           : null;
       if (!el) return;
 
@@ -2548,13 +2554,13 @@ if (document.readyState === "loading") {
 
       try {
         window.mtTooltips && window.mtTooltips.refresh(wrapper);
-      } catch (_) {}
+      } catch (_) { }
     } else {
       const body = wrapper.querySelector(".mt-tooltip__body");
       if (body) body.textContent = text || "You are up to date.";
       try {
         window.mtTooltips && window.mtTooltips.refresh(wrapper);
-      } catch (_) {}
+      } catch (_) { }
     }
   }
 
@@ -2565,13 +2571,13 @@ if (document.readyState === "loading") {
     if (wrapper) {
       try {
         window.mtTooltips && window.mtTooltips.closeAll();
-      } catch (_) {}
+      } catch (_) { }
       const parent = wrapper.parentNode;
       parent.insertBefore(toggle, wrapper);
       wrapper.remove();
       try {
         window.mtTooltips && window.mtTooltips.refresh(parent || document);
-      } catch (_) {}
+      } catch (_) { }
     }
   }
 
@@ -2611,8 +2617,8 @@ if (document.readyState === "loading") {
         method: "POST",
         credentials: "same-origin",
         body: fd,
-      }).catch(() => {});
-    } catch (_) {}
+      }).catch(() => { });
+    } catch (_) { }
   }
 
   function uidFromBtn(btn, article) {
@@ -2689,7 +2695,7 @@ if (document.readyState === "loading") {
     toggle.setAttribute("aria-expanded", "true");
     try {
       panel.focus({ preventScroll: true });
-    } catch (_) {}
+    } catch (_) { }
 
     document.addEventListener("click", onDocClick, true);
     document.addEventListener("keydown", onKey, true);
@@ -2756,7 +2762,7 @@ if (document.readyState === "loading") {
           closePanel(container);
           try {
             window.mtTooltips && window.mtTooltips.refresh(container);
-          } catch (_) {}
+          } catch (_) { }
         }
       },
       true
@@ -2809,7 +2815,7 @@ if (document.readyState === "loading") {
           closePanel(container);
           try {
             toggle.focus({ preventScroll: true });
-          } catch (_) {}
+          } catch (_) { }
         },
         { capture: true }
       );
@@ -2819,7 +2825,7 @@ if (document.readyState === "loading") {
     syncBell(container);
     try {
       window.mtTooltips && window.mtTooltips.refresh(container);
-    } catch (_) {}
+    } catch (_) { }
   }
 
   function init() {
@@ -2931,12 +2937,10 @@ if (document.readyState === "loading") {
         data-logo="${esc(logo)}"
         data-main-id="${esc(a.mainProductId || "")}"
         data-order-id="${esc(a.order || 0)}"
-        data-has-subscription="${
-          a.subscriptionId || a.hasSubscription ? "1" : "0"
+        data-has-subscription="${a.subscriptionId || a.hasSubscription ? "1" : "0"
         }"
         data-subscription-id="${esc(a.subscriptionId || "")}">
-        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${
-          isCur ? "" : "display:none;"
+        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${isCur ? "" : "display:none;"
         }">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" fill="#FFB34A" />
@@ -2946,13 +2950,13 @@ if (document.readyState === "loading") {
         <div class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
           <div class="logo-container position-relative d-inline-block">
             <img src="${esc(
-              logo
-            )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
-        FALLBACK_LOGO
-      )}'">
+          logo
+        )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
+          FALLBACK_LOGO
+        )}'">
             <div class="dot-indicator ${esc(dotClass)}" title="${esc(
-        statusRaw
-      )}" style="position:absolute;right:-1px;bottom:-1px;">
+          statusRaw
+        )}" style="position:absolute;right:-1px;bottom:-1px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <circle cx="6" cy="6" r="6" fill="white" />
                 <circle cx="6" cy="6" r="4" fill="currentColor" />
@@ -2965,15 +2969,14 @@ if (document.readyState === "loading") {
             ${esc((a.size || "") + " " + (a.name || "Account"))}
           </div>
           <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">#${esc(
-            platId || aid
-          )}</div>
-          ${
-            a.programTypeText && a.programTypeClass
-              ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(
-                  a.programTypeClass
-                )}">${esc(a.programTypeText)}</div>`
-              : ""
-          }
+          platId || aid
+        )}</div>
+          ${a.programTypeText && a.programTypeClass
+          ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(
+            a.programTypeClass
+          )}">${esc(a.programTypeText)}</div>`
+          : ""
+        }
         </div>
       </div>`;
     }
@@ -2982,7 +2985,7 @@ if (document.readyState === "loading") {
     ric(() => {
       try {
         window.mtTooltips && window.mtTooltips.refresh(grid);
-      } catch (_) {}
+      } catch (_) { }
     });
 
     markActiveInGrid();
@@ -3252,7 +3255,7 @@ if (document.readyState === "loading") {
         $.preloader.show();
         return;
       }
-    } catch (_) {}
+    } catch (_) { }
     const el = document.querySelector(".preloader");
     if (el) el.style.display = "block";
   }
@@ -3275,7 +3278,7 @@ if (document.readyState === "loading") {
         $.preloader.hide();
         return;
       }
-    } catch (_) {}
+    } catch (_) { }
     const el = document.querySelector(".preloader");
     if (el) el.style.display = "none";
   }
@@ -3292,7 +3295,7 @@ if (document.readyState === "loading") {
       if (v === "metrics" || v === "journal") return v;
       if (/trading-journal/i.test(u.pathname)) return "journal";
       if (/trade-area|overview/i.test(u.pathname)) return "metrics";
-    } catch (_) {}
+    } catch (_) { }
     return "";
   }
 
@@ -3425,8 +3428,8 @@ if (document.readyState === "loading") {
     "";
   const perPageAttr = parseInt(
     comp.getAttribute("data-per-page") ||
-      wrap.getAttribute("data-per-page") ||
-      "25",
+    wrap.getAttribute("data-per-page") ||
+    "25",
     10
   );
   const perPage =
@@ -3522,7 +3525,7 @@ if (document.readyState === "loading") {
           detail: { type: "CLOSED", page: 1 },
         })
       );
-      fetchTrades("CLOSED", 1, /*force*/ true).catch(() => {});
+      fetchTrades("CLOSED", 1, /*force*/ true).catch(() => { });
     });
   }
 
@@ -3539,7 +3542,7 @@ if (document.readyState === "loading") {
   };
 
   // Primer fetch por defecto
-  fetchTrades("CLOSED", 1).catch(() => {});
+  fetchTrades("CLOSED", 1).catch(() => { });
 })();
 
 /* =========================
@@ -3624,8 +3627,7 @@ if (document.readyState === "loading") {
   };
 
   const pill = (txt, kind) =>
-    `<span class="mt-pill ${
-      kind === "err" ? "mt-pill--err" : "mt-pill--sec"
+    `<span class="mt-pill ${kind === "err" ? "mt-pill--err" : "mt-pill--sec"
     }">${txt}</span>`;
 
   // empty-state
@@ -3704,8 +3706,8 @@ if (document.readyState === "loading") {
         ? r.net > 0
           ? "text-success"
           : r.net < 0
-          ? "text-danger"
-          : ""
+            ? "text-danger"
+            : ""
         : "";
 
     const status = String(r.status || "").toUpperCase();
@@ -3759,9 +3761,9 @@ if (document.readyState === "loading") {
     const page = Number(payload.page || 1);
     const total = Number(
       payload.total ??
-        (payload.meta && payload.meta.totalCount) ??
-        recs.length ??
-        0
+      (payload.meta && payload.meta.totalCount) ??
+      recs.length ??
+      0
     );
     const pages = Number(
       payload.pages || Math.ceil(total / Math.max(1, perPage))
@@ -3959,14 +3961,14 @@ if (document.readyState === "loading") {
     );
     const START_YEAR = parseInt(
       grid.dataset.startYear ||
-        grid.getAttribute("data-start-year") ||
-        now.getFullYear(),
+      grid.getAttribute("data-start-year") ||
+      now.getFullYear(),
       10
     );
     const START_MONTH = parseInt(
       grid.dataset.startMonth ||
-        grid.getAttribute("data-start-month") ||
-        now.getMonth(),
+      grid.getAttribute("data-start-month") ||
+      now.getMonth(),
       10
     );
 
@@ -4022,7 +4024,7 @@ if (document.readyState === "loading") {
     function createDropdown(ddEl, items, { formatLabel, value, onChange }) {
       if (!ddEl) {
         return {
-          set() {},
+          set() { },
           get() {
             return undefined;
           },
@@ -4034,7 +4036,7 @@ if (document.readyState === "loading") {
       const list = ddEl.querySelector(".mt-dd__panel");
       if (!btn || !lab || !list) {
         return {
-          set() {},
+          set() { },
           get() {
             return undefined;
           },
@@ -4227,8 +4229,7 @@ if (document.readyState === "loading") {
 
         cell.setAttribute(
           "aria-label",
-          `${key}, ${pnl !== null ? "$" + pnl.toFixed(0) : "no data"}, ${
-            tr || 0
+          `${key}, ${pnl !== null ? "$" + pnl.toFixed(0) : "no data"}, ${tr || 0
           } trades`
         );
 
