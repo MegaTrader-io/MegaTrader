@@ -319,21 +319,6 @@ function mt_update_personal_information_callback()
     "phone" => sanitize_text_field($_POST['billing_phone_full'])
   ];
 
-  foreach ($payload as $key => $value) {
-    if (empty($value)) continue;
-    $field = $key === 'address' ? 'address_1' : $key;
-    $field = $key === 'zipcode' ? 'postcode' : $field;
-
-    $setter = "set_billing_{$field}";
-    if (method_exists($customer, $setter)) {
-      $customer->{$setter}($value);
-    } else {
-      echo 'error ' . $setter;
-    }
-  }
-
-  $customer->save();
-
   $email = get_the_author_meta('user_email', get_current_user_id());
   $data = MT_Api::fetch_user_by_email(email: $email);
   if ($data) {
@@ -433,7 +418,7 @@ function mt_get_account_profile_data(WP_REST_Request $request)
       return new WP_Error('user_not_found', __('User not found.', 'text-domain'), ['status' => 404]);
     }
 
-    $user = MT_Api::fetch_user_by_email(email: $current_user->user_email);
+    $user = MT_Api::fetch_user_by_email(email: $current_user->user_email, forceToGetData: true);
     $is_verified = mt_is_user_verified($current_user->ID);
 
     $country = 'US';
@@ -441,12 +426,14 @@ function mt_get_account_profile_data(WP_REST_Request $request)
     $personal_information = $user ? [
       'firstname' => $user['firstname'],
       'lastname' => $user['lastname'],
+      'fullname' => $user['firstname'] . ' ' . $user['lastname'],
       'email' => $user['email'],
       'address' => $user['address'],
       'city' => $user['city'],
       'phone' => $user['phone'],
       'state' => $user['state'],
       'zipcode' => $user['zipcode'],
+      'createdAt' => $user['createdAt'],
       'country' => $user['country'] ?? $country,
     ] : null;
 
