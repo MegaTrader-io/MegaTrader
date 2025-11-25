@@ -1260,8 +1260,8 @@ add_action('wp_enqueue_scripts', 'mt_enqueue_overview_script_path_only', 101);
 
 add_action('wp_enqueue_scripts', 'mt_enqueue_overview_script_path_only', 101);
 
-require_once get_template_directory() . '/inc/auth-hooks.php';
-require_once get_template_directory() . '/inc/register-hooks.php';
+require_once get_template_directory() . '/inc/mt-login.php';
+require_once get_template_directory() . '/inc/mt-register.php';
 require_once get_template_directory() . '/inc/lost-password-hooks.php';
 
 add_filter( 'gettext', 'custom_change_cvc_label', 20, 3 );

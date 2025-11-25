@@ -17,6 +17,23 @@ document.addEventListener('DOMContentLoaded', function () {
         // window.history.replaceState({}, document.title, url.toString());
     }
 
+    async function handlerRestCookieInvalidNonce(form) {
+        if ($.refreshNonce) {
+            MG_GLOBAL.nonce = await $.refreshNonce();
+            console.info('Nonce refreshed, retrying submit...');
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'woocommerce-notices-wrapper';
+        const msg = document.createElement('div');
+        msg.className = 'woocommerce-error';
+        msg.setAttribute('role', 'alert');
+        msg.setAttribute('tabindex', '-1');
+        msg.textContent = 'Security check failed. Please refresh the page and try again.';
+        wrapper.appendChild(msg);
+        form.parentNode.insertBefore(wrapper, form);
+    }
+
     // Initialize Slider
     function initializeSwiper() {
         (new Swiper('.swiper', {
@@ -115,6 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const formLogin = document.getElementById('form-login');
 
+    let probar = null;
     formLogin?.addEventListener('submit', async (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -145,12 +163,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             $.preloader.show();
-
             const response = await fetch(MG_GLOBAL.loginAjaxApi, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-WP-Nonce': MG_GLOBAL.authNonce,
+                    'X-WP-Nonce': MG_GLOBAL.nonce,
                 },
                 body: new URLSearchParams({
                     username: usernameEl.value.trim(),
@@ -185,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.errors) {
                 if (data.errors.username) {
                     createOrUpdateError(usernameEl, 'error-username', data.errors.username);
-                    if (!firstErrorField) firstErrorField = usernameEl;
+                    firstErrorField = usernameEl;
                 }
                 if (data.errors.password) {
                     createOrUpdateError(passwordEl, 'error-password', data.errors.password);
@@ -210,12 +227,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     firstErrorField.focus();
                     firstErrorField.scrollIntoView({behavior: 'smooth', block: 'center'});
                 }
-
-                // ✅ desbloquear inputs y botón
-                $.preloader.hide();
-                inputs.forEach(el => el.readOnly = false);
-                submitBtn.classList.remove('btn--loading');
             }
+
+            if (data.code && data.code === 'rest_cookie_invalid_nonce') {
+                void handlerRestCookieInvalidNonce(form);
+            }
+
+            // ✅ desbloquear inputs y botón
+            $.preloader.hide();
+            inputs.forEach(el => el.readOnly = false);
+            submitBtn.classList.remove('btn--loading');
         } catch (err) {
             console.error('Login request failed:', err);
             const wrapper = document.createElement('div');
@@ -274,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-WP-Nonce': MG_GLOBAL.authNonce,
+                    'X-WP-Nonce': MG_GLOBAL.nonce,
                 },
                 body: payload,
             });
@@ -320,12 +341,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         wrapper.appendChild(msg);
                         form.parentNode.insertBefore(wrapper, form);
                     }
-
-                    $.preloader.hide();
-                    inputs.forEach(el => el.readOnly = false);
-                    submitBtn.classList.remove('btn--loading');
                 });
             }
+
+            if (data.code && data.code === 'rest_cookie_invalid_nonce') {
+                void handlerRestCookieInvalidNonce(form);
+            }
+
+            $.preloader.hide();
+            inputs.forEach(el => el.readOnly = false);
+            submitBtn.classList.remove('btn--loading');
 
             if (firstErrorField) {
                 firstErrorField.focus();

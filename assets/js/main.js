@@ -360,6 +360,17 @@ const $ = jQuery; //TODO: remove, temp for dev mode
       updatePlanWidget();
     });
 
+    $.refreshNonce = async function () {
+          const res = await fetch('/wp-json/custom/v1/refresh-nonce', {credentials: 'include'});
+          if (!res.ok) throw new Error('Failed to refresh nonce');
+          const data = await res.json();
+          if (data.success && data.nonce) {
+              console.info(`New nonce (${data.action}) refreshed.`);
+              return data.nonce;
+          }
+          throw new Error('No nonce returned');
+    }
+
     // Evitar fetch en overview
     if (!isOverviewPage()) fetchProductsAttributeData();
 
