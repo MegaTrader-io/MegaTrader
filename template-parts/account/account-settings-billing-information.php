@@ -123,7 +123,7 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
             formData.append('action', 'mt_update_billing_information');
 
             try {
-                const response = await fetch(window.wpAjax.ajaxUrl, {
+                const response = await fetch(window.MT_AP.ajaxUrl, {
                     method: 'POST',
                     body: formData,
                     credentials: 'same-origin'

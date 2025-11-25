@@ -154,7 +154,6 @@ $valid_states = WC()->countries->get_states($api_billing_country);
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('personal-information-form');
-        const preloader = document.querySelector('.preloader');
         const submitBtn = form.querySelector('button[type="submit"]');
 
         function setPhoneInput(form) {
@@ -179,13 +178,14 @@ $valid_states = WC()->countries->get_states($api_billing_country);
 
             setPhoneInput(form);
 
+            $.preloader.show();
             submitBtn.disabled = true;
 
             const formData = new FormData(form);
             formData.append('action', 'mt_update_personal_information');
 
             try {
-                const response = await fetch(window.wpAjax.ajaxUrl, {
+                const response = await fetch(window.MT_AP.ajaxUrl, {
                     method: 'POST',
                     body: formData,
                     credentials: 'same-origin'
@@ -221,7 +221,7 @@ $valid_states = WC()->countries->get_states($api_billing_country);
                 displayGlobalMessage(form, 'Unexpected error. Please try again later.', 'error');
             } finally {
                 submitBtn.disabled = false;
-                preloader.style.display = 'none';
+                $.preloader.hide();
             }
         });
     })
@@ -229,17 +229,21 @@ $valid_states = WC()->countries->get_states($api_billing_country);
 
 <script>
     jQuery(document).ready(function ($) {
-        $('#billing_country').on('input', function () {
+        $('#api_billing_country').on('input', function () {
             var country = $(this).val();
             var data = {
                 action: 'get_cities',
                 country: country,
-                state: '<?php echo $api_billing_state; ?>'
             };
 
             $.post(woocommerce_params.ajax_url, data, function (response) {
-                $('#billing_state_wrapper').html(response);
+                const element = parseHTMLElement(response);
+                element.name = 'api_billing_state';
+                element.id = 'api_billing_state';
+                element.value = '';
+                $('#api_billing_state_wrapper').empty().append(element);
             });
+
         });
     });
 </script>

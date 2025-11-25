@@ -6,11 +6,6 @@
 defined('ABSPATH') || exit;
 
 get_header();
-
-$is_verified = null;
-
-set_query_var('mt_is_verified', $is_verified);
-
 ?>
 
 <div class="container">
@@ -32,7 +27,8 @@ set_query_var('mt_is_verified', $is_verified);
                           id="personal-information-form">
                         <h2 class="toggle-panel__title-wrapper">
                             <button type="button" class="toggle-panel__header" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    name="account-settings__personal-information-button"
+                                    data-bs-target="#collapseOnePersonalInformation" aria-expanded="true" aria-controls="collapseOnePersonalInformation">
                                 <div class="toggle-panel__icon">
                                     <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +47,7 @@ set_query_var('mt_is_verified', $is_verified);
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseOne" class="toggle-panel__content mt-2 collapse"
+                        <div id="collapseOnePersonalInformation" class="toggle-panel__content mt-2 collapse"
                              data-bs-parent="#accordionExample">
                             <div class="toggle-panel__body">
                                 <?php get_template_part("template-parts/account/account-settings-personal-information"); ?>
@@ -97,7 +93,8 @@ set_query_var('mt_is_verified', $is_verified);
                     </form>
                     <div class="mt-skeleton-pulse mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">
-                            <button <?= is_null($is_verified) ? 'disabled' : '' ?>
+                            <button disabled
+                                    name="account-settings__verification-button"
                                     class="toggle-panel__header toggle-panel__header--collapsed" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
                                     aria-controls="collapseTwo">
@@ -117,7 +114,7 @@ set_query_var('mt_is_verified', $is_verified);
                                 <div class="toggle-panel__details">
                                     <div class="toggle-panel__title">
                                         <div class="d-flex gap-3 align-items-center">
-                                            <span class="toggle-panel__text">Verification</span>
+                                            <div class="toggle-panel__title">Verification</div>
                                             <?php get_template_part('template-parts/verified'); ?>
                                         </div>
                                     </div>
@@ -218,6 +215,29 @@ set_query_var('mt_is_verified', $is_verified);
 </div>
 
 <script>
+    function parseHTMLElement(htmlString) {
+        try {
+            if (typeof htmlString !== "string" || !htmlString.trim()) {
+                throw new Error("El parámetro debe ser un string HTML no vacío.");
+            }
+
+            const container = document.createElement("div");
+            container.innerHTML = htmlString.trim();
+
+            // Retornar el primer nodo hijo que sea un elemento (no texto, no comentario)
+            const element = container.firstElementChild;
+
+            if (!element) {
+                throw new Error("No se encontró ningún elemento válido en el HTML.");
+            }
+
+            return element;
+        } catch (error) {
+            console.error("Error al convertir el string en elemento DOM:", error);
+            return null;
+        }
+    }
+
     function clearErrorBeforeSendRequest(form) {
         const globalMessage = document.querySelector('[data-form-ref="' + form.id + '"]');
         if (globalMessage) {
@@ -259,7 +279,7 @@ set_query_var('mt_is_verified', $is_verified);
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
-                        'X-WP-Nonce': wpAjax.nonceWpRest
+                        'X-WP-Nonce': MT_AP.nonceWpRest
                     }
                 });
 
@@ -270,8 +290,67 @@ set_query_var('mt_is_verified', $is_verified);
                     return;
                 }
 
-                const data = await response.json();
-                console.log('Account profile data:', data);
+                const {is_verified, personal_information: personalInformationData} = await response.json();
+
+                const verifiedInformationList = document.querySelectorAll('.mt-verified');
+                const personalInformationBtn = document.querySelector('[name=account-settings__personal-information-button]');
+                const verificationBtn = document.querySelector('[name=account-settings__verification-button]');
+
+                verifiedInformationList?.forEach(element => {
+                    if (is_verified !== null) {
+                        element.dataset.verified = is_verified ? '1' : '0';
+                    }
+                });
+
+                if (verificationBtn) {
+                    if (is_verified === null) {
+                        verificationBtn.disabled = true;
+                    } else {
+                        verificationBtn.disabled = false;
+                        document.getElementById('get-verified-btn').disabled = is_verified;
+                    }
+                }
+
+                if (personalInformationBtn) {
+                    if (personalInformationData) {
+                        personalInformationBtn.disabled = false;
+
+                        const {
+                            address,
+                            city,
+                            phone,
+                            state,
+                            zipcode,
+                            country,
+                        } = personalInformationData;
+
+                        document.querySelector('[name=api_billing_address_1]').value = address;
+                        document.querySelector('[name=api_billing_city]').value = city;
+
+                        document.querySelector('[name=api_billing_postcode]').value = zipcode;
+                        document.querySelector('[name=api_billing_country]').value = country || 'US';
+                        document.querySelector('[name=billing_phone]').value = phone;
+                        window.iti.setNumber(phone)
+
+                        var data = {
+                            action: 'get_cities',
+                            country: country,
+                            state
+                        };
+
+                        $.post(woocommerce_params.ajax_url, data, function (response) {
+                            const element = parseHTMLElement(response);
+                            element.name = 'api_billing_state';
+                            element.id = 'api_billing_state';
+                            element.value = state;
+                            $('#api_billing_state_wrapper').empty().append(element);
+                        });
+                        bootstrap.Collapse.getOrCreateInstance(document.getElementById('collapseOnePersonalInformation')).show();
+                    } else {
+                        bootstrap.Collapse.getOrCreateInstance(document.getElementById('collapseBillingInformationOne')).show();
+                        personalInformationBtn.disabled = true;
+                    }
+                }
             } catch (error) {
                 console.error('Network or server error:', error);
             } finally {
