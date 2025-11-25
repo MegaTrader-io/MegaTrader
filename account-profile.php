@@ -215,6 +215,25 @@ get_header();
 </div>
 
 <script>
+    function formatUtcToDMY(utcString) {
+        try {
+            const date = new Date(utcString);
+
+            if (isNaN(date.getTime())) {
+                throw new Error('Invalid date string');
+            }
+
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+
+            return `${day}/${month}/${year}`;
+        } catch (error) {
+            console.error('Error formatting UTC date:', error.message);
+            return null;
+        }
+    }
+
     function parseHTMLElement(htmlString) {
         try {
             if (typeof htmlString !== "string" || !htmlString.trim()) {
@@ -316,13 +335,28 @@ get_header();
                         personalInformationBtn.disabled = false;
 
                         const {
+                            fullname,
+                            firstname,
+                            lastname,
+                            email,
                             address,
                             city,
                             phone,
                             state,
+                            createdAt,
                             zipcode,
                             country,
                         } = personalInformationData;
+
+                        const avatarContainer = document.querySelector('.mt-user-profile-card__avatar-container');
+
+                        document.querySelector('.mt-user-profile-card__member-date').innerText = formatUtcToDMY(createdAt);
+                        avatarContainer.querySelector('.mt-avatar__user-information > div:first-child').innerText = fullname;
+                        avatarContainer.querySelector('.mt-avatar__user-information > div:last-child').innerText = email;
+
+                        document.querySelector('[name=billing_first_name]').value = firstname;
+                        document.querySelector('[name=billing_last_name]').value = lastname;
+                        document.querySelector('[name=personal_email]').value = email;
 
                         document.querySelector('[name=api_billing_address_1]').value = address;
                         document.querySelector('[name=api_billing_city]').value = city;
@@ -346,6 +380,7 @@ get_header();
                             $('#api_billing_state_wrapper').empty().append(element);
                         });
                         bootstrap.Collapse.getOrCreateInstance(document.getElementById('collapseOnePersonalInformation')).show();
+                        avatarContainer.querySelector('.mt-avatar__user-information > div:nth-child(2)').innerText = document.querySelector('[name=api_billing_country] option:checked')?.text?.replace('(US)', '')?.trim();
                     } else {
                         bootstrap.Collapse.getOrCreateInstance(document.getElementById('collapseBillingInformationOne')).show();
                         personalInformationBtn.disabled = true;

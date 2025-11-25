@@ -19,8 +19,8 @@ $user_profile = mt_get_current_user_profile_data(avatar_size: 96);
         <div class="mt-user-profile-card__details">
             <div class="mt-user-profile-card__member-since">
                 <div>
-                    <div>Member since:</div>
-                    <?php echo esc_html($user_profile['member_since']); ?>
+                    <div class="">Member since:</div>
+                    <span class="mt-user-profile-card__member-date"></span>
                 </div>
             </div>
             <?php
