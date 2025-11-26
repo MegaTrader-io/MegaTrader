@@ -2513,6 +2513,128 @@ if (!function_exists('mt_prepare_ui_payout')) {
   }
 }
 
+if ( ! function_exists( 'mt_get_account_payout_eligibility' ) ) {
+  /**
+   * Devuelve elegibilidad de payout para UNA cuenta (por accountId interno).
+   *
+   * @return array {
+   *   @type string  id
+   *   @type bool    eligibleForPayout
+   *   @type bool    eligibleBase
+   *   @type float   maxWithdrawalUI
+   *   @type array   meta
+   * }
+   */
+  function mt_get_account_payout_eligibility( string $account_id ): array {
+    $account_id = trim( (string) $account_id );
+    if ( $account_id === '' ) {
+      return [
+        'id'                => '',
+        'eligibleBase'      => false,
+        'eligibleForPayout' => false,
+        'maxWithdrawalUI'   => 0.0,
+        'meta'              => [],
+      ];
+    }
+
+    // Resolver cuenta
+    $byId = null;
+    if ( function_exists( 'mt_accounts_resolve_account_by_id' ) ) {
+      try {
+        $byId = mt_accounts_resolve_account_by_id( $account_id );
+      } catch ( \Throwable $e ) {
+        $byId = null;
+      }
+    }
+
+    if ( ! is_array( $byId ) ) {
+      return [
+        'id'                => $account_id,
+        'eligibleBase'      => false,
+        'eligibleForPayout' => false,
+        'maxWithdrawalUI'   => 0.0,
+        'meta'              => [],
+      ];
+    }
+
+    // Datos base (igual lógica que en mt_prepare_ui_payout)
+    $currentBalance  = (float) ( ( $byId['metrics']['currentBalance'] ?? 0 ) ?: 0 );
+    $startingBalance = (float) ( ( $byId['program']['startingBalance'] ?? 0 ) ?: 0 );
+
+    $minMap          = class_exists( 'MT_PAYOUT' ) ? MT_PAYOUT::MIN_BALANCE_MAP : [];
+    $minimumBalance  = isset( $minMap[ $startingBalance ] ) ? (float) $minMap[ $startingBalance ] : 0.0;
+
+    $minWMap           = class_exists( 'MT_PAYOUT' ) ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
+    $minimumWithdrawal = isset( $minWMap[ $startingBalance ] ) ? (float) $minWMap[ $startingBalance ] : 0.0;
+
+    $withdrawalRoom = max( 0.0, $currentBalance - $minimumBalance );
+
+    // Llamamos al mega_api_get_payout_eligibility para esta cuenta
+    $elig = [];
+    if ( function_exists( 'mega_api_get_payout_eligibility' ) ) {
+      $raw = mega_api_get_payout_eligibility( $account_id );
+      if ( ! is_wp_error( $raw ) && is_array( $raw ) ) {
+        $elig = $raw;
+      }
+    }
+
+    $enabled      = (bool) ( $elig['payoutCycle']['enabled'] ?? false );
+    $targetPassed = (bool) ( $elig['payoutCycle']['targetPassed'] ?? false );
+    $status       = (array) ( $elig['accountStatus'] ?? [] );
+
+    $STATUS_KEYS = [
+      'amountAvailable',
+      'userKYCVerified',
+      'accountIsFlat',
+      'accountHasMetMinTradingDays',
+      'accountHasProfitShare',
+      'accountIsActive',
+      'accountHasProfit',
+      'accountHasWithdrawalAmount',
+      'accountIsFunded',
+      'accountHasPendingPayout',
+      'accountConsistencyMet',
+      'payoutHasMetMinTradingDays',
+      'payoutCycleCheckPassed',
+    ];
+
+    $allStatusOK = true;
+    foreach ( $STATUS_KEYS as $k ) {
+      if ( empty( $status[ $k ] ) ) {
+        $allStatusOK = false;
+        break;
+      }
+    }
+
+    $maxWithdrawalApi = (float) ( $elig['payoutCycle']['maxWithdrawal']
+      ?? ( $byId['payout']['payoutCycle']['maxWithdrawal'] ?? 0 ) );
+
+    $eligibleBase      = ( $enabled && $targetPassed && $allStatusOK );
+    $eligibleForPayout = ( $eligibleBase && ( $withdrawalRoom >= $minimumWithdrawal ) );
+    $maxWithdrawalUI   = $eligibleForPayout
+      ? max( 0.0, min( $withdrawalRoom, (float) $maxWithdrawalApi ) )
+      : 0.0;
+
+    return [
+      'id'                => (string) $account_id,
+      'eligibleBase'      => $eligibleBase,
+      'eligibleForPayout' => $eligibleForPayout,
+      'maxWithdrawalUI'   => $maxWithdrawalUI,
+      'meta'              => [
+        'maxWithdrawal'    => $maxWithdrawalApi,
+        'maxWithdrawalApi' => $maxWithdrawalApi,
+        'maxWithdrawalUI'  => $maxWithdrawalUI,
+        'currentBalance'   => $currentBalance,
+        'startingBalance'  => $startingBalance,
+        'minimumBalance'   => $minimumBalance,
+        'withdrawalRoom'   => $withdrawalRoom,
+        'minWithdrawal'    => $minimumWithdrawal,
+      ],
+    ];
+  }
+}
+
+
 if (!function_exists('mega_api_get_bulk')) {
   /**
    * Realiza múltiples solicitudes GET concurrentes usando cURL multi.

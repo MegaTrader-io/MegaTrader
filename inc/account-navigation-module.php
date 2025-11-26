@@ -121,7 +121,7 @@ function subscriptions_billing_navigation_render(): void
         [
             'label'         => Label::META_SUBSCRIPTIONS_BILLING['tab_subscriptions_label'],
             'endpoint'      => 'orders',
-            'alt_endpoints' => ['orders', 'view-order', 'view-subscription'],
+            'alt_endpoints' => ['orders', 'view-order', 'view-subscription', 'subscriptions'],
         ],
         [
             'label'         => Label::META_SUBSCRIPTIONS_BILLING['tab_billing_label'],

@@ -2418,19 +2418,37 @@ function mt_ajax_account_data_global() {
 
 
 
-// == AJAX: prepara UI de payout desde email ==
-add_action('wp_ajax_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
-add_action('wp_ajax_nopriv_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
-function mt_ajax_payouts_prepare_ui() {
-  $email = '';
-  if (isset($_REQUEST['email'])) $email = sanitize_email(wp_unslash($_REQUEST['email']));
-  if (!$email && is_user_logged_in()) $email = wp_get_current_user()->user_email ?? '';
-  if (empty($email)) wp_send_json_error(['message' => 'Missing email'], 400);
+// == AJAX: elegibilidad de payout por accountId ==
+add_action( 'wp_ajax_mt_payout_check_eligibility', 'mt_ajax_payout_check_eligibility' );
+add_action( 'wp_ajax_nopriv_mt_payout_check_eligibility', 'mt_ajax_payout_check_eligibility' );
 
-  if (!function_exists('mt_prepare_ui_payout')) wp_send_json_error(['message' => 'Helper not available'], 500);
+function mt_ajax_payout_check_eligibility() {
+  $account_id = isset( $_REQUEST['accountId'] )
+    ? sanitize_text_field( wp_unslash( $_REQUEST['accountId'] ) )
+    : '';
 
-  $payload = mt_prepare_ui_payout($email);
-  wp_send_json_success($payload);
+  if ( ! $account_id ) {
+    wp_send_json_error( [ 'message' => 'Missing accountId' ], 400 );
+  }
+
+  if ( ! function_exists( 'mt_get_account_payout_eligibility' ) ) {
+    wp_send_json_error( [ 'message' => 'Helper not available' ], 500 );
+  }
+
+  $data = mt_get_account_payout_eligibility( $account_id );
+
+  // Siempre devolvemos success, pero con eligibleForPayout false si algo fue mal
+  if ( empty( $data ) || ! is_array( $data ) ) {
+    $data = [
+      'id'                => (string) $account_id,
+      'eligibleBase'      => false,
+      'eligibleForPayout' => false,
+      'maxWithdrawalUI'   => 0.0,
+      'meta'              => [],
+    ];
+  }
+
+  wp_send_json_success( $data );
 }
 
 

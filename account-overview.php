@@ -25,6 +25,7 @@ $__selected_subscription_id = '';
 $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
 $__can_manage_subscription = true;
 $mt_chart = [];
+$__account_type_init = '';
 
 /* === Usuario + email saneado === */
 if (is_user_logged_in()) {
@@ -270,12 +271,21 @@ if (is_user_logged_in()) {
         }
 
         $__selected_subscription_id = '';
+        $__account_type_init = '';
         if (is_array($selRow)) {
           $__selected_subscription_id = (string) ($selRow['subscriptionId'] ?? '');
           $hasSubLegacy = !empty($selRow['hasSubscription']);
           $__can_manage_subscription = ($__selected_subscription_id !== '' || $hasSubLegacy) ? true : false;
+
+          if (function_exists('mt_program_stage')) {
+            $stage = mt_program_stage($selRow['programTypeText'] ?? '', '');
+            $__account_type_init = strtolower($stage ?: '');
+          } else {
+            $__account_type_init = strtolower((string) ($selRow['programTypeText'] ?? ''));
+          }
         }
       }
+
 
     } else {
       echo '<div class="mt-alert mt-alert--error">Email inválido. Actualiza tu perfil.</div>';
@@ -320,8 +330,8 @@ get_header();
   data-has-subscription="<?php echo $__can_manage_subscription ? '1' : '0'; ?>"
   data-agreement-show="<?php echo esc_attr($__mt_agreement_show); ?>"
   data-agreement-url="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>"
+  data-account-type="<?php echo esc_attr($__account_type_init); ?>"
   data-order-id="<?php echo esc_attr($__active_order_id); ?>">
-
   <div class="mt-page">
     <div class="mt-page__sidebar">
       <?php if (function_exists('render_sidebar')) {
@@ -393,7 +403,11 @@ get_header();
             ?>
           </div>
 
-              <div class="mt-account-payout mt-skeleton-pulse" id="mt-account-payout">
+          <?php
+          $is_funded = (strtolower($mt_account_data['type'] ?? '') === 'funded');
+          ?>
+          <div class="mt-account-payout mt-skeleton-pulse<?php echo $is_funded ? '' : ' d-none'; ?>"
+            id="mt-account-payout">
             <?php
             if (!empty($mt_selected_id)) {
               get_template_part(
@@ -406,6 +420,7 @@ get_header();
             }
             ?>
           </div>
+
 
 
           <div class="mt-account-performance mt-skeleton-pulse" id="mt-performance-container">

@@ -1133,6 +1133,19 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   border-bottom: 1px solid var(--colors-gray-700, #404040);
 }
 
+.border-gray-800 {
+  border: 1px solid var(--Colors-Gray-800, #292524);
+}
+
+.border-top-gray-800 {
+  border-top: 1px solid var(--Colors-Gray-800, #292524);
+}
+
+.border-bottom-gray-800 {
+  border-bottom: 1px solid var(--Colors-Gray-800, #292524);
+}
+
+
 .border-bottom-dark {
   border-bottom: 1px solid var(--surface-dark, #292524);
 }

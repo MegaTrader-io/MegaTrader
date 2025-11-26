@@ -4823,40 +4823,136 @@ if (document.readyState === "loading") {
   }
 })();
 
-// ======= Request Payout Card (sin AJAX, solo sync de accountId) =======
+// ======= Request Payout Card: elegibilidad por accountId (AJAX) =======
 (function () {
-  function syncPayoutCard(accountId) {
+  var root = document.getElementById("mt-account-overview");
+  if (!root) return;
+
+  var ajaxUrl =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+
+  var cache = {};
+
+  function setCardState(accountId, payload) {
     var card = document.querySelector('[data-role="mt-request-payout-card"]');
     if (!card) return;
 
-    card.setAttribute('data-account-id', accountId || '');
+    card.setAttribute("data-account-id", accountId || "");
 
-    var btn = card.querySelector('[data-role="mt-request-payout-btn"]');
-    if (btn) {
-      // Por ahora: solo habilitar si hay accountId
-      btn.disabled = !accountId;
+    var btn = card.querySelector('[data-role="mt-open-payout-modal"]');
+    if (!btn) return;
+
+    if (!accountId || !payload) {
+      card.setAttribute("data-payout-eligible", "0");
+      card.setAttribute("data-max-withdrawal", "0");
+      btn.disabled = true;
+      btn.setAttribute("aria-disabled", "true");
+      return;
+    }
+
+    var eligible = !!payload.eligibleForPayout;
+    var maxUI = Number(payload.maxWithdrawalUI || (payload.meta && payload.meta.maxWithdrawalUI) || 0) || 0;
+
+    if (eligible && maxUI > 0) {
+      card.setAttribute("data-payout-eligible", "1");
+      card.setAttribute("data-max-withdrawal", String(maxUI));
+      btn.disabled = false;
+      btn.setAttribute("aria-disabled", "false");
+    } else {
+      card.setAttribute("data-payout-eligible", "0");
+      card.setAttribute("data-max-withdrawal", "0");
+      btn.disabled = true;
+      btn.setAttribute("aria-disabled", "true");
     }
   }
 
-  // Inicial: leer el accountId del wrapper principal
-  function initFromOverview() {
-    var root = document.getElementById('mt-account-overview');
-    if (!root) return;
-    var initialId = root.getAttribute('data-account-id') || '';
-    syncPayoutCard(initialId);
+  function fetchEligibility(accountId) {
+    if (!accountId) {
+      setCardState("", null);
+      return;
+    }
+
+    if (cache[accountId]) {
+      setCardState(accountId, cache[accountId]);
+      return;
+    }
+
+    var form = new FormData();
+    form.append("action", "mt_payout_check_eligibility");
+    form.append("accountId", accountId);
+
+    fetch(ajaxUrl, {
+      method: "POST",
+      body: form,
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (json) {
+        if (!json || !json.success) {
+          throw new Error("Invalid response");
+        }
+        cache[accountId] = json.data || {};
+        setCardState(accountId, cache[accountId]);
+      })
+      .catch(function (err) {
+        console.error("[Payout] eligibility error", err);
+        setCardState(accountId, null);
+      });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFromOverview, { once: true });
+  function init() {
+    var initialId = root.getAttribute("data-account-id") || "";
+    if (initialId) {
+      fetchEligibility(initialId);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
   } else {
-    initFromOverview();
+    init();
   }
 
-  // Cuando el usuario cambia de cuenta (selector)
-  document.addEventListener('mt:accountSelected', function (e) {
-    var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || '';
+  // Cada vez que seleccionas cuenta nueva
+  document.addEventListener("mt:accountSelected", function (e) {
+    var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
     if (!id) return;
-    syncPayoutCard(id);
+    fetchEligibility(id);
   });
 })();
+
+// ======= Mostrar/ocultar card de payout según account-type (Funded/Evaluation) =======
+(function () {
+  var root = document.getElementById("mt-account-overview");
+  var wrap = document.getElementById("mt-account-payout");
+  if (!root || !wrap) return;
+
+  function syncPayoutVisibility() {
+    var t = (root.getAttribute("data-account-type") || "").toLowerCase();
+
+    var isFunded =
+      t.indexOf("funded") === 0 || t.indexOf("funded") !== -1; // por si viene "Funded Account" o similar
+
+    if (isFunded) {
+      wrap.classList.remove("d-none");
+    } else {
+      wrap.classList.add("d-none");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncPayoutVisibility, { once: true });
+  } else {
+    syncPayoutVisibility();
+  }
+
+  // Cuando cambias de cuenta
+  document.addEventListener("mt:accountSelected", function () {
+    // pequeño delay por si otro código actualiza data-account-type
+    setTimeout(syncPayoutVisibility, 0);
+  });
+})();
+
+
 

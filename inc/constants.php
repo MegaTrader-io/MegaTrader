@@ -520,11 +520,20 @@ class Label
     ];
 
 
-public const META_SUBSCRIPTIONS_BILLING = [
+    public const META_SUBSCRIPTIONS_BILLING = [
         "page_title" => "Subscriptions & Billing",
         "page_subtitle" => "Manage your plans, renewal settings, billing history, and payment preferences.",
         "tab_subscriptions_label" => 'Manage Subscription',
         "tab_billing_label" => 'Payment Methods',
         "btn_order_again_label" => 'Order Again',
+
+
+        "billing_label_by_status" => [
+            '_default'        => 'Next Payment date:',
+			'on-hold'         => 'Payment due:',
+			'pending-cancel'  => 'Cancellation date:',
+			'expired'         => 'Expired date:',
+			'cancelled'       => 'Cancellation date:',
+		],
     ];
 }

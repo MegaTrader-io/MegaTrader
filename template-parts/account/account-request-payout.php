@@ -50,9 +50,9 @@ if ($user_email && $account_id && function_exists('mt_prepare_ui_payout')) {
     </span>
 
     <div class="d-flex align-items-center gap-2">
-      <span class="mt-icon mt-icon_rise" aria-hidden="true"></span>
-      <span class="mt-icon mt-icon_btc" aria-hidden="true"></span>
-      <span class="mt-icon mt-icon_eth" aria-hidden="true"></span>
+      <span class="mt-icon mt-icon_color_rise" aria-hidden="true"></span>
+      <span class="mt-icon mt-icon_color_btc" aria-hidden="true"></span>
+      <span class="mt-icon mt-icon_color_eth" aria-hidden="true"></span>
     </div>
   </div>
 
@@ -71,7 +71,7 @@ if ($user_email && $account_id && function_exists('mt_prepare_ui_payout')) {
 // Movemos aquí el modal (usando el email que ya calculaste en account-overview.php)
 if ($user_email) {
   get_template_part(
-    'template-parts/modals/request-payout',
+    'template-parts/modals/request-payout-modal',
     null,
     ['user_email' => $user_email]
   );
