@@ -106,6 +106,9 @@
 
 .hero-bs__media-wrapper {
     width: 100%;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 .hero-bs__image {
@@ -118,6 +121,9 @@
     width: 600px;
 }
 
+.hero-bs__media-card .hero-bs__glide .slider__bullets.glide__bullets {
+    bottom: -32px;
+}
 
 /* =========================================================
    Verified Section (.verified-bs)
@@ -228,27 +234,28 @@
     padding: 8px;
     background: #1E1E1E;
     border-radius: 64px;
-    outline: 1px #404040 solid;
+    outline: 1px #404040 solid !important;
     outline-offset: -1px;
+    width: 40px;
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    border: none;
 }
 
 .control-arrows-bs .glide__arrow--prev {
-    left: 16px;
+    left: 0;
     top: calc(50% - 28px);
 }
 
 .control-arrows-bs .glide__arrow--next {
-    right: 16px;
+    right: 0;
     top: calc(50% - 28px);
 }
 
 .hero-bs__glide .slider__frame img {
-    max-width: 590px;
-    transform: translateX(5px);
+    max-width: 504px;
 }
 
 .verified-bs__glide .glide__arrow--prev {
