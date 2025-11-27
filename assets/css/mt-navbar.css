@@ -228,14 +228,6 @@ body.admin-bar {
     gap: 32px;
 }
 
-/*.mt-navbar--landing-page-bs .mt-navbar__links {*/
-/*    z-index: 50;*/
-/*    display: flex;*/
-/*    box-shadow: none;*/
-/*    background: #131210;*/
-/*    border-bottom: 2px solid #FFB34A;*/
-/*}*/
-
 /* =========================================================
    Media Queries (Responsive Adjustments)
    ========================================================= */
@@ -269,7 +261,6 @@ body.admin-bar {
         display: flex;
         box-shadow: none;
         background: #131210;
-        border-bottom: 2px solid #FFB34A;
     }
 
     .mt-navbar__nav {
