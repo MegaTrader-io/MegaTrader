@@ -51,7 +51,7 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
 <div class="mt-subscription-card">
     <div class="mt-subscription-card__wrapper mt-card gap-3">
         <div class="mt-subscription-card__section d-flex flex-column gap-3 border-bottom-gray pb-3">
-            <div class="mt-subscription-card__block d-flex flex-column flex-md-row gap-3">
+            <div class="mt-subscription-card__block d-flex flex-column flex-md-row gap-3 align-items-md-center">
 
                 <!-- Platform Logo + Size + Plan -->
                 <div class="d-flex gap-3 align-items-center flex-fill">
@@ -148,7 +148,8 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
 
 
                 <!-- Badge + Menu Dots -->
-                <div role="button" class="d-flex gap-3 justify-content-between order-first order-md-0">
+                <div class="d-flex gap-3 justify-content-between order-first order-md-0">
+                    <!-- Badge -->
                     <span class="badge-mega badge-mega-sm <?php echo esc_attr($status_badge_class); ?>">
                         <?php
                             if ($status === 'pending-cancel') {
@@ -158,18 +159,72 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                             }
                         ?>
                     </span>
-                    <div class="dropdown">
-                        <i  class="mt-icon mt-icon-white mt-icon_menu-dots dropdown-toggle" 
+
+                    <style>
+                        .mt-subscription-menu .dropdown-toggle:after {
+                            content: unset;
+                        }
+                        .mt-subscription-menu .dropdown-menu {
+                            --menu-inline-spacing: 8px;
+                        }
+                        .mt-subscription-menu .dropdown-menu.show {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 4px;
+                        }
+                        .mt-subscription-menu .dropdown-item {
+                            position: relative;
+                            color: var(--Black, #000);
+                            font-family: var(--Type-Font-Family-Body, Roboto);
+                            font-size: var(--Text-FontSize-Body-sm, 14px);
+                            font-style: normal;
+                            font-weight: 500;
+                            line-height: var(--Text-Lineheight-Body-sm, 20px);
+                            padding: 12px calc(12px + var(--menu-inline-spacing));
+                        }
+                        .mt-subscription-menu .dropdown-item:hover {
+                            background-color: unset;
+                        }
+                        .mt-subscription-menu .dropdown-item:hover:before {
+                            content: '';
+                            position: absolute;
+                            width: calc(100% - (2 * var(--menu-inline-spacing)));
+                            height: 100%;
+                            border-radius: var(--Border-Radius-md, 8px);
+                            background: var(--Colors-Gray-100, #F5F5F5);
+                            inset: 0 var(--menu-inline-spacing);
+                            z-index: -1;
+                        }
+                        .mt-subscription-menu .dropdown-item.disabled {
+                            color: var(--bs-dropdown-link-disabled-color);
+                        }
+                        .mt-subscription-menu .dropdown-item:not(.disabled).cancel {
+                            color: var(--Error-500, #F43F5E);
+                        }
+                    </style>
+
+                    <div class="mt-subscription-menu dropdown">
+                        <!-- Menu Trigger -->
+                        <a  class="dropdown-toggle"
                             role="button" 
                             title="Menu"
                             aria-expanded="false"
-                            data-bs-toggle="dropdown"></i>
-                        <ul class="dropdown-menu">
-                            <li><button class="dropdown-item" type="button">Action</button></li>
-                            <li><button class="dropdown-item" type="button">Another action</button></li>
-                            <li><button class="dropdown-item" type="button">Something else here</button></li>
-                                           <!-- Menu Items -->
+                            data-bs-toggle="dropdown"
+                            data-bs-offset="10,14">
+                            <i class="mt-icon mt-icon-white mt-icon_menu-dots"></i>
+                        </a>
+                        <!-- Menu Items -->
+                        <ul class="dropdown-menu dropdown-menu-end">
                             <?php do_action('woocommerce_subscription_before_actions', $subscription); ?>
+                            
+                            <?php 
+                                $actions_labels = [
+                                    'cancel'                => 'Cancel Subscription',
+                                    'change_payment_method' => 'Update Payment Method',
+                                    'pending'               => 'Complete Payment', 
+                                    'reactivate'            => 'Reactivate',
+                                ];
+                            ?>
 
                             <?php if ('on-hold' === $status):
                                 $related_orders = $subscription->get_related_orders('renewal');
@@ -178,8 +233,8 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                                     if ($order && $order->has_status(['pending', 'failed'])) {
                                         $pay_url = $order->get_checkout_payment_url();
                                         ?>
-                                        <a class="btn w-100 mega-btn-md mega-btn-primary-md" href="<?= esc_url($pay_url); ?>">
-                                            Complete Payment
+                                        <a class="dropdown-item" href="<?= esc_url($pay_url); ?>">
+                                            <?= $actions_labels['pending'] ?>
                                         </a>
                                         <?php
                                         break;
@@ -197,28 +252,28 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                                 ?>
                                 <a  class="dropdown-item wcs_reactivate_subscription"
                                     href="<?= esc_url($reactivate_url); ?>">
-                                    Reactivate
+                                        <?= $actions_labels['reactivate'] ?>
                                 </a>
                                 <a  class="dropdown-item change_payment_method disabled"
                                     href="#" 
                                     aria-disabled="true">
-                                    Change Payment
+                                        <?= $actions_labels['change_payment_method'] ?>
                                 </a>
                                 <a  class="dropdown-item cancel disabled"
                                     href="#" 
                                     aria-disabled="true">
-                                    Cancel
+                                        <?= $actions_labels['cancel'] ?>
                                 </a>
                             <?php elseif (in_array($status, ['cancelled', 'expired'], true)): ?>
-                                <a  class="btn w-100 mega-btn-md mega-btn-secondary-md change_payment_method disabled"
+                                <a  class="dropdown-item change_payment_method disabled"
                                     href="#" 
                                     aria-disabled="true">
-                                    Change Payment
+                                        <?= $actions_labels['change_payment_method'] ?>
                                 </a>
-                                <a  class="btn w-100 mega-btn-md mega-btn-secondary-md cancel disabled"
+                                <a  class="dropdown-item cancel disabled"
                                     href="#"
                                     aria-disabled="true">
-                                    Cancel
+                                        <?= $actions_labels['cancel'] ?>
                                 </a>
                             <?php else:
                                 $actions = wcs_get_all_user_actions_for_subscription($subscription, get_current_user_id());
@@ -231,7 +286,7 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                                 }
 
                                 foreach ($sorted_actions as $key => $action):
-                                    $classes = ['mega-btn-md', 'mega-btn-secondary-md', 'w-100', sanitize_html_class($key)];
+                                    $classes = ['dropdown-item', sanitize_html_class($key)];
                                     if (!empty($action['block_ui'])) {
                                         $classes[] = 'wcs_block_ui_on_click';
                                     }
@@ -241,12 +296,13 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                                             href="#"
                                             data-bs-toggle="modal"
                                             data-bs-target="#<?= esc_attr($change_payment_modal_id); ?>">
-                                                <?= esc_html($action['name']); ?>
+                                                <?php //echo esc_html($action['name']); ?>
+                                                <?= $actions_labels[$key] ?>
                                         </a>
                                     <?php else: ?>
                                         <a  class="<?= esc_attr(implode(' ', $classes)); ?>"
                                             href="<?= esc_url($action['url']); ?>">
-                                                <?= esc_html($action['name']); ?>
+                                                <?= $actions_labels[$key] ?>
                                         </a>
                                     <?php endif; ?>
                                 <?php endforeach; ?>

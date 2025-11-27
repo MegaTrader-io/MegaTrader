@@ -2460,11 +2460,10 @@ add_action('wp_ajax_nopriv_mt_payouts_create', 'mt_payouts_create_cb');
 function mt_payouts_create_cb() {
   $TAG = '[MT_PAYOUT_JSON]';
 
-  // 1) Nonce (respeta MT_PAYOUT_VARS.nonce en _wpnonce)
-  if (!check_ajax_referer('mt_payouts', '_wpnonce', false)) {
+if (!check_ajax_referer('mt-acc-nonce', '_wpnonce', false)) {
     error_log("$TAG NONCE_FAIL got=".($_REQUEST['_wpnonce'] ?? 'NULL'));
     wp_send_json_error(['message' => 'Invalid or missing nonce.'], 400);
-  }
+}
 
   // 2) Leer cuerpo JSON (Content-Type: application/json)
   $raw = file_get_contents('php://input');
@@ -2479,7 +2478,7 @@ function mt_payouts_create_cb() {
   $amount   = isset($data['amount'])   ? (0 + $data['amount'])     : 0;
   $method   = isset($data['method'])   ? (string)$data['method']   : '';
   $currency = isset($data['currency']) ? (string)$data['currency'] : 'USD';
-  $reason   = isset($data['reason'])   ? (string)$data['reason']   : 'Customer request from js';
+  $reason   = isset($data['reason'])   ? (string)$data['reason']   : 'Customer Request Payout';
   $ip       = isset($data['ip'])       ? (string)$data['ip']       : '127.0.0.1';
 
   // methodFields tal cual: [{"name":"email","value":"..."}]

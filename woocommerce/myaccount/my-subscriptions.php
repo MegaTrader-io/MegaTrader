@@ -197,7 +197,7 @@ if ( ! function_exists( 'get_subscription_related_orders_data' ) ) {
 	?>
 		<?php get_template_part('template-parts/subscriptions/subscription-card', null, [
 			'subscription' => $subscription,
-			'mt_id' => $order_number,
+			'mt_id' => '—', //$order_number,
 			'accordion_id' => $accordion_id,
 			'subscription_id' => $subscription_id,
 			'subscription_status' => $subscription_status,

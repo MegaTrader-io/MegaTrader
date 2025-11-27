@@ -4845,26 +4845,42 @@ if (document.readyState === "loading") {
     if (!accountId || !payload) {
       card.setAttribute("data-payout-eligible", "0");
       card.setAttribute("data-max-withdrawal", "0");
+      card.setAttribute("data-min-withdrawal", "0");
       btn.disabled = true;
       btn.setAttribute("aria-disabled", "true");
       return;
     }
 
     var eligible = !!payload.eligibleForPayout;
-    var maxUI = Number(payload.maxWithdrawalUI || (payload.meta && payload.meta.maxWithdrawalUI) || 0) || 0;
+    var maxUI =
+      Number(
+        payload.maxWithdrawalUI ||
+        (payload.meta && payload.meta.maxWithdrawalUI) ||
+        0
+      ) || 0;
+
+    var minUI =
+      Number(
+        payload.meta && typeof payload.meta.minWithdrawal !== "undefined"
+          ? payload.meta.minWithdrawal
+          : payload.minWithdrawal || 0
+      ) || 0;
 
     if (eligible && maxUI > 0) {
       card.setAttribute("data-payout-eligible", "1");
       card.setAttribute("data-max-withdrawal", String(maxUI));
+      card.setAttribute("data-min-withdrawal", String(minUI));
       btn.disabled = false;
       btn.setAttribute("aria-disabled", "false");
     } else {
       card.setAttribute("data-payout-eligible", "0");
       card.setAttribute("data-max-withdrawal", "0");
+      card.setAttribute("data-min-withdrawal", "0");
       btn.disabled = true;
       btn.setAttribute("aria-disabled", "true");
     }
   }
+
 
   function fetchEligibility(accountId) {
     if (!accountId) {
@@ -4920,6 +4936,7 @@ if (document.readyState === "loading") {
     if (!id) return;
     fetchEligibility(id);
   });
+  window.MT_PAYOUT_ELIGIBILITY_CACHE = cache;
 })();
 
 // ======= Mostrar/ocultar card de payout según account-type (Funded/Evaluation) =======
@@ -4953,6 +4970,603 @@ if (document.readyState === "loading") {
     setTimeout(syncPayoutVisibility, 0);
   });
 })();
+
+/* ===== Request Payout Modal (desde card Funded) ===== */
+(function () {
+  const modal = document.getElementById("mt-request-payout-modal");
+  if (!modal || !window.mtModal || typeof window.mtModal.openCentered !== "function") return;
+
+  const form = modal.querySelector("#mt-payout-form");
+  const amountInput = modal.querySelector("#mt-payout-amount");
+  const maxEl = modal.querySelector("#mt-payout-max");
+  const maxValueEl = maxEl ? maxEl.querySelector("[data-role='mt-payout-max-value']") : null;
+  const accHidden = modal.querySelector("#mt-payout-account");
+  const errEl = modal.querySelector("#mt-payout-error");
+  const btnContinue = modal.querySelector("#mt-payout-continue");
+  const btnConfirm = modal.querySelector("#mt-payout-confirm");
+  const step1 = modal.querySelector("#mt-payout-step1");
+  const step2 = modal.querySelector("#mt-payout-step2");
+  const btnBack = modal.querySelector("#mt-payout-back");
+  const btnCancel = modal.querySelector("#mt-payout-cancel");
+  const btnClose = modal.querySelector(".mt-modal__close");
+
+  const I18N = (typeof window !== "undefined" && window.MT_PAYOUT_I18N) || {};
+
+  /* ---------- Utils ---------- */
+  function formatMoney(n) {
+    if (!isFinite(n)) return "—";
+    return "$" + (Math.round(Number(n) * 100) / 100).toLocaleString();
+  }
+
+  function showPreloader() {
+    try {
+      if (window.jQuery && window.jQuery(".preloader").length) {
+        window.jQuery(".preloader").fadeIn();
+      }
+    } catch (e) { }
+  }
+
+  function hidePreloader() {
+    try {
+      if (window.jQuery && window.jQuery(".preloader").length) {
+        window.jQuery(".preloader").fadeOut();
+      }
+    } catch (e) { }
+  }
+
+  function safeJsonParse(text) {
+    try {
+      const j = JSON.parse(text);
+      return { ok: true, json: j };
+    } catch (e) {
+      return { ok: false, json: null };
+    }
+  }
+
+  function showGlobalError(headline, message, opts) {
+    try {
+      if (window.MEGATRADER && typeof window.MEGATRADER.showError === "function") {
+        window.MEGATRADER.showError(
+          headline || "Request failed",
+          message || "Unexpected error.",
+          opts || {}
+        );
+        setTimeout(function () {
+          const b = document.querySelector(".modal-backdrop:last-of-type");
+          if (b) b.classList.add("mt-error");
+        }, 0);
+        return;
+      }
+
+      const m = document.getElementById("mt-error-modal");
+      if (m) {
+        const t = document.getElementById("mt-error-title");
+        const msg = document.getElementById("mt-error-message");
+        if (t) t.textContent = headline || "Request failed";
+        if (msg) msg.textContent = message || "Unexpected error.";
+        const inst =
+          window.bootstrap && window.bootstrap.Modal
+            ? window.bootstrap.Modal.getOrCreateInstance(m, { backdrop: true })
+            : null;
+        if (inst) {
+          inst.show();
+          setTimeout(function () {
+            const b = document.querySelector(".modal-backdrop:last-of-type");
+            if (b) b.classList.add("mt-error");
+          }, 0);
+        } else {
+          alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+        }
+      } else {
+        alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+      }
+    } catch (e) {
+      console.error("showError failed:", e);
+      alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+    }
+  }
+
+  function renderCongratsStep() {
+    const body = modal.querySelector(".modal-body");
+    const footer = modal.querySelector(".modal-footer");
+    const headerTitle = modal.querySelector("#mtpayout-title");
+    if (headerTitle) headerTitle.textContent = "Payout Request";
+
+    const congrats = (I18N && I18N.congrats) || "Congrats!";
+    const msg = (I18N && I18N.congratsMessage) || "Your request has been successfully submitted";
+    const subtitle = (I18N && I18N.congratsSubtitle) || "You’ll be notified once your request is approved.";
+
+    if (body) {
+      body.innerHTML =
+        '<div class="text-center w-100 mb-n4">' +
+        '  <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png" alt="thank you" width="690" height="132">' +
+        '  <img decoding="async" class="d-inline-block d-sm-none" src="/wp-content/themes/megatrader-addons/assets/img/thank-you2.png" alt="thank you" width="327" height="132">' +
+        "</div>" +
+        '<div class="d-flex flex-column align-items-center gap-2 pb-4">' +
+        '  <div class="fw-medium leading-60px text-5xl text-uppercase text-white">' + congrats + "</div>" +
+        '  <div class="text-white fw-medium text-uppercase text-2xl leading-7 text-center">' + msg + "</div>" +
+        '  <div class="fw-medium text-a8a29e text-base text-center">' + subtitle + "</div>" +
+        "</div>";
+    }
+
+    if (footer) {
+      footer.innerHTML = "";
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "mt-btn mt-btn--md mt-btn--primary m-auto";
+      closeBtn.setAttribute("data-bs-dismiss", "modal");
+      closeBtn.textContent = "Close";
+      footer.appendChild(closeBtn);
+    }
+  }
+
+  /* ---------- Steps helpers ---------- */
+  function switchToStep(step) {
+    if (!step1 || !step2 || !btnCancel || !btnBack || !btnContinue || !btnConfirm) return;
+
+    if (step === 2) {
+      step1.classList.add("d-none");
+      step2.classList.remove("d-none");
+
+      btnBack.classList.remove("d-none");
+      btnCancel.classList.add("d-none");
+
+      btnContinue.classList.add("d-none");
+      btnConfirm.classList.remove("d-none");
+      btnConfirm.disabled = false;
+    } else {
+      step2.classList.add("d-none");
+      step1.classList.remove("d-none");
+
+      btnBack.classList.add("d-none");
+      btnCancel.classList.remove("d-none");
+
+      btnContinue.classList.remove("d-none");
+      btnConfirm.classList.add("d-none");
+      btnConfirm.disabled = false;
+    }
+  }
+
+  function resetSteps() {
+    if (errEl) {
+      errEl.style.display = "none";
+      errEl.textContent = "";
+    }
+    if (amountInput) {
+      amountInput.value = "";
+      amountInput.classList.remove("is-invalid");
+      amountInput.removeAttribute("max");
+    }
+    if (btnContinue) {
+      btnContinue.disabled = true;
+      btnContinue.classList.add("disabled");
+    }
+    if (btnConfirm) {
+      btnConfirm.classList.add("d-none");
+      btnConfirm.disabled = false;
+    }
+    if (step1 && step2 && btnBack && btnCancel && btnContinue && btnConfirm) {
+      switchToStep(1);
+    }
+  }
+
+  /* ---------- Validación Step 1 ---------- */
+  function setupValidation(ctx) {
+    if (!amountInput || !maxEl || !btnContinue) return;
+
+    const max = Number(ctx.max) || 0;
+    const min = Number(ctx.min) || 0;
+    const eligible = !!ctx.eligible;
+
+    function setError(msg) {
+      if (!errEl) return;
+      if (!msg) {
+        errEl.style.display = "none";
+        errEl.textContent = "";
+        amountInput.classList.remove("is-invalid");
+      } else {
+        errEl.style.display = "";
+        errEl.textContent = msg;
+        amountInput.classList.add("is-invalid");
+      }
+    }
+
+    function validate() {
+      const raw = amountInput.value.trim();
+      let val = parseFloat(raw);
+
+      btnContinue.disabled = true;
+      btnContinue.classList.add("disabled");
+
+      if (!eligible) {
+        setError(
+          I18N.withdrawalNotEligible ||
+          "This account is not eligible for payout at the moment."
+        );
+        return;
+      }
+
+      if (!raw) {
+        setError("");
+        return;
+      }
+
+      if (!Number.isFinite(val) || val <= 0) {
+        setError(
+          I18N.withdrawalAmountMinorZero ||
+          "Enter a valid amount greater than 0."
+        );
+        return;
+      }
+
+      if (max <= 0) {
+        setError(
+          I18N.withdrawalAmountNotEligible ||
+          "This account is not eligible for payout at the moment."
+        );
+        return;
+      }
+
+      if (val > max) {
+        setError(
+          I18N.withdrawalAmountError ||
+          "Amount exceeds the maximum allowed for this payout."
+        );
+        return;
+      }
+
+      // MIN withdrawal (desde helper / MIN_WITHDRAWAL_MAP)
+      if (min > 0 && val < min) {
+        setError(
+          (I18N.withdrawalAmountBelowMin ||
+            "Amount is below the minimum withdrawal for this account.") +
+          " (" +
+          formatMoney(min) +
+          " min)"
+        );
+        return;
+      }
+
+      setError("");
+      btnContinue.disabled = false;
+      btnContinue.classList.remove("disabled");
+    }
+
+    // input en vivo
+    amountInput.removeEventListener("input", amountInput._mtPayoutHandler || (() => { }));
+    amountInput._mtPayoutHandler = validate;
+    amountInput.addEventListener("input", validate, { passive: true });
+
+    // CONTINUE → Step 2
+    if (!btnContinue._mtPayoutStepHandler) {
+      btnContinue._mtPayoutStepHandler = true;
+      btnContinue.addEventListener(
+        "click",
+        function () {
+          if (btnContinue.disabled) return;
+
+          // revalida
+          validate();
+          if (btnContinue.disabled) return;
+
+          const raw = amountInput.value.trim();
+          const amount = parseFloat(raw) || 0;
+          const fee = Math.round(amount * 0.1 * 100) / 100;
+          const receive = Math.max(
+            0,
+            Math.round((amount - fee) * 100) / 100
+          );
+
+          const emailEl = document.getElementById("mt-payout-email");
+          const email = emailEl ? emailEl.value || emailEl.textContent || "" : "";
+
+          const methodEl = document.getElementById("mt-payout-method");
+          const method = methodEl ? (methodEl.value || "rise") : "rise";
+
+          // rellenar resumen
+          const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+          };
+          setTxt("mt-review-email", email || "—");
+          setTxt(
+            "mt-review-account",
+            ctx.platformAccountId || ctx.accountId || "—"
+          );
+          setTxt("mt-review-amount", formatMoney(amount));
+          setTxt("mt-review-fee", formatMoney(fee));
+          setTxt("mt-review-receive", formatMoney(receive));
+
+          // contexto global para el submit
+          window.MT_PAYOUT_SUBMIT = {
+            accountId: ctx.accountId,
+            platformAccountId: ctx.platformAccountId || "",
+            amount,
+            fee,
+            receive,
+            method,
+            email,
+          };
+
+          switchToStep(2);
+        },
+        { passive: true }
+      );
+    }
+
+    // BACK
+    if (btnBack && !btnBack._mtPayoutBackHandler) {
+      btnBack._mtPayoutBackHandler = true;
+      btnBack.addEventListener(
+        "click",
+        function () {
+          switchToStep(1);
+        },
+        { passive: true }
+      );
+    }
+
+    validate();
+  }
+
+  /* ---------- Confirm (Step 2) → AJAX JSON ---------- */
+  if (btnConfirm && !btnConfirm._mtPayoutConfirmHandler) {
+    btnConfirm._mtPayoutConfirmHandler = true;
+    btnConfirm.addEventListener("click", function () {
+      if (!step2 || step2.classList.contains("d-none")) return;
+
+      const st = window.MT_PAYOUT_SUBMIT || {};
+      const account = st.accountId || "";
+      const amount = st.amount || 0;
+      const method = st.method || "";
+      const email = st.email || "";
+
+      if (!account || !amount || !method || !email) {
+        if (errEl) {
+          errEl.style.display = "";
+          errEl.textContent =
+            "Account, amount, method and email are required.";
+        }
+        return;
+      }
+
+      const url = (function () {
+        const base =
+          (window.mtAccounts && mtAccounts.ajaxUrl) ||
+          window.ajaxurl ||
+          "/wp-admin/admin-ajax.php";
+
+        const q = new URLSearchParams();
+        q.set("action", "mt_payouts_create");
+
+        if (window.mtAccounts && mtAccounts.nonce) {
+          q.set("_wpnonce", mtAccounts.nonce);
+        }
+        return base + "?" + q.toString();
+      })();
+
+
+      const payload = {
+        account: String(account),
+        amount: Number(amount),
+        method: String(method),
+        currency: "USD",
+        reason: "Customer request from js",
+        methodFields: [{ name: "email", value: String(email) }],
+        ip: "127.0.0.1",
+      };
+
+      console.log("[PAYOUT] POST(JSON) →", url, payload);
+
+      btnConfirm.disabled = true;
+      showPreloader();
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(payload),
+      })
+        .then(function (r) {
+          return r.text().then(function (t) {
+            return { status: r.status, raw: t };
+          });
+        })
+        .then(function (resp) {
+          console.log("[PAYOUT] ←", resp);
+          const status = resp.status;
+          const raw = resp.raw;
+
+          const parsed = safeJsonParse(raw);
+          const res = parsed.ok ? parsed.json : null;
+
+          if (status === 409) {
+            showGlobalError(
+              "Payout unavailable",
+              (res && (res.data?.message || res.message)) ||
+              "You already have a payout request in progress.",
+              { code: "409" }
+            );
+            btnConfirm.disabled = false;
+            return;
+          }
+
+          if (status < 200 || status >= 300 || !res) {
+            const msg =
+              (res && (res.data?.message || res.data?.error)) ||
+              (res && res.message) ||
+              "Request failed.";
+            showGlobalError("Request failed", msg, { code: String(status) });
+            btnConfirm.disabled = false;
+            return;
+          }
+
+          if (res && res.success) {
+            renderCongratsStep();
+          } else {
+            const msg2 =
+              (res && (res.data?.message || res.data?.error)) ||
+              "Unknown error.";
+            showGlobalError("Request failed", msg2, {});
+            btnConfirm.disabled = false;
+          }
+        })
+        .catch(function (e) {
+          console.error("[PAYOUT] ERR ←", e);
+          showGlobalError(
+            "Network error",
+            "Network/server error, please try again later.",
+            {}
+          );
+          btnConfirm.disabled = false;
+        })
+        .finally(function () {
+          hidePreloader();
+        });
+    });
+  }
+
+  /* ---------- Abrir modal desde el card ---------- */
+  function openForCard(card, opener) {
+    if (!card) return;
+
+    const accountId =
+      card.getAttribute("data-account-id") || card.dataset.accountId || "";
+    const rawMax =
+      card.getAttribute("data-max-withdrawal") ||
+      card.dataset.maxWithdrawal ||
+      "0";
+    const rawMinAttr =
+      card.getAttribute("data-min-withdrawal") ||
+      card.dataset.minWithdrawal ||
+      "0";
+    const eligibleRaw =
+      card.getAttribute("data-payout-eligible") ||
+      card.dataset.payoutEligible ||
+      "";
+    const platformAccountId =
+      card.getAttribute("data-platform-account-id") ||
+      card.dataset.platformAccountId ||
+      "";
+
+    const max = parseFloat(rawMax) || 0;
+
+    // min desde atributo o desde caché del helper
+    let min = parseFloat(rawMinAttr);
+    if (!Number.isFinite(min) || min <= 0) {
+      try {
+        const cache = window.MT_PAYOUT_ELIGIBILITY_CACHE || {};
+        const payload = cache[accountId] || null;
+        if (payload && payload.meta && typeof payload.meta.minWithdrawal === "number") {
+          min = payload.meta.minWithdrawal;
+        }
+      } catch (e) {
+        min = min || 0;
+      }
+    }
+
+    const eligible =
+      eligibleRaw === true ||
+      eligibleRaw === "1" ||
+      eligibleRaw === "true" ||
+      eligibleRaw === 1;
+
+    if (form) form.setAttribute("data-account", accountId);
+    if (accHidden) accHidden.value = accountId;
+    modal.setAttribute("data-account-id", accountId);
+
+    // pintar máximo
+    if (maxEl) {
+      maxEl.dataset.max = String(max > 0 ? max : 0);
+      maxEl.dataset.min = String(min > 0 ? min : 0);
+
+      const target = maxValueEl || maxEl;
+      const fmt = new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      target.textContent = max > 0 ? fmt.format(max) : "—";
+    }
+
+    // atributos en el input
+    if (amountInput) {
+      amountInput.setAttribute("min", "0");
+      if (max > 0) {
+        amountInput.setAttribute("max", String(max));
+      } else {
+        amountInput.removeAttribute("max");
+      }
+    }
+
+    resetSteps();
+
+    const ctx = { accountId, platformAccountId, max, min, eligible };
+    setupValidation(ctx);
+
+    modal.__opener = opener || null;
+
+    window.mtModal.openCentered(modal, { setDataShow: true });
+  }
+
+  function findCardForButton(btn) {
+    if (!btn) return null;
+    const fromClosest = btn.closest('[data-role="mt-request-payout-card"]');
+    if (fromClosest) return fromClosest;
+
+    const root = document.getElementById("mt-account-overview");
+    const currentId = (root && root.getAttribute("data-account-id")) || "";
+    if (!currentId) return null;
+
+    return document.querySelector(
+      '[data-role="mt-request-payout-card"][data-account-id="' +
+      currentId.replace(/"/g, '\\"') +
+      '"]'
+    );
+  }
+
+  function closeModal() {
+    window.mtModal.closeCentered(modal, { clearDataShow: true });
+  }
+
+  // Abrir modal al click en el botón del card
+  document.addEventListener("click", function (ev) {
+    const btn = ev.target.closest('[data-role="mt-open-payout-modal"]');
+    if (!btn) return;
+    ev.preventDefault();
+    const card = findCardForButton(btn);
+    if (!card) return;
+    openForCard(card, btn);
+  });
+
+  // Cerrar con X
+  if (btnClose && !btnClose.__mtPayoutClose) {
+    btnClose.__mtPayoutClose = true;
+    btnClose.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      closeModal();
+    });
+  }
+
+  // Cerrar con Cancel
+  if (btnCancel && !btnCancel.__mtPayoutCancel) {
+    btnCancel.__mtPayoutCancel = true;
+    btnCancel.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      closeModal();
+    });
+  }
+
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && modal.classList.contains("show")) {
+      closeModal();
+    }
+  });
+})();
+
+
+
+
 
 
 
