@@ -43,31 +43,24 @@ $valid_states = WC()->countries->get_states($api_billing_country);
 
         <div class="row">
             <div class="col-lg-6">
-                <label class="mb-1"
-                       for="billing_first_name"><?php esc_html_e('First Name', 'megatrader'); ?></label>
+                <label class="mb-1"><?php esc_html_e('First Name', 'megatrader'); ?></label>
                 <input type="text"
                        disabled
                        class="form-control"
-                       name="billing_first_name" id="billing_first_name"
-                       placeholder="<?php esc_attr_e('First Name', 'megatrader'); ?>"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_first_name', true)); ?>">
+                       name="api_billing_first_name"
+                       placeholder="<?php esc_attr_e('First Name', 'megatrader'); ?>">
             </div>
             <div class="col-lg-6">
-                <label class="mb-1"
-                       for="billing_last_name"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
-                <input type="text"
-                       class="form-control"
-                       disabled
-                       name="billing_last_name" id="billing_last_name"
-                       placeholder="<?php esc_attr_e('Last Name', 'megatrader'); ?>"
-                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_last_name', true)); ?>">
+                <label class="mb-1"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
+                <input type="text" class="form-control" disabled name="api_billing_last_name"
+                       placeholder="<?php esc_attr_e('Last Name', 'megatrader'); ?>">
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-12">
-                <label class="mb-1" for="personal_email"><?php _e('Email', 'woocommerce'); ?></label>
-                <input type="email" disabled name="personal_email" id="personal_email"
+                <label class="mb-1"><?php _e('Email', 'woocommerce'); ?></label>
+                <input type="email" disabled name="api_billing_email"
                        class="form-control"
                        value="<?php echo $user_email; ?>"/>
             </div>
@@ -133,12 +126,11 @@ $valid_states = WC()->countries->get_states($api_billing_country);
             </div>
             <div class="col-lg-6">
                 <div class="w-phone-full form-group mb-0">
-                    <label class="mb-1" for="personal_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
+                    <label class="mb-1" for="api_billing_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
                     <input type="tel"
-                           class="form-control"
-                           name="billing_phone" id="personal_phone"
-                           placeholder="<?php esc_attr_e('Phone Number', 'megatrader'); ?>"
-                           value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_phone', true)); ?>">
+                           class="form-control mt-phone-component"
+                           name="api_billing_phone" id="api_billing_phone"
+                           placeholder="<?php esc_attr_e('Phone Number', 'megatrader'); ?>">
                 </div>
             </div>
         </div>
@@ -156,27 +148,11 @@ $valid_states = WC()->countries->get_states($api_billing_country);
         const form = document.getElementById('personal-information-form');
         const submitBtn = form.querySelector('button[type="submit"]');
 
-        function setPhoneInput(form) {
-            if (window.iti) {
-                const fullNumber = window.iti.getNumber();
-                console.info("📞 Full number on submit:", fullNumber);
-
-                let hiddenInput = form.querySelector("input[name='billing_phone_full']");
-                if (!hiddenInput) {
-                    hiddenInput = document.createElement("input");
-                    hiddenInput.type = "hidden";
-                    hiddenInput.name = "billing_phone_full";
-                    form.appendChild(hiddenInput);
-                }
-                hiddenInput.value = fullNumber;
-            }
-        }
-
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
 
-            setPhoneInput(form);
+            setFullPhoneInput(form, 'api_billing_phone');
 
             $.preloader.show();
             submitBtn.disabled = true;

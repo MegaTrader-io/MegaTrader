@@ -294,10 +294,9 @@ function mt_update_personal_information_callback()
     return;
   }
 
-  $user_id = get_current_user_id();
   $errors = [];
 
-  $required = ['api_billing_address_1', 'api_billing_city', 'api_billing_state', 'api_billing_postcode', 'billing_phone', 'api_billing_country'];
+  $required = ['api_billing_address_1', 'api_billing_city', 'api_billing_state', 'api_billing_postcode', 'api_billing_phone', 'api_billing_country'];
   foreach ($required as $field) {
     if (empty($_POST[$field])) {
       $errors[$field] = __('This field is required', 'megatrader');
@@ -307,8 +306,6 @@ function mt_update_personal_information_callback()
   if (count($errors) > 0) {
     wp_send_json_error(['errors' => $errors], 422);
   }
-
-  $customer = new WC_Customer($user_id);
 
   $payload = [
     "country" => sanitize_text_field($_POST['api_billing_country']),
@@ -352,7 +349,7 @@ function mt_update_billing_information_callback()
   $user_id = get_current_user_id();
   $errors = [];
 
-  $required = ['billing_address_1', 'billing_city', 'billing_state', 'billing_postcode', 'billing_country'];
+  $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'wp_billing_phone', 'billing_city', 'billing_state', 'billing_postcode', 'billing_country'];
   foreach ($required as $field) {
     if (empty($_POST[$field])) {
       $errors[$field] = __('This field is required', 'megatrader');
@@ -366,6 +363,9 @@ function mt_update_billing_information_callback()
   $customer = new WC_Customer($user_id);
 
   $payload = [
+    "billing_first_name" => sanitize_text_field($_POST['billing_first_name']),
+    "billing_last_name" => sanitize_text_field($_POST['billing_last_name']),
+    "billing_phone" => sanitize_text_field($_POST['billing_phone_full']),
     "billing_country" => sanitize_text_field($_POST['billing_country']),
     "billing_state" => sanitize_text_field($_POST['billing_state']),
     "billing_city" => sanitize_text_field($_POST['billing_city']),

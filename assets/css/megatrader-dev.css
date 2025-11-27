@@ -5568,6 +5568,12 @@ button#mt-payout-acc-btn:active {
   padding: 0;
 }
 
+#billing-information-form .iti{
+    width: 100%;
+}
+
+
+
 /* ===== End Account Data Global Card ===== */
 
 /* =====  Account Data ===== */
