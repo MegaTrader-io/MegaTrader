@@ -5557,3 +5557,7 @@ button#mt-payout-acc-btn:active {
   margin: 0 !important;
   padding: 0;
 }
+
+#billing-information-form .iti{
+    width: 100%;
+}

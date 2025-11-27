@@ -27,6 +27,48 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
 
     <div class="space-y-3">
         <div class="row">
+            <div class="col-lg-6">
+                <label class="mb-1"
+                       for="billing_first_name"><?php esc_html_e('First Name', 'megatrader'); ?></label>
+                <input type="text"
+                       class="form-control"
+                       name="billing_first_name" id="billing_first_name"
+                       placeholder="<?php esc_attr_e('First Name', 'megatrader'); ?>"
+                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_first_name', true)); ?>">
+            </div>
+            <div class="col-lg-6">
+                <label class="mb-1 mt-3 mt-lg-0"
+                       for="billing_last_name"><?php esc_html_e('Last Name', 'megatrader'); ?></label>
+                <input type="text"
+                       class="form-control"
+                       name="billing_last_name" id="billing_last_name"
+                       placeholder="<?php esc_attr_e('Last Name', 'megatrader'); ?>"
+                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_last_name', true)); ?>">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <label class="mb-1"
+                       for="billing_email"><?php esc_html_e('Email', 'megatrader'); ?></label>
+                <input type="email" class="form-control" name="billing_email" id="billing_email"
+                       placeholder="<?php esc_attr_e('Enter your email', 'megatrader'); ?>"
+                       value="<?php echo esc_attr($user_email); ?>" readonly>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group mb-0">
+                    <label class="label mb-1" for="wp_billing_phone"><?php esc_html_e('Phone', 'megatrader'); ?></label>
+                    <input type="tel" class="form-control mt-phone-component" name="wp_billing_phone" id="wp_billing_phone"
+                           placeholder="<?php esc_attr_e('Phone Number', 'megatrader'); ?>"
+                           value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_phone', true)); ?>">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-lg-12">
                 <label class="mb-1" for="billing_address_1"><?php _e('Address', 'woocommerce'); ?></label>
                 <input type="text" name="billing_address_1" id="billing_address_1"
@@ -45,8 +87,10 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
         </div>
 
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-3">
                 <div class="col">
+                    <label class="label mb-1"
+                           for="billing_country"><?php esc_html_e('Country', 'megatrader'); ?></label>
                     <select name="billing_country" id="billing_country"
                             class="form-select form-control woocommerce-select">
                         <option value="" disabled>Country</option>
@@ -56,19 +100,15 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
                     </select>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-3 mt-3 mt-lg-0">
+                <label class="label mb-1" for="billing_city"><?php esc_html_e('Town / City', 'megatrader'); ?></label>
                 <input type="text" name="billing_city" id="billing_city"
                        class="form-control"
                        placeholder="Town / City"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_city', true)); ?>"/>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-3 mt-3 mt-lg-0">
+                <label class="label mb-1" for="billing_state"><?php esc_html_e('State', 'megatrader'); ?></label>
                 <div id="billing_state_wrapper">
                     <?php if (!empty($valid_states)): ?>
                         <select name="billing_state" id="billing_state"
@@ -88,17 +128,16 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
                     <?php endif; ?>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-3 mt-3 mt-lg-0">
+                <label class="label mb-1"
+                       for="billing_postcode"><?php esc_html_e('Post code/ZIP*', 'megatrader'); ?></label>
                 <input type="text" name="billing_postcode" id="billing_postcode"
                        class="form-control"
                        placeholder="Post code/ZIP*"
                        value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_postcode', true)); ?>"/>
             </div>
         </div>
-
         <div>
             <button type="submit" class="mega-btn-md mega-btn-primary-md" name="mt_save_billing" value="1">
                 <?php _e('Save details', 'woocommerce'); ?>
@@ -112,9 +151,169 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
         const form = document.getElementById('billing-information-form');
         const submitBtn = form.querySelector('button[type="submit"]');
 
+        const protectedErrors = new Map();
+
+        const validationRules = {
+            billing_first_name: [
+                (value) =>
+                    value.trim() !== "" || "Billing First Name is a required field",
+            ],
+            billing_last_name: [
+                (value) => value.trim() !== "" || "Billing Last Name is a required field",
+            ],
+            wp_billing_phone: [
+                (value) => value.trim() !== "" || "Billing Phone is a required field.",
+            ],
+            billing_address_1: [
+                (value) =>
+                    value.trim() !== "" || "Billing Street address is a required field.",
+            ],
+            billing_city: [
+                (value) =>
+                    value.trim() !== "" || "Billing Town / City is a required field.",
+            ],
+            billing_postcode: [
+                (value) => value.trim() !== "" || "Billing ZIP code is a required field.",
+            ],
+            billing_country: [
+                (value) => value.trim() !== "" || "Billing Country is a required field.",
+            ],
+            billing_state: [
+                (value) => value.trim() !== "" || "Billing State is a required field.",
+            ],
+        };
+
+        function validateFormFields(values, rules) {
+            const errors = {};
+            for (const [field, ruleSet] of Object.entries(rules)) {
+                const inputEl = document.querySelector(`[name="${field}"]`);
+                if (!inputEl) continue;
+
+                const value = values[field] || "";
+                for (const rule of ruleSet) {
+                    const result = rule(value);
+                    if (result !== true) {
+                        errors[field] = result;
+                        break;
+                    }
+                }
+            }
+            return errors;
+        }
+
+        function showErrors(form, errors) {
+            for (const [field, message] of Object.entries(errors)) {
+                const input = form.querySelector(`[name="${field}"]`);
+                if (!input) continue;
+
+                const errorNode = document.createElement("div");
+                errorNode.className = Selector.ErrorMessageClass;
+                errorNode.textContent = message;
+
+                // Prevent Douplicate Errors
+                const existingErrorNode = input.parentNode.querySelector(
+                    `.${Selector.ErrorMessageClass}`
+                );
+                if (existingErrorNode) {
+                    existingErrorNode.remove();
+                }
+
+                // Insert New Error
+                input.parentElement.appendChild(errorNode);
+                input.classList.add(Selector.InvalidFieldClass);
+                protectedErrors.set(field, errorNode);
+            }
+        }
+
+        function startErrorProtection() {
+            const observer = new MutationObserver(() => {
+                for (const [field, node] of protectedErrors.entries()) {
+                    const input = document.querySelector(`[name="${field}"]`);
+                    if (!input) continue;
+
+                    const existing = input.parentNode.querySelector(".invalid-feedback");
+                    if (!existing) {
+                        input.parentElement.appendChild(node);
+                        input.classList.add("is-invalid");
+                    }
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+            });
+        }
+
+        startErrorProtection();
+
+        function validateBillingFormOnly() {
+            const container = form || document;
+
+            const val = (id) => document.getElementById(id)?.value?.trim() || "";
+
+            const values = {
+                billing_first_name: val("billing_first_name"),
+                billing_last_name: val("billing_last_name"),
+                wp_billing_phone: val("wp_billing_phone"),
+                billing_address_1: val("billing_address_1"),
+                billing_city: val("billing_city"),
+                billing_postcode: val("billing_postcode"),
+                billing_country: val("billing_country"),
+                billing_state: val("billing_state"),
+            };
+
+            const rules = {...validationRules};
+
+            const errors = validateFormFields(values, rules);
+
+            // Validación extra con intl-tel-input (si está activo)
+            try {
+                const telInput = document.getElementById("wp_billing_phone");
+                const iti = window.itiRefs[wp_billing_phone];
+                if (telInput && iti && typeof iti.isValidNumber === "function") {
+                    if (!iti.isValidNumber()) {
+                        errors.billing_phone = "Please enter a valid phone number.";
+                    } else {
+                        // guarda en formato E.164 para el servidor
+                        const full = iti.getNumber();
+                        if (full) telInput.value = full;
+                    }
+                }
+            } catch (_) {
+            }
+
+            if (Object.keys(errors).length) {
+                showErrors(container, errors);
+
+                // focus/scroll al primer inválido
+                const firstInvalid =
+                    container.querySelector("." + Selector.InvalidFieldClass) ||
+                    container.querySelector("." + Selector.ErrorMessageClass)
+                        ?.previousElementSibling;
+
+                if (firstInvalid && typeof firstInvalid.scrollIntoView === "function") {
+                    firstInvalid.scrollIntoView({behavior: "smooth", block: "center"});
+                    setTimeout(() => firstInvalid.focus && firstInvalid.focus(), 250);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
+
+            if (!validateBillingFormOnly()) {
+                return;
+            }
+
+            setFullPhoneInput(form, 'wp_billing_phone');
+
+            protectedErrors.clear();
+            clearErrorBeforeSendRequest(form);
 
             $.preloader.show();
             submitBtn.disabled = true;
@@ -130,8 +329,6 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
                 });
 
                 const result = await response.json();
-
-                clearErrorBeforeSendRequest(form);
 
                 if (!result.success) {
                     const errors = result.data?.errors || {};
