@@ -80,15 +80,11 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
                             <!-- IMPORTANTE: name="amount" -->
                             <input id="mt-payout-amount" name="amount" type="number" min="0" step="1"
                                 class="form-control" placeholder="0" inputmode="numeric" autocomplete="off">
-                            <small
-  id="mt-payout-max"
-  class="text-a8a29e"
-  data-max="0"
-  data-label="<?php echo esc_attr( Label::META_ACCOUNT_PAYOUT['maxWithdrawal'] ); ?>"
->
-  <?php echo esc_html( Label::META_ACCOUNT_PAYOUT['maxWithdrawal'] ); ?>:
-  <span data-role="mt-payout-max-value">—</span>
-</small>
+                            <small id="mt-payout-max" class="text-a8a29e" data-max="0"
+                                data-label="<?php echo esc_attr(Label::META_ACCOUNT_PAYOUT['maxWithdrawal']); ?>">
+                                <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['maxWithdrawal']); ?>:
+                                <span data-role="mt-payout-max-value">—</span>
+                            </small>
 
                         </div>
 
@@ -141,25 +137,25 @@ $user_email = isset($args['user_email']) ? sanitize_email($args['user_email']) :
             </div>
 
             <div class="modal-footer border-0 d-flex gap-2 p-0 mt-2">
-    <button id="mt-payout-cancel" type="button" class="flex-1-1-0 mt-btn mt-btn--link text-white"
-        data-bs-dismiss="modal">
-        <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['cancelButton']); ?>
-    </button>
+                <button id="mt-payout-cancel" type="button" class="flex-1-1-0 mt-btn mt-btn--link text-white"
+                    data-bs-dismiss="modal">
+                    <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['cancelButton']); ?>
+                </button>
 
-    <button id="mt-payout-back" type="button" class="flex-1-1-0 mt-btn mt-btn--link text-white d-none">
-        Go back
-    </button>
+                <button id="mt-payout-back" type="button" class="flex-1-1-0 mt-btn mt-btn--link text-white d-none">
+                    Go back
+                </button>
 
-    <button id="mt-payout-continue" type="button" class="flex-1-1-0 mt-btn mt-btn--md mt-btn--primary"
-        disabled>
-        <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['submitButton']); ?>
-    </button>
+                <button id="mt-payout-continue" type="button" class="flex-1-1-0 mt-btn mt-btn--md mt-btn--primary"
+                    disabled>
+                    <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['submitButton']); ?>
+                </button>
 
-    <button id="mt-payout-confirm" type="button"
-        class="flex-1-1-0 mt-btn mt-btn--md mt-btn--primary d-none" data-role="payout-submit">
-        <?php echo esc_html( Label::META_ACCOUNT_PAYOUT['confirmButton'] ?? 'Confirm Request' ); ?>
-    </button>
-</div>
+                <button id="mt-payout-confirm" type="button" class="flex-1-1-0 mt-btn mt-btn--md mt-btn--primary d-none"
+                    data-role="payout-submit">
+                    <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['confirmButton'] ?? 'Confirm Request'); ?>
+                </button>
+            </div>
 
 
         </div>

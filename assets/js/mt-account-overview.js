@@ -4937,7 +4937,17 @@ if (document.readyState === "loading") {
     fetchEligibility(id);
   });
   window.MT_PAYOUT_ELIGIBILITY_CACHE = cache;
+
+  window.MT_PAYOUT_REFRESH = function (accountId) {
+    // si no pasan id, intenta usar la cuenta actual del overview
+    var root = document.getElementById("mt-account-overview");
+    var currentId = accountId || (root && root.getAttribute("data-account-id")) || "";
+    if (!currentId) return;
+    fetchEligibility(currentId);
+  };
 })();
+
+
 
 // ======= Mostrar/ocultar card de payout según account-type (Funded/Evaluation) =======
 (function () {
@@ -5094,10 +5104,22 @@ if (document.readyState === "loading") {
       const closeBtn = document.createElement("button");
       closeBtn.type = "button";
       closeBtn.className = "mt-btn mt-btn--md mt-btn--primary m-auto";
-      closeBtn.setAttribute("data-bs-dismiss", "modal");
       closeBtn.textContent = "Close";
+
+      closeBtn.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try {
+          if (window.mtModal && typeof window.mtModal.closeCentered === "function") {
+            window.mtModal.closeCentered(modal, { clearDataShow: true });
+          }
+        } catch (e) {
+          console.error("[PAYOUT] close after congrats failed:", e);
+        }
+      });
+
       footer.appendChild(closeBtn);
     }
+
   }
 
   /* ---------- Steps helpers ---------- */
@@ -5402,6 +5424,14 @@ if (document.readyState === "loading") {
           }
 
           if (res && res.success) {
+            try {
+              if (window.MT_PAYOUT_REFRESH) {
+                window.MT_PAYOUT_REFRESH(account);
+              }
+            } catch (e) {
+              console.warn("[PAYOUT] refresh after success failed:", e);
+            }
+
             renderCongratsStep();
           } else {
             const msg2 =
@@ -5410,6 +5440,7 @@ if (document.readyState === "loading") {
             showGlobalError("Request failed", msg2, {});
             btnConfirm.disabled = false;
           }
+
         })
         .catch(function (e) {
           console.error("[PAYOUT] ERR ←", e);
