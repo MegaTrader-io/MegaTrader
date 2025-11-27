@@ -147,6 +147,329 @@ $valid_states = WC()->countries->get_states($api_billing_country);
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('personal-information-form');
         const submitBtn = form.querySelector('button[type="submit"]');
+        const PAC_HIDE_CLASS = "pac-hidden";
+
+        const debouncedUpdate = (() => {
+            let t;
+            return () => {
+                clearTimeout(t);
+                t = setTimeout(() => {
+                    if (typeof jQuery !== "undefined") {
+                        jQuery(document.body).trigger("update_checkout");
+                    }
+                }, 300);
+            };
+        })();
+
+        function lockStateSelection(stateCode, ttlMs = 7000) {
+            if (!stateCode) return;
+            const wrapper = document.getElementById("api_billing_state_wrapper");
+            if (!wrapper) return;
+
+            const start = Date.now();
+            const apply = () => {
+                const select = document.getElementById("api_billing_state");
+                if (!select) return;
+                const opt = [...select.options].find((o) => o.value === stateCode);
+                if (opt) {
+                    select.value = stateCode;
+                    select.dataset.googleSet = "true";
+                }
+            };
+
+            apply();
+
+            const obs = new MutationObserver(() => {
+                apply();
+                if (Date.now() - start > ttlMs) {
+                    obs.disconnect();
+                }
+            });
+            obs.observe(wrapper, {childList: true, subtree: true});
+        }
+
+        function setStateWhenReady(stateCode) {
+            if (!stateCode) return;
+            const wrapper = document.getElementById("api_billing_state_wrapper");
+
+            const tryApply = () => {
+                const select = document.getElementById("api_billing_state");
+                if (!select) return false;
+
+                const match = [...select.options].find((o) => o.value === stateCode);
+                if (!match) return false;
+
+                select.value = stateCode;
+                select.dispatchEvent(new Event("change"));
+                select.dataset.googleSet = "true";
+                return true;
+            };
+
+            if (tryApply()) return;
+
+            const obs = new MutationObserver(() => {
+                if (tryApply()) obs.disconnect();
+            });
+            obs.observe(wrapper, {childList: true, subtree: true});
+        }
+
+        function forceClosePlaces() {
+            document.body.classList.add(PAC_HIDE_CLASS);
+
+            const addr = document.getElementById("api_billing_address_1");
+            if (addr) addr.blur();
+
+            document.querySelectorAll(".pac-container").forEach((el) => {
+                el.innerHTML = '';
+                el.removeAttribute("style");
+                el.style.display = "none";
+                el.setAttribute("aria-hidden", "true");
+            });
+        }
+
+        function allowPlaces() {
+            document.body.classList.remove(PAC_HIDE_CLASS);
+            document
+                .querySelectorAll('.pac-container[aria-hidden="true"]')
+                .forEach((el) => {
+                    el.style.display = "";
+                    el.removeAttribute("aria-hidden");
+                });
+        }
+
+        // ========== GOOGLE AUTOCOMPLETE ==========
+        const addressInput = document.getElementById("api_billing_address_1");
+
+        if (addressInput && window.google && google.maps && google.maps.places) {
+            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                types: ["address"],
+                componentRestrictions: {country: ["us"]},
+            });
+
+            // Mantener cerrado de inicio (evita que se abra al re-entrar en "Change")
+            forceClosePlaces();
+
+            // Abrir SOLO cuando el usuario interactúa con el input
+            const enablePacOnUserInput = () => allowPlaces();
+            addressInput.addEventListener("focus", enablePacOnUserInput);
+            addressInput.addEventListener("keydown", enablePacOnUserInput);
+            addressInput.addEventListener("input", enablePacOnUserInput);
+
+            // Cerrar al salir del input (con pequeño delay para permitir click en la sugerencia)
+            addressInput.addEventListener("blur", () => {
+                setTimeout(forceClosePlaces, 150);
+            });
+
+            // Cerrar si el usuario hace click fuera del input y del dropdown
+            document.addEventListener("click", (e) => {
+                const pac = document.querySelector(".pac-container");
+                if (!pac) return;
+                if (e.target?.name === 'billing_address_1' || e.target === addressInput || pac.contains(e.target)) return;
+                forceClosePlaces();
+            });
+
+            autocomplete.addListener("place_changed", function () {
+                const place = autocomplete.getPlace();
+                if (!place.address_components) return;
+
+                const fields = {
+                    billing_address_1: "",
+                    billing_address_2: "",
+                    billing_city: "",
+                    billing_state: "",
+                    billing_postcode: "",
+                    billing_country: "",
+                };
+
+                place.address_components.forEach((component) => {
+                    const types = component.types;
+
+                    if (types.includes("street_number")) {
+                        fields.billing_address_1 =
+                            component.long_name + " " + fields.billing_address_1;
+                    }
+                    if (types.includes("route")) {
+                        fields.billing_address_1 += component.long_name;
+                    }
+                    if (types.includes("subpremise")) {
+                        fields.billing_address_2 = component.long_name;
+                    }
+                    if (types.includes("locality")) {
+                        fields.billing_city = component.long_name;
+                    }
+                    if (types.includes("administrative_area_level_1")) {
+                        fields.billing_state = component.short_name;
+                    }
+                    if (types.includes("postal_code")) {
+                        fields.billing_postcode = component.long_name;
+                    }
+                    if (types.includes("country")) {
+                        fields.billing_country = component.short_name;
+                    }
+                });
+
+                document.getElementById("api_billing_address_1").value =
+                    fields.billing_address_1;
+                document.getElementById("api_billing_city").value = fields.billing_city;
+                document.getElementById("api_billing_postcode").value =
+                    fields.billing_postcode;
+
+                const countrySelect = document.getElementById("api_billing_country");
+                if (fields.billing_country && countrySelect) {
+                    const option = [...countrySelect.options].find(
+                        (opt) => opt.value === fields.billing_country
+                    );
+                    if (option) {
+                        countrySelect.value = fields.billing_country;
+                        countrySelect.classList.add("selected-by-google");
+                        countrySelect.dispatchEvent(new Event("change"));
+                    }
+                }
+
+                setStateWhenReady(fields.billing_state);
+                lockStateSelection(fields.billing_state, 7000);
+
+                // Cerrar el dropdown tras seleccionar
+                forceClosePlaces();
+                debouncedUpdate();
+            });
+        }
+
+        function setAddressHTML(id, linesArray) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const esc = (s) =>
+                String(s)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            const html = (linesArray || []).filter(Boolean).map(esc).join("<br>");
+            el.innerHTML = html;
+        }
+
+        function initBillingSummary() {
+            const summary = document.getElementById("mt-billing-summary");
+            const formBox = document.getElementById("mt-billing-form");
+            const changeLn = document.getElementById("mt-billing-change");
+            const saveBtn = document.getElementById("mt-save-billing");
+
+            function getStoredState() {
+                try {
+                    return localStorage.getItem("mt_billing_state") || "";
+                } catch (_) {
+                    return "";
+                }
+            }
+
+            function restoreStateIfEmpty() {
+                const el = document.getElementById("api_billing_state");
+                if (!el) return;
+
+                // usa lo que haya guardado; si no hay, no toques nada
+                const saved = getStoredState();
+                if (!saved) return;
+
+                // Fuerza el valor guardado aunque el select ya tenga otro (Woo lo puede haber reescrito)
+                if (el.tagName === "SELECT") {
+                    if (el.value !== saved) {
+                        setStateWhenReady(saved);
+                        // Mantén el lock un poco más (Woo puede refrescar fragmentos con retraso)
+                        lockStateSelection(saved, 7000);
+                    }
+                } else {
+                    if (el.value !== saved) {
+                        el.value = saved;
+                        el.dispatchEvent(new Event("change", {bubbles: true}));
+                    }
+                }
+            }
+
+            const stEl = document.getElementById("api_billing_state");
+            if (stEl && !stEl.dataset.mtRemember) {
+                stEl.dataset.mtRemember = "1";
+                stEl.addEventListener("change", () => {
+                    try {
+                        localStorage.setItem("mt_billing_state", stEl.value || "");
+                    } catch (_) {
+                    }
+                    // Recalcula cuando cambie el estado
+                    debouncedUpdate();
+                });
+            }
+
+            const stOrig = document.getElementById("billing_state_current");
+            if (stEl && stOrig && !stEl.value) {
+                setStateWhenReady(stOrig.value);
+                lockStateSelection(stOrig.value, 2000);
+            }
+
+            const countryEl = document.getElementById("api_billing_country");
+            if (countryEl && !countryEl.dataset.mtReset) {
+                countryEl.dataset.mtReset = "1";
+                countryEl.addEventListener("change", () => {
+                    // Olvida el state guardado
+                    try {
+                        localStorage.removeItem("mt_billing_state");
+                    } catch (_) {
+                    }
+
+                    // Limpia el campo state para que Woo repueble según el país
+                    const st = document.getElementById("api_billing_state");
+                    if (st) {
+                        st.value = "";
+                        st.dispatchEvent(new Event("change", {bubbles: true}));
+                    }
+
+                    // Vuelve a calcular impuestos/totales
+                    debouncedUpdate();
+                });
+            }
+
+            // Recalcular al editar manualmente ZIP, City y Address 1
+            ["api_billing_postcode", "api_billing_city", "api_billing_address_1"].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el && !el.dataset.mtDebounced) {
+                    el.dataset.mtDebounced = "1";
+                    el.addEventListener("input", debouncedUpdate);
+                    el.addEventListener("change", debouncedUpdate);
+                }
+            });
+
+            function showForm() {
+                if (!summary || !formBox) return;
+                formBox.classList.remove("d-none");
+                summary.classList.add("d-none");
+                restoreStateIfEmpty();
+
+                if (typeof jQuery !== "undefined" && jQuery.fn && jQuery.fn.slideDown) {
+                    jQuery(formBox).stop(true, true).hide().slideDown(200);
+                }
+            }
+
+            function showSummary() {
+                if (!summary || !formBox) return;
+                forceClosePlaces(); // <- cerrarlo al volver al resumen
+                summary.classList.remove("d-none");
+                formBox.classList.add("d-none");
+                if (typeof jQuery !== "undefined" && jQuery.fn && jQuery.fn.slideDown) {
+                    jQuery(summary).stop(true, true).hide().slideDown(200);
+                }
+            }
+
+            // evita listeners duplicados cuando Woo refresca fragmentos
+            if (changeLn && !changeLn.dataset.bound) {
+                changeLn.dataset.bound = "1";
+                changeLn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    showForm();
+                });
+            }
+        }
+
+        // Inicializa y reata tras fragment refresh
+        initBillingSummary();
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();

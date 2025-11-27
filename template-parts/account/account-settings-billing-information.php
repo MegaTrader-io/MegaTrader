@@ -53,7 +53,7 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
                        for="billing_email"><?php esc_html_e('Email', 'megatrader'); ?></label>
                 <input type="email" class="form-control" name="billing_email" id="billing_email"
                        placeholder="<?php esc_attr_e('Enter your email', 'megatrader'); ?>"
-                       value="<?php echo esc_attr($user_email); ?>" readonly>
+                       value="<?php echo esc_attr(get_user_meta(get_current_user_id(), 'billing_email', true)); ?>">
             </div>
         </div>
 
@@ -164,6 +164,12 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
             wp_billing_phone: [
                 (value) => value.trim() !== "" || "Billing Phone is a required field.",
             ],
+            billing_email: [
+                (value) => value.trim() !== "" || "Please enter an Email address",
+                (value) =>
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ||
+                    "Please enter a valid Email address",
+            ],
             billing_address_1: [
                 (value) =>
                     value.trim() !== "" || "Billing Street address is a required field.",
@@ -255,6 +261,7 @@ $billing_state = esc_attr(get_user_meta(get_current_user_id(), 'billing_state', 
             const values = {
                 billing_first_name: val("billing_first_name"),
                 billing_last_name: val("billing_last_name"),
+                billing_email: val("billing_email"),
                 wp_billing_phone: val("wp_billing_phone"),
                 billing_address_1: val("billing_address_1"),
                 billing_city: val("billing_city"),

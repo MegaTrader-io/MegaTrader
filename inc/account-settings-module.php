@@ -365,6 +365,7 @@ function mt_update_billing_information_callback()
   $payload = [
     "billing_first_name" => sanitize_text_field($_POST['billing_first_name']),
     "billing_last_name" => sanitize_text_field($_POST['billing_last_name']),
+    "billing_email" => sanitize_text_field($_POST['billing_email']),
     "billing_phone" => sanitize_text_field($_POST['billing_phone_full']),
     "billing_country" => sanitize_text_field($_POST['billing_country']),
     "billing_state" => sanitize_text_field($_POST['billing_state']),
