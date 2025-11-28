@@ -416,6 +416,10 @@ require_once get_template_directory() . '/inc/validate_coupon_for_variation.php'
 require_once get_template_directory() . '/inc/account-navigation-module.php';
 require_once get_template_directory() . '/inc/account-settings-module.php';
 
+// My Account - My Subscriptions
+require_once get_stylesheet_directory() . '/inc/class-mt-subscriptions-toggle.php';
+MT_Subscriptions_Toggle::init();
+
 /**
  * Plugin Scripts
  */

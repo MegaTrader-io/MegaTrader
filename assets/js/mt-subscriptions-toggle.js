@@ -1,5 +1,7 @@
 jQuery(function ($) {
 
+    console.log('mt-subscriptions-toggle.js LOAD TEST');
+
     $('.wcs-auto-renew-toggle').each(function () {
 
         const $container = $(this);
