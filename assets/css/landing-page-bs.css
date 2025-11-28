@@ -967,7 +967,8 @@
         font-weight: 300;
         text-transform: uppercase;
         line-height: 40px;
-        word-wrap: break-word
+        word-wrap: break-word;
+        text-align: center;
     }
 
     .hero-bs__text {
@@ -975,6 +976,17 @@
         font-size: 16px;
         font-weight: 500;
         line-height: 24px;
+        word-wrap: break-word
+    }
+
+    .verified-bs__title {
+        color: white;
+        font-size: 24px;
+        max-width: 302px;
+        margin: auto;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
         word-wrap: break-word
     }
 }
@@ -1085,6 +1097,7 @@
         font-size: 16px;
         line-height: 24px;
         word-wrap: break-word;
+        margin-block: 12px;
     }
 
     #verified-bs-carousel-list .splide__slide, #verified-bs-carousel-list .verified-bs__image {
@@ -1093,7 +1106,12 @@
     }
 
     .hero-bs__get-funded-now {
-        margin-bottom: 32px;
+        margin-bottom: 0;
+    }
+
+    #verified-bs-carousel {
+        padding-top: 0;
+        padding-bottom: 12px;
     }
 
     .verified-bs {
@@ -1114,6 +1132,26 @@
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
 @media (max-width: 1024px) {
+    .hero-bs__content {
+        align-items: center;
+    }
+
+    .hero-bs__benefit {
+        justify-content: center;
+    }
+
+    .hero-bs .landing-bs-container {
+        padding-block: 0;
+    }
+
+    .landing-bs-container.verified-bs__container {
+        padding: 0;
+    }
+
+    .verified-bs__subtitle {
+        letter-spacing: -0.05em;
+    }
+
     .verified-bs__glide .glide__arrow--prev {
         left: calc(var(--verified-bs-slide-left) + 16px);
         top: calc(50% - 28px);
