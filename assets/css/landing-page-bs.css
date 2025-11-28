@@ -190,8 +190,8 @@
 }
 
 .splide__slide {
-    width: 378px !important; /* Mantenido para slider de terceros */
-    height: 260px;
+    width: 291px !important; /* Mantenido para slider de terceros */
+    height: 200px;
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -203,7 +203,9 @@
     display: inline-table;
     border-radius: 16px;
     border: 4px #1E1E1E solid;
-    width: 378px !important;
+    width: 291px !important;
+    height: 200px;
+    object-fit: cover;
 }
 
 .verified-bs__image:hover {
