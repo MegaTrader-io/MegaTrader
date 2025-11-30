@@ -227,8 +227,8 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                             ?>
 
                             <?php if ('on-hold' === $status):
-                                $related_orders = $subscription->get_related_orders('renewal');
-                                foreach ($related_orders as $order_id => $order_type) {
+                                $menu_related_orders = $subscription->get_related_orders('renewal');
+                                foreach ($menu_related_orders as $order_id => $order_type) {
                                     $order = wc_get_order($order_id);
                                     if ($order && $order->has_status(['pending', 'failed'])) {
                                         $pay_url = $order->get_checkout_payment_url();

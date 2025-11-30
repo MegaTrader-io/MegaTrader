@@ -1838,7 +1838,395 @@ if (!function_exists('mt_count_trades_for_day')) {
   }
 }
 
-/* === DAILY JOURNAL (cutoff consistente) === */
+/* === DAILY JOURNAL (METRICS SOLO PARA NET; RESTO DESDE TRADES) === */
+if (!function_exists('mt_accounts_build_daily_journal')) {
+  function mt_accounts_build_daily_journal($accountId, $page = 1, $perPage = 30)
+  {
+    $accountId = (string) $accountId;
+    $rows = [];
+
+    // Sin accountId o sin metrics: no hay tabla
+    if ($accountId === '' || !function_exists('mega_api_get_metrics')) {
+      if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('[DJ] early-exit: missing accountId or mega_api_get_metrics');
+      }
+      return ['rows' => $rows, 'per_page' => (int) $perPage];
+    }
+
+    $has_trades_fn = function_exists('mt_trades_fetch_by_shortcode');
+
+    $tzUTC = new DateTimeZone('UTC');
+    $tzNY = new DateTimeZone('America/New_York');
+
+    $toNY = function (?string $iso) use ($tzUTC, $tzNY): ?DateTime {
+      if (!$iso)
+        return null;
+      try {
+        $dt = new DateTime($iso, $tzUTC);
+        $dt->setTimezone($tzNY);
+        return $dt;
+      } catch (\Throwable $e) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+          error_log('[DJ] toNY error: ' . $e->getMessage() . ' iso=' . $iso);
+        }
+        return null;
+      }
+    };
+
+    $fmtHMS = function (int $secs): string {
+      if ($secs <= 0)
+        return '00:00:00';
+      $h = (int) floor($secs / 3600);
+      $m = (int) floor(($secs % 3600) / 60);
+      $s = (int) ($secs % 60);
+      return sprintf('%02d:%02d:%02d', $h, $m, $s);
+    };
+
+    /* ==================================================
+     * 1) METRICS → fuente principal (solo NET + días)
+     * ================================================== */
+
+    $metricsByDay = [];
+
+    $mPerPage = 500;
+    $mPage = 1;
+
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[DJ] metrics fetch start account=' . $accountId);
+    }
+
+    while (true) {
+      $mChunk = mega_api_get_metrics($accountId, $mPage, $mPerPage, '', '');
+      if (is_wp_error($mChunk)) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+          error_log('[DJ] metrics fetch error page=' . $mPage . ' msg=' . $mChunk->get_error_message());
+        }
+        break;
+      }
+
+      $mItems = [];
+      if (isset($mChunk['data']) && is_array($mChunk['data'])) {
+        $mItems = $mChunk['data'];
+      }
+
+      if (empty($mItems)) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+          error_log('[DJ] metrics fetch empty page=' . $mPage);
+        }
+        break;
+      }
+
+      foreach ($mItems as $mItem) {
+        if (!is_array($mItem))
+          continue;
+        $m = isset($mItem['metrics']) && is_array($mItem['metrics'])
+          ? $mItem['metrics']
+          : $mItem;
+
+        $dayIso = isset($m['tradeDateUTC']) ? trim((string) $m['tradeDateUTC']) : '';
+        if ($dayIso === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dayIso)) {
+          continue;
+        }
+
+        // API viene en DESC; nos quedamos con el primero por día
+        if (!isset($metricsByDay[$dayIso])) {
+          $metricsByDay[$dayIso] = $m;
+        }
+      }
+
+      $pagesCount = isset($mChunk['meta']['pagesCount']) ? (int) $mChunk['meta']['pagesCount'] : null;
+      if ($pagesCount && $mPage >= $pagesCount)
+        break;
+      if (count($mItems) < $mPerPage)
+        break;
+
+      $mPage++;
+    }
+
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      error_log('[DJ] metrics days fetched=' . count($metricsByDay));
+    }
+
+    if (empty($metricsByDay)) {
+      return ['rows' => [], 'per_page' => (int) $perPage];
+    }
+
+    /* ==================================================
+     * 2) Construir filas base desde METRICS
+     *    - net desde consTradingDailyTotalRealizedPnL
+     *    - si net === 0 → NO se pinta ese día
+     *    - el resto se rellena luego con TRADES (versión vieja)
+     * ================================================== */
+
+    foreach ($metricsByDay as $dayIso => $m) {
+
+      // Net P&L desde metrics (campo nuevo principal)
+      if (isset($m['consTradingDailyTotalRealizedPnL'])) {
+        $netVal = (float) $m['consTradingDailyTotalRealizedPnL'];
+      } elseif (isset($m['tradingDailyTotalRealizedPnL'])) {
+        $netVal = (float) $m['tradingDailyTotalRealizedPnL'];
+      } elseif (isset($m['dailyTotalRealizedPnL'])) {
+        $netVal = (float) $m['dailyTotalRealizedPnL'];
+      } else {
+        $netVal = 0.0;
+      }
+
+      // Si el Net P&L es 0 → no pintamos ese row
+      if (abs($netVal) < 0.00001) {
+        continue;
+      }
+
+      $rows[] = [
+        'date' => $dayIso,
+        'openTime' => $dayIso,
+        'net' => $netVal,        // METRICS
+        'hi' => '-',            // TRADES (P&L High vieja)
+        'lo' => '-',            // TRADES (P&L Low vieja)
+        'ct' => 0,              // TRADES (Total Contracts viejo)
+        'trades' => 0,              // TRADES (Total Trades viejo)
+        'fees' => 0.0,            // TRADES
+        'awin' => '-',            // TRADES (Avg. Win Trades viejo)
+        'aloss' => '-',            // TRADES (Avg. Loss Trades viejo)
+        'win' => 0.0,            // TRADES (Winning Trade % viejo)
+        'loss' => 0.0,            // TRADES (Loss Trade % viejo)
+        'max' => '0/0',          // TRADES (máx racha W/L viejo)
+        'dur' => '00:00:00/00:00:00', // TRADES (Avg W/L Duration viejo)
+      ];
+    }
+
+    // Si después del filtro no quedó nada, devolvemos vacío
+    if (empty($rows)) {
+      return ['rows' => [], 'per_page' => (int) $perPage];
+    }
+
+    // Índice rápido por día
+    $rowsByDay = [];
+    foreach ($rows as $idx => $r) {
+      $dayIso = substr((string) ($r['openTime'] ?? $r['date'] ?? ''), 0, 10);
+      if ($dayIso !== '') {
+        $rowsByDay[$dayIso] = $idx;
+      }
+    }
+
+    /* ==================================================
+     * 3) TRADES → fees, hi, lo, ct, trades, awin, aloss,
+     *               win, loss, max, dur (toda la lógica vieja)
+     * ================================================== */
+
+    if ($has_trades_fn) {
+      $tradesAgg = [];
+      $perPageFetch = 500;
+      $pageFetch = 1;
+
+      if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('[DJ] fetch trades (for legacy stats) start account=' . $accountId);
+      }
+
+      while (true) {
+        $chunk = mt_trades_fetch_by_shortcode($accountId, 'CLOSED', $pageFetch, $perPageFetch);
+        if (is_wp_error($chunk)) {
+          if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[DJ] trades fetch error page=' . $pageFetch . ' msg=' . $chunk->get_error_message());
+          }
+          break;
+        }
+        if (empty($chunk)) {
+          if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[DJ] trades fetch empty page=' . $pageFetch);
+          }
+          break;
+        }
+
+        $items = [];
+        if (isset($chunk['data']) && is_array($chunk['data'])) {
+          $items = $chunk['data'];
+        } elseif (is_array($chunk)) {
+          $items = $chunk;
+        }
+
+        if (empty($items))
+          break;
+
+        foreach ($items as $t) {
+          if (!is_array($t))
+            continue;
+
+          $cIso = isset($t['closeTime']) ? (string) $t['closeTime'] : null;
+          $oIso = isset($t['openTime']) ? (string) $t['openTime'] : null;
+
+          $closeNY = $toNY($cIso);
+          $openNY = $toNY($oIso);
+          if (!$closeNY || !$openNY)
+            continue;
+
+          $day = function_exists('mt_utc_to_eastern_ymd_cutoff')
+            ? mt_utc_to_eastern_ymd_cutoff((string) $t['closeTime'], 18)
+            : $closeNY->format('Y-m-d');
+
+          // Solo si ese día existe en METRICS (tabla diaria no-cero)
+          if (!isset($rowsByDay[$day]))
+            continue;
+
+          $pnl = (float) ($t['pnl'] ?? 0);
+          $commission = (float) ($t['commission'] ?? 0);
+          $lots = (int) ($t['lots'] ?? 0);
+          $durSecs = max(0, (int) round($closeNY->getTimestamp() - $openNY->getTimestamp()));
+
+          if (!isset($tradesAgg[$day])) {
+            $tradesAgg[$day] = [
+              'fees' => 0.0,
+              'wins' => 0,
+              'losses' => 0,
+              'sumWin' => 0.0,
+              'sumLoss' => 0.0,
+              'durWinSecs' => 0,
+              'durLossSecs' => 0,
+              'hi' => null,
+              'lo' => null,
+              'ct' => 0,
+              'trades' => 0,
+              '_seq' => [],
+            ];
+          }
+
+          $A =& $tradesAgg[$day];
+
+          // fees
+          $A['fees'] += $commission;
+
+          // contratos y trades (como versión original)
+          $A['ct'] += max(0, $lots);
+          $A['trades'] += 1;
+
+          // hi/lo P&L por trade (versión vieja)
+          if ($pnl > 0) {
+            $A['hi'] = is_null($A['hi']) ? $pnl : max($A['hi'], $pnl);
+          } elseif ($pnl < 0) {
+            $A['lo'] = is_null($A['lo']) ? $pnl : min($A['lo'], $pnl);
+          }
+
+          // W/L + sumas para Avg Win / Avg Loss + duraciones
+          if ($pnl > 0) {
+            $A['wins'] += 1;
+            $A['sumWin'] += $pnl;
+            $A['durWinSecs'] += $durSecs;
+          } elseif ($pnl < 0) {
+            $A['losses'] += 1;
+            $A['sumLoss'] += $pnl;
+            $A['durLossSecs'] += $durSecs;
+          }
+
+          // secuencia para rachas
+          $A['_seq'][] = [
+            'openTs' => $openNY->getTimestamp(),
+            'pnl' => $pnl,
+          ];
+
+          unset($A);
+        }
+
+        $pagesCount = isset($chunk['meta']['pagesCount']) ? (int) $chunk['meta']['pagesCount'] : null;
+        if ($pagesCount && $pageFetch >= $pagesCount)
+          break;
+        if (count($items) < $perPageFetch)
+          break;
+
+        $pageFetch++;
+      }
+
+      // Aplicar TODO lo viejo a las filas
+      foreach ($tradesAgg as $day => $agg) {
+        if (!isset($rowsByDay[$day]))
+          continue;
+        $idx = $rowsByDay[$day];
+
+        // racha max W/L (versión vieja)
+        usort($agg['_seq'], function ($a, $b) {
+          return $a['openTs'] <=> $b['openTs'];
+        });
+        $curW = $curL = $maxW = $maxL = 0;
+        foreach ($agg['_seq'] as $e) {
+          if ($e['pnl'] > 0) {
+            $curW += 1;
+            $curL = 0;
+          } elseif ($e['pnl'] < 0) {
+            $curL += 1;
+            $curW = 0;
+          } else {
+            $curW = 0;
+            $curL = 0;
+          }
+          $maxW = max($maxW, $curW);
+          $maxL = max($maxL, $curL);
+        }
+
+        $wins = (int) $agg['wins'];
+        $loss = (int) $agg['losses'];
+        $tot = max(1, (int) $agg['trades']);
+
+        // Avg. Win / Avg. Loss (versión vieja)
+        $awin = $wins > 0 ? ($agg['sumWin'] / $wins) : '-';
+        $aloss = $loss > 0 ? ($agg['sumLoss'] / $loss) : '-';
+
+        // Winning % / Loss % (versión vieja)
+        $winPct = round(($wins * 100.0) / $tot, 2);
+        $losPct = round(100.0 - $winPct, 2);
+
+        // Duraciones promedio (versión vieja)
+        $avgWinDur = $wins > 0 ? (int) floor($agg['durWinSecs'] / $wins) : 0;
+        $avgLosDur = $loss > 0 ? (int) floor($agg['durLossSecs'] / $loss) : 0;
+
+        // Aplicar a la fila
+        $rows[$idx]['fees'] = (float) $agg['fees'];
+        $rows[$idx]['hi'] = is_null($agg['hi']) ? '-' : (float) $agg['hi'];
+        $rows[$idx]['lo'] = is_null($agg['lo']) ? '-' : (float) $agg['lo'];
+        $rows[$idx]['ct'] = (int) $agg['ct'];
+        $rows[$idx]['trades'] = (int) $agg['trades'];
+        $rows[$idx]['max'] = $maxW . '/' . $maxL;
+        $rows[$idx]['dur'] = $fmtHMS($avgWinDur) . '/' . $fmtHMS($avgLosDur);
+        $rows[$idx]['awin'] = $awin;
+        $rows[$idx]['aloss'] = $aloss;
+        $rows[$idx]['win'] = $winPct;
+        $rows[$idx]['loss'] = $losPct;
+      }
+    }
+
+    /* ==================================================
+     * 4) Orden final DESC por fecha
+     * ================================================== */
+
+    usort($rows, function ($a, $b) {
+      $ta = strtotime((string) ($a['openTime'] ?? $a['date'] ?? '')) ?: 0;
+      $tb = strtotime((string) ($b['openTime'] ?? $b['date'] ?? '')) ?: 0;
+      return $tb <=> $ta;
+    });
+
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+      foreach ($rows as $rr) {
+        error_log(sprintf(
+          '[DJ] ROW day=%s net=%s hi=%s lo=%s ct=%d trades=%d fees=%s awin=%s aloss=%s win=%s loss=%s max=%s dur=%s',
+          (string) $rr['openTime'],
+          is_numeric($rr['net']) ? number_format((float) $rr['net'], 2, '.', '') : (string) $rr['net'],
+          (string) $rr['hi'],
+          (string) $rr['lo'],
+          (int) $rr['ct'],
+          (int) $rr['trades'],
+          is_numeric($rr['fees']) ? number_format((float) $rr['fees'], 2, '.', '') : (string) $rr['fees'],
+          (string) $rr['awin'],
+          (string) $rr['aloss'],
+          (string) $rr['win'],
+          (string) $rr['loss'],
+          (string) $rr['max'],
+          (string) $rr['dur']
+        ));
+      }
+    }
+
+    return ['rows' => $rows, 'per_page' => (int) $perPage];
+  }
+}
+
+/* Backup Old function Taking Data from trade
 if (!function_exists('mt_accounts_build_daily_journal')) {
   function mt_accounts_build_daily_journal($accountId, $page = 1, $perPage = 30)
   {
@@ -1975,7 +2363,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
 
       $D =& $byDay[$day];
       $D['trades'] += 1;
-      $D['ct'] += max(0, $lots);
+     ejemplo 
       $D['fees'] += $commission;
       $D['net'] += $pnl - $commission;
 
@@ -2076,6 +2464,7 @@ if (!function_exists('mt_accounts_build_daily_journal')) {
     return ['rows' => $rows, 'per_page' => (int) $perPage];
   }
 }
+*/
 
 /* === DAILY JOURNAL rows HTML === */
 if (!function_exists('mt_daily_journal_rows_html')) {
@@ -2513,7 +2902,7 @@ if (!function_exists('mt_prepare_ui_payout')) {
   }
 }
 
-if ( ! function_exists( 'mt_get_account_payout_eligibility' ) ) {
+if (!function_exists('mt_get_account_payout_eligibility')) {
   /**
    * Devuelve elegibilidad de payout para UNA cuenta (por accountId interno).
    *
@@ -2525,62 +2914,63 @@ if ( ! function_exists( 'mt_get_account_payout_eligibility' ) ) {
    *   @type array   meta
    * }
    */
-  function mt_get_account_payout_eligibility( string $account_id ): array {
-    $account_id = trim( (string) $account_id );
-    if ( $account_id === '' ) {
+  function mt_get_account_payout_eligibility(string $account_id): array
+  {
+    $account_id = trim((string) $account_id);
+    if ($account_id === '') {
       return [
-        'id'                => '',
-        'eligibleBase'      => false,
+        'id' => '',
+        'eligibleBase' => false,
         'eligibleForPayout' => false,
-        'maxWithdrawalUI'   => 0.0,
-        'meta'              => [],
+        'maxWithdrawalUI' => 0.0,
+        'meta' => [],
       ];
     }
 
     // Resolver cuenta
     $byId = null;
-    if ( function_exists( 'mt_accounts_resolve_account_by_id' ) ) {
+    if (function_exists('mt_accounts_resolve_account_by_id')) {
       try {
-        $byId = mt_accounts_resolve_account_by_id( $account_id );
-      } catch ( \Throwable $e ) {
+        $byId = mt_accounts_resolve_account_by_id($account_id);
+      } catch (\Throwable $e) {
         $byId = null;
       }
     }
 
-    if ( ! is_array( $byId ) ) {
+    if (!is_array($byId)) {
       return [
-        'id'                => $account_id,
-        'eligibleBase'      => false,
+        'id' => $account_id,
+        'eligibleBase' => false,
         'eligibleForPayout' => false,
-        'maxWithdrawalUI'   => 0.0,
-        'meta'              => [],
+        'maxWithdrawalUI' => 0.0,
+        'meta' => [],
       ];
     }
 
     // Datos base (igual lógica que en mt_prepare_ui_payout)
-    $currentBalance  = (float) ( ( $byId['metrics']['currentBalance'] ?? 0 ) ?: 0 );
-    $startingBalance = (float) ( ( $byId['program']['startingBalance'] ?? 0 ) ?: 0 );
+    $currentBalance = (float) (($byId['metrics']['currentBalance'] ?? 0) ?: 0);
+    $startingBalance = (float) (($byId['program']['startingBalance'] ?? 0) ?: 0);
 
-    $minMap          = class_exists( 'MT_PAYOUT' ) ? MT_PAYOUT::MIN_BALANCE_MAP : [];
-    $minimumBalance  = isset( $minMap[ $startingBalance ] ) ? (float) $minMap[ $startingBalance ] : 0.0;
+    $minMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_BALANCE_MAP : [];
+    $minimumBalance = isset($minMap[$startingBalance]) ? (float) $minMap[$startingBalance] : 0.0;
 
-    $minWMap           = class_exists( 'MT_PAYOUT' ) ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
-    $minimumWithdrawal = isset( $minWMap[ $startingBalance ] ) ? (float) $minWMap[ $startingBalance ] : 0.0;
+    $minWMap = class_exists('MT_PAYOUT') ? MT_PAYOUT::MIN_WITHDRAWAL_MAP : [];
+    $minimumWithdrawal = isset($minWMap[$startingBalance]) ? (float) $minWMap[$startingBalance] : 0.0;
 
-    $withdrawalRoom = max( 0.0, $currentBalance - $minimumBalance );
+    $withdrawalRoom = max(0.0, $currentBalance - $minimumBalance);
 
     // Llamamos al mega_api_get_payout_eligibility para esta cuenta
     $elig = [];
-    if ( function_exists( 'mega_api_get_payout_eligibility' ) ) {
-      $raw = mega_api_get_payout_eligibility( $account_id );
-      if ( ! is_wp_error( $raw ) && is_array( $raw ) ) {
+    if (function_exists('mega_api_get_payout_eligibility')) {
+      $raw = mega_api_get_payout_eligibility($account_id);
+      if (!is_wp_error($raw) && is_array($raw)) {
         $elig = $raw;
       }
     }
 
-    $enabled      = (bool) ( $elig['payoutCycle']['enabled'] ?? false );
-    $targetPassed = (bool) ( $elig['payoutCycle']['targetPassed'] ?? false );
-    $status       = (array) ( $elig['accountStatus'] ?? [] );
+    $enabled = (bool) ($elig['payoutCycle']['enabled'] ?? false);
+    $targetPassed = (bool) ($elig['payoutCycle']['targetPassed'] ?? false);
+    $status = (array) ($elig['accountStatus'] ?? []);
 
     $STATUS_KEYS = [
       'amountAvailable',
@@ -2599,36 +2989,36 @@ if ( ! function_exists( 'mt_get_account_payout_eligibility' ) ) {
     ];
 
     $allStatusOK = true;
-    foreach ( $STATUS_KEYS as $k ) {
-      if ( empty( $status[ $k ] ) ) {
+    foreach ($STATUS_KEYS as $k) {
+      if (empty($status[$k])) {
         $allStatusOK = false;
         break;
       }
     }
 
-    $maxWithdrawalApi = (float) ( $elig['payoutCycle']['maxWithdrawal']
-      ?? ( $byId['payout']['payoutCycle']['maxWithdrawal'] ?? 0 ) );
+    $maxWithdrawalApi = (float) ($elig['payoutCycle']['maxWithdrawal']
+      ?? ($byId['payout']['payoutCycle']['maxWithdrawal'] ?? 0));
 
-    $eligibleBase      = ( $enabled && $targetPassed && $allStatusOK );
-    $eligibleForPayout = ( $eligibleBase && ( $withdrawalRoom >= $minimumWithdrawal ) );
-    $maxWithdrawalUI   = $eligibleForPayout
-      ? max( 0.0, min( $withdrawalRoom, (float) $maxWithdrawalApi ) )
+    $eligibleBase = ($enabled && $targetPassed && $allStatusOK);
+    $eligibleForPayout = ($eligibleBase && ($withdrawalRoom >= $minimumWithdrawal));
+    $maxWithdrawalUI = $eligibleForPayout
+      ? max(0.0, min($withdrawalRoom, (float) $maxWithdrawalApi))
       : 0.0;
 
     return [
-      'id'                => (string) $account_id,
-      'eligibleBase'      => $eligibleBase,
+      'id' => (string) $account_id,
+      'eligibleBase' => $eligibleBase,
       'eligibleForPayout' => $eligibleForPayout,
-      'maxWithdrawalUI'   => $maxWithdrawalUI,
-      'meta'              => [
-        'maxWithdrawal'    => $maxWithdrawalApi,
+      'maxWithdrawalUI' => $maxWithdrawalUI,
+      'meta' => [
+        'maxWithdrawal' => $maxWithdrawalApi,
         'maxWithdrawalApi' => $maxWithdrawalApi,
-        'maxWithdrawalUI'  => $maxWithdrawalUI,
-        'currentBalance'   => $currentBalance,
-        'startingBalance'  => $startingBalance,
-        'minimumBalance'   => $minimumBalance,
-        'withdrawalRoom'   => $withdrawalRoom,
-        'minWithdrawal'    => $minimumWithdrawal,
+        'maxWithdrawalUI' => $maxWithdrawalUI,
+        'currentBalance' => $currentBalance,
+        'startingBalance' => $startingBalance,
+        'minimumBalance' => $minimumBalance,
+        'withdrawalRoom' => $withdrawalRoom,
+        'minWithdrawal' => $minimumWithdrawal,
       ],
     ];
   }
