@@ -37,7 +37,7 @@ defined('ABSPATH') || exit;
             <label class="label" for="billing_email"><?php esc_html_e('Email Address', 'megatrader'); ?>*</label>
             <input type="email" class="form-control" name="billing_email" id="billing_email"
                 placeholder="<?php esc_attr_e('Enter your email', 'megatrader'); ?>"
-                value="<?php echo esc_attr($checkout->get_value('billing_email')); ?>" readonly>
+                value="<?php echo esc_attr($checkout->get_value('billing_email')); ?>">
         </div>
         <div class="form-group no-label">
             <label class="label" for="billing_phone"><?php esc_html_e('Phone', 'megatrader'); ?>*</label>

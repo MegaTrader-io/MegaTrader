@@ -10,21 +10,26 @@ if (file_exists(get_stylesheet_directory() . '/inc/mt-accounts-helpers.php')) {
 
 /* Check account Elegible for payout? */
 if (!function_exists('mt_user_has_payout_accounts')) {
-  function mt_user_has_payout_accounts(string $email, bool $requireEligible = true): bool {
-    $email = sanitize_email($email);
-    if (!$email || !function_exists('mt_prepare_ui_payout')) return false;
+    function mt_user_has_payout_accounts(string $email, bool $requireEligible = true): bool
+    {
+        $email = sanitize_email($email);
+        if (!$email || !function_exists('mt_prepare_ui_payout'))
+            return false;
 
-    $out = mt_prepare_ui_payout($email);
-    if (!is_array($out) || empty($out['items'])) return false;
+        $out = mt_prepare_ui_payout($email);
+        if (!is_array($out) || empty($out['items']))
+            return false;
 
-    if (!$requireEligible) return true; 
-    foreach ($out['items'] as $it) {
-      $eligible = !empty($it['eligibleForPayout']);
-      $maxUI = isset($it['meta']['maxWithdrawalUI']) ? floatval($it['meta']['maxWithdrawalUI']) : 0.0;
-      if ($eligible && $maxUI > 0) return true;
+        if (!$requireEligible)
+            return true;
+        foreach ($out['items'] as $it) {
+            $eligible = !empty($it['eligibleForPayout']);
+            $maxUI = isset($it['meta']['maxWithdrawalUI']) ? floatval($it['meta']['maxWithdrawalUI']) : 0.0;
+            if ($eligible && $maxUI > 0)
+                return true;
+        }
+        return false;
     }
-    return false;
-  }
 }
 
 /* get email from the use login */
@@ -37,7 +42,7 @@ $mt_current_account_section = static function (): string {
     $req_path = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     $req_path = rtrim($req_path ?: '/', '/');
 
-    $account_base_url = wc_get_page_permalink('myaccount');           
+    $account_base_url = wc_get_page_permalink('myaccount');
     $account_base = (string) parse_url($account_base_url, PHP_URL_PATH);
     $account_base = rtrim($account_base ?: '/my-account', '/');
 
@@ -60,6 +65,12 @@ $mt_is_active = static function (string $slug, string $class = 'active') use ($m
 
 $account_base_url = trailingslashit(wc_get_page_permalink('myaccount'));
 
+$is_subscriptions_billing_endpoint = 
+    is_wc_endpoint_url('orders') ||
+    is_wc_endpoint_url('view-order') ||
+    is_wc_endpoint_url('view-subscription') ||
+    is_wc_endpoint_url('payment-methods');
+
 $menu_links = [
     [
         'class' => $mt_is_active('overview', 'active'),
@@ -77,20 +88,12 @@ $menu_links = [
             'style' => 'light'
         ]
     ],
-    /*[
-        'class' => $mt_is_active('payout', 'active'),
-        'id' => 'mt-request-payout',
-        'text' => 'REQUEST PAYOUT',
+    [
+        'class' => $is_subscriptions_billing_endpoint ? 'active' : '',
+        'text' => 'SUBCRIPTIONS & BILLING',
         'icon' => 'mt-icon_wallet',
-        'href' => '#',
-        'modal_target' => '#mt-request-payout-modal',
-        /*'is_disabled' => !$can_request_payout,
-        'is_disabled' => true,
-         'badge' => [
-            'text' => 'COMING SOON',
-            'style' => 'light'
-        ]
-    ],*/
+        'href' => '/my-account/orders/',
+    ],
     [
         'class' => $mt_is_active('profile', 'active'),
         'text' => 'ACCOUNT SETTINGS',
@@ -122,9 +125,11 @@ if (!function_exists('render_menu_link')) {
         $icon = esc_attr($item['icon'] ?? '');
         $badge = $item['badge'] ?? null;
         $id = esc_attr($item['id'] ?? '');
+        $is_disabled = !empty($item['is_disabled']);
+
 
         $modal_attrs = '';
-    if (!empty($item['modal_target']) && !$is_disabled) { 
+        if (!empty($item['modal_target']) && !$is_disabled) {
             $href = '#';
             $modal_attrs = ' data-bs-toggle="modal" data-bs-target="' . esc_attr($item['modal_target']) . '" role="button"';
         }
@@ -158,9 +163,10 @@ if (!function_exists('render_menu_link_collapsed')) {
         $text = esc_html($item['text'] ?? '');
         $icon = esc_attr($item['icon'] ?? '');
         $badge = $item['badge'] ?? null;
+        $is_disabled = !empty($item['is_disabled']);
 
         $modal_attrs = '';
-    if (!empty($item['modal_target']) && !$is_disabled) { 
+        if (!empty($item['modal_target']) && !$is_disabled) {
             $href = '#';
             $modal_attrs = ' data-bs-toggle="modal" data-bs-target="' . esc_attr($item['modal_target']) . '" role="button"';
         }
@@ -177,7 +183,8 @@ if (!function_exists('render_menu_link_collapsed')) {
                     <span><?= $text ?></span>
                     <?php if ($badge): ?>
                         <div class="mt-badge mt-badge-<?= esc_attr($badge['style'] ?? 'light') ?>">
-                            <?= esc_html($badge['text'] ?? '') ?></div>
+                            <?= esc_html($badge['text'] ?? '') ?>
+                        </div>
                     <?php endif; ?>
                 </div>
             </span>
@@ -195,66 +202,72 @@ $is_overlay = $args['is_overlay'] ?? false;
 <?php if ($is_overlay): ?>
     <!-- DRAWER -->
     <div class="mt-sidebar-overlay">
-        <div class="mt-sidebar-overlay__dialog">
-            <div class="mt-sidebar-overlay__content d-flex flex-column gap-32 overflow-hidden">
-                <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between">
-                    <a href="<?php echo esc_url(home_url()); ?>"
-                        class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
-                        <img class="mt-sidebar__logo-icon"
-                            src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
-                            alt="MegaTrader" width="60" height="60" loading="eager">
-                        <div class="mt-sidebar__logo-text">
-                            <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg"
-                                alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager" />
-                        </div>
-                    </a>
-                    <a id="mt-sidebar-overlay__close-btn" class="p-2" href="javascript:void(0);" title="Close Menu"
-                        onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
-                        <i class="mt-icon mt-icon-white mt-icon_close"></i>
-                    </a>
+        <div class="mt-sidebar-overlay__wrapper">
+             <a class="mt-sidebar-overlay__close-btn" href="javascript:void(0);" title="Close Menu"
+                            onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
+                            <i class="mt-icon mt-icon-white mt-icon_caret-left"></i>
+                        </a>
+            <div class="mt-sidebar-overlay__dialog">
+                <div class="mt-sidebar-overlay__content d-flex flex-column gap-32 overflow-hidden">
+                    <div class="mt-sidebar__logo d-flex gap-2 align-items-center justify-content-between d-none">
+                        <a href="<?php echo esc_url(home_url()); ?>"
+                            class="mt-sidebar__logo-link d-flex gap-3 align-items-center">
+                            <img class="mt-sidebar__logo-icon"
+                                src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-mobile-original.svg"
+                                alt="MegaTrader" width="60" height="60" loading="eager">
+                            <div class="mt-sidebar__logo-text">
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/megatrader-text-original.svg"
+                                    alt="MegaTrader" class="mt-sidebar__logo-wordmark" width="200" loading="eager" />
+                            </div>
+                        </a>
+                        <a id="mt-sidebar-overlay__close-btn" class="p-2" href="javascript:void(0);" title="Close Menu"
+                            onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
+                            <i class="mt-icon mt-icon-white mt-icon_close"></i>
+                        </a>
 
-                </div>
+                    </div>
 
-                <div class="mt-card mt-card-dark h-auto">
-                    <?php get_template_part('template-parts/my-profile'); ?>
-                </div>
+                    <div class="mt-card mt-card-dark h-auto">
+                        <?php get_template_part('template-parts/my-profile'); ?>
+                    </div>
 
-                <div class="mt-sidebar__menu flex-fill overflow-y-auto d-flex flex-column gap-32"">
+                    <div class="mt-sidebar__menu flex-fill overflow-y-auto d-flex flex-column gap-32"">
                     <div class=" mt-sidebar__menu__group">
-                    <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
-                    <div class="mt-sidebar__menu__group__options">
-                        <!-- Desktop -->
-                        <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
-                            <?php foreach ($menu_links as $item) {
-                                echo render_menu_link($item);
-                            }
-                            ?>
+                        <div class="mt-sidebar__menu__group__title mb-2">DASHBOARD</div>
+                        <div class="mt-sidebar__menu__group__options">
+                            <!-- Desktop -->
+                            <div class="mt-sidebar__menu__links d-flex flex-column gap-1 align-items-start">
+                                <?php foreach ($menu_links as $item) {
+                                    echo render_menu_link($item);
+                                }
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="mt-card mt-card_bg-layer mt-card_radius-small gap-3 h-auto">
-                <div class="text-white text-size-20 fw-medium text-uppercase">
-                    <?php echo esc_html(Label::SIDEBAR_META['plan_title']); ?>
+                <div class="mt-card mt-card_bg-layer mt-card_radius-small gap-3 h-auto">
+                    <div class="text-white text-size-20 fw-medium text-uppercase">
+                        <?php echo esc_html(Label::SIDEBAR_META['plan_title']); ?>
+                    </div>
+                    <div class="text-16px fw-medium text-a8a29e text-wrap">
+                        <?php echo esc_html(Label::SIDEBAR_META['plan_description']); ?>
+                    </div>
+                    <div class="btn-challenge">
+                        <a href="<?php echo esc_url(home_url('/subscriptions')); ?>"
+                            class="mega-btn-md mega-btn-default-md w-100">
+                            <?php echo esc_html(Label::SIDEBAR_META['plan_button']); ?>
+                            <i class="mt-icon mt-icon_caret-right"></i>
+                        </a>
+                    </div>
+                    <script>
+                        document.querySelector('.btn-challenge a').addEventListener('click', function () {
+                            localStorage.removeItem('content-crypto-storage');
+                            localStorage.removeItem('content-forex-storage');
+                            localStorage.removeItem('content-futures-storage');
+                        });
+                    </script>
                 </div>
-                <div class="text-16px fw-medium text-a8a29e text-wrap">
-                    <?php echo esc_html(Label::SIDEBAR_META['plan_description']); ?>
-                </div>
-                <div class="btn-challenge">
-                    <a href="<?php echo esc_url(home_url('/subscriptions')); ?>"
-                        class="mega-btn-md mega-btn-default-md w-100">
-                        <?php echo esc_html(Label::SIDEBAR_META['plan_button']); ?>
-                        <i class="mt-icon mt-icon_caret-right"></i>
-                    </a>
-                </div>
-                <script>
-                    document.querySelector('.btn-challenge a').addEventListener('click', function () {
-                        localStorage.removeItem('content-crypto-storage');
-                        localStorage.removeItem('content-forex-storage');
-                        localStorage.removeItem('content-futures-storage');
-                    });
-                </script>
             </div>
         </div>
     </div>
@@ -361,7 +374,7 @@ $is_overlay = $args['is_overlay'] ?? false;
 
         <span class="mt-tooltip" data-placement="right">
             <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
-                <i class="mt-icon mt-icon_dollar-solid"></i>
+                <i class="mt-icon mt-icon_plus"></i>
             </a>
             <span class="mt-tooltip__panel" role="tooltip">
                 <div class="mt-tooltip__body text-uppercase"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?></div>

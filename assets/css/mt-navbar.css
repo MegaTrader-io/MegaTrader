@@ -1,3 +1,6 @@
+/* =========================================================
+   Base and Global Resets
+   ========================================================= */
 html {
     margin: 0 !important;
 }
@@ -6,6 +9,14 @@ html {
     top: 0 !important;
     position: fixed;
 }
+
+body.admin-bar {
+    padding-top: var(--admin-bar-height, 32px);
+}
+
+/* =========================================================
+   Main Navbar Container (.mt-navbar)
+   ========================================================= */
 
 .mt-navbar {
     z-index: 1001;
@@ -16,16 +27,6 @@ html {
     margin-bottom: 0;
 }
 
-@media (min-width: 768px) {
-    .mt-navbar {
-        margin-bottom: 14px;
-    }
-}
-
-body.admin-bar {
-    padding-top: var(--admin-bar-height, 32px);
-}
-
 .admin-bar .mt-navbar {
     top: var(--admin-bar-height, 32px);
 }
@@ -34,8 +35,15 @@ body.admin-bar {
     width: 100%
 }
 
-.mt-navbar__promo {
+/* Scrolled state */
+.mt-navbar__links--scrolled {
+    background: rgba(18, 18, 18, 0.95) !important;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
+
+/* =========================================================
+   Navbar Links & Layout (.mt-navbar__links / .mt-navbar__container)
+   ========================================================= */
 
 .mt-navbar__links {
     z-index: 50;
@@ -43,17 +51,6 @@ body.admin-bar {
     height: 90px;
     box-shadow: none;
     border-bottom: 2px solid #FFB34A;
-}
-
-@media (max-width: 1024px) {
-    .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
-        background: rgba(18, 18, 18, 0.95);
-    }
-}
-
-.mt-navbar__links--scrolled {
-    background: rgba(18, 18, 18, 0.95) !important;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .mt-navbar__container {
@@ -68,30 +65,9 @@ body.admin-bar {
     padding-right: 20px;
 }
 
-@media (min-width: 1024px) {
-    .mt-navbar__container {
-        height: 100px
-    }
-
-    .mt-navbar__links {
-        padding-top: 0;
-        padding-bottom: 0;
-        border-bottom: transparent;
-        height: 100px;
-    }
-
-    .mt-navbar__links--scrolled {
-        border-bottom: 1px rgba(0, 0, 0, 0.95) solid;
-    }
-
-}
-
-@media (min-width: 1536px) {
-    .mt-navbar__container {
-        padding-left: 0px;
-        padding-right: 0px
-    }
-}
+/* =========================================================
+   Logo (.mt-navbar__logo)
+   ========================================================= */
 
 .mt-navbar__logo {
     width: auto
@@ -108,35 +84,9 @@ body.admin-bar {
     width: 30px
 }
 
-.mt-navbar__actions .mt-my-profile {
-    gap: 7px;
-}
-
 .mt-navbar__logo-icon-bs {
     height: 40px;
     width: 40px
-}
-
-.mt-navbar__logo-text {
-
-}
-
-.mt-navbar__logo-text-bs {
-    display: none;
-}
-
-@media (min-width: 1280px) {
-    .mt-navbar__logo-link {
-        gap: 16px
-    }
-
-    .mt-navbar__logo-text {
-        display: block
-    }
-
-    .mt-navbar__logo-text-bs {
-        display: block;
-    }
 }
 
 .mt-navbar__logo-wordmark {
@@ -149,21 +99,9 @@ body.admin-bar {
     width: 167px
 }
 
-@media (min-width: 1024px) {
-    .mt-navbar__actions .mt-my-profile {
-        gap: 16px;
-    }
-
-    .mt-navbar__logo-icon {
-        height: 60px;
-        width: 60px
-    }
-
-    .mt-navbar__logo-wordmark {
-        height: 45px;
-        width: 250px
-    }
-}
+/* =========================================================
+   Navigation Menu (.mt-navbar__nav)
+   ========================================================= */
 
 .mt-navbar__nav {
     display: none;
@@ -171,18 +109,6 @@ body.admin-bar {
     align-items: center;
     justify-content: flex-start;
     gap: 8px;
-}
-
-@media (min-width: 1024px) {
-    .mt-navbar__nav {
-        display: flex
-    }
-}
-
-@media (min-width: 1280px) {
-    .mt-navbar__nav {
-        gap: 0.5rem
-    }
 }
 
 .mt-navbar__nav-link {
@@ -210,7 +136,17 @@ body.admin-bar {
     background-color: var(--mgt-dark);
 }
 
-.mt-navbar__user {
+/* =========================================================
+   Actions / User / Auth
+   ========================================================= */
+
+.mt-navbar__actions {
+    display: flex;
+    gap: 7px;
+}
+
+.mt-navbar__actions .mt-my-profile {
+    gap: 7px;
 }
 
 .mt-navbar__account {
@@ -245,39 +181,33 @@ body.admin-bar {
     gap: 0.875rem
 }
 
-.mt-navbar:not(.mt-navbar--landing-page-bs) .mt-navbar__auth .mt-navbar__auth-link {
-    padding: 10.39px 13.85px;
-    background: #131210;
-    border-radius: 10.39px;
-    justify-content: center;
-    align-items: center;
-    gap: 6.93px;
-    min-height: auto;
-    display: inline-flex;
-    border: 1px solid var(--colors-gray-700);
+/* =========================================================
+   Mobile Menu Container (.mt-menu-container)
+   ========================================================= */
+
+.mt-menu-container {
+    position: relative;
 }
 
-.mt-navbar__auth-link .mt-navbar__auth-link-text {
-    color: #fafafa;
-    font-size: 13.85px;
-    font-weight: 500;
-    text-transform: uppercase;
-    line-height: 21px;
-    word-wrap: break-word
+.mt-menu-container__menu {
+    position: absolute;
+    background-color: white;
+    bottom: 0;
 }
 
-.mt-menu-container__btn-burger {
-    display: block;
-    padding: 10.39px;
-    border-radius: 10.39px;
-    min-height: 40px;
+.mt-menu-container .dropdown-menu .dropdown-item:focus-visible {
+    outline: none;
 }
 
-.mt-menu-container__btn-burger::after {
-    content: none;
+.mt-menu-container .dropdown-menu .dropdown-item:active {
+    background-color: inherit;
+    color: black;
 }
 
-/* My Account Variant */
+/* =========================================================
+   Variant: My Account (.mt-navbar--my-account)
+   ========================================================= */
+
 .mt-navbar.mt-navbar--my-account {
     margin-bottom: 0;
 }
@@ -286,6 +216,147 @@ body.admin-bar {
     display: flex;
 }
 
+.mt-navbar.mt-navbar--my-account .mt-navbar__nav {
+    display: none;
+}
+
+/* =========================================================
+   Variant: Landing Page BS (.mt-navbar--landing-page-bs)
+   ========================================================= */
+
+.mt-navbar--landing-page-bs .mt-navbar__container {
+    gap: 32px;
+}
+
+/* =========================================================
+   Media Queries (Responsive Adjustments)
+   ========================================================= */
+
+/* Tablet and larger (min-width: 768px) */
+@media (min-width: 768px) {
+    .mt-navbar {
+        margin-bottom: 14px;
+    }
+}
+
+/* Desktop small (min-width: 1024px) */
+@media (min-width: 1024px) {
+    .mt-navbar__container {
+        height: 100px
+    }
+
+    .mt-navbar__links {
+        padding-top: 0;
+        padding-bottom: 0;
+        border-bottom: transparent;
+        height: 100px;
+    }
+
+    .mt-navbar__links--scrolled {
+        border-bottom: 1px rgba(0, 0, 0, 0.95) solid;
+    }
+
+    .mt-navbar--landing-page-bs .mt-navbar__links--scrolled {
+        z-index: 50;
+        display: flex;
+        box-shadow: none;
+        background: #131210;
+    }
+
+    .mt-navbar__nav {
+        display: flex
+    }
+
+    .mt-navbar__actions .mt-my-profile {
+        gap: 16px;
+    }
+
+    .mt-navbar__logo-icon {
+        height: 60px;
+        width: 60px
+    }
+
+    .mt-navbar__logo-wordmark {
+        height: 45px;
+        width: 250px
+    }
+
+    .mt-menu-container {
+        display: none;
+    }
+}
+
+/* Desktop medium (min-width: 1280px) */
+@media (min-width: 1280px) {
+    .mt-navbar__logo-link {
+        gap: 16px
+    }
+
+    .mt-navbar__logo-text {
+        display: block
+    }
+
+    .mt-navbar__logo-text-bs {
+        display: block;
+    }
+
+    .mt-navbar__nav {
+        gap: 0.5rem
+    }
+}
+
+/* Desktop large (min-width: 1536px) */
+@media (min-width: 1536px) {
+    .mt-navbar__container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+/* Mobile/Tablet (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
+        background: rgba(18, 18, 18, 0.95);
+    }
+
+    .mt-navbar__actions .mt-navbar__get-funded {
+        display: none;
+    }
+
+    .mt-navbar .mt-navbar__auth .mt-navbar__auth-link {
+        padding: 10.39px 13.85px;
+        background: #131210;
+        border-radius: 10.39px;
+        justify-content: center;
+        align-items: center;
+        gap: 6.93px;
+        min-height: auto;
+        display: inline-flex;
+        border: 1px solid var(--colors-gray-700);
+    }
+
+    .mt-navbar__auth-link .mt-navbar__auth-link-text {
+        color: #fafafa;
+        font-size: 13.85px;
+        font-weight: 500;
+        text-transform: uppercase;
+        line-height: 21px;
+        word-wrap: break-word
+    }
+
+    .mt-menu-container__btn-burger.mega-btn-secondary-md {
+        display: block;
+        padding: 10.39px;
+        border-radius: 10.39px;
+        min-height: 40px;
+    }
+
+    .mt-menu-container__btn-burger.mega-btn-secondary-md::after {
+        content: none;
+    }
+}
+
+/* Tablet / Smaller Desktop for My Account Variant (max-width: 1199.98px) */
 @media (max-width: 1199.98px) {
     .mt-navbar.mt-navbar--my-account .mt-navbar__auth-link {
         display: block !important;
@@ -302,69 +373,15 @@ body.admin-bar {
     }
 }
 
+/* Desktop for My Account Variant (min-width: 1200px) */
 @media (min-width: 1200px) {
     .mt-navbar.mt-navbar--my-account .mt-navbar__links {
         display: none;
     }
 }
 
-.mt-navbar.mt-navbar--my-account .mt-navbar__nav {
-    display: none;
-}
-
-.mt-navbar__actions {
-    display: flex;
-    gap: 7px;
-}
-
-.mt-menu-container {
-    position: relative;
-}
-
-.mt-menu-container__menu {
-    position: absolute;
-    background-color: white;
-    bottom: 0;
-}
-
-@media (min-width: 1024px) {
-    .mt-menu-container {
-        display: none;
+@media (max-width: 1023px) {
+    .mt-navbar__actions .mt-menu-container .dropdown-menu .dropdown-item:is(:focus,:hover) {
+        background-color: #efefef !important;
     }
 }
-
-.mt-menu-container .dropdown-menu .dropdown-item:focus-visible {
-    outline: none;
-}
-
-.mt-menu-container .dropdown-menu .dropdown-item:active {
-    background-color: inherit;
-    color: black;
-}
-
-.mt-navbar--landing-page-bs .mt-navbar__container {
-    gap: 32px;
-}
-
-/** LANDING PAGE BS **/
-
-.mt-navbar--landing-page-bs .mt-navbar__links {
-    z-index: 50;
-    display: flex;
-    box-shadow: none;
-    background: #131210;
-    border-bottom: 2px solid #FFB34A;
-}
-
-@media (max-width: 1024px) {
-    .mt-navbar__links:not(&.mt-navbar__links--scrolled) {
-        background: rgba(18, 18, 18, 0.95);
-    }
-}
-
-.mt-navbar__links--scrolled {
-    background: rgba(18, 18, 18, 0.95) !important;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-}
-
-/** LANDING PAGE BS **/

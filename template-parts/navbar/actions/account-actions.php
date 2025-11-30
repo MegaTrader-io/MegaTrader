@@ -12,7 +12,7 @@
         <div class="mt-icon mt-icon-white mt-icon_menu"></div>
     </button>
 -->
-    <a id="mt-sidebar-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
+    <a id="mt-menu-toggle" class="p-2" href="javascript:void(0);" onclick="this.dispatchEvent(new CustomEvent('MT_MENU_TOGGLE', { bubbles:true }));">
         <i class="mt-icon mt-icon-white mt-icon_menu"></i>
     </a>
 </div>

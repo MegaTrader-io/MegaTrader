@@ -66,15 +66,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function initializeSwiper() {
-
         try {
+            const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
+            const heroGlideInstance = new Glide(heroBsCarouselRoot, {
+                type: 'carousel',
+                focusAt: 'center',
+                gap: 16,
+                perView: 1,
+                autoplay: 3000,
+            });
+
+            heroGlideInstance.mount();
+
             const carouselSelector = '#verified-bs-carousel';
             const carouselEl = document.querySelector(carouselSelector);
             if (!carouselEl) throw new Error('Carousel element not found.');
 
             function calculatePerPage() {
                 const width = carouselEl.clientWidth;
-                const slideWidth = 378;
+                const slideWidth = window.innerWidth <= 767 ? 276 : 378;
                 return Math.max(1, Math.floor(width / slideWidth));
             }
 
@@ -108,14 +118,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const verifiedBsCarouselRoot = document.getElementById('verified-bs-id');
 
-        const slider = new Glide(verifiedBsCarouselRoot, {
+        const verifiedBsCarousel = new Glide(verifiedBsCarouselRoot, {
             type: 'carousel',
             focusAt: 'center',
             gap: 16,
             perView: 1,
+            autoplay: 3000,
         });
 
-        slider.mount({
+        verifiedBsCarousel.mount({
             Sizes: function CustomSizes(Glide, Components, Events) {
 
                 const Sizes = {
@@ -170,32 +181,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
-                // ----------------------------
-                // ⭐⭐ AQUÍ VA TU CÁLCULO ⭐⭐
-                // ----------------------------
                 Object.defineProperty(Sizes, 'slideWidth', {
                     get() {
-                        let w;
+                        let width = window.innerWidth <= 768 ? window.innerWidth - 32 : 800;
 
-                        if (window.innerWidth <= 768) {
-                            if (window.innerWidth < 450) {
-                                w = window.innerWidth - 32;
-                            } else {
-                                w = 450;
-                            }
-                        } else {
-                            w = 800;
-                        }
-
-                        // Actualiza la variable CSS global
-                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', w + 'px');
+                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', width + 'px');
 
                         const points = document.querySelector('.verified-bs__glide .slider__bullets');
 
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-left', (points?.getBoundingClientRect().x || 0) + 'px');
 
-                        console.info('getBoundingClientRect().x', points.getBoundingClientRect().x);
-                        return w;
+                        return width;
                     }
                 });
 

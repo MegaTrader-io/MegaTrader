@@ -132,10 +132,11 @@ function mt_account_settings_module()
     'veriffKey' => VERIFF_API_KEY,
     'nonce' => wp_create_nonce('mt_veriff_nonce'),
     'isLoggedIn' => is_user_logged_in(),
+    'nonceWpRest' => wp_create_nonce('wp_rest')
   ];
 
-  wp_localize_script('account-settings-module', 'wpAjax', $localize_data);
-  wp_localize_script('veriff-validation-module', 'wpAjax', $localize_data);
+  wp_localize_script('account-settings-module', 'MT_AP', $localize_data);
+  wp_localize_script('veriff-validation-module', 'MT_AP', $localize_data);
 }
 
 add_action('wp_enqueue_scripts', function () {
@@ -177,6 +178,7 @@ if (!function_exists('mt_is_user_verified')) {
 // ✅ Endpoint AJAX seguro
 add_action('wp_ajax_mt_update_password', 'mt_update_password_callback');
 add_action('wp_ajax_mt_update_personal_information', 'mt_update_personal_information_callback');
+add_action('wp_ajax_mt_update_billing_information', 'mt_update_billing_information_callback');
 
 function mt_update_password_callback()
 {
@@ -283,6 +285,58 @@ function mt_update_personal_information_callback()
     ], 403);
   }
 
+  if (!isset($_POST['mt_personal_nonce']) || !wp_verify_nonce($_POST['mt_personal_nonce'], 'mt_save_personal_address')) {
+    wp_send_json_error([
+      'errors' => [
+        'global' => __('Security check failed. Please try again.', 'megatrader')
+      ]
+    ], 403);
+    return;
+  }
+
+  $errors = [];
+
+  $required = ['api_billing_address_1', 'api_billing_city', 'api_billing_state', 'api_billing_postcode', 'api_billing_phone', 'api_billing_country'];
+  foreach ($required as $field) {
+    if (empty($_POST[$field])) {
+      $errors[$field] = __('This field is required', 'megatrader');
+    }
+  }
+
+  if (count($errors) > 0) {
+    wp_send_json_error(['errors' => $errors], 422);
+  }
+
+  $payload = [
+    "country" => sanitize_text_field($_POST['api_billing_country']),
+    "state" => sanitize_text_field($_POST['api_billing_state']),
+    "city" => sanitize_text_field($_POST['api_billing_city']),
+    "address" => sanitize_text_field($_POST['api_billing_address_1']),
+    "zipcode" => sanitize_text_field($_POST['api_billing_postcode']),
+    "phone" => sanitize_text_field($_POST['billing_phone_full'])
+  ];
+
+  $email = get_the_author_meta('user_email', get_current_user_id());
+  $data = MT_Api::fetch_user_by_email(email: $email);
+  if ($data) {
+    MT_Api::update_user_by_email(array_merge(["email" => $email], $payload));
+  }
+
+  wp_send_json_success([
+    'message' => __('Great! Your personal information have been updated successfully', 'megatrader'),
+  ]);
+}
+
+function mt_update_billing_information_callback()
+{
+  if (!is_user_logged_in()) {
+    wp_send_json_error([
+      'errors' => [
+        'global' => __('You must be logged in to change your billing information.', 'megatrader')
+      ]
+    ], 403);
+  }
+
   if (!isset($_POST['mt_billing_nonce']) || !wp_verify_nonce($_POST['mt_billing_nonce'], 'mt_save_billing_address')) {
     wp_send_json_error([
       'errors' => [
@@ -295,7 +349,7 @@ function mt_update_personal_information_callback()
   $user_id = get_current_user_id();
   $errors = [];
 
-  $required = ['billing_address_1', 'billing_city', 'billing_state', 'billing_postcode', 'billing_phone', 'billing_country'];
+  $required = ['billing_first_name', 'billing_last_name', 'billing_address_1', 'wp_billing_phone', 'billing_city', 'billing_state', 'billing_postcode', 'billing_country'];
   foreach ($required as $field) {
     if (empty($_POST[$field])) {
       $errors[$field] = __('This field is required', 'megatrader');
@@ -309,38 +363,92 @@ function mt_update_personal_information_callback()
   $customer = new WC_Customer($user_id);
 
   $payload = [
-    "country" => sanitize_text_field($_POST['billing_country']),
-    "state" => sanitize_text_field($_POST['billing_state']),
-    "city" => sanitize_text_field($_POST['billing_city']),
-    "address" => sanitize_text_field($_POST['billing_address_1']),
-    "zipcode" => sanitize_text_field($_POST['billing_postcode']),
-    "phone" => sanitize_text_field($_POST['billing_phone_full'])
+    "billing_first_name" => sanitize_text_field($_POST['billing_first_name']),
+    "billing_last_name" => sanitize_text_field($_POST['billing_last_name']),
+    "billing_email" => sanitize_text_field($_POST['billing_email']),
+    "billing_phone" => sanitize_text_field($_POST['billing_phone_full']),
+    "billing_country" => sanitize_text_field($_POST['billing_country']),
+    "billing_state" => sanitize_text_field($_POST['billing_state']),
+    "billing_city" => sanitize_text_field($_POST['billing_city']),
+    "billing_address_1" => sanitize_text_field($_POST['billing_address_1']),
+    "billing_address_2" => sanitize_text_field($_POST['billing_address_2']),
+    "billing_postcode" => sanitize_text_field($_POST['billing_postcode']),
   ];
 
   foreach ($payload as $key => $value) {
     if (empty($value)) continue;
-    $field = $key === 'address' ? 'address_1' : $key;
-    $field = $key === 'zipcode' ? 'postcode' : $field;
 
-    $setter = "set_billing_{$field}";
+    $setter = "set_{$key}";
     if (method_exists($customer, $setter)) {
       $customer->{$setter}($value);
     } else {
-      echo 'error ' . $setter;
+      wp_send_json_error(['errors' => [$errors[$key] => 'unexpected field']], 422);
     }
   }
 
   $customer->save();
 
-  $email = get_the_author_meta('user_email', get_current_user_id());
-  $data = MT_Api::fetch_user_by_email(email: $email);
-  if ($data) {
-    MT_Api::update_user_by_email(array_merge(["email" => $email], $payload));
-  }
-
   wp_send_json_success([
-    'message' => __('Great! Your personal information have been updated successfully', 'megatrader'),
+    'message' => __('Great! Your billing information have been updated successfully', 'megatrader'),
   ]);
 }
+
+add_action('rest_api_init', function () {
+  register_rest_route('custom/v1', '/account-profile-data', [
+    'methods' => 'GET',
+    'callback' => 'mt_get_account_profile_data',
+    'permission_callback' => '__return_true'
+  ]);
+});
+
+
+function mt_get_account_profile_data(WP_REST_Request $request)
+{
+  if (!is_user_logged_in()) {
+    return new WP_Error(
+      'rest_forbidden',
+      __('Access denied. You must be logged in to access this endpoint.', 'text-domain'),
+      ['status' => 401]
+    );
+  }
+
+  try {
+    $current_user = wp_get_current_user();
+
+    if (!$current_user || $current_user->ID === 0) {
+      return new WP_Error('user_not_found', __('User not found.', 'text-domain'), ['status' => 404]);
+    }
+
+    $user = MT_Api::fetch_user_by_email(email: $current_user->user_email, forceToGetData: true);
+    $is_verified = mt_is_user_verified($current_user->ID);
+
+    $country = 'US';
+
+    $personal_information = $user ? [
+      'firstname' => $user['firstname'],
+      'lastname' => $user['lastname'],
+      'fullname' => $user['firstname'] . ' ' . $user['lastname'],
+      'email' => $user['email'],
+      'address' => $user['address'],
+      'city' => $user['city'],
+      'phone' => $user['phone'],
+      'state' => $user['state'],
+      'zipcode' => $user['zipcode'],
+      'createdAt' => $user['createdAt'],
+      'country' => $user['country'] ?? $country,
+    ] : null;
+
+    $valid_states = WC()->countries->get_states($personal_information && $personal_information['country'] ? $personal_information['country'] : $country);
+
+    return rest_ensure_response([
+      'personal_information' => $personal_information,
+      'is_verified' => $is_verified,
+      'valid_states' => $valid_states
+    ]);
+  } catch (Exception $e) {
+    return new WP_Error('server_error', __('Internal server error: ', 'text-domain') . $e->getMessage(), ['status' => 500]);
+  }
+}
+
 
 require_once 'veriff-module.php';

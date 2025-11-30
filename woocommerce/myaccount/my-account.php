@@ -18,14 +18,15 @@ defined('ABSPATH') || exit;
         <div class="mt-page__main">
             <div class="mt-page__main-header mb-3">
                 <div class="mt-page__title text-white text-size-20 fw-medium text-uppercase">
-                    <?php echo Label::META_ACCOUNT_OVERVIEW['page_title_overview']; ?>
+                    <?= Label::META_SUBSCRIPTIONS_BILLING['page_title']; ?>
                 </div>
                 <span class="mt-page__subtitle text-a8a29e text-14px-line-20px fw-medium">
-                    <?php echo Label::META_ACCOUNT_OVERVIEW['page_subtitle_overview']; ?>
+                    <?= Label::META_SUBSCRIPTIONS_BILLING['page_subtitle']; ?>
                 </span>
             </div>
+
             <div class="mb-3">
-                <?php account_navigation_render(); ?>
+                <?php subscriptions_billing_navigation_render(); ?>
             </div>
 
             <div class="woocommerce-MyAccount-content">

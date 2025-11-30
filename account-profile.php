@@ -6,11 +6,6 @@
 defined('ABSPATH') || exit;
 
 get_header();
-
-$is_verified = mt_is_user_verified();
-
-set_query_var('mt_is_verified', $is_verified);
-
 ?>
 
 <div class="container">
@@ -28,11 +23,12 @@ set_query_var('mt_is_verified', $is_verified);
                 </div>
 
                 <div class="account-settings__sections-wrapper" id="accordionExample">
-                    <form method="post" class="mt-card account-settings__section toggle-panel"
+                    <form method="post" class="mt-skeleton-pulse mt-card account-settings__section toggle-panel"
                           id="personal-information-form">
                         <h2 class="toggle-panel__title-wrapper">
                             <button type="button" class="toggle-panel__header" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    name="account-settings__personal-information-button"
+                                    data-bs-target="#collapseOnePersonalInformation" aria-expanded="true" aria-controls="collapseOnePersonalInformation">
                                 <div class="toggle-panel__icon">
                                     <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -51,17 +47,54 @@ set_query_var('mt_is_verified', $is_verified);
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapseOne" class="toggle-panel__content mt-2 collapse show"
+                        <div id="collapseOnePersonalInformation" class="toggle-panel__content mt-2 collapse"
                              data-bs-parent="#accordionExample">
                             <div class="toggle-panel__body">
                                 <?php get_template_part("template-parts/account/account-settings-personal-information"); ?>
                             </div>
                         </div>
                     </form>
-
-                    <div class="mt-card account-settings__section toggle-panel">
+                    <form method="post" novalidate="novalidate" class="mt-skeleton-pulse mt-card account-settings__section toggle-panel"
+                          id="billing-information-form">
                         <h2 class="toggle-panel__title-wrapper">
-                            <button <?= is_null($is_verified) ? 'disabled' : '' ?>
+                            <button type="button" class="toggle-panel__header" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseBillingInformationOne" aria-expanded="true"
+                                    aria-controls="collapseBillingInformationOne">
+                                <div class="toggle-panel__icon">
+                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_17802_7773" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                              x="0" y="0" width="30" height="30">
+                                            <rect width="30" height="30" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_17802_7773)">
+                                            <path d="M7.5 25C6.125 25 4.94792 24.5104 3.96875 23.5312C2.98958 22.5521 2.5 21.375 2.5 20V10C2.5 8.625 2.98958 7.44792 3.96875 6.46875C4.94792 5.48958 6.125 5 7.5 5H22.5C23.875 5 25.0521 5.48958 26.0312 6.46875C27.0104 7.44792 27.5 8.625 27.5 10V20C27.5 21.375 27.0104 22.5521 26.0312 23.5312C25.0521 24.5104 23.875 25 22.5 25H7.5ZM7.5 10H22.5C22.9583 10 23.3958 10.0521 23.8125 10.1562C24.2292 10.2604 24.625 10.4271 25 10.6562V10C25 9.3125 24.7552 8.72396 24.2656 8.23438C23.776 7.74479 23.1875 7.5 22.5 7.5H7.5C6.8125 7.5 6.22396 7.74479 5.73438 8.23438C5.24479 8.72396 5 9.3125 5 10V10.6562C5.375 10.4271 5.77083 10.2604 6.1875 10.1562C6.60417 10.0521 7.04167 10 7.5 10ZM5.1875 14.0625L19.0938 17.4375C19.2812 17.4792 19.4688 17.4792 19.6562 17.4375C19.8438 17.3958 20.0208 17.3125 20.1875 17.1875L24.5312 13.5625C24.3021 13.25 24.0104 12.9948 23.6563 12.7969C23.3021 12.599 22.9167 12.5 22.5 12.5H7.5C6.95833 12.5 6.48438 12.6406 6.07812 12.9219C5.67188 13.2031 5.375 13.5833 5.1875 14.0625Z"
+                                                  fill="white"/>
+                                        </g>
+                                    </svg>
+                                </div>
+                                <div class="toggle-panel__details">
+                                    <div class="toggle-panel__title">Billing information</div>
+                                    <div class="toggle-panel__description">Update your payment methods, invoices, and
+                                        billing address details
+                                    </div>
+                                </div>
+                                <div class="toggle-panel__arrow">
+                                    <i class="mt-icon mt-icon-white mt-icon_caret-up-solid"></i>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="collapseBillingInformationOne" class="toggle-panel__content collapse"
+                             data-bs-parent="#accordionExample">
+                            <div class="toggle-panel__body">
+                                <?php get_template_part("template-parts/account/account-settings-billing-information"); ?>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="mt-skeleton-pulse mt-card account-settings__section toggle-panel">
+                        <h2 class="toggle-panel__title-wrapper">
+                            <button disabled
+                                    name="account-settings__verification-button"
                                     class="toggle-panel__header toggle-panel__header--collapsed" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
                                     aria-controls="collapseTwo">
@@ -81,7 +114,7 @@ set_query_var('mt_is_verified', $is_verified);
                                 <div class="toggle-panel__details">
                                     <div class="toggle-panel__title">
                                         <div class="d-flex gap-3 align-items-center">
-                                            <span class="toggle-panel__text">Verification</span>
+                                            <div class="toggle-panel__title">Verification</div>
                                             <?php get_template_part('template-parts/verified'); ?>
                                         </div>
                                     </div>
@@ -101,7 +134,7 @@ set_query_var('mt_is_verified', $is_verified);
                             </div>
                         </div>
                     </div>
-                    <form class="mt-card account-settings__section toggle-panel"
+                    <form class="mt-skeleton-pulse mt-card account-settings__section toggle-panel"
                           id="change-password-form"
                           method="post">
                         <h2 class="toggle-panel__title-wrapper">
@@ -139,7 +172,7 @@ set_query_var('mt_is_verified', $is_verified);
                             </div>
                         </div>
                     </form>
-                    <div class="mt-card account-settings__section toggle-panel">
+                    <div class="mt-skeleton-pulse mt-card account-settings__section toggle-panel">
                         <h2 class="toggle-panel__title-wrapper">
                             <button class="toggle-panel__header toggle-panel__header--collapsed" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false"
@@ -180,42 +213,6 @@ set_query_var('mt_is_verified', $is_verified);
         </div>
     </div>
 </div>
-
-<script>
-    function clearErrorBeforeSendRequest(form) {
-        const globalMessage = document.querySelector('[data-form-ref="' + form.id + '"]');
-        if (globalMessage) {
-            globalMessage.remove();
-        }
-
-        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
-        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-    }
-
-    function displayGlobalMessage(form, message, type = 'success') {
-        type = ['success', 'error'].includes(type) ? type : 'success';
-
-        const messageContainer = window.MTHelpers.showMessage({
-            message,
-            type
-        });
-
-        messageContainer.setAttribute('tabindex', '-1');
-        messageContainer.dataset.formRef = form.id;
-
-        const card = form.closest('.account-settings__section');
-        console.info(card.parentNode);
-        card.parentNode.insertBefore(messageContainer, card);
-
-        setTimeout(() => {
-            messageContainer.classList.add('woocommerce-message', type === 'error' ? 'woocommerce-error' : null);
-
-            setTimeout(() => {
-                messageContainer.remove();
-            }, 2000)
-        }, 0);
-    }
-</script>
 
 <?php get_footer(); ?>
 <?php

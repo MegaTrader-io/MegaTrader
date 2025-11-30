@@ -234,7 +234,7 @@ class Label
         "performance_rules_link_text" => "Maximum Loss Limit",
         "performance_consistency_link_text" => "See Consistency Rule",
         "performance_consistency_progress_text" => "Current Consistency",
-        "performance_consistency_progress_text_description" => "Best Day ÷ Total PnL = Consistency %",
+        "performance_consistency_progress_text_description" => "(Best Day PnL ÷ Total PnL) x 100 = Consistency %",
         "performance_dll_tooltip_title" => "Daily Loss Limit (DLL)",
         "performance_dll_tooltip_description" => "Reaching the DLL pauses trading for the day. It’s removed once a profit milestone is met.",
         "performance_dpl_tooltip_title" => "Daily P&L (DPL)",
@@ -257,7 +257,9 @@ class Label
         "agreement_modal_body_title" => "OOPS!",
         "agreement_modal_body_description" => "Please sign data agreement!",
         "agreement_modal_body_subtitle" => "Before you can start trading you need to sign the data agreement.",
-        "agreement_modal_button" => "Review & Sign",
+        "agreement_modal_button" => "Sign agreement",
+        "agreement_overlay_button" => "Sign agreement",
+        "agreement_overlay_description" => "Before you can access the trading platform, please review and sign the required data agreement to proceed.",
         "breach_modal_title" => "Breach alert!",
         "breach_modal_body_title" => "OOPS!",
         "breach_modal_body_description_evaluation" => "Your evaluation account has failed!",
@@ -492,6 +494,7 @@ class Label
         'congratsTitle' => 'Congrats!',
         'congratsMessage' => 'Your request has been successfully submitted.',
         'congratsSubtitle' => 'You’ll be notified once your request is approved.',
+        'paymentMethodTitle' => "Payment Methods"
     ];
 
     public const META_ACCOUNT_OVERVIEW_TOOLTIP = [
@@ -506,9 +509,9 @@ class Label
         "currentDayStreakTitle" => "Current Day Streak",
         "currentDayStreakTitleTooltip" => "Current Day Streak – Days",
         "currentDayStreakBody" => "Number of consecutive trading days ending positive or negative.",
-        "currentDayTradesTitle" => "Current Day Trades",
+        "currentDayTradesTitle" => "Current Trade Streak",
         "currentDayTradesTitleTooltip" => "Current Day Streak – Trades",
-        "currentDayTradesBody" => "Number of consecutive trades closed in profit or loss today.",
+        "currentDayTradesBody" => "Counts how many consecutive trades you’ve closed in profit or loss overall.",
         "tradeCalendar" => "Trade Calendar",
         "tradeCalendarBody" => "Shows your daily trading activity, including number of trades and P&L for each day.",
         "tradesTable" => "Trades",
@@ -517,4 +520,20 @@ class Label
     ];
 
 
+    public const META_SUBSCRIPTIONS_BILLING = [
+        "page_title" => "Subscriptions & Billing",
+        "page_subtitle" => "Manage your plans, renewal settings, billing history, and payment preferences.",
+        "tab_subscriptions_label" => 'Manage Subscription',
+        "tab_billing_label" => 'Payment Methods',
+        "btn_order_again_label" => 'Order Again',
+
+
+        "billing_label_by_status" => [
+            '_default'        => 'Next Payment date:',
+			'on-hold'         => 'Payment due:',
+			'pending-cancel'  => 'Cancellation date:',
+			'expired'         => 'Expired date:',
+			'cancelled'       => 'Cancellation date:',
+		],
+    ];
 }

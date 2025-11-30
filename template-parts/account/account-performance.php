@@ -74,7 +74,6 @@ $resetMark = $performance['consistencyResetBalanceMark'];
 $profitPct = $performance['currentProfitPercent'];
 $daysTraded = (int) $performance['activeTradingDays'];
 $daysSinceLastPayout = (int) $performance['activeTradingDaysSinceLastPayout'];
-$dailyPnL = $performance['dailyTotalPnL'];
 $minDays = (int) $performance['minTradingDays'];
 $maxLossEq = $performance['maxLossLimitEquityLevel'];
 $maxDailyLoss = $performance['maxDailyLossLimitPnLLevel'];
@@ -90,6 +89,7 @@ $consistencyCurrentTop = $performance['consistencyCurrentTopDayProfit'] ?? null;
 $consistency = $performance['consistency'] ?? null;
 $currentCycle = $performance['currentCycle'] ?? null;
 $consistencyUrl = Label::PLAN_RULES_URLS['Consistency'] ?? '';
+$dailyPnL = $performance['dailyTotalPnL'];
 
 
 /* ========= Derivados (para barras / chips) ========= */
@@ -189,7 +189,7 @@ $profitText = mt_format_signed_money($profit);
 
 $profitIconClass = mt_value_compare_icon_classes($profit, $profitTarget);
 
-$daysIconClass = mt_value_compare_icon_classes($daysTraded, $minDays);
+$daysIconClass = mt_value_compare_icon_classes($daysShown, $minDays);
 $daysColorClass = ($daysTraded > 0) ? 'text-success' : 'text-white';
 
 $maxDailyLossFormat = is_numeric($maxDailyLoss ?? null) ? abs((float) $maxDailyLoss) : 0;

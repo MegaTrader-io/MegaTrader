@@ -32,7 +32,7 @@ function mt_enqueue_auth_script_on_login_form(): void
     wp_localize_script('mt-auth', 'MG_GLOBAL', [
       'loginAjaxApi' => esc_url(rest_url('login-process/callback')),
       'registerAjaxApi' => esc_url(rest_url('register-process/callback')),
-      'authNonce' => wp_create_nonce('wp_rest'),
+      'nonce' => wp_create_nonce('wp_rest'),
     ]);
 
     wp_enqueue_style(
@@ -150,13 +150,13 @@ function mt_process_callback_login(WP_REST_Request $request): WP_REST_Response
   $username = trim((string)$request->get_param('username'));
   $password = (string)$request->get_param('password');
   $remember = (bool)$request->get_param('rememberme');
-  $nonce    = $request->get_header('x-wp-nonce');
+  $nonce = $request->get_header('x-wp-nonce');
   $raw_redirect = (string)$request->get_param('redirect_to');
 
   if (!wp_verify_nonce($nonce, 'wp_rest')) {
     return new WP_REST_Response([
       'success' => false,
-      'errors'  => ['general' => 'Security check failed. Please refresh the page and try again.'],
+      'errors' => ['general' => 'Security check failed. Please refresh the page and try again.'],
     ], 403);
   }
 
@@ -177,24 +177,24 @@ function mt_process_callback_login(WP_REST_Request $request): WP_REST_Response
   if (!empty($errors)) {
     return new WP_REST_Response([
       'success' => false,
-      'errors'  => $errors,
-      'values'  => ['username' => $username],
+      'errors' => $errors,
+      'values' => ['username' => $username],
     ], 400);
   }
 
   // --- Try authentication ---
   $user = wp_signon([
-    'user_login'    => $username,
+    'user_login' => $username,
     'user_password' => $password,
-    'remember'      => $remember,
+    'remember' => $remember,
   ], is_ssl());
 
   if (is_wp_error($user)) {
     foreach ($user->get_error_codes() as $code) {
       $field = match ($code) {
         'empty_username', 'invalid_username', 'invalid_email' => 'username',
-        'empty_password', 'incorrect_password'                => 'password',
-        default                                               => 'general',
+        'empty_password', 'incorrect_password' => 'password',
+        default => 'general',
       };
       foreach ($user->get_error_messages($code) as $msg) {
         if ($code === 'incorrect_password') {
@@ -208,10 +208,12 @@ function mt_process_callback_login(WP_REST_Request $request): WP_REST_Response
 
     return new WP_REST_Response([
       'success' => false,
-      'errors'  => $errors,
-      'values'  => ['username' => $username],
+      'errors' => $errors,
+      'values' => ['username' => $username],
     ], 401);
   }
+
+  mt_handler_cookies_on_login($user->ID);
 
   // --- Determine redirect URL ---
   $default_redirect = home_url('/my-account/overview/');
@@ -234,12 +236,12 @@ function mt_process_callback_login(WP_REST_Request $request): WP_REST_Response
   }
 
   return new WP_REST_Response([
-    'success'  => true,
-    'message'  => 'Login successful.',
-    'user'     => [
-      'id'    => $user->ID,
+    'success' => true,
+    'message' => 'Login successful.',
+    'user' => [
+      'id' => $user->ID,
       'email' => $user->user_email,
-      'name'  => $user->display_name,
+      'name' => $user->display_name,
     ],
     'redirect' => $redirect,
   ], 200);
@@ -476,6 +478,8 @@ add_action('template_redirect', function () {
  * Post-login: respeta ?redirect_to si es mismo host, si no, manda a /my-account.
  */
 add_filter('woocommerce_login_redirect', function ($redirect, $user) {
+  mt_handler_cookies_on_login($user->ID);
+
   $requested = isset($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : '';
   if ($requested) {
     $homeHost = wp_parse_url(home_url('/'), PHP_URL_HOST);
@@ -529,3 +533,163 @@ add_action('init', function () {
 add_action('after_switch_theme', function () {
   flush_rewrite_rules(false);
 });
+
+add_action('rest_api_init', function () {
+  register_rest_route('custom/v1', '/refresh-nonce', [
+    'methods' => 'GET',
+    'callback' => 'mt_refresh_dual_nonce',
+    'permission_callback' => '__return_true', // público
+  ]);
+});
+
+
+if (!function_exists('mt_refresh_dual_nonce')) {
+  /**
+   * Genera una nonce adaptada al estado de sesión del usuario.
+   */
+  function mt_refresh_dual_nonce(WP_REST_Request $request)
+  {
+    try {
+      $is_logged_in = is_user_logged_in();
+
+      // Diferenciar nonces según contexto
+      $nonce = wp_create_nonce('wp_rest');
+
+      return rest_ensure_response([
+        'success' => true,
+        'nonce' => $nonce,
+        'expires_in' => apply_filters('nonce_life', DAY_IN_SECONDS),
+        'is_logged_in' => $is_logged_in,
+      ]);
+    } catch (Throwable $e) {
+      return new WP_Error(
+        'nonce_refresh_failed',
+        __('Error al generar una nueva nonce.', 'text-domain'),
+        [
+          'status' => 500,
+          'details' => $e->getMessage(),
+        ]
+      );
+    }
+  }
+}
+
+if (!function_exists('mt_clear_account_cookies')) {
+  /**
+   * Clear frontend-defined account cookies.
+   *
+   * Esta función elimina las cookies 'mt:lastAccountId' creadas desde el frontend.
+   *
+   * @param int|null $user_id Optional. ID del usuario actual (para limpiar variantes con sufijo :uid).
+   * @return void
+   */
+  function mt_clear_account_cookies($user_id = null): void
+  {
+    $cookie_keys = array(
+      'mt:lastAccountId' . ($user_id ? (':' . $user_id) : ''),
+      'mt:lastAccountId',
+    );
+
+    foreach ($cookie_keys as $ck) {
+      if (isset($_COOKIE[$ck])) {
+        // Igualamos las condiciones de creación desde JS: path=/, sin domain
+        setcookie(
+          $ck,
+          '',
+          [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'secure' => is_ssl(),
+            'httponly' => false, // importante: la cookie fue creada desde JS
+            'samesite' => 'Lax'
+          ]
+        );
+        unset($_COOKIE[$ck]);
+      }
+    }
+  }
+}
+
+
+if (!function_exists('mt_set_cookie_safe')) {
+  /**
+   * Get a cookie value safely (returns null if not found).
+   *
+   * @param string $name Nombre de la cookie.
+   * @param bool $sanitize Si debe sanear el valor (por defecto true).
+   * @return string|null
+   */
+  function mt_get_cookie_safe(string $name, bool $sanitize = true): ?string
+  {
+    if (!isset($_COOKIE[$name])) {
+      return null;
+    }
+
+    $value = $_COOKIE[$name];
+
+    if ($sanitize) {
+      $value = sanitize_text_field(wp_unslash($value));
+    }
+
+    return $value;
+  }
+}
+
+if (!function_exists('mt_set_cookie_safe')) {
+  /**
+   * Set a cookie safely across environments (local, staging, production).
+   *
+   * Maneja automáticamente HTTPS, SameSite y compatibilidad con localhost.
+   *
+   * @param string $name Cookie name.
+   * @param string $value Cookie value.
+   * @param int $ttl Time-to-live en segundos (por defecto, 1 año).
+   * @param bool $httpOnly Si la cookie es accesible solo por HTTP (false si la crea JS).
+   * @return void
+   */
+  function mt_set_cookie_safe(string $name, string $value, int $ttl = YEAR_IN_SECONDS, bool $httpOnly = false): void
+  {
+    // Detectar si la conexión es segura (incluso en proxys como Docker o Valet)
+    $is_secure = (
+      (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+      || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+    );
+
+    // Evitar errores si headers ya fueron enviados
+    if (headers_sent()) {
+      return;
+    }
+
+    setcookie(
+      $name,
+      $value,
+      [
+        'expires' => time() + $ttl,
+        'path' => '/',
+        'secure' => $is_secure,
+        'httponly' => $httpOnly,
+        'samesite' => 'Lax', // Mantiene compatibilidad entre pestañas y evita warnings
+      ]
+    );
+
+    // Actualiza la superglobal para disponibilidad inmediata
+    $_COOKIE[$name] = $value;
+  }
+}
+
+
+if (!function_exists('mt_handler_cookies_on_login')) {
+  function mt_handler_cookies_on_login($user_id): void
+  {
+    error_log('[MT_LOGIN_COOKIES]: user_id = ' . $user_id);
+
+    $hash_user_id = md5((string)$user_id);
+    $last_hash = mt_get_cookie_safe('mt:lastUserId');
+
+    if (!$last_hash || $last_hash !== $hash_user_id) {
+      mt_clear_account_cookies($user_id);
+      mt_set_cookie_safe('mt:lastUserId', $hash_user_id);
+    }
+  }
+}
+

@@ -596,7 +596,7 @@ if ($current_trades_dir === 'up') {
             <i class="mt-icon mt-icon-base mt-icon_info-solid" tabindex="0" aria-label="Current trades info"></i>
             <span class="mt-tooltip__panel" role="tooltip">
               <div class="mt-tooltip__title">
-                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW_TOOLTIP['currentDayTradesTitleTolltip']); ?>
+                <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW_TOOLTIP['currentDayTradesTitleTooltip']); ?>
               </div>
               <div class="mt-tooltip__body">
                 <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW_TOOLTIP['currentDayTradesBody']); ?>

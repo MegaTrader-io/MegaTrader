@@ -25,6 +25,7 @@ $__selected_subscription_id = '';
 $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart';
 $__can_manage_subscription = true;
 $mt_chart = [];
+$__account_type_init = '';
 
 /* === Usuario + email saneado === */
 if (is_user_logged_in()) {
@@ -270,12 +271,21 @@ if (is_user_logged_in()) {
         }
 
         $__selected_subscription_id = '';
+        $__account_type_init = '';
         if (is_array($selRow)) {
           $__selected_subscription_id = (string) ($selRow['subscriptionId'] ?? '');
           $hasSubLegacy = !empty($selRow['hasSubscription']);
           $__can_manage_subscription = ($__selected_subscription_id !== '' || $hasSubLegacy) ? true : false;
+
+          if (function_exists('mt_program_stage')) {
+            $stage = mt_program_stage($selRow['programTypeText'] ?? '', '');
+            $__account_type_init = strtolower($stage ?: '');
+          } else {
+            $__account_type_init = strtolower((string) ($selRow['programTypeText'] ?? ''));
+          }
         }
       }
+
 
     } else {
       echo '<div class="mt-alert mt-alert--error">Email inválido. Actualiza tu perfil.</div>';
@@ -318,8 +328,10 @@ get_header();
   data-account-id="<?php echo esc_attr($mt_selected_id); ?>"
   data-subscription-id="<?php echo esc_attr($__selected_subscription_id ?? ''); ?>"
   data-has-subscription="<?php echo $__can_manage_subscription ? '1' : '0'; ?>"
+  data-agreement-show="<?php echo esc_attr($__mt_agreement_show); ?>"
+  data-agreement-url="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>"
+  data-account-type="<?php echo esc_attr($__account_type_init); ?>"
   data-order-id="<?php echo esc_attr($__active_order_id); ?>">
-
   <div class="mt-page">
     <div class="mt-page__sidebar">
       <?php if (function_exists('render_sidebar')) {
@@ -380,12 +392,36 @@ get_header();
               'template-parts/account/account-data',
               null,
               [
-                'meta' => ['accountId' => $mt_selected_id],
+                'meta' => [
+                  'accountId' => $mt_selected_id,
+                  'agreementShow' => $__mt_agreement_show,
+                  'agreementUrl' => $__mt_agreement_url,
+                ],
                 'data' => $mt_account_data,
               ]
             );
             ?>
           </div>
+
+          <?php
+          $is_funded = (strtolower($mt_account_data['type'] ?? '') === 'funded');
+          ?>
+          <div class="mt-account-payout mt-skeleton-pulse<?php echo $is_funded ? '' : ' d-none'; ?>"
+            id="mt-account-payout">
+            <?php
+            if (!empty($mt_selected_id)) {
+              get_template_part(
+                'template-parts/account/account-request-payout',
+                null,
+                [
+                  'account_id' => $mt_selected_id,
+                ]
+              );
+            }
+            ?>
+          </div>
+
+
 
           <div class="mt-account-performance mt-skeleton-pulse" id="mt-performance-container">
             <?php
@@ -440,7 +476,6 @@ get_header();
           </div>
         </section>
 
-        <!-- ======= JOURNAL (TAB NUEVA) ======= -->
         <section id="mt-journal" class="mt-journal-wrapper d-flex flex-column gap-32"
           aria-hidden="<?php echo $aria_journal; ?>" <?php echo $is_journal ? '' : 'hidden'; ?>>
 
@@ -529,47 +564,6 @@ get_header();
   </div>
 </div>
 
-<div id="mt-agreement-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtag-title"
-  aria-hidden="true" data-show="<?php echo $__mt_agreement_show; ?>">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-    <div class="modal-content gap-32">
-      <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
-        <span id="mtag-title" class="modal-title text-white heading-sm-medium">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_title']; ?>
-        </span>
-        <button type="button" class="p-0 border-0 bg-transparent shadow-none mt-modal__close" data-bs-dismiss="modal"
-          aria-label="Close">
-          <span aria-hidden="true">
-            <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close" style="width: 24px; height: 24px;" />
-          </span>
-        </button>
-      </div>
-
-      <div class="modal-body d-flex flex-column align-items-center text-center gap-2">
-        <div aria-hidden="true">
-          <div class="modal-body-image modal-image-warning">
-            <img decoding="async" src="/wp-content/themes/megatrader-addons/assets/img/warning.svg"
-              alt="http://Warning%20icon">
-          </div>
-        </div>
-        <span class="fw-medium leading-60px text-5xl text-uppercase text-white mt-2">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_title']; ?>
-        </span>
-        <span class="text-white fw-medium text-uppercase text-2xl leading-7">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_description']; ?>
-        </span>
-        <span class="fw-medium text-a8a29e text-base">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_body_subtitle']; ?>
-        </span>
-
-        <a href="<?php echo esc_url($__mt_agreement_url ?: '#'); ?>" target="_blank" rel="noopener"
-          class="mega-btn-md mega-btn-primary-md mt-agreement-button mt-4">
-          <?php echo Label::META_ACCOUNT_OVERVIEW['agreement_modal_button']; ?>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div id="mt-breach-alert-modal" class="modal modal-subcription fade" tabindex="-1" aria-labelledby="mtbreach-title"
   aria-hidden="true" data-show="<?php echo $__mt_breach_show; ?>"
@@ -582,7 +576,7 @@ get_header();
   data-btn-default="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button']); ?>"
   data-btn-no-reset="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button_no_reset']); ?>"
   data-subscriptions-url="/subscriptions/">
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mtbreach-title" class="modal-title text-white heading-sm-medium">
@@ -647,7 +641,7 @@ get_header();
   data-body-w-id="<?php echo esc_attr($__body_subtitle_w_activation_id); ?>"
   data-body-no-id="<?php echo esc_attr($__body_subtitle_no_activation_id); ?>">
 
-  <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">
         <span id="mtactivation-title" class="modal-title text-white heading-sm-medium">

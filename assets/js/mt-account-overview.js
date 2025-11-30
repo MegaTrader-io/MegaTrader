@@ -216,10 +216,10 @@
       anchorEl && anchorEl.getBoundingClientRect
         ? anchorEl.getBoundingClientRect()
         : {
-            left: window.innerWidth / 2,
-            top: window.innerHeight - 24,
-            width: 0,
-          };
+          left: window.innerWidth / 2,
+          top: window.innerHeight - 24,
+          width: 0,
+        };
 
     const clampNum = (n, min, max) => Math.max(min, Math.min(max, n));
     const centerX = clampNum(
@@ -261,7 +261,7 @@
       ta.select();
       try {
         document.execCommand("copy");
-      } catch (err) {}
+      } catch (err) { }
       document.body.removeChild(ta);
       onDone();
     }
@@ -413,24 +413,50 @@ window.mtRefresh = (function () {
   };
 })();
 
+// === Helper: vista actual (metrics / journal) ===
+window.mtGetCurrentOverviewView = function mtGetCurrentOverviewView() {
+  var root = document.getElementById("mt-account-overview");
+  if (root) {
+    var v = (root.getAttribute("data-current-view") || "").toLowerCase();
+    if (v === "metrics" || v === "journal") return v;
+  }
+
+  // Fallback por si acaso
+  var qsView = (new URLSearchParams(window.location.search).get("view") || "metrics").toLowerCase();
+  return qsView === "journal" ? "journal" : "metrics";
+};
+
+window.mtIsJournalView = function mtIsJournalView() {
+  try {
+    return window.mtGetCurrentOverviewView() === "journal";
+  } catch (_) {
+    return false;
+  }
+};
+
+
 /* === Consolidated accountSelected handler (único y seguro) === */
 document.addEventListener("mt:accountSelected", (e) => {
   const id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
   if (!id) return;
 
-  // Paso 1: refresca todos los módulos (o usa refreshAllSequence si lo tienes)
-  // window.mtRefresh?.refreshAll?.(id);
-  window.mtRefresh?.refreshAllSequence?.(id); // pinta Account Data primero (si está disponible)
+  // Paso 1: refresca todos los módulos
+  window.mtRefresh?.refreshAllSequence?.(id);
+
+  // Si estamos en JOURNAL, no disparamos lógica de modales ni manage-sub
+  if (window.mtIsJournalView && window.mtIsJournalView()) {
+    return;
+  }
 
   // Paso 2: chequeo de breach (throttle propio)
   try {
     breachGuardCheck?.(id);
-  } catch (_) {}
+  } catch (_) { }
 
   // Paso 3: re-sincroniza Manage Subscription
   try {
     syncManageSubscription?.();
-  } catch (_) {}
+  } catch (_) { }
 
   // Paso 4/5: re-render del breach modal (si existe)
   try {
@@ -440,8 +466,9 @@ document.addEventListener("mt:accountSelected", (e) => {
       document.querySelector(".mt-breach-modal") ||
       undefined;
     refreshBreachModalUI?.(modalRef);
-  } catch (_) {}
+  } catch (_) { }
 });
+
 
 // ===== Overlay utils (genérico) =====
 window.mtOverlay = (function () {
@@ -514,7 +541,7 @@ window.mtOverlay = (function () {
                 el.style.setProperty("--mt-progress-value", v + "%");
               });
           })(wrap);
-        } catch (_) {}
+        } catch (_) { }
 
         // Re-init tooltips
         if (
@@ -549,11 +576,18 @@ window.mtOverlay = (function () {
     return qsa(".dj-row", root);
   }
 
+  function getPagerWindow(current, total) {
+    current = Math.max(1, Math.min(current, total));
+    if (total <= 3) return Array.from({ length: total }, (_, i) => i + 1);
+    if (current <= 2) return [1, 2, 3];
+    if (current >= total) return [total - 2, total - 1, total];
+    return [current - 1, current, current + 1];
+  }
+
   function rebuildNumericPager(root, st) {
     const pager = qs(".dj-pager", root);
     if (!pager) return;
 
-    const prev = qs(".mt-dj-prev", pager);
     const next = qs(".mt-dj-next", pager);
     let holder = qs(".dj-pages", pager);
     if (!holder) {
@@ -563,31 +597,44 @@ window.mtOverlay = (function () {
     }
     holder.innerHTML = "";
 
-    for (let i = 1; i <= st.totalPages; i++) {
+    const windowPages = getPagerWindow(st.currentPage, st.totalPages);
+
+    windowPages.forEach((p) => {
       const b = document.createElement("button");
       b.type = "button";
       b.className = "dj-btn dj-num";
-      b.textContent = String(i);
-      b.addEventListener("click", () => {
-        goTo(root, st, i);
-      });
+      b.textContent = String(p);
+      b.dataset.page = String(p);
+
+      b.addEventListener("click", () => goTo(root, st, p));
       holder.appendChild(b);
-    }
+    });
   }
 
   function updatePagerUI(root, st) {
     const pager = qs(".dj-pager", root);
     if (!pager) return;
+
     const prev = qs(".mt-dj-prev", pager);
     const next = qs(".mt-dj-next", pager);
 
     prev && (prev.disabled = st.currentPage <= 1);
     next && (next.disabled = st.currentPage >= st.totalPages);
 
-    const nums = qsa(".dj-pages .dj-btn", pager);
-    nums.forEach((b, i) =>
-      b.classList.toggle("active", i + 1 === st.currentPage)
-    );
+    // active por data-page
+    const nums = qsa(".dj-pages .dj-num", pager);
+    nums.forEach((b) => {
+      const p = Number(b.dataset.page || b.textContent);
+      b.classList.toggle("active", p === st.currentPage);
+    });
+
+    // Showing X / totalRows (acumulado)
+    const showingEl = qs(".js-showing", pager);
+    const totalEl = qs(".js-total", pager);
+    const endCount = Math.min(st.currentPage * st.perPage, st.totalRows);
+
+    if (showingEl) showingEl.textContent = String(endCount);
+    if (totalEl) totalEl.textContent = String(st.totalRows);
   }
 
   function applyPageVisibility(root, st) {
@@ -898,7 +945,7 @@ window.mtOverlay = (function () {
 
     try {
       ctrl?.abort();
-    } catch (_) {}
+    } catch (_) { }
     ctrl = new AbortController();
     const myToken = ++reqToken;
 
@@ -1005,8 +1052,12 @@ window.mtOverlay = (function () {
         wrap.innerHTML = j.data.html;
 
         try {
+          if (window.applyAgreementMissing) window.applyAgreementMissing();
+        } catch (_) { }
+
+        try {
           // initDonuts?.(wrap); initDualBars?.(wrap); initProgressBars?.(wrap);
-        } catch (_) {}
+        } catch (_) { }
 
         if (
           window.mtTooltips &&
@@ -1015,6 +1066,7 @@ window.mtOverlay = (function () {
           window.mtTooltips.refresh(wrap);
         }
       })
+
       .catch(function (err) {
         window.MEGATRADER?.showError?.(
           "Account Data Error",
@@ -1352,729 +1404,191 @@ window.mtOverlay = (function () {
   });
 })();
 
-// ===== Agreement Modal (centrado + backdrop con clases de Bootstrap) =====
+// ===== Agreement Missing Overlay (blur en Account Data) =====
 (function () {
-  function init() {
-    var modal = document.getElementById("mt-agreement-modal");
-    if (!modal) return;
-
-    var closeBtn = modal.querySelector(".mt-modal__close");
-    var actionBtn = modal.querySelector(".mt-agreement-button");
-    var withBackdrop = null;
-
-    function openModal() {
-      modal.removeAttribute("hidden");
-      modal.setAttribute("aria-hidden", "false");
-      modal.classList.add("show");
-
-      modal.style.position = "fixed";
-      modal.style.inset = "0";
-      modal.style.display = "flex";
-      modal.style.alignItems = "center";
-      modal.style.justifyContent = "center";
-      modal.style.zIndex = "1055";
-
-      withBackdrop = document.createElement("div");
-      withBackdrop.className = "modal-backdrop fade show";
-      withBackdrop.style.zIndex = "1050";
-      document.body.appendChild(withBackdrop);
-
-      document.body.classList.add("modal-open");
-      try {
-        modal.focus();
-      } catch (e) {}
-    }
-
-    function closeModal() {
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      modal.setAttribute("hidden", "");
-      modal.style.display = "";
-      modal.style.position = "";
-      modal.style.inset = "";
-      modal.style.alignItems = "";
-      modal.style.justifyContent = "";
-      modal.style.zIndex = "";
-
-      if (withBackdrop && withBackdrop.parentNode) {
-        withBackdrop.parentNode.removeChild(withBackdrop);
-        withBackdrop = null;
-      }
-      if (!document.querySelector(".modal.show")) {
-        document.body.classList.remove("modal-open");
-      }
-    }
-
-    if (closeBtn) {
-      closeBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        closeModal();
-      });
-    }
-
-    if (actionBtn) {
-      actionBtn.addEventListener("click", function () {
-        var href = actionBtn.getAttribute("href") || "";
-        if (!href || href === "#") return;
-        setTimeout(closeModal, 100);
-      });
-    }
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && modal.classList.contains("show")) {
-        closeModal();
-      }
-    });
-
-    if (modal.getAttribute("data-show") === "1") {
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openModal);
-      } else {
-        openModal();
-      }
-    }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
-})();
-
-// ===== Breach Alert Modal (centrado + backdrop) =====
-(function () {
-  function init() {
-    var modal = document.getElementById("mt-breach-alert-modal");
-    if (!modal) return;
-
-    var closeBtn = modal.querySelector(".mt-modal__close");
-    var actionBtn = modal.querySelector(".mt-breach-reset-button");
-    var withBackdrop = null;
-
-    // === NUEVO: refresca título y botón según data-* (resetId/mainId/accountType) ===
-    function refreshBreachModalUI(modalEl) {
-      if (!modalEl) return;
-
-      var btn = modalEl.querySelector(".mt-breach-reset-button");
-      var descEl =
-        modalEl.querySelector("#mtbreach-desc") ||
-        modalEl.querySelector(".modal-body .text-2xl.leading-7");
-
-      var ds = modalEl.dataset || {};
-
-      // helpers
-      function normalizeId(v) {
-        if (v == null) return "";
-        var s = String(v).trim().toLowerCase();
-        return s === "" || s === "0" || s === "null" || s === "undefined"
-          ? ""
-          : String(v).trim();
-      }
-      function normalizeType(t) {
-        var raw =
-          (t && String(t)) ||
-          document
-            .getElementById("mt-account-overview")
-            ?.getAttribute("data-account-type") ||
-          "";
-        raw = String(raw).trim().toLowerCase();
-        if (raw.startsWith("funded")) return "funded";
-        if (raw.startsWith("evaluation") || raw.startsWith("eval"))
-          return "evaluation";
-        // fallback: intenta detectar palabra aislada
-        if (raw.indexOf("funded") >= 0) return "funded";
-        if (raw.indexOf("evaluation") >= 0 || raw.indexOf("eval") >= 0)
-          return "evaluation";
-        return "";
-      }
-
-      var resetId = normalizeId(ds.resetId);
-      var accountId = normalizeId(ds.accountId);
-      var mainId = normalizeId(ds.mainId);
-      var accType = normalizeType(ds.accountType);
-
-      var base = (ds.checkoutBase || "/checkout").replace(/(\?|#).*$/, "");
-      var subsUrl =
-        (ds.subscriptionsUrl || "/subscriptions/").replace(/\/+$/, "") + "/";
-
-      // labels (inyectadas desde PHP)
-      var fundedTitle = ds.fundedTitle || "";
-      var evaluationTitle = ds.evaluationTitle || "";
-      var btnDefault = ds.btnDefault || (btn ? btn.textContent : "");
-      var btnNoReset = ds.btnNoReset || "";
-
-      // 1) Descripción por tipo (si hay labels)
-      if (descEl) {
-        if (accType === "funded" && fundedTitle) {
-          descEl.textContent = fundedTitle;
-        } else if (accType === "evaluation" && evaluationTitle) {
-          descEl.textContent = evaluationTitle;
-        }
-        // si no hay labels, queda el texto del server
-      }
-
-      // 2) Botón (href + label) — nunca ocultar
-      if (!btn) return;
-      btn.classList.remove("d-none", "disabled");
-      btn.removeAttribute("aria-disabled");
-
-      if (resetId) {
-        // Con reset: checkout + label default
-        btn.href =
-          base +
-          "?add-to-cart=" +
-          encodeURIComponent(resetId) +
-          "&account_id=" +
-          encodeURIComponent(accountId);
-        if (btnDefault) btn.textContent = btnDefault;
-      } else if (mainId) {
-        // Sin reset + con mainId: ir a /subscriptions/{mainId} + label no_reset
-        btn.href = subsUrl + encodeURIComponent(mainId);
-        if (btnNoReset) btn.textContent = btnNoReset;
-      } else {
-        // Sin reset ni mainId (o "0"): /subscriptions/ + label no_reset
-        btn.href = subsUrl;
-        if (btnNoReset) btn.textContent = btnNoReset;
-      }
-    }
-
-    function openModal() {
-      if (modal.classList.contains("show")) return;
-
-      // NUEVO: refrescar UI antes de abrir
-      refreshBreachModalUI(modal);
-
-      modal.removeAttribute("inert");
-
-      modal.removeAttribute("hidden");
-      modal.setAttribute("aria-hidden", "false");
-      modal.classList.add("show");
-
-      modal.style.position = "fixed";
-      modal.style.inset = "0";
-      modal.style.display = "flex";
-      modal.style.alignItems = "center";
-      modal.style.justifyContent = "center";
-      modal.style.zIndex = "1055";
-
-      if (!withBackdrop && !document.querySelector(".modal-backdrop.show")) {
-        withBackdrop = document.createElement("div");
-        withBackdrop.className = "modal-backdrop fade show";
-        withBackdrop.style.zIndex = "1050";
-        document.body.appendChild(withBackdrop);
-      }
-
-      document.body.classList.add("modal-open");
-      try {
-        modal.focus();
-      } catch (e) {}
-    }
-
-    function closeModal() {
-      try {
-        const active = document.activeElement;
-        if (active && modal.contains(active)) {
-          let fallback =
-            modal.__opener ||
-            document.querySelector(
-              '[data-bs-target="#changeSubcriptionModal"]'
-            ) ||
-            document.querySelector(
-              ".mega-navigation a, .mega-navigation select"
-            ) ||
-            document.getElementById("mt-account-overview") ||
-            document.body;
-          const needsTab = fallback && fallback.tabIndex < 0;
-          if (needsTab) fallback.setAttribute("tabindex", "-1");
-          fallback && fallback.focus({ preventScroll: true });
-          if (needsTab) fallback.removeAttribute("tabindex");
-        }
-      } catch (_) {}
-
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      modal.setAttribute("hidden", "");
-      modal.setAttribute("inert", "");
-
-      modal.style.display = "";
-      modal.style.position = "";
-      modal.style.inset = "";
-      modal.style.alignItems = "";
-      modal.style.justifyContent = "";
-      modal.style.zIndex = "";
-
-      if (withBackdrop && withBackdrop.parentNode) {
-        withBackdrop.parentNode.removeChild(withBackdrop);
-        withBackdrop = null;
-      }
-      if (!document.querySelector(".modal.show")) {
-        document.body.classList.remove("modal-open");
-      }
-    }
-
-    // Sanea estado inicial si el HTML vino en estado inconsistente
-    (function sanitizeInitial() {
-      var ds = modal.getAttribute("data-show");
-      if (ds !== "1" && modal.classList.contains("show")) closeModal();
-    })();
-
-    if (closeBtn) {
-      closeBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        closeModal();
-      });
-    }
-
-    if (actionBtn) {
-      actionBtn.addEventListener("click", function () {
-        var href = actionBtn.getAttribute("href") || "";
-        if (!href || href === "#") return;
-        setTimeout(closeModal, 100);
-      });
-    }
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
-    });
-
-    document.addEventListener("mt:hasSubscriptionChanged", function () {
-      refreshBreachModalUI(modal);
-    });
-
-    modal.__open = openModal;
-    modal.__close = closeModal;
-
-    if (modal.getAttribute("data-show") === "1") {
-      var openNow = function () {
-        refreshBreachModalUI(modal); // refrescar en auto-open
-        openModal();
-      };
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openNow, { once: true });
-      } else {
-        openNow();
-      }
-    }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
-  } else {
-    init();
-  }
-})();
-
-/* === fetchStatus (AJAX) — usado por breachGuard y otros === */
-function fetchStatus(accountId) {
-  var url =
-    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-  var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
-
-  var body = new URLSearchParams();
-  body.set("action", "mt_accounts_status");
-  if (nonce) body.set("nonce", nonce);
-  body.set("accountId", String(accountId || ""));
-  body.set("account_id", String(accountId || ""));
-
-  return window.MEGATRADER.fetchJSON(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: body,
-  }).catch(function () {
-    return null;
-  });
-}
-
-function fetchAccountOverview() {
-  var url =
-    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
-  var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
-
-  var body = new URLSearchParams();
-  body.set("action", "mt_account_overview_data");
-  if (nonce) body.set("nonce", nonce);
-
-  MT_DATA.accounts.forEach(function (account) {
-    body.append("accountId[]", account.id);
-  });
-
-  return window.MEGATRADER.fetchJSON(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: body,
-  }).catch(function () {
-    return null;
-  });
-}
-
-/* === breachGuard: consulta estado y abre el modal si está BREACHED === */
-var __breachGuard = { pending: false, lastId: null, lastAt: 0 };
-
-function breachGuardCheck(accountId) {
-  if (!accountId) return;
-
-  var now = Date.now();
-  if (__breachGuard.pending) return;
-  if (__breachGuard.lastId === accountId && now - __breachGuard.lastAt < 800)
-    return;
-
-  __breachGuard.pending = true;
-  __breachGuard.lastId = accountId;
-  __breachGuard.lastAt = now;
-
-  return fetchStatus(accountId)
-    .then(function (j) {
-      if (!j || !j.success) return;
-
-      var raw = j.data && j.data.status != null ? String(j.data.status) : "";
-      var status = raw.trim().toUpperCase();
-
-      var target = (
-        window.mtAccounts && mtAccounts.statusBreached
-          ? String(mtAccounts.statusBreached)
-          : "BREACHED"
-      )
-        .trim()
-        .toUpperCase();
-
-      if (status === target) {
-        try {
-          var grid = document.querySelector("#mt-accounts-grid");
-          var card =
-            grid &&
-            (grid.querySelector(".subscription-card.active") ||
-              grid.querySelector(
-                '.subscription-card[data-account-id="' +
-                  CSS.escape(String(accountId)) +
-                  '"]'
-              ));
-          var resetId = card ? card.getAttribute("data-reset-id") || "" : "";
-          var modal = document.getElementById("mt-breach-alert-modal");
-          var btn = modal
-            ? modal.querySelector(".mt-breach-reset-button")
-            : null;
-          var base =
-            (modal && modal.getAttribute("data-checkout-base")) ||
-            (window.MT_DATA && window.MT_DATA.checkoutBase) ||
-            "/checkout";
-
-          // expone el account_id por si lo necesitas en el checkout
-          if (modal)
-            modal.setAttribute("data-account-id", String(accountId || ""));
-
-          if (btn) {
-            if (resetId) {
-              btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId);
-              btn.setAttribute("data-account-id", String(accountId || ""));
-              btn.classList.remove("disabled");
-              btn.removeAttribute("aria-disabled");
-            } else {
-              btn.href = "#";
-              btn.classList.add("disabled");
-              btn.setAttribute("aria-disabled", "true");
-            }
-          }
-        } catch (_) {}
-
-        var modalEl = document.getElementById("mt-breach-alert-modal");
-        if (!modalEl || modalEl.classList.contains("show")) return;
-        if (typeof modalEl.__open === "function") modalEl.__open();
-        else {
-          modalEl.setAttribute("data-show", "1");
-          modalEl.removeAttribute("hidden");
-          modalEl.setAttribute("aria-hidden", "false");
-          modalEl.classList.add("show");
-        }
-      }
-    })
-    .finally(function () {
-      __breachGuard.pending = false;
-    });
-}
-
-/* === Registro en el bus de refresco y listeners === */
-if (window.mtRefresh && typeof window.mtRefresh.register === "function") {
-  window.mtRefresh.register("breachGuard", breachGuardCheck);
-}
-
-window.breachGuardCheck = breachGuardCheck;
-
-// 1) primer chequeo al cargar, si hay selectedId
-(function () {
-  var firstId = (window.mtAccounts && mtAccounts.selectedId) || "";
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      function () {
-        if (firstId) breachGuardCheck(firstId);
-      },
-      { once: true }
-    );
-  } else {
-    if (firstId) breachGuardCheck(firstId);
-  }
-})();
-
-// == Main width var: --mt-main-width (+ --dj-viewport) ==
-(function () {
-  function clamp(n) {
-    return Math.max(784, Math.round(n || 0));
-  }
-
-  function calcMainWidth() {
-    var page = document.querySelector(".mt-page");
-    var side = document.querySelector(".mt-page__sidebar");
-    if (!page) return 0;
-    var gap = parseFloat(getComputedStyle(page).gap || 0) || 0;
-    var pageW = page.clientWidth;
-    var sideW = side ? side.getBoundingClientRect().width : 0;
-    return clamp(pageW - sideW - gap);
-  }
-
-  function applyWidth() {
-    var w = calcMainWidth();
-    if (!w) return;
-
-    document.documentElement.style.setProperty("--mt-main-width", w + "px");
-    document.body.style.setProperty("--mt-main-width", w + "px");
-
-    var dj = document.getElementById("mt-daily-journal");
-    if (dj) dj.style.setProperty("--dj-viewport", w + "px");
-  }
-
-  function boot() {
-    applyWidth();
-
-    var page = document.querySelector(".mt-page");
-    var side = document.querySelector(".mt-page__sidebar");
-
-    if (window.ResizeObserver && page) {
-      var ro = new ResizeObserver(applyWidth);
-      ro.observe(page);
-      if (side) {
-        var ro2 = new ResizeObserver(applyWidth);
-        ro2.observe(side);
-        side.addEventListener("transitionend", function (e) {
-          if (["width", "flex-basis", "transform"].includes(e.propertyName)) {
-            requestAnimationFrame(applyWidth);
-          }
-        });
-      }
-    } else {
-      var t;
-      window.addEventListener("resize", function () {
-        clearTimeout(t);
-        t = setTimeout(applyWidth, 100);
-      });
-    }
-  }
-
-  if (document.readyState === "loading")
-    document.addEventListener("DOMContentLoaded", boot, { once: true });
-  else boot();
-})();
-
-// === Bind nav -> POST /my-account/orders con orderId actual ===
-function mtBindManageSubsNav() {
-  var nav = document.querySelector(".mega-navigation");
-  if (!nav) return;
-
-  if (nav.__mtBoundManageSubs) return;
-  nav.__mtBoundManageSubs = true;
-
-  function readOrderId() {
+  function applyAgreementMissing() {
     var root = document.getElementById("mt-account-overview");
-    var raw =
-      (root && (root.getAttribute("data-order-id") || root.dataset.orderId)) ||
-      "";
-    raw = String(raw).replace(/[^\d]/g, "");
-    var id = parseInt(raw, 10) || 0;
-    try {
-      console.debug("[MT][Orders] orderId from data-order-id =", id);
-    } catch (_) {}
-    return id;
-  }
+    if (!root) return;
 
-  function ensurePostForm(actionUrl) {
-    var form = document.getElementById("mt-manage-subs-form");
-    if (!form) {
-      form = document.createElement("form");
-      form.id = "mt-manage-subs-form";
-      form.method = "post";
-      form.action =
-        actionUrl ||
-        (window.location.origin
-          ? window.location.origin + "/my-account/orders/"
-          : "/my-account/orders/");
-      form.className = "d-none";
+    var show = (root.getAttribute("data-agreement-show") || "").trim() === "1";
+    var url = root.getAttribute("data-agreement-url") || "#";
 
-      var i1 = document.createElement("input");
-      i1.type = "hidden";
-      i1.name = "orderId";
-      form.appendChild(i1);
+    var wrap = document.querySelector(".mt-account-data .mt-card-wrapper");
+    if (!wrap) return;
 
-      var i2 = document.createElement("input");
-      i2.type = "hidden";
-      i2.name = "optionalOrderId";
-      form.appendChild(i2);
+    // toggle blur class
+    wrap.classList.toggle("mt-agrement-missing", show);
 
-      document.body.appendChild(form);
-    }
-    return form;
-  }
+    // overlay
+    var ov = wrap.querySelector(".mt-agreement-overlay");
+    if (!ov) return;
 
-  function submitPost(toUrl) {
-    var orderId = readOrderId();
-    if (!orderId) {
-      window.location.href = toUrl;
-      return;
-    }
-    var form = ensurePostForm(toUrl);
+    var btn = ov.querySelector(".mt-agreement-button");
+    if (btn && url) btn.setAttribute("href", url);
 
-    var action =
-      toUrl && toUrl.indexOf("/my-account/orders") !== -1
-        ? toUrl
-        : window.location.origin
-        ? window.location.origin + "/my-account/orders/"
-        : "/my-account/orders/";
-    form.action = action;
-
-    var inp1 = form.querySelector('input[name="orderId"]');
-    var inp2 = form.querySelector('input[name="optionalOrderId"]');
-    if (inp1) inp1.value = String(orderId);
-    if (inp2) inp2.value = String(orderId);
-
-    try {
-      console.debug("[MT][Orders] POST ->", form.action, { orderId });
-    } catch (_) {}
-    form.submit();
-  }
-
-  var link = nav.querySelector('a[href*="/my-account/orders"]');
-  if (link) {
-    link.addEventListener(
-      "click",
-      function (e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        submitPost(this.href);
-      },
-      { passive: false }
-    );
-  }
-
-  var select = document.getElementById("mega-navigation-select");
-  if (select) {
-    try {
-      select.onchange = null;
-      select.removeAttribute("onchange");
-    } catch (_) {}
-    select.addEventListener(
-      "change",
-      function (e) {
-        var url = this.value || "";
-        if (!url) return;
-
-        if (url.indexOf("/my-account/orders") !== -1) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          submitPost(url);
-        } else {
-          window.location.href = url;
-        }
-      },
-      { passive: false }
-    );
-  }
-}
-
-// === Manage Subscription (show/hide + URL) según data-subscription-id del ROOT ===
-(function () {
-  function getRoot() {
-    return document.getElementById("mt-account-overview");
-  }
-
-  function readSubscriptionId() {
-    // 1) root (lo setea PHP y el picker)
-    var root = getRoot();
-    var sid =
-      (root &&
-        (root.getAttribute("data-subscription-id") ||
-          root.dataset.subscriptionId)) ||
-      "";
-
-    // 2) fallback: card activa en el grid
-    if (!sid) {
-      var card = document.querySelector(
-        "#mt-accounts-grid .subscription-card.active"
-      );
-      sid =
-        (card &&
-          (card.getAttribute("data-subscription-id") ||
-            card.dataset.subscriptionId)) ||
-        "";
-    }
-    return String(sid).trim();
-  }
-
-  function syncManageSubscription() {
-    var li = document.getElementById("mt-nav-manage-subscription");
-    if (!li) return;
-    var a = li.querySelector("a");
-    var sid = readSubscriptionId();
-
-    if (sid) {
-      var url =
-        (window.location.origin || "") +
-        "/my-account/view-subscription/" +
-        encodeURIComponent(sid) +
-        "/";
-      if (a) a.href = url;
-
-      // visible
-      li.classList.remove("d-none");
-      li.removeAttribute("aria-hidden");
-      li.removeAttribute("inert");
-      if (a) {
-        a.removeAttribute("aria-disabled");
-      }
+    if (show) {
+      ov.hidden = false;
+      ov.setAttribute("aria-hidden", "false");
     } else {
-      // oculto + guard UI
-      li.classList.add("d-none");
-      li.setAttribute("aria-hidden", "true");
-      li.setAttribute("inert", "");
-      if (a) {
-        a.setAttribute("href", "#");
-        a.setAttribute("aria-disabled", "true");
-      }
+      ov.hidden = true;
+      ov.setAttribute("aria-hidden", "true");
     }
   }
 
-  // boot
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", syncManageSubscription, {
-      once: true,
-    });
+    document.addEventListener("DOMContentLoaded", applyAgreementMissing);
   } else {
-    syncManageSubscription();
+    applyAgreementMissing();
   }
 
-  // y cuando confirmas con el botón "Select" del picker (por si el root se actualiza ahí)
-  document.addEventListener("click", function (e) {
-    if (e.target && e.target.closest("#select-subscription-btn")) {
-      setTimeout(syncManageSubscription, 0);
-    }
+  // re-aplicar cuando cambias account via AJAX
+  document.addEventListener("mt:accountSelected", function () {
+    setTimeout(applyAgreementMissing, 0);
   });
+
+  // expón por si lo llamas manual
+  window.applyAgreementMissing = applyAgreementMissing;
 })();
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", mtBindManageSubsNav, {
-    once: true,
+// ===== Auto-refresh cuando el usuario firma el Agreement =====
+(function () {
+  function checkAgreementAndReload() {
+    var root = document.getElementById("mt-account-overview");
+    if (!root) return;
+
+    // Si ya no falta el agreement, no hacemos nada
+    var show = (root.getAttribute("data-agreement-show") || "").trim() === "1";
+    if (!show) return;
+
+    // AJAX config
+    var url = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+    var body = new URLSearchParams();
+    body.set("action", "mt_check_agreement");
+    body.set("nonce", nonce);
+
+    window.MEGATRADER.fetchJSON(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body,
+    })
+      .then(function (j) {
+        if (j && j.success && j.data && j.data.agreementSigned) {
+          location.reload();
+        }
+      })
+      .catch(function (_) { });
+  }
+
+  // Se dispara cuando el usuario vuelve a la pestaña
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) checkAgreementAndReload();
   });
-} else {
-  mtBindManageSubsNav();
-}
+
+  // Fallback: algunos navegadores NO disparan visibilitychange
+  window.addEventListener("focus", function () {
+    checkAgreementAndReload();
+  });
+
+})();
+
+// ===== Modal helper (centrado + backdrop reutilizable) =====
+window.mtModal = window.mtModal || {};
+
+window.mtModal.openCentered = function openCenteredModal(modal, opts) {
+  if (!modal || modal.classList.contains("show")) return;
+
+  opts = opts || {};
+
+  if (typeof opts.beforeOpen === "function") {
+    opts.beforeOpen(modal);
+  }
+
+  // data-show opcional
+  if (opts.setDataShow) {
+    modal.setAttribute("data-show", "1");
+  }
+
+  modal.removeAttribute("inert");
+  modal.removeAttribute("hidden");
+  modal.setAttribute("aria-hidden", "false");
+  modal.classList.add("show");
+
+  modal.style.position = "fixed";
+  modal.style.inset = "0";
+  modal.style.display = "flex";
+  modal.style.alignItems = "center";
+  modal.style.justifyContent = "center";
+  modal.style.zIndex = "1055";
+
+  // backdrop por-modal
+  var backdrop = modal.__mtBackdrop;
+  if (!backdrop && !document.querySelector(".modal-backdrop.show")) {
+    backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop fade show";
+    backdrop.style.zIndex = "1050";
+    document.body.appendChild(backdrop);
+    modal.__mtBackdrop = backdrop;
+  }
+
+  document.body.classList.add("modal-open");
+
+  try {
+    modal.focus();
+  } catch (_) { }
+};
+
+window.mtModal.closeCentered = function closeCenteredModal(modal, opts) {
+  if (!modal || !modal.classList.contains("show")) return;
+
+  opts = opts || {};
+
+  // gestión de foco (igual que antes)
+  try {
+    const active = document.activeElement;
+    if (active && modal.contains(active)) {
+      let fallback =
+        modal.__opener ||
+        document.querySelector('[data-bs-target="#changeSubcriptionModal"]') ||
+        document.querySelector(".mega-navigation a, .mega-navigation select") ||
+        document.getElementById("mt-account-overview") ||
+        document.body;
+      const needsTab = fallback && fallback.tabIndex < 0;
+      if (needsTab) fallback.setAttribute("tabindex", "-1");
+      fallback && fallback.focus({ preventScroll: true });
+      if (needsTab) fallback.removeAttribute("tabindex");
+    }
+  } catch (_) { }
+
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden", "true");
+  modal.setAttribute("hidden", "");
+  modal.setAttribute("inert", "");
+
+  // data-show opcional
+  if (opts.clearDataShow) {
+    modal.setAttribute("data-show", "0");
+  }
+
+  modal.style.display = "";
+  modal.style.position = "";
+  modal.style.inset = "";
+  modal.style.alignItems = "";
+  modal.style.justifyContent = "";
+  modal.style.zIndex = "";
+
+  const backdrop = modal.__mtBackdrop;
+  if (backdrop && backdrop.parentNode) {
+    backdrop.parentNode.removeChild(backdrop);
+    modal.__mtBackdrop = null;
+  }
+
+  if (!document.querySelector(".modal.show")) {
+    document.body.classList.remove("modal-open");
+  }
+};
+
 
 /* ===== Passed & Pending Activation Modal ===== */
 (function () {
@@ -2209,78 +1723,18 @@ if (document.readyState === "loading") {
     }
 
     function openModal() {
-      if (modal.classList.contains("show")) return;
-
-      syncUI(modal);
-
-      modal.removeAttribute("hidden");
-      modal.setAttribute("aria-hidden", "false");
-      modal.classList.add("show");
-      modal.setAttribute("data-show", "1");
-
-      modal.style.position = "fixed";
-      modal.style.inset = "0";
-      modal.style.display = "flex";
-      modal.style.alignItems = "center";
-      modal.style.justifyContent = "center";
-      modal.style.zIndex = "1055";
-
-      modal.removeAttribute("inert");
-
-      if (!withBackdrop && !document.querySelector(".modal-backdrop.show")) {
-        withBackdrop = document.createElement("div");
-        withBackdrop.className = "modal-backdrop fade show";
-        withBackdrop.style.zIndex = "1050";
-        document.body.appendChild(withBackdrop);
-      }
-
-      document.body.classList.add("modal-open");
-      try {
-        modal.focus();
-      } catch (_) {}
+      window.mtModal.openCentered(modal, {
+        beforeOpen: function (m) {
+          syncUI(m);
+        },
+        setDataShow: true, // este sí usa data-show="1"
+      });
     }
 
     function closeModal() {
-      try {
-        const active = document.activeElement;
-        if (active && modal.contains(active)) {
-          let fallback =
-            modal.__opener ||
-            document.querySelector(
-              '[data-bs-target="#changeSubcriptionModal"]'
-            ) ||
-            document.querySelector(
-              ".mega-navigation a, .mega-navigation select"
-            ) ||
-            document.getElementById("mt-account-overview") ||
-            document.body;
-          const needsTab = fallback && fallback.tabIndex < 0;
-          if (needsTab) fallback.setAttribute("tabindex", "-1");
-          fallback && fallback.focus({ preventScroll: true });
-          if (needsTab) fallback.removeAttribute("tabindex");
-        }
-      } catch (_) {}
-
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden", "true");
-      modal.setAttribute("hidden", "");
-      modal.setAttribute("inert", "");
-      modal.setAttribute("data-show", "0");
-
-      modal.style.display = "";
-      modal.style.position = "";
-      modal.style.inset = "";
-      modal.style.alignItems = "";
-      modal.style.justifyContent = "";
-      modal.style.zIndex = "";
-
-      if (withBackdrop && withBackdrop.parentNode) {
-        withBackdrop.parentNode.removeChild(withBackdrop);
-        withBackdrop = null;
-      }
-      if (!document.querySelector(".modal.show")) {
-        document.body.classList.remove("modal-open");
-      }
+      window.mtModal.closeCentered(modal, {
+        clearDataShow: true, // y lo resetea a "0"
+      });
     }
 
     // Saneamos estado inicial si llega mal
@@ -2325,8 +1779,8 @@ if (document.readyState === "loading") {
       document.querySelector(sel) ||
       document.querySelector(
         '.subscription-card[data-account-id="' +
-          String(accountId).replace(/"/g, "&quot;") +
-          '"]'
+        String(accountId).replace(/"/g, "&quot;") +
+        '"]'
       );
     if (!card) return "";
     return card.getAttribute("data-activation-id") || "";
@@ -2336,6 +1790,11 @@ if (document.readyState === "loading") {
 
   function passedGuardCheck(accountId) {
     if (!accountId) return;
+
+    if (window.mtIsJournalView && window.mtIsJournalView()) {
+      return;
+    }
+
     var now = Date.now();
     if (__passedGuard.pending) return;
     if (__passedGuard.lastId === accountId && now - __passedGuard.lastAt < 800)
@@ -2416,6 +1875,588 @@ if (document.readyState === "loading") {
   };
 })();
 
+// ===== Breach Alert Modal (centrado + backdrop) =====
+(function () {
+  function init() {
+    var modal = document.getElementById("mt-breach-alert-modal");
+    if (!modal) return;
+
+    var closeBtn = modal.querySelector(".mt-modal__close");
+    var actionBtn = modal.querySelector(".mt-breach-reset-button");
+    var withBackdrop = null;
+
+    // === NUEVO: refresca título y botón según data-* (resetId/mainId/accountType) ===
+    function refreshBreachModalUI(modalEl) {
+      if (!modalEl) return;
+
+      var btn = modalEl.querySelector(".mt-breach-reset-button");
+      var descEl =
+        modalEl.querySelector("#mtbreach-desc") ||
+        modalEl.querySelector(".modal-body .text-2xl.leading-7");
+
+      var ds = modalEl.dataset || {};
+
+      // helpers
+      function normalizeId(v) {
+        if (v == null) return "";
+        var s = String(v).trim().toLowerCase();
+        return s === "" || s === "0" || s === "null" || s === "undefined"
+          ? ""
+          : String(v).trim();
+      }
+      function normalizeType(t) {
+        var raw =
+          (t && String(t)) ||
+          document
+            .getElementById("mt-account-overview")
+            ?.getAttribute("data-account-type") ||
+          "";
+        raw = String(raw).trim().toLowerCase();
+        if (raw.startsWith("funded")) return "funded";
+        if (raw.startsWith("evaluation") || raw.startsWith("eval"))
+          return "evaluation";
+        // fallback: intenta detectar palabra aislada
+        if (raw.indexOf("funded") >= 0) return "funded";
+        if (raw.indexOf("evaluation") >= 0 || raw.indexOf("eval") >= 0)
+          return "evaluation";
+        return "";
+      }
+
+      var resetId = normalizeId(ds.resetId);
+      var accountId = normalizeId(ds.accountId);
+      var mainId = normalizeId(ds.mainId);
+      var accType = normalizeType(ds.accountType);
+
+      var base = (ds.checkoutBase || "/checkout").replace(/(\?|#).*$/, "");
+      var subsUrl =
+        (ds.subscriptionsUrl || "/subscriptions/").replace(/\/+$/, "") + "/";
+
+      // labels (inyectadas desde PHP)
+      var fundedTitle = ds.fundedTitle || "";
+      var evaluationTitle = ds.evaluationTitle || "";
+      var btnDefault = ds.btnDefault || (btn ? btn.textContent : "");
+      var btnNoReset = ds.btnNoReset || "";
+
+      // 1) Descripción por tipo (si hay labels)
+      if (descEl) {
+        if (accType === "funded" && fundedTitle) {
+          descEl.textContent = fundedTitle;
+        } else if (accType === "evaluation" && evaluationTitle) {
+          descEl.textContent = evaluationTitle;
+        }
+        // si no hay labels, queda el texto del server
+      }
+
+      // 2) Botón (href + label) — nunca ocultar
+      if (!btn) return;
+      btn.classList.remove("d-none", "disabled");
+      btn.removeAttribute("aria-disabled");
+
+      if (resetId) {
+        // Con reset: checkout + label default
+        btn.href =
+          base +
+          "?add-to-cart=" +
+          encodeURIComponent(resetId) +
+          "&account_id=" +
+          encodeURIComponent(accountId);
+        if (btnDefault) btn.textContent = btnDefault;
+      } else if (mainId) {
+        // Sin reset + con mainId: ir a /subscriptions/{mainId} + label no_reset
+        btn.href = subsUrl + encodeURIComponent(mainId);
+        if (btnNoReset) btn.textContent = btnNoReset;
+      } else {
+        // Sin reset ni mainId (o "0"): /subscriptions/ + label no_reset
+        btn.href = subsUrl;
+        if (btnNoReset) btn.textContent = btnNoReset;
+      }
+    }
+
+    function openModal() {
+      window.mtModal.openCentered(modal, {
+        beforeOpen: function (m) {
+          // refrescar UI antes de abrir (como antes)
+          refreshBreachModalUI(m);
+        },
+        // OJO: aquí NO tocamos data-show, eso viene del server si hace falta
+      });
+    }
+
+    function closeModal() {
+      window.mtModal.closeCentered(modal);
+    }
+
+
+    // Sanea estado inicial si el HTML vino en estado inconsistente
+    (function sanitizeInitial() {
+      var ds = modal.getAttribute("data-show");
+      if (ds !== "1" && modal.classList.contains("show")) closeModal();
+    })();
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        closeModal();
+      });
+    }
+
+    if (actionBtn) {
+      actionBtn.addEventListener("click", function () {
+        var href = actionBtn.getAttribute("href") || "";
+        if (!href || href === "#") return;
+        setTimeout(closeModal, 100);
+      });
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+    });
+
+    document.addEventListener("mt:hasSubscriptionChanged", function () {
+      refreshBreachModalUI(modal);
+    });
+
+    modal.__open = openModal;
+    modal.__close = closeModal;
+
+    if (modal.getAttribute("data-show") === "1") {
+      var openNow = function () {
+        refreshBreachModalUI(modal); // refrescar en auto-open
+        openModal();
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", openNow, { once: true });
+      } else {
+        openNow();
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+
+/* === fetchStatus (AJAX) — usado por breachGuard y otros === */
+function fetchStatus(accountId) {
+  var url =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+  var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+  var body = new URLSearchParams();
+  body.set("action", "mt_accounts_status");
+  if (nonce) body.set("nonce", nonce);
+  body.set("accountId", String(accountId || ""));
+  body.set("account_id", String(accountId || ""));
+
+  return window.MEGATRADER.fetchJSON(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body,
+  }).catch(function () {
+    return null;
+  });
+}
+
+function fetchAccountOverview() {
+  var url =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+  var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
+
+  var body = new URLSearchParams();
+  body.set("action", "mt_account_overview_data");
+  if (nonce) body.set("nonce", nonce);
+
+  MT_DATA.accounts.forEach(function (account) {
+    body.append("accountId[]", account.id);
+  });
+
+  return window.MEGATRADER.fetchJSON(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body,
+  }).catch(function () {
+    return null;
+  });
+}
+
+/* === breachGuard: consulta estado y abre el modal si está BREACHED === */
+var __breachGuard = { pending: false, lastId: null, lastAt: 0 };
+
+function breachGuardCheck(accountId) {
+  if (!accountId) return;
+
+  if (window.mtIsJournalView && window.mtIsJournalView()) {
+    return;
+  }
+
+  var now = Date.now();
+  if (__breachGuard.pending) return;
+  if (__breachGuard.lastId === accountId && now - __breachGuard.lastAt < 800)
+    return;
+
+  __breachGuard.pending = true;
+  __breachGuard.lastId = accountId;
+  __breachGuard.lastAt = now;
+
+  return fetchStatus(accountId)
+    .then(function (j) {
+      if (!j || !j.success) return;
+
+      var raw = j.data && j.data.status != null ? String(j.data.status) : "";
+      var status = raw.trim().toUpperCase();
+
+      var target = (
+        window.mtAccounts && mtAccounts.statusBreached
+          ? String(mtAccounts.statusBreached)
+          : "BREACHED"
+      )
+        .trim()
+        .toUpperCase();
+
+      if (status === target) {
+        try {
+          var grid = document.querySelector("#mt-accounts-grid");
+          var card =
+            grid &&
+            (grid.querySelector(".subscription-card.active") ||
+              grid.querySelector(
+                '.subscription-card[data-account-id="' +
+                CSS.escape(String(accountId)) +
+                '"]'
+              ));
+          var resetId = card ? card.getAttribute("data-reset-id") || "" : "";
+          var modal = document.getElementById("mt-breach-alert-modal");
+          var btn = modal
+            ? modal.querySelector(".mt-breach-reset-button")
+            : null;
+          var base =
+            (modal && modal.getAttribute("data-checkout-base")) ||
+            (window.MT_DATA && window.MT_DATA.checkoutBase) ||
+            "/checkout";
+
+          // expone el account_id por si lo necesitas en el checkout
+          if (modal)
+            modal.setAttribute("data-account-id", String(accountId || ""));
+
+          if (btn) {
+            if (resetId) {
+              btn.href = base + "?add-to-cart=" + encodeURIComponent(resetId);
+              btn.setAttribute("data-account-id", String(accountId || ""));
+              btn.classList.remove("disabled");
+              btn.removeAttribute("aria-disabled");
+            } else {
+              btn.href = "#";
+              btn.classList.add("disabled");
+              btn.setAttribute("aria-disabled", "true");
+            }
+          }
+        } catch (_) { }
+
+        var modalEl = document.getElementById("mt-breach-alert-modal");
+        if (!modalEl || modalEl.classList.contains("show")) return;
+        if (typeof modalEl.__open === "function") modalEl.__open();
+        else {
+          modalEl.setAttribute("data-show", "1");
+          modalEl.removeAttribute("hidden");
+          modalEl.setAttribute("aria-hidden", "false");
+          modalEl.classList.add("show");
+        }
+      }
+    })
+    .finally(function () {
+      __breachGuard.pending = false;
+    });
+}
+
+/* === Registro en el bus de refresco y listeners === */
+if (window.mtRefresh && typeof window.mtRefresh.register === "function") {
+  window.mtRefresh.register("breachGuard", breachGuardCheck);
+}
+
+window.breachGuardCheck = breachGuardCheck;
+
+// 1) primer chequeo al cargar, si hay selectedId
+(function () {
+  var firstId = (window.mtAccounts && mtAccounts.selectedId) || "";
+  if (document.readyState === "loading") {
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+        if (firstId) breachGuardCheck(firstId);
+      },
+      { once: true }
+    );
+  } else {
+    if (firstId) breachGuardCheck(firstId);
+  }
+})();
+
+// == Main width var: --mt-main-width (+ --dj-viewport) ==
+(function () {
+  function clamp(n) {
+    return Math.max(784, Math.round(n || 0));
+  }
+
+  function calcMainWidth() {
+    var page = document.querySelector(".mt-page");
+    var side = document.querySelector(".mt-page__sidebar");
+    if (!page) return 0;
+    var gap = parseFloat(getComputedStyle(page).gap || 0) || 0;
+    var pageW = page.clientWidth;
+    var sideW = side ? side.getBoundingClientRect().width : 0;
+    return clamp(pageW - sideW - gap);
+  }
+
+  function applyWidth() {
+    var w = calcMainWidth();
+    if (!w) return;
+
+    document.documentElement.style.setProperty("--mt-main-width", w + "px");
+    document.body.style.setProperty("--mt-main-width", w + "px");
+
+    var dj = document.getElementById("mt-daily-journal");
+    if (dj) dj.style.setProperty("--dj-viewport", w + "px");
+  }
+
+  function boot() {
+    applyWidth();
+
+    var page = document.querySelector(".mt-page");
+    var side = document.querySelector(".mt-page__sidebar");
+
+    if (window.ResizeObserver && page) {
+      var ro = new ResizeObserver(applyWidth);
+      ro.observe(page);
+      if (side) {
+        var ro2 = new ResizeObserver(applyWidth);
+        ro2.observe(side);
+        side.addEventListener("transitionend", function (e) {
+          if (["width", "flex-basis", "transform"].includes(e.propertyName)) {
+            requestAnimationFrame(applyWidth);
+          }
+        });
+      }
+    } else {
+      var t;
+      window.addEventListener("resize", function () {
+        clearTimeout(t);
+        t = setTimeout(applyWidth, 100);
+      });
+    }
+  }
+
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  else boot();
+})();
+
+// === Bind nav -> POST /my-account/orders con orderId actual ===
+function mtBindManageSubsNav() {
+  var nav = document.querySelector(".mega-navigation");
+  if (!nav) return;
+
+  if (nav.__mtBoundManageSubs) return;
+  nav.__mtBoundManageSubs = true;
+
+  function readOrderId() {
+    var root = document.getElementById("mt-account-overview");
+    var raw =
+      (root && (root.getAttribute("data-order-id") || root.dataset.orderId)) ||
+      "";
+    raw = String(raw).replace(/[^\d]/g, "");
+    var id = parseInt(raw, 10) || 0;
+    try {
+      console.debug("[MT][Orders] orderId from data-order-id =", id);
+    } catch (_) { }
+    return id;
+  }
+
+  function ensurePostForm(actionUrl) {
+    var form = document.getElementById("mt-manage-subs-form");
+    if (!form) {
+      form = document.createElement("form");
+      form.id = "mt-manage-subs-form";
+      form.method = "post";
+      form.action =
+        actionUrl ||
+        (window.location.origin
+          ? window.location.origin + "/my-account/orders/"
+          : "/my-account/orders/");
+      form.className = "d-none";
+
+      var i1 = document.createElement("input");
+      i1.type = "hidden";
+      i1.name = "orderId";
+      form.appendChild(i1);
+
+      var i2 = document.createElement("input");
+      i2.type = "hidden";
+      i2.name = "optionalOrderId";
+      form.appendChild(i2);
+
+      document.body.appendChild(form);
+    }
+    return form;
+  }
+
+  function submitPost(toUrl) {
+    var orderId = readOrderId();
+    if (!orderId) {
+      window.location.href = toUrl;
+      return;
+    }
+    var form = ensurePostForm(toUrl);
+
+    var action =
+      toUrl && toUrl.indexOf("/my-account/orders") !== -1
+        ? toUrl
+        : window.location.origin
+          ? window.location.origin + "/my-account/orders/"
+          : "/my-account/orders/";
+    form.action = action;
+
+    var inp1 = form.querySelector('input[name="orderId"]');
+    var inp2 = form.querySelector('input[name="optionalOrderId"]');
+    if (inp1) inp1.value = String(orderId);
+    if (inp2) inp2.value = String(orderId);
+
+    try {
+      console.debug("[MT][Orders] POST ->", form.action, { orderId });
+    } catch (_) { }
+    form.submit();
+  }
+
+  var link = nav.querySelector('a[href*="/my-account/orders"]');
+  if (link) {
+    link.addEventListener(
+      "click",
+      function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        submitPost(this.href);
+      },
+      { passive: false }
+    );
+  }
+
+  var select = document.getElementById("mega-navigation-select");
+  if (select) {
+    try {
+      select.onchange = null;
+      select.removeAttribute("onchange");
+    } catch (_) { }
+    select.addEventListener(
+      "change",
+      function (e) {
+        var url = this.value || "";
+        if (!url) return;
+
+        if (url.indexOf("/my-account/orders") !== -1) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          submitPost(url);
+        } else {
+          window.location.href = url;
+        }
+      },
+      { passive: false }
+    );
+  }
+}
+
+// === Manage Subscription (show/hide + URL) según data-subscription-id del ROOT ===
+(function () {
+  function getRoot() {
+    return document.getElementById("mt-account-overview");
+  }
+
+  function readSubscriptionId() {
+    // 1) root (lo setea PHP y el picker)
+    var root = getRoot();
+    var sid =
+      (root &&
+        (root.getAttribute("data-subscription-id") ||
+          root.dataset.subscriptionId)) ||
+      "";
+
+    // 2) fallback: card activa en el grid
+    if (!sid) {
+      var card = document.querySelector(
+        "#mt-accounts-grid .subscription-card.active"
+      );
+      sid =
+        (card &&
+          (card.getAttribute("data-subscription-id") ||
+            card.dataset.subscriptionId)) ||
+        "";
+    }
+    return String(sid).trim();
+  }
+
+  function syncManageSubscription() {
+    var li = document.getElementById("mt-nav-manage-subscription");
+    if (!li) return;
+    var a = li.querySelector("a");
+    var sid = readSubscriptionId();
+
+    if (sid) {
+      var url =
+        (window.location.origin || "") +
+        "/my-account/view-subscription/" +
+        encodeURIComponent(sid) +
+        "/";
+      if (a) a.href = url;
+
+      // visible
+      li.classList.remove("d-none");
+      li.removeAttribute("aria-hidden");
+      li.removeAttribute("inert");
+      if (a) {
+        a.removeAttribute("aria-disabled");
+      }
+    } else {
+      // oculto + guard UI
+      li.classList.add("d-none");
+      li.setAttribute("aria-hidden", "true");
+      li.setAttribute("inert", "");
+      if (a) {
+        a.setAttribute("href", "#");
+        a.setAttribute("aria-disabled", "true");
+      }
+    }
+  }
+
+  // boot
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncManageSubscription, {
+      once: true,
+    });
+  } else {
+    syncManageSubscription();
+  }
+
+  // y cuando confirmas con el botón "Select" del picker (por si el root se actualiza ahí)
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.closest("#select-subscription-btn")) {
+      setTimeout(syncManageSubscription, 0);
+    }
+  });
+})();
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", mtBindManageSubsNav, {
+    once: true,
+  });
+} else {
+  mtBindManageSubsNav();
+}
+
+
+
 // --- POST silencioso al checkout con account_id en el body (sin exponerlo en la URL)
 (function attachMtModalPostCheckout() {
   if (window.__mtModalPostCheckoutBound) return;
@@ -2457,8 +2498,8 @@ if (document.readyState === "loading") {
       var el =
         ev.target && ev.target.closest
           ? ev.target.closest(
-              ".mt-breach-reset-button, #mt-activation-btn, .account-reset-button"
-            )
+            ".mt-breach-reset-button, #mt-activation-btn, .account-reset-button"
+          )
           : null;
       if (!el) return;
 
@@ -2528,13 +2569,13 @@ if (document.readyState === "loading") {
 
       try {
         window.mtTooltips && window.mtTooltips.refresh(wrapper);
-      } catch (_) {}
+      } catch (_) { }
     } else {
       const body = wrapper.querySelector(".mt-tooltip__body");
       if (body) body.textContent = text || "You are up to date.";
       try {
         window.mtTooltips && window.mtTooltips.refresh(wrapper);
-      } catch (_) {}
+      } catch (_) { }
     }
   }
 
@@ -2545,13 +2586,13 @@ if (document.readyState === "loading") {
     if (wrapper) {
       try {
         window.mtTooltips && window.mtTooltips.closeAll();
-      } catch (_) {}
+      } catch (_) { }
       const parent = wrapper.parentNode;
       parent.insertBefore(toggle, wrapper);
       wrapper.remove();
       try {
         window.mtTooltips && window.mtTooltips.refresh(parent || document);
-      } catch (_) {}
+      } catch (_) { }
     }
   }
 
@@ -2591,8 +2632,8 @@ if (document.readyState === "loading") {
         method: "POST",
         credentials: "same-origin",
         body: fd,
-      }).catch(() => {});
-    } catch (_) {}
+      }).catch(() => { });
+    } catch (_) { }
   }
 
   function uidFromBtn(btn, article) {
@@ -2669,7 +2710,7 @@ if (document.readyState === "loading") {
     toggle.setAttribute("aria-expanded", "true");
     try {
       panel.focus({ preventScroll: true });
-    } catch (_) {}
+    } catch (_) { }
 
     document.addEventListener("click", onDocClick, true);
     document.addEventListener("keydown", onKey, true);
@@ -2736,7 +2777,7 @@ if (document.readyState === "loading") {
           closePanel(container);
           try {
             window.mtTooltips && window.mtTooltips.refresh(container);
-          } catch (_) {}
+          } catch (_) { }
         }
       },
       true
@@ -2789,7 +2830,7 @@ if (document.readyState === "loading") {
           closePanel(container);
           try {
             toggle.focus({ preventScroll: true });
-          } catch (_) {}
+          } catch (_) { }
         },
         { capture: true }
       );
@@ -2799,7 +2840,7 @@ if (document.readyState === "loading") {
     syncBell(container);
     try {
       window.mtTooltips && window.mtTooltips.refresh(container);
-    } catch (_) {}
+    } catch (_) { }
   }
 
   function init() {
@@ -2911,12 +2952,10 @@ if (document.readyState === "loading") {
         data-logo="${esc(logo)}"
         data-main-id="${esc(a.mainProductId || "")}"
         data-order-id="${esc(a.order || 0)}"
-        data-has-subscription="${
-          a.subscriptionId || a.hasSubscription ? "1" : "0"
+        data-has-subscription="${a.subscriptionId || a.hasSubscription ? "1" : "0"
         }"
         data-subscription-id="${esc(a.subscriptionId || "")}">
-        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${
-          isCur ? "" : "display:none;"
+        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${isCur ? "" : "display:none;"
         }">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" fill="#FFB34A" />
@@ -2926,13 +2965,13 @@ if (document.readyState === "loading") {
         <div class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
           <div class="logo-container position-relative d-inline-block">
             <img src="${esc(
-              logo
-            )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
-        FALLBACK_LOGO
-      )}'">
+          logo
+        )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
+          FALLBACK_LOGO
+        )}'">
             <div class="dot-indicator ${esc(dotClass)}" title="${esc(
-        statusRaw
-      )}" style="position:absolute;right:-1px;bottom:-1px;">
+          statusRaw
+        )}" style="position:absolute;right:-1px;bottom:-1px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <circle cx="6" cy="6" r="6" fill="white" />
                 <circle cx="6" cy="6" r="4" fill="currentColor" />
@@ -2945,15 +2984,14 @@ if (document.readyState === "loading") {
             ${esc((a.size || "") + " " + (a.name || "Account"))}
           </div>
           <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">#${esc(
-            platId || aid
-          )}</div>
-          ${
-            a.programTypeText && a.programTypeClass
-              ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(
-                  a.programTypeClass
-                )}">${esc(a.programTypeText)}</div>`
-              : ""
-          }
+          platId || aid
+        )}</div>
+          ${a.programTypeText && a.programTypeClass
+          ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(
+            a.programTypeClass
+          )}">${esc(a.programTypeText)}</div>`
+          : ""
+        }
         </div>
       </div>`;
     }
@@ -2962,7 +3000,7 @@ if (document.readyState === "loading") {
     ric(() => {
       try {
         window.mtTooltips && window.mtTooltips.refresh(grid);
-      } catch (_) {}
+      } catch (_) { }
     });
 
     markActiveInGrid();
@@ -3232,7 +3270,7 @@ if (document.readyState === "loading") {
         $.preloader.show();
         return;
       }
-    } catch (_) {}
+    } catch (_) { }
     const el = document.querySelector(".preloader");
     if (el) el.style.display = "block";
   }
@@ -3255,7 +3293,7 @@ if (document.readyState === "loading") {
         $.preloader.hide();
         return;
       }
-    } catch (_) {}
+    } catch (_) { }
     const el = document.querySelector(".preloader");
     if (el) el.style.display = "none";
   }
@@ -3272,7 +3310,7 @@ if (document.readyState === "loading") {
       if (v === "metrics" || v === "journal") return v;
       if (/trading-journal/i.test(u.pathname)) return "journal";
       if (/trade-area|overview/i.test(u.pathname)) return "metrics";
-    } catch (_) {}
+    } catch (_) { }
     return "";
   }
 
@@ -3335,6 +3373,9 @@ if (document.readyState === "loading") {
     if (view !== "metrics" && view !== "journal") view = "metrics";
     if (view === currentView && hydrated) return;
 
+    // Nuevo: vista anterior antes de cambiar
+    const prevView = currentView || "";
+
     root.setAttribute("data-current-view", view);
     fastToggle(elMet, view === "metrics");
     fastToggle(elJour, view === "journal");
@@ -3349,6 +3390,37 @@ if (document.readyState === "loading") {
       window.mtAccountDataGlobal.onShow();
     }
 
+    // si venimos de JOURNAL y entramos a METRICS, forzamos check de modales
+    if (view === "metrics" && prevView === "journal") {
+      try {
+        let accId = "";
+
+        // 1) Intentar usar el contexto global actual
+        if (
+          window.mtRefresh &&
+          typeof window.mtRefresh.getCurrentAccount === "function"
+        ) {
+          const ctx = mtRefresh.getCurrentAccount() || {};
+          accId = String(ctx.accountId || ctx.id || "");
+        }
+
+        // 2) Fallback al atributo del root
+        if (!accId && root) {
+          accId = root.getAttribute("data-account-id") || "";
+        }
+
+        if (accId) {
+          try {
+            breachGuardCheck?.(accId);
+          } catch (_) { }
+
+          try {
+            passedGuardCheck?.(accId);
+          } catch (_) { }
+        }
+      } catch (_) { }
+    }
+
     if (push) {
       const url = new URL(location.href);
       url.searchParams.set("view", view);
@@ -3357,6 +3429,7 @@ if (document.readyState === "loading") {
     if (doBlink) blinkPreloader(500);
     currentView = view;
   }
+
 
   function fastToggle(el, show) {
     if (!el) return;
@@ -3405,8 +3478,8 @@ if (document.readyState === "loading") {
     "";
   const perPageAttr = parseInt(
     comp.getAttribute("data-per-page") ||
-      wrap.getAttribute("data-per-page") ||
-      "25",
+    wrap.getAttribute("data-per-page") ||
+    "25",
     10
   );
   const perPage =
@@ -3502,7 +3575,7 @@ if (document.readyState === "loading") {
           detail: { type: "CLOSED", page: 1 },
         })
       );
-      fetchTrades("CLOSED", 1, /*force*/ true).catch(() => {});
+      fetchTrades("CLOSED", 1, /*force*/ true).catch(() => { });
     });
   }
 
@@ -3519,7 +3592,7 @@ if (document.readyState === "loading") {
   };
 
   // Primer fetch por defecto
-  fetchTrades("CLOSED", 1).catch(() => {});
+  fetchTrades("CLOSED", 1).catch(() => { });
 })();
 
 /* =========================
@@ -3585,6 +3658,8 @@ if (document.readyState === "loading") {
     v == null || v === "" || isNaN(v)
       ? "-"
       : (v < 0 ? "-" : "") + "$" + Math.abs(+v).toFixed(2);
+  const fmtPrice = (v) =>
+    v == null || v === "" || isNaN(v) ? "-" : Number(v).toFixed(2);
 
   const fmtDate = (s) => (s && /^\d{2}\/\d{2}\/\d{4}$/.test(s) ? s : s || "-");
 
@@ -3602,8 +3677,7 @@ if (document.readyState === "loading") {
   };
 
   const pill = (txt, kind) =>
-    `<span class="mt-pill ${
-      kind === "err" ? "mt-pill--err" : "mt-pill--sec"
+    `<span class="mt-pill ${kind === "err" ? "mt-pill--err" : "mt-pill--sec"
     }">${txt}</span>`;
 
   // empty-state
@@ -3618,6 +3692,63 @@ if (document.readyState === "loading") {
     removeSkeletonClasses();
   };
 
+  // ===== ventana de 3 páginas max, actual al centro =====
+  function getPagerWindow(current, total) {
+    current = Math.max(1, Math.min(current, total));
+    if (total <= 3) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    if (current <= 2) return [1, 2, 3];
+    if (current >= total) return [total - 2, total - 1, total];
+    return [current - 1, current, current + 1];
+  }
+
+  // ===== Pager numérico (max 3 botones) =====
+  function rebuildNumericPager(pages) {
+    if (!pager) return;
+
+    let holder = pager.querySelector(".dj-pages");
+    if (!holder) {
+      holder = document.createElement("span");
+      holder.className = "dj-pages d-flex gap-1";
+      const nextBtn = pager.querySelector(".js-next");
+      nextBtn ? pager.insertBefore(holder, nextBtn) : pager.appendChild(holder);
+    }
+
+    holder.innerHTML = "";
+
+    const windowPages = getPagerWindow(currentPage, pages);
+
+    windowPages.forEach((p) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "dj-btn dj-num";
+      b.textContent = String(p);
+      b.dataset.page = String(p);
+
+      b.addEventListener("click", () => {
+        if (p === currentPage) return;
+        currentPage = p;
+        pageByType[currentType] = currentPage;
+        setBusy(true);
+        window.mtTradesAPI
+          ?.refresh(currentType, currentPage)
+          .catch(() => setBusy(false));
+      });
+
+      holder.appendChild(b);
+    });
+  }
+
+  function updateNumericPagerUI() {
+    if (!pager) return;
+    const nums = Array.from(pager.querySelectorAll(".dj-pages .dj-num"));
+    nums.forEach((b) => {
+      const p = Number(b.dataset.page || b.textContent);
+      b.classList.toggle("active", p === currentPage);
+    });
+  }
+
   // fila
   function buildRow(r, isLast = false) {
     const netCls =
@@ -3625,8 +3756,8 @@ if (document.readyState === "loading") {
         ? r.net > 0
           ? "text-success"
           : r.net < 0
-          ? "text-danger"
-          : ""
+            ? "text-danger"
+            : ""
         : "";
 
     const status = String(r.status || "").toUpperCase();
@@ -3665,12 +3796,9 @@ if (document.readyState === "loading") {
       <div class="dj-cell is-right ${netCls}">${fmtMoney(r.net)}</div>  
       <div class="dj-cell is-right">${durationLabel}</div>
       <div class="dj-cell is-right">${sym}</div>
-    <div class="dj-cell is-right dj-cell--side">
-       
-        <span>${sideLabel}</span> ${sideIcon}
-      </div>
-      <div class="dj-cell is-right">${fmtMoney(r.avgEntry)}</div>
-      <div class="dj-cell is-right">${fmtMoney(r.avgExit)}</div>
+      <div class="dj-cell is-right dj-cell--side"><span>${sideLabel}</span> ${sideIcon}</div>
+      <div class="dj-cell is-right">${fmtPrice(r.avgEntry)}</div>
+      <div class="dj-cell is-right">${fmtPrice(r.avgExit)}</div>
       <div class="dj-cell is-right">${fmtDate(r.openDate)}</div>
       <div class="dj-cell is-right">${fmtTime(r.openTimeStr)}</div>
       <div class="dj-cell is-right">${fmtDate(r.closeDate)}</div>
@@ -3683,9 +3811,9 @@ if (document.readyState === "loading") {
     const page = Number(payload.page || 1);
     const total = Number(
       payload.total ??
-        (payload.meta && payload.meta.totalCount) ??
-        recs.length ??
-        0
+      (payload.meta && payload.meta.totalCount) ??
+      recs.length ??
+      0
     );
     const pages = Number(
       payload.pages || Math.ceil(total / Math.max(1, perPage))
@@ -3710,17 +3838,21 @@ if (document.readyState === "loading") {
     if (pager) {
       pager.hidden = total === 0;
 
-      const end = Math.min(page * perPage, total);
-      if (showing) showing.textContent = String(end);
-      if (totalEl) totalEl.textContent = String(total);
-
+      // habilitar/disable prev/next igual que antes
       if (btnPrev) btnPrev.disabled = page <= 1;
       if (btnNext) btnNext.disabled = page >= pages;
 
+      const endCount = Math.min(page * perPage, total); // acumulado hasta esta página
+      if (showing) showing.textContent = String(endCount);
+      if (totalEl) totalEl.textContent = String(total);
+
+      rebuildNumericPager(pages);
+      updateNumericPagerUI();
+
       if (btnPrev)
         btnPrev.onclick = () => {
-          if (page > 1) {
-            currentPage = page - 1;
+          if (currentPage > 1) {
+            currentPage = currentPage - 1;
             pageByType[tKey] = currentPage;
             setBusy(true);
             window.mtTradesAPI
@@ -3728,10 +3860,11 @@ if (document.readyState === "loading") {
               .catch(() => setBusy(false));
           }
         };
+
       if (btnNext)
         btnNext.onclick = () => {
-          if (page < pages) {
-            currentPage = page + 1;
+          if (currentPage < pages) {
+            currentPage = currentPage + 1;
             pageByType[tKey] = currentPage;
             setBusy(true);
             window.mtTradesAPI
@@ -3740,6 +3873,7 @@ if (document.readyState === "loading") {
           }
         };
     }
+
     removeSkeletonClasses();
     setBusy(false);
   }
@@ -3877,14 +4011,14 @@ if (document.readyState === "loading") {
     );
     const START_YEAR = parseInt(
       grid.dataset.startYear ||
-        grid.getAttribute("data-start-year") ||
-        now.getFullYear(),
+      grid.getAttribute("data-start-year") ||
+      now.getFullYear(),
       10
     );
     const START_MONTH = parseInt(
       grid.dataset.startMonth ||
-        grid.getAttribute("data-start-month") ||
-        now.getMonth(),
+      grid.getAttribute("data-start-month") ||
+      now.getMonth(),
       10
     );
 
@@ -3940,7 +4074,7 @@ if (document.readyState === "loading") {
     function createDropdown(ddEl, items, { formatLabel, value, onChange }) {
       if (!ddEl) {
         return {
-          set() {},
+          set() { },
           get() {
             return undefined;
           },
@@ -3952,7 +4086,7 @@ if (document.readyState === "loading") {
       const list = ddEl.querySelector(".mt-dd__panel");
       if (!btn || !lab || !list) {
         return {
-          set() {},
+          set() { },
           get() {
             return undefined;
           },
@@ -4145,8 +4279,7 @@ if (document.readyState === "loading") {
 
         cell.setAttribute(
           "aria-label",
-          `${key}, ${pnl !== null ? "$" + pnl.toFixed(0) : "no data"}, ${
-            tr || 0
+          `${key}, ${pnl !== null ? "$" + pnl.toFixed(0) : "no data"}, ${tr || 0
           } trades`
         );
 
@@ -4689,3 +4822,782 @@ if (document.readyState === "loading") {
     });
   }
 })();
+
+// ======= Request Payout Card: elegibilidad por accountId (AJAX) =======
+(function () {
+  var root = document.getElementById("mt-account-overview");
+  if (!root) return;
+
+  var ajaxUrl =
+    (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+
+  var cache = {};
+
+  function setCardState(accountId, payload) {
+    var card = document.querySelector('[data-role="mt-request-payout-card"]');
+    if (!card) return;
+
+    card.setAttribute("data-account-id", accountId || "");
+
+    var btn = card.querySelector('[data-role="mt-open-payout-modal"]');
+    if (!btn) return;
+
+    if (!accountId || !payload) {
+      card.setAttribute("data-payout-eligible", "0");
+      card.setAttribute("data-max-withdrawal", "0");
+      card.setAttribute("data-min-withdrawal", "0");
+      btn.disabled = true;
+      btn.setAttribute("aria-disabled", "true");
+      return;
+    }
+
+    var eligible = !!payload.eligibleForPayout;
+    var maxUI =
+      Number(
+        payload.maxWithdrawalUI ||
+        (payload.meta && payload.meta.maxWithdrawalUI) ||
+        0
+      ) || 0;
+
+    var minUI =
+      Number(
+        payload.meta && typeof payload.meta.minWithdrawal !== "undefined"
+          ? payload.meta.minWithdrawal
+          : payload.minWithdrawal || 0
+      ) || 0;
+
+    if (eligible && maxUI > 0) {
+      card.setAttribute("data-payout-eligible", "1");
+      card.setAttribute("data-max-withdrawal", String(maxUI));
+      card.setAttribute("data-min-withdrawal", String(minUI));
+      btn.disabled = false;
+      btn.setAttribute("aria-disabled", "false");
+    } else {
+      card.setAttribute("data-payout-eligible", "0");
+      card.setAttribute("data-max-withdrawal", "0");
+      card.setAttribute("data-min-withdrawal", "0");
+      btn.disabled = true;
+      btn.setAttribute("aria-disabled", "true");
+    }
+  }
+
+
+  function fetchEligibility(accountId) {
+    if (!accountId) {
+      setCardState("", null);
+      return;
+    }
+
+    if (cache[accountId]) {
+      setCardState(accountId, cache[accountId]);
+      return;
+    }
+
+    var form = new FormData();
+    form.append("action", "mt_payout_check_eligibility");
+    form.append("accountId", accountId);
+
+    fetch(ajaxUrl, {
+      method: "POST",
+      body: form,
+    })
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (json) {
+        if (!json || !json.success) {
+          throw new Error("Invalid response");
+        }
+        cache[accountId] = json.data || {};
+        setCardState(accountId, cache[accountId]);
+      })
+      .catch(function (err) {
+        console.error("[Payout] eligibility error", err);
+        setCardState(accountId, null);
+      });
+  }
+
+  function init() {
+    var initialId = root.getAttribute("data-account-id") || "";
+    if (initialId) {
+      fetchEligibility(initialId);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+
+  // Cada vez que seleccionas cuenta nueva
+  document.addEventListener("mt:accountSelected", function (e) {
+    var id = (e && e.detail && (e.detail.accountId || e.detail.id)) || "";
+    if (!id) return;
+    fetchEligibility(id);
+  });
+  window.MT_PAYOUT_ELIGIBILITY_CACHE = cache;
+
+  window.MT_PAYOUT_REFRESH = function (accountId) {
+    // si no pasan id, intenta usar la cuenta actual del overview
+    var root = document.getElementById("mt-account-overview");
+    var currentId = accountId || (root && root.getAttribute("data-account-id")) || "";
+    if (!currentId) return;
+    fetchEligibility(currentId);
+  };
+})();
+
+
+
+// ======= Mostrar/ocultar card de payout según account-type (Funded/Evaluation) =======
+(function () {
+  var root = document.getElementById("mt-account-overview");
+  var wrap = document.getElementById("mt-account-payout");
+  if (!root || !wrap) return;
+
+  function syncPayoutVisibility() {
+    var t = (root.getAttribute("data-account-type") || "").toLowerCase();
+
+    var isFunded =
+      t.indexOf("funded") === 0 || t.indexOf("funded") !== -1; // por si viene "Funded Account" o similar
+
+    if (isFunded) {
+      wrap.classList.remove("d-none");
+    } else {
+      wrap.classList.add("d-none");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncPayoutVisibility, { once: true });
+  } else {
+    syncPayoutVisibility();
+  }
+
+  // Cuando cambias de cuenta
+  document.addEventListener("mt:accountSelected", function () {
+    // pequeño delay por si otro código actualiza data-account-type
+    setTimeout(syncPayoutVisibility, 0);
+  });
+})();
+
+/* ===== Request Payout Modal (desde card Funded) ===== */
+(function () {
+  const modal = document.getElementById("mt-request-payout-modal");
+  if (!modal || !window.mtModal || typeof window.mtModal.openCentered !== "function") return;
+
+  const form = modal.querySelector("#mt-payout-form");
+  const amountInput = modal.querySelector("#mt-payout-amount");
+  const maxEl = modal.querySelector("#mt-payout-max");
+  const maxValueEl = maxEl ? maxEl.querySelector("[data-role='mt-payout-max-value']") : null;
+  const accHidden = modal.querySelector("#mt-payout-account");
+  const errEl = modal.querySelector("#mt-payout-error");
+  const btnContinue = modal.querySelector("#mt-payout-continue");
+  const btnConfirm = modal.querySelector("#mt-payout-confirm");
+  const step1 = modal.querySelector("#mt-payout-step1");
+  const step2 = modal.querySelector("#mt-payout-step2");
+  const btnBack = modal.querySelector("#mt-payout-back");
+  const btnCancel = modal.querySelector("#mt-payout-cancel");
+  const btnClose = modal.querySelector(".mt-modal__close");
+
+  const I18N = (typeof window !== "undefined" && window.MT_PAYOUT_I18N) || {};
+
+  /* ---------- Utils ---------- */
+  function formatMoney(n) {
+    if (!isFinite(n)) return "—";
+    return "$" + (Math.round(Number(n) * 100) / 100).toLocaleString();
+  }
+
+  function showPreloader() {
+    try {
+      if (window.jQuery && window.jQuery(".preloader").length) {
+        window.jQuery(".preloader").fadeIn();
+      }
+    } catch (e) { }
+  }
+
+  function hidePreloader() {
+    try {
+      if (window.jQuery && window.jQuery(".preloader").length) {
+        window.jQuery(".preloader").fadeOut();
+      }
+    } catch (e) { }
+  }
+
+  function safeJsonParse(text) {
+    try {
+      const j = JSON.parse(text);
+      return { ok: true, json: j };
+    } catch (e) {
+      return { ok: false, json: null };
+    }
+  }
+
+  function showGlobalError(headline, message, opts) {
+    try {
+      if (window.MEGATRADER && typeof window.MEGATRADER.showError === "function") {
+        window.MEGATRADER.showError(
+          headline || "Request failed",
+          message || "Unexpected error.",
+          opts || {}
+        );
+        setTimeout(function () {
+          const b = document.querySelector(".modal-backdrop:last-of-type");
+          if (b) b.classList.add("mt-error");
+        }, 0);
+        return;
+      }
+
+      const m = document.getElementById("mt-error-modal");
+      if (m) {
+        const t = document.getElementById("mt-error-title");
+        const msg = document.getElementById("mt-error-message");
+        if (t) t.textContent = headline || "Request failed";
+        if (msg) msg.textContent = message || "Unexpected error.";
+        const inst =
+          window.bootstrap && window.bootstrap.Modal
+            ? window.bootstrap.Modal.getOrCreateInstance(m, { backdrop: true })
+            : null;
+        if (inst) {
+          inst.show();
+          setTimeout(function () {
+            const b = document.querySelector(".modal-backdrop:last-of-type");
+            if (b) b.classList.add("mt-error");
+          }, 0);
+        } else {
+          alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+        }
+      } else {
+        alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+      }
+    } catch (e) {
+      console.error("showError failed:", e);
+      alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+    }
+  }
+
+  function renderCongratsStep() {
+    const body = modal.querySelector(".modal-body");
+    const footer = modal.querySelector(".modal-footer");
+    const headerTitle = modal.querySelector("#mtpayout-title");
+    if (headerTitle) headerTitle.textContent = "Payout Request";
+
+    const congrats = (I18N && I18N.congrats) || "Congrats!";
+    const msg = (I18N && I18N.congratsMessage) || "Your request has been successfully submitted";
+    const subtitle = (I18N && I18N.congratsSubtitle) || "You’ll be notified once your request is approved.";
+
+    if (body) {
+      body.innerHTML =
+        '<div class="text-center w-100 mb-n4">' +
+        '  <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block" src="/wp-content/themes/megatrader-addons/assets/img/thank-you.png" alt="thank you" width="690" height="132">' +
+        '  <img decoding="async" class="d-inline-block d-sm-none" src="/wp-content/themes/megatrader-addons/assets/img/thank-you2.png" alt="thank you" width="327" height="132">' +
+        "</div>" +
+        '<div class="d-flex flex-column align-items-center gap-2 pb-4">' +
+        '  <div class="fw-medium leading-60px text-5xl text-uppercase text-white">' + congrats + "</div>" +
+        '  <div class="text-white fw-medium text-uppercase text-2xl leading-7 text-center">' + msg + "</div>" +
+        '  <div class="fw-medium text-a8a29e text-base text-center">' + subtitle + "</div>" +
+        "</div>";
+    }
+
+    if (footer) {
+      footer.innerHTML = "";
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "mt-btn mt-btn--md mt-btn--primary m-auto";
+      closeBtn.textContent = "Close";
+
+      closeBtn.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        try {
+          if (window.mtModal && typeof window.mtModal.closeCentered === "function") {
+            window.mtModal.closeCentered(modal, { clearDataShow: true });
+          }
+        } catch (e) {
+          console.error("[PAYOUT] close after congrats failed:", e);
+        }
+      });
+
+      footer.appendChild(closeBtn);
+    }
+
+  }
+
+  /* ---------- Steps helpers ---------- */
+  function switchToStep(step) {
+    if (!step1 || !step2 || !btnCancel || !btnBack || !btnContinue || !btnConfirm) return;
+
+    if (step === 2) {
+      step1.classList.add("d-none");
+      step2.classList.remove("d-none");
+
+      btnBack.classList.remove("d-none");
+      btnCancel.classList.add("d-none");
+
+      btnContinue.classList.add("d-none");
+      btnConfirm.classList.remove("d-none");
+      btnConfirm.disabled = false;
+    } else {
+      step2.classList.add("d-none");
+      step1.classList.remove("d-none");
+
+      btnBack.classList.add("d-none");
+      btnCancel.classList.remove("d-none");
+
+      btnContinue.classList.remove("d-none");
+      btnConfirm.classList.add("d-none");
+      btnConfirm.disabled = false;
+    }
+  }
+
+  function resetSteps() {
+    if (errEl) {
+      errEl.style.display = "none";
+      errEl.textContent = "";
+    }
+    if (amountInput) {
+      amountInput.value = "";
+      amountInput.classList.remove("is-invalid");
+      amountInput.removeAttribute("max");
+    }
+    if (btnContinue) {
+      btnContinue.disabled = true;
+      btnContinue.classList.add("disabled");
+    }
+    if (btnConfirm) {
+      btnConfirm.classList.add("d-none");
+      btnConfirm.disabled = false;
+    }
+    if (step1 && step2 && btnBack && btnCancel && btnContinue && btnConfirm) {
+      switchToStep(1);
+    }
+  }
+
+  /* ---------- Validación Step 1 ---------- */
+  function setupValidation(ctx) {
+    if (!amountInput || !maxEl || !btnContinue) return;
+
+    const max = Number(ctx.max) || 0;
+    const min = Number(ctx.min) || 0;
+    const eligible = !!ctx.eligible;
+
+    function setError(msg) {
+      if (!errEl) return;
+      if (!msg) {
+        errEl.style.display = "none";
+        errEl.textContent = "";
+        amountInput.classList.remove("is-invalid");
+      } else {
+        errEl.style.display = "";
+        errEl.textContent = msg;
+        amountInput.classList.add("is-invalid");
+      }
+    }
+
+    function validate() {
+      const raw = amountInput.value.trim();
+      let val = parseFloat(raw);
+
+      btnContinue.disabled = true;
+      btnContinue.classList.add("disabled");
+
+      if (!eligible) {
+        setError(
+          I18N.withdrawalNotEligible ||
+          "This account is not eligible for payout at the moment."
+        );
+        return;
+      }
+
+      if (!raw) {
+        setError("");
+        return;
+      }
+
+      if (!Number.isFinite(val) || val <= 0) {
+        setError(
+          I18N.withdrawalAmountMinorZero ||
+          "Enter a valid amount greater than 0."
+        );
+        return;
+      }
+
+      if (max <= 0) {
+        setError(
+          I18N.withdrawalAmountNotEligible ||
+          "This account is not eligible for payout at the moment."
+        );
+        return;
+      }
+
+      if (val > max) {
+        setError(
+          I18N.withdrawalAmountError ||
+          "Amount exceeds the maximum allowed for this payout."
+        );
+        return;
+      }
+
+      // MIN withdrawal (desde helper / MIN_WITHDRAWAL_MAP)
+      if (min > 0 && val < min) {
+        setError(
+          (I18N.withdrawalAmountBelowMin ||
+            "Amount is below the minimum withdrawal for this account.") +
+          " (" +
+          formatMoney(min) +
+          " min)"
+        );
+        return;
+      }
+
+      setError("");
+      btnContinue.disabled = false;
+      btnContinue.classList.remove("disabled");
+    }
+
+    // input en vivo
+    amountInput.removeEventListener("input", amountInput._mtPayoutHandler || (() => { }));
+    amountInput._mtPayoutHandler = validate;
+    amountInput.addEventListener("input", validate, { passive: true });
+
+    // CONTINUE → Step 2
+    if (!btnContinue._mtPayoutStepHandler) {
+      btnContinue._mtPayoutStepHandler = true;
+      btnContinue.addEventListener(
+        "click",
+        function () {
+          if (btnContinue.disabled) return;
+
+          // revalida
+          validate();
+          if (btnContinue.disabled) return;
+
+          const raw = amountInput.value.trim();
+          const amount = parseFloat(raw) || 0;
+          const fee = Math.round(amount * 0.1 * 100) / 100;
+          const receive = Math.max(
+            0,
+            Math.round((amount - fee) * 100) / 100
+          );
+
+          const emailEl = document.getElementById("mt-payout-email");
+          const email = emailEl ? emailEl.value || emailEl.textContent || "" : "";
+
+          const methodEl = document.getElementById("mt-payout-method");
+          const method = methodEl ? (methodEl.value || "rise") : "rise";
+
+          // rellenar resumen
+          const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+          };
+          setTxt("mt-review-email", email || "—");
+          setTxt(
+            "mt-review-account",
+            ctx.platformAccountId || ctx.accountId || "—"
+          );
+          setTxt("mt-review-amount", formatMoney(amount));
+          setTxt("mt-review-fee", formatMoney(fee));
+          setTxt("mt-review-receive", formatMoney(receive));
+
+          // contexto global para el submit
+          window.MT_PAYOUT_SUBMIT = {
+            accountId: ctx.accountId,
+            platformAccountId: ctx.platformAccountId || "",
+            amount,
+            fee,
+            receive,
+            method,
+            email,
+          };
+
+          switchToStep(2);
+        },
+        { passive: true }
+      );
+    }
+
+    // BACK
+    if (btnBack && !btnBack._mtPayoutBackHandler) {
+      btnBack._mtPayoutBackHandler = true;
+      btnBack.addEventListener(
+        "click",
+        function () {
+          switchToStep(1);
+        },
+        { passive: true }
+      );
+    }
+
+    validate();
+  }
+
+  /* ---------- Confirm (Step 2) → AJAX JSON ---------- */
+  if (btnConfirm && !btnConfirm._mtPayoutConfirmHandler) {
+    btnConfirm._mtPayoutConfirmHandler = true;
+    btnConfirm.addEventListener("click", function () {
+      if (!step2 || step2.classList.contains("d-none")) return;
+
+      const st = window.MT_PAYOUT_SUBMIT || {};
+      const account = st.accountId || "";
+      const amount = st.amount || 0;
+      const method = st.method || "";
+      const email = st.email || "";
+
+      if (!account || !amount || !method || !email) {
+        if (errEl) {
+          errEl.style.display = "";
+          errEl.textContent =
+            "Account, amount, method and email are required.";
+        }
+        return;
+      }
+
+      const url = (function () {
+        const base =
+          (window.mtAccounts && mtAccounts.ajaxUrl) ||
+          window.ajaxurl ||
+          "/wp-admin/admin-ajax.php";
+
+        const q = new URLSearchParams();
+        q.set("action", "mt_payouts_create");
+
+        if (window.mtAccounts && mtAccounts.nonce) {
+          q.set("_wpnonce", mtAccounts.nonce);
+        }
+        return base + "?" + q.toString();
+      })();
+
+
+      const payload = {
+        account: String(account),
+        amount: Number(amount),
+        method: String(method),
+        currency: "USD",
+        reason: "Customer request from js",
+        methodFields: [{ name: "email", value: String(email) }],
+        ip: "127.0.0.1",
+      };
+
+      console.log("[PAYOUT] POST(JSON) →", url, payload);
+
+      btnConfirm.disabled = true;
+      showPreloader();
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(payload),
+      })
+        .then(function (r) {
+          return r.text().then(function (t) {
+            return { status: r.status, raw: t };
+          });
+        })
+        .then(function (resp) {
+          console.log("[PAYOUT] ←", resp);
+          const status = resp.status;
+          const raw = resp.raw;
+
+          const parsed = safeJsonParse(raw);
+          const res = parsed.ok ? parsed.json : null;
+
+          if (status === 409) {
+            showGlobalError(
+              "Payout unavailable",
+              (res && (res.data?.message || res.message)) ||
+              "You already have a payout request in progress.",
+              { code: "409" }
+            );
+            btnConfirm.disabled = false;
+            return;
+          }
+
+          if (status < 200 || status >= 300 || !res) {
+            const msg =
+              (res && (res.data?.message || res.data?.error)) ||
+              (res && res.message) ||
+              "Request failed.";
+            showGlobalError("Request failed", msg, { code: String(status) });
+            btnConfirm.disabled = false;
+            return;
+          }
+
+          if (res && res.success) {
+            try {
+              if (window.MT_PAYOUT_REFRESH) {
+                window.MT_PAYOUT_REFRESH(account);
+              }
+            } catch (e) {
+              console.warn("[PAYOUT] refresh after success failed:", e);
+            }
+
+            renderCongratsStep();
+          } else {
+            const msg2 =
+              (res && (res.data?.message || res.data?.error)) ||
+              "Unknown error.";
+            showGlobalError("Request failed", msg2, {});
+            btnConfirm.disabled = false;
+          }
+
+        })
+        .catch(function (e) {
+          console.error("[PAYOUT] ERR ←", e);
+          showGlobalError(
+            "Network error",
+            "Network/server error, please try again later.",
+            {}
+          );
+          btnConfirm.disabled = false;
+        })
+        .finally(function () {
+          hidePreloader();
+        });
+    });
+  }
+
+  /* ---------- Abrir modal desde el card ---------- */
+  function openForCard(card, opener) {
+    if (!card) return;
+
+    const accountId =
+      card.getAttribute("data-account-id") || card.dataset.accountId || "";
+    const rawMax =
+      card.getAttribute("data-max-withdrawal") ||
+      card.dataset.maxWithdrawal ||
+      "0";
+    const rawMinAttr =
+      card.getAttribute("data-min-withdrawal") ||
+      card.dataset.minWithdrawal ||
+      "0";
+    const eligibleRaw =
+      card.getAttribute("data-payout-eligible") ||
+      card.dataset.payoutEligible ||
+      "";
+    const platformAccountId =
+      card.getAttribute("data-platform-account-id") ||
+      card.dataset.platformAccountId ||
+      "";
+
+    const max = parseFloat(rawMax) || 0;
+
+    // min desde atributo o desde caché del helper
+    let min = parseFloat(rawMinAttr);
+    if (!Number.isFinite(min) || min <= 0) {
+      try {
+        const cache = window.MT_PAYOUT_ELIGIBILITY_CACHE || {};
+        const payload = cache[accountId] || null;
+        if (payload && payload.meta && typeof payload.meta.minWithdrawal === "number") {
+          min = payload.meta.minWithdrawal;
+        }
+      } catch (e) {
+        min = min || 0;
+      }
+    }
+
+    const eligible =
+      eligibleRaw === true ||
+      eligibleRaw === "1" ||
+      eligibleRaw === "true" ||
+      eligibleRaw === 1;
+
+    if (form) form.setAttribute("data-account", accountId);
+    if (accHidden) accHidden.value = accountId;
+    modal.setAttribute("data-account-id", accountId);
+
+    // pintar máximo
+    if (maxEl) {
+      maxEl.dataset.max = String(max > 0 ? max : 0);
+      maxEl.dataset.min = String(min > 0 ? min : 0);
+
+      const target = maxValueEl || maxEl;
+      const fmt = new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      target.textContent = max > 0 ? fmt.format(max) : "—";
+    }
+
+    // atributos en el input
+    if (amountInput) {
+      amountInput.setAttribute("min", "0");
+      if (max > 0) {
+        amountInput.setAttribute("max", String(max));
+      } else {
+        amountInput.removeAttribute("max");
+      }
+    }
+
+    resetSteps();
+
+    const ctx = { accountId, platformAccountId, max, min, eligible };
+    setupValidation(ctx);
+
+    modal.__opener = opener || null;
+
+    window.mtModal.openCentered(modal, { setDataShow: true });
+  }
+
+  function findCardForButton(btn) {
+    if (!btn) return null;
+    const fromClosest = btn.closest('[data-role="mt-request-payout-card"]');
+    if (fromClosest) return fromClosest;
+
+    const root = document.getElementById("mt-account-overview");
+    const currentId = (root && root.getAttribute("data-account-id")) || "";
+    if (!currentId) return null;
+
+    return document.querySelector(
+      '[data-role="mt-request-payout-card"][data-account-id="' +
+      currentId.replace(/"/g, '\\"') +
+      '"]'
+    );
+  }
+
+  function closeModal() {
+    window.mtModal.closeCentered(modal, { clearDataShow: true });
+  }
+
+  // Abrir modal al click en el botón del card
+  document.addEventListener("click", function (ev) {
+    const btn = ev.target.closest('[data-role="mt-open-payout-modal"]');
+    if (!btn) return;
+    ev.preventDefault();
+    const card = findCardForButton(btn);
+    if (!card) return;
+    openForCard(card, btn);
+  });
+
+  // Cerrar con X
+  if (btnClose && !btnClose.__mtPayoutClose) {
+    btnClose.__mtPayoutClose = true;
+    btnClose.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      closeModal();
+    });
+  }
+
+  // Cerrar con Cancel
+  if (btnCancel && !btnCancel.__mtPayoutCancel) {
+    btnCancel.__mtPayoutCancel = true;
+    btnCancel.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      closeModal();
+    });
+  }
+
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && modal.classList.contains("show")) {
+      closeModal();
+    }
+  });
+})();
+
+
+
+
+
+
+

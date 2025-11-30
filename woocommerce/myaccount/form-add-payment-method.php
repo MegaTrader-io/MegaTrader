@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 $available_gateways = WC()->payment_gateways->get_available_payment_gateways();
 
 if ( $available_gateways ) : ?>
-	<form id="add_payment_method" method="post">
+	<form id="add_payment_method" method="post" class="mx-1">
 		<div id="payment" class="woocommerce-Payment d-flex flex-column gap-32">
 			<ul class="woocommerce-PaymentMethods payment_methods methods">
 				<?php

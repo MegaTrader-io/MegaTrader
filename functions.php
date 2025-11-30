@@ -416,6 +416,10 @@ require_once get_template_directory() . '/inc/validate_coupon_for_variation.php'
 require_once get_template_directory() . '/inc/account-navigation-module.php';
 require_once get_template_directory() . '/inc/account-settings-module.php';
 
+// My Account - My Subscriptions
+// require_once get_stylesheet_directory() . '/inc/class-mt-subscriptions-toggle.php';
+// MT_Subscriptions_Toggle::init();
+
 /**
  * Plugin Scripts
  */
@@ -1148,19 +1152,6 @@ add_action('wp_enqueue_scripts', function () {
         }
     ');
 }, 100);
-function enqueue_thankyou_validation_script() {
-    if (is_checkout()) {
-        wp_enqueue_script(
-            'thankyou-modal"',
-            get_stylesheet_directory_uri() . '/assets/js/thankyou-modal.js"',
-            array(),
-            time(),
-            true
-        );
-    }
-}
-
-add_action('wp_enqueue_scripts', 'enqueue_thankyou_validation_script');
 
 function enqueue_mt_helper_script() {
     wp_enqueue_script(
@@ -1240,11 +1231,9 @@ function mt_enqueue_overview_script_path_only() {
 
   // Cargar script en:
   // - /my-account/overview
-  // - /my-account/view-subscription/....
   $is_overview        = ($req_path === '/my-account/overview');
-  $is_view_subscript  = (strpos($req_path, '/my-account/view-subscription') === 0);
 
-  if (!$is_overview && !$is_view_subscript) {
+  if (!$is_overview) {
     return;
   }
 
@@ -1275,8 +1264,8 @@ add_action('wp_enqueue_scripts', 'mt_enqueue_overview_script_path_only', 101);
 
 add_action('wp_enqueue_scripts', 'mt_enqueue_overview_script_path_only', 101);
 
-require_once get_template_directory() . '/inc/auth-hooks.php';
-require_once get_template_directory() . '/inc/register-hooks.php';
+require_once get_template_directory() . '/inc/mt-login.php';
+require_once get_template_directory() . '/inc/mt-register.php';
 require_once get_template_directory() . '/inc/lost-password-hooks.php';
 
 add_filter( 'gettext', 'custom_change_cvc_label', 20, 3 );
@@ -1922,6 +1911,8 @@ add_action('template_redirect', function () {
     '/auth/register/',   // Register Page
     '/auth/lost-password/',   // Lost Password Page
     '/landing-page-bootstrap/',   // Landing Page Bootstrap
+    '/checkout/',
+    '/subscriptions/',
   ];
 
   $public_paths = apply_filters('mt_public_paths', $public_paths, $path);
@@ -2114,10 +2105,41 @@ if (!function_exists('mt_get_agreement_status_cached')) {
         $cached = get_transient($k);
         if ($cached !== false) return $cached;
         $data = (function_exists('mt_get_agreement_status_by_email')) ? mt_get_agreement_status_by_email($email_api, 0) : null;
-        set_transient($k, $data, 5 * MINUTE_IN_SECONDS);
+        set_transient($k, $data, 20);
         return $data;
     }
 }
+
+add_action('wp_ajax_mt_check_agreement', 'mt_ajax_check_agreement');
+
+function mt_ajax_check_agreement() {
+  if (!check_ajax_referer('mt-acc-nonce', 'nonce', false)) {
+    wp_send_json_error(['message' => 'Invalid nonce'], 403);
+  }
+
+  if (!is_user_logged_in()) {
+    wp_send_json_error(['message' => 'Not logged'], 401);
+  }
+
+  $u = wp_get_current_user();
+  $email_api = rawurlencode(strtolower(trim((string)($u->user_email ?? ''))));
+  if (!$email_api) wp_send_json_error(['message' => 'No email'], 400);
+
+  // forzar refresh del cache
+  $k = 'mt_agreement_' . md5($email_api);
+  delete_transient($k);
+
+  $ag = mt_get_agreement_status_cached($email_api);
+
+  $signed = (is_array($ag) && !empty($ag['agreementSigned'])) ? true : false;
+
+  wp_send_json_success([
+    'agreementSigned' => $signed,
+    'agreementStatus' => $ag['agreementStatus'] ?? '',
+  ]);
+}
+
+
 
 // === Performance Chart AJAX ===
 add_action('wp_ajax_mt_account_performance_chart', 'mt_ajax_account_performance_chart');
@@ -2161,6 +2183,7 @@ function mt_account_data_ajax() {
     if (!check_ajax_referer('mt-acc-nonce', 'nonce', false)) {
       wp_send_json_error(['message' => 'Invalid nonce'], 403);
     }
+
     $accountId = isset($_POST['accountId']) ? sanitize_text_field(wp_unslash($_POST['accountId'])) : '';
     if ($accountId === '') wp_send_json_error(['message' => 'Missing accountId'], 400);
 
@@ -2170,9 +2193,38 @@ function mt_account_data_ajax() {
 
     $payload = function_exists('mt_accounts_build_account_data') ? mt_accounts_build_account_data($acc) : [];
 
+    // === AGREEMENT (recalcular igual que overview) ===
+    $agreement_show = '0';
+    $agreement_url  = '#';
+
+    $email_api = '';
+    if (is_user_logged_in()) {
+      $u = wp_get_current_user();
+      if ($u && $u->exists()) {
+        $raw = strtolower(trim((string)($u->user_email ?? '')));
+        $email_api = rawurlencode($raw);
+      }
+    }
+
+    if ($email_api && function_exists('mt_get_agreement_status_cached')) {
+      $__mt_agreement = mt_get_agreement_status_cached($email_api);
+
+      $agreement_url = (is_array($__mt_agreement) && !empty($__mt_agreement['agreementURL']))
+        ? (string)$__mt_agreement['agreementURL']
+        : '#';
+
+      $agreement_show = (is_array($__mt_agreement)
+        && array_key_exists('agreementSigned', $__mt_agreement)
+        && $__mt_agreement['agreementSigned'] === false) ? '1' : '0';
+    }
+
     ob_start();
     get_template_part('template-parts/account/account-data', null, [
-      'meta' => ['accountId' => $accountId],
+      'meta' => [
+        'accountId'     => $accountId,
+        'agreementShow' => $agreement_show,
+        'agreementUrl'  => $agreement_url,
+      ],
       'data' => $payload,
     ]);
     $html = ob_get_clean();
@@ -2183,6 +2235,7 @@ function mt_account_data_ajax() {
     wp_send_json_error(['message' => 'Server error'], 500);
   }
 }
+
 
 // === Daily Journal AJAX (render filas) ===
 add_action('wp_ajax_mt_account_daily_journal', 'mt_ajax_account_daily_journal');
@@ -2369,19 +2422,37 @@ function mt_ajax_account_data_global() {
 
 
 
-// == AJAX: prepara UI de payout desde email ==
-add_action('wp_ajax_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
-add_action('wp_ajax_nopriv_mt_payouts_prepare_ui', 'mt_ajax_payouts_prepare_ui');
-function mt_ajax_payouts_prepare_ui() {
-  $email = '';
-  if (isset($_REQUEST['email'])) $email = sanitize_email(wp_unslash($_REQUEST['email']));
-  if (!$email && is_user_logged_in()) $email = wp_get_current_user()->user_email ?? '';
-  if (empty($email)) wp_send_json_error(['message' => 'Missing email'], 400);
+// == AJAX: elegibilidad de payout por accountId ==
+add_action( 'wp_ajax_mt_payout_check_eligibility', 'mt_ajax_payout_check_eligibility' );
+add_action( 'wp_ajax_nopriv_mt_payout_check_eligibility', 'mt_ajax_payout_check_eligibility' );
 
-  if (!function_exists('mt_prepare_ui_payout')) wp_send_json_error(['message' => 'Helper not available'], 500);
+function mt_ajax_payout_check_eligibility() {
+  $account_id = isset( $_REQUEST['accountId'] )
+    ? sanitize_text_field( wp_unslash( $_REQUEST['accountId'] ) )
+    : '';
 
-  $payload = mt_prepare_ui_payout($email);
-  wp_send_json_success($payload);
+  if ( ! $account_id ) {
+    wp_send_json_error( [ 'message' => 'Missing accountId' ], 400 );
+  }
+
+  if ( ! function_exists( 'mt_get_account_payout_eligibility' ) ) {
+    wp_send_json_error( [ 'message' => 'Helper not available' ], 500 );
+  }
+
+  $data = mt_get_account_payout_eligibility( $account_id );
+
+  // Siempre devolvemos success, pero con eligibleForPayout false si algo fue mal
+  if ( empty( $data ) || ! is_array( $data ) ) {
+    $data = [
+      'id'                => (string) $account_id,
+      'eligibleBase'      => false,
+      'eligibleForPayout' => false,
+      'maxWithdrawalUI'   => 0.0,
+      'meta'              => [],
+    ];
+  }
+
+  wp_send_json_success( $data );
 }
 
 
@@ -2393,11 +2464,10 @@ add_action('wp_ajax_nopriv_mt_payouts_create', 'mt_payouts_create_cb');
 function mt_payouts_create_cb() {
   $TAG = '[MT_PAYOUT_JSON]';
 
-  // 1) Nonce (respeta MT_PAYOUT_VARS.nonce en _wpnonce)
-  if (!check_ajax_referer('mt_payouts', '_wpnonce', false)) {
+if (!check_ajax_referer('mt-acc-nonce', '_wpnonce', false)) {
     error_log("$TAG NONCE_FAIL got=".($_REQUEST['_wpnonce'] ?? 'NULL'));
     wp_send_json_error(['message' => 'Invalid or missing nonce.'], 400);
-  }
+}
 
   // 2) Leer cuerpo JSON (Content-Type: application/json)
   $raw = file_get_contents('php://input');
@@ -2412,7 +2482,7 @@ function mt_payouts_create_cb() {
   $amount   = isset($data['amount'])   ? (0 + $data['amount'])     : 0;
   $method   = isset($data['method'])   ? (string)$data['method']   : '';
   $currency = isset($data['currency']) ? (string)$data['currency'] : 'USD';
-  $reason   = isset($data['reason'])   ? (string)$data['reason']   : 'Customer request from js';
+  $reason   = isset($data['reason'])   ? (string)$data['reason']   : 'Customer Request Payout';
   $ip       = isset($data['ip'])       ? (string)$data['ip']       : '127.0.0.1';
 
   // methodFields tal cual: [{"name":"email","value":"..."}]
@@ -2745,9 +2815,6 @@ if (!function_exists('mt_get_current_user_profile_data')) {
             }
         }
 
-        // Verified flag (from query var)
-        $is_verified = get_query_var('mt_is_verified', false);
-
         // Membership date
         $member_since = $current_user->user_registered
                 ? date_i18n('m/d/Y', strtotime($current_user->user_registered))
@@ -2761,8 +2828,7 @@ if (!function_exists('mt_get_current_user_profile_data')) {
                 'avatar_size' => $avatar_size,
                 'has_real_avatar' => $has_real_avatar,
                 'billing_country' => $billing_country,
-                'member_since' => $member_since,
-                'is_verified' => (bool)$is_verified,
+                'member_since' => $member_since
         ];
     }
 }

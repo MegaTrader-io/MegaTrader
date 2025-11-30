@@ -194,7 +194,7 @@ do_action( 'woocommerce_before_account_payment_methods', $has_methods ); ?>
 		</div>
 
 	<?php else : ?>
-		<div class="no-methods mt-lg-32 mt-3">
+		<div class="no-methods">
 			<span class="no-methods_title">No payment methods</span>
 			<span class="no-methods_description">You haven’t added any payment methods yet. Add a payment method to manage your subscription and make purchases.</span>
 			<span class="no-methods_types_title">We Accept:</span>

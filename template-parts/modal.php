@@ -43,8 +43,8 @@ $label_id   = $args['labelId'] ?: $args['modalId'] . 'Label';
 	 tabindex="-1" aria-labelledby="<?php echo esc_attr( $label_id ); ?>" role="dialog"
 	 data-autoshow="<?php echo $args['autoshow'] ?>" 
 	 data-notice="<?php echo $args['notice'] ?>" >
-	<div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-		<div class="modal-content flex-shrink-0 d-flex flex-column align-items-center">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content d-flex flex-column align-items-center">
 			<div class="modal-header w-100 border-0 justify-content-between align-items-start p-0 mb-32">
 				<h5 class="modal-title text-white heading-sm-medium text-uppercase" id="<?php echo esc_attr( $label_id ); ?>">
 					<?php echo esc_html( $args['modalTitle'] ); ?>
@@ -60,7 +60,7 @@ $label_id   = $args['labelId'] ?: $args['modalId'] . 'Label';
 					echo '<div class="woocommerce-notices-wrapper w-100"></div>';
 				}
 			?>
-			<div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
+			<div class="modal-body d-flex flex-column align-items-center gap-32">
 				<?php if ( $modal_image['imageSrc'] ) : ?>
 					<div class="modal-body-image <?php echo esc_attr( $modal_image['imageClass'] ); ?>">
 						<img decoding="async" src="<?php echo esc_url( $modal_image['imageSrc'] ); ?>" alt="<?php echo esc_url( $modal_image['imageAlt'] ); ?>">

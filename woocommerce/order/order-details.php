@@ -163,49 +163,17 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 
 ?>
 
-<!-- Trigger Button for Subscription-Style Modal -->
+<?php get_template_part('template-parts/orders-subscriptions/order-selector', null, [
+	'selected_item' => [
+		'status' 		=> $status,
+		'size_slug' 	=> $size_slug,
+		'product_name' 	=> $product_name,
+	]
+]); ?>
 
-<!--
-<button type="button" class="w-100 p-0 border-0 bg-131210 text-start btn-reset" data-bs-toggle="modal"
-	data-bs-target="#changeSubcriptionModal">
-	<div class="border-gray d-flex flex-wrap align-items-center gap-2 mb-3 p-3 rounded-2xl">
-		<div class="d-flex gap-3 flex-grow-1 flex-shirk-0 align-items-center">
-			<div class="d-flex gap-2 align-items-center">
-				<div class="plan-svg d-flex align-items-center h-24px">
-					<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
-						<mask id="mask0_12109_4240" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
-							width="30" height="30">
-							<rect width="30" height="30" fill="#D9D9D9" />
-						</mask>
-						<g mask="url(#mask0_12109_4240)">
-							<path
-								d="M6.25 21.25V12.5H8.75V21.25H6.25ZM13.75 21.25V12.5H16.25V21.25H13.75ZM2.5 26.25V23.75H27.5V26.25H2.5ZM21.25 21.25V12.5H23.75V21.25H21.25ZM2.5 10V7.5L15 1.25L27.5 7.5V10H2.5Z"
-								fill="#FFB34A" />
-						</g>
-					</svg>
-				</div>
-				<div class="fw-medium plan-name text-size-24 text-uppercase text-white">
-					<?= esc_html($size_slug) ?> <?= esc_html($product_name) ?>
-				</div>
-			</div>
-		</div>
-		<span class="svg-button">
-			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-				<mask id="mask0_12854_16591" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
-					height="24">
-					<rect width="24" height="24" fill="#D9D9D9" />
-				</mask>
-				<g mask="url(#mask0_12854_16591)">
-					<path d="M12 15L7 10H17L12 15Z" fill="white" />
-				</g>
-			</svg>
-		</span>
-	</div>
-</button>
-
--->
-
-<?php if ($product_id): ?>
+<?php if ($product_id): 
+	$order_again_url = home_url( '/checkout/?add-to-cart=' . $product_id );
+?>
 	<div class="mb-32 mt-card">
 		<div
 			class="d-flex flex-column flex-lg-row flex-md-row gap-3 h-full justify-content-lg-between justify-content-md-between w-full">
@@ -218,8 +186,8 @@ $last_item = min($offset + count($orders_to_show), $total_orders);
 				</div>
 			</div>
 			<div class="align-items-center d-flex flex-column flex-md-row flex-lg-row gap-2">
-				<a href="https://subscriptions.megatrader.io/" class="btn w-100 mega-btn-md mega-btn-primary-md">
-					<?php esc_html_e('Order Again', 'woocommerce'); ?>
+				<a href="<?= esc_attr($order_again_url) ?>" class="btn w-100 mega-btn-md mega-btn-primary-md">
+					<?= Label::META_SUBSCRIPTIONS_BILLING['btn_order_again_label']; ?>
 				</a>
 			</div>
 		</div>

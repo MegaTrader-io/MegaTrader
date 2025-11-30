@@ -87,7 +87,7 @@
 
             try {
                 // Enviar petición al endpoint AJAX de WordPress
-                const response = await fetch(window.wpAjax.ajaxUrl, {
+                const response = await fetch(window.MT_AP.ajaxUrl, {
                     method: 'POST',
                     body: formData,
                     credentials: 'same-origin'

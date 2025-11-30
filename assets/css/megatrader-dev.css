@@ -92,6 +92,12 @@
   --bs-modal-width: 600px;
 }
 
+@media (max-width: 575.98px) {
+  .modal {
+    --bs-modal-margin: 16px;
+  }
+}
+
 /* MD-DOWN */
 @media (max-width: 767.98px) {
   .modal .modal-content {
@@ -111,31 +117,34 @@
   }
 }
 
-/* MD-UP */
-@media (min-width: 768px) {
-  .modal .modal-dialog {
-    width: var(--bs-modal-width);
-    max-width: unset;
-  }
+.modal .modal-dialog {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 
-  .modal .modal-content {
-    --modal-content-padding: 16px;
-    --modal-content-border: 1px solid var(--ot-border-color);
-    --modal-content-border-radius: 16px;
-  }
+  width: var(--bs-modal-width);
+  max-width: min(var(--bs-modal-width), calc(100% - var(--bs-modal-margin) * 2));
+  max-height: calc(100% - var(--bs-modal-margin)*2);
 }
 
 .modal .modal-content {
+  --modal-content-padding: 16px;
+  --modal-content-border: 1px solid var(--ot-border-color);
+  --modal-content-border-radius: 16px;
+
   padding: var(--modal-content-padding);
   background: var(--black-color);
   border: var(--modal-content-border);
   border-radius: var(--modal-content-border-radius);
   box-shadow: 0px 8px 10px -6px rgba(0, 0, 0, 0.1),
     0px 20px 20px 20px rgba(0, 0, 0, 0.1);
+
+  overflow-y: auto;
 }
 
 .modal .modal-body {
   --bs-modal-padding: 0;
+  overflow-y: auto;
 }
 
 .modal .modal-image-warning {
@@ -149,26 +158,14 @@
   background-color: var(--bs-backdrop-bg) !important;
 }
 
-.modal-dialog.modal-mega {
-  width: 100%;
-  max-width: 800px;
-}
-
 #mt-request-payout-modal .modal-dialog {
   --bs-modal-width: 700px;
 }
 
-@media (min-width: 641px) and (max-width: 799px) {
-  .modal-dialog.modal-mega {
-    width: calc(100vw - 32px);
-  }
+.modal-dialog.modal-mega {
+  --bs-modal-width: 800px;
 }
 
-@media (min-width: 800px) {
-  .modal-dialog.modal-mega {
-    width: 800px;
-  }
-}
 
 /* SCROLL BAR --- */
 
@@ -1135,6 +1132,19 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .border-bottom-gray {
   border-bottom: 1px solid var(--colors-gray-700, #404040);
 }
+
+.border-gray-800 {
+  border: 1px solid var(--Colors-Gray-800, #292524);
+}
+
+.border-top-gray-800 {
+  border-top: 1px solid var(--Colors-Gray-800, #292524);
+}
+
+.border-bottom-gray-800 {
+  border-bottom: 1px solid var(--Colors-Gray-800, #292524);
+}
+
 
 .border-bottom-dark {
   border-bottom: 1px solid var(--surface-dark, #292524);
@@ -4190,6 +4200,7 @@ body.mt-placing .woocommerce-checkout {
   gap: 4px;
   justify-content: flex-end;
   padding: 0.5rem 0 0;
+  align-items: center;
 }
 
 #mt-daily-journal .dj-btn {
@@ -4437,7 +4448,7 @@ textarea.mtfb-note {
 }
 
 .mt-card.account-settings__section {
-  gap: 16px;
+  gap: 24px;
 }
 
 .account-settings__sections-wrapper>*+* {
@@ -4465,14 +4476,14 @@ textarea.mtfb-note {
   cursor: not-allowed;
 }
 
-.toggle-panel__header[disabled] .toggle-panel__text,
+.toggle-panel__header[disabled] .toggle-panel__title,
 .toggle-panel__header[disabled] .toggle-panel__icon,
 .toggle-panel__header[disabled] .toggle-panel__description,
 .toggle-panel__header[disabled] .toggle-panel__arrow {
   opacity: 0.2;
 }
 
-.toggle-panel__header[disabled] .toggle-panel__text {
+.toggle-panel__header[disabled] .toggle-panel__title {
   color: white;
 }
 
@@ -4482,7 +4493,7 @@ textarea.mtfb-note {
 
 .toggle-panel__icon {
   display: flex;
-  align-items: center;
+  align-items: self-start;
 }
 
 .toggle-panel__title {
@@ -4498,12 +4509,13 @@ textarea.mtfb-note {
 
 .toggle-panel .toggle-panel__header[aria-expanded="true"] .toggle-panel__arrow {
   transform: rotate(0deg);
+  align-self: self-start;
 }
 
 .toggle-panel__arrow {
   transform: rotate(180deg);
   display: flex;
-  align-items: center;
+  align-items: end;
 }
 
 .toggle-panel__description {
@@ -4520,6 +4532,26 @@ textarea.mtfb-note {
   outline: 1px var(--colors-gray-700) solid;
   outline-offset: -1px;
   margin-bottom: 32px;
+}
+
+.mt-user-profile-card__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (max-width: 767px) {
+    .mt-user-profile-card__wrapper {
+        display: inline;
+    }
+
+    .mt-user-profile-card__details {
+        padding-left: 112px;
+    }
+
+    .mt-user-profile-card__details .mt-user-profile-card__member-since {
+        text-align: left;
+    }
 }
 
 .mt-user-profile-card__avatar-container {}
@@ -5011,19 +5043,24 @@ button#mt-payout-acc-btn:active {
 }
 
 #mt-trades .dj-head {
-  color: #fff;
+  color: var(--Text-Headings, #fff);
+  font-size: 0.75rem;
   font-weight: 700;
-  font-size: .875rem;
   line-height: 1.25;
-  padding: 16px 8px;
+  background: var(--dj-bg);
+  padding: 0.75rem 0.9rem;
 }
 
 #mt-trades .dj-cell {
-  color: var(--Text-Body, #A8A29E);
+  color: var(--Text-Body, #a8a29e);
+  font-size: 0.75rem;
+  line-height: 1rem;
   font-weight: 500;
-  font-size: .875rem;
-  padding: 8px;
-  white-space: normal
+  background: var(--dj-bg);
+  padding: 0.75rem 0.9rem;
+  min-width: 0;
+  word-break: break-word;
+  white-space: normal;
 }
 
 #mt-trades .dj-cell--side {
@@ -5032,17 +5069,6 @@ button#mt-payout-acc-btn:active {
   justify-content: flex-end;
   gap: 4px;
 }
-
-/* Fondo base de las filas */
-#mt-trades .dj-rows .dj-row {
-  background-color: #1E1E1E;
-}
-
-/* Zebra striping: una sí y una no */
-#mt-trades .dj-rows .dj-row:nth-child(odd) {
-  background-color: #131210;
-}
-
 
 #mt-trades .is-right {
   text-align: right
@@ -5124,26 +5150,31 @@ button#mt-payout-acc-btn:active {
 /* Pager */
 #mt-trades .dj-pager {
   display: flex;
-  align-items: center;
+  gap: 4px;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px
+  padding: 0.5rem 0 0;
+  align-items: center;
 }
 
 #mt-trades .dj-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  background: var(--Surface-Dark, #292524);
-  border: 1px solid var(--Colors-Gray-700, #404040);
-  border-radius: 4px
+  background: #0f0f10;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
 }
 
-#mt-trades .dj-pages {
-  color: var(--Text-Body, #A8A29E);
-  font: 500 14px/20px Roboto, system-ui, sans-serif
+
+#mt-trades .dj-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
+
+#mt-trades .dj-btn.active {
+  background: #1f1f20;
+}
+
 
 #mt-trades .dj-empty {
   text-align: center;
@@ -5536,3 +5567,56 @@ button#mt-payout-acc-btn:active {
   margin: 0 !important;
   padding: 0;
 }
+
+#billing-information-form .iti{
+    width: 100%;
+}
+
+
+
+/* ===== End Account Data Global Card ===== */
+
+/* =====  Account Data ===== */
+
+/* default: en desktop NO limites ancho */
+.mt-account-data-credentials {
+  flex: 1 1 auto;
+  max-width: fit-content;
+  min-width: 0;
+  /* ya lo tienes pero lo dejo por claridad */
+}
+
+.mt-account-data .mt-card-wrapper {
+  position: relative;
+}
+
+.mt-account-data .mt-card-wrapper.mt-agrement-missing .mt-card-content {
+  filter: blur(5px);
+}
+
+.mt-account-data .mt-agreement-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.mt-account-data .mt-agreement-overlay__inner {
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.mt-account-data .mt-agreement-overlay__text {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+
+/* ===== End Account Data ===== */

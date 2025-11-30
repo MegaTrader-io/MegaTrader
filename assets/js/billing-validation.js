@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("click", (e) => {
       const pac = document.querySelector(".pac-container");
       if (!pac) return;
-      if (e.target === addressInput || pac.contains(e.target)) return;
+      if (e.target?.name === 'api_billing_address_1' ||  e.target === addressInput || pac.contains(e.target)) return;
       forceClosePlaces();
     });
 
