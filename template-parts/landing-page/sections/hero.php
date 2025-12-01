@@ -118,7 +118,7 @@
                 <div class="tw-group tw-w-full tw-p-6 tw-space-y-4 tw-bg-mgt-dark">
                     <div class="tw-space-y-2">
                         <div class="self-stretch text-center justify-start text-white text-xl font-bold leading-loose">
-                            Platform Life Demo
+                            Platform Live Demo
                         </div>
                         <div class="self-stretch text-center justify-start text-stone-400 text-base font-medium leading-normal">
                             ID: trydemo@megatrader.io
