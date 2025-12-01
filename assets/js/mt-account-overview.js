@@ -4846,6 +4846,7 @@ if (document.readyState === "loading") {
       card.setAttribute("data-payout-eligible", "0");
       card.setAttribute("data-max-withdrawal", "0");
       card.setAttribute("data-min-withdrawal", "0");
+      card.removeAttribute("data-platform-account-id");
       btn.disabled = true;
       btn.setAttribute("aria-disabled", "true");
       return;
@@ -4866,6 +4867,18 @@ if (document.readyState === "loading") {
           : payload.minWithdrawal || 0
       ) || 0;
 
+    var platformAccountId =
+      (payload.meta &&
+        (payload.meta.platformAccountId || payload.meta.accountNr)) ||
+      payload.platformAccountId ||
+      "";
+
+    if (platformAccountId) {
+      card.setAttribute("data-platform-account-id", platformAccountId);
+    } else {
+      card.removeAttribute("data-platform-account-id");
+    }
+
     if (eligible && maxUI > 0) {
       card.setAttribute("data-payout-eligible", "1");
       card.setAttribute("data-max-withdrawal", String(maxUI));
@@ -4880,6 +4893,7 @@ if (document.readyState === "loading") {
       btn.setAttribute("aria-disabled", "true");
     }
   }
+
 
 
   function fetchEligibility(accountId) {
@@ -4939,14 +4953,25 @@ if (document.readyState === "loading") {
   window.MT_PAYOUT_ELIGIBILITY_CACHE = cache;
 
   window.MT_PAYOUT_REFRESH = function (accountId) {
-    // si no pasan id, intenta usar la cuenta actual del overview
     var root = document.getElementById("mt-account-overview");
     var currentId = accountId || (root && root.getAttribute("data-account-id")) || "";
     if (!currentId) return;
+
+    try {
+      if (cache[currentId]) {
+        delete cache[currentId];
+      }
+      if (window.MT_PAYOUT_ELIGIBILITY_CACHE && window.MT_PAYOUT_ELIGIBILITY_CACHE[currentId]) {
+        delete window.MT_PAYOUT_ELIGIBILITY_CACHE[currentId];
+      }
+    } catch (e) {
+      console.warn("[PAYOUT] MT_PAYOUT_REFRESH cache clear error", e);
+    }
+
     fetchEligibility(currentId);
   };
-})();
 
+})();
 
 
 // ======= Mostrar/ocultar card de payout según account-type (Funded/Evaluation) =======
