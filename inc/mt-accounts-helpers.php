@@ -3019,6 +3019,8 @@ if (!function_exists('mt_get_account_payout_eligibility')) {
         'minimumBalance' => $minimumBalance,
         'withdrawalRoom' => $withdrawalRoom,
         'minWithdrawal' => $minimumWithdrawal,
+        'accountNr' => isset($byId['accountNr']) ? (string) $byId['accountNr'] : '',
+        'platformAccountId' => isset($byId['platform']['accountId']) ? (string) $byId['platform']['accountId'] : '',
       ],
     ];
   }

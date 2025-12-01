@@ -63,12 +63,11 @@ if ($user_email && $account_id && function_exists('mt_prepare_ui_payout')) {
     aria-disabled="<?php echo $btn_disabled ? 'true' : 'false'; ?>"
     <?php echo $btn_disabled ? 'disabled' : ''; ?>
   >
-    REQUEST WITHDRAWAL
+    <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['requestBtn']); ?>
   </button>
 </div>
 
 <?php
-// Movemos aquí el modal (usando el email que ya calculaste en account-overview.php)
 if ($user_email) {
   get_template_part(
     'template-parts/modals/request-payout-modal',

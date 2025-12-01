@@ -19,7 +19,7 @@ $details_list = $args['details_list'] ?? [];
 $title = $args['title'] ?? [];
 $related_orders = $args['related_orders'] ?? [];
 
-$collapse_id = esc_attr('collapse-' . $subscription_id);
+$collapse_id = esc_attr('orders-for-' . $subscription_id);
 
 $status_classes = [
 	'active' => 'badge-mega-active',
@@ -332,50 +332,52 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
             
             <!-- Auto Renew Toggle -->
 
-            <div class="wcs-auto-renew-toggle">
-                <?php
-                $is_active = 'active' === $status;
-                $toggle_classes = [
-                    'subscription-auto-renew-toggle',
-                    'subscription-auto-renew-toggle--hidden',
-                ];
-
-                if ($is_active) {
-                    if ($subscription->is_manual()) {
-                        $toggle_label = __('Enable auto renew', 'woocommerce-subscriptions');
-                        $toggle_classes[] = 'subscription-auto-renew-toggle--off';
-                    } else {
-                        $toggle_label = __('Disable auto renew', 'woocommerce-subscriptions');
-                        $toggle_classes[] = 'subscription-auto-renew-toggle--on';
-                    }
-                } else {
-                    $toggle_label = __('Auto renew not available', 'woocommerce-subscriptions');
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--off'; // Always force OFF
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--disabled';
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
-                }
-
-                if (!$is_active) {
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--disabled no-active';
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
-                }
-                ?>
-
-                <a <?php if ($is_active): ?> href="#" <?php endif; ?>
-                    class="<?php echo esc_attr(implode(' ', $toggle_classes)); ?>"
-                    aria-label="<?php echo esc_attr($toggle_label); ?>" <?php if (!$is_active): ?>
-                        style="pointer-events: none; cursor: not-allowed;" <?php endif; ?>>
-                    <i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i>
-                </a>
-            </div>
-
             <div class="d-flex align-items-center gap-2">
 				<span class="text-a8a29e text-sm fw-medium">Auto renew</span>
-				<div class="wcs-auto-renew-toggle">
-					<a href="#" class="subscription-auto-renew-toggle subscription-auto-renew-toggle--off" aria-label="Enable auto renew">
-						<i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i>
-					</a>
-				</div>
+				<div class="wcs-auto-renew-toggle" data-sub-id="<?= esc_attr($subscription_id) ?>">
+                    <?php
+                    $is_active = 'active' === $status;
+                    $toggle_classes = [
+                        'subscription-auto-renew-toggle',
+                        //'subscription-auto-renew-toggle--hidden',
+                    ];
+
+                    if ($is_active) {
+                        if ($subscription->is_manual()) {
+                            $toggle_label = __('Enable auto renew', 'woocommerce-subscriptions');
+                            $toggle_classes[] = 'subscription-auto-renew-toggle--off';
+                        } else {
+                            $toggle_label = __('Disable auto renew', 'woocommerce-subscriptions');
+                            $toggle_classes[] = 'subscription-auto-renew-toggle--on';
+                        }
+                    } else {
+                        $toggle_label = __('Auto renew not available', 'woocommerce-subscriptions');
+                        $toggle_classes[] = 'subscription-auto-renew-toggle--off'; // Always force OFF
+                        $toggle_classes[] = 'subscription-auto-renew-toggle--disabled';
+                        $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
+                    }
+
+                    if (!$is_active) {
+                        $toggle_classes[] = 'subscription-auto-renew-toggle--disabled no-active';
+                        $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
+                    }
+                    echo '<script>console.log("STATUS ' . $status . '");</script>';
+                    echo '<script>console.log("is_active", ' . wp_json_encode( $is_active ) . ');</script>';
+                    echo '<script>console.log("toggle_classes", ' . wp_json_encode( $toggle_classes ) . ');</script>';
+
+echo '<script>console.log("is_manual():", ' . json_encode($subscription->is_manual()) . ');</script>';
+echo '<script>console.log("get_requires_manual_renewal():", ' . json_encode($subscription->get_requires_manual_renewal()) . ');</script>';
+echo '<script>console.log("payment_method:", ' . json_encode($subscription->get_payment_method()) . ');</script>';
+
+                    ?>
+
+                    <a <?php if ($is_active): ?> href="#" <?php endif; ?>
+                        class="<?php echo esc_attr(implode(' ', $toggle_classes)); ?>"
+                        aria-label="<?php echo esc_attr($toggle_label); ?>" <?php if (!$is_active): ?>
+                        style="pointer-events: none; cursor: not-allowed;" <?php endif; ?>>
+                        <i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i>
+                    </a>
+                </div>
 			</div>
 
             <?php if ( ! empty( $related_orders ) ) : ?>

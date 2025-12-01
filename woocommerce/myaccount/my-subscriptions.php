@@ -179,8 +179,6 @@ if ( ! function_exists( 'get_subscription_related_orders_data' ) ) {
 				'name'		=> $size_name,
 			],
 		];
-
-		echo '<script>console.log("product ",' . wp_json_encode( $product-> get_data() ) . ');</script>';
 		
 		// Get Price
 		$subtotal_raw = $item ? $item->get_subtotal() : 0;
