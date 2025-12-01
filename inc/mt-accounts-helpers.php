@@ -158,11 +158,10 @@ class MT_Accounts
 
       $status = (string) ($acc['status'] ?? '');
       $rules = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
-      $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
-      $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
+      $platAccountId = $acc['accountNr'];
       $order = (string) ($acc['order'] ?? '');
 
-      $needById = ($order === '' || $platformRaw === '' || $platAccountId === '');
+      $needById = ($order === '' || $platformRaw === '');
       if ($fullData && $id !== '' && $needById && function_exists('mt_accounts_resolve_account_by_id')) {
         try {
           $full = mt_accounts_resolve_account_by_id($id);
@@ -173,8 +172,6 @@ class MT_Accounts
               $platformRaw = (string) ($full['platform']['platform'] ?? $full['platform']['name'] ?? $platformRaw);
               $logo = MT_Accounts::platform_logo($platformRaw);
             }
-            if ($platAccountId === '')
-              $platAccountId = (string) ($full['platform']['accountId'] ?? $full['accountId'] ?? $platAccountId);
           }
         } catch (\Throwable $e) {
         }
@@ -269,8 +266,7 @@ class MT_Accounts
 
       $status = (string) ($acc['status'] ?? '');
       $rules = is_array($acc['rules'] ?? null) ? $acc['rules'] : [];
-      $plat = is_array($acc['platform'] ?? null) ? $acc['platform'] : [];
-      $platAccountId = (string) ($plat['accountId'] ?? ($acc['accountId'] ?? ''));
+      $platAccountId = $acc['accountNr'];
       $order = (string) ($acc['order'] ?? '');
 
       // programType badge
