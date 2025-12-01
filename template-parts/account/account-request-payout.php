@@ -63,7 +63,7 @@ if ($user_email && $account_id && function_exists('mt_prepare_ui_payout')) {
     aria-disabled="<?php echo $btn_disabled ? 'true' : 'false'; ?>"
     <?php echo $btn_disabled ? 'disabled' : ''; ?>
   >
-    REQUEST WITHDRAWAL
+    <?php echo esc_html(Label::META_ACCOUNT_PAYOUT['requestBtn']); ?>
   </button>
 </div>
 
