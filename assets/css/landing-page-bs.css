@@ -1139,6 +1139,22 @@
         justify-content: space-around;
         gap: 32px;
     }
+
+    .journal-bs__badge-group {
+        display: none;
+    }
+
+    .journal-bs .journal-bs__content {
+        padding-top: 16px;
+    }
+
+    .journal-bs {
+        padding-block: 32px;
+    }
+
+    .verified-bs__glide .glide__bullets {
+        margin-bottom: 0;
+    }
 }
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */

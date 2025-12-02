@@ -274,7 +274,7 @@ get_header('landing-page-bs');
                         Journal to find your winning strategies
                     </h2>
 
-                    <div class="badge-group">
+                    <div class="badge-group journal-bs__badge-group">
                         <div class="badge-group__item is-active">
                             <div class="badge-group__text">P&amp;L Calendar</div>
                         </div>
