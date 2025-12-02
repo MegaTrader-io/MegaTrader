@@ -916,6 +916,8 @@
 
     .payout-bs__content {
         align-items: center;
+        width: 328px;
+        margin: auto;
     }
 
     .payout-bs__title {
@@ -1014,6 +1016,7 @@
 
     .platforms-bs__list {
         gap: 32px !important;
+        padding-bottom: 0;
     }
 
     .platforms-bs__first-row {
@@ -1057,6 +1060,14 @@
 @media (max-width: 767px) {
     .landing-bs > * + * {
         margin-top: auto;
+    }
+
+    .payout-bs {
+        padding: 32px 16px;
+    }
+
+    .payout-bs .landing-bs-container {
+        padding: 0;
     }
 
     .journal-bs__title {
