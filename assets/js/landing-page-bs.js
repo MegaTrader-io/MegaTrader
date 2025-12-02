@@ -116,21 +116,81 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error initializing Splide carousel:', error);
         }
 
+        $('.home-video-slider').slick({
+            dots: true,
+            infinite: false,
+            speed: 800,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            focusOnSelect: true,
+            arrows: true,
+            prevArrow: ".slick_custom_prev",
+            nextArrow: ".slick_custom_next",
+            responsive: [{
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                }
+            }]
+        });
+
+        const homeSliderNavWrppr = document.querySelector(".home-video-slide-nav");
+        const homeSliderNav = homeSliderNavWrppr.querySelectorAll(".video-nav-button");
+        function updateNavButtons(activeIndex) {
+            homeSliderNav.forEach( (btn, idx) => {
+                    btn.classList.toggle('active', idx === activeIndex);
+                }
+            );
+        }
+
+        homeSliderNav.forEach( (button, index) => {
+                button.addEventListener("click", () => {
+                        $('.home-video-slider').slick('slickGoTo', index);
+                        updateNavButtons(index);
+                    }
+                );
+            }
+        );
+
+        function handleVideoPlayback() {
+            const slides = document.querySelectorAll('.home-video-slide');
+            slides.forEach( (slide, index) => {
+                    const video = slide.querySelector('.w-background-video video');
+                    if (video) {
+                        if (slide.classList.contains('slick-current')) {
+                            video.play();
+                        } else {
+                            video.pause();
+                            video.currentTime = 0;
+                        }
+                    }
+                }
+            );
+        }
+
+        $('.home-video-slider').on('afterChange', function(event, slick, currentSlide) {
+            updateNavButtons(currentSlide);
+            handleVideoPlayback();
+        });
+        updateNavButtons(0);
+        handleVideoPlayback();
+
+
         const verifiedBsCarouselRoot = document.getElementById('verified-bs-id');
 
         const verifiedBsCarousel = new Glide(verifiedBsCarouselRoot, {
-            type: 'carousel',
-            focusAt: 'center',
+            type: 'slider',
             gap: 16,
             perView: 1,
             autoplay: 3000,
+            rewind: false,
+            animationDuration: 800
         });
 
         verifiedBsCarousel.mount({
             Sizes: function CustomSizes(Glide, Components, Events) {
-
                 const Sizes = {
-
                     setupSlides() {
                         const width = this.slideWidth + 'px';
                         const slides = Components.Html.slides;
@@ -146,29 +206,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     remove() {
                         const slides = Components.Html.slides;
-
                         for (let i = 0; i < slides.length; i++) {
                             slides[i].style.width = '';
                         }
-
                         Components.Html.wrapper.style.width = '';
-                    }
+                    },
                 };
 
-                // ----------------------------
-                // GETTERS OBLIGATORIOS
-                // ----------------------------
-
+                // === GETTERS ===
                 Object.defineProperty(Sizes, 'length', {
                     get() {
                         return Components.Html.slides.length;
-                    }
+                    },
                 });
 
                 Object.defineProperty(Sizes, 'width', {
                     get() {
                         return Components.Html.track.offsetWidth;
-                    }
+                    },
                 });
 
                 Object.defineProperty(Sizes, 'wrapperSize', {
@@ -178,27 +233,34 @@ document.addEventListener('DOMContentLoaded', function () {
                             Components.Gaps.grow +
                             Components.Clones.grow
                         );
-                    }
+                    },
                 });
 
                 Object.defineProperty(Sizes, 'slideWidth', {
                     get() {
-                        let width = window.innerWidth <= 768 ? window.innerWidth - 32 : 800;
+                        // 🔹 Lógica adaptativa + límite máximo
+                        const maxWidth = 990; // el máximo que tú desees
+                        const horizontalPadding = 32; // margen lateral en mobile
 
+                        let width =
+                            window.innerWidth <= 768
+                                ? window.innerWidth - horizontalPadding
+                                : Math.min(window.innerWidth * 0.85, maxWidth);
+
+                        // 🔹 Variables CSS opcionales para efectos visuales
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', width + 'px');
 
                         const points = document.querySelector('.verified-bs__glide .slider__bullets');
-
-                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-left', (points?.getBoundingClientRect().x || 0) + 'px');
+                        verifiedBsCarouselRoot.style.setProperty(
+                            '--verified-bs-slide-left',
+                            (points?.getBoundingClientRect().x || 0) + 'px'
+                        );
 
                         return width;
-                    }
+                    },
                 });
 
-                // ----------------------------
-                // EVENTOS COMO EN LA LIBRERÍA
-                // ----------------------------
-
+                // === EVENTOS ===
                 Events.on(['build.before', 'resize', 'update'], () => {
                     Sizes.setupSlides();
                     Sizes.setupWrapper();
@@ -209,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 return Sizes;
-            }
+            },
         });
     }
 

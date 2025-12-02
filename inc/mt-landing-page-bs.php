@@ -31,6 +31,11 @@ add_action('wp_enqueue_scripts', function () {
   wp_enqueue_style('glide-style', $css_uri . 'glide.core.min.css', [], $css_version);
   wp_enqueue_script('glide-js', $js_uri . 'glide.js', [], $js_version, true);
 
+  $css_version = file_exists($css_path . 'slick.css') ? filemtime($css_path . 'slick.css') : null;
+  $js_version = file_exists($js_path . 'slick.js') ? filemtime($js_path . 'slick.js') : null;
+
+  wp_enqueue_style('slick-style', $css_uri . 'slick.css', [], $css_version);
+  wp_enqueue_script('slick-js', $js_uri . 'slick.js', [], $js_version, true);
 
   $css_version = file_exists($css_path . 'splide.min.css') ? filemtime($css_path . 'splide.min.css') : null;
   $js_version = file_exists($js_path . 'splide.min.js') ? filemtime($js_path . 'splide.min.js') : null;
