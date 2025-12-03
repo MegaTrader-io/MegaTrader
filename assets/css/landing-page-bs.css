@@ -212,9 +212,15 @@
     border-color: #FFB34A;
 }
 
+.verified-bs__wrapper {
+    margin-top: 16px;
+    padding-top: 32px;
+}
+
 /* Glide Slider Overrides */
 .verified-bs__glide .glide__slide {
     position: relative;
+    max-width: 990px;
 }
 
 .verified-bs__glide .glide__track {
@@ -266,13 +272,11 @@
 
 .verified-bs__glide .glide__arrow--prev {
     left: 20px;
-    /*left: calc(var(--verified-bs-slide-left) - 32px);*/
     top: calc(50% - 28px);
 }
 
 .verified-bs__glide .glide__arrow--next {
-    /*right: 20px;*/
-    right: calc(var(--verified-bs-slide-left) + 28px);
+    right: calc(100% - var(--verified-bs-slide-width) + 20px);
     top: calc(50% - 28px);
 }
 
@@ -459,6 +463,7 @@
 .journal-bs__card {
     background-color: var(--body-bg);
     height: 500px;
+    opacity: 0.5;
 }
 
 .journal-bs__media {
@@ -473,7 +478,7 @@
 }
 
 .slider__slides .glide__slide:not(.glide__slide--active) .journal-bs__card {
-    opacity: 0.5;
+    opacity: 1;
 }
 
 /* Pagination */
@@ -1163,6 +1168,22 @@
     .verified-bs__glide .glide__bullets {
         margin-bottom: 0;
     }
+
+    .journal-bs .landing-bs-container {
+        padding: 0 16px;
+    }
+
+    .verified-bs__wrapper {
+        padding-top: 0;
+    }
+
+    .verified-bs__glide .glide__arrow--prev {
+        left: 16px;
+    }
+
+    .verified-bs__glide .glide__arrow--next {
+        right: 16px;
+    }
 }
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
@@ -1173,6 +1194,11 @@
 
     .hero-bs__benefit {
         justify-content: center;
+    }
+
+    .verified-bs__glide .glide__slide {
+        position: relative;
+        max-width: min(var(--verified-bs-slide-width), 990px);
     }
 
     .hero-bs .landing-bs-container {
@@ -1187,16 +1213,6 @@
         letter-spacing: -0.05em;
     }
 
-    .verified-bs__glide .glide__arrow--prev {
-        left: calc(var(--verified-bs-slide-left) + 16px);
-        top: calc(50% - 28px);
-    }
-
-    .verified-bs__glide .glide__arrow--next {
-        right: calc(var(--verified-bs-slide-left) + 16px);
-        top: calc(50% - 28px);
-    }
-
     .platforms-bs__list {
         gap: 64px;
     }
@@ -1204,35 +1220,4 @@
     .landing-bs-container {
         padding: 32px;
     }
-}
-
-.home-video-slider .slick-list {
-    overflow: visible;
-    padding-right: 15%;
-    margin-left: -1rem;
-}
-
-.home-video-slider .slick-slide {
-    max-width: 990px; /* por ejemplo */
-}
-
-.home-video-slider .slick-track {
-    display: flex !important;
-    grid-gap: 1rem;
-}
-
-.home-video-slide.slick-current .mt-card.journal-bs__card {
-    background-color: red !important;
-}
-
-.home-video-slide:not(:hover) {
-    filter: blur(1px);
-    /*opacity: 0.4;*/
-}
-
-.home-video-slide.home-video-slide
-
-.home-video-slider .home-video-slide {
-    height: inherit !important;
-    display: flex !important;
 }

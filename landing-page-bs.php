@@ -304,71 +304,39 @@ get_header('landing-page-bs');
                         </div>
                     </div>
                 </header>
-            </div>
-            <div class="journal-bs__content">
-                <div class="landing-bs-container">
-                    <div class="home-video-slide-nav"></div>
-                    <div class="home-video-slider">
-                        <div id="slick-slide00"
-                             class="home-video-slide"
-                             tabindex="-1"
-                             role="tabpanel"
-                             aria-describedby="slick-slide-control00">
-                            <div class="mt-card journal-bs__card"></div>
+
+                <div class="verified-bs__wrapper">
+                    <div id="verified-bs-id" class="verified-bs__glide slider glide" style="--verified-bs-slide-width: 0px; --verified-bs-slide-left: 0px;">
+                        <div class="slider__track glide__track" data-glide-el="track">
+                            <ul class="slider__slides glide__slides">
+                                <?php for ($i = 1; $i <= 3; $i++) : ?>
+                                    <li class="slider__frame glide__slide">
+                                        <div class="mt-card journal-bs__card">
+                                        </div>
+                                    </li>
+                                <?php endfor; ?>
+                            </ul>
                         </div>
-                        <div id="slick-slide01"
-                             class="home-video-slide"
-                             tabindex="0"
-                             role="tabpanel"
-                             aria-describedby="slick-slide-control01">
-                            <div class="mt-card journal-bs__card"></div>
+
+                        <div data-glide-el="controls" class="glide__arrows">
+                            <button class="glide__arrow glide__arrow--prev" data-glide-dir="<">
+                                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-left.svg'); ?>"
+                                     alt="control left">
+                            </button>
+                            <button class="glide__arrow glide__arrow--next" data-glide-dir=">">
+                                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-right.svg'); ?>"
+                                     alt="control right">
+                            </button>
                         </div>
-                        <div id="slick-slide02"
-                             class="home-video-slide"
-                             tabindex="-1"
-                             role="tabpanel"
-                             aria-describedby="slick-slide-control02">
-                            <div class="mt-card journal-bs__card"></div>
+
+                        <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
+                            <button class="slider__bullet glide__bullet" data-glide-dir="=0"></button>
+                            <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
+                            <button class="slider__bullet glide__bullet" data-glide-dir="=2"></button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="landing-bs-container">
-                <div id="verified-bs-id" class="verified-bs__glide slider glide"
-                     style="--verified-bs-slide-width: 0px; --verified-bs-slide-left: 0px;">
-                    <div class="slider__track glide__track" data-glide-el="track">
-                        <ul class="slider__slides glide__slides">
-                            <?php for ($i = 1; $i <= 3; $i++) : ?>
-                                <li class="slider__frame glide__slide">
-                                    <div class="mt-card journal-bs__card" style="max-width: 990px;">
-                                    </div>
-                                </li>
-                            <?php endfor; ?>
-                        </ul>
-                    </div>
-
-                    <div data-glide-el="controls" class="glide__arrows">
-                        <button class="glide__arrow glide__arrow--prev" data-glide-dir="<">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-left.svg'); ?>"
-                                 alt="control left">
-                        </button>
-                        <button class="glide__arrow glide__arrow--next" data-glide-dir=">">
-                            <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-right.svg'); ?>"
-                                 alt="control right">
-                        </button>
-                    </div>
-
-                    <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
-                        <button class="slider__bullet glide__bullet" data-glide-dir="=0"></button>
-                        <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
-                        <button class="slider__bullet glide__bullet" data-glide-dir="=2"></button>
-                    </div>
-                </div>
-
-            </div>
-
-
         </section>
 
         <?php get_template_part('template-parts/landing-page/sections/pricing_table', null, ['classes' => 'landing-bs-container']); ?>

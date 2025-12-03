@@ -116,87 +116,36 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error initializing Splide carousel:', error);
         }
 
-        $('.home-video-slider').slick({
-            dots: true,
-            infinite: false,
-            speed: 800,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            focusOnSelect: true,
-            arrows: true,
-            prevArrow: ".slick_custom_prev",
-            nextArrow: ".slick_custom_next",
-            responsive: [{
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1
-                }
-            }]
-        });
-
-        const homeSliderNavWrppr = document.querySelector(".home-video-slide-nav");
-        const homeSliderNav = homeSliderNavWrppr.querySelectorAll(".video-nav-button");
-        function updateNavButtons(activeIndex) {
-            homeSliderNav.forEach( (btn, idx) => {
-                    btn.classList.toggle('active', idx === activeIndex);
-                }
-            );
-        }
-
-        homeSliderNav.forEach( (button, index) => {
-                button.addEventListener("click", () => {
-                        $('.home-video-slider').slick('slickGoTo', index);
-                        updateNavButtons(index);
-                    }
-                );
-            }
-        );
-
-        function handleVideoPlayback() {
-            const slides = document.querySelectorAll('.home-video-slide');
-            slides.forEach( (slide, index) => {
-                    const video = slide.querySelector('.w-background-video video');
-                    if (video) {
-                        if (slide.classList.contains('slick-current')) {
-                            video.play();
-                        } else {
-                            video.pause();
-                            video.currentTime = 0;
-                        }
-                    }
-                }
-            );
-        }
-
-        $('.home-video-slider').on('afterChange', function(event, slick, currentSlide) {
-            updateNavButtons(currentSlide);
-            handleVideoPlayback();
-        });
-        updateNavButtons(0);
-        handleVideoPlayback();
-
-
         const verifiedBsCarouselRoot = document.getElementById('verified-bs-id');
 
         const verifiedBsCarousel = new Glide(verifiedBsCarouselRoot, {
             type: 'slider',
             gap: 16,
             perView: 1,
-            autoplay: 3000,
+            autoplay: false,
+            hoverpause: false,
             rewind: false,
             animationDuration: 800
         });
 
         verifiedBsCarousel.mount({
             Sizes: function CustomSizes(Glide, Components, Events) {
+
                 const Sizes = {
+
                     setupSlides() {
                         const width = this.slideWidth + 'px';
                         const slides = Components.Html.slides;
 
                         for (let i = 0; i < slides.length; i++) {
                             slides[i].style.width = width;
+                        }
+
+                        // 🔹 Ejemplo: cambiar autoplay dinámicamente
+                        if (window.innerWidth <= 768 && !Glide.settings.autoplay) {
+                            Glide.update({autoplay: 3000, type: 'carousel', focusAt: 'center'});
+                        } else if (window.innerWidth > 768 && Glide.settings.autoplay) {
+                            Glide.update({autoplay: false});
                         }
                     },
 
@@ -206,24 +155,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     remove() {
                         const slides = Components.Html.slides;
+
                         for (let i = 0; i < slides.length; i++) {
                             slides[i].style.width = '';
                         }
+
                         Components.Html.wrapper.style.width = '';
-                    },
+                    }
                 };
 
-                // === GETTERS ===
+                // ----------------------------
+                // GETTERS OBLIGATORIOS
+                // ----------------------------
+
                 Object.defineProperty(Sizes, 'length', {
                     get() {
                         return Components.Html.slides.length;
-                    },
+                    }
                 });
 
                 Object.defineProperty(Sizes, 'width', {
                     get() {
                         return Components.Html.track.offsetWidth;
-                    },
+                    }
                 });
 
                 Object.defineProperty(Sizes, 'wrapperSize', {
@@ -233,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             Components.Gaps.grow +
                             Components.Clones.grow
                         );
-                    },
+                    }
                 });
 
                 Object.defineProperty(Sizes, 'slideWidth', {
@@ -257,10 +211,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         );
 
                         return width;
-                    },
+                    }
                 });
 
-                // === EVENTOS ===
+                // ----------------------------
+                // EVENTOS COMO EN LA LIBRERÍA
+                // ----------------------------
+
                 Events.on(['build.before', 'resize', 'update'], () => {
                     Sizes.setupSlides();
                     Sizes.setupWrapper();
@@ -271,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 return Sizes;
-            },
+            }
         });
     }
 
