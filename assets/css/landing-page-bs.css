@@ -140,7 +140,7 @@
 }
 
 /* Titles */
-.verified-bs__title, .payouts-and-comparison__title, .comparison__header {
+.verified-bs__title, .payouts-and-comparison__title, .comparison__header, .pricing-table-container__title {
     color: white;
     font-size: 32px;
     font-weight: 300;
@@ -150,11 +150,11 @@
     margin-bottom: 0;
 }
 
-.verified-bs__title span, .payouts-and-comparison__title span {
+.verified-bs__title span, .payouts-and-comparison__title span, .pricing-table-container__title span {
     color: var(--Surface-Primary);
 }
 
-.verified-bs__subtitle, .payouts-and-comparison__subtitle {
+.verified-bs__subtitle, .payouts-and-comparison__subtitle, .pricing-table-container__subtitle {
     max-width: 760px;
     text-align: center;
     color: var(--body-color);
@@ -165,6 +165,13 @@
     margin: auto;
     margin-block: 16px;
 }
+
+.pricing-table-container__subtitle {
+    margin-top: 16px;
+    margin-bottom: 0;
+    padding: 0;
+}
+
 
 /* Carousel / Images */
 #verified-bs-carousel {
@@ -443,14 +450,19 @@
     margin-top: 16px;
 }
 
+.journal-bs__header .badge-group {
+    padding: 0;
+}
+
 /* Title */
 .journal-bs__title {
     align-self: stretch;
     color: white;
-    font-size: 40px;
+    font-size: 32px;
     font-weight: 300;
     text-transform: uppercase;
-    line-height: 48px;
+    line-height: 40px;
+    word-wrap: break-word;
     margin-bottom: 0;
 }
 
@@ -686,6 +698,7 @@
     display: inline-flex;
     justify-content: center;
     gap: 48px;
+    width: 100%;
 }
 
 .competition__content {
@@ -1083,11 +1096,6 @@
         padding: 0;
     }
 
-    .journal-bs__title {
-        font-size: 28px;
-        line-height: 36px;
-    }
-
     .journal-bs__header {
         text-align: left;
     }
@@ -1219,5 +1227,82 @@
 
     .landing-bs-container {
         padding: 32px;
+    }
+
+    .pricing-table-container-options {
+        padding: 0;
+    }
+
+    .pricing-table-container-options > .mt-pricing-table-plan-options__wrapper {
+        display: none;
+    }
+
+    .testimonials {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .competition__wrapper {
+        flex-direction: column;
+    }
+
+    .competition__image {
+        order: 1;
+        width: 100%;
+        min-height: 220px;
+    }
+
+    .competition__content {
+        order: 2
+    }
+
+    .competition__title {
+        align-self: stretch;
+        color: white;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .competition.landing-bs-container {
+        padding: 48px;
+    }
+
+    .competition__rewards {
+        display: grid;
+        justify-content: normal;
+    }
+
+    .mt-pricing-table-plan-options {
+        display: none;
+    }
+
+    .pricing-table-container__title {
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .pricing-table-container__title--hidden-md {
+        display: none;
+    }
+
+    .pricing-table-container__subtitle {
+        max-width: 376px;
+        text-align: center;
+        color: #A8A29E;
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 24px;
+        word-wrap: break-word;
+    }
+
+    .pricing-table-container.landing-bs-container {
+        padding: 0;
+        margin-top: 32px;
     }
 }
