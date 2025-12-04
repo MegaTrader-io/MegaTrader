@@ -17,39 +17,34 @@ $show_guest_view = $mt_fake_guest || !is_user_logged_in();
 
         <?php /* if (!is_user_logged_in()): */ ?>
 
-        <div
-            style="width: 100%; height: 100%; padding: 16px; background: var(--Surface-Page, #1E1E1E); border-radius: 16px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 16px; display: inline-flex">
-            <div
-                style="align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 8px; display: flex">
-                <div
-                    style="align-self: stretch; color: white; font-size: 48px; font-family: Roboto; font-weight: 300; text-transform: uppercase; line-height: 60px; word-wrap: break-word">
-                    Sign in</div>
-                <div
-                    style="align-self: stretch; color: var(--Text-Body, #A8A29E); font-size: 16px; font-family: Roboto; font-weight: 400; line-height: 24px; letter-spacing: 0.50px; word-wrap: break-word">
-                    Log into your account to complete your purchase faster.</div>
-            </div>
-            <div
-                style="align-self: stretch; justify-content: flex-start; align-items: flex-start; gap: 16px; display: inline-flex">
-                <div data-icon-alignment="Default" data-size="md" data-status="Default" data-type="Dark"
-                    data-variant="Filled"
-                    style="flex: 1 1 0; padding-left: 16px; padding-right: 16px; padding-top: 12px; padding-bottom: 12px; background: var(--Surface-Dark, #292524); border-radius: 12px; outline: 1px var(--Colors-Gray-700, #404040) solid; outline-offset: -1px; justify-content: center; align-items: center; gap: 8px; display: flex">
-                    <div
-                        style="color: var(--Text-Action-Dark-Solid, #FAFAFA); font-size: 16px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                        Sign In</div>
-                </div>
-                <div data-icon-alignment="Left" data-size="md" data-status="Default" data-type="Light" data-variant="Filled"
-                    style="flex: 1 1 0; padding-top: 12px; padding-bottom: 12px; padding-left: 12px; padding-right: 16px; background: var(--Surface-Light, white); border-radius: 12px; outline: 2px var(--Surface-Light, white) solid; outline-offset: -2px; justify-content: center; align-items: center; gap: 8px; display: flex">
-                    <div style="width: 24px; height: 24px; position: relative; overflow: hidden">
-                        <div
-                            style="width: 16.82px; height: 17.14px; left: 3.60px; top: 3.45px; position: absolute; background: var(--Basic-Black, black)">
-                        </div>
+        <div class="mt-card mt-card-md mb-4">
+            <div class="d-flex flex-column gap-3">
+                <!-- Título + copy -->
+                <div class="d-flex flex-column gap-2">
+                    <div class="text-white text-40px fw-light text-uppercase">
+                        Sign in
                     </div>
-                    <div
-                        style="color: var(--Text-Action-Light-Solid, #292524); font-size: 16px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">
-                        Sign In with google</div>
+                    <div class="text-a8a29e text-base fw-normal">
+                        Log into your account to complete your purchase faster.
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex flex-column flex-sm-row gap-3 w-100">
+                    <!-- Botón Sign In normal -->
+                    <button type="button"
+                        class="mt-btn mt-btn--secondary mt-btn--md flex-1-0-0">
+                        Sign In
+                    </button>
+
+                    <!-- Botón Google -->
+                    <button type="button"
+                        class="google-signin-btn flex-1-0-0">
+                    </button>
                 </div>
             </div>
         </div>
+
         <h5 class="mb-6 text text-theme text-size-24"><?php esc_html_e('OR, CEATE A NEW ACCOUNT', 'megatrader'); ?></h5>
         <span><?php esc_html_e(' Set up a new account in just a few steps to start trading instantly.', 'megatrader'); ?></span>
     <?php endif; ?>
