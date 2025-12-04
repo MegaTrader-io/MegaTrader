@@ -99,42 +99,9 @@ function mt_render_template_meta_info($value = '', $label = '', $classes = '')
     return <<<HTML
 <div class="mega-info-row {$classes}">
     <div class="mega-info-row__label">{$label}</div>
-    <div class="mega-info-row__value">{$value}</div>
+    <div class="mega-info-row__value text-truncate">{$value}</div>
 </div>
 HTML;
-}
-
-function mt_render_account_types($account_types, $mt_default_platform, $mt_default_market_type)
-{
-    if (empty($account_types)) {
-        return;
-    }
-
-    foreach ($account_types as $index => $item) {
-        $slug = esc_attr($item['slug']);
-        $name = esc_html($item['name']);
-        $thumbnail = esc_url($item['thumbnail_url']);
-        $radio_id = esc_attr('account-type-' . $slug);
-        $checked_attr = $index === 0 ? 'checked="true"' : '';
-
-        ?>
-        <input type="radio" name="account-type"
-               data-default-platform="<?= $mt_default_platform ?>"
-               data-default-market-type="<?= $mt_default_market_type ?>"
-               value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
-        <div class="mt-pricing-table-plan-options__item">
-            <label for="<?= $radio_id ?>">
-                <?php if ($thumbnail): ?>
-                    <img class="mt-pricing-table-plan-options__icon" src="<?= $thumbnail; ?>" alt="Icon">
-                <?php endif; ?>
-
-                <div class="mt-pricing-table-plan-options__text">
-                    <?= $name ?>
-                </div>
-            </label>
-        </div>
-        <?php
-    }
 }
 
 ?>
@@ -152,9 +119,13 @@ function mt_render_account_types($account_types, $mt_default_platform, $mt_defau
     </header>
 
     <div class="pricing-table-container-options">
-        <div class="mt-pricing-table-plan-options">
-            <?php mt_render_account_types($mt_account_types, $mt_default_platform, $mt_default_market_type); ?>
-        </div>
+        <?php
+        get_template_part("template-parts/landing-page/sections/select-account-type", null, [
+                'account_types' => $mt_account_types,
+                'mt_default_platform' => $mt_default_platform,
+                'mt_default_market_type' => $mt_default_market_type,
+        ]);
+        ?>
 
         <div class="mt-pricing-table-type justify-content-center align-items-center">
             <div class="mt-dropdown dropdown w-100" style="max-width: calc(100% - 32px)">

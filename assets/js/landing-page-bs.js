@@ -257,10 +257,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.couponsCache = {};
     loadChooseYourAccountSize(async (params) => {
-        const {defaultPlatform, defaultMarketType} = params;
+        const {defaultPlatform, defaultMarketType, values} = params;
         const productSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
         const productPlatformDetail = productSelected[params.accountType];
-
+        console.info('mt-pricing-table-plan-options__text');
         const defaultMetaInfo = {}
         for (const priceSize in productPlatformDetail) {
             const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
