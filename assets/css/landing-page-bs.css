@@ -931,6 +931,30 @@
     display: none;
 }
 
+.mt-select-ac-type input[type="radio"]:checked ~ .dropdown-item__wrapper label {
+    background: #F5F5F5;
+    border-radius: 8px;
+}
+
+.mt-select-ac-type input[type="radio"]:checked ~ .dropdown-item__wrapper label {
+    background: #F5F5F5;
+    border-radius: 8px;
+}
+
+.mt-select-ac-type {
+    display: none;
+}
+
+.mt-select-ac-type label {
+    cursor: pointer;
+    margin-bottom: 4px;
+}
+
+.mt-select-ac-type li:last-child label {
+    margin-bottom: 0;
+}
+
+
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
@@ -1278,6 +1302,10 @@
     .competition__rewards {
         display: grid;
         justify-content: normal;
+    }
+
+    .mt-select-ac-type {
+        display: flex;
     }
 
     .mt-pricing-table-plan-options {

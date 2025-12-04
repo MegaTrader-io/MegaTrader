@@ -11,6 +11,6 @@
 
 get_header('landing-page');
 
-get_template_part('template-parts/landing-page/main.php');
+get_template_part('template-parts/landing-page/main');
 
 get_footer('landing-page');
