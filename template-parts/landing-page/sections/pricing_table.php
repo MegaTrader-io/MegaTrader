@@ -127,83 +127,6 @@ HTML;
         ]);
         ?>
 
-        <div class="mt-pricing-table-type justify-content-center align-items-center">
-            <div class="mt-dropdown dropdown w-100" style="max-width: calc(100% - 32px)">
-                <button class="btn w-100 mega-btn-md mega-btn-secondary-md dropdown-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-
-                    <div class="mt-dropdown__btn-inner">
-                        <svg class="mt-dropdown__btn-icon" width="24" height="24" viewBox="0 0 24 24">
-                            <mask id="mask0_18853_9454" style="mask-type:alpha" x="0" y="0" width="24" height="24">
-                                <rect width="24" height="24"/>
-                            </mask>
-                            <g mask="url(#mask0_18853_9454)">
-                                <path d="M5 17V10H7V17H5ZM11 17V10H13V17H11ZM2 21V19H22V21H2ZM17 17V10H19V17H17ZM2 8V6L12 1L22 6V8H2Z"
-                                      fill="#FFB34A"/>
-                            </g>
-                        </svg>
-
-                        <div class="mt-dropdown__btn-label">Funded Plan</div>
-                    </div>
-
-                    <div class="mt-dropdown__badge mt-badge mt-badge-rounded-sm mt-badge-secondary">
-                        NEW
-                    </div>
-                </button>
-
-                <ul class="dropdown-menu dropdown-menu--without-arrow w-100 mt-dropdown__menu">
-
-                    <li>
-                        <a class="dropdown-item mt-dropdown__item" href="javascript:void(0);">
-                            <svg class="mt-dropdown__item-icon" width="24" height="24" viewBox="0 0 24 24">
-                                <mask id="mask0_18903_32393" style="mask-type:alpha" x="0" y="0" width="24" height="24">
-                                    <rect width="24" height="24"/>
-                                </mask>
-                                <g mask="url(#mask0_18903_32393)">
-                                    <path d="M5 17V10H7V17H5ZM11 17V10H13V17H11ZM2 21V19H22V21H2ZM17 17V10H19V17H17ZM2 8V6L12 1L22 6V8H2Z"
-                                          fill="#FFB34A"/>
-                                </g>
-                            </svg>
-                            <div class="mt-dropdown__item-label">Funded Plan</div>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item mt-dropdown__item" href="javascript:void(0);">
-                            <svg class="mt-dropdown__item-icon" width="24" height="24" viewBox="0 0 24 24">
-                                <mask id="mask0_18903_32400" style="mask-type:alpha" x="0" y="0" width="24" height="24">
-                                    <rect width="24" height="24"/>
-                                </mask>
-                                <g mask="url(#mask0_18903_32400)">
-                                    <path d="M9.2 8.25L11.85 3H12.15L14.8 8.25H9.2ZM11.25 20.1L2.625 9.75H11.25V20.1ZM12.75 20.1V9.75H21.375L12.75 20.1ZM16.45 8.25L13.85 3H19L21.625 8.25H16.45ZM2.375 8.25L5 3H10.15L7.55 8.25H2.375Z"
-                                          fill="#FFB34A"/>
-                                </g>
-                            </svg>
-                            <div class="mt-dropdown__item-label">Elite Plan</div>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="dropdown-item mt-dropdown__item" href="javascript:void(0);">
-                            <svg class="mt-dropdown__item-icon" width="24" height="24" viewBox="0 0 24 24">
-                                <mask id="mask0_18903_32406" style="mask-type:alpha" x="0" y="0" width="24" height="24">
-                                    <rect width="24" height="24"/>
-                                </mask>
-                                <g mask="url(#mask0_18903_32406)">
-                                    <path d="M2.4498 10.575L6.6498 6.37504C6.88314 6.1417 7.15814 5.97504 7.4748 5.87504C7.79147 5.77504 8.11647 5.75837 8.4498 5.82504L9.7498 6.10004C8.8498 7.1667 8.14147 8.13337 7.6248 9.00004C7.10814 9.8667 6.60814 10.9167 6.1248 12.15L2.4498 10.575ZM7.5748 12.85C7.95814 11.65 8.47897 10.5167 9.1373 9.45004C9.79564 8.38337 10.5915 7.38337 11.5248 6.45004C12.9915 4.98337 14.6665 3.88754 16.5498 3.16254C18.4331 2.43754 20.1915 2.2167 21.8248 2.50004C22.1081 4.13337 21.8915 5.8917 21.1748 7.77504C20.4581 9.65837 19.3665 11.3334 17.8998 12.8C16.9831 13.7167 15.9831 14.5125 14.8998 15.1875C13.8165 15.8625 12.6748 16.3917 11.4748 16.775L7.5748 12.85ZM14.4748 9.85004C14.8581 10.2334 15.329 10.425 15.8873 10.425C16.4456 10.425 16.9165 10.2334 17.2998 9.85004C17.6831 9.4667 17.8748 8.99587 17.8748 8.43754C17.8748 7.8792 17.6831 7.40837 17.2998 7.02504C16.9165 6.6417 16.4456 6.45004 15.8873 6.45004C15.329 6.45004 14.8581 6.6417 14.4748 7.02504C14.0915 7.40837 13.8998 7.8792 13.8998 8.43754C13.8998 8.99587 14.0915 9.4667 14.4748 9.85004ZM13.7748 21.875L12.1748 18.2C13.4081 17.7167 14.4623 17.2167 15.3373 16.7C16.2123 16.1834 17.1831 15.475 18.2498 14.575L18.4998 15.875C18.5665 16.2084 18.5498 16.5375 18.4498 16.8625C18.3498 17.1875 18.1831 17.4667 17.9498 17.7L13.7748 21.875ZM4.0498 16.05C4.63314 15.4667 5.34147 15.1709 6.1748 15.1625C7.00814 15.1542 7.71647 15.4417 8.2998 16.025C8.88314 16.6084 9.1748 17.3167 9.1748 18.15C9.1748 18.9834 8.88314 19.6917 8.2998 20.275C7.88314 20.6917 7.1873 21.05 6.2123 21.35C5.2373 21.65 3.89147 21.9167 2.1748 22.15C2.40814 20.4334 2.6748 19.0917 2.9748 18.125C3.2748 17.1584 3.63314 16.4667 4.0498 16.05Z"
-                                          fill="#FFB34A"/>
-                                </g>
-                            </svg>
-                            <div class="mt-dropdown__item-label">Growth Plan</div>
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-
         <div class="mt-pricing-table-plan-options__wrapper">
             <?php
             foreach ($mt_account_types as $index => $item) {
@@ -532,7 +455,6 @@ HTML;
     };
 
     document.addEventListener("DOMContentLoaded", () => {
-
 
     });
 </script>

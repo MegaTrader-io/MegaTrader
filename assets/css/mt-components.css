@@ -2436,7 +2436,7 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
 }
 
 .price-table:has(.price-table__plan--most-popular) .price-table__plan--regular-plan {
-    margin-top: 40px;
+    margin-top: 32px;
 }
 
 .price-table__plan--regular-plan {
@@ -2463,6 +2463,11 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
 
 .price-table__plan--most-popular .price-table__most-popular-badge {
     display: inline-flex;
+}
+
+.price-table__plan--most-popular .price-table__right-line {
+    border-right-width: 0;
+    border-left-width: 0;
 }
 
 .price-table__plan--most-popular .price-table__size {
@@ -2865,7 +2870,15 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     display: inline-flex
 }
 
-.mt-dropdown .dropdown-menu .dropdown-item:is(:hover,:focus,:active) {
+.mt-dropdown .dropdown-menu .dropdown-item {
+    padding: 12px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: inline-flex
+}
+
+.mt-dropdown .dropdown-menu .dropdown-item:is(:hover,:focus,:active, .selected) {
     background: #F5F5F5;
     border-radius: 8px;
 }

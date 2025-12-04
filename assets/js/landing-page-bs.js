@@ -257,10 +257,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.couponsCache = {};
     loadChooseYourAccountSize(async (params) => {
-        const {defaultPlatform, defaultMarketType, values} = params;
+        const {defaultPlatform, defaultMarketType} = params;
+        const dropdownAccountTypeComponent = document.querySelector('.mt-select-ac-type');
+
+        dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
+
+        const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
         const productSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
         const productPlatformDetail = productSelected[params.accountType];
-        console.info('mt-pricing-table-plan-options__text');
+
+        dropdownAccountTypeOption.querySelector('label').classList.add('selected');
+        const accountTypeIcon = dropdownAccountTypeOption.querySelector('img');
+        const accountTypeText = dropdownAccountTypeOption.querySelector('.mt-dropdown__item-label');
+        const accountTypeBadge = dropdownAccountTypeOption.querySelector('.mt-card__badge');
+
+        dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-icon').src = accountTypeIcon.src;
+        dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-label').innerText = accountTypeText.innerText;
+
+        dropdownAccountTypeComponent
+            .querySelector('.mt-dropdown__btn-inner')
+            .nextElementSibling
+            ?.remove();
+
+        if (accountTypeBadge) {
+            const badge = accountTypeBadge.cloneNode(true);
+
+            dropdownAccountTypeComponent
+                .querySelector('.mt-select-ac-type__selection')
+                .appendChild(badge);
+        }
+
         const defaultMetaInfo = {}
         for (const priceSize in productPlatformDetail) {
             const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
@@ -302,18 +328,25 @@ document.addEventListener('DOMContentLoaded', function () {
             products.push({productId, priceSize, priceObject});
 
             const isMostPopular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
+            const priceCard = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
 
             if (isMostPopular) {
-                const mostPopularElement = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
-                if (mostPopularElement) {
-                    mostPopularElement.classList.add('price-table__plan--most-popular');
-                    mostPopularElement.classList.remove('price-table__plan--regular-plan');
+                priceCard.classList.add('price-table__plan--most-popular');
+                priceCard.classList.remove('price-table__plan--regular-plan');
 
-                    const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
-                    if (btnGetPlan) {
-                        btnGetPlan.classList.add('mega-btn-primary-md');
-                        btnGetPlan.classList.remove('mega-btn-default-md');
-                    }
+                const btnGetPlan = priceCard.querySelector('.mega-btn-md');
+                if (btnGetPlan) {
+                    btnGetPlan.classList.add('mega-btn-primary-md', 'mega-btn-primary--icon-md');
+                    btnGetPlan.classList.remove('mega-btn-default-md');
+                }
+            } else {
+                priceCard.classList.remove('price-table__plan--most-popular');
+                priceCard.classList.add('price-table__plan--regular-plan');
+
+                const btnGetPlan = priceCard.querySelector('.mega-btn-md');
+                if (btnGetPlan) {
+                    btnGetPlan.classList.remove('mega-btn-primary-md', 'mega-btn-primary--icon-md');
+                    btnGetPlan.classList.add('mega-btn-default-md');
                 }
             }
 
@@ -353,7 +386,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const url = buildProductUrl(productId);
-            console.info('url', url);
             const link = document.querySelector(`.price-table__footer[data-price="${priceSize}"] a`);
             link.href = url;
         }
@@ -361,8 +393,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const productIds = products.map(product => Number(product.productId)).join(',')
 
         const {data: coupons} = await fetchCouponInBatch(productIds);
-
-        console.info('dataCoupons', coupons);
 
         products.forEach(({productId, priceSize, priceObject}) => {
             const coupon = coupons[productId];
