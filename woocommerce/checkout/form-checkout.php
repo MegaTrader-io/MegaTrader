@@ -207,6 +207,14 @@ $mt_billing_nonce = wp_create_nonce('mt_save_billing');
 
 /* ================== Feature flag ================== */
 $fflag = isset($_GET['v2']);
+if ($fflag) {
+    $step2_path = get_stylesheet_directory() . '/woocommerce/checkout/step_2.php';
+
+    if (file_exists($step2_path)) {
+        include $step2_path;
+        return;
+    }
+}
 
 /* ================== Preparación de UI (header y metas) ================== */
 // Línea secundaria compacta (size - {plan_type | Buying Power})
