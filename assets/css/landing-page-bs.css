@@ -476,6 +476,7 @@
     background-color: var(--body-bg);
     height: 500px;
     opacity: 0.5;
+    width: 100%;
 }
 
 .journal-bs__media {
