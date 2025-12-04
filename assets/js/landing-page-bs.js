@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             function calculatePerPage() {
                 const width = carouselEl.clientWidth;
-                const slideWidth = window.innerWidth <= 767 ? 276 : 378;
+                const slideWidth = document.documentElement.clientWidth <= 767 ? 276 : 378;
                 return Math.max(1, Math.floor(width / slideWidth));
             }
 
@@ -142,9 +142,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
 
                         // 🔹 Ejemplo: cambiar autoplay dinámicamente
-                        if (window.innerWidth <= 768 && !Glide.settings.autoplay) {
+                        if (document.documentElement.clientWidth <= 768 && !Glide.settings.autoplay) {
                             Glide.update({autoplay: 3000, type: 'slider', focusAt: 'center'});
-                        } else if (window.innerWidth > 768 && Glide.settings.autoplay) {
+                        } else if (document.documentElement.clientWidth > 768 && Glide.settings.autoplay) {
                             Glide.update({autoplay: false});
                         }
                     },
@@ -197,9 +197,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         const horizontalPadding = 32; // margen lateral en mobile
 
                         let width =
-                            window.innerWidth <= 768
-                                ? window.innerWidth - horizontalPadding
-                                : Math.min(window.innerWidth * 0.85, maxWidth);
+                            document.documentElement.clientWidth <= 768
+                                ? document.documentElement.clientWidth - horizontalPadding
+                                : Math.min(document.documentElement.clientWidth * 0.85, maxWidth);
 
                         // 🔹 Variables CSS opcionales para efectos visuales
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', width + 'px');
