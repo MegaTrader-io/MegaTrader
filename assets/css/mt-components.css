@@ -2261,6 +2261,11 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     /* mezcla BEM + clase existente */
 }
 
+.plan-summary__plan-icon {
+    width: 30px;
+    height: 30px;
+}
+
 .plan-summary__name {
     font-size: 1.5rem;
     line-height: 2rem;
