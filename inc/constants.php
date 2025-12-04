@@ -169,8 +169,9 @@ class Label
 
     public const CHECKOUT_META = [
         "plan_option_title" => "Customize Your Plan (Optional)",
-         "billing_step_1" => "1. Billing Details",
-         "billing_step_2"  => "2. create credentials",
+        "billing_step_1" => "1. Billing Details",
+        "billing_step_2"  => "2. create credentials",
+        "addons_title" => "Available add-ons",
         "billing_title" => "Billing Details",
         "edit_billing" => "Edit Billing",
         "payment_title" => "Payment Method",

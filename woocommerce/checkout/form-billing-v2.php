@@ -17,7 +17,7 @@ $show_guest_view = $mt_fake_guest || !is_user_logged_in();
 
         <?php /* if (!is_user_logged_in()): */ ?>
 
-        <div class="mt-card mt-card-md mb-4">
+        <div class="mt-card mt-card-md mb-32">
             <div class="d-flex flex-column gap-3">
                 <!-- Título + copy -->
                 <div class="d-flex flex-column gap-2">
@@ -32,29 +32,36 @@ $show_guest_view = $mt_fake_guest || !is_user_logged_in();
                 <!-- Botones -->
                 <div class="d-flex flex-column flex-sm-row gap-3 w-100">
                     <!-- Botón Sign In normal -->
-                    <button type="button"
-                        class="mt-btn mt-btn--secondary mt-btn--md flex-1-0-0">
+                    <button type="button" class="mt-btn mt-btn--secondary mt-btn--md flex-1-0-0">
                         Sign In
                     </button>
 
                     <!-- Botón Google -->
-                    <button type="button"
-                        class="google-signin-btn flex-1-0-0">
+                    <button type="button" class="google-signin-btn flex-1-0-0">
                     </button>
                 </div>
             </div>
         </div>
 
-        <h5 class="mb-6 text text-theme text-size-24"><?php esc_html_e('OR, CEATE A NEW ACCOUNT', 'megatrader'); ?></h5>
-        <span><?php esc_html_e(' Set up a new account in just a few steps to start trading instantly.', 'megatrader'); ?></span>
-    <?php endif; ?>
-    <div class="billing-details">
-        <div class="customer_title pb-2">
-            <div class="fw-medium leading-6 text-size-20 text-white text-uppercase">
-                <?php echo esc_html(Label::CHECKOUT_META['billing_step_1']); ?>
-            </div>
+        <div class="billing-create-account-title d-flex flex-column gap-3 mb-32">
+            <h5 class="fw-light leading-7 text-primary text-uppercase text-size-24 mb-0">
+                <?php esc_html_e('OR, CEATE A NEW ACCOUNT', 'megatrader'); ?>
+            </h5>
+            <span
+                class="fw-normal text-a8a29e text-base"><?php esc_html_e(' Set up a new account in just a few steps to start trading instantly.', 'megatrader'); ?></span>
         </div>
+
+
+    <?php endif; ?>
+
+    <div class="billing-details d-flex flex-column gap-32">
+
         <div class="row g-3">
+            <div class="customer_title ">
+                <div class="fw-medium leading-6 text-size-20 text-white text-uppercase">
+                    <?php echo esc_html(Label::CHECKOUT_META['billing_step_1']); ?>
+                </div>
+            </div>
             <div class="col-lg-6">
                 <div class="form-group no-label">
                     <label class="label"
@@ -128,7 +135,6 @@ $show_guest_view = $mt_fake_guest || !is_user_logged_in();
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-12">
                 <div class="form-group no-label">
                     <label class="label"
@@ -152,18 +158,30 @@ $show_guest_view = $mt_fake_guest || !is_user_logged_in();
                     </select>
                 </div>
             </div>
+        </div>
 
-            <?php /* if (!is_user_logged_in()): */ ?>
-
+        <?php /* if (!is_user_logged_in()): */ ?>
+        <div class="row g-3">
             <?php if ($show_guest_view): ?>
+                <?php
+                $account_username_val = $checkout->get_value('account_username');
+
+                if (empty($account_username_val)) {
+                    $account_username_val = $checkout->get_value('billing_email');
+                }
+                ?>
+
                 <div class="fw-medium leading-6 text-size-20 text-white text-uppercase">
                     <?php echo esc_html(Label::CHECKOUT_META['billing_step_2']); ?>
                 </div>
+
                 <div class="form-group no-label">
-                    <label class="label" for="billing_email"><?php esc_html_e('Email Address', 'megatrader'); ?>*</label>
-                    <input type="email" class="form-control" name="billing_email" id="billing_email"
-                        placeholder="<?php esc_attr_e('Enter your email', 'megatrader'); ?>"
-                        value="<?php echo esc_attr($checkout->get_value('billing_email')); ?>">
+                    <label class="label" for="account_username">
+                        <?php esc_html_e('Contact Email (username)', 'megatrader'); ?>*
+                    </label>
+                    <input type="email" class="form-control" name="account_username" id="account_username"
+                        placeholder="<?php esc_attr_e('Enter email for your account', 'megatrader'); ?>"
+                        value="<?php echo esc_attr($account_username_val); ?>">
                 </div>
 
                 <div class="form-group no-label">
@@ -173,6 +191,7 @@ $show_guest_view = $mt_fake_guest || !is_user_logged_in();
                     <input type="password" class="form-control" name="account_password" id="account_password"
                         placeholder="<?php esc_attr_e('Create a password', 'megatrader'); ?>">
                 </div>
+
             <?php endif; ?>
         </div>
     </div>
