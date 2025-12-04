@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         // 🔹 Ejemplo: cambiar autoplay dinámicamente
                         if (document.documentElement.clientWidth <= 768 && !Glide.settings.autoplay) {
-                            Glide.update({autoplay: 3000, type: 'slider', focusAt: 'center'});
+                            Glide.update({ focusAt: 'center'});
                         } else if (document.documentElement.clientWidth > 768 && Glide.settings.autoplay) {
                             Glide.update({autoplay: false});
                         }
