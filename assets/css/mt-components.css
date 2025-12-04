@@ -2840,6 +2840,95 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     visibility: hidden;
 }
 
+/* --------------------------------------------------
+   Block: mt-dropdown
+-------------------------------------------------- */
+
+.mt-dropdown > button {
+    background: #1E1E1E;
+}
+
+.mt-dropdown .dropdown-menu {
+    padding: 8px;
+}
+
+.mt-dropdown .dropdown-menu .dropdown-item {
+    padding: 12px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: inline-flex
+}
+
+.mt-dropdown .dropdown-menu .dropdown-item:hover {
+    background: #F5F5F5;
+    border-radius: 8px;
+}
+
+/* Botón interno (contenedor del icono + label) */
+.mt-dropdown__btn-inner {
+    flex: 1 1 0;
+    align-self: stretch;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Icono en el botón */
+.mt-dropdown__btn-icon {
+    flex-shrink: 0;
+}
+
+/* Texto principal del botón */
+.mt-dropdown__btn-label {
+    flex: 1 1 0;
+    text-align: left;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    text-transform: none;
+    word-wrap: break-word;
+}
+
+/* Badge dentro del botón */
+.mt-dropdown__badge {
+    margin-left: 8px;
+}
+
+/* --------------------------------------------------
+   Dropdown menu
+-------------------------------------------------- */
+
+.mt-dropdown__menu {
+    width: 100%;
+}
+
+/* Item del menú */
+.mt-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Icono del item */
+.mt-dropdown__item-icon {
+    flex-shrink: 0;
+}
+
+/* Label del item */
+.mt-dropdown__item-label {
+    flex: 1 1 auto;
+    align-self: stretch;
+    color: #131210;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+
 @keyframes mtPulse {
     0% {
         background-position: 200% 0;
