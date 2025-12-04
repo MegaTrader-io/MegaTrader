@@ -2860,7 +2860,7 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     display: inline-flex
 }
 
-.mt-dropdown .dropdown-menu .dropdown-item:hover {
+.mt-dropdown .dropdown-menu .dropdown-item:is(:hover,:focus,:active) {
     background: #F5F5F5;
     border-radius: 8px;
 }
