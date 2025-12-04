@@ -3482,7 +3482,7 @@ a.text-theme:hover,
     --dropdown-menu-pointer-height: 10px;
 }
 
-.dropdown-menu:before {
+.dropdown-menu:not(.dropdown-menu--without-arrow):before {
     content: "";
     position: absolute;
     top: calc(-1*var(--dropdown-menu-pointer-height));

@@ -926,6 +926,31 @@
     line-height: 20px;
 }
 
+.mt-pricing-table-type {
+    display: none;
+}
+
+.mt-dropdown > button {
+    background: #1E1E1E;
+}
+
+.mt-dropdown .dropdown-menu {
+    padding: 8px;
+}
+
+.mt-dropdown .dropdown-menu .dropdown-item {
+    padding: 12px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: inline-flex
+}
+
+.mt-dropdown .dropdown-menu .dropdown-item:hover {
+    background: #F5F5F5;
+    border-radius: 8px;
+}
+
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
@@ -1304,5 +1329,9 @@
     .pricing-table-container.landing-bs-container {
         padding: 0;
         margin-top: 32px;
+    }
+
+    .mt-pricing-table-type {
+        display: flex;
     }
 }
