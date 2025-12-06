@@ -19,16 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
             <label class="label"><?php esc_html_e('Log into your account to complete your purchase faster.', 'woocommerce'); ?></label>            
         </div>
         <div class="form-group mb-0 d-flex flex-column flex-lg-row gap-2 align-items-center">
-          <button
-            class="btn open-email-modal-btn w-100 d-flex justify-content-center align-items-center text-uppercase text-white rounded-12 bg-surface-dark gap-2 fw-medium" 
+          <a
+            href="#" class="mt-btn mt-btn--secondary mt-btn--md w-100" role="button"
             data-bs-toggle="modal"
             data-bs-target="#emailModal"
-            style="            
-              border: 1px solid #404040;          
-              padding:12px 16px; 
-            "        >
-          <?php esc_html_e('Sign In pinga', 'woocommerce'); ?>
-          </button>
+            >
+          <?php esc_html_e('Sign In', 'woocommerce'); ?>
+          </a>
           <div class="google-signin-btn">
             <div class="googlesitekit-sign-in-with-google__frontend-output-button"><!-- Here's where googlesitekit injects btn iframe --></div>
           </div>

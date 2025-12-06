@@ -7,53 +7,10 @@
  */
 defined('ABSPATH') || exit;
 
-$mt_fake_guest = true;
-$show_guest_view = $mt_fake_guest || !is_user_logged_in();
 
 ?>
 
 <div class="mb-0">
-    <?php if ($show_guest_view): ?>
-
-        <?php /* if (!is_user_logged_in()): */ ?>
-
-        <div class="mt-card mt-card-md mb-32">
-            <div class="d-flex flex-column gap-3">
-                <!-- Título + copy -->
-                <div class="d-flex flex-column gap-2">
-                    <div class="text-white text-40px fw-light text-uppercase">
-                        Sign in
-                    </div>
-                    <div class="text-a8a29e text-base fw-normal">
-                        Log into your account to complete your purchase faster.
-                    </div>
-                </div>
-
-                <!-- Botones -->
-                <div class="d-flex flex-column flex-sm-row gap-3 w-100">
-                    <!-- Botón Sign In normal -->
-                    <button type="button" class="mt-btn mt-btn--secondary mt-btn--md flex-1-0-0">
-                        Sign In
-                    </button>
-
-                    <!-- Botón Google -->
-                    <button type="button" class="google-signin-btn flex-1-0-0">
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="billing-create-account-title d-flex flex-column gap-3 mb-32">
-            <h5 class="fw-light leading-7 text-primary text-uppercase text-size-24 mb-0">
-                <?php esc_html_e('OR, CEATE A NEW ACCOUNT', 'megatrader'); ?>
-            </h5>
-            <span
-                class="fw-normal text-a8a29e text-base"><?php esc_html_e(' Set up a new account in just a few steps to start trading instantly.', 'megatrader'); ?></span>
-        </div>
-
-
-    <?php endif; ?>
-
     <div class="billing-details d-flex flex-column gap-32">
 
         <div class="row g-3">
@@ -160,9 +117,8 @@ $show_guest_view = $mt_fake_guest || !is_user_logged_in();
             </div>
         </div>
 
-        <?php /* if (!is_user_logged_in()): */ ?>
+        <?php  if (!is_user_logged_in()):  ?>
         <div class="row g-3">
-            <?php if ($show_guest_view): ?>
                 <?php
                 $account_username_val = $checkout->get_value('account_username');
 
