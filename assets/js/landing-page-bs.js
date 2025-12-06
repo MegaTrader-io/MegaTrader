@@ -230,6 +230,117 @@ document.addEventListener('DOMContentLoaded', function () {
                 return Sizes;
             }
         });
+
+        const priceTable = document.querySelector('.price-table');
+        const priceTableInstance = new Glide(priceTable, {
+            type: 'slider',
+            gap: 16,
+            autoplay: false,
+            rewind: false,
+            animationDuration: 800
+        });
+
+        priceTableInstance.mount({
+            Sizes: function CustomSizes(Glide, Components, Events) {
+
+                const Sizes = {
+
+                    setupSlides() {
+                        const width = this.slideWidth + 'px';
+                        const slides = Components.Html.slides;
+
+                        for (let i = 0; i < slides.length; i++) {
+                            slides[i].style.width = width;
+                        }
+
+                        // 🔹 Ejemplo: cambiar autoplay dinámicamente
+                        if (document.documentElement.clientWidth <= 768 && !Glide.settings.autoplay) {
+                            // Glide.update({autoplay: 3000, type: 'slider', focusAt: 'center'});
+                        } else if (document.documentElement.clientWidth > 768 && Glide.settings.autoplay) {
+                            // Glide.update({autoplay: false});
+                        }
+                    },
+
+                    setupWrapper() {
+                        Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
+                    },
+
+                    remove() {
+                        const slides = Components.Html.slides;
+
+                        for (let i = 0; i < slides.length; i++) {
+                            slides[i].style.width = '';
+                        }
+
+                        Components.Html.wrapper.style.width = '';
+                    }
+                };
+
+                // ----------------------------
+                // GETTERS OBLIGATORIOS
+                // ----------------------------
+
+                Object.defineProperty(Sizes, 'length', {
+                    get() {
+                        return Components.Html.slides.length;
+                    }
+                });
+
+                Object.defineProperty(Sizes, 'width', {
+                    get() {
+                        return Components.Html.track.offsetWidth;
+                    }
+                });
+
+                Object.defineProperty(Sizes, 'wrapperSize', {
+                    get() {
+                        return (
+                            this.slideWidth * this.length +
+                            Components.Gaps.grow +
+                            Components.Clones.grow
+                        );
+                    }
+                });
+
+                Object.defineProperty(Sizes, 'slideWidth', {
+                    get() {
+                        // 🔹 Lógica adaptativa + límite máximo
+                        const maxWidth = document.documentElement.clientWidth < 640 ? 320 : 345; // el máximo que tú desees
+                        const horizontalPadding = 32; // margen lateral en mobile
+
+                        let width = document.documentElement.clientWidth <= 768
+                            ? document.documentElement.clientWidth - horizontalPadding
+                            : Math.min(document.documentElement.clientWidth * 0.85, maxWidth);
+
+                        // 🔹 Variables CSS opcionales para efectos visuales
+                        priceTable.style.setProperty('--price-table-slide-width', width + 'px');
+
+                        const points = document.querySelector('.price-table__glide .slider__bullets');
+                        priceTable.style.setProperty(
+                            '--price-table-slide-left',
+                            (points?.getBoundingClientRect().x || 0) + 'px'
+                        );
+
+                        return width;
+                    }
+                });
+
+                // ----------------------------
+                // EVENTOS COMO EN LA LIBRERÍA
+                // ----------------------------
+
+                Events.on(['build.before', 'resize', 'update'], () => {
+                    Sizes.setupSlides();
+                    Sizes.setupWrapper();
+                });
+
+                Events.on('destroy', () => {
+                    Sizes.remove();
+                });
+
+                return Sizes;
+            }
+        });
     }
 
     function loadChooseYourAccountSize(fn) {
