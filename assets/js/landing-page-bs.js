@@ -231,106 +231,144 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        const priceTable = document.querySelector('.price-table');
-        window.priceTableInstance = new Glide(priceTable, {
-            type: 'slider',
-            gap: 16,
-            autoplay: false,
-            rewind: false,
-            animationDuration: 800
-        });
+        (function () {
+            const priceTable = document.querySelector('.price-table');
+            let glideInstance = null;
+            let isGlideMounted = false;
 
-        priceTableInstance
-            .mutate([
-                function (Glide, Components, Events) {
-                    return {
-                        modify(translate) {
-                            const slideWidth = Components.Sizes.slideWidth; // ancho dinámico del slide
-                            // const gap = Components.Gaps.value; // separación configurada
-                            // const viewportWidth = document.documentElement.clientWidth;
-                            //
-                            // // Calcula el offset para centrar
-                            // // Centramos el slide activo tomando el espacio vacío a los lados
-                            // const offsetToCenter = (viewportWidth - slideWidth) / 2;
-                            //
-                            // // Glide usa desplazamientos acumulativos (negativos)
-                            // const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
-                            // const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
-                            //
-                            // console.info('adjustedTranslate', adjustedTranslate, translate, 'offsetToCenter')
-                            console.info('translate', translate, 'slideWidth', slideWidth)
+            function initGlide() {
+                if (glideInstance || isGlideMounted) return;
 
-                            if (translate === 0) {
-                                return translate - 16;
+                try {
+                    glideInstance = new Glide(priceTable, {
+                        type: 'slider',
+                        gap: 16,
+                        autoplay: false,
+                        rewind: false,
+                        animationDuration: 800
+                    });
+
+                    glideInstance
+                        .mutate([
+                            function (Glide, Components, Events) {
+                                return {
+                                    modify(translate) {
+                                        const slideWidth = Components.Sizes.slideWidth;
+                                        const gap = Components.Gaps.value;
+                                        const viewportWidth = document.documentElement.clientWidth;
+                                        const offsetToCenter = (viewportWidth - slideWidth) / 2;
+                                        const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
+                                        const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
+                                        return -1 * adjustedTranslate;
+                                    }
+                                };
                             }
+                        ])
+                        .mount({
+                            Sizes: function CustomSizes(Glide, Components, Events) {
+                                const Sizes = {
+                                    setupSlides() {
+                                        const width = this.slideWidth + 'px';
+                                        const slides = Components.Html.slides;
+                                        for (let i = 0; i < slides.length; i++) {
+                                            slides[i].style.width = width;
+                                        }
+                                    },
+                                    setupWrapper() {
+                                        Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
+                                    },
+                                    remove() {
+                                        const slides = Components.Html.slides;
+                                        for (let i = 0; i < slides.length; i++) {
+                                            slides[i].style.width = '';
+                                        }
+                                        Components.Html.wrapper.style.width = '';
+                                    }
+                                };
 
-                            return translate - (16+8+2);
-                        }
-                    };
+                                Object.defineProperty(Sizes, 'length', {
+                                    get() {
+                                        return Components.Html.slides.length;
+                                    }
+                                });
+
+                                Object.defineProperty(Sizes, 'width', {
+                                    get() {
+                                        return Components.Html.track.offsetWidth;
+                                    }
+                                });
+
+                                Object.defineProperty(Sizes, 'wrapperSize', {
+                                    get() {
+                                        return (
+                                            this.slideWidth * this.length +
+                                            Components.Gaps.grow +
+                                            Components.Clones.grow
+                                        );
+                                    }
+                                });
+
+                                Object.defineProperty(Sizes, 'slideWidth', {
+                                    get() {
+                                        const maxWidth = document.documentElement.clientWidth < 640 ? 320 : 345;
+                                        let width = document.documentElement.clientWidth <= 768
+                                            ? Math.min(document.documentElement.clientWidth, maxWidth)
+                                            : Math.min(document.documentElement.clientWidth, maxWidth);
+
+                                        priceTable.style.setProperty('--price-table-slide-width', width + 'px');
+                                        return width;
+                                    }
+                                });
+
+                                Events.on(['build.before', 'resize', 'update'], () => {
+                                    Sizes.setupSlides();
+                                    Sizes.setupWrapper();
+                                });
+
+                                Events.on('destroy', () => Sizes.remove());
+                                return Sizes;
+                            }
+                        });
+
+                    isGlideMounted = true;
+                    console.info('[Glide] mounted');
+                } catch (err) {
+                    console.error('Error initializing Glide:', err);
                 }
-            ])
-            .mount({
-                Sizes: function CustomSizes(Glide, Components, Events) {
-                    const Sizes = {
-                        setupSlides() {
-                            const width = this.slideWidth + 'px';
-                            const slides = Components.Html.slides;
-                            for (let i = 0; i < slides.length; i++) {
-                                slides[i].style.width = width;
-                            }
-                        },
-                        setupWrapper() {
-                            Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
-                        },
-                        remove() {
-                            const slides = Components.Html.slides;
-                            for (let i = 0; i < slides.length; i++) {
-                                slides[i].style.width = '';
-                            }
-                            Components.Html.wrapper.style.width = '';
-                        }
-                    };
+            }
 
-                    Object.defineProperty(Sizes, 'length', {
-                        get() {
-                            return Components.Html.slides.length;
-                        }
-                    });
-
-                    Object.defineProperty(Sizes, 'width', {
-                        get() {
-                            return Components.Html.track.offsetWidth;
-                        }
-                    });
-
-                    Object.defineProperty(Sizes, 'wrapperSize', {
-                        get() {
-                            console.info('wrapperSize', this.slideWidth * this.length + Components.Gaps.grow + Components.Clones.grow)
-                            return this.slideWidth * this.length + Components.Gaps.grow + Components.Clones.grow;
-                        }
-                    });
-
-                    Object.defineProperty(Sizes, 'slideWidth', {
-                        get() {
-                            const maxWidth = document.documentElement.clientWidth < 640 ? 320 : 345;
-                            let width = document.documentElement.clientWidth <= 768
-                                ? document.documentElement.clientWidth
-                                : Math.min(document.documentElement.clientWidth * 0.85, maxWidth);
-
-                            priceTable.style.setProperty('--price-table-slide-width', width + 'px');
-                            return width;
-                        }
-                    });
-
-                    Events.on(['build.before', 'resize', 'update'], () => {
-                        Sizes.setupSlides();
-                        Sizes.setupWrapper();
-                    });
-
-                    Events.on('destroy', () => Sizes.remove());
-                    return Sizes;
+            function destroyGlide() {
+                if (glideInstance && isGlideMounted) {
+                    try {
+                        glideInstance.destroy();
+                        glideInstance = null;
+                        isGlideMounted = false;
+                        console.info('[Glide] destroyed');
+                    } catch (err) {
+                        console.error('Error destroying Glide:', err);
+                    }
                 }
+            }
+
+            function handleResize() {
+                const viewportWidth = window.innerWidth;
+                if (viewportWidth > 800) {
+                    destroyGlide();
+                } else {
+                    initGlide();
+                }
+            }
+
+            // Inicializa solo si el viewport es menor o igual a 800
+            if (window.innerWidth <= 800) initGlide();
+
+            // Escucha cambios de tamaño con debounce
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(handleResize, 250);
             });
+        })();
     }
 
     function loadChooseYourAccountSize(fn) {

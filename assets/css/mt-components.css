@@ -2442,7 +2442,7 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
 
 .price-table__glide .glide__slide {
     position: relative;
-    max-width: 324px;
+    max-width: 320px;
 }
 
 @media (max-width: 640px)  {
@@ -2450,10 +2450,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
         position: relative;
         max-width: 320px;
     }
-}
-
-.price-table__glide .glide__track {
-    overflow: visible;
 }
 
 .price-table__glide .slider__bullets {
@@ -3031,10 +3027,9 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
         padding-bottom: 0;
     }
 
-
     .price-table {
-        padding-inline: 16px;
-        grid-template-columns: repeat(4, 320px);
+        /*padding-inline: 16px;*/
+        /*grid-template-columns: repeat(4, 328px);*/
         gap: 16px;
     }
     .mt-pricing-table-plan-options__wrapper > * + * {
