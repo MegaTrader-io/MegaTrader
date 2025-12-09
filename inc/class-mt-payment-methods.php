@@ -22,9 +22,9 @@ add_action( 'template_redirect', function() {
 
         $query_string = http_build_query( $params );
 
-        $new_url = home_url( "/my-account/view-subscription/{$subscription_id}/" );
+        $new_url = home_url( "/my-account/subscriptions/" );
         if ( $query_string ) {
-            $new_url .= '?' . $query_string;
+            $new_url .= '?v2&' . $query_string . '#' . $subscription_id;
         }
 
         wp_safe_redirect( $new_url, 302 );

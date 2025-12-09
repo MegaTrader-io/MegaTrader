@@ -49,6 +49,13 @@ defined('ABSPATH') || exit;
                     placeholder="<?php esc_attr_e('Phone Number', 'megatrader'); ?>"
                     value="<?php echo esc_attr($checkout->get_value('billing_phone')); ?>">
             </div>
+        </div>
+        <div class="row g-3">
+            <div class="customer_title ">
+                <div class="fw-medium leading-6 text-size-20 text-white text-uppercase">
+                    <?php echo esc_html(Label::CHECKOUT_META['billing_step_2']); ?>
+                </div>
+            </div>
             <div class="col-lg-12">
                 <div class="form-group no-label">
                     <label class="label"
@@ -117,8 +124,8 @@ defined('ABSPATH') || exit;
             </div>
         </div>
 
-        <?php  if (!is_user_logged_in()):  ?>
-        <div class="row g-3">
+        <?php if (!is_user_logged_in()): ?>
+            <div class="row g-3">
                 <?php
                 $account_username_val = $checkout->get_value('account_username');
 
@@ -128,24 +135,24 @@ defined('ABSPATH') || exit;
                 ?>
 
                 <div class="fw-medium leading-6 text-size-20 text-white text-uppercase">
-                    <?php echo esc_html(Label::CHECKOUT_META['billing_step_2']); ?>
+                    <?php echo esc_html(Label::CHECKOUT_META['billing_step_3']); ?>
                 </div>
 
-                <div class="form-group no-label">
+                <div class="form-group no-label create-account-label">
                     <label class="label" for="account_username">
-                        <?php esc_html_e('Contact Email (username)', 'megatrader'); ?>*
+                        <?php esc_html_e('Email address', 'megatrader'); ?>*
                     </label>
                     <input type="email" class="form-control" name="account_username" id="account_username"
-                        placeholder="<?php esc_attr_e('Enter email for your account', 'megatrader'); ?>"
+                        placeholder="<?php esc_attr_e('Enter your email', 'megatrader'); ?>"
                         value="<?php echo esc_attr($account_username_val); ?>">
                 </div>
 
-                <div class="form-group no-label">
+                <div class="form-group no-label create-account-label">
                     <label class="label" for="account_password">
-                        <?php esc_html_e('Password', 'megatrader'); ?>*
+                        <?php esc_html_e('Create Password', 'megatrader'); ?>*
                     </label>
                     <input type="password" class="form-control" name="account_password" id="account_password"
-                        placeholder="<?php esc_attr_e('Create a password', 'megatrader'); ?>">
+                        placeholder="<?php esc_attr_e('Create your password', 'megatrader'); ?>">
                 </div>
 
             <?php endif; ?>

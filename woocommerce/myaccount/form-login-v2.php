@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="form-group mb-3">
             <label class="label"><?php esc_html_e('Log into your account to complete your purchase faster.', 'woocommerce'); ?></label>            
         </div>
-        <div class="form-group mb-0 d-flex flex-column flex-lg-row gap-2 align-items-center">
+        <div class="form-group mb-0 d-flex flex-column flex-lg-row gap-3 align-items-center">
           <a
             href="#" class="mt-btn mt-btn--secondary mt-btn--md w-100" role="button"
             data-bs-toggle="modal"

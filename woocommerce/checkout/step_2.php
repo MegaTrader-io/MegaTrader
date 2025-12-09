@@ -35,17 +35,18 @@ if (!isset($checkout) && function_exists('WC')) {
                                 <div class="mt-card mt-card-md mb-32">
                                     <?php wc_get_template('myaccount/form-login-v2.php'); ?>
                                 </div>
-                            </div>
 
-                            <div class="d-flex flex-column gap-3 mb-32">
-                                <h5 class="fw-light leading-7 text-primary text-uppercase text-size-24 mb-0">
-                                    <?php echo esc_html(Label::CHECKOUT_META['create_account_title']); ?>
-                                </h5>
-                                <span
-                                    class="fw-normal text-a8a29e text-base"><?php echo esc_html(Label::CHECKOUT_META['create_account_subtitle']); ?></span>
+
+                                <div class="d-flex flex-column gap-3 mb-32">
+                                    <h5 class="fw-light leading-7 text-primary text-uppercase text-size-24 mb-0">
+                                        <?php echo esc_html(Label::CHECKOUT_META['create_account_title']); ?>
+                                    </h5>
+                                    <span
+                                        class="fw-normal text-a8a29e text-base"><?php echo esc_html(Label::CHECKOUT_META['create_account_subtitle']); ?></span>
+                                </div>
                             </div>
                         <?php else: ?>
-                            <div class="mt-card flex-row flex-wrap mt-card--login-bg justify-content-between mb-32">
+                            <div class="mt-card flex-row flex-wrap mt-card--login-bg justify-content-between p-32 mb-32">
                                 <div class="d-flex flex-column gap-1">
                                     <?php
                                     $first = trim($checkout->get_value('billing_first_name'));
@@ -57,14 +58,15 @@ if (!isset($checkout) && function_exists('WC')) {
                                         $name = $current_user->display_name;
                                     }
                                     ?>
-                                    <span class="title-black-color fw-medium fs-4 text-truncate text-uppercase"><?php echo esc_html($name); ?></span>
-                                    <span class="title-black-color fw-medium text-size-20"><?php echo esc_html($country_name); ?></span>
+                                    <span
+                                        class="title-black-color fw-medium fs-4 text-truncate text-uppercase"><?php echo esc_html($name); ?></span>
+                                    <span
+                                        class="title-black-color fw-medium text-size-20"><?php echo esc_html($country_name); ?></span>
 
                                 </div>
                                 <div class="d-flex flex-row gap-1">
-                                    <a href="<?php echo esc_url(home_url('/my-account/overview/')); ?>"
-                                        class="mt-btn mt-btn--default mt-btn--sm"><span
-                                            class="mt-icon mt-icon-sm mt-icon_bar-chart"></span></a>
+                                    <a href="<?php echo esc_url(home_url('/my-account/orders/')); ?>"
+                                        class="mt-btn mt-btn--default mt-btn--sm">manage subscriptions</a>
                                     <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>"
                                         class="mt-btn mt-btn--default mt-btn--sm" title="Logout">
                                         <span class="mt-icon mt-icon-sm mt-icon_logout"></span>
@@ -73,26 +75,26 @@ if (!isset($checkout) && function_exists('WC')) {
                             </div>
 
                         <?php endif; ?>
-                    </div>
 
 
-                    <?php
-                    do_action('woocommerce_checkout_before_customer_details');
-                    ?>
-                    <div id="customer_details" style="display:none;">
+
                         <?php
-                        do_action('woocommerce_checkout_billing');
-                        do_action('woocommerce_checkout_shipping');
+                        do_action('woocommerce_checkout_before_customer_details');
                         ?>
-                    </div>
-                    <?php
-                    do_action('woocommerce_checkout_after_customer_details');
-                    ?>
+                        <div id="customer_details" style="display:none;">
+                            <?php
+                            do_action('woocommerce_checkout_billing');
+                            do_action('woocommerce_checkout_shipping');
+                            ?>
+                        </div>
+                        <?php
+                        do_action('woocommerce_checkout_after_customer_details');
+                        ?>
 
-                    <div id="billing-container" class="d-flex flex-column gap-3">
-                        <?php wc_get_template('checkout/form-billing-v2.php', ['checkout' => $checkout]); ?>
+                        <div id="billing-container" class="d-flex flex-column gap-3">
+                            <?php wc_get_template('checkout/form-billing-v2.php', ['checkout' => $checkout]); ?>
+                        </div>
                     </div>
-
 
 
                     <div class="two-columns__col">
@@ -140,8 +142,8 @@ if (!isset($checkout) && function_exists('WC')) {
                                                     <div class="checkout-addons">
                                                         <div class="available-info d-flex flex-column gap-3">
                                                             <?php foreach ($addon_options as $option_key => $option_data): ?>
-                                                                <div
-                                                                    class="addons-item addons-item-new d-flex gap-3 align-items-center bg-1e1e1e rounded-16px w-100 justify-content-between <?php echo esc_attr($option_key); ?>">
+                                                                <div class="addons-item addons-item-new d-flex gap-3 align-items-center bg-1e1e1e rounded-16px w-100 justify-content-between <?php echo esc_attr($option_key); ?>"
+                                                                    data-addon-key="<?php echo esc_attr($option_key); ?>">
                                                                     <div class="addons-header d-flex flex-column gap-1">
                                                                         <div class="text-base text-white fw-medium">
                                                                             <?php
@@ -178,7 +180,7 @@ if (!isset($checkout) && function_exists('WC')) {
                                 <div class="fw-medium leading-8 text-size-20 text-white pb-3">
                                     <?php echo esc_html(Label::CHECKOUT_META['payment_title']); ?>
                                 </div>
-                                <div class="mt-payment-cards" id="mt-payment">
+                                <div class="mt-payment-cards mt-payment-cards-v2" id="mt-payment">
                                     <?php wc_get_template('checkout/payment.php', array('checkout' => WC()->checkout())); ?>
                                 </div>
                                 <div class="mt-card mt-3">

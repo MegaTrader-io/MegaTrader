@@ -345,6 +345,37 @@
     }
   }
 
+  /* ======================= Cards ↔ Checkboxes (lo que estaba en main.js) ======================= */
+  function bindAddonCards() {
+    if (!window.jQuery) return;
+    var $ = window.jQuery;
+
+    var $addonsNode = $("#wc_checkout_add_ons");
+    if (!$addonsNode.length) return;
+
+    // Para cada checkbox de add-on, conectamos la/s card/s que tengan la clase = value
+    $addonsNode.find('input[type="checkbox"]').each(function () {
+      var value = $(this).val();
+      if (!value) return;
+
+      $("." + value)
+        .off("click.mtAddon")
+        .on("click.mtAddon", function () {
+          $(this).toggleClass("active");
+          $addonsNode
+            .find('input[type="checkbox"][value="' + value + '"]')
+            .trigger("click");
+        });
+    });
+
+    // Estado inicial: marcar como .active las cards de los checkboxes ya checked
+    $addonsNode.find('input[type="checkbox"]:checked').each(function () {
+      var value = $(this).val();
+      if (!value) return;
+      $("." + value).addClass("active");
+    });
+  }
+
   /* ======================= Orquestador ======================= */
   function applyAll(root = document) {
     // 1) reflejo/config (addons del plugin → UI)
@@ -402,6 +433,9 @@
     const pluginAddons = $("#wc_checkout_add_ons");
     if (pluginAddons) bindAddonsNode(pluginAddons);
 
+    // Cards ↔ checkboxes (lógica trasladada desde main.js)
+    bindAddonCards();
+
     // Observar DOM por si Woo refresca fragmentos o llegan tarde
     const mo = new MutationObserver((muts) => {
       let need = false;
@@ -421,6 +455,7 @@
         const node =
           $("#wc_checkout_add_ons") || $(".checkout-addons") || document;
         bindAddonsNode(node);
+        bindAddonCards();
         applyAll(document);
       }
     });
@@ -432,6 +467,7 @@
         const node =
           $("#wc_checkout_add_ons") || $(".checkout-addons") || document;
         bindAddonsNode(node);
+        bindAddonCards();
         applyAll(document);
       });
     }
