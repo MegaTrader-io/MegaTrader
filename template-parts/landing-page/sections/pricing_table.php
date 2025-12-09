@@ -380,10 +380,11 @@ HTML;
             <button class="slider__bullet glide__bullet" data-glide-dir="=0"></button>
             <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
             <button class="slider__bullet glide__bullet" data-glide-dir="=2"></button>
+            <button class="slider__bullet glide__bullet" data-glide-dir="=3"></button>
         </div>
     </div>
 
-    <div class="testimonials">
+    <div style="display: none;" class="testimonials">
         <div class="testimonials__card">
             <img
                     class="testimonials__image"
