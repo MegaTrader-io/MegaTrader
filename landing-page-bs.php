@@ -341,7 +341,7 @@ get_header('landing-page-bs');
 
         <?php get_template_part('template-parts/landing-page/sections/pricing_table', null, ['classes' => 'landing-bs-container']); ?>
 
-        <section id="competition">
+        <section style="display: none;" id="competition">
             <div class="competition landing-bs-container">
                 <div class="competition__wrapper ">
                     <div class="competition__content">
@@ -425,7 +425,7 @@ get_header('landing-page-bs');
             </div>
         </section>
 
-        <section class="payouts-and-comparison">
+        <section style="display: none;" class="payouts-and-comparison">
             <div class="payouts-and-comparison__container container">
                 <header class="payouts-and-comparison__header text-center">
                     <h2 class="payouts-and-comparison__title">

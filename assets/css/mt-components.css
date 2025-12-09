@@ -2433,7 +2433,7 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
 
 .price-table__glide .glide__slide {
     position: relative;
-    max-width: 345px;
+    max-width: 324px;
 }
 
 @media (max-width: 640px)  {
