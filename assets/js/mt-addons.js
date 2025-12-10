@@ -195,7 +195,7 @@
     // Si NO existe el meta real y el addon está activo → inyectar texto fijo
     if (!item) {
       if (isDrawdownBufferActive(root)) {
-        ensureDrawdownInjected();   // "Extra +500" SIN cálculos
+        ensureDrawdownInjected(); // "Extra +500" SIN cálculos
       } else {
         removeDrawdownInjected();
       }
@@ -345,19 +345,52 @@
     }
   }
 
+  /* ======================= Cards ↔ Checkboxes (lo que estaba en main.js) ======================= */
+  function bindAddonCards() {
+    if (!window.jQuery) return;
+    var $jq = window.jQuery;
+
+    var $addonsNode = $jq("#wc_checkout_add_ons");
+    if (!$addonsNode.length) return;
+
+    // Para cada checkbox de add-on, conectamos la/s card/s que tengan la clase = value
+    $addonsNode.find('input[type="checkbox"]').each(function () {
+      var value = $jq(this).val();
+      if (!value) return;
+
+      $jq("." + value)
+        .off("click.mtAddon")
+        .on("click.mtAddon", function () {
+          $jq(this).toggleClass("active");
+          $addonsNode
+            .find('input[type="checkbox"][value="' + value + '"]')
+            .trigger("click");
+        });
+    });
+
+    // Estado inicial: marcar como .active las cards de los checkboxes ya checked
+    $addonsNode.find('input[type="checkbox"]:checked').each(function () {
+      var value = $jq(this).val();
+      if (!value) return;
+      $jq("." + value).addClass("active");
+    });
+  }
+
   /* ======================= Orquestador ======================= */
   function applyAll(root = document) {
-    // 1) reflejo/config (addons del plugin → UI)
+    // 1) reflejo/config (addons del plugin → UI). SOLO si existe bloque de addons
     const addonsNode =
-      $("#wc_checkout_add_ons", root) || $(".checkout-addons", root) || root;
+      $("#wc_checkout_add_ons", root) || $(".checkout-addons", root);
+
     if (addonsNode) {
       try {
         addonsConfigRun(addonsNode);
-      } catch {}
+      } catch (e) {}
       try {
         updateAddonsCard(addonsNode);
-      } catch {}
+      } catch (e) {}
     }
+
     // 2) drawdown buffer / anytime payouts
     updateTrailingMaxDrawdownUI(root);
     updateAnytimePayoutsUI(root);
@@ -378,8 +411,13 @@
   }
 
   function bindAddonsNode(addonsNode) {
-    if (!addonsNode || addonsNode.dataset.mtAddonsBound) return;
+    // solo elementos de tipo nodo 1 (HTMLElement)
+    if (!addonsNode || addonsNode.nodeType !== 1) return;
+    if (!("dataset" in addonsNode)) return;
+
+    if (addonsNode.dataset.mtAddonsBound) return;
     addonsNode.dataset.mtAddonsBound = "1";
+
     addonsNode.addEventListener("change", (e) => {
       if (
         e.target &&
@@ -399,8 +437,12 @@
     watchClassToggle(".addons-item.addons-item-new.anytime-payouts", applyAll);
 
     // Enlazar cambios del bloque del plugin (#wc_checkout_add_ons) si existe
-    const pluginAddons = $("#wc_checkout_add_ons");
+    const pluginAddons =
+      $("#wc_checkout_add_ons") || $(".checkout-addons");
     if (pluginAddons) bindAddonsNode(pluginAddons);
+
+    // Cards ↔ checkboxes (lógica trasladada desde main.js)
+    bindAddonCards();
 
     // Observar DOM por si Woo refresca fragmentos o llegan tarde
     const mo = new MutationObserver((muts) => {
@@ -419,8 +461,9 @@
       });
       if (need) {
         const node =
-          $("#wc_checkout_add_ons") || $(".checkout-addons") || document;
-        bindAddonsNode(node);
+          $("#wc_checkout_add_ons") || $(".checkout-addons");
+        if (node) bindAddonsNode(node);
+        bindAddonCards();
         applyAll(document);
       }
     });
@@ -430,8 +473,9 @@
     if (window.jQuery && jQuery(document.body)) {
       jQuery(document.body).on("updated_checkout", () => {
         const node =
-          $("#wc_checkout_add_ons") || $(".checkout-addons") || document;
-        bindAddonsNode(node);
+          $("#wc_checkout_add_ons") || $(".checkout-addons");
+        if (node) bindAddonsNode(node);
+        bindAddonCards();
         applyAll(document);
       });
     }
