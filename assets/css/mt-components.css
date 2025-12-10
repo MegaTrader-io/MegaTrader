@@ -2474,16 +2474,15 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     gap: 10px;
     display: inline-flex;
     border: none;
+    top: calc(50% - 28px);
 }
 
 .price-table__glide .glide__arrow--prev {
     left: calc(((100dvw - var(--price-table-slide-width)) / 2) - 30px);
-    top: calc(50% - 28px);
 }
 
 .price-table__glide .glide__arrow--next {
     right: calc(((100dvw - var(--price-table-slide-width)) / 2) - 30px);
-    top: calc(50% - 28px);
 }
 
 .mega-btn-primary--icon-md svg {
