@@ -391,6 +391,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(handleResize, 250);
             });
+
+            handleResize();
         })();
     }
 
