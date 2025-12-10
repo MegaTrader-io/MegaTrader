@@ -3052,17 +3052,36 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
         overflow: unset;
     }
 
+    .price-table .slider__slides.glide__slides {
+        padding-block: 32px;
+    }
 
-    .price-table .slider__slides .slider__frame{
-        display: contents;
+    .price-table .slider__slides .slider__frame {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        display: inline-flex
+    }
+
+    .price-table__glide .glide__slide {
+        max-width: fit-content;
     }
 
     .price-table:has(.price-table__plan--most-popular) .price-table__plan--regular-plan {
-        margin-top: 40px;
+        margin-top: 48px;
     }
 
     .price-table__plan--regular-plan:last-child, .price-table__plan--regular-plan:first-child {
-        : 0;
         border-radius: 0;
+        border-right-width: 0;
+        border-left-width: 0;
+    }
+
+    .price-table__size {
+        padding: 24px 16px;
+    }
+
+    .price-table__plan:last-child .price-table__right-line {
+        border-right: 1px #404040 solid;
     }
 }
