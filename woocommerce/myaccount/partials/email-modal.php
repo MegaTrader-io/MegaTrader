@@ -1,16 +1,17 @@
 <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-        <div class="authentication-form modal-content align-items-center d-flex flex-column flex-shrink-0">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content gap-32">
             <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-                <h5 class="modal-title text-white heading-sm-medium" id="emailModalLabel">SIGN IN</h5>
+                <span class="modal-title text-white heading-sm-medium"
+                    id="emailModalLabel"><?php echo esc_html(Label::CHECKOUT_META['login_modal_title']); ?></span>
                 <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
                     aria-label="Close">
                     <span aria-hidden="true">
-                        <img src="/wp-content/uploads/2025/05/cancel-circle-1.png"
-                            alt="Close" style="width: 24px; height: 24px;" /></span>
+                        <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
+                            style="width: 24px; height: 24px;" /></span>
                 </button>
             </div>
-            <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
+            <div class="modal-body d-flex flex-column align-items-center text-center gap-32">
                 <div class="otp-message-container w-100 d-flex justify-content-start d-none">
                     <!-- Error -->
                     <div class="error-otp-message notifications notifications-error">
@@ -22,7 +23,7 @@
                                 </path>
                             </svg>
                         </div>
-                        <span class="error-otp-text">This is an error message</span>
+                        <span class="error-otp-text"><?php echo esc_html(Label::CHECKOUT_META['login_modal_error_text']); ?></span>
                     </div>
                     <!-- Éxito -->
                     <div class="success-otp-message notifications notifications-success" style="max-width: 600px;">
@@ -35,21 +36,22 @@
                             </svg>
                         </div>
 
-                        <span class="success-otp-text">A new code has been sent to your email.</span>
+                        <span class="success-otp-text"><?php echo esc_html(Label::CHECKOUT_META['login_modal_success_text']); ?></span>
                     </div>
                 </div>
                 <div class="sign-in__logo" style="height: 72px; width:72px">
-                    <img src="/wp-content/uploads/2025/06/appIcon.svg" alt="mt logo"
-                        class="rounded-4" />
+                    <img src="/wp-content/uploads/2025/06/appIcon.svg" alt="mt logo" class="rounded-4" />
                 </div>
-                <form method="post" class="woocommerce-form woocommerce-form-login login w-100 m-0"
-                    style="max-width: 360px;">
-                    <p class="text-body pb-2 text-center">Enter your email, and We will send an email with a code
-                        verification.</p>
-                    <input type="email" name="username" class="form-control otp-email-input" placeholder="Email"
-                        data-gtm-form-interact-field-id="1" style="background-color: var(--smoke-color) !important;">
-                    <button type="button" class="get-otp-btn mt-4 ot-btn text-black w-100"
-                        style="color: #000 !important;font-weight: 500 !important;">SEND</button>
+                <span class="modal-description text-base">
+                    <?php echo esc_html(Label::CHECKOUT_META['login_modal_description']); ?>
+                </span>
+                <form method="post"
+                    class="woocommerce-form woocommerce-form-login login d-flex flex-column gap-3 w-100 m-0">
+                    <input type="email" name="username" autocomplete="username"
+                        class="form-control otp-email-input bg-1e1e1e-70" placeholder="Email"
+                        data-gtm-form-interact-field-id="1">
+                    <button type="button"
+                        class="get-otp-btn mt-btn mt-btn--md mt-btn--primary"><?php echo esc_html(Label::CHECKOUT_META['login_modal_btn']); ?></button>
                 </form>
             </div>
         </div>

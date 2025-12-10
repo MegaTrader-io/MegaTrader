@@ -1,20 +1,21 @@
 <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
-        <div class="authentication-form modal-content align-items-center d-flex flex-column gap-4">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content gap-32">
             <!-- Header -->
             <div class="modal-header w-100 border-0 justify-content-between align-items-start p-0">
-                <h5 class="modal-title text-white heading-sm-medium" id="otpModalLabel">VERIFY OTP</h5>
+                <span class="modal-title text-white heading-sm-medium"
+                    id="otpModalLabel"><?php echo esc_html(Label::CHECKOUT_META['otp_modal_title']); ?></span>
                 <button type="button" class="p-0 border-0 bg-transparent shadow-none" data-bs-dismiss="modal"
                     aria-label="Close">
-                    <img src="/wp-content/uploads/2025/05/cancel-circle-1.png"
-                        alt="Close" style="width: 24px; height: 24px;" />
+                    <img src="/wp-content/uploads/2025/05/cancel-circle-1.png" alt="Close"
+                        style="width: 24px; height: 24px;" />
                 </button>
             </div>
-            <div class="modal-body d-flex flex-column align-items-center justify-content-center gap-32">
+            <div class="modal-body d-flex flex-column align-items-center text-center gap-32">
                 <!-- Unified message container (copiar igual al de otpModal) -->
                 <div class="otp-message-container w-100 d-flex justify-content-start d-none">
                     <!-- Error -->
-                    <div class="error-otp-message notifications notifications-error">
+                    <div class="error-otp-message notifications notifications-error w-100">
                         <div class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-red-400">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                                 aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
@@ -26,7 +27,7 @@
                         <span class="error-otp-text">Some error</span>
                     </div>
                     <!-- Success -->
-                    <div class="success-otp-message notifications notifications-success">
+                    <div class="success-otp-message notifications notifications-success w-100">
                         <div class="w-6 h-6 d-flex align-items-center justify-content-center rounded-full bg-teal-400">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                                 aria-hidden="true" data-slot="icon" class="w-5 h-5 text-black">
@@ -35,13 +36,13 @@
                                     clip-rule="evenodd"></path>
                             </svg>
                         </div>
-                        <span class="success-otp-text">A new code has been sent</span>
+                        <span
+                            class="success-otp-text"><?php echo esc_html(Label::CHECKOUT_META['otp_modal_success_text']); ?></span>
                     </div>
                 </div>
                 <!-- Logo -->
                 <div class="sign-in__logo" style="height: 72px; width: 72px;">
-                    <img src="/wp-content/uploads/2025/06/appIcon.svg" alt="mt logo"
-                        class="rounded-4" />
+                    <img src="/wp-content/uploads/2025/06/appIcon.svg" alt="mt logo" class="rounded-4" />
                 </div>
                 <!-- Instruction -->
                 <p class="text-body text-center mb-0" style="color: #E4E4E7;">
@@ -61,18 +62,19 @@
                     </div>
                     <!-- Resend + Timer -->
                     <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
-                        <a href="#" class="resend-otp fw-semibold text-decoration-underline">Resend OTP</a>
+                        <a href="#"
+                            class="resend-otp fw-semibold text-decoration-underline"><?php echo esc_html(Label::CHECKOUT_META['otp_modal_resend_text']); ?></a>
                     </div>
-                    <!-- Submit buttons -->
-                    <button type="submit"
-                        class="verify-otp-btn mt-2 ot-btn w-100 fw-medium text-black rounded-xl p-y-12-mega p-x-16-mega bg-mgt-primary">
-                        <?php esc_html_e('VERIFY', 'woocommerce'); ?>
-                    </button>
-                    <button
-                        class="btn w-100 d-flex back-otp-back justify-content-center align-items-center text-uppercase text-white mt-3 fw-medium rounded-xl border border-neutral-700 bg-stone-800 p-x-16-mega p-y-12-mega"
-                        type="button">
-                        <?php esc_html_e('BACK TO LOGIN', 'woocommerce'); ?>
-                    </button>
+                    <div class="otp-cta d-flex flex-column gap-3">
+                        <!-- Submit buttons -->
+                        <button type="submit" class="mt-btn mt-btn--md mt-btn--primary verify-otp-btn">
+                            <?php echo esc_html(Label::CHECKOUT_META['otp_modal_verify_btn']); ?>
+                        </button>
+                        <button class="back-otp-back mt-btn mt-btn--md mt-btn--secondary" type="button">
+                            <?php echo esc_html(Label::CHECKOUT_META['otp_modal_back_btn']); ?>
+
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

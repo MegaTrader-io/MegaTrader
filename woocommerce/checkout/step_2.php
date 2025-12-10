@@ -36,7 +36,6 @@ if (!isset($checkout) && function_exists('WC')) {
                                     <?php wc_get_template('myaccount/form-login-v2.php'); ?>
                                 </div>
 
-
                                 <div class="d-flex flex-column gap-3 mb-32">
                                     <h5 class="fw-light leading-7 text-primary text-uppercase text-size-24 mb-0">
                                         <?php echo esc_html(Label::CHECKOUT_META['create_account_title']); ?>
@@ -66,17 +65,22 @@ if (!isset($checkout) && function_exists('WC')) {
                                 </div>
                                 <div class="d-flex flex-row gap-1">
                                     <a href="<?php echo esc_url(home_url('/my-account/orders/')); ?>"
-                                        class="mt-btn mt-btn--default mt-btn--sm">manage subscriptions</a>
-                                    <a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>"
-                                        class="mt-btn mt-btn--default mt-btn--sm" title="Logout">
+                                        title="<?php echo esc_attr(Label::CHECKOUT_META['btn_manage_subcription']); ?>"
+                                        class="mt-btn mt-btn--default mt-btn--sm"><?php echo esc_html(Label::CHECKOUT_META['btn_manage_subcription']); ?></a>
+                                    <a href="<?php echo esc_url(
+                                        add_query_arg(
+                                            'time',
+                                            time(),
+                                            wp_logout_url('https://megatrader.io/auth/login/')
+                                        )
+                                    ); ?>" class="mt-btn mt-btn--default mt-btn--sm btn-logout" title="Logout">
                                         <span class="mt-icon mt-icon-sm mt-icon_logout"></span>
                                     </a>
+
                                 </div>
                             </div>
 
                         <?php endif; ?>
-
-
 
                         <?php
                         do_action('woocommerce_checkout_before_customer_details');

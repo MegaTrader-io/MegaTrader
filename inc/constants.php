@@ -180,6 +180,18 @@ class Label
         "edit_billing" => "Edit Billing",
         "payment_title" => "Payment Method",
         "payment_disclaimer" => "All payments are secured and encrypted.",
+        "btn_manage_subcription" => "Manage Subscriptions",
+        "login_modal_title" => "SIGN IN",
+        "login_modal_btn" => "SEND",
+        "login_modal_description" => "Enter your email address to receive a secure verification code.",
+        "login_modal_success_text" => "A new code has been sent to your email.",
+        "login_modal_error_text" => "This is an error message",
+        "otp_modal_title" => "Verify OTP",
+        "otp_modal_success_text" => "A new code has been sent.",
+        "otp_modal_resend_text" => "Resend OTP",
+        "otp_modal_verify_btn" => "Verify",
+        "otp_modal_back_btn" => "Back to Login",
+
     ];
 
     public const SIDEBAR_META = [
