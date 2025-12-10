@@ -3046,3 +3046,32 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
         border-radius: 16px;
     }
 }
+
+@media (min-width: 1025px) {
+    .price-table {
+        padding-block: 32px;
+        display: unset;
+    }
+
+    .price-table .glide__arrows, .price-table .glide__bullets {
+        display: none;
+    }
+
+    .price-table .glide__track {
+        overflow: unset;
+    }
+
+
+    .price-table .slider__slides .slider__frame{
+        display: contents;
+    }
+
+    .price-table:has(.price-table__plan--most-popular) .price-table__plan--regular-plan {
+        margin-top: 40px;
+    }
+
+    .price-table__plan--regular-plan:last-child, .price-table__plan--regular-plan:first-child {
+        : 0;
+        border-radius: 0;
+    }
+}

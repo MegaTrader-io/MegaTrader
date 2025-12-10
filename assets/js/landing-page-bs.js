@@ -235,10 +235,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const priceTable = document.querySelector('.price-table');
             let glideInstance = null;
             let isGlideMounted = false;
+            const parentGlideClasses = ['price-table__glide', 'slider', 'glide'];
+
+            function addClassToPriceTable() {
+                parentGlideClasses.map(className => priceTable.classList.add(className));
+            }
+
+            function removeClassToPriceTable(extraClasses = ['glide--swipeable']) {
+                (parentGlideClasses.concat(extraClasses)).map(className => priceTable.classList.remove(className));
+            }
 
             function initGlide() {
                 if (glideInstance || isGlideMounted) return;
-
+                addClassToPriceTable();
                 try {
                     glideInstance = new Glide(priceTable, {
                         type: 'slider',
@@ -310,13 +319,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
                                 Object.defineProperty(Sizes, 'slideWidth', {
                                     get() {
-                                        const maxWidth = document.documentElement.clientWidth < 640 ? 320 : 345;
-                                        let width = document.documentElement.clientWidth <= 768
-                                            ? Math.min(document.documentElement.clientWidth, maxWidth)
-                                            : Math.min(document.documentElement.clientWidth, maxWidth);
+                                        const viewport = document.documentElement.clientWidth;
+                                        const isSliderActive = viewport <= 1024;
+                                        let cardWidth = 346;
 
-                                        priceTable.style.setProperty('--price-table-slide-width', width + 'px');
-                                        return width;
+                                        if (viewport <= 768) {
+                                            cardWidth = 320;
+                                        }
+
+                                        console.info({
+                                            viewport,
+                                            isSliderActive,
+                                            cardWidth
+                                        });
+
+                                        priceTable.style.setProperty('--price-table-slide-width', cardWidth + 'px');
+
+                                        return cardWidth;
                                     }
                                 });
 
@@ -343,6 +362,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         glideInstance.destroy();
                         glideInstance = null;
                         isGlideMounted = false;
+                        removeClassToPriceTable();
+
                         console.info('[Glide] destroyed');
                     } catch (err) {
                         console.error('Error destroying Glide:', err);
@@ -352,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             function handleResize() {
                 const viewportWidth = window.innerWidth;
-                if (viewportWidth > 800) {
+                if (viewportWidth > 1024) {
                     destroyGlide();
                 } else {
                     initGlide();
@@ -360,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Inicializa solo si el viewport es menor o igual a 800
-            if (window.innerWidth <= 800) initGlide();
+            if (window.innerWidth <= 1024) initGlide();
 
             // Escucha cambios de tamaño con debounce
             let resizeTimeout;
