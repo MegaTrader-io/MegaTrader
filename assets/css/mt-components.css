@@ -2210,6 +2210,10 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     .pricing-table-panel__plan_summary_container {
         display: none;
     }
+
+    .mt-pricing-table-plan-options__wrapper > * + * {
+        margin-top: 0;
+    }
 }
 
 .pricing-table-panel__summary_card {
@@ -3022,9 +3026,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
         /*padding-inline: 16px;*/
         /*grid-template-columns: repeat(4, 328px);*/
         gap: 16px;
-    }
-    .mt-pricing-table-plan-options__wrapper > * + * {
-        margin-top: 0;
     }
 
     .price-table__right-line {

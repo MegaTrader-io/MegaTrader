@@ -268,7 +268,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                         const offsetToCenter = (viewportWidth - slideWidth) / 2;
                                         const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
                                         const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
-                                        return -1 * adjustedTranslate;
+                                        const containerGap = viewportWidth <= 767 ? 0 : 32;
+
+                                        return -1 * (adjustedTranslate - containerGap);
                                     }
                                 };
                             }

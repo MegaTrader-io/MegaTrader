@@ -1221,6 +1221,58 @@
     .verified-bs__glide .glide__arrow--next {
         right: 16px;
     }
+
+    .mt-select-ac-type {
+        display: flex;
+    }
+
+    #pricing.landing-bs-container {
+        padding: 0;
+    }
+
+    .mt-pricing-table-plan-options {
+        display: none;
+    }
+
+    .pricing-table-container__title {
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .pricing-table-container__title--hidden-md {
+        display: none;
+    }
+
+    .pricing-table-container__subtitle {
+        max-width: 376px;
+        text-align: center;
+        color: #A8A29E;
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 24px;
+        word-wrap: break-word;
+    }
+
+    .pricing-table-container.landing-bs-container {
+        padding: 0;
+        margin-top: 32px;
+    }
+
+    .mt-pricing-table-type {
+        display: flex;
+    }
+
+
+    .pricing-table-container-options {
+        padding: 0;
+    }
+
+    .pricing-table-container-options > .mt-pricing-table-plan-options__wrapper {
+        display: none;
+    }
 }
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
@@ -1255,15 +1307,11 @@
     }
 
     .landing-bs-container {
-        padding: 32px;
+        /*padding: 32px;*/
     }
 
-    .pricing-table-container-options {
-        padding: 0;
-    }
-
-    .pricing-table-container-options > .mt-pricing-table-plan-options__wrapper {
-        display: none;
+    #pricing.landing-bs-container {
+        padding-block: 0;
     }
 
     .testimonials {
@@ -1302,44 +1350,5 @@
     .competition__rewards {
         display: grid;
         justify-content: normal;
-    }
-
-    .mt-select-ac-type {
-        display: flex;
-    }
-
-    .mt-pricing-table-plan-options {
-        display: none;
-    }
-
-    .pricing-table-container__title {
-        font-size: 24px;
-        font-weight: 300;
-        text-transform: uppercase;
-        line-height: 28px;
-        word-wrap: break-word
-    }
-
-    .pricing-table-container__title--hidden-md {
-        display: none;
-    }
-
-    .pricing-table-container__subtitle {
-        max-width: 376px;
-        text-align: center;
-        color: #A8A29E;
-        font-size: 16px;
-        font-weight: 300;
-        line-height: 24px;
-        word-wrap: break-word;
-    }
-
-    .pricing-table-container.landing-bs-container {
-        padding: 0;
-        margin-top: 32px;
-    }
-
-    .mt-pricing-table-type {
-        display: flex;
     }
 }
