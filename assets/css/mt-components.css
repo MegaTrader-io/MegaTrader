@@ -2614,10 +2614,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     border-right: 1px #404040 solid;
 }
 
-.price-table__plan:last-child .price-table__right-line {
-    border-right: none;
-}
-
 .price-information {
     padding-top: 12px;
     display: inline-grid;
@@ -3086,14 +3082,20 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
         border-right: 1px #404040 solid;
     }
 
+    .price-table li:first-child .price-table__plan--regular-plan{
+        border-left: 2px #404040 solid;
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
+    }
+
     .price-table li:last-child .price-table__plan--regular-plan {
         border-right: 2px #404040 solid;
         border-top-right-radius: 16px;
         border-bottom-right-radius: 16px;
     }
 
-    .price-table__plan:last-child .price-table__right-line {
-        border-right: 1px #404040 solid;
+    .price-table .slider__slides li:has(+ li .price-table__plan--most-popular) .price-table__right-line {
+        border-right: 0;
     }
 
     .price-table li:last-child .price-table__plan .price-table__right-line {
