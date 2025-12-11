@@ -207,6 +207,14 @@ $mt_billing_nonce = wp_create_nonce('mt_save_billing');
 
 /* ================== Feature flag ================== */
 $fflag = isset($_GET['v2']);
+if ($fflag) {
+    $step2_path = get_stylesheet_directory() . '/woocommerce/checkout/step_2.php';
+
+    if (file_exists($step2_path)) {
+        include $step2_path;
+        return;
+    }
+}
 
 /* ================== Preparación de UI (header y metas) ================== */
 // Línea secundaria compacta (size - {plan_type | Buying Power})
@@ -316,74 +324,98 @@ if (function_exists('WC') && WC()->session) {
                         </div>
                     </div>
                 </div>
-                <?php if (!$mt_is_activation): ?>
-                    <div class="addons-container">
-                        <?php
-                        $has_subscription = true;
-                        if (!WC()->cart->is_empty()) {
-                            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                                $product = $cart_item['data'];
-                                $product_id = $cart_item['product_id'];
-                                $wc_product = wc_get_product($product_id);
-                                $product_type = $product->get_type();
+               <?php if (function_exists('WC') && WC()->cart && !$mt_is_activation): ?>
+                                <?php $has_subscription = true;
+                                if (!WC()->cart->is_empty()) {
+                                    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                                        $product = $cart_item['data'] ?? null;
+                                        $product_id = $cart_item['product_id'] ?? 0;
+                                        $wc_product = $product instanceof WC_Product ? $product : wc_get_product($product_id);
+                                        $product_type = $wc_product ? $wc_product->get_type() : '';
 
-                                if (
-                                    $product_type === 'subscription' ||
-                                    $product_type === 'variable-subscription' ||
-                                    $product_type === 'subscription_variation' ||
-                                    (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($product)) ||
-                                    has_term('subscription', 'product_type', $product_id)
-                                ) {
-                                    $has_subscription = true;
-                                    break;
+                                        if (
+                                            $product_type === 'subscription' ||
+                                            $product_type === 'variable-subscription' ||
+                                            $product_type === 'subscription_variation' ||
+                                            (function_exists('wcs_is_subscription_product') && wcs_is_subscription_product($wc_product)) ||
+                                            has_term('subscription', 'product_type', $product_id)
+                                        ) {
+                                            $has_subscription = true;
+                                            break;
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        ?>
-                        <?php if (function_exists('WC') && WC()->cart): ?>
-                            <?php
-                            $add_on_fields = WC()->checkout()->checkout_fields['add_ons'] ?? [];
-                            $addon_options = $add_on_fields['e0e87f1']['options'] ?? [];
-                            ?>
-                            <?php if ($has_subscription && !empty($addon_options)): ?>
-                                <div class="addons-block d-flex flex-column gap-3">
-                                    <div class="fw-medium leading-8 text-size-20 text-white">
-                                        <?php echo esc_html(Label::CHECKOUT_META['plan_option_title']); ?>
-                                    </div>
-                                    <div class="checkout-addons">
-                                        <div class="available-info d-flex flex-column flex-lg-row flex-md-row gap-2">
-                                            <?php foreach ($addon_options as $option_key => $option_data): ?>
-                                                <div
-                                                    class="addons-item addons-item-new d-flex gap-3 align-items-center bg-1e1e1e rounded-16px w-100 <?php echo esc_attr($option_key); ?>">
-                                                    <div class="addons-header d-flex flex-column gap-1">
-                                                        <div class="text-base text-white fw-medium">
-                                                            <?php
-                                                            $label_full = $option_data['label'];
-                                                            preg_match('/^(.*?)\s*\((.*?)\)$/', wp_strip_all_tags($label_full), $matches);
-                                                            $label_text = $matches[1] ?? wp_strip_all_tags($label_full);
-                                                            $price_html = $matches[2] ?? '';
-                                                            echo esc_html($label_text);
-                                                            ?>
-                                                        </div>
-                                                        <?php if (!empty($option_data['description'])): ?>
-                                                            <span class="text-a8a29e text-14px-line-20px fw-bold">
-                                                                <?php echo esc_html(trim($option_data['description'])); ?>
-                                                            </span>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                    <div class="title">
-                                                        <?php if ($price_html)
-                                                            echo '<div>' . esc_html($price_html) . '</div>'; ?>
+
+                                $addon_options = [];
+
+                                $checkout_obj = WC()->checkout();
+                                if ($checkout_obj) {
+                                    $checkout_fields = $checkout_obj->get_checkout_fields();
+
+                                    if (!empty($checkout_fields['add_ons']) && is_array($checkout_fields['add_ons'])) {
+                                        $first_addon_field = reset($checkout_fields['add_ons']);
+
+                                        if (!empty($first_addon_field['options']) && is_array($first_addon_field['options'])) {
+                                            $addon_options = $first_addon_field['options'];
+                                        }
+                                    }
+                                }
+                                ?>
+
+                                <?php if ($has_subscription && !empty($addon_options)): ?>
+                                    <div class="mt-addons">
+                                        <div class="addons-container">
+                                            <div class="addons-block d-flex flex-column gap-3">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="mt-icon mt-icon_plus mt-icon-primary"></span>
+                                                    <span class="text-white fw-bold text-base">
+                                                        <?php echo esc_html(Label::CHECKOUT_META['addons_title']); ?>
+                                                    </span>
+                                                </div>
+
+                                                <div class="checkout-addons">
+                                                    <div class="available-info d-flex flex-column gap-3">
+                                                        <?php foreach ($addon_options as $option_key => $option_data): ?>
+                                                            <div class="addons-item addons-item-new d-flex gap-3 align-items-center bg-1e1e1e rounded-16px w-100 justify-content-between <?php echo esc_attr($option_key); ?>"
+                                                                data-addon-key="<?php echo esc_attr($option_key); ?>">
+                                                                <div class="addons-header d-flex flex-column gap-1">
+                                                                    <div class="text-base text-white fw-medium">
+                                                                        <?php
+                                                                        $label_full = $option_data['label'];
+                                                                        preg_match('/^(.*?)\s*\((.*?)\)$/', wp_strip_all_tags($label_full), $matches);
+                                                                        $label_text = $matches[1] ?? wp_strip_all_tags($label_full);
+                                                                        $price_html = $matches[2] ?? '';
+                                                                        echo esc_html($label_text);
+                                                                        ?>
+                                                                    </div>
+                                                                    <?php if (!empty($option_data['description'])): ?>
+                                                                        <span class="text-a8a29e text-14px-line-20px fw-bold">
+                                                                            <?php echo esc_html(trim($option_data['description'])); ?>
+                                                                        </span>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                                <div class="title">
+                                                                    <?php
+                                                                    if ($price_html) {
+                                                                        echo '<div>' . esc_html($price_html) . '</div>';
+                                                                    }
+                                                                    ?>
+                                                                </div>
+                                                            </div>
+                                                        <?php endforeach; ?>
                                                     </div>
                                                 </div>
-                                            <?php endforeach; ?>
+
+                                                <span class="text-a8a293 fw-medium text-14px-line-20px">
+                                                    <?php echo esc_html(Label::CHECKOUT_META['addons_discalimer']); ?>
+                                                </span>
+                                            </div>
                                         </div>
+
                                     </div>
-                                </div>
+                                <?php endif; ?>
+
                             <?php endif; ?>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
                 <div id="billing-container" class="d-flex flex-column gap-3">
                     <div class="fw-medium leading-8 text-size-20 text-white">
                         <?php echo esc_html(Label::CHECKOUT_META['billing_title']); ?>
