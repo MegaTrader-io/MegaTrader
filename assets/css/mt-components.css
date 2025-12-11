@@ -1597,8 +1597,8 @@ input[type="radio"]:checked+.radio__label__wrapper>label.mt-card-radio .mt-card_
 
 .mt-btn--fit-content{
   width: auto !important;
-  inline-size: fit-content;     
-  align-self: flex-start;       
+  inline-size: fit-content;
+  align-self: flex-start;
 }
 
 
@@ -2426,9 +2426,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
 
 .price-table {
     padding-block: 32px;
-    /*display: grid;*/
-    /*grid-template-columns: repeat(4, 1fr);*/
-    /*align-items: center;*/
 }
 
 .price-table .price-table__plan {
@@ -2445,6 +2442,15 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     bottom: var(--current-slider-height);
     justify-content: center;
     transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.price-table__glide .glide__bullets {
+    position: relative;
+    padding-block: 8px;
+}
+
+.price-table__glide .slider__track.glide__track {
+    padding-block: 16px;
 }
 
 .price-table__glide .glide__arrows {

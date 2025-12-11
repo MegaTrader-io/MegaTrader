@@ -614,7 +614,7 @@
 .testimonials {
     display: flex;
     gap: 16px;
-    padding-block: 16px;
+    padding: 16px;
 }
 
 .testimonials__card {
@@ -623,9 +623,9 @@
     overflow: hidden;
 }
 
-.testimonials__image {
+img.testimonials__image {
     width: 200px;
-    height: 200px;
+    height: 176px;
     border-radius: 16px 0 0 16px;
     object-fit: cover;
 }
@@ -637,7 +637,6 @@
     background-color: var(--smoke-color2);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
 .testimonials__content > * + * {
@@ -648,14 +647,20 @@
     color: #a8a29e;
     font-size: 16px;
     font-weight: 500;
+    margin-bottom: 0;
     line-height: 24px;
     word-wrap: break-word;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .testimonials__info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
 }
 
 .testimonials__author {
@@ -670,6 +675,11 @@
 
 .testimonials__name {
     display: inline-block;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word
 }
 
 .testimonials__icon {
@@ -1273,6 +1283,20 @@
     .pricing-table-container-options > .mt-pricing-table-plan-options__wrapper {
         display: none;
     }
+
+    .testimonials {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .testimonials .testimonials__quote {
+        display: block;
+        max-width: none;
+    }
+
+    .price-table {
+        padding-block: 16px;
+    }
 }
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
@@ -1306,17 +1330,8 @@
         gap: 64px;
     }
 
-    .landing-bs-container {
-        /*padding: 32px;*/
-    }
-
     #pricing.landing-bs-container {
         padding: 0;
-    }
-
-    .testimonials {
-        display: flex;
-        flex-direction: column;
     }
 
     .competition__wrapper {
@@ -1350,5 +1365,32 @@
     .competition__rewards {
         display: grid;
         justify-content: normal;
+    }
+
+    img.testimonials__image {
+        width: 72px;
+        height: 72px;
+        border-radius: 64px
+    }
+
+    .testimonials {
+        padding-inline: 16px;
+    }
+
+    .testimonials__card {
+        padding: 16px;
+        gap: 16px;
+        background-color: var(--smoke-color2);
+        flex: 1;
+    }
+
+    .testimonials__quote {
+        display: block;
+        max-width: 256px;
+    }
+
+    .testimonials__content {
+        padding: 0;
+        background-color: transparent;
     }
 }

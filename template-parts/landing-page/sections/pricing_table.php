@@ -384,7 +384,7 @@ HTML;
         </div>
     </div>
 
-    <div style="display: none;" class="testimonials">
+    <div class="testimonials">
         <div class="testimonials__card">
             <img
                     class="testimonials__image"
@@ -393,12 +393,11 @@ HTML;
             />
             <div class="testimonials__content">
                 <p class="testimonials__quote">
-                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast
-                    they solve any issues”
+                    The rules are fair and easy to follow. Everything’s clear, and the platform feels built for traders.
                 </p>
                 <div class="testimonials__info">
                     <div class="testimonials__author">
-                        <span class="testimonials__name">Angela Kim, United States</span>
+                        <span class="testimonials__name">Daniel Ruiz, United States</span>
                         <svg
                                 class="testimonials__icon"
                                 width="20"
@@ -439,12 +438,11 @@ HTML;
             />
             <div class="testimonials__content">
                 <p class="testimonials__quote">
-                    “Clear rules, extremely responsive customer support. Blown away by both payout speed and how fast
-                    they solve any issues”
+                    Got my payout within an hour — no delays, no confusion. Super smooth process.
                 </p>
                 <div class="testimonials__info">
                     <div class="testimonials__author">
-                        <span class="testimonials__name">Angela Kim, United States</span>
+                        <span class="testimonials__name">Ava Thompson, Canada</span>
                         <svg
                                 class="testimonials__icon"
                                 width="20"
