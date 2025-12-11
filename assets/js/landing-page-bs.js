@@ -65,6 +65,19 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
+    function updatePoints() {
+        let priceTable = document.querySelector('.price-table');
+        let hasPopularPlan = !!priceTable.querySelector('ul.slider__slides li > .price-table__plan--most-popular');
+        let cardActive = priceTable.querySelector('ul.slider__slides li.glide__slide--active') || priceTable.querySelector('ul.slider__slides li:first-child');
+        let bottomPoints = 0;
+
+        if (!cardActive.querySelector('.price-table__plan--most-popular')) {
+            bottomPoints = hasPopularPlan ? 24 : 0;
+        }
+
+        priceTable.style.setProperty('--current-slider-height', bottomPoints + 'px');
+    }
+
     function initializeSwiper() {
         try {
             const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
@@ -254,12 +267,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         gap: 16,
                         autoplay: false,
                         rewind: false,
-                        animationDuration: 800
+                        animationDuration: 900
+                    });
+
+                    glideInstance.on(['swipe.start', 'run.after'], () => {
+                        updatePoints();
                     });
 
                     glideInstance
                         .mutate([
-                            function (Glide, Components, Events) {
+                            function (Glide, Components) {
                                 return {
                                     modify(translate) {
                                         const slideWidth = Components.Sizes.slideWidth;
@@ -322,18 +339,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                 Object.defineProperty(Sizes, 'slideWidth', {
                                     get() {
                                         const viewport = document.documentElement.clientWidth;
-                                        const isSliderActive = viewport <= 1024;
                                         let cardWidth = 346;
 
                                         if (viewport <= 768) {
                                             cardWidth = 320;
                                         }
-
-                                        console.info({
-                                            viewport,
-                                            isSliderActive,
-                                            cardWidth
-                                        });
 
                                         priceTable.style.setProperty('--price-table-slide-width', cardWidth + 'px');
 
@@ -344,6 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 Events.on(['build.before', 'resize', 'update'], () => {
                                     Sizes.setupSlides();
                                     Sizes.setupWrapper();
+                                    updatePoints();
                                 });
 
                                 Events.on('destroy', () => Sizes.remove());
@@ -393,6 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             handleResize();
+            updatePoints();
         })();
     }
 
@@ -421,6 +433,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.couponsCache = {};
     loadChooseYourAccountSize(async (params) => {
+        const priceTable = document.querySelector('.price-table');
+        const height = document.querySelector('.price-table .glide__slide--active .price-table__plan--most-popular') || document.querySelector('.price-table .glide__slide--active .price-table__plan--regular-plan') ? 0 : 24;
+        priceTable.style.setProperty('--current-slider-height', height + 'px');
+
         const {defaultPlatform, defaultMarketType} = params;
         const dropdownAccountTypeComponent = document.querySelector('.mt-select-ac-type');
 
@@ -591,5 +607,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 element.classList.add('price-information--min-h-112', 'align-items-center');
             })
         }
+
+        updatePoints();
     })
 });
