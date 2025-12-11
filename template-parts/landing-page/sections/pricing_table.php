@@ -44,7 +44,6 @@ $mt_filtered_products = array_filter($mt_products_data['products'], function ($m
 });
 
 $mt_product = reset($mt_filtered_products) ?: null;
-
 $mt_product_level = $mt_product[$mt_default_slug][$mt_size][$mt_default_slug];
 $mt_default_platform = array_key_first($mt_product_level);
 $mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
@@ -232,7 +231,8 @@ HTML;
 
     </div>
 
-    <div class="price-table price-table__glide slider glide" style="--price-table-slide-width: 0px; --price-table-slide-left: 0px;">
+    <div class="price-table price-table__glide slider glide"
+         style="--price-table-slide-width: 0px; --price-table-slide-left: 0px;--current-slider-height: 0px">
         <div class="slider__track glide__track" data-glide-el="track">
             <ul class="slider__slides glide__slides">
                 <?php foreach ($mt_plan_list as $mt_index => $mt_plan) : ?>
