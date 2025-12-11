@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         gap: 16,
                         autoplay: false,
                         rewind: false,
-                        animationDuration: 900
+                        animationDuration: 200
                     });
 
                     glideInstance.on(['swipe.start', 'run.after'], () => {
