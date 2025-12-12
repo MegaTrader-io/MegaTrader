@@ -517,6 +517,66 @@ function get_cities_by_country() {
 
 remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
 
+// Crear usuario y loguearlo antes de procesar el checkout si viene username/password
+add_action( 'woocommerce_checkout_process', 'mt_create_and_login_customer_before_checkout' );
+function mt_create_and_login_customer_before_checkout() {
+
+    if ( is_user_logged_in() ) {
+        return;
+    }
+
+    if ( empty( $_POST['createaccount'] ) ) {
+        return;
+    }
+    $username = isset( $_POST['account_username'] )
+        ? sanitize_user( wp_unslash( $_POST['account_username'] ) )
+        : '';
+
+    $email = isset( $_POST['billing_email'] )
+        ? sanitize_email( wp_unslash( $_POST['billing_email'] ) )
+        : '';
+
+    $password = isset( $_POST['account_password'] )
+        ? (string) $_POST['account_password']
+        : '';
+
+    if ( $username === '' || $email === '' || $password === '' ) {
+        return;
+    }
+    if ( email_exists( $email ) || username_exists( $username ) ) {
+        wc_add_notice(
+            __( 'An account already exists with this email. Please log in to complete your purchase.', 'megatrader' ),
+            'error'
+        );
+        return;
+    }
+    $customer_id = wc_create_new_customer( $email, $username, $password );
+
+    if ( is_wp_error( $customer_id ) ) {
+        error_log(
+            'mt_create_and_login_customer_before_checkout error: ' .
+            $customer_id->get_error_message()
+        );
+        return;
+    }
+    if ( isset( $_POST['billing_first_name'] ) ) {
+        update_user_meta(
+            $customer_id,
+            'first_name',
+            sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) )
+        );
+    }
+    if ( isset( $_POST['billing_last_name'] ) ) {
+        update_user_meta(
+            $customer_id,
+            'last_name',
+            sanitize_text_field( wp_unslash( $_POST['billing_last_name'] ) )
+        );
+    }
+    wc_set_customer_auth_cookie( $customer_id );
+}
+
+
 
 /* Update Account Information 
 // Hook for logged-in users
@@ -1889,28 +1949,38 @@ add_action( 'template_redirect', function () {
 
 
 add_action('template_redirect', function () {
-  if ( is_user_logged_in() ) {
-    nocache_headers();  
+
+  if ( function_exists('is_order_received_page') && is_order_received_page() ) {
     return;
-  };
+  }
+
+  $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+  if ( strpos($request_uri, '/checkout/order-received/') !== false ) {
+    return;
+  }
+
+  if ( is_user_logged_in() ) {
+    nocache_headers();
+    return;
+  }
 
   if ( is_admin() && ! wp_doing_ajax() ) return;
   if ( wp_doing_ajax() || wp_doing_cron() ) return;
 
-  $path = strtolower( trailingslashit( parse_url( $_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH ) ?: '/' ) );
+  $path = strtolower( trailingslashit( parse_url( $request_uri ?: '/', PHP_URL_PATH ) ?: '/' ) );
 
   // Allow REST API 
   if ( strpos($path, '/wp-json/') === 0 ) return;
 
   // ====== White List ======
   $public_paths = [
-    '/',              // Home
-    '/privacy-policy/',   // privacy-policy
+    '/',                    // Home
+    '/privacy-policy/',     // privacy-policy
     '/terms-of-service/',   // terms-of-service
-    '/auth/login/',   // login Page
-    '/auth/register/',   // Register Page
-    '/auth/lost-password/',   // Lost Password Page
-    '/landing-page-bootstrap/',   // Landing Page Bootstrap
+    '/auth/login/',         // login Page
+    '/auth/register/',      // Register Page
+    '/auth/lost-password/', // Lost Password Page
+    '/landing-page-bootstrap/',
     '/checkout/',
     '/subscriptions/',
   ];
@@ -1918,12 +1988,13 @@ add_action('template_redirect', function () {
   $public_paths = apply_filters('mt_public_paths', $public_paths, $path);
 
   if ( ! in_array($path, $public_paths, true) ) {
-
     $login_url = home_url('/auth/login/');
     wp_safe_redirect( $login_url, 302 );
     exit;
   }
 }, 0);
+
+
 
 // Render del HTML del modal de éxito
 add_action('wp_ajax_nopriv_mt_render_order_success_modal', 'mt_render_order_success_modal');

@@ -74,7 +74,8 @@ function lockStateSelection(stateCode, ttlMs = 7000) {
 
 document.addEventListener("DOMContentLoaded", function () {
   // --- DEBUG LOGGER ---
-  // const MT_DBG = true;
+  //const MT_DBG = true;
+
   function mtNow() {
     return `[MT ${performance.now().toFixed(1)}ms]`;
   }
@@ -107,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
     jQuery(document).ajaxComplete(function (_e, xhr, o) {
       const mark = (o.url || "") + " " + (o.data || "");
       if (
-        mark.includes("wc-ajax=checkout") 
+        mark.includes("wc-ajax=checkout")
         // ||
         // mark.includes("mt_render_order_success_modal")
       ) {
@@ -211,7 +212,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("click", (e) => {
       const pac = document.querySelector(".pac-container");
       if (!pac) return;
-      if (e.target?.name === 'api_billing_address_1' ||  e.target === addressInput || pac.contains(e.target)) return;
+      if (
+        e.target?.name === "api_billing_address_1" ||
+        e.target === addressInput ||
+        pac.contains(e.target)
+      )
+        return;
       forceClosePlaces();
     });
 
@@ -257,8 +263,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       document.getElementById("billing_address_1").value =
         fields.billing_address_1;
-      document.getElementById("billing_address_2").value =
-        fields.billing_address_2;
+      const addr2 = document.getElementById("billing_address_2");
+      if (addr2) {
+        addr2.value = fields.billing_address_2 || "";
+      }
       document.getElementById("billing_city").value = fields.billing_city;
       document.getElementById("billing_postcode").value =
         fields.billing_postcode;
@@ -406,15 +414,47 @@ document.addEventListener("DOMContentLoaded", function () {
     billing_state: [
       (value) => value.trim() !== "" || "Billing State is a required field.",
     ],
+    account_username: [
+      (value) => value.trim() !== "" || "Email address is a required field.",
+      (value) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ||
+        "Please enter a valid email address.",
+    ],
+    account_password: [
+      (value) => value.trim() !== "" || "Password is a required field.",
+      (value) =>
+        value.trim().length >= 8 ||
+        "Password must be at least 8 characters long.",
+    ],
   };
+
+  function findFieldElement(field) {
+    const elByName = document.querySelector(`[name="${field}"]`);
+    const elById = document.getElementById(field);
+    const finalElement = elByName || elById || null;
+    return finalElement;
+  }
+
+  function isVisibleField(el) {
+    if (!el) return false;
+    const rects = el.getClientRects();
+    return !!(
+      (el.offsetWidth || el.offsetHeight || rects.length) &&
+      window.getComputedStyle(el).visibility !== "hidden"
+    );
+  }
 
   function validateFormFields(values, rules) {
     const errors = {};
-    for (const [field, ruleSet] of Object.entries(rules)) {
-      const inputEl = document.querySelector(`[name="${field}"]`);
-      if (!inputEl) continue;
 
-      const value = values[field] || "";
+    for (const [field, ruleSet] of Object.entries(rules)) {
+      const inputEl = findFieldElement(field);
+      const value = (values[field] ?? "").trim();
+
+      // Si el campo no existe o está oculto, lo saltamos
+      if (!inputEl) continue;
+      if (!isVisibleField(inputEl)) continue;
+
       for (const rule of ruleSet) {
         const result = rule(value);
         if (result !== true) {
@@ -423,6 +463,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
+
     return errors;
   }
 
@@ -439,23 +480,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showErrors(form, errors) {
     for (const [field, message] of Object.entries(errors)) {
-      const input = form.querySelector(`[name="${field}"]`);
+      const input = findFieldElement(field);
       if (!input) continue;
+
+      const container =
+        input.closest(".form-group") || input.parentElement || input;
 
       const errorNode = document.createElement("div");
       errorNode.className = Selector.ErrorMessageClass;
       errorNode.textContent = message;
 
-      // Prevent Douplicate Errors
-      const existingErrorNode = input.parentNode.querySelector(
+      const existingErrorNode = container.querySelector(
         `.${Selector.ErrorMessageClass}`
       );
       if (existingErrorNode) {
         existingErrorNode.remove();
       }
 
-      // Insert New Error
-      input.parentElement.appendChild(errorNode);
+      container.appendChild(errorNode);
       input.classList.add(Selector.InvalidFieldClass);
       protectedErrors.set(field, errorNode);
     }
@@ -507,6 +549,8 @@ document.addEventListener("DOMContentLoaded", function () {
       billing_postcode: val("billing_postcode"),
       billing_country: val("billing_country"),
       billing_state: val("billing_state"),
+      account_username: val("account_username"),
+      account_password: val("account_password"),
     };
 
     // usa tus mismas reglas, pero sin privacy_policy
@@ -934,9 +978,20 @@ document.addEventListener("DOMContentLoaded", function () {
         {}
       );
 
+      if (typeof checkoutForm !== "undefined" && checkoutForm) {
+        const formData = new FormData(checkoutForm);
+        const values = Object.fromEntries(formData.entries());
+        const jsErrors = validateFormFields(values, validationRules);
+
+        ["account_username", "account_password"].forEach((field) => {
+          if (!inputErrors[field] && jsErrors[field]) {
+            inputErrors[field] = jsErrors[field];
+          }
+        });
+      }
+
       showErrors(checkoutForm, inputErrors);
 
-      // Delete Error Group If Empty
       if (!errorGroup.children.length) {
         errorGroup.remove();
         stripEmptyNoticeGroups();
@@ -1364,6 +1419,8 @@ document.addEventListener("DOMContentLoaded", function () {
           billing_state: v("billing_state"),
           billing_postcode: v("billing_postcode"),
           billing_country: v("billing_country"),
+          account_username: v("account_username"),
+          account_password: v("account_password"),
         };
 
         const ajaxUrl =
