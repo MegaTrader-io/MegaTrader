@@ -860,6 +860,7 @@ img.testimonials__image {
     justify-content: center;
     margin-top: 32px;
     padding-top: 16px;
+    padding-bottom: 32px;
 }
 
 .payouts-and-comparison__card {
@@ -1479,5 +1480,9 @@ img.testimonials__image {
 
     .payouts-and-comparison__platforms {
         justify-content: space-between;
+    }
+
+    .payouts-and-comparison__list p {
+        font-size: 14px;
     }
 }
