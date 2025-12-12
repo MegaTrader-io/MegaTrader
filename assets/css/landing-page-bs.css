@@ -901,6 +901,7 @@ img.testimonials__image {
 
 .payouts-and-comparison__platforms {
     display: flex;
+    align-items: center;
     gap: 41px;
 }
 
