@@ -614,7 +614,7 @@
 .testimonials {
     display: flex;
     gap: 16px;
-    padding: 16px;
+    padding: 0 16px 24px 16px;
 }
 
 .testimonials__card {
@@ -700,6 +700,7 @@ img.testimonials__image {
    ========================================================= */
 
 .competition {
+    margin: 24px 0 48px 0;
     padding: 48px;
     border-radius: 16px;
     background: linear-gradient(180deg, #1E1E1E 0%, #0A0A0A 100%);
@@ -723,12 +724,14 @@ img.testimonials__image {
 
 .competition__title {
     align-self: stretch;
-    color: #fff;
-    font-size: 40px;
+    color: white;
+    font-size: 32px;
     font-weight: 300;
     text-transform: uppercase;
-    line-height: 48px;
+    line-height: 40px;
     word-wrap: break-word;
+    letter-spacing: -0.025em;
+    margin-bottom: 0;
 }
 
 .competition__rewards {
@@ -776,13 +779,14 @@ img.testimonials__image {
 }
 
 .competition__entry-note {
-    margin-bottom: 0;
+    width: 100%;
+    max-width: 760px;
     color: #A8A29E;
     font-size: 20px;
     font-weight: 500;
     line-height: 32px;
-    max-width: 760px;
-    width: 100%;
+    word-wrap: break-word;
+    margin-bottom: 0;
 }
 
 .competition__perks {
@@ -807,6 +811,7 @@ img.testimonials__image {
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
+    word-wrap: break-word;
 }
 
 .competition__cta {
@@ -963,7 +968,6 @@ img.testimonials__image {
 .mt-select-ac-type li:last-child label {
     margin-bottom: 0;
 }
-
 
 /* =========================================================
    Responsive adjustments (Media Queries)
@@ -1297,6 +1301,43 @@ img.testimonials__image {
     .price-table {
         padding-block: 16px;
     }
+
+    .competition__rewards {
+        display: grid;
+        justify-content: normal;
+    }
+
+    .competition__wrapper .competition__image {
+        min-height: 220px;
+    }
+
+    .competition__title {
+        align-self: stretch;
+        color: white;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .competition.landing-bs-container {
+        padding: 32px !important;
+    }
+
+    .competition__cta {
+        width: 100%;
+    }
+
+    .competition__entry-note {
+        width: 100%;
+        max-width: 760px;
+        color: #A8A29E;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        word-wrap: break-word;
+    }
 }
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
@@ -1335,13 +1376,14 @@ img.testimonials__image {
     }
 
     .competition__wrapper {
+        gap: 32px;
         flex-direction: column;
     }
 
     .competition__image {
         order: 1;
         width: 100%;
-        min-height: 220px;
+        min-height: 532px;
     }
 
     .competition__content {
@@ -1351,20 +1393,17 @@ img.testimonials__image {
     .competition__title {
         align-self: stretch;
         color: white;
-        font-size: 24px;
+        font-size: 32px;
         font-weight: 300;
         text-transform: uppercase;
-        line-height: 28px;
-        word-wrap: break-word
+        line-height: 40px;
+        word-wrap: break-word;
     }
 
     .competition.landing-bs-container {
-        padding: 48px;
-    }
-
-    .competition__rewards {
-        display: grid;
-        justify-content: normal;
+        padding: 32px 48px;
+        width: calc(100% - 32px);
+        margin: 16px 16px 32px;
     }
 
     img.testimonials__image {
@@ -1392,5 +1431,9 @@ img.testimonials__image {
     .testimonials__content {
         padding: 0;
         background-color: transparent;
+    }
+
+    .competition__content {
+        gap: 16px;
     }
 }

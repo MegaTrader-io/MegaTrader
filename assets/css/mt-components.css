@@ -2041,78 +2041,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     flex-shrink: 0;
 }
 
-/* Bloque principal */
-.mt-pricing-table-partners {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 32px;
-    padding-left: 16px;
-    padding-right: 16px;
-    align-self: stretch;
-}
-
-/* Logos SVG */
-.mt-pricing-table-partners__logo {
-    flex-shrink: 0;
-    height: auto;
-    display: block;
-    max-width: 100%;
-}
-
-/* Switch decorativo */
-.mt-pricing-table-partners__switch {
-    width: 40px;
-    padding-top: 10px;
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 10px;
-}
-
-/* Línea del switch */
-.mt-pricing-table-partners__track {
-    position: relative;
-    align-self: stretch;
-    height: 20px;
-    background: #57534e;
-    border-radius: 64px;
-}
-
-/* Botón circular del switch */
-.mt-pricing-table-partners__thumb {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    left: -2px;
-    top: -2px;
-    background: #a8a29e;
-    border-radius: 50%;
-}
-
-/* Estado deshabilitado */
-.mt-pricing-table-partners__track[data-status='disabled'],
-.mt-pricing-table-partners__switch[data-status='disabled'] .mt-pricing-table-partners__track {
-    opacity: 0.6;
-}
-
-/* Hover opcional */
-.mt-pricing-table-partners__thumb:hover {
-    background: #d6d3d1;
-    cursor: pointer;
-    transition: background 0.2s ease-in-out;
-}
-
-/* Responsive opcional */
-@media (max-width: 768px) {
-    .mt-pricing-table-partners {
-        flex-wrap: wrap;
-        gap: 24px;
-    }
-}
-
 .pricing-table-container-options {
     padding: 32px 0;
 }
@@ -2121,20 +2049,8 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
     margin-top: 32px;
 }
 
-.mt-pricing-table-partners__mega {
-    padding-top: 9px;
-}
-
 .mt-badge-wrapper {
     position: absolute;
-}
-
-.mt-pricing-table-partners__tradovate .mt-badge-wrapper {
-    transform: translate(45%, 11px);
-}
-
-.mt-pricing-table-partners__ninja .mt-badge-wrapper {
-    transform: translate(30%, 11px);
 }
 
 /****************************************
@@ -2456,10 +2372,6 @@ input[type="radio"]:not(:checked)+.mt-pricing-table-plan-options__item>label {
 .price-table__glide .glide__bullets {
     position: relative;
     padding-block: 8px;
-}
-
-.price-table__glide .slider__track.glide__track {
-    padding-block: 16px;
 }
 
 .price-table__glide .glide__arrows {
