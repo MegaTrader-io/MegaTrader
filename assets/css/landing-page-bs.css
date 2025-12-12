@@ -140,7 +140,7 @@
 }
 
 /* Titles */
-.verified-bs__title, .payouts-and-comparison__title, .comparison__header, .pricing-table-container__title {
+.verified-bs__title, .payouts-and-comparison__title, .comparison__header, .pricing-table-container__title, .section-header__title {
     color: white;
     font-size: 32px;
     font-weight: 300;
@@ -150,11 +150,11 @@
     margin-bottom: 0;
 }
 
-.verified-bs__title span, .payouts-and-comparison__title span, .pricing-table-container__title span {
+.verified-bs__title span, .payouts-and-comparison__title span, .pricing-table-container__title span, .section-header__title span {
     color: var(--Surface-Primary);
 }
 
-.verified-bs__subtitle, .payouts-and-comparison__subtitle, .pricing-table-container__subtitle {
+.verified-bs__subtitle, .payouts-and-comparison__subtitle, .pricing-table-container__subtitle, .section-header__subtitle {
     max-width: 760px;
     text-align: center;
     color: var(--body-color);
@@ -969,6 +969,10 @@ img.testimonials__image {
     margin-bottom: 0;
 }
 
+.payouts-and-comparison__list {
+    text-align: left;
+}
+
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
@@ -1338,6 +1342,38 @@ img.testimonials__image {
         line-height: 24px;
         word-wrap: break-word;
     }
+
+    .payouts-and-comparison__cards {
+        flex-direction: column;
+    }
+
+    .section-header__title {
+        color: white;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .section-header__title span {
+        color: #F1A035;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .section-header__subtitle {
+        align-self: stretch;
+        text-align: center;
+        color: #A8A29E;
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 24px;
+        word-wrap: break-word;
+    }
 }
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
@@ -1435,5 +1471,13 @@ img.testimonials__image {
 
     .competition__content {
         gap: 16px;
+    }
+
+    .payouts-and-comparison__image {
+        width: auto;
+    }
+
+    .payouts-and-comparison__platforms {
+        justify-content: space-between;
     }
 }
