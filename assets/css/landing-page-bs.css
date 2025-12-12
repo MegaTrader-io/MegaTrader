@@ -974,6 +974,10 @@ img.testimonials__image {
     text-align: left;
 }
 
+.comparison .section-header__title {
+    padding-block: 32px;
+}
+
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */

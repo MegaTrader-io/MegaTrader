@@ -501,37 +501,55 @@ get_header('landing-page-bs');
                         </header>
                     </div>
 
-                    <div style="align-self: stretch; justify-content: flex-start; align-items: center; display: inline-flex">
+                    <div style="align-self: stretch; justify-content: flex-start; align-items: center;">
                         <div style="flex: 1 1 0; background: #1E1E1E; overflow: hidden; border-top-left-radius: 16px; border-bottom-left-radius: 16px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
                             <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 24px; padding-bottom: 24px; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; display: flex"></div>
                             <div style="align-self: stretch; padding-bottom: 48px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                                 <div style="align-self: stretch; border-right: 2px #292524 solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Time to funding</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Time to funding
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Payouts</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Payouts
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Fees</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Fees
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Tools included</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Tools included
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Number of days to pass</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Number of days to pass
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Number of contracts</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Number of contracts
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Mini / Micro scaling</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Mini / Micro scaling
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Scaling plan</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Scaling plan
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">Rules</div>
+                                        <div style="flex: 1 1 0; text-align: right; color: white; font-size: 16px; font-family: Roboto; font-weight: 700; line-height: 24px; word-wrap: break-word">
+                                            Rules
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -539,45 +557,68 @@ get_header('landing-page-bs');
                         <div style="flex: 1 1 0; background: #1E1E1E; overflow: hidden; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
                             <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 24px; padding-bottom: 24px; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; display: flex">
                                 <div style="align-self: stretch; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <mask id="mask0_17095_6132" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_17095_6132" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                              x="0" y="0" width="24" height="24">
                                             <rect width="24" height="24" fill="#D9D9D9"/>
                                         </mask>
                                         <g mask="url(#mask0_17095_6132)">
-                                            <path d="M8.4 17L12 13.4L15.6 17L17 15.6L13.4 12L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4L10.6 12L7 15.6L8.4 17ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22Z" fill="#F43F5E"/>
+                                            <path d="M8.4 17L12 13.4L15.6 17L17 15.6L13.4 12L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4L10.6 12L7 15.6L8.4 17ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22Z"
+                                                  fill="#F43F5E"/>
                                         </g>
                                     </svg>
-                                    <div style="flex: 1 1 0; color: white; font-size: 24px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 28px; word-wrap: break-word">Other prop firms</div>
+                                    <div style="flex: 1 1 0; color: white; font-size: 24px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 28px; word-wrap: break-word">
+                                        Other prop firms
+                                    </div>
                                 </div>
                             </div>
                             <div style="align-self: stretch; padding-bottom: 48px; border-right: 2px #292524 solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                                 <div style="align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Long evaluations</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Long evaluations
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">7+ days to get paid</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            7+ days to get paid
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">High evaluation & activation fees</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            High evaluation & activation fees
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">No tools included</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            No tools included
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">2+ days to pass</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            2+ days to pass
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Strict, complex limits</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Strict, complex limits
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">1:1 mini/micro scaling</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            1:1 mini/micro scaling
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Complex scaling plan</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Complex scaling plan
+                                        </div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Hidden rules, payout denials</div>
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Hidden rules, payout denials
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -585,87 +626,96 @@ get_header('landing-page-bs');
                         <div style="flex: 1 1 0; background: #131210; overflow: hidden; border-radius: 16px; outline: 2px #FFB34A solid; outline-offset: -2px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
                             <div style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 40px; padding-bottom: 40px; background: linear-gradient(0deg, rgba(255, 179, 74, 0.05) 0%, rgba(255, 179, 74, 0.05) 100%), #131210; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; display: flex">
                                 <div style="align-self: stretch; justify-content: flex-start; align-items: center; gap: 16px; display: inline-flex">
-                                    <svg width="44" height="43" viewBox="0 0 44 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M21.9983 43C21.2999 43 20.6181 42.4144 19.9594 41.8514C19.3669 41.3402 18.7512 40.816 18.0925 40.6866C17.9701 40.664 17.8377 40.651 17.6986 40.651C17.1128 40.651 16.4706 40.8646 15.8483 41.0716C15.2592 41.2658 14.6501 41.4696 14.1338 41.4696C13.9219 41.4696 13.7432 41.4372 13.5777 41.3725C12.9455 41.1169 12.5483 40.3275 12.1643 39.5639C11.8134 38.865 11.4493 38.1403 10.88 37.7682C10.3041 37.3928 9.47657 37.3378 8.67554 37.2861C7.81494 37.2311 6.92124 37.1728 6.4446 36.7037C5.96795 36.2345 5.90837 35.3642 5.8521 34.5229C5.79914 33.7399 5.74287 32.9311 5.35891 32.3681C4.97826 31.8116 4.23682 31.4557 3.52185 31.1127C2.74069 30.7374 1.93636 30.3491 1.67156 29.7311C1.41669 29.1293 1.68811 28.3431 1.97608 27.5116C2.23426 26.7642 2.50568 25.9909 2.36666 25.3179C2.23757 24.674 1.69804 24.0722 1.17505 23.4931C0.595802 22.8492 0 22.1827 0 21.5C0 20.8173 0.599112 20.1508 1.17505 19.5069C1.69804 18.9278 2.23426 18.326 2.36666 17.6821C2.50237 17.0091 2.23426 16.2358 1.97608 15.4884C1.68811 14.6569 1.41669 13.8739 1.67156 13.2688C1.93305 12.6509 2.74069 12.2626 3.52185 11.8873C4.23682 11.5443 4.97826 11.1884 5.35891 10.6319C5.74287 10.0689 5.79914 9.26004 5.8521 8.47705C5.90837 7.63582 5.96795 6.76223 6.4446 6.29631C6.92455 5.82716 7.81494 5.77216 8.67554 5.71392C9.47657 5.66215 10.3041 5.60715 10.88 5.23183C11.4493 4.85974 11.8134 4.13499 12.1643 3.43612C12.5483 2.67254 12.9455 1.88631 13.5777 1.62746C13.7399 1.56275 13.9219 1.5304 14.1338 1.5304C14.6501 1.5304 15.2592 1.731 15.8483 1.92837C16.4706 2.13544 17.1128 2.34898 17.6986 2.34898C17.8377 2.34898 17.9701 2.33604 18.0925 2.31339C18.7512 2.18721 19.3669 1.65982 19.9594 1.14861C20.6181 0.582393 21.2966 0 21.9983 0C22.7001 0 23.3786 0.585628 24.0373 1.14861C24.6298 1.65982 25.2455 2.18397 25.9042 2.31339C26.0266 2.33604 26.159 2.34898 26.2981 2.34898C26.8839 2.34898 27.5261 2.13544 28.1484 1.92837C28.7375 1.73424 29.3466 1.5304 29.8629 1.5304C30.0748 1.5304 30.2535 1.56275 30.419 1.62746C31.0512 1.88307 31.4484 2.67254 31.8324 3.43612C32.1833 4.13499 32.5474 4.85974 33.1167 5.23183C33.6926 5.60715 34.5201 5.66215 35.3211 5.71392C36.1818 5.76892 37.0755 5.82716 37.5521 6.29631C38.0321 6.76546 38.0883 7.63582 38.1479 8.47705C38.2009 9.26004 38.2571 10.0689 38.6411 10.6319C39.0217 11.1884 39.7632 11.5443 40.4781 11.8873C41.2593 12.2626 42.0636 12.6509 42.3284 13.2688C42.5833 13.8707 42.3119 14.6569 42.0239 15.4852C41.7624 16.2326 41.4943 17.0059 41.6333 17.6789C41.7624 18.3227 42.302 18.9245 42.8249 19.5037C43.4042 20.1476 44 20.8108 44 21.4968C44 22.1827 43.4009 22.846 42.8249 23.4898C42.302 24.069 41.7624 24.6708 41.6333 25.3147C41.4976 25.9877 41.7657 26.7609 42.0239 27.5083C42.3119 28.3399 42.5833 29.1229 42.3284 29.7279C42.067 30.3459 41.2593 30.7342 40.4781 31.1095C39.7632 31.4524 39.0217 31.8083 38.6411 32.3649C38.2571 32.9278 38.2009 33.7367 38.1479 34.5197C38.0916 35.3609 38.0321 36.2345 37.5554 36.7004C37.0755 37.1696 36.1851 37.2246 35.3245 37.2828C34.5234 37.3346 33.6959 37.3896 33.12 37.7649C32.5507 38.137 32.1866 38.8618 31.8357 39.5606C31.4517 40.3242 31.0545 41.1105 30.4223 41.3693C30.2601 41.4372 30.0781 41.4664 29.8662 41.4664C29.3499 41.4664 28.7408 41.2658 28.1517 41.0684C27.5294 40.8613 26.8872 40.6478 26.3014 40.6478C26.1623 40.6478 26.0299 40.6607 25.9075 40.6834C25.2488 40.8096 24.6331 41.3369 24.0406 41.8482C23.3819 42.4144 22.7001 42.9968 22.0017 42.9968L21.9983 43Z" fill="#FFD78A"/>
-                                        <mask id="mask0_151_303" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="10" y="9" width="24" height="24">
+                                    <svg width="44" height="43" viewBox="0 0 44 43" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21.9983 43C21.2999 43 20.6181 42.4144 19.9594 41.8514C19.3669 41.3402 18.7512 40.816 18.0925 40.6866C17.9701 40.664 17.8377 40.651 17.6986 40.651C17.1128 40.651 16.4706 40.8646 15.8483 41.0716C15.2592 41.2658 14.6501 41.4696 14.1338 41.4696C13.9219 41.4696 13.7432 41.4372 13.5777 41.3725C12.9455 41.1169 12.5483 40.3275 12.1643 39.5639C11.8134 38.865 11.4493 38.1403 10.88 37.7682C10.3041 37.3928 9.47657 37.3378 8.67554 37.2861C7.81494 37.2311 6.92124 37.1728 6.4446 36.7037C5.96795 36.2345 5.90837 35.3642 5.8521 34.5229C5.79914 33.7399 5.74287 32.9311 5.35891 32.3681C4.97826 31.8116 4.23682 31.4557 3.52185 31.1127C2.74069 30.7374 1.93636 30.3491 1.67156 29.7311C1.41669 29.1293 1.68811 28.3431 1.97608 27.5116C2.23426 26.7642 2.50568 25.9909 2.36666 25.3179C2.23757 24.674 1.69804 24.0722 1.17505 23.4931C0.595802 22.8492 0 22.1827 0 21.5C0 20.8173 0.599112 20.1508 1.17505 19.5069C1.69804 18.9278 2.23426 18.326 2.36666 17.6821C2.50237 17.0091 2.23426 16.2358 1.97608 15.4884C1.68811 14.6569 1.41669 13.8739 1.67156 13.2688C1.93305 12.6509 2.74069 12.2626 3.52185 11.8873C4.23682 11.5443 4.97826 11.1884 5.35891 10.6319C5.74287 10.0689 5.79914 9.26004 5.8521 8.47705C5.90837 7.63582 5.96795 6.76223 6.4446 6.29631C6.92455 5.82716 7.81494 5.77216 8.67554 5.71392C9.47657 5.66215 10.3041 5.60715 10.88 5.23183C11.4493 4.85974 11.8134 4.13499 12.1643 3.43612C12.5483 2.67254 12.9455 1.88631 13.5777 1.62746C13.7399 1.56275 13.9219 1.5304 14.1338 1.5304C14.6501 1.5304 15.2592 1.731 15.8483 1.92837C16.4706 2.13544 17.1128 2.34898 17.6986 2.34898C17.8377 2.34898 17.9701 2.33604 18.0925 2.31339C18.7512 2.18721 19.3669 1.65982 19.9594 1.14861C20.6181 0.582393 21.2966 0 21.9983 0C22.7001 0 23.3786 0.585628 24.0373 1.14861C24.6298 1.65982 25.2455 2.18397 25.9042 2.31339C26.0266 2.33604 26.159 2.34898 26.2981 2.34898C26.8839 2.34898 27.5261 2.13544 28.1484 1.92837C28.7375 1.73424 29.3466 1.5304 29.8629 1.5304C30.0748 1.5304 30.2535 1.56275 30.419 1.62746C31.0512 1.88307 31.4484 2.67254 31.8324 3.43612C32.1833 4.13499 32.5474 4.85974 33.1167 5.23183C33.6926 5.60715 34.5201 5.66215 35.3211 5.71392C36.1818 5.76892 37.0755 5.82716 37.5521 6.29631C38.0321 6.76546 38.0883 7.63582 38.1479 8.47705C38.2009 9.26004 38.2571 10.0689 38.6411 10.6319C39.0217 11.1884 39.7632 11.5443 40.4781 11.8873C41.2593 12.2626 42.0636 12.6509 42.3284 13.2688C42.5833 13.8707 42.3119 14.6569 42.0239 15.4852C41.7624 16.2326 41.4943 17.0059 41.6333 17.6789C41.7624 18.3227 42.302 18.9245 42.8249 19.5037C43.4042 20.1476 44 20.8108 44 21.4968C44 22.1827 43.4009 22.846 42.8249 23.4898C42.302 24.069 41.7624 24.6708 41.6333 25.3147C41.4976 25.9877 41.7657 26.7609 42.0239 27.5083C42.3119 28.3399 42.5833 29.1229 42.3284 29.7279C42.067 30.3459 41.2593 30.7342 40.4781 31.1095C39.7632 31.4524 39.0217 31.8083 38.6411 32.3649C38.2571 32.9278 38.2009 33.7367 38.1479 34.5197C38.0916 35.3609 38.0321 36.2345 37.5554 36.7004C37.0755 37.1696 36.1851 37.2246 35.3245 37.2828C34.5234 37.3346 33.6959 37.3896 33.12 37.7649C32.5507 38.137 32.1866 38.8618 31.8357 39.5606C31.4517 40.3242 31.0545 41.1105 30.4223 41.3693C30.2601 41.4372 30.0781 41.4664 29.8662 41.4664C29.3499 41.4664 28.7408 41.2658 28.1517 41.0684C27.5294 40.8613 26.8872 40.6478 26.3014 40.6478C26.1623 40.6478 26.0299 40.6607 25.9075 40.6834C25.2488 40.8096 24.6331 41.3369 24.0406 41.8482C23.3819 42.4144 22.7001 42.9968 22.0017 42.9968L21.9983 43Z"
+                                              fill="#FFD78A"/>
+                                        <mask id="mask0_151_303" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                              x="10" y="9" width="24" height="24">
                                             <rect x="10" y="9" width="24" height="24" fill="#D9D9D9"/>
                                         </mask>
                                         <g mask="url(#mask0_151_303)">
                                             <path d="M18 31L19 24H14L23 11H25L24 19H30L20 31H18Z" fill="#3D2900"/>
                                         </g>
                                     </svg>
-                                    <div style="flex: 1 1 0; color: white; font-size: 24px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 28px; word-wrap: break-word">MEGATRADER</div>
+                                    <div style="flex: 1 1 0; color: white; font-size: 24px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 28px; word-wrap: break-word">
+                                        MEGATRADER
+                                    </div>
                                 </div>
                             </div>
                             <div style="align-self: stretch; padding-bottom: 32px; background: #131210; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                                 <div style="align-self: stretch; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Instant funding, or 1 day to pass
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Instant funding, or 1 day to pass</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Lightning fast automated payouts
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Lightning fast automated payouts</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            No activation fees on Growth
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">No activation fees on Growth</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Free built-in journal
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Free built-in journal</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            Pass in just 1 day
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">Pass in just 1 day</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            5 contract per $50k in funding
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">5 contract per $50k in funding</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            1:10 for more control
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">1:10 for more control</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            None, full access immediately
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">None, full access immediately</div>
                                     </div>
                                     <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; padding-top: 16px; padding-bottom: 16px; border-top: 1px #292524 solid; justify-content: flex-start; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="width: 24px; height: 24px; position: relative">
-                                            <div style="width: 24px; height: 24px; left: 0px; top: 0px; position: absolute; background: #D9D9D9"></div>
-                                            <div style="width: 20px; height: 20px; left: 2px; top: 2px; position: absolute; background: #FFB34A"></div>
+                                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                             alt="checked circle">
+                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">
+                                            No hidden rules, no payout denials
                                         </div>
-                                        <div style="flex: 1 1 0; color: #A8A29E; font-size: 16px; font-family: Roboto; font-weight: 500; line-height: 24px; word-wrap: break-word">No hidden rules, no payout denials</div>
                                     </div>
                                 </div>
                                 <div style="align-self: stretch; padding-left: 24px; padding-right: 24px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 10px; display: flex">
-                                    <div data-icon-alignment="Default" data-size="md" data-status="Default" data-type="Primary" data-variant="Filled" style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 12px; padding-bottom: 12px; background: #FFB34A; border-radius: 12px; outline: 2px #FFB34A solid; outline-offset: -2px; justify-content: center; align-items: center; gap: 8px; display: inline-flex">
-                                        <div style="color: #020617; font-size: 16px; font-family: Roboto; font-weight: 500; text-transform: uppercase; line-height: 24px; word-wrap: break-word">GET FUNDED NOW</div>
+                                    <div data-icon-alignment="Default" data-size="md" data-status="Default"
+                                         data-type="Primary" data-variant="Filled"
+                                         style="align-self: stretch; padding-left: 16px; padding-right: 16px; padding-top: 12px; padding-bottom: 12px; background: #FFB34A; border-radius: 12px; outline: 2px #FFB34A solid; outline-offset: -2px; justify-content: center; align-items: center; gap: 8px; display: inline-flex">
+                                        <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
+                                            GET FUNDED NOW
+                                        </a>
                                     </div>
                                 </div>
                             </div>
