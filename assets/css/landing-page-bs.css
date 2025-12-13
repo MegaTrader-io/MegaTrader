@@ -10,15 +10,6 @@
     margin-top: 48px;
 }
 
-/* =========================================================
-   Hero Section (.hero-bs)
-   ========================================================= */
-
-.hero-bs {
-    color: #fff;
-    padding-block: 48px;
-}
-
 .landing-bs-container {
     max-width: 1280px;
     margin-left: auto;
@@ -26,6 +17,15 @@
     width: 100%;
     padding-left: 16px;
     padding-right: 16px;
+}
+
+/* =========================================================
+   Hero Section (.hero-bs)
+   ========================================================= */
+
+.hero-bs {
+    color: #fff;
+    padding-block: 48px;
 }
 
 .hero-bs__row {
@@ -125,6 +125,11 @@
     bottom: -32px;
 }
 
+/* Glide Slider Overrides for Hero */
+.hero-bs__glide .slider__frame img {
+    max-width: 504px;
+}
+
 /* =========================================================
    Verified Section (.verified-bs)
    ========================================================= */
@@ -139,7 +144,7 @@
     padding: 0 var(--space-md);
 }
 
-/* Titles */
+/* Titles (Shared with other sections) */
 .verified-bs__title, .payouts-and-comparison__title, .comparison__header, .pricing-table-container__title, .section-header__title {
     color: white;
     font-size: 32px;
@@ -224,7 +229,7 @@
     padding-top: 32px;
 }
 
-/* Glide Slider Overrides */
+/* Glide Slider Overrides for Verified */
 .verified-bs__glide .glide__slide {
     position: relative;
     max-width: 990px;
@@ -273,10 +278,6 @@
     top: calc(50% - 28px);
 }
 
-.hero-bs__glide .slider__frame img {
-    max-width: 504px;
-}
-
 .verified-bs__glide .glide__arrow--prev {
     left: 20px;
     top: calc(50% - 28px);
@@ -296,7 +297,6 @@
     left: auto;
     transform: translateX(0px);
 }
-
 
 /* =========================================================
    Payout Section (.payout-bs)
@@ -423,7 +423,6 @@
     align-items: center;
 }
 
-
 /* =========================================================
    Journal Section (.journal-bs)
    ========================================================= */
@@ -513,7 +512,6 @@
     opacity: 1;
 }
 
-
 /* =========================================================
    Component: Badge Duo (.badge-duo)
    ========================================================= */
@@ -561,7 +559,6 @@
     color: white;
 }
 
-
 /* =========================================================
    Component: Badge Group (.badge-group)
    ========================================================= */
@@ -605,7 +602,6 @@
 .badge-group__item.is-active .badge-group__text {
     color: #020617;
 }
-
 
 /* =========================================================
    Testimonials Section (.testimonials)
@@ -693,7 +689,6 @@ img.testimonials__image {
     line-height: 24px;
     word-wrap: break-word;
 }
-
 
 /* =========================================================
    Competition Section (.competition)
@@ -834,7 +829,6 @@ img.testimonials__image {
     border-radius: 16px;
 }
 
-
 /* =========================================================
    Payouts & Comparison Section (.payouts-and-comparison)
    ========================================================= */
@@ -905,6 +899,174 @@ img.testimonials__image {
     gap: 41px;
 }
 
+.payouts-and-comparison__list {
+    text-align: left;
+}
+
+/* =========================================================
+   Comparison Section (.comparison)
+   ========================================================= */
+
+.comparison {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+}
+
+.comparison .section-header__title {
+    padding-block: 32px;
+}
+
+/* Columnas */
+.comparison__col {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background: #1e1e1e;
+    overflow: hidden;
+}
+
+.comparison__col--labels {
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+.comparison__col--mega {
+    background: #131210;
+    border-radius: 16px;
+    outline: 2px solid #ffb34a;
+    outline-offset: -2px;
+}
+
+/* Espaciador superior (mantiene alineación) */
+.comparison__spacer {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-block: 38px;
+    padding-inline: 16px;
+    gap: 8px;
+}
+
+/* Headers */
+.comparison__header {
+    align-self: stretch;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.comparison__header--highlighted {
+    padding: 40px 16px;
+    background: linear-gradient(
+            0deg,
+            rgba(255, 179, 74, 0.05),
+            rgba(255, 179, 74, 0.05)
+    ),
+    #131210;
+}
+
+.comparison__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 28px;
+}
+
+.comparison__title--mega {
+    gap: 16px;
+}
+
+/* Cuerpo */
+.comparison__content {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.comparison__content--border {
+    padding-bottom: 48px;
+    border-right: 2px solid #292524;
+}
+
+.comparison__content--mega {
+    padding-bottom: 32px;
+    background: #131210;
+}
+
+.comparison__content--labels {
+    padding-bottom: 48px;
+}
+
+/* Inner */
+.comparison__inner {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border-right: 2px solid #292524;
+}
+
+/* Filas */
+.comparison__row {
+    align-self: stretch;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid #292524;
+}
+
+.comparison__row:first-child {
+    border-top: none;
+}
+
+/* Textos */
+.comparison__label {
+    flex: 1 1 0;
+    text-align: right;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+}
+
+.comparison__value {
+    color: #a8a29e;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+/* CTA */
+.comparison__cta {
+    align-self: stretch;
+    padding: 0 24px;
+    margin-top: 10px;
+}
+
+.comparison__cta a {
+    display: block;
+    width: 100%;
+}
+
 /* =========================================================
    Component: Promo Badge (.promo-badge)
    ========================================================= */
@@ -944,6 +1106,10 @@ img.testimonials__image {
     line-height: 20px;
 }
 
+/* =========================================================
+   Miscellaneous UI
+   ========================================================= */
+
 .mt-pricing-table-type {
     display: none;
 }
@@ -971,23 +1137,159 @@ img.testimonials__image {
     margin-bottom: 0;
 }
 
-.payouts-and-comparison__list {
-    text-align: left;
+.price-table {
+    padding-block: 16px;
 }
 
-.comparison .section-header__title {
-    padding-block: 32px;
+#pricing .pricing-table-container-options {
+    padding: 32px 0 0;
 }
 
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
 
-/* Tablet and larger (min-width: 768px) */
-/* No hay reglas específicas para hero-bs__title */
+/* Large devices (max-width: 1024px) */
+@media (max-width: 1024px) {
+    /* Hero */
+    .hero-bs__content {
+        align-items: center;
+    }
 
-/* Medium devices (max-width: 991.98px) - Payout Section */
+    .hero-bs__benefit {
+        justify-content: center;
+    }
+
+    .hero-bs .landing-bs-container {
+        padding-block: 0;
+    }
+
+    /* Verified */
+    .verified-bs__glide .glide__slide {
+        position: relative;
+        max-width: min(var(--verified-bs-slide-width), 990px);
+    }
+
+    .landing-bs-container.verified-bs__container {
+        padding: 0;
+    }
+
+    .verified-bs__subtitle {
+        letter-spacing: -0.05em;
+    }
+
+    /* Platforms */
+    .platforms-bs__list {
+        gap: 64px;
+    }
+
+    /* Pricing/Comparison */
+    #pricing.landing-bs-container {
+        padding: 0;
+    }
+
+    /* Competition */
+    .competition__wrapper {
+        gap: 32px;
+        flex-direction: column;
+    }
+
+    .competition__image {
+        order: 1;
+        width: 100%;
+        min-height: 532px;
+    }
+
+    .competition__content {
+        order: 2
+    }
+
+    .competition__title {
+        align-self: stretch;
+        color: white;
+        font-size: 32px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 40px;
+        word-wrap: break-word;
+    }
+
+    .competition.landing-bs-container {
+        padding: 32px 48px;
+        width: calc(100% - 32px);
+        margin: 16px 16px 32px;
+    }
+
+    .competition__content {
+        gap: 16px;
+    }
+
+    /* Testimonials */
+    img.testimonials__image {
+        width: 72px;
+        height: 72px;
+        border-radius: 64px
+    }
+
+    .testimonials {
+        padding-inline: 16px;
+    }
+
+    .testimonials__card {
+        padding: 16px;
+        gap: 16px;
+        background-color: var(--smoke-color2);
+        flex: 1;
+    }
+
+    .testimonials__quote {
+        display: block;
+        max-width: 256px;
+    }
+
+    .testimonials__content {
+        padding: 0;
+        background-color: transparent;
+    }
+
+    /* Payouts & Comparison */
+    .payouts-and-comparison__image {
+        width: auto;
+    }
+
+    .payouts-and-comparison__platforms {
+        justify-content: space-between;
+    }
+
+    .payouts-and-comparison__list p {
+        font-size: 14px;
+    }
+
+    .comparison__title .comparison__megatrader-icon {
+        width: 33px;
+        height: 32px;
+    }
+
+    .comparison__header {
+        height: 80px;
+    }
+
+    .comparison__header--highlighted {
+        padding: 24px 16px;
+    }
+
+    .comparison .comparison__col:first-child {
+        display: none;
+    }
+
+    .comparison {
+        align-items: normal;
+    }
+}
+
+/* Medium devices (max-width: 991.98px) */
 @media (max-width: 991.98px) {
+    /* Payout Section */
     .payout-bs__row {
         flex-direction: column;
         text-align: center;
@@ -1025,6 +1327,7 @@ img.testimonials__image {
         order: 1;
     }
 
+    /* Hero Section */
     .hero-bs {
         padding-block: 36px;
     }
@@ -1060,6 +1363,7 @@ img.testimonials__image {
         word-wrap: break-word
     }
 
+    /* Verified Section */
     .verified-bs__title {
         color: white;
         font-size: 24px;
@@ -1072,75 +1376,13 @@ img.testimonials__image {
     }
 }
 
-/* Small devices (max-width: 575.98px) - Payout Section */
-@media (max-width: 575.98px) {
-    .payout-bs__title {
-        font-size: 28px;
-        line-height: 36px;
-        /*width: 80dvw;*/
-    }
-
-    .payout-bs__row {
-        gap: 32px;
-    }
-
-    .payout-bs__media-wrapper {
-        height: 260px;
-    }
-
-
-    .payout-bs__wrapper_content p {
-        /*width: 80dvw;*/
-    }
-
-    .platforms-bs__list {
-        gap: 32px !important;
-        padding-bottom: 0;
-    }
-
-    .platforms-bs__first-row {
-        gap: 32px;
-    }
-
-    .platforms-bs__first-row .platforms-bs__item:last-child {
-        flex: 1;
-    }
-
-    .platforms-bs__second-row {
-        gap: 32px;
-    }
-
-    .platforms-bs__second-row .platforms-bs__item {
-        flex: 1
-    }
-
-    .platforms-bs__first-row .platforms-bs__item:first-child img {
-        width: 161px;
-        height: 26px;
-    }
-
-    .platforms-bs__first-row .platforms-bs__item:last-child img {
-        width: 109px;
-        height: 33px;
-    }
-
-    .platforms-bs__second-row .platforms-bs__item:first-child img {
-        width: 116px;
-        height: 15px;
-    }
-
-    .platforms-bs__second-row .platforms-bs__item:last-child img {
-        width: 104px;
-        height: 23px;
-    }
-}
-
-/* Small devices (max-width: 767px) - Journal Section */
+/* Small devices (max-width: 767px) */
 @media (max-width: 767px) {
     .landing-bs > * + * {
         margin-top: auto;
     }
 
+    /* Payout Section */
     .payout-bs {
         padding: 32px 16px;
     }
@@ -1149,6 +1391,7 @@ img.testimonials__image {
         padding: 0;
     }
 
+    /* Journal Section */
     .journal-bs__header {
         text-align: left;
     }
@@ -1174,6 +1417,23 @@ img.testimonials__image {
         display: inline-flex
     }
 
+    .journal-bs__badge-group {
+        display: none;
+    }
+
+    .journal-bs .journal-bs__content {
+        padding-top: 16px;
+    }
+
+    .journal-bs {
+        padding-block: 32px;
+    }
+
+    .journal-bs .landing-bs-container {
+        padding: 0 16px;
+    }
+
+    /* Verified Section */
     .verified-bs__subtitle, .payouts-and-comparison__subtitle {
         width: 100%;
         max-width: 760px;
@@ -1203,35 +1463,8 @@ img.testimonials__image {
         margin-block: 12px;
     }
 
-    .platforms-bs__list {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .platforms-bs__first-row, .platforms-bs__second-row {
-        display: flex;
-        justify-content: space-around;
-        gap: 32px;
-    }
-
-    .journal-bs__badge-group {
-        display: none;
-    }
-
-    .journal-bs .journal-bs__content {
-        padding-top: 16px;
-    }
-
-    .journal-bs {
-        padding-block: 32px;
-    }
-
     .verified-bs__glide .glide__bullets {
         margin-bottom: 0;
-    }
-
-    .journal-bs .landing-bs-container {
-        padding: 0 16px;
     }
 
     .verified-bs__wrapper {
@@ -1246,6 +1479,19 @@ img.testimonials__image {
         right: 16px;
     }
 
+    /* Platforms Section */
+    .platforms-bs__list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .platforms-bs__first-row, .platforms-bs__second-row {
+        display: flex;
+        justify-content: space-around;
+        gap: 32px;
+    }
+
+    /* Pricing/Comparison */
     .mt-select-ac-type {
         display: flex;
     }
@@ -1289,15 +1535,7 @@ img.testimonials__image {
         display: flex;
     }
 
-
-    .pricing-table-container-options {
-        padding: 0;
-    }
-
-    .pricing-table-container-options > .mt-pricing-table-plan-options__wrapper {
-        display: none;
-    }
-
+    /* Testimonials */
     .testimonials {
         display: flex;
         flex-direction: column;
@@ -1308,10 +1546,7 @@ img.testimonials__image {
         max-width: none;
     }
 
-    .price-table {
-        padding-block: 16px;
-    }
-
+    /* Competition */
     .competition__rewards {
         display: grid;
         justify-content: normal;
@@ -1349,10 +1584,12 @@ img.testimonials__image {
         word-wrap: break-word;
     }
 
+    /* Payouts & Comparison */
     .payouts-and-comparison__cards {
         flex-direction: column;
     }
 
+    /* Section Header (Shared) */
     .section-header__title {
         color: white;
         font-size: 24px;
@@ -1380,114 +1617,91 @@ img.testimonials__image {
         line-height: 24px;
         word-wrap: break-word;
     }
-}
 
-/* Large devices (max-width: 1024px) - Verified Glide Arrows */
-@media (max-width: 1024px) {
-    .hero-bs__content {
-        align-items: center;
+    .comparison__value {
+        font-size: 14px;
+        letter-spacing: -0.025em;
     }
 
-    .hero-bs__benefit {
-        justify-content: center;
+    .comparison__row {
+        height: 80px;
     }
 
-    .verified-bs__glide .glide__slide {
-        position: relative;
-        max-width: min(var(--verified-bs-slide-width), 990px);
-    }
-
-    .hero-bs .landing-bs-container {
-        padding-block: 0;
-    }
-
-    .landing-bs-container.verified-bs__container {
-        padding: 0;
-    }
-
-    .verified-bs__subtitle {
-        letter-spacing: -0.05em;
-    }
-
-    .platforms-bs__list {
-        gap: 64px;
-    }
-
-    #pricing.landing-bs-container {
-        padding: 0;
-    }
-
-    .competition__wrapper {
-        gap: 32px;
-        flex-direction: column;
-    }
-
-    .competition__image {
-        order: 1;
-        width: 100%;
-        min-height: 532px;
-    }
-
-    .competition__content {
-        order: 2
-    }
-
-    .competition__title {
-        align-self: stretch;
+    .comparison__header .comparison__title span {
         color: white;
-        font-size: 32px;
-        font-weight: 300;
-        text-transform: uppercase;
-        line-height: 40px;
+        font-size: 14px;
+        text-transform: none;
+        font-weight: 500;
+        line-height: 24px;
         word-wrap: break-word;
     }
 
-    .competition.landing-bs-container {
-        padding: 32px 48px;
-        width: calc(100% - 32px);
-        margin: 16px 16px 32px;
+    .comparison .landing-bs-container {
+        padding-inline: 0;
+    }
+}
+
+/* Extra small devices (max-width: 575.98px) */
+@media (max-width: 575.98px) {
+    /* Payout Section */
+    .payout-bs__title {
+        font-size: 28px;
+        line-height: 36px;
+        /*width: 80dvw;*/
     }
 
-    img.testimonials__image {
-        width: 72px;
-        height: 72px;
-        border-radius: 64px
+    .payout-bs__row {
+        gap: 32px;
     }
 
-    .testimonials {
-        padding-inline: 16px;
+    .payout-bs__media-wrapper {
+        height: 260px;
     }
 
-    .testimonials__card {
-        padding: 16px;
-        gap: 16px;
-        background-color: var(--smoke-color2);
+
+    .payout-bs__wrapper_content p {
+        /*width: 80dvw;*/
+    }
+
+    /* Platforms Section */
+    .platforms-bs__list {
+        gap: 32px !important;
+        padding-bottom: 0;
+    }
+
+    .platforms-bs__first-row {
+        gap: 32px;
+    }
+
+    .platforms-bs__first-row .platforms-bs__item:last-child {
         flex: 1;
     }
 
-    .testimonials__quote {
-        display: block;
-        max-width: 256px;
+    .platforms-bs__second-row {
+        gap: 32px;
     }
 
-    .testimonials__content {
-        padding: 0;
-        background-color: transparent;
+    .platforms-bs__second-row .platforms-bs__item {
+        flex: 1
     }
 
-    .competition__content {
-        gap: 16px;
+    .platforms-bs__first-row .platforms-bs__item:first-child img {
+        width: 161px;
+        height: 26px;
     }
 
-    .payouts-and-comparison__image {
-        width: auto;
+    .platforms-bs__first-row .platforms-bs__item:last-child img {
+        width: 109px;
+        height: 33px;
     }
 
-    .payouts-and-comparison__platforms {
-        justify-content: space-between;
+    .platforms-bs__second-row .platforms-bs__item:first-child img {
+        width: 116px;
+        height: 15px;
     }
 
-    .payouts-and-comparison__list p {
-        font-size: 14px;
+    .platforms-bs__second-row .platforms-bs__item:last-child img {
+        width: 104px;
+        height: 23px;
     }
 }
