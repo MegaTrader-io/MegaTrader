@@ -55,12 +55,12 @@ $is_checkout_flow =
 
   <?php
   if ($is_checkout_flow) {
-    Mt_Navbar::render_navbar(
+    Mt_Navbar::render_navbar_bs(
       section: 'checkout',
-      classes_navbar: 'mt-navbar--checkout'
+      classes_navbar: 'mt-navbar--checkout mt-navbar__links--scrolled'
     );
   } else {
-    Mt_Navbar::render_navbar(
+    Mt_Navbar::render_navbar_bs(
       section: 'account',
       classes_navbar: 'mt-navbar--my-account'
     );

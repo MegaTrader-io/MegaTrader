@@ -65,6 +65,7 @@ $navbar_actions_template = $args['navbar_actions_template'] ?? '';
                     <?php endif; ?>
 
                     <div class="mt-menu-container dropdown">
+                    <?php if ($section == 'landing-page-bs'): ?>
                         <button class="mt-menu-container__btn-burger mega-btn-md mega-btn-secondary-md dropdown-toggle"
                                 type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                 data-bs-auto-close="outside">
@@ -76,6 +77,7 @@ $navbar_actions_template = $args['navbar_actions_template'] ?? '';
                                 </svg>
                             </div>
                         </button>
+                        <?php endif; ?>
                         <ul class="dropdown-menu mt-3">
                             <?php foreach ($links as $index => $link): ?>
                                 <li class="dropdown-item">

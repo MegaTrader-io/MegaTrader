@@ -206,6 +206,7 @@ if (function_exists('WC') && WC()->countries) {
 $mt_billing_nonce = wp_create_nonce('mt_save_billing');
 
 /* ================== Feature flag ================== */
+/*
 $fflag = isset($_GET['v2']);
 if ($fflag) {
     $step2_path = get_stylesheet_directory() . '/woocommerce/checkout/step_2.php';
@@ -216,7 +217,7 @@ if ($fflag) {
     }
 }
 
-
+*/
 
 /* ================== Preparación de UI (header y metas) ================== */
 // Línea secundaria compacta (size - {plan_type | Buying Power})
@@ -302,6 +303,7 @@ if (function_exists('WC') && WC()->session) {
                                     <a href="<?php echo esc_url(home_url('/my-account/orders/')); ?>"
                                         title="<?php echo esc_attr(Label::CHECKOUT_META['btn_manage_subcription']); ?>"
                                         class="mt-btn mt-btn--default mt-btn--sm"><?php echo esc_html(Label::CHECKOUT_META['btn_manage_subcription']); ?></a>
+                                          <!--
                                     <a href="<?php echo esc_url(
                                         add_query_arg(
                                             'time',
@@ -311,6 +313,7 @@ if (function_exists('WC') && WC()->session) {
                                     ); ?>" class="mt-btn mt-btn--default mt-btn--sm btn-logout" title="Logout">
                                         <span class="mt-icon mt-icon-sm mt-icon_logout"></span>
                                     </a>
+                                     -->
 
                                 </div>
                             </div>
