@@ -16,6 +16,8 @@ $aria_label = $args['aria_label'] ?? $links['aria_label'] ?? 'Main navigation';
 /** @var string $class */
 $class = $args['class'] ?? '';
 
+$section = $args['section'] ?? '';
+
 /** @var string|null $classes_navbar */
 $classes_navbar = $args['classes_navbar'] ?? '';
 
@@ -56,9 +58,11 @@ $navbar_actions_template = $args['navbar_actions_template'] ?? '';
                         <?php get_template_part($navbar_actions_template); ?>
                     <?php endif; ?>
 
-                    <a href="/auth/login" class="mt-navbar__get-funded mega-btn-md mega-btn-primary-md">
-                        GET FUNDED
-                    </a>
+                    <?php if ($section == 'landing-page-bs'): ?>
+                        <a href="/auth/login" class="mt-navbar__get-funded mega-btn-md mega-btn-primary-md">
+                            GET FUNDED
+                        </a>
+                    <?php endif; ?>
 
                     <div class="mt-menu-container dropdown">
                         <button class="mt-menu-container__btn-burger mega-btn-md mega-btn-secondary-md dropdown-toggle"
