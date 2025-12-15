@@ -74,10 +74,10 @@ final class Mt_Navbar
   }
 
   private static function checkout_nav(): array
-{
-  // Checkout / Order-received: sin links (navbar limpio)
-  return [];
-}
+  {
+    // Checkout / Order-received: sin links (navbar limpio)
+    return [];
+  }
 
 }
 
