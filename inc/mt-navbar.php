@@ -19,6 +19,7 @@ final class Mt_Navbar
 
     get_template_part('template-parts/navbar/mt-navbar-bs', null, [
       'links' => self::$method(),
+      'section' => $section,
       'classes_navbar' => $classes_navbar,
       'navbar_actions_template' => $template_action
     ]);
