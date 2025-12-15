@@ -358,9 +358,11 @@ if ( isset($order) && $order && !$order->has_status('failed')):
 
 <div class="container">
     <div class="mt-page">
+    <!--
         <div class="mt-page__sidebar">
             <?php render_sidebar(); ?>
         </div>
+        -->
         <div class="mt-page__main">
             <?php render_step_selector(3); ?>
             <div class="mt-thankyou d-flex flex-column align-items-center gap-32">    

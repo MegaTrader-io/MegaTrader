@@ -229,6 +229,24 @@ body.admin-bar {
 }
 
 /* =========================================================
+   Variant: Checkout (.mt-navbar--checkout)
+   ========================================================= */
+
+.mt-navbar--checkout {
+    background: rgba(18, 18, 18, 0.80);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12.5px);
+}
+
+.mt-navbar--checkout .mt-navbar__logo {
+    max-width: 250px;
+}
+
+.mt-navbar--checkout .mt-navbar__logo-icon{
+    max-width: 55px;
+}
+
+/* =========================================================
    Media Queries (Responsive Adjustments)
    ========================================================= */
 
@@ -381,7 +399,7 @@ body.admin-bar {
 }
 
 @media (max-width: 1023px) {
-    .mt-navbar__actions .mt-menu-container .dropdown-menu .dropdown-item:is(:focus,:hover) {
+    .mt-navbar__actions .mt-menu-container .dropdown-menu .dropdown-item:is(:focus, :hover) {
         background-color: #efefef !important;
     }
 }

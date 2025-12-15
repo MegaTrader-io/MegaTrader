@@ -268,7 +268,7 @@ if (function_exists('WC') && WC()->session) {
                         <div class="mt-login-section">
                             <?php if (!is_user_logged_in()): ?>
                                 <div class="mt-card mt-card-md mb-32">
-                                    <?php wc_get_template('myaccount/form-login.php'); ?>
+                                    <?php wc_get_template('myaccount/form-login-checkout.php'); ?>
                                 </div>
 
                                 <div class="d-flex flex-column gap-3 mb-32">

@@ -13,6 +13,10 @@ $auth_paths = [
         '/auth/lost-password/',
 ];
 
+$is_checkout_flow =
+  function_exists('is_checkout') && is_checkout()
+  || function_exists('is_order_received_page') && is_order_received_page();
+
 ?>
     <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -48,10 +52,19 @@ $auth_paths = [
     </div>
 
 <?php if (!in_array($current_path, $auth_paths, true)): ?>
-    <?php
+
+  <?php
+  if ($is_checkout_flow) {
     Mt_Navbar::render_navbar(
-            section: 'account',
-            classes_navbar: 'mt-navbar--my-account'
+      section: 'checkout',
+      classes_navbar: 'mt-navbar--checkout'
     );
-    ?>
+  } else {
+    Mt_Navbar::render_navbar(
+      section: 'account',
+      classes_navbar: 'mt-navbar--my-account'
+    );
+  }
+  ?>
+
 <?php endif; ?>

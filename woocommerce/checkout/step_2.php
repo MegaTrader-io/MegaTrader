@@ -33,7 +33,7 @@ if (!isset($checkout) && function_exists('WC')) {
                         <div class="mt-login-section">
                             <?php if (!is_user_logged_in()): ?>
                                 <div class="mt-card mt-card-md mb-32">
-                                    <?php wc_get_template('myaccount/form-login-v2.php'); ?>
+                                    <?php wc_get_template('myaccount/form-login-checkout.php'); ?>
                                 </div>
 
                                 <div class="d-flex flex-column gap-3 mb-32">

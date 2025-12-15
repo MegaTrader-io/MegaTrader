@@ -72,5 +72,12 @@ final class Mt_Navbar
       ['href' => 'https://help.megatrader.io/en/', 'value' => 'HELP CENTER', 'wrapper_attributes' => ["target" => "_blank", "rel" => "noopener"]],
     ];
   }
+
+  private static function checkout_nav(): array
+{
+  // Checkout / Order-received: sin links (navbar limpio)
+  return [];
+}
+
 }
 
