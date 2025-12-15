@@ -12,7 +12,7 @@
   const PM_SEL = {
     paymentRoot: '#payment',
     savedRadio: '.woocommerce-SavedPaymentMethods [type="radio"]',
-    newRadio:   '.woocommerce-SavedPaymentMethods-new [type="radio"]',
+    newRadio: '.woocommerce-SavedPaymentMethods-new [type="radio"]',
     placeOrderBtn: 'button[name="woocommerce_checkout_place_order"]',
     termsField: '#privacy_policy_field',
     termsCheckbox: '#privacy_policy',
@@ -65,7 +65,7 @@
           node.remove();
         }
         log('Filtro de errores aplicado');
-      } catch (e) {}
+      } catch (e) { }
     };
   }
 
@@ -84,9 +84,9 @@
     const cb = getTermsCheckbox();
     if (!field || !cb) { log('No encontré términos'); return null; }
 
-    field.classList.add('woocommerce-invalid','woocommerce-invalid-required-field');
+    field.classList.add('woocommerce-invalid', 'woocommerce-invalid-required-field');
     cb.classList.add('is-invalid');
-    cb.setAttribute('aria-invalid','true');
+    cb.setAttribute('aria-invalid', 'true');
 
     let msg = field.querySelector('.invalid-feedback.privacy-policy-error');
     if (!msg) {
@@ -111,7 +111,7 @@
     const field = getTermsField();
     const cb = getTermsCheckbox();
     if (!field || !cb) return;
-    field.classList.remove('woocommerce-invalid','woocommerce-invalid-required-field');
+    field.classList.remove('woocommerce-invalid', 'woocommerce-invalid-required-field');
     cb.classList.remove('is-invalid');
     cb.removeAttribute('aria-invalid');
     cb.removeAttribute('aria-describedby');
@@ -127,7 +127,7 @@
       const tgt = ensureTermsError();
       scrollToEl(tgt);
       const cbi = tgt ? tgt.querySelector('input[type="checkbox"]') : null;
-      setTimeout(() => { try { cbi && cbi.focus(); } catch(_){} }, 200);
+      setTimeout(() => { try { cbi && cbi.focus(); } catch (_) { } }, 200);
       log('Bloqueo por términos no aceptados');
       return true;
     }
@@ -186,8 +186,8 @@
 
     jQuery(document.body).on('checkout_error', function () {
       console.log('🛑 Error detectado (tarjeta u otro) → ocultando preloader');
-      try { window.wcUnblockCheckout && window.wcUnblockCheckout(); } catch(_) {}
-      try { window.hideSitePreloader && window.hideSitePreloader(); } catch(_) {}
+      try { window.wcUnblockCheckout && window.wcUnblockCheckout(); } catch (_) { }
+      try { window.hideSitePreloader && window.hideSitePreloader(); } catch (_) { }
 
       const cb = getTermsCheckbox();
       if (cb && !cb.checked) {
@@ -285,6 +285,16 @@
       const saveFs = saveP.closest('fieldset') || saveP;
       saveFs.classList.add('payment-save-card', 'pt-2');
 
+      // si el <p> está oculto (display:none), ocultar también su padre (fieldset) para que no deje espacio
+      try {
+        const cs = window.getComputedStyle(saveP);
+        const isHidden = cs.display === 'none'
+          || saveP.hidden
+          || saveP.getAttribute('aria-hidden') === 'true';
+
+        saveFs.style.display = isHidden ? 'none' : '';
+      } catch (e) { }
+
 
       if (dest.contains(saveFs)) return;
 
@@ -292,8 +302,9 @@
       if (newRadio && !newRadio.checked) return;
 
       //saveFs.style.marginTop = '12px';
-      dest.appendChild(saveFs);   
+      dest.appendChild(saveFs);
     }
+
 
     // 1) Initial load
     document.addEventListener('DOMContentLoaded', () => moveSaveCheckboxInside('DOMContentLoaded'));

@@ -266,7 +266,7 @@ if (!function_exists('mt_get_order_card_brand_last4')) {
 ?>
 
 <?php
-if ( isset($order) && $order && !$order->has_status('failed')):
+if (isset($order) && $order && !$order->has_status('failed')):
 
     // Datos básicos para modal
     $order_number = $order->get_order_number();
@@ -354,138 +354,140 @@ if ( isset($order) && $order && !$order->has_status('failed')):
     ];
     $card_icon = ($brand && isset($icons_map[$brand])) ? $icons_map[$brand] : '';
 
-?>
+    ?>
 
-<div class="container">
-    <div class="mt-page">
-    <!--
-        <div class="mt-page__sidebar">
-            <?php render_sidebar(); ?>
-        </div>
-        -->
-        <div class="mt-page__main">
-            <?php render_step_selector(3); ?>
-            <div class="mt-thankyou d-flex flex-column align-items-center gap-32">    
-                <div class="d-flex flex-column align-items-center gap-3">
-                    <!-- Image -->
-                    <div class="text-center w-100">
-                        <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block"
-                            src="<?php echo esc_url(home_url('/wp-content/themes/megatrader-addons/assets/img/thank-you.png')); ?>"
-                            alt="thank you" width="690" height="132">
-                        <img decoding="async" class="d-inline-block d-sm-none"
-                            src="<?php echo esc_url(home_url('/wp-content/themes/megatrader-addons/assets/img/thank-you2.png')); ?>"
-                            alt="thank you" width="327" height="132">
-                    </div>
+    <div class="container">
+        <div class="mt-page pp">
 
-                    <!-- Titles -->
-                    <div class="d-flex flex-column align-items-center gap-2">
-                        <div class="text-white text-uppercase fw-medium leading-10 text-32px">
-                            <?php echo esc_html(Label::THANKYOU_META['order_successful']); ?>
-                        </div>
-                        <div class="text-A8A29E text-center">
-                            <?php echo esc_html(Label::THANKYOU_META['trading_challenge_ready']); ?>
-                        </div>
-                    </div>
+            <?php /*
+<div class="mt-page__sidebar">
+   <?php render_sidebar(); ?>
+</div>
+*/ ?>
 
-                    <!-- Order Number + Copy -->
-                    <div id="order-copy-chip test-pp"
-                        class="px-3 py-2 bg-1e1e1e outline-dark rounded-2 d-inline-flex align-items-center gap-2 order-chip"
-                        data-order="<?php echo esc_attr($order_number); ?>" role="button" tabindex="0"
-                        aria-label="Copy order number">
-                        <div class="text-white fw-bold order-chip-label">
-                            <?php echo esc_html(Label::THANKYOU_META['order']); ?>:
-                        </div>
-                        <div class="fw-bold order-chip-value text-a8a29e">
-                            <?php echo esc_html($order_number); ?>
-                        </div>
-                        <div class="mt-icon mt-icon-white mt-icon_content-copy"></div>
-                    </div>
-                </div>
-                <!-- Summary -->
-                <div class="w-100 w-max-600px">
-                    <div class="p-3 rounded-3 d-flex flex-column gap-3">
-                        <div class="text-white fw-bold text-base">
-                            <?php echo esc_html(Label::THANKYOU_META['order_summary']); ?>
+            <div class="mt-page__main">
+                <?php render_step_selector(3); ?>
+                <div class="mt-thankyou d-flex flex-column align-items-center gap-32">
+                    <div class="d-flex flex-column align-items-center gap-3">
+                        <!-- Image -->
+                        <div class="text-center w-100">
+                            <img fetchpriority="high" decoding="async" class="d-none d-sm-inline-block"
+                                src="<?php echo esc_url(home_url('/wp-content/themes/megatrader-addons/assets/img/thank-you.png')); ?>"
+                                alt="thank you" width="690" height="132">
+                            <img decoding="async" class="d-inline-block d-sm-none"
+                                src="<?php echo esc_url(home_url('/wp-content/themes/megatrader-addons/assets/img/thank-you2.png')); ?>"
+                                alt="thank you" width="327" height="132">
                         </div>
 
-                        <!-- Producto principal -->
-                        <?php if ($main_item_name): ?>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="fw-light text-base text-white"><?php echo esc_html($main_item_name); ?></div>
-                                <div class="fw-medium text-base text-primary">
-                                    <?php echo wp_kses_post(wc_price($main_item_price)); ?>
-                                    <?php echo esc_html($main_item_price_suffix); ?>
-                                </div>
+                        <!-- Titles -->
+                        <div class="d-flex flex-column align-items-center gap-2">
+                            <div class="text-white text-uppercase fw-medium leading-10 text-32px">
+                                <?php echo esc_html(Label::THANKYOU_META['order_successful']); ?>
                             </div>
-                        <?php endif; ?>
+                            <div class="text-A8A29E text-center">
+                                <?php echo esc_html(Label::THANKYOU_META['trading_challenge_ready']); ?>
+                            </div>
+                        </div>
 
-                        <div class="h-1px border-top-gray"></div>
-
-                        <!-- Add-ons -->
-                        <?php if ($addons_total > 0): ?>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="text-white text-base fw-bold">
-                                    <?php echo esc_html(Label::THANKYOU_META['addons']); ?>
-                                </div>
-                                <div class="fw-medium text-primary text-base">
-                                    <?php echo wp_kses_post(wc_price($addons_total)); ?>
-                                </div>
+                        <!-- Order Number + Copy -->
+                        <div id="order-copy-chip test-pp"
+                            class="px-3 py-2 bg-1e1e1e outline-dark rounded-2 d-inline-flex align-items-center gap-2 order-chip"
+                            data-order="<?php echo esc_attr($order_number); ?>" role="button" tabindex="0"
+                            aria-label="Copy order number">
+                            <div class="text-white fw-bold order-chip-label">
+                                <?php echo esc_html(Label::THANKYOU_META['order']); ?>:
+                            </div>
+                            <div class="fw-bold order-chip-value text-a8a29e">
+                                <?php echo esc_html($order_number); ?>
+                            </div>
+                            <div class="mt-icon mt-icon-white mt-icon_content-copy"></div>
+                        </div>
+                    </div>
+                    <!-- Summary -->
+                    <div class="w-100 w-max-600px">
+                        <div class="p-3 rounded-3 d-flex flex-column gap-3">
+                            <div class="text-white fw-bold text-base">
+                                <?php echo esc_html(Label::THANKYOU_META['order_summary']); ?>
                             </div>
 
-                            <?php foreach ($addons_names as $an): ?>
+                            <!-- Producto principal -->
+                            <?php if ($main_item_name): ?>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <div class="text-white text-base fw-light"><?php echo esc_html($an); ?></div>
+                                    <div class="fw-light text-base text-white"><?php echo esc_html($main_item_name); ?></div>
+                                    <div class="fw-medium text-base text-primary">
+                                        <?php echo wp_kses_post(wc_price($main_item_price)); ?>
+                                        <?php echo esc_html($main_item_price_suffix); ?>
+                                    </div>
                                 </div>
-                            <?php endforeach; ?>
+                            <?php endif; ?>
 
                             <div class="h-1px border-top-gray"></div>
-                        <?php endif; ?>
 
-                        <!-- Total + método de pago -->
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="text-white text-base fw-medium">
-                                <?php echo esc_html(Label::THANKYOU_META['total_paid']); ?>
-                            </div>
-                            <div class="text-primary text-base fw-medium">
-                                <?php echo wp_kses_post($total_paid); ?>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="text-white fw-medium text-base">
-                                <?php echo esc_html(Label::THANKYOU_META['payment_method']); ?>
-                            </div>
-                            <div class="d-flex align-items-center gap-2"
-                                data-debug-brand="<?php echo esc_attr($brand_raw); ?>"
-                                data-debug-source="<?php echo esc_attr($source); ?>">
-                                <div class="w-36px h-36px overflow-hidden">
-                                    <?php if ($card_icon): ?>
-                                        <img src="<?php echo esc_url($card_icon); ?>"
-                                            alt="<?php echo esc_attr(strtoupper($brand)); ?>" width="36" height="36" />
-                                    <?php else: ?>
-                                        <span class="text-white text-base fw-medium text-uppercase">
-                                            <?php echo esc_html($brand ?: 'CARD'); ?>
-                                        </span>
-                                    <?php endif; ?>
+                            <!-- Add-ons -->
+                            <?php if ($addons_total > 0): ?>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="text-white text-base fw-bold">
+                                        <?php echo esc_html(Label::THANKYOU_META['addons']); ?>
+                                    </div>
+                                    <div class="fw-medium text-primary text-base">
+                                        <?php echo wp_kses_post(wc_price($addons_total)); ?>
+                                    </div>
                                 </div>
-                                <div class="text-white text-base fw-medium"><?php echo esc_html($pm_suffix); ?></div>
-                            </div>
-                        </div>
 
-                        <div class="p-3 rounded-2 d-flex align-items-start gap-3 mt-2 bg-1e1e1e">
-                            <div class="flex-grow-1 text-2dd4bf">
-                                <?php echo esc_html(Label::THANKYOU_META['confirmation_email_sent']); ?>
-                            </div>
-                        </div>
+                                <?php foreach ($addons_names as $an): ?>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="text-white text-base fw-light"><?php echo esc_html($an); ?></div>
+                                    </div>
+                                <?php endforeach; ?>
 
-                        <a href="<?php echo esc_url(home_url('/my-account/overview/')); ?>"
-                            class="js-goto-account ot-btn w-100 fw-medium text-black rounded-xl p-y-12-mega p-x-16-mega bg-mgt-primary text-center text-uppercase">
-                            <?php echo esc_html(Label::THANKYOU_META['go_to_my_account']); ?>
-                        </a>
+                                <div class="h-1px border-top-gray"></div>
+                            <?php endif; ?>
+
+                            <!-- Total + método de pago -->
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-white text-base fw-medium">
+                                    <?php echo esc_html(Label::THANKYOU_META['total_paid']); ?>
+                                </div>
+                                <div class="text-primary text-base fw-medium">
+                                    <?php echo wp_kses_post($total_paid); ?>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-white fw-medium text-base">
+                                    <?php echo esc_html(Label::THANKYOU_META['payment_method']); ?>
+                                </div>
+                                <div class="d-flex align-items-center gap-2"
+                                    data-debug-brand="<?php echo esc_attr($brand_raw); ?>"
+                                    data-debug-source="<?php echo esc_attr($source); ?>">
+                                    <div class="w-36px h-36px overflow-hidden">
+                                        <?php if ($card_icon): ?>
+                                            <img src="<?php echo esc_url($card_icon); ?>"
+                                                alt="<?php echo esc_attr(strtoupper($brand)); ?>" width="36" height="36" />
+                                        <?php else: ?>
+                                            <span class="text-white text-base fw-medium text-uppercase">
+                                                <?php echo esc_html($brand ?: 'CARD'); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="text-white text-base fw-medium"><?php echo esc_html($pm_suffix); ?></div>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-2 d-flex align-items-start gap-3 mt-2 bg-1e1e1e">
+                                <div class="flex-grow-1 text-2dd4bf">
+                                    <?php echo esc_html(Label::THANKYOU_META['confirmation_email_sent']); ?>
+                                </div>
+                            </div>
+
+                            <a href="<?php echo esc_url(home_url('/my-account/overview/')); ?>"
+                                class="js-goto-account ot-btn w-100 fw-medium text-black rounded-xl p-y-12-mega p-x-16-mega bg-mgt-primary text-center text-uppercase">
+                                <?php echo esc_html(Label::THANKYOU_META['go_to_my_account']); ?>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 <?php endif; ?>

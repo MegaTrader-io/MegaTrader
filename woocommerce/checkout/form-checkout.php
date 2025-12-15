@@ -303,7 +303,7 @@ if (function_exists('WC') && WC()->session) {
                                     <a href="<?php echo esc_url(home_url('/my-account/orders/')); ?>"
                                         title="<?php echo esc_attr(Label::CHECKOUT_META['btn_manage_subcription']); ?>"
                                         class="mt-btn mt-btn--default mt-btn--sm"><?php echo esc_html(Label::CHECKOUT_META['btn_manage_subcription']); ?></a>
-                                          <!--
+                                    <!--
                                     <a href="<?php echo esc_url(
                                         add_query_arg(
                                             'time',
@@ -320,9 +320,14 @@ if (function_exists('WC') && WC()->session) {
 
                         <?php endif; ?>
 
+                        <?php do_action('woocommerce_checkout_before_customer_details'); ?>
+
                         <div id="billing-container" class="d-flex flex-column gap-3">
                             <?php wc_get_template('checkout/form-billing.php', ['checkout' => $checkout]); ?>
                         </div>
+
+                        <?php do_action('woocommerce_checkout_after_customer_details'); ?>
+
                     </div>
 
 
@@ -474,6 +479,8 @@ if (function_exists('WC') && WC()->session) {
                 </div>
 
             </form>
+            <?php do_action('woocommerce_after_checkout_form', $checkout); ?>
+
         </div>
     </div>
     <?php wc_get_template('myaccount/partials/email-modal.php'); ?>
