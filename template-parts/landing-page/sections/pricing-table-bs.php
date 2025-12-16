@@ -2,8 +2,6 @@
 $page_slug = pathinfo(__FILE__, PATHINFO_FILENAME);
 $remember_previous_selection = true;
 
-$mt_classes = isset($args['classes']) ? $args['classes'] : '';
-
 $mt_products_data = get_products_with_attributes();
 $mt_attributes = $mt_products_data['attributes'] ?? [];
 
@@ -105,7 +103,7 @@ HTML;
 
 ?>
 
-<section id="pricing" class="pricing-table-container <?= esc_attr($mt_classes) ?>">
+<section id="pricing" class="pricing-table-container landing-bs-container">
     <header class="pricing-table-container__header-wrapper text-center">
         <h2 class="pricing-table-container__title">
             Choose <span class="pricing-table-container__title--hidden-md text-white">your</span> <span>account</span>
