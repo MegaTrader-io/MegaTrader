@@ -1573,6 +1573,10 @@ img.testimonials__image {
     .testimonials-bs__grid {
         display: block;
     }
+
+    .verified-bs__glide .glide__track {
+        overflow: hidden !important;
+    }
 }
 
 /* Medium devices (max-width: 991.98px) */
