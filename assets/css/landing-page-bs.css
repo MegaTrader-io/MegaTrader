@@ -2005,11 +2005,15 @@ img.testimonials__image {
         height: 288px;
         max-height: 288px;
         display: flex;
-        /*overflow-x: auto;*/
-        overflow: hidden;
+        overflow-x: auto;
         scroll-snap-type: x mandatory;
         gap: 24px;
         padding-bottom: 16px;
+        scrollbar-width: none;
+    }
+
+    .testimonials-bs__grid::-webkit-scrollbar {  /* Chrome, Safari, Edge */
+        display: none;
     }
 
     .testimonials-bs__intro {
@@ -2037,8 +2041,7 @@ img.testimonials__image {
     }
 
     .testimonials-bs__card {
-        width: 350px;
-        flex: 0 0 350px;
+        flex: 0 0 80vw;
         scroll-snap-align: start;
         background: #1e1e1e;
         border-radius: 16px;
