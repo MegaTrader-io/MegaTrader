@@ -2041,6 +2041,7 @@ img.testimonials__image {
     }
 
     .testimonials-bs__card {
+        max-width: 350px;
         flex: 0 0 80vw;
         scroll-snap-align: start;
         background: #1e1e1e;
