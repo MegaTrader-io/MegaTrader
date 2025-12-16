@@ -1198,6 +1198,225 @@ img.testimonials__image {
     padding: 32px 0 0;
 }
 
+/* ============================================================
+   TESTIMONIALS-BS — Bloque principal
+   ============================================================ */
+
+.testimonials-bs {
+    margin-top: 0;
+}
+
+.testimonials-bs__layout {
+    width: 100%;
+    height: 774px;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 48px;
+}
+
+/* ============================================================
+   Columna izquierda — Introducción y CTA
+   ============================================================ */
+
+.testimonials-bs__intro {
+    flex: 1 1 0;
+    max-width: 400px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.testimonials-bs__trustpilot {
+    width: 100%;
+}
+
+.testimonials-bs__headline {
+    align-self: stretch;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 40px;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.testimonials-bs__subheadline {
+    width: 100%;
+    max-width: 760px;
+    color: #a8a29e;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.testimonials-bs__features {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.testimonials-bs__feature {
+    align-self: stretch;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+}
+
+.testimonials-bs__feature-icon {
+    width: auto;
+    height: auto;
+}
+
+.testimonials-bs__feature-text {
+    flex: 1 1 0;
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.testimonials-bs__cta {
+    align-self: stretch;
+}
+
+/* ============================================================
+   Grid principal — columnas de testimonios
+   ============================================================ */
+
+.testimonials-bs__grid {
+    flex: 1 1 0;
+    height: 744px;
+    max-height: 1000px;
+    overflow: hidden;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+    display: flex;
+}
+
+.testimonials-bs__col {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* ============================================================
+   Card de testimonio individual
+   ============================================================ */
+
+.testimonials-bs__card {
+    align-self: stretch;
+    padding: 32px;
+    background: #1e1e1e;
+    overflow: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.testimonials-bs__stars {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    display: inline-flex;
+}
+
+.testimonials-bs__text {
+    align-self: stretch;
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+/* ============================================================
+   Autor del testimonio
+   ============================================================ */
+
+.testimonials-bs__author {
+    align-self: stretch;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
+}
+
+.testimonials-bs__author-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 9999px;
+    position: relative;
+    object-fit: cover;
+}
+
+.testimonials-bs__author-info {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.testimonials-bs__author-name {
+    align-self: stretch;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.testimonials-bs__author-country {
+    align-self: stretch;
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+/* ============================================================
+   Variante de autor con iniciales (sin imagen)
+   ============================================================ */
+
+.testimonials-bs__author-initials {
+    width: 64px;
+    height: 64px;
+    position: relative;
+    border-radius: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-size: 24px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 28px;
+    text-align: center;
+}
+
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
@@ -1349,6 +1568,10 @@ img.testimonials__image {
 
     .comparison-stats {
         padding-top: 0;
+    }
+
+    .testimonials-bs__grid {
+        display: block;
     }
 }
 
@@ -1753,6 +1976,80 @@ img.testimonials__image {
     .comparison-stats {
         display: grid;
         grid-template-columns: 130px 24px 100px 24px 130px;
+    }
+
+    .testimonials-bs__layout {
+        display: inline-grid;
+        height: auto;
+        margin-block: 32px;
+        gap: 32px;
+    }
+
+    .testimonials-bs__headline {
+        align-self: stretch;
+        text-align: center;
+        color: white;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .testimonials-bs__grid {
+        order: 1;
+        height: 288px;
+        max-height: 288px;
+        display: flex;
+        /*overflow-x: auto;*/
+        overflow: hidden;
+        scroll-snap-type: x mandatory;
+        gap: 24px;
+        padding-bottom: 16px;
+    }
+
+    .testimonials-bs__intro {
+        order: 2;
+        max-width: unset;
+    }
+
+    .testimonials-bs__features {
+        margin: auto;
+    }
+
+    .testimonials-bs__trustpilot {
+        justify-content: center;
+        display: flex;
+    }
+
+    .testimonials-bs__subheadline {
+        max-width: 408px;
+        text-align: center;
+        margin: auto;
+    }
+
+    .testimonials-bs__col {
+        display: contents;
+    }
+
+    .testimonials-bs__card {
+        width: 350px;
+        flex: 0 0 350px;
+        scroll-snap-align: start;
+        background: #1e1e1e;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .testimonials-bs__text {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
