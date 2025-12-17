@@ -1691,7 +1691,7 @@ img.testimonials__image {
 
 .trader-benefits-bs {
     width: 100%;
-    padding: 48px 16px 101px;
+    padding: 48px 16px 0;
     justify-content: center;
     align-items: flex-start;
     gap: 48px;
@@ -1792,6 +1792,276 @@ img.testimonials__image {
     display: block;
 }
 
+/* =========================================================
+   Resource Section (.resources-bs)
+   ========================================================= */
+
+.resources-bs {
+    width: 100%;
+    align-self: stretch;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    background: #1e1e1e;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 48px;
+    display: inline-flex;
+}
+
+.resources-bs__intro {
+    width: 100%;
+    padding: 48px;
+    background: #131210;
+    border-radius: 16px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.resources-bs__intro-content {
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+    display: inline-flex;
+}
+
+/* Bloque contenedor principal */
+.trading-status {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* El badge o cápsula exterior */
+.trading-status__badge {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px 6px 6px;
+    border-radius: 64px;
+    outline: 2px #e11d48 solid;
+    outline-offset: -2px;
+}
+
+/* Etiqueta interna con fondo oscuro */
+.trading-status__label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #881337;
+    border-radius: 64px;
+    overflow: hidden;
+}
+
+/* El punto indicador (dot) */
+.trading-status__dot {
+    width: 8px;
+    height: 8px;
+    background: #fb7185;
+    border-radius: 9999px;
+}
+
+/* Texto de la etiqueta */
+.trading-status__label-text {
+    color: white;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    line-height: 20px;
+    word-wrap: break-word;
+}
+
+/* Texto descriptivo principal */
+.trading-status__description {
+    color: white;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    line-height: 20px;
+    flex: 1;
+    word-wrap: break-word;
+}
+
+.resources-bs__intro-description {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    display: flex;
+}
+
+.resources-bs__intro-title {
+    align-self: stretch;
+    color: white;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 28px;
+    word-wrap: break-word;
+}
+
+.resources-bs__intro-paragraph {
+    align-self: stretch;
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.resources-bs__intro-button {
+    padding: 12px 16px;
+    background: #ffb34a;
+    border-radius: 12px;
+    outline: 2px #ffb34a solid;
+    outline-offset: -2px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: inline-flex;
+}
+
+.resources-bs__intro-button-text {
+    color: #020617;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.resources-bs__intro-image {
+    width: 100%;
+    height: 252px;
+    background: #1e1e1e;
+    border-radius: 16px;
+}
+
+.resources-bs__cards {
+    width: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+    display: inline-flex;
+}
+
+.resources-bs__card {
+    flex: 1 1 0;
+    padding: 16px;
+    background: #131210;
+    border-radius: 16px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    display: inline-flex;
+}
+
+.resources-bs__card-image {
+    align-self: stretch;
+    height: 300px;
+    min-height: 300px;
+    border-radius: 16px;
+}
+
+.resources-bs__card-body {
+    align-self: stretch;
+    padding: 8px 16px 16px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    display: flex;
+}
+
+.resources-bs__card-title {
+    align-self: stretch;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+}
+
+.resources-bs__card-button {
+    align-self: stretch;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background: white;
+    border-radius: 12px;
+    outline: 2px white solid;
+    outline-offset: -2px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: inline-flex;
+}
+
+.resources-bs__card-button-text {
+    color: #292524;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.resources-bs .landing-bs-container > * + * {
+    margin-top: 48px;
+}
+
+/* =========================================================
+   Resource Section (.resources-bs)
+   ========================================================= */
+
+.funding-banner-bs {
+    margin-top: 0;
+    width: 100%;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    background: #0a0a0a;
+    border-top: 1px #404040 solid;
+    border-bottom: 1px #404040 solid;
+}
+
+.funding-banner-bs__list {
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    display: inline-flex;
+    width: 100%;
+}
+
+.funding-banner-bs__column, .funding-banner-bs__row {
+    display: contents;
+}
+
+.funding-banner-bs__column:last-child .funding-banner-bs__row:last-child img:last-child {
+    display: none;
+}
+
+
+.funding-banner-bs__text {
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 24px;
+    word-wrap: break-word;
+}
 
 /* =========================================================
    Responsive adjustments (Media Queries)
@@ -1969,6 +2239,58 @@ img.testimonials__image {
 
     .trader-benefits-bs__image {
         align-self: center;
+    }
+
+    .resources-bs .landing-bs-container > * + * {
+        margin-top: 16px;
+    }
+
+    .resources-bs__cards {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .resources-bs__card {
+        width: 100%;
+    }
+
+    .resources-bs__cards .resources-bs__card-image {
+        height: 200px;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .funding-banner-bs__list {
+        display: flex;
+        justify-content: start;
+    }
+
+    .funding-banner-bs__column {
+        display: flex;
+        gap: 16px;
+        flex-direction: column;
+    }
+
+    .funding-banner-bs__row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .funding-banner-bs__row img {
+        order: 1;
+    }
+
+    .funding-banner-bs__row div {
+        order: 2;
+    }
+
+    .funding-banner-bs__text {
+        text-align: left;
+    }
+
+    .funding-banner-bs__column:last-child .funding-banner-bs__row:last-child img:last-child {
+        display: block;
     }
 }
 
@@ -2487,10 +2809,15 @@ img.testimonials__image {
         text-align: center;
     }
 
+    .trader-benefits-bs__title {
+        font-size: 24px;
+    }
+
     .trader-benefits-bs {
-        padding: 16px 0;
+        padding: 16px 0 0 0;
         display: flex;
         flex-direction: column;
+        gap: 16px;
     }
 
     .trader-benefits-bs__image-placeholder {
@@ -2597,6 +2924,55 @@ img.testimonials__image {
         width: auto;
         margin: unset;
     }
+
+    .resources-bs {
+        padding-bottom: 32px;
+        padding-top: 32px;
+        gap: 16px;
+    }
+
+    .resources-bs .section-header__title {
+        max-width: 324px;
+    }
+
+    .resources-bs__intro-title {
+        font-size: 20px;
+    }
+
+    .resources-bs__intro {
+        display: block;
+        padding: 16px;
+    }
+
+    .trading-status {
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .resources-bs__intro-title, .resources-bs__intro-paragraph {
+        text-align: center;
+    }
+
+    .resources-bs__intro-paragraph {
+        font-size: 16px;
+        letter-spacing: -0.05em;
+    }
+
+    .resources-bs__intro-content a {
+        width: 100%;
+    }
+
+    .resources-bs__intro > * + * {
+        margin-top: 16px;
+    }
+
+    .trader-benefits-bs__description {
+        letter-spacing: -0.05em;
+    }
+
+    .trader-benefits-bs__content {
+        gap: 16px;
+    }
 }
 
 /* Extra small devices (max-width: 575.98px) */
@@ -2672,4 +3048,8 @@ img.testimonials__image {
         padding-inline: 0;
     }
 
+
+    .trading-status__description {
+        font-size: 13px;
+    }
 }
