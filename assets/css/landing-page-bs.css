@@ -2063,6 +2063,168 @@ img.testimonials__image {
     word-wrap: break-word;
 }
 
+
+.faqs-bs {
+    background: #1E1E1E;
+    margin-top: 0;
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.faqs-bs > * + * {
+    margin-top: 32px !important;
+}
+
+/* --- BLOQUE ACCORDION --- */
+.accordion {
+    width: 100%;
+    display: flex;
+    margin: auto;
+    max-width: 800px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.accordion__item {
+    align-self: stretch;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.accordion__header {
+    align-self: stretch;
+    padding: 8px 0;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer; /* Mejora de UX */
+}
+
+.accordion__question {
+    flex: 1 1 0;
+    color: white;
+    user-select: none;
+    font-size: 20px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.accordion__icon-wrapper {
+    width: 30px;
+    height: 30px;
+    position: relative;
+}
+
+/* Ocultar respuesta por defecto */
+.accordion__content {
+    display: none;
+    overflow: hidden;
+}
+
+/* Mostrar cuando está activo */
+.accordion__item--active .accordion__content {
+    display: block;
+}
+
+/* Control de iconos */
+.accordion__item .icon-minus {
+    display: none;
+}
+
+.accordion__item .icon-plus {
+    display: block;
+}
+
+.accordion__item--active .icon-minus {
+    display: block;
+}
+
+.accordion__item--active .icon-plus {
+    display: none;
+}
+
+.accordion__header {
+    cursor: pointer;
+}
+
+/* --- BLOQUE SUPPORT CARD --- */
+.support-card {
+    width: 100%;
+    max-width: 800px;
+    padding: 48px;
+    background: #131210;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 24px;
+    margin: 48px auto auto auto; /* Añadido margen superior para separar del acordeón */
+}
+
+.support-card__header {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.support-card__subtitle {
+    align-self: stretch;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 24px;
+}
+
+.support-card__title {
+    align-self: stretch;
+    text-align: center;
+    color: white;
+    font-size: 32px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 40px;
+}
+
+.support-card__body {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+}
+
+.support-card__description {
+    align-self: stretch;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+}
+
+.support-card__actions {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
@@ -2973,6 +3135,49 @@ img.testimonials__image {
 
     .trader-benefits-bs__content {
         gap: 16px;
+    }
+
+    .accordion {
+        gap: 16px;
+    }
+
+    .faqs-bs {
+        padding: 16px
+    }
+
+    .faqs-bs > * + * {
+        margin-top: 16px !important;
+    }
+
+    .support-card__title {
+        align-self: stretch;
+        text-align: center;
+        color: white;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .support-card__description {
+        align-self: stretch;
+        text-align: center;
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        word-wrap: break-word;
+        letter-spacing: -0.05em;
+    }
+
+    .support-card {
+        padding: 32px;
+    }
+
+    .support-card__actions a {
+        padding-inline: 8px;
+        font-size: 14px;
     }
 }
 
