@@ -31,8 +31,75 @@
                     </div>
                 </div>
             </div>
-
         </div>
+
+        <div class="trader-benefits-bs">
+            <div class="trader-benefits-bs__content">
+                <div class="trader-benefits-bs__title">
+                    WHAT YOU GET AS A TRADER
+                </div>
+
+                <div class="trader-benefits-bs__list">
+                    <div class="trader-benefits-bs__item">
+                        <img
+                                class="trader-benefits-bs__icon"
+                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                        />
+                        <div class="trader-benefits-bs__text">
+                            <div class="trader-benefits-bs__subtitle">
+                                Real Capital Simulation
+                            </div>
+                            <div class="trader-benefits-bs__description">
+                                Trade with real market data and professional-grade performance tracking.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trader-benefits-bs__item">
+                        <img
+                                class="trader-benefits-bs__icon"
+                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                        />
+                        <div class="trader-benefits-bs__text">
+                            <div class="trader-benefits-bs__subtitle">
+                                Fast, Reliable Payouts
+                            </div>
+                            <div class="trader-benefits-bs__description">
+                                Request payouts with 90% profit share and quick processing times.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trader-benefits-bs__item">
+                        <img
+                                class="trader-benefits-bs__icon"
+                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                        />
+                        <div class="trader-benefits-bs__text">
+                            <div class="trader-benefits-bs__subtitle">
+                                Full Control and Flexibility
+                            </div>
+                            <div class="trader-benefits-bs__description">
+                                Use add-ons like Anytime Payouts or Drawdown Buffer for more freedom.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
+                    GET FUNDED NOW
+                </a>
+
+                <div class="trader-benefits-bs__link">
+                    Learn more about funded trading
+                </div>
+            </div>
+
+            <div class="trader-benefits-bs__image">
+                <div class="trader-benefits-bs__image-placeholder"></div>
+            </div>
+        </div>
+
     </div>
 </section>
 

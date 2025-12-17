@@ -1552,6 +1552,7 @@ img.testimonials__image {
     display: flex;
     gap: 48px;
     margin-top: 32px;
+    margin-bottom: 48px;
 }
 
 /* Elemento de paso individual y wrapper del último elemento */
@@ -1682,6 +1683,113 @@ img.testimonials__image {
     font-weight: 500;
     line-height: 24px;
     word-wrap: break-word;
+}
+
+/* =========================================================
+   Path to Payout Section (.trader-benefits-bs)
+   ========================================================= */
+
+.trader-benefits-bs {
+    width: 100%;
+    padding: 48px 16px 101px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 48px;
+    display: inline-flex;
+}
+
+.trader-benefits-bs__content {
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+    display: inline-flex;
+}
+
+.trader-benefits-bs__title {
+    width: 100%;
+    max-width: 1280px;
+    color: white;
+    font-size: 32px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 40px;
+    word-wrap: break-word;
+}
+
+.trader-benefits-bs__list {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
+    display: flex;
+}
+
+.trader-benefits-bs__item {
+    align-self: stretch;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 4px;
+    display: inline-flex;
+}
+
+.trader-benefits-bs__icon {
+    display: inline-block;
+}
+
+.trader-benefits-bs__text {
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    display: inline-flex;
+}
+
+.trader-benefits-bs__subtitle {
+    align-self: stretch;
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.trader-benefits-bs__description {
+    align-self: stretch;
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.trader-benefits-bs__link {
+    align-self: stretch;
+    color: #ffd78a;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: underline;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+.trader-benefits-bs__image {
+    flex: 1 1 0;
+    height: 408px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    display: flex;
+}
+
+.trader-benefits-bs__image-placeholder {
+    background: #1e1e1e;
+    border-radius: 16px;
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 
@@ -1857,6 +1965,10 @@ img.testimonials__image {
     /* Path to Payout */
     .path-to-payout-bs__steps {
         gap: 32px;
+    }
+
+    .trader-benefits-bs__image {
+        align-self: center;
     }
 }
 
@@ -2364,9 +2476,40 @@ img.testimonials__image {
 
     .path-to-payout-bs__steps {
         margin-top: 16px;
+        margin-bottom: 32px;
         display: flex;
         flex-direction: column;
         gap: 8px;
+    }
+
+    .trader-benefits-bs__title,
+    .trader-benefits-bs__link {
+        text-align: center;
+    }
+
+    .trader-benefits-bs {
+        padding: 16px 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .trader-benefits-bs__image-placeholder {
+        height: 220px;
+        width: 100%;
+    }
+
+    .trader-benefits-bs__image {
+        width: 100%;
+        height: 100%;
+        order: 1;
+    }
+
+    .trader-benefits-bs__content {
+        order: 2;
+    }
+
+    .trader-benefits-bs__content a {
+        width: 100%;
     }
 
     .path-to-payout-bs .section-header__title {
