@@ -74,11 +74,23 @@ final class Mt_Navbar
     ];
   }
 
-  private static function checkout_nav(): array
-  {
-    // Checkout / Order-received: sin links (navbar limpio)
-    return [];
-  }
+private static function checkout_nav(): array
+{
+  return [
+    [
+      'href' => 'javascript:void(0);',
+      'value' => 'BACK TO WEBSITE',
+      'icon_class' => 'mt-icon mt-icon_caret-left',
+      'class' => 'navbar__nav-link--active',
+      'wrapper_attributes' => [
+        'onclick' => "if (window.history.length > 1) { window.history.back(); } else { window.location.href = '" . esc_url(home_url('/')) . "'; } return false;",
+        'aria-label' => 'Back to website'
+      ],
+    ],
+  ];
+}
+
+
 
 }
 
