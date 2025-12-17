@@ -1417,6 +1417,10 @@ img.testimonials__image {
     text-align: center;
 }
 
+/* =========================================================
+   Upcoming Section (.upcoming-bs)
+   ========================================================= */
+
 .upcoming-bs {
     margin-top: 0;
     border-top: 1px #404040 solid;
@@ -1429,6 +1433,7 @@ img.testimonials__image {
     padding-bottom: 32px;
 }
 
+/* Events */
 .events-bs {
     padding-top: 16px;
     padding-bottom: 16px;
@@ -1535,8 +1540,162 @@ img.testimonials__image {
 }
 
 /* =========================================================
+   Path to Payout Section (.path-to-payout-bs)
+   ========================================================= */
+
+.path-to-payout-bs {
+    /* No tiene reglas directas en el original, se añade para mantener la coherencia si se necesita */
+}
+
+/* Contenedor de pasos (escritorio) */
+.path-to-payout-bs__steps {
+    display: flex;
+    gap: 48px;
+    margin-top: 32px;
+}
+
+/* Elemento de paso individual y wrapper del último elemento */
+.path-to-payout-bs__item,
+.path-to-payout-bs__item--last-card--wrapper {
+    width: 100%;
+    flex-direction: column;
+    display: flex;
+    position: relative;
+}
+
+/* Estilos de la tarjeta de escritorio */
+.path-to-payout-bs__desktop-card {
+    padding: 16px;
+    background: #1E1E1E;
+    border-radius: 16px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: flex;
+    height: 100%;
+}
+
+/* Estilos de la tarjeta móvil (se muestran en móvil, se ocultan en escritorio) */
+.path-to-payout-bs__mobile-card {
+    /* Esta clase solo tiene reglas en media queries en el original */
+}
+
+/* Paso/Número (Desktop) */
+.path-to-payout-item__step {
+    padding: 12px;
+    background: #FFB34A;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+    text-align: center;
+    color: #131210;
+    font-size: 24px;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 28px;
+    word-wrap: break-word;
+    margin-bottom: var(--margin-bottom-path-to-payout-item__step);
+    align-self: center;
+    position: relative;
+}
+
+/* Pseudo-elementos de línea y efectos de estado (Desktop) */
+.path-to-payout-item__step:after {
+    content: '';
+    height: var(--margin-bottom-path-to-payout-item__step);
+    width: 2px;
+    background: #ffb34a;
+    position: absolute;
+    z-index: -1;
+    bottom: calc(var(--margin-bottom-path-to-payout-item__step) * -1);
+}
+
+.path-to-payout-bs__item--first-card:before {
+    content: '';
+    height: 2px;
+    width: 60%;
+    background: #ffb34a;
+    position: absolute;
+    right: -48px;
+    transform: translateY(25px);
+    z-index: -1;
+}
+
+.path-to-payout-bs__item--middle-card:after {
+    content: '';
+    height: 2px;
+    width: 60%;
+    background: #ffb34a;
+    position: absolute;
+    left: -48px;
+    transform: translateY(25px);
+    z-index: -1;
+}
+
+.path-to-payout-bs__item--middle-card:before {
+    content: '';
+    height: 2px;
+    width: 100%;
+    background: #fdb34a;
+    position: absolute;
+    right: -48px;
+    transform: translateY(25px);
+    z-index: -1;
+}
+
+.path-to-payout-bs__item--last-card {
+    opacity: 0.40;
+}
+
+.path-to-payout-bs__item--last-card--wrapper:before {
+    content: '';
+    height: 2px;
+    width: var(--path-to-payout-last-line-px);
+    background: #fdb34a;
+    position: absolute;
+    left: -1px;
+    transform: translateY(25px);
+    z-index: -1;
+}
+
+/* Contenido de la tarjeta (Desktop) */
+.path-to-payout-item__title {
+    align-self: stretch;
+    text-align: center;
+    margin-bottom: 0;
+    color: #FFB34A;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+}
+
+.path-to-payout-item__subtitle {
+    align-self: stretch;
+    text-align: center;
+    color: #A8A29E;
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+}
+
+
+/* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
+
+@media (max-width: 1267px) {
+    .path-to-payout-item__title,
+    .path-to-payout-item__subtitle {
+        width: 192px;
+        margin: auto;
+    }
+}
 
 /* Large devices (max-width: 1024px) */
 @media (max-width: 1024px) {
@@ -1693,6 +1852,11 @@ img.testimonials__image {
 
     .verified-bs__glide .glide__track {
         overflow: hidden !important;
+    }
+
+    /* Path to Payout */
+    .path-to-payout-bs__steps {
+        gap: 32px;
     }
 }
 
@@ -2189,8 +2353,106 @@ img.testimonials__image {
         display: inline;
     }
 
-    .events-bs__list > * + *{
+    .events-bs__list > * + * {
         margin-top: 16px;
+    }
+
+    /* Path to Payout (Mobile) */
+    .path-to-payout-bs {
+        padding-block: 32px;
+    }
+
+    .path-to-payout-bs__steps {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .path-to-payout-bs .section-header__title {
+        max-width: 302px;
+    }
+
+    .path-to-payout-bs__steps > * + * {
+        margin-top: 16px;
+    }
+
+    /* Elementos de paso y tarjeta móvil */
+    .path-to-payout-item__step {
+        color: #292524;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        line-height: 20px;
+        word-wrap: break-word;
+        padding: 4px 12px;
+        background: white;
+        border-radius: 4px;
+        outline: 1px white solid;
+        outline-offset: -1px;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 0;
+        display: inline-flex;
+        align-self: self-start;
+    }
+
+    .path-to-payout-bs__desktop-card {
+        display: contents; /* Oculta la estructura de la tarjeta de escritorio para usar la móvil */
+    }
+
+    .path-to-payout-bs__mobile-card {
+        width: 100%;
+        align-self: stretch;
+        padding: 16px;
+        background: #1E1E1E;
+        border-radius: 16px;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 8px;
+        display: inline-flex
+    }
+
+    .path-to-payout-bs__mobile-card > * + * {
+        margin-top: 8px;
+    }
+
+    .path-to-payout-item__title {
+        align-self: stretch;
+        color: #FFB34A;
+        font-size: 20px;
+        font-weight: 500;
+        text-align: left;
+        line-height: 32px;
+        word-wrap: break-word
+    }
+
+    .path-to-payout-item__subtitle {
+        align-self: stretch;
+        color: #A8A29E;
+        font-size: 16px;
+        text-align: left;
+        font-weight: 500;
+        line-height: 24px;
+        word-wrap: break-word
+    }
+
+    /* Eliminación de pseudo-elementos de línea en móvil */
+    .path-to-payout-bs__item--first-card:before,
+    .path-to-payout-bs__item--middle-card:before,
+    .path-to-payout-bs__item--middle-card:after,
+    .path-to-payout-bs__item--last-card--wrapper:before,
+    .path-to-payout-item__step:after {
+        display: none;
+    }
+
+    /* Ajuste de márgenes/ancho en móvil */
+    .path-to-payout-item__title,
+    .path-to-payout-item__subtitle {
+        width: auto;
+        margin: unset;
     }
 }
 

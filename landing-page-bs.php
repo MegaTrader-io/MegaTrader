@@ -15,6 +15,7 @@ get_header('landing-page-bs');
         <?php get_template_part('template-parts/landing-page/sections/payouts-and-comparison-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/testimonials-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/upcoming-events-bs'); ?>
+        <?php get_template_part('template-parts/landing-page/sections/path-to-payout-bs'); ?>
     </main>
 
 <?php get_footer('landing-page-bs'); ?>
