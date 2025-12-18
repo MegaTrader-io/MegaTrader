@@ -2225,6 +2225,151 @@ img.testimonials__image {
     gap: 8px;
 }
 
+/* Bloque Principal */
+.social-section-bs {
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+    width: 100%;
+}
+
+.social-section-bs__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    width: 100%;
+    max-width: 1280px;
+}
+
+/* Cuadrícula de Redes Sociales */
+.social-section-bs__grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+/* Tarjeta Individual */
+.social-section-bs__card {
+    flex: 1 1 0;
+    max-width: 300px;
+    min-width: 200px;
+    padding: 16px;
+    background: #1E1E1E;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.social-section-bs__icon-bg {
+    padding: 8px;
+    background: white;
+    border-radius: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-section-bs__icon {
+    width: 24px;
+    height: 24px;
+    background-color: black;
+}
+
+.social-section-bs__card-label {
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+}
+
+/* Banner de Promoción */
+.social-section-bs__banner {
+    width: 100%;
+    max-width: 800px;
+    padding: 48px;
+    background: linear-gradient(180deg, #1E1E1E 0%, #0A0A0A 100%);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+}
+
+.social-section-bs__rating {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.social-section-bs__star {
+    width: 24px;
+    height: 24px;
+    background: #00B67A;
+}
+
+.social-section-bs__banner-title {
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 32px;
+    font-weight: 300;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 40px;
+    margin: 0;
+}
+
+/* Características (Features) */
+.social-section-bs__features {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px;
+}
+
+.social-section-bs__feature-item--last-img {
+    display: none;
+}
+
+.social-section-bs__feature-item {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: center;
+}
+
+/* Botón de Acción */
+.social-section-bs__cta {
+    padding: 12px 16px;
+    background: #FFB34A;
+    border-radius: 12px;
+    border: none;
+    outline: 2px #FFB34A solid;
+    outline-offset: -2px;
+    color: #020617;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.social-section-bs__cta:hover {
+    transform: scale(1.02);
+}
+
 /* =========================================================
    Responsive adjustments (Media Queries)
    ========================================================= */
@@ -2453,6 +2598,15 @@ img.testimonials__image {
 
     .funding-banner-bs__column:last-child .funding-banner-bs__row:last-child img:last-child {
         display: block;
+    }
+
+    .social-section-bs__grid {
+        max-width: 800px;
+    }
+
+    .social-section-bs__card {
+        max-width: unset;
+        min-width: unset;
     }
 }
 
@@ -3142,7 +3296,7 @@ img.testimonials__image {
     }
 
     .faqs-bs {
-        padding: 16px
+        padding: 32px 16px
     }
 
     .faqs-bs > * + * {
@@ -3179,6 +3333,83 @@ img.testimonials__image {
         padding-inline: 8px;
         font-size: 14px;
     }
+
+    .social-section-bs__banner-title {
+        align-self: stretch;
+        text-align: center;
+        color: white;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word;
+        letter-spacing: -0.05em;
+    }
+
+    .social-section-bs__banner-title br {
+        display: none;
+    }
+
+    .social-section-bs__container {
+        padding: 32px 16px;
+        gap: 16px;
+    }
+
+    .social-section-bs__grid {
+        display: grid;
+        max-width: unset;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .social-section-bs__banner {
+        align-items: stretch;
+        padding: 32px 16px;
+        gap: 16px;
+    }
+
+    .social-section-bs .section-header__title {
+        min-width: 302px;
+    }
+
+    .social-section-bs__features {
+        gap: 8px;
+        display: grid;
+        grid-template-columns: 24px 1fr;
+        row-gap: 16px;
+    }
+
+    .social-section-bs__feature-item--last-img {
+        display: block;
+    }
+
+    .social-section-bs__feature-item--order-2 {
+        order: 1
+    }
+
+    .social-section-bs__feature-item--order-1 {
+        order: 2
+    }
+
+    .social-section-bs__feature-item--order-4 {
+        order: 3
+    }
+
+    .social-section-bs__feature-item--order-3 {
+        order: 4
+    }
+
+    .social-section-bs__feature-item--order-6 {
+        order: 5
+    }
+
+    .social-section-bs__feature-item--order-5 {
+        order: 6
+    }
+
+    .social-section-bs__feature-item {
+        text-align: left;
+    }
+
 }
 
 /* Extra small devices (max-width: 575.98px) */
