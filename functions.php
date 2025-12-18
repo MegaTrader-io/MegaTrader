@@ -411,6 +411,8 @@ require get_template_directory() . '/inc/class-mt-payment-methods.php';
  */
 require_once get_template_directory() . '/inc/attributes-meta-parser.php';
 require_once get_template_directory() . '/inc/validate_coupon_for_variation.php';
+require_once get_stylesheet_directory() . '/inc/mt-checkout-helper.php';
+
 
 // Load navigation module
 require_once get_template_directory() . '/inc/account-navigation-module.php';

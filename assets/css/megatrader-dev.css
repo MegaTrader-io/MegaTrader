@@ -207,6 +207,14 @@
    * Notifications
 */
 
+/* Cuando el cupón viene por URL: oculta el banner grande de Woo.
+   OJO: el DOM sigue existiendo, así tu JS lo lee y lo convierte a inline. */
+body.mt-coupon-from-url .woocommerce .woocommerce-message,
+body.mt-coupon-from-url .woocommerce .woocommerce-error {
+  display: none !important;
+}
+
+
 .coupon-form .form-control.invalid_coupon {
   border: 1px solid var(--error-color) !important;
 }

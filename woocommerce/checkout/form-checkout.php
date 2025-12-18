@@ -17,9 +17,6 @@ if (!defined('ABSPATH')) {
 remove_action('woocommerce_before_checkout_form', 'wc_print_notices', 10);
 remove_action('woocommerce_before_checkout_form', 'woocommerce_output_all_notices', 10);
 
-/* ================== Helper externo centralizado ================== */
-require_once get_stylesheet_directory() . '/inc/mt-checkout-helper.php';
-
 
 /* ================== Helpers locales mínimos ================== */
 if (!function_exists('mt_get_param')) {

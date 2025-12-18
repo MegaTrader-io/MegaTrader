@@ -189,7 +189,7 @@ jQuery(document).ready(function ($) {
     const code = $(this).data("coupon") || $(this).attr("data-coupon") || "";
 
     // Reemplaza de inmediato cualquier mensaje previo y muestra fallback de removido (error)
-    const fallback = code ? `Coupon "${code}" has been removed.` : `Coupon has been removed.`;
+    const fallback = code ? `Coupon "${code}" has been removed.` : `Coupon has been removed132.`;
     showCouponMessage(fallback, "success");
 
     // Poll para capturar el notice real si Woo lo pinta

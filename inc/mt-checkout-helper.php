@@ -209,7 +209,6 @@ if (!function_exists('mtch_resolve_account_id')) {
 }
 
 
-
 // === Debug visual opcional (?mtdebug=1 o WP_DEBUG) ===
 if (!function_exists('mtch_render_debug_panel')) {
     function mtch_render_debug_panel(?WC_Product $product, array $rich, array $meta_info = [])
@@ -276,3 +275,125 @@ if (!function_exists('mtch_render_debug_panel')) {
         echo '</pre></details></div>';
     }
 }
+
+// =============================================
+// MT: Auto-aplicar cupón por URL en checkout
+// + inyecta notice oculto para que coupon-message-handler.js lo convierta a inline
+// URL ejemplo: /checkout/?add-to-cart=2459&coupon=MEGA5
+// =============================================
+
+if (!function_exists('mtch_is_checkout_request')) {
+    function mtch_is_checkout_request(): bool
+    {
+        if (function_exists('is_checkout') && is_checkout()) return true;
+
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if ($uri && strpos($uri, '/checkout') !== false) return true;
+
+        $checkout_id = (int) get_option('woocommerce_checkout_page_id');
+        if ($checkout_id && function_exists('is_page') && is_page($checkout_id)) return true;
+
+        return false;
+    }
+}
+
+// 1) Captura cupón temprano (add-to-cart puede redirigir y perder querystring)
+add_action('template_redirect', function () {
+    if (!function_exists('WC') || !WC()->session) return;
+
+    $coupon = isset($_GET['coupon']) ? wc_format_coupon_code(wp_unslash($_GET['coupon'])) : '';
+    if ($coupon !== '') {
+        WC()->session->set('mt_pending_coupon', $coupon);
+        WC()->session->set('mt_coupon_from_url', '1'); // para CSS
+    }
+}, 1);
+
+// 2) Aplica cupón cuando ya hay carrito en checkout
+add_action('wp_loaded', function () {
+    if (!function_exists('WC') || !WC()->cart || !WC()->session) return;
+    if (!mtch_is_checkout_request()) return;
+
+    $code = (string) WC()->session->get('mt_pending_coupon', '');
+    if ($code === '') return;
+    if (WC()->cart->is_empty()) return;
+
+    // Si ya está aplicado, no hagas nada (y no muestres mensaje)
+    if (WC()->cart->has_discount($code)) {
+        WC()->session->set('mt_pending_coupon', '');
+        return;
+    }
+
+    // Aplica cupón
+    $ok = WC()->cart->apply_coupon($code);
+    WC()->cart->calculate_totals();
+
+    $msg_type = 'success';
+    $msg_text = sprintf('Coupon "%s" has been applied.', $code);
+
+    if (!$ok || !WC()->cart->has_discount($code)) {
+        $msg_type = 'error';
+        $msg_text = sprintf('Coupon "%s" could not be applied.', $code);
+
+        // Si Woo generó un error más específico, úsalo
+        if (function_exists('wc_get_notices')) {
+            $errs = wc_get_notices('error');
+            if (!empty($errs[0]['notice'])) {
+                $msg_text = wp_strip_all_tags($errs[0]['notice']);
+            }
+        }
+    }
+
+    // Flash para inyectarlo en el DOM (tu JS lo convierte a inline)
+    WC()->session->set('mt_coupon_flash', [
+        'type' => $msg_type,
+        'text' => $msg_text,
+    ]);
+
+    // Limpia pending para no re-aplicar
+    WC()->session->set('mt_pending_coupon', '');
+}, 60);
+
+// 3) Body class (para ocultar el banner grande SOLO cuando viene por URL)
+add_filter('body_class', function ($classes) {
+    if (!function_exists('WC') || !WC()->session) return $classes;
+
+    if ((string) WC()->session->get('mt_coupon_from_url', '') === '1') {
+        $classes[] = 'mt-coupon-from-url';
+    }
+    return $classes;
+}, 20);
+
+// 4) Inyecta notice oculto dentro de .woocommerce (tu JS lo captura y lo muestra inline)
+add_action('wp_footer', function () {
+    if (is_admin() || wp_doing_ajax()) return;
+    if (!function_exists('WC') || !WC()->session) return;
+    if (!mtch_is_checkout_request()) return;
+
+    $flash = WC()->session->get('mt_coupon_flash');
+    if (!is_array($flash) || empty($flash['text'])) return;
+
+    $type = ($flash['type'] === 'error') ? 'woocommerce-error' : 'woocommerce-message';
+    $text = wp_json_encode((string) $flash['text']);
+
+    ?>
+    <script>
+      (function($){
+        $(function(){
+          var $w = $('.woocommerce').first();
+          if (!$w.length) return;
+
+          var cls = <?php echo wp_json_encode($type); ?>;
+          var txt = <?php echo $text; ?>;
+
+          // Node oculto -> MutationObserver lo detecta -> coupon-message-handler.js lo convierte a inline
+          var $node = $('<div/>', { 'class': cls, 'style': 'display:none;' }).text(txt);
+          $w.prepend($node);
+        });
+      })(jQuery);
+    </script>
+    <?php
+
+    // Limpieza (1 vez)
+    WC()->session->set('mt_coupon_flash', null);
+    WC()->session->set('mt_coupon_from_url', '');
+}, 9999);
