@@ -19,6 +19,6 @@ get_header('landing-page-bs');
         <?php get_template_part('template-parts/landing-page/sections/resource-to-help-your-grow-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/funding-banner-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/faq-bs'); ?>
+        <?php get_template_part('template-parts/landing-page/sections/social-section-bs'); ?>
     </main>
-
 <?php get_footer('landing-page-bs'); ?>
