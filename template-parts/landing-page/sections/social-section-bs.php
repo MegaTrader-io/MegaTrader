@@ -2,7 +2,7 @@
     <div class="social-section-bs__container">
         <header class="section-header text-center">
             <h2 class="section-header__title">
-                Get the latest <span>discounts</span>on socials
+                GET THE LATEST <span>DISCOUNTS</span> ON SOCIALS
             </h2>
         </header>
 
@@ -96,7 +96,8 @@
                 <span class="social-section-bs__feature-item social-section-bs__feature-item--order-5">Automated payouts</span>
                 <img src="<?php echo get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'; ?>"
                      alt="flash"
-                     width="24" height="24" class="social-section-bs__feature-item--order-6 social-section-bs__feature-item--last-img">
+                     width="24" height="24"
+                     class="social-section-bs__feature-item--order-6 social-section-bs__feature-item--last-img">
             </div>
 
             <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
