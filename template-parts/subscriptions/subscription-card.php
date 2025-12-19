@@ -19,7 +19,7 @@ $details_list = $args['details_list'] ?? [];
 $title = $args['title'] ?? [];
 $related_orders = $args['related_orders'] ?? [];
 
-$collapse_id = esc_attr('collapse-' . $subscription_id);
+$collapse_id = esc_attr('orders-for-' . $subscription_id);
 
 $status_classes = [
 	'active' => 'badge-mega-active',
@@ -33,7 +33,73 @@ $status_classes = [
 	'failed' => 'badge-mega-cancelled',
 ];
 $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
+$title_compose = $title['product_size']['slug'] . ' ' . $title['product_name'];
 
+// TODO: integrating changePaymentModal - v2
+$change_payment_modal_id = 'changePaymentMethodModal';
+if ( ! function_exists( 'render_change_payment_method_modal' ) ) {
+    function render_change_payment_method_modal($subscription, $modal_id){
+        ob_start();
+
+            // Mock needed for stripe to render
+            add_filter( 'woocommerce_is_order_pay_page', '__return_true' );
+            add_filter( 'woocommerce_is_checkout', '__return_true' );
+
+            // Force Stripe scripts to enqueue in this mocked context
+            $gateway = WC()->payment_gateways()->payment_gateways()['stripe'];
+            if ( method_exists( $gateway, 'payment_scripts' ) ) {
+                $gateway->payment_scripts();
+            }
+            
+            $close_btn = true;
+            echo '<div class="woocommerce-checkout wc-checkout-in-modal">';
+                wc_get_template(
+                    'checkout/form-change-payment-method.php',
+                    array( 'subscription' => $subscription )
+                );
+            echo '</div>';
+
+            // Remove mocks
+            remove_filter( 'woocommerce_is_order_pay_page', '__return_true' );
+            remove_filter( 'woocommerce_is_checkout', '__return_true' );
+
+        $template_html = ob_get_clean();
+
+        $autoshow = change_payment_modal_should_show();
+
+        if ( $autoshow ) {
+            echo "<script>
+                if (window.history.replaceState) {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('pay_for_order');
+                    url.searchParams.delete('key');
+                    url.searchParams.delete('change_payment_method');
+                    window.history.replaceState({}, '', url.pathname + url.search);
+                }
+            </script>";
+        }
+
+        $modal_html = render_modal([
+            'autoshow'		=> $autoshow,
+            'notice'		=> true,
+            'modalId'     	=> $modal_id,
+            'modalTitle'  	=> 'Change payment method',
+            'bodyContent' 	=> $template_html,
+        ]);
+
+        echo $modal_html;
+    }
+}
+
+if ( ! function_exists( 'change_payment_modal_should_show' ) ) {
+    function change_payment_modal_should_show() {
+        return (
+            isset($_GET['pay_for_order']) &&
+            isset($_GET['key']) &&
+            isset($_GET['change_payment_method'])
+        );
+    }
+}
 ?>
 
 <style>
@@ -48,26 +114,70 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
 
 </style>
 
-<div class="mt-subscription-card">
+<div class="mt-subscription-card" id="<?= $subscription_id ?>">
     <div class="mt-subscription-card__wrapper mt-card gap-3">
         <div class="mt-subscription-card__section d-flex flex-column gap-3 border-bottom-gray pb-3">
             <div class="mt-subscription-card__block d-flex flex-column flex-md-row gap-3 align-items-md-center">
 
-                <!-- Platform Logo + Size + Plan -->
                 <div class="d-flex gap-3 align-items-center flex-fill">
+    
+                    <!-- Platform Logo + Size + Plan -->
                     <img decoding="async" src="<?= $title['platform_logo']?>" alt="<?= $title['platform_name']?>"
                          title="<?= $title['platform_name']?>"
                          width="48" height="48"
-                         class="bg-black rounded-circle overflow-hidden d-flex align-items-center">
-                    <div class="">
-                        <div class="text-white text-size-20 fw-medium text-uppercase"><?= $title['product_size']['slug'] . ' ' . $title['product_name']?></div>
-                        <div class="text-a8a29e small fw-medium"><?= esc_html($mt_id)?></div>
+                         class="flex-shrink-0 bg-black rounded-circle overflow-hidden d-flex align-items-center">
+                    <div class="flex-fill min-w-0">
+                        <div class="text-white text-size-20 fw-medium text-uppercase text-truncate"
+                             title="<?= esc_attr($title_compose) ?>"><?= esc_html($title_compose) ?></div>
+                        <div class="text-a8a29e small fw-medium text-truncate"
+                             title="<?= esc_attr($mt_id)?>"><?= esc_html($mt_id)?></div>
+                    </div>
+
+                    <!-- Auto Renew Toggle -->
+                    <div class="flex-shrink-0 d-flex flex-column align-items-end flex-md-row align-items-md-center gap-2">
+                        <span class="text-a8a29e text-sm fw-medium">Auto renew</span>
+                        <div class="wcs-auto-renew-toggle" data-sub-id="<?= esc_attr($subscription_id) ?>">
+                            <?php
+                            $is_active = 'active' === $status;
+                            $toggle_classes = [
+                                'subscription-auto-renew-toggle',
+                                //'subscription-auto-renew-toggle--hidden',
+                            ];
+
+                            if ($is_active) {
+                                if ($subscription->is_manual()) {
+                                    $toggle_label = __('Enable auto renew', 'woocommerce-subscriptions');
+                                    $toggle_classes[] = 'subscription-auto-renew-toggle--off';
+                                } else {
+                                    $toggle_label = __('Disable auto renew', 'woocommerce-subscriptions');
+                                    $toggle_classes[] = 'subscription-auto-renew-toggle--on';
+                                }
+                            } else {
+                                $toggle_label = __('Auto renew not available', 'woocommerce-subscriptions');
+                                $toggle_classes[] = 'subscription-auto-renew-toggle--off'; // Always force OFF
+                                $toggle_classes[] = 'subscription-auto-renew-toggle--disabled';
+                                $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
+                            }
+
+                            if (!$is_active) {
+                                $toggle_classes[] = 'subscription-auto-renew-toggle--disabled no-active';
+                                $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
+                            }
+                            ?>
+
+                            <a <?php if ($is_active): ?> href="#" <?php endif; ?>
+                                class="<?php echo esc_attr(implode(' ', $toggle_classes)); ?>"
+                                aria-label="<?php echo esc_attr($toggle_label); ?>" <?php if (!$is_active): ?>
+                                style="pointer-events: none; cursor: not-allowed;" <?php endif; ?>>
+                                <i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i>
+                            </a>
+                        </div>
                     </div>
 
     			</div>
 
                 <!-- Progress -->
-                <?php if ( ! in_array($status, ['cancelled', 'expired', 'on-hold'], true)):
+                <?php if ( false && ! in_array($status, ['cancelled', 'expired', 'on-hold'], true)):
                 	// 3. Dates and days
                     $status = $subscription->get_status();
                     $next_payment = $subscription->get_time('next_payment');
@@ -145,7 +255,6 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                         </div>
                     </div>
                 <?php endif; ?>
-
 
                 <!-- Badge + Menu Dots -->
                 <div class="d-flex gap-3 justify-content-between order-first order-md-0">
@@ -291,14 +400,29 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
                                         $classes[] = 'wcs_block_ui_on_click';
                                     }
                                     ?>
-                                    <?php if ($key === 'change_payment_method' && false /* change_payment_modal_should_show()*/): ?>
-                                        <a  class="<?= esc_attr(implode(' ', $classes)); ?>"
-                                            href="#"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#<?= esc_attr($change_payment_modal_id); ?>">
-                                                <?php //echo esc_html($action['name']); ?>
+                                    <?php if ($key === 'change_payment_method'): ?>
+                                        <?php if (change_payment_modal_should_show()): ?>
+                                            <a class="<?= esc_attr(implode(' ', $classes)); ?>"
+                                               href="#"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#<?= esc_attr($change_payment_modal_id); ?>">
                                                 <?= $actions_labels[$key] ?>
-                                        </a>
+                                            </a>
+                                        <?php else: ?>
+                                            <a class="<?= esc_attr(implode(' ', $classes)); ?>"
+                                               href="<?php echo esc_url($action['url']); ?>">
+                                                <?php echo esc_html($action['name']); ?>
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php if (false): //LEGACY - V1 ?>
+                                            <a  class="<?= esc_attr(implode(' ', $classes)); ?>"
+                                                href="#"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#<?= esc_attr($change_payment_modal_id); ?>">
+                                                    <?php //echo esc_html($action['name']); ?>
+                                                    <?= $actions_labels[$key] ?>
+                                            </a>
+                                        <?php endif; ?>
                                     <?php else: ?>
                                         <a  class="<?= esc_attr(implode(' ', $classes)); ?>"
                                             href="<?= esc_url($action['url']); ?>">
@@ -319,7 +443,7 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
             <?php if ( ! empty( $details_list ) ) : ?>
                 <div class="mt-subscription-card__block row row-gap-3">
                     <?php foreach ( $details_list as $details_item ) : ?>
-                        <div class="col-4">
+                        <div class="col-4 col-md-auto">
                             <div class="fw-medium text-base text-white"><?= esc_html($details_item['label']) ?></div>
                             <div class="fw-medium text-sm text-a8a29e <?= $details_item['value-class'] ?? '' ?>">
                                 <?= esc_html($details_item['value'])?></div>
@@ -329,54 +453,6 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
             <?php endif; ?>
         </div>
         <div class="mt-subscription-card__section d-flex flex-column gap-3">
-            
-            <!-- Auto Renew Toggle -->
-
-            <div class="wcs-auto-renew-toggle">
-                <?php
-                $is_active = 'active' === $status;
-                $toggle_classes = [
-                    'subscription-auto-renew-toggle',
-                    'subscription-auto-renew-toggle--hidden',
-                ];
-
-                if ($is_active) {
-                    if ($subscription->is_manual()) {
-                        $toggle_label = __('Enable auto renew', 'woocommerce-subscriptions');
-                        $toggle_classes[] = 'subscription-auto-renew-toggle--off';
-                    } else {
-                        $toggle_label = __('Disable auto renew', 'woocommerce-subscriptions');
-                        $toggle_classes[] = 'subscription-auto-renew-toggle--on';
-                    }
-                } else {
-                    $toggle_label = __('Auto renew not available', 'woocommerce-subscriptions');
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--off'; // Always force OFF
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--disabled';
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
-                }
-
-                if (!$is_active) {
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--disabled no-active';
-                    $toggle_classes[] = 'subscription-auto-renew-toggle--visually-disabled';
-                }
-                ?>
-
-                <a <?php if ($is_active): ?> href="#" <?php endif; ?>
-                    class="<?php echo esc_attr(implode(' ', $toggle_classes)); ?>"
-                    aria-label="<?php echo esc_attr($toggle_label); ?>" <?php if (!$is_active): ?>
-                        style="pointer-events: none; cursor: not-allowed;" <?php endif; ?>>
-                    <i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i>
-                </a>
-            </div>
-
-            <div class="d-flex align-items-center gap-2">
-				<span class="text-a8a29e text-sm fw-medium">Auto renew</span>
-				<div class="wcs-auto-renew-toggle">
-					<a href="#" class="subscription-auto-renew-toggle subscription-auto-renew-toggle--off" aria-label="Enable auto renew">
-						<i class="subscription-auto-renew-toggle__i" aria-hidden="true"></i>
-					</a>
-				</div>
-			</div>
 
             <?php if ( ! empty( $related_orders ) ) : ?>
                 <!-- Related Orders Collapse -->
@@ -418,4 +494,9 @@ $status_badge_class = $status_classes[$status] ?? 'badge-mega-default';
             <?php endif; ?>
         </div>
     </div>
+    <?php
+        if (change_payment_modal_should_show()){
+            render_change_payment_method_modal($subscription, $change_payment_modal_id); 
+        }
+    ?>
 </div>

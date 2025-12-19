@@ -19,6 +19,7 @@ final class Mt_Navbar
 
     get_template_part('template-parts/navbar/mt-navbar-bs', null, [
       'links' => self::$method(),
+      'section' => $section,
       'classes_navbar' => $classes_navbar,
       'navbar_actions_template' => $template_action
     ]);
@@ -72,5 +73,24 @@ final class Mt_Navbar
       ['href' => 'https://help.megatrader.io/en/', 'value' => 'HELP CENTER', 'wrapper_attributes' => ["target" => "_blank", "rel" => "noopener"]],
     ];
   }
+
+private static function checkout_nav(): array
+{
+  return [
+    [
+      'href' => 'javascript:void(0);',
+      'value' => 'BACK TO WEBSITE',
+      'icon_class' => 'mt-icon mt-icon_caret-left',
+      'class' => 'navbar__nav-link--active',
+      'wrapper_attributes' => [
+        'onclick' => "if (window.history.length > 1) { window.history.back(); } else { window.location.href = '" . esc_url(home_url('/')) . "'; } return false;",
+        'aria-label' => 'Back to website'
+      ],
+    ],
+  ];
+}
+
+
+
 }
 

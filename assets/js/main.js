@@ -163,6 +163,7 @@ const $ = jQuery; //TODO: remove, temp for dev mode
 
     //TODO: improve to support future Addons
     //TODO: migrate to checkout/billing scripts
+    /*
     ["drawdown-buffer", "anytime-payouts"].forEach(function (className) {
       $("." + className).click(function () {
         $(this).toggleClass("active");
@@ -174,6 +175,8 @@ const $ = jQuery; //TODO: remove, temp for dev mode
       var value = $(this).val();
       $("." + value).addClass("active");
     });
+
+    */
 
     // ----------------- PRICING WIDGET -----------------
     let data;

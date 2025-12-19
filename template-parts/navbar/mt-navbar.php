@@ -11,7 +11,7 @@
 $links = $args['links'] ?? [];
 
 /** @var string $aria_label */
-$aria_label = $args['aria_label'] ?? $links['aria_label'] ?? 'Main navigation';
+$aria_label = $args['aria_label'] ?? 'Main navigation';
 
 /** @var string $class */
 $class = $args['class'] ?? '';

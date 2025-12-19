@@ -110,16 +110,20 @@ add_action('wp_ajax_nopriv_verify_otp', 'verify_otp_and_login');
 // 3. Enqueue external OTP script
 add_action('wp_enqueue_scripts', 'enqueue_otp_script');
 function enqueue_otp_script() {
-    if (!is_checkout() && !is_page_template('sign-in.php')) return;
+
+    $is_step2 = is_page_template('woocommerce/checkout/step_2.php');
+
+    if ( ! is_checkout() && ! is_page_template('sign-in.php') && ! $is_step2 ) {
+        return;
+    }
 
     wp_enqueue_script(
-    'otp-script',
-    get_template_directory_uri() . '/assets/js/otp.js',
-    ['jquery'],
-    filemtime(get_template_directory() . '/assets/js/otp.js'), // 🔥 cache-busting
-    true
-);
-
+        'otp-script',
+        get_template_directory_uri() . '/assets/js/otp.js',
+        ['jquery'],
+        filemtime(get_template_directory() . '/assets/js/otp.js'),
+        true
+    );
 
     wp_localize_script('otp-script', 'wc_otp_data', [
         'nonce'    => wp_create_nonce('wc_otp_nonce'),

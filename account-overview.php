@@ -278,12 +278,18 @@ if (is_user_logged_in()) {
           $__can_manage_subscription = ($__selected_subscription_id !== '' || $hasSubLegacy) ? true : false;
 
           if (function_exists('mt_program_stage')) {
-            $stage = mt_program_stage($selRow['programTypeText'] ?? '', '');
+            // primero probamos con el row completo (usa accountType)
+            $stage = mt_program_stage($selRow, '');
+            // fallback por si solo tenemos el texto viejo
+            if ($stage === '' && isset($selRow['programTypeText'])) {
+              $stage = mt_program_stage($selRow['programTypeText'], '');
+            }
             $__account_type_init = strtolower($stage ?: '');
           } else {
             $__account_type_init = strtolower((string) ($selRow['programTypeText'] ?? ''));
           }
         }
+
       }
 
 

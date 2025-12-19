@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
               border: 1px solid #404040;          
               padding:12px 16px; 
             "        >
-          <?php esc_html_e('Sign In', 'woocommerce'); ?>
+          <?php esc_html_e('Sign In pinga', 'woocommerce'); ?>
           </button>
           <div class="google-signin-btn">
             <div class="googlesitekit-sign-in-with-google__frontend-output-button"><!-- Here's where googlesitekit injects btn iframe --></div>

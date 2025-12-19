@@ -31,7 +31,6 @@ add_action('wp_enqueue_scripts', function () {
   wp_enqueue_style('glide-style', $css_uri . 'glide.core.min.css', [], $css_version);
   wp_enqueue_script('glide-js', $js_uri . 'glide.js', [], $js_version, true);
 
-
   $css_version = file_exists($css_path . 'splide.min.css') ? filemtime($css_path . 'splide.min.css') : null;
   $js_version = file_exists($js_path . 'splide.min.js') ? filemtime($js_path . 'splide.min.js') : null;
 

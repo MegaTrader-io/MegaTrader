@@ -68,7 +68,6 @@ if ($user_email && $account_id && function_exists('mt_prepare_ui_payout')) {
 </div>
 
 <?php
-// Movemos aquí el modal (usando el email que ya calculaste en account-overview.php)
 if ($user_email) {
   get_template_part(
     'template-parts/modals/request-payout-modal',

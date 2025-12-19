@@ -178,15 +178,30 @@ class MT_Accounts
       }
 
       // programType badge
+      // programType badge (usa accountType cuando viene del API)
       $ptypeLabel = '';
       $ptypeClass = 'badge-mega-default';
-      if ($plabel !== '') {
+
+      $accountType = strtolower(trim((string) ($acc['accountType'] ?? '')));
+
+      if ($accountType !== '') {
+        // "evaluation" | "funded" → badge por accountType
+        $ptypeLabel = ucfirst($accountType);
+        $key = preg_replace('/\s+/', '-', $accountType);
+        if ($key === 'evaluation') {
+          $ptypeClass = 'badge-mega-evaluation';
+        } elseif ($key === 'funded') {
+          $ptypeClass = 'badge-mega-funded';
+        }
+      } elseif ($plabel !== '') {
+        // fallback antiguo por si algún dato viejo no trae accountType
         $parts = array_map('trim', explode('|', $plabel));
         $last = $parts ? trim(end($parts)) : '';
         $ptypeLabel = $last;
         $key = strtolower(preg_replace('/\s+/', '-', $last));
         $ptypeClass = $key === 'evaluation' ? 'badge-mega-evaluation' : ($key === 'funded' ? 'badge-mega-funded' : 'badge-mega-default');
       }
+
 
       $subscriptionId = '';
       $user_id = get_current_user_id();
@@ -210,6 +225,7 @@ class MT_Accounts
         'order' => $order,
         'subscriptionId' => $subscriptionId,
         'hasSubscription' => $subscriptionId !== '',
+        'accountType' => strtolower((string) ($acc['accountType'] ?? '')),
         'programTypeText' => $ptypeLabel,
         'programTypeClass' => $ptypeClass,
       ];
@@ -270,15 +286,29 @@ class MT_Accounts
       $order = (string) ($acc['order'] ?? '');
 
       // programType badge
+      // programType badge (usa accountType cuando viene del API)
       $ptypeLabel = '';
       $ptypeClass = 'badge-mega-default';
-      if ($plabel !== '') {
+
+      $accountType = strtolower(trim((string) ($acc['accountType'] ?? '')));
+
+      if ($accountType !== '') {
+        $ptypeLabel = ucfirst($accountType);
+        $key = preg_replace('/\s+/', '-', $accountType);
+        if ($key === 'evaluation') {
+          $ptypeClass = 'badge-mega-evaluation';
+        } elseif ($key === 'funded') {
+          $ptypeClass = 'badge-mega-funded';
+        }
+      } elseif ($plabel !== '') {
+        // fallback antiguo por si algún dato viejo no trae accountType
         $parts = array_map('trim', explode('|', $plabel));
         $last = $parts ? trim(end($parts)) : '';
         $ptypeLabel = $last;
         $key = strtolower(preg_replace('/\s+/', '-', $last));
         $ptypeClass = $key === 'evaluation' ? 'badge-mega-evaluation' : ($key === 'funded' ? 'badge-mega-funded' : 'badge-mega-default');
       }
+
 
       $subscriptionId = '';
       $user_id = get_current_user_id();
@@ -302,6 +332,7 @@ class MT_Accounts
         'order' => $order,
         'subscriptionId' => $subscriptionId,
         'hasSubscription' => $subscriptionId !== '',
+        'accountType' => strtolower((string) ($acc['accountType'] ?? '')),
         'programTypeText' => $ptypeLabel,
         'programTypeClass' => $ptypeClass,
       ];
@@ -337,46 +368,80 @@ if (!function_exists('mt_accounts_find_active_account')) {
 if (!function_exists('mt_program_stage')) {
   function mt_program_stage($programOrLabel, $default = '')
   {
+    // 1) Intento directo por accountType cuando venga un array
+    if (is_array($programOrLabel)) {
+      $accountType = '';
+
+      if (isset($programOrLabel['accountType'])) {
+        $accountType = (string) $programOrLabel['accountType'];
+      } elseif (
+        isset($programOrLabel['account']) &&
+        is_array($programOrLabel['account']) &&
+        isset($programOrLabel['account']['accountType'])
+      ) {
+        // por si en algún sitio viene envuelto en ['account' => [...]]
+        $accountType = (string) $programOrLabel['account']['accountType'];
+      }
+
+      $key = strtolower(trim($accountType));
+      if ($key === 'funded') {
+        return 'Funded';
+      }
+      if ($key === 'evaluation') {
+        return 'Evaluation';
+      }
+    }
+
+    // 2) Fallback antiguo: parsear label / description
     $label = '';
     if (is_array($programOrLabel)) {
       $label = (string) ($programOrLabel['label'] ?? $programOrLabel['description'] ?? '');
     } else {
       $label = (string) $programOrLabel;
     }
+
     $label = trim(preg_replace('/\s+/', ' ', $label));
 
-    if ($label === '')
+    if ($label === '') {
       return $default;
+    }
 
     $parts = array_map('trim', explode('|', $label));
     $last = end($parts);
     $key = strtolower(preg_replace('/[^a-z]/i', '', $last));
 
-    if ($key === 'funded')
+    if ($key === 'funded') {
       return 'Funded';
-    if ($key === 'evaluation')
+    }
+    if ($key === 'evaluation') {
       return 'Evaluation';
+    }
 
-    if (stripos($label, 'Funded') !== false)
+    if (stripos($label, 'Funded') !== false) {
       return 'Funded';
-    if (stripos($label, 'Evaluation') !== false)
+    }
+    if (stripos($label, 'Evaluation') !== false) {
       return 'Evaluation';
+    }
 
     return $default;
   }
 }
+
 if (!function_exists('mt_is_funded')) {
   function mt_is_funded($programOrLabel)
   {
     return mt_program_stage($programOrLabel) === 'Funded';
   }
 }
+
 if (!function_exists('mt_is_evaluation')) {
   function mt_is_evaluation($programOrLabel)
   {
     return mt_program_stage($programOrLabel) === 'Evaluation';
   }
 }
+
 
 /* ==== Helper: detectar plan (Funded|Elite|Growth) desde el label ==== */
 if (!function_exists('mt_program_plan')) {
@@ -462,8 +527,7 @@ if (!function_exists('mt_accounts_build_performance')) {
       'consistencyCurrentTopDayProfit' => $metrics['consistencyCurrentTopDayProfit'] ?? null,
       'consistencyResetBalanceMark' => $metrics['consistencyResetBalanceMark'] ?? null,
       'currentCycle' => mt__get($account, ['payout', 'payoutCycle', 'currentCycle']),
-
-
+      'accountType' => isset($account['accountType']) ? strtolower((string) $account['accountType']) : null,
     ];
     foreach ($payload as $k => $v) {
       if (is_string($v) && is_numeric($v))

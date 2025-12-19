@@ -14,6 +14,7 @@ defined('ABSPATH') || exit;
 $performance = [];
 $meta = [];
 $source = 'unknown';
+$profitTarget = null;
 
 if (isset($args) && is_array($args)) {
     if (isset($args['performance']) && is_array($args['performance'])) {
@@ -60,6 +61,7 @@ $defaults = [
     'targetAmount' => null,
     'consistencyResetBalanceMark' => null,
     'currentCycle' => null,
+    'accountType' => null,
 ];
 $performance = array_merge($defaults, (array) $performance);
 
@@ -80,8 +82,8 @@ $maxDailyLoss = $performance['maxDailyLossLimitPnLLevel'];
 $targetAmount = $performance['targetAmount'];
 $plan = mt_program_plan($performance['label'] ?? '');
 $rulesUrl = mt_program_rules_url($performance['label'] ?? '');
-$isFunded = mt_is_funded($performance['label'] ?? '');
-$isEvaluation = mt_is_evaluation($performance['label'] ?? '');
+$isFunded = mt_is_funded($performance);
+$isEvaluation = mt_is_evaluation($performance);
 $profitTarget = $isFunded
     ? ($performance['targetAmount'] ?? null)
     : ($performance['target'] ?? null);

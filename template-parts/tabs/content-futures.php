@@ -358,7 +358,6 @@ function render_platforms($platforms) {
     const REMEMBER_PREVIOUS_SELECTION = <?= $remember_previous_selection ? 'true' : 'false' ?>;
     const CHECKOUT_URL = '<?= home_url( '/checkout/?add-to-cart=PRODUCT_ID' ) ?>';
     const GO_TO_URL = '<?= home_url( '/auth/register/?redirect_to=' ) ?>';
-    const isUserLoggedIn = <?= is_user_logged_in() ? 'true' : 'false' ?>;
     const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
 
     function normalizeAttributes(data) {
@@ -383,7 +382,7 @@ function render_platforms($platforms) {
         let values = getFormValues(form);
 
         const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
-        console.log('selectedProduct', selectedProduct);
+
         const selectedProductId = selectedProduct.id ?? '';
 
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
@@ -398,11 +397,11 @@ function render_platforms($platforms) {
             return;
         }
 
-        const checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', selectedProductId);
+        let checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', selectedProductId);
 
-        if (!isUserLoggedIn) {
-            checkoutBtn.href = GO_TO_URL + encodeURIComponent(checkoutUrl);
-            return;
+        const couponElement = document.querySelector('.pricing-table-panel__pricing_card .mt-pricing-card__code');
+        if (couponElement) {
+            checkoutUrl = checkoutUrl + '&coupon=' + couponElement.innerText;
         }
 
         checkoutBtn.href = checkoutUrl;

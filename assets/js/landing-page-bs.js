@@ -65,6 +65,19 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
+    function updatePoints() {
+        let priceTable = document.querySelector('.price-table');
+        let hasPopularPlan = !!priceTable.querySelector('ul.slider__slides li > .price-table__plan--most-popular');
+        let cardActive = priceTable.querySelector('ul.slider__slides li.glide__slide--active') || priceTable.querySelector('ul.slider__slides li:first-child');
+        let bottomPoints = 0;
+
+        if (!cardActive.querySelector('.price-table__plan--most-popular')) {
+            bottomPoints = hasPopularPlan ? 24 : 0;
+        }
+
+        priceTable.style.setProperty('--current-slider-height', bottomPoints + 'px');
+    }
+
     function initializeSwiper() {
         try {
             const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
@@ -84,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             function calculatePerPage() {
                 const width = carouselEl.clientWidth;
-                const slideWidth = window.innerWidth <= 767 ? 276 : 378;
+                const slideWidth = document.documentElement.clientWidth <= 767 ? 276 : 378;
                 return Math.max(1, Math.floor(width / slideWidth));
             }
 
@@ -119,11 +132,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const verifiedBsCarouselRoot = document.getElementById('verified-bs-id');
 
         const verifiedBsCarousel = new Glide(verifiedBsCarouselRoot, {
-            type: 'carousel',
-            focusAt: 'center',
+            type: 'slider',
             gap: 16,
             perView: 1,
-            autoplay: 3000,
+            autoplay: false,
+            hoverpause: false,
+            rewind: false,
+            animationDuration: 800
         });
 
         verifiedBsCarousel.mount({
@@ -137,6 +152,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         for (let i = 0; i < slides.length; i++) {
                             slides[i].style.width = width;
+                        }
+
+                        // 🔹 Ejemplo: cambiar autoplay dinámicamente
+                        if (document.documentElement.clientWidth <= 768 && !Glide.settings.autoplay) {
+                            Glide.update({autoplay: 3000, type: 'slider', focusAt: 'center'});
+                        } else if (document.documentElement.clientWidth > 768 && Glide.settings.autoplay) {
+                            Glide.update({autoplay: false});
                         }
                     },
 
@@ -183,13 +205,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 Object.defineProperty(Sizes, 'slideWidth', {
                     get() {
-                        let width = window.innerWidth <= 768 ? window.innerWidth - 32 : 800;
+                        // 🔹 Lógica adaptativa + límite máximo
+                        const maxWidth = 990; // el máximo que tú desees
+                        const horizontalPadding = 32; // margen lateral en mobile
 
+                        let width =
+                            document.documentElement.clientWidth <= 768
+                                ? document.documentElement.clientWidth - horizontalPadding
+                                : Math.min(document.documentElement.clientWidth * 0.85, maxWidth);
+
+                        // 🔹 Variables CSS opcionales para efectos visuales
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', width + 'px');
 
                         const points = document.querySelector('.verified-bs__glide .slider__bullets');
-
-                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-left', (points?.getBoundingClientRect().x || 0) + 'px');
+                        verifiedBsCarouselRoot.style.setProperty(
+                            '--verified-bs-slide-left',
+                            (points?.getBoundingClientRect().x || 0) + 'px'
+                        );
 
                         return width;
                     }
@@ -211,6 +243,169 @@ document.addEventListener('DOMContentLoaded', function () {
                 return Sizes;
             }
         });
+
+        (function () {
+            const priceTable = document.querySelector('.price-table');
+            let glideInstance = null;
+            let isGlideMounted = false;
+            const parentGlideClasses = ['price-table__glide', 'slider', 'glide'];
+
+            function addClassToPriceTable() {
+                parentGlideClasses.map(className => priceTable.classList.add(className));
+            }
+
+            function removeClassToPriceTable(extraClasses = ['glide--swipeable']) {
+                (parentGlideClasses.concat(extraClasses)).map(className => priceTable.classList.remove(className));
+            }
+
+            function initGlide() {
+                if (glideInstance || isGlideMounted) return;
+                addClassToPriceTable();
+                try {
+                    glideInstance = new Glide(priceTable, {
+                        type: 'slider',
+                        gap: 16,
+                        autoplay: false,
+                        rewind: false,
+                        animationDuration: 200
+                    });
+
+                    glideInstance.on(['swipe.start', 'run.after'], () => {
+                        updatePoints();
+                    });
+
+                    glideInstance
+                        .mutate([
+                            function (Glide, Components) {
+                                return {
+                                    modify(translate) {
+                                        const slideWidth = Components.Sizes.slideWidth;
+                                        const gap = Components.Gaps.value;
+                                        const viewportWidth = document.documentElement.clientWidth;
+                                        const offsetToCenter = (viewportWidth - slideWidth) / 2;
+                                        const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
+                                        const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
+                                        const containerGap = viewportWidth <= 1024 ? 0 : 32;
+
+                                        return -1 * (adjustedTranslate - containerGap);
+                                    }
+                                };
+                            }
+                        ])
+                        .mount({
+                            Sizes: function CustomSizes(Glide, Components, Events) {
+                                const Sizes = {
+                                    setupSlides() {
+                                        const width = this.slideWidth + 'px';
+                                        const slides = Components.Html.slides;
+                                        for (let i = 0; i < slides.length; i++) {
+                                            slides[i].style.width = width;
+                                        }
+                                    },
+                                    setupWrapper() {
+                                        Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
+                                    },
+                                    remove() {
+                                        const slides = Components.Html.slides;
+                                        for (let i = 0; i < slides.length; i++) {
+                                            slides[i].style.width = '';
+                                        }
+                                        Components.Html.wrapper.style.width = '';
+                                    }
+                                };
+
+                                Object.defineProperty(Sizes, 'length', {
+                                    get() {
+                                        return Components.Html.slides.length;
+                                    }
+                                });
+
+                                Object.defineProperty(Sizes, 'width', {
+                                    get() {
+                                        return Components.Html.track.offsetWidth;
+                                    }
+                                });
+
+                                Object.defineProperty(Sizes, 'wrapperSize', {
+                                    get() {
+                                        return (
+                                            this.slideWidth * this.length +
+                                            Components.Gaps.grow +
+                                            Components.Clones.grow
+                                        );
+                                    }
+                                });
+
+                                Object.defineProperty(Sizes, 'slideWidth', {
+                                    get() {
+                                        const viewport = document.documentElement.clientWidth;
+                                        let cardWidth = 346;
+
+                                        if (viewport <= 768) {
+                                            cardWidth = 320;
+                                        }
+
+                                        priceTable.style.setProperty('--price-table-slide-width', cardWidth + 'px');
+
+                                        return cardWidth;
+                                    }
+                                });
+
+                                Events.on(['build.before', 'resize', 'update'], () => {
+                                    Sizes.setupSlides();
+                                    Sizes.setupWrapper();
+                                    updatePoints();
+                                });
+
+                                Events.on('destroy', () => Sizes.remove());
+                                return Sizes;
+                            }
+                        });
+
+                    isGlideMounted = true;
+                    console.info('[Glide] mounted');
+                } catch (err) {
+                    console.error('Error initializing Glide:', err);
+                }
+            }
+
+            function destroyGlide() {
+                if (glideInstance && isGlideMounted) {
+                    try {
+                        glideInstance.destroy();
+                        glideInstance = null;
+                        isGlideMounted = false;
+                        removeClassToPriceTable();
+
+                        console.info('[Glide] destroyed');
+                    } catch (err) {
+                        console.error('Error destroying Glide:', err);
+                    }
+                }
+            }
+
+            function handleResize() {
+                const viewportWidth = window.innerWidth;
+                if (viewportWidth > 1024) {
+                    destroyGlide();
+                } else {
+                    initGlide();
+                }
+            }
+
+            // Inicializa solo si el viewport es menor o igual a 800
+            if (window.innerWidth <= 1024) initGlide();
+
+            // Escucha cambios de tamaño con debounce
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(handleResize, 250);
+            });
+
+            handleResize();
+            updatePoints();
+        })();
     }
 
     function loadChooseYourAccountSize(fn) {
@@ -238,9 +433,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.couponsCache = {};
     loadChooseYourAccountSize(async (params) => {
+        const priceTable = document.querySelector('.price-table');
+        const height = document.querySelector('.price-table .glide__slide--active .price-table__plan--most-popular') || document.querySelector('.price-table .glide__slide--active .price-table__plan--regular-plan') ? 0 : 24;
+        priceTable.style.setProperty('--current-slider-height', height + 'px');
+
         const {defaultPlatform, defaultMarketType} = params;
+        const dropdownAccountTypeComponent = document.querySelector('.mt-select-ac-type');
+
+        dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
+
+        const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
         const productSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
         const productPlatformDetail = productSelected[params.accountType];
+
+        dropdownAccountTypeOption.querySelector('label').classList.add('selected');
+        const accountTypeIcon = dropdownAccountTypeOption.querySelector('img');
+        const accountTypeText = dropdownAccountTypeOption.querySelector('.mt-dropdown__item-label');
+        const accountTypeBadge = dropdownAccountTypeOption.querySelector('.mt-card__badge');
+
+        dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-icon').src = accountTypeIcon.src;
+        dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-label').innerText = accountTypeText.innerText;
+
+        dropdownAccountTypeComponent
+            .querySelector('.mt-dropdown__btn-inner')
+            .nextElementSibling
+            ?.remove();
+
+        if (accountTypeBadge) {
+            const badge = accountTypeBadge.cloneNode(true);
+
+            dropdownAccountTypeComponent
+                .querySelector('.mt-select-ac-type__selection')
+                .appendChild(badge);
+        }
 
         const defaultMetaInfo = {}
         for (const priceSize in productPlatformDetail) {
@@ -283,18 +508,25 @@ document.addEventListener('DOMContentLoaded', function () {
             products.push({productId, priceSize, priceObject});
 
             const isMostPopular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
+            const priceCard = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
 
             if (isMostPopular) {
-                const mostPopularElement = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
-                if (mostPopularElement) {
-                    mostPopularElement.classList.add('price-table__plan--most-popular');
-                    mostPopularElement.classList.remove('price-table__plan--regular-plan');
+                priceCard.classList.add('price-table__plan--most-popular');
+                priceCard.classList.remove('price-table__plan--regular-plan');
 
-                    const btnGetPlan = mostPopularElement.querySelector('.mega-btn-md');
-                    if (btnGetPlan) {
-                        btnGetPlan.classList.add('mega-btn-primary-md');
-                        btnGetPlan.classList.remove('mega-btn-default-md');
-                    }
+                const btnGetPlan = priceCard.querySelector('.mega-btn-md');
+                if (btnGetPlan) {
+                    btnGetPlan.classList.add('mega-btn-primary-md', 'mega-btn-primary--icon-md');
+                    btnGetPlan.classList.remove('mega-btn-default-md');
+                }
+            } else {
+                priceCard.classList.remove('price-table__plan--most-popular');
+                priceCard.classList.add('price-table__plan--regular-plan');
+
+                const btnGetPlan = priceCard.querySelector('.mega-btn-md');
+                if (btnGetPlan) {
+                    btnGetPlan.classList.remove('mega-btn-primary-md', 'mega-btn-primary--icon-md');
+                    btnGetPlan.classList.add('mega-btn-default-md');
                 }
             }
 
@@ -334,7 +566,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const url = buildProductUrl(productId);
-            console.info('url', url);
             const link = document.querySelector(`.price-table__footer[data-price="${priceSize}"] a`);
             link.href = url;
         }
@@ -342,8 +573,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const productIds = products.map(product => Number(product.productId)).join(',')
 
         const {data: coupons} = await fetchCouponInBatch(productIds);
-
-        console.info('dataCoupons', coupons);
 
         products.forEach(({productId, priceSize, priceObject}) => {
             const coupon = coupons[productId];
@@ -378,5 +607,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 element.classList.add('price-information--min-h-112', 'align-items-center');
             })
         }
+
+        updatePoints();
     })
 });

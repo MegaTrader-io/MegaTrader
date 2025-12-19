@@ -207,6 +207,14 @@
    * Notifications
 */
 
+/* Cuando el cupón viene por URL: oculta el banner grande de Woo.
+   OJO: el DOM sigue existiendo, así tu JS lo lee y lo convierte a inline. */
+body.mt-coupon-from-url .woocommerce .woocommerce-message,
+body.mt-coupon-from-url .woocommerce .woocommerce-error {
+  display: none !important;
+}
+
+
 .coupon-form .form-control.invalid_coupon {
   border: 1px solid var(--error-color) !important;
 }
@@ -273,6 +281,7 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
   padding-bottom: 0.5rem;
   background-color: var(--smoke-color2);
   display: none;
+  padding: 16px;
 }
 
 .notifications.show {
@@ -3239,6 +3248,11 @@ ul.product-section__list {
 .mt-payment-cards .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
   display: flex;
   flex-direction: row;
+}
+
+.mt-payment-cards.mt-payment-cards-v2 .woocommerce-SavedPaymentMethods.wc-saved-payment-methods.default-only {
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 767.98px) {

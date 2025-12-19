@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // handler clicks for landing page
-        document.querySelectorAll('.mt-navbar__nav-link,.dropdown-menu__link')
+        document.querySelectorAll('.mt-navbar__nav-link,.dropdown-menu__link,.btn-get-funded-now')
             .forEach(btn => {
                 btn.addEventListener('click', (ev) => {
                     ev.preventDefault();

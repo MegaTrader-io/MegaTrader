@@ -168,11 +168,30 @@ class Label
     ];
 
     public const CHECKOUT_META = [
+        "create_account_title" => "OR, CEATE A NEW ACCOUNT",
+        "create_account_subtitle" => "Set up a new account in just a few steps to start trading instantly.",
         "plan_option_title" => "Customize Your Plan (Optional)",
+        "billing_step_1" => "1. Customer information",
+        "billing_step_2" => "2. Billing Details",
+        "billing_step_3"  => "3. create credentials",
+        "addons_title" => "Available add-ons",
+        "addons_discalimer" => "* Discounts do not apply to addons.",
         "billing_title" => "Billing Details",
         "edit_billing" => "Edit Billing",
         "payment_title" => "Payment Method",
         "payment_disclaimer" => "All payments are secured and encrypted.",
+        "btn_manage_subcription" => "Manage Subscriptions",
+        "login_modal_title" => "SIGN IN",
+        "login_modal_btn" => "SEND",
+        "login_modal_description" => "Enter your email address to receive a secure verification code.",
+        "login_modal_success_text" => "A new code has been sent to your email.",
+        "login_modal_error_text" => "This is an error message",
+        "otp_modal_title" => "Verify OTP",
+        "otp_modal_success_text" => "A new code has been sent.",
+        "otp_modal_resend_text" => "Resend OTP",
+        "otp_modal_verify_btn" => "Verify",
+        "otp_modal_back_btn" => "Back to Login",
+
     ];
 
     public const SIDEBAR_META = [

@@ -1,3 +1,4 @@
+// coupon-message-handler.js
 jQuery(document).ready(function ($) {
   const COUPON_TTL = 30000; // 30s
 
@@ -112,10 +113,15 @@ jQuery(document).ready(function ($) {
     const t = (text || "").toLowerCase();
     return t.includes("coupon") || t.includes("discount");
   }
+
+  function isGenericRemoved(text) {
+    const t = String(text || "").trim().toLowerCase();
+    return t === "coupon has been removed." || t === "coupon has been removed";
+  }
+
   function isErrorMessage(text) {
     const t = (text || "").toLowerCase();
     return (
-      // t.includes("removed") ||
       t.includes("does not exist") ||
       t.includes("is not valid") ||
       t.includes("has expired") ||
@@ -137,18 +143,25 @@ jQuery(document).ready(function ($) {
           if (
             node.nodeType === 1 &&
             (node.classList.contains("woocommerce-message") ||
-             node.classList.contains("woocommerce-error"))
+              node.classList.contains("woocommerce-error"))
           ) {
             const raw = $(node).text().trim();
             const low = raw.toLowerCase();
 
-            if (isCouponRelated(low)) {
-              // Si venimos de "remove", forzamos estilo error y reemplazamos al instante
-              const isErr = currentAction === "remove" ? true : isErrorMessage(low);
-              showCouponMessage(raw, isErr ? "error" : "success");
+            if (!isCouponRelated(low)) return;
+
+            // ✅ REMOVE: deja solo TU mensaje (verde) y mata el de Woo
+            if (currentAction === "remove") {
               $(node).hide();
               currentAction = null;
+              return;
             }
+
+            // APPLY / otros: usa notice real de Woo
+            const isErr = isErrorMessage(low);
+            showCouponMessage(raw, isErr ? "error" : "success");
+            $(node).hide();
+            currentAction = null;
           }
         });
       });
@@ -159,28 +172,7 @@ jQuery(document).ready(function ($) {
   // ---------- Click: aplicar cupón ----------
   $(document).on("click", '[name="apply_coupon"]', function () {
     currentAction = "apply";
-    // Reemplazo inmediato del mensaje anterior
     hideMessageNow();
-
-    // Poll corto por si el notice se retrasa
-    let attempts = 0;
-    const maxAttempts = 30;
-    const iv = setInterval(() => {
-      const $msg = $(".woocommerce-message, .woocommerce-error").first();
-      const raw = $msg.text().trim();
-      const low = raw.toLowerCase();
-
-      if ($msg.length && isCouponRelated(low)) {
-        clearInterval(iv);
-        const isErr = isErrorMessage(low);
-        showCouponMessage(raw, isErr ? "error" : "success");
-        $msg.hide();
-        currentAction = null;
-      }
-
-      attempts++;
-      if (attempts >= maxAttempts) clearInterval(iv);
-    }, 100);
   });
 
   // ---------- Click: remover cupón ----------
@@ -188,29 +180,12 @@ jQuery(document).ready(function ($) {
     currentAction = "remove";
     const code = $(this).data("coupon") || $(this).attr("data-coupon") || "";
 
-    // Reemplaza de inmediato cualquier mensaje previo y muestra fallback de removido (error)
+    // ✅ Solo tu mensaje (verde) y NO marca input
     const fallback = code ? `Coupon "${code}" has been removed.` : `Coupon has been removed.`;
     showCouponMessage(fallback, "success");
 
-    // Poll para capturar el notice real si Woo lo pinta
-    let attempts = 0;
-    const maxAttempts = 30;
-    const iv = setInterval(() => {
-      const $msg = $(".woocommerce-message, .woocommerce-error").first();
-      const raw = $msg.text().trim();
-      const low = raw.toLowerCase();
-
-      if ($msg.length && isCouponRelated(low)) {
-        clearInterval(iv);
-        // Forzamos error cuando es remove, y reemplazamos el fallback por el texto real
-        showCouponMessage(raw, "success");
-        $msg.hide();
-        currentAction = null;
-      }
-
-      attempts++;
-      if (attempts >= maxAttempts) clearInterval(iv);
-    }, 100);
+    // intenta ocultar cualquier notice visible inmediato
+    $(".woocommerce-message, .woocommerce-error").hide();
   });
 
   // ---------- Rehidratación tras refresh del checkout ----------
@@ -222,13 +197,8 @@ jQuery(document).ready(function ($) {
     "removed_coupon_in_checkout"
   ];
   REHYDRATE.forEach(evt => {
-    $(document.body).on(evt, function (_e, maybeCode) {
-      // Si Woo anuncia removed y tenemos código, refuerza el mensaje como error
-      if (evt === "removed_coupon_in_checkout" && maybeCode) {
-        showCouponMessage(`Coupon "${maybeCode}" has been removed.`, "success");
-      } else {
-        renderWithRemaining();
-      }
+    $(document.body).on(evt, function () {
+      renderWithRemaining();
     });
   });
 });

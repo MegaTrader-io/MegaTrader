@@ -3482,7 +3482,7 @@ a.text-theme:hover,
     --dropdown-menu-pointer-height: 10px;
 }
 
-.dropdown-menu:before {
+.dropdown-menu:not(.dropdown-menu--without-arrow):before {
     content: "";
     position: absolute;
     top: calc(-1*var(--dropdown-menu-pointer-height));
@@ -5615,6 +5615,10 @@ a.text-theme:hover,
     display: none;
 }
 
+.billing-details .form-group.create-account-label label {
+    display: block;
+}
+
 .billing-details .iti.iti--allow-dropdown {
     width: 100%;
 }
@@ -5927,7 +5931,7 @@ a.text-theme:hover,
     font-size: 16px;
     font-weight: 500;
     padding: 16px;
-    /*border: 1px solid var(--ot-border-color);*/
+    border: 1px solid var(--ot-border-color);
     border-radius: 8px;
     margin-bottom: 16px;
     color: var(--title-color);
@@ -6072,13 +6076,6 @@ a.text-theme:hover,
     min-width: 0;
 }
 
-.p-32 {
-    padding: 32px;
-}
-
-.p-12 {
-    padding: 12px;
-}
 
 .checkout-addons .main-title {
     font-size: 20px;
@@ -6088,11 +6085,11 @@ a.text-theme:hover,
 }
 
 .p-32 {
-    padding: 32px;
+    padding: 32px !important;
 }
 
 .p-12 {
-    padding: 12px;
+    padding: 12px !important;
 }
 
 .pt-32 {
