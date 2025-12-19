@@ -398,7 +398,12 @@ function render_platforms($platforms) {
             return;
         }
 
-        const checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', selectedProductId);
+        let checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', selectedProductId);
+
+        const couponElement = document.querySelector('.pricing-table-panel__pricing_card .mt-pricing-card__code');
+        if (couponElement) {
+            checkoutUrl = checkoutUrl + '&coupon=' + couponElement.innerText;
+        }
 
         if (!isUserLoggedIn) {
             checkoutBtn.href = GO_TO_URL + encodeURIComponent(checkoutUrl);
