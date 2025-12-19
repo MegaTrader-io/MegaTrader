@@ -25,8 +25,8 @@
         </div>
 
         <div class="tw-flex tw-justify-center tw-mt-6">
-            <a href="<?= home_url('/auth/register') ?>"
-               class="tw-h-[59px] tw-px-6 tw-bg-[#ffb34a] tw-rounded-xl tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
+            <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
+               class="btn-get-funded-now tw-h-[59px] tw-px-6 tw-bg-[#ffb34a] tw-rounded-xl tw-inline-flex tw-justify-center tw-items-center tw-gap-2">
                 <div class="tw-w-11 tw-h-[43px] tw-relative">
                     <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
                          width="44" height="43">
@@ -58,8 +58,8 @@
             </div>
 
             <div class="tw-space-y-4 md:tw-space-y-0 md:tw-flex md:tw-justify-center md:tw-gap-4">
-                <a href="<?= home_url('/auth/register') ?>"
-                   class="btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
+                <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
+                   class="btn-get-funded-now btn-yellow-link tw-rounded-xl tw-h-12 tw-px-4 tw-py-3">
                     Start trading
                 </a>
                 <a href="https://discord.com/invite/megatrader" target="_blank"
