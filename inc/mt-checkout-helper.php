@@ -297,16 +297,23 @@ if (!function_exists('mtch_is_checkout_request')) {
     }
 }
 
-// 1) Captura cupón temprano (add-to-cart puede redirigir y perder querystring)
-add_action('template_redirect', function () {
+// 1) Captura cupón MUY temprano: antes del redirect de Woo por ?add-to-cart=...
+//    (Woo suele redirigir en wp_loaded, así que lo guardamos aquí con prioridad 1)
+add_action('wp_loaded', function () {
     if (!function_exists('WC') || !WC()->session) return;
 
     $coupon = isset($_GET['coupon']) ? wc_format_coupon_code(wp_unslash($_GET['coupon'])) : '';
-    if ($coupon !== '') {
-        WC()->session->set('mt_pending_coupon', $coupon);
-        WC()->session->set('mt_coupon_from_url', '1'); // para CSS
+    if ($coupon === '') return;
+
+    // Asegura cookie de sesión desde el primer hit
+    if (method_exists(WC()->session, 'set_customer_session_cookie')) {
+        WC()->session->set_customer_session_cookie(true);
     }
+
+    WC()->session->set('mt_pending_coupon', $coupon);
+    WC()->session->set('mt_coupon_from_url', '1'); // para CSS
 }, 1);
+
 
 // 2) Aplica cupón cuando ya hay carrito en checkout
 add_action('wp_loaded', function () {
@@ -353,6 +360,7 @@ add_action('wp_loaded', function () {
     WC()->session->set('mt_pending_coupon', '');
 }, 60);
 
+
 // 3) Body class (para ocultar el banner grande SOLO cuando viene por URL)
 add_filter('body_class', function ($classes) {
     if (!function_exists('WC') || !WC()->session) return $classes;
@@ -362,6 +370,7 @@ add_filter('body_class', function ($classes) {
     }
     return $classes;
 }, 20);
+
 
 // 4) Inyecta notice oculto dentro de .woocommerce (tu JS lo captura y lo muestra inline)
 add_action('wp_footer', function () {
@@ -397,3 +406,4 @@ add_action('wp_footer', function () {
     WC()->session->set('mt_coupon_flash', null);
     WC()->session->set('mt_coupon_from_url', '');
 }, 9999);
+

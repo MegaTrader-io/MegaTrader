@@ -68,42 +68,43 @@ $navbar_actions_template = $args['navbar_actions_template'] ?? '';
                             GET FUNDED
                         </a>
                     <?php endif; ?>
+                    <?php if ($section == 'landing-page-bs' || $section == 'checkout'): ?>
+                        <div class="mt-menu-container dropdown">
 
-                    <div class="mt-menu-container dropdown">
+                            <button class="mt-menu-container__btn-burger mega-btn-md mega-btn-secondary-md dropdown-toggle"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                                <div style="width: 21px; height: 21px;">
+                                    <svg width="16" height="11" viewBox="0 0 16 11" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M0 10.3889V8.65741H15.5833V10.3889H0ZM0 6.06019V4.3287H15.5833V6.06019H0ZM0 1.73148V0H15.5833V1.73148H0Z"
+                                            fill="white" />
+                                    </svg>
+                                </div>
+                            </button>
 
-                        <button class="mt-menu-container__btn-burger mega-btn-md mega-btn-secondary-md dropdown-toggle"
-                            type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                            <div style="width: 21px; height: 21px;">
-                                <svg width="16" height="11" viewBox="0 0 16 11" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M0 10.3889V8.65741H15.5833V10.3889H0ZM0 6.06019V4.3287H15.5833V6.06019H0ZM0 1.73148V0H15.5833V1.73148H0Z"
-                                        fill="white" />
-                                </svg>
-                            </div>
-                        </button>
+                            <ul class="dropdown-menu mt-3">
+                                <?php foreach ($links as $index => $link): ?>
+                                    <li class="dropdown-item">
+                                        <a href="<?= esc_url($link['href']) ?>" <?= !empty($link['wrapper_attributes'])
+                                              ? ' ' . implode(' ', array_map(function ($key, $value) {
+                                                                  return $key . '="' . esc_attr($value) . '"';
+                                                              }, array_keys($link['wrapper_attributes']), $link['wrapper_attributes']))
+                                              : '' ?>
+                                            class="dropdown-menu__link dropdown-item text-center <?= !empty($link['icon_class']) ? 'mt-navbar__nav-link--has-icon' : '' ?>">
 
-                        <ul class="dropdown-menu mt-3">
-                            <?php foreach ($links as $index => $link): ?>
-                                <li class="dropdown-item">
-                                    <a href="<?= esc_url($link['href']) ?>" <?= !empty($link['wrapper_attributes'])
-                                          ? ' ' . implode(' ', array_map(function ($key, $value) {
-                                                          return $key . '="' . esc_attr($value) . '"';
-                                                      }, array_keys($link['wrapper_attributes']), $link['wrapper_attributes']))
-                                          : '' ?>
-                                        class="dropdown-menu__link dropdown-item text-center <?= !empty($link['icon_class']) ? 'mt-navbar__nav-link--has-icon' : '' ?>">
+                                            <?php if (!empty($link['icon_class'])): ?>
+                                                <i class="<?= esc_attr($link['icon_class']); ?>" aria-hidden="true"></i>
+                                            <?php endif; ?>
 
-                                        <?php if (!empty($link['icon_class'])): ?>
-                                            <i class="<?= esc_attr($link['icon_class']); ?>" aria-hidden="true"></i>
-                                        <?php endif; ?>
+                                            <span><?= esc_html($link['value']); ?></span>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
 
-                                        <span><?= esc_html($link['value']); ?></span>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-
-                    </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
