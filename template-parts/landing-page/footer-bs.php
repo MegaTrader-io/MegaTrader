@@ -32,11 +32,13 @@
 
         <div class="footer-bs__bottom">
             <div class="footer-bs__copy">© <?= date('Y') ?> MegaTraderX</div>
-            <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#disclaimerModal">Disclaimer</a>
-            <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
-            <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a>
-            <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#cookiesModal">Cookies
-                Settings</a>
+            <div class="footer-bs__links">
+                <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#disclaimerModal">Disclaimer</a>
+                <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a>
+                <a href="#" class="footer-bs__link" data-bs-toggle="modal" data-bs-target="#cookiesModal">Cookies
+                    Settings</a>
+            </div>
         </div>
     </div>
 </footer>
