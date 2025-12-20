@@ -2527,7 +2527,11 @@ img.testimonials__image {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 8px;
+}
+
+.footer-bs__input-group .invalid-text {
+    color: var(--error-color);
+    font-size: .75rem;
 }
 
 .footer-bs__input {
@@ -2543,6 +2547,24 @@ img.testimonials__image {
     font-weight: 500;
     line-height: 24px;
 }
+
+.footer-bs__column--subscribe .form-control.invalid_email {
+    border: 1px solid var(--error-color) !important;
+}
+
+color:
+
+var
+(
+--error-color,
+
+var
+(
+--Error-500, #f43f5e
+
+)
+)
+;
 
 .footer-bs__button {
     padding: 12px 16px;

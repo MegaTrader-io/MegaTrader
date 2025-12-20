@@ -1,5 +1,5 @@
-<form novalidate class="footer-bs__column footer-bs__column--subscribe">
-    <div class="footer-bs__alert" style="display: none">
+<form id="form-subscription" novalidate class="footer-bs__column footer-bs__column--subscribe">
+    <div class="footer-bs__alert d-none">
         <div role="alert" tabindex="-1" class="woocommerce-message">
             Congratulations, you have successfully subscribed.
         </div>
@@ -8,11 +8,12 @@
     <div class="footer-bs__form">
         <div class="footer-bs__input-group">
             <label for="email" class="w-100 mb-0">
-                <input type="email" id="email" name="email" placeholder="Enter your email" class="form-control">
+                <input type="email" id="email" name="email" autocomplete="off" placeholder="Enter your email" class="form-control">
             </label>
+            <div id="email-error" class="email_text invalid-text d-none"></div>
         </div>
 
-        <button disabled class="btn mega-btn-md mega-btn-primary-md">
+        <button type="submit" disabled class="btn mega-btn-md mega-btn-primary-md">
             SUBSCRIBE
         </button>
     </div>
