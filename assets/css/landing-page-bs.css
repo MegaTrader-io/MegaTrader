@@ -3,7 +3,7 @@
    ========================================================= */
 
 .landing-bs {
-    margin-bottom: 64px;
+    margin-bottom: 48px;
 }
 
 .landing-bs > * + * {
@@ -2369,6 +2369,273 @@ img.testimonials__image {
 .social-section-bs__cta:hover {
     transform: scale(1.02);
 }
+
+/* --- BLOQUE FOOTER --- */
+
+.footer-bs {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 1248px;
+    padding: 32px;
+    background: #131210;
+    overflow: hidden;
+    border-radius: 20px;
+    outline: 1px solid #404040;
+    outline-offset: -1px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    margin-inline: auto;
+    margin-bottom: 27px;
+}
+
+/* ---------- TOP SECTION ---------- */
+.footer-bs__top {
+    align-self: stretch;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+/* ---------- COLUMNAS ---------- */
+.footer-bs__column {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+/* ---------- LOGO ---------- */
+.footer-bs__logo-group {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+}
+
+.footer-bs__logo-box {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    background: #131210;
+    overflow: hidden;
+    border-radius: 16px;
+    outline: 1px solid #404040;
+    outline-offset: -1px;
+}
+
+.footer-bs__logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.footer-bs__logo-text {
+    width: 200px;
+    height: 45px;
+    display: flex;
+    align-content: center;
+}
+
+/* ---------- DESCRIPTION ---------- */
+.footer-bs__description {
+    align-self: stretch;
+    color: #a8a29e;
+    font-size: 14px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    line-height: 20px;
+    margin-bottom: 0;
+}
+
+/* ---------- SOCIAL ICONS ---------- */
+.footer-bs__social {
+    align-self: stretch;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+}
+
+.footer-bs__icon {
+    width: 20px;
+    height: 20px;
+    color: white;
+    border-radius: 4px;
+}
+
+.footer-bs__icon:hover {
+    color: #fdb539;
+}
+
+/* ---------- ALERT ---------- */
+.footer-bs__alert {
+    width: 100%;
+}
+
+.footer-bs__alert .woocommerce-message, .footer-bs__alert .woocommerce-error {
+    margin-bottom: 0;
+}
+
+.footer-bs__consent .checkbox-container__input[type=checkbox]:checked ~ label:before {
+    background-image: url('data:image/svg+xml,<svg width="11" height="8" viewBox="0 0 11 8" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="M3.79862 5.95955C3.56125 6.1967 3.17661 6.19661 2.93935 5.95935L1.23284 4.25284C0.992563 4.01256 0.603211 4.01188 0.362087 4.2513V4.2513C0.119756 4.49193 0.119063 4.88366 0.360543 5.12514L2.79623 7.56083C3.1125 7.87709 3.62527 7.87709 3.94153 7.56083L10.3317 1.17062C10.5718 0.930539 10.5718 0.541287 10.3317 0.301203V0.301203C10.0917 0.0612002 9.70264 0.0611083 9.46252 0.300998L3.79862 5.95955Z" stroke="black" stroke-width="0.8" fill="black"/></svg>');
+    color: var(--white-color);
+    background-color: var(--theme-color);
+    border-color: var(--theme-color);
+    background-repeat: no-repeat;
+    background-position: center;
+    content: '';
+    background-position-x: 2px;
+}
+
+.footer-bs__consent .checkbox-container__input[type=checkbox] ~ label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3.5px;
+    background-color: transparent;
+    border: 2px solid var(--theme-color);
+    height: 18px;
+    width: 18px;
+    line-height: 11px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 16px;
+    border-radius: 4px !important;
+    -webkit-transform: translateY(-2px);
+    transform: translateY(0px);
+    transition: none;
+    display: flex;
+}
+
+/* ---------- FORM ---------- */
+.footer-bs__form {
+    align-self: stretch;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.footer-bs__input-group {
+    flex: 1 1 0;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.footer-bs__input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(30, 30, 30, 0.7);
+    border-radius: 12px;
+    outline: 1px solid #404040;
+    outline-offset: -1px;
+    color: #404040;
+    font-size: 16px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.footer-bs__button {
+    padding: 12px 16px;
+    background: #57534e;
+    border-radius: 12px;
+    outline: 2px solid #57534e;
+    outline-offset: -2px;
+    color: #292524;
+    font-size: 16px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    line-height: 24px;
+    cursor: pointer;
+}
+
+.footer-bs__button:hover {
+    background: #6b665e;
+}
+
+/* ---------- CONSENT ---------- */
+.footer-bs__consent {
+    align-self: stretch;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.footer-bs__consent-icon {
+    width: 24px;
+    height: 24px;
+    background: #ffb34a;
+}
+
+.footer-bs__consent-text {
+    flex: 1 1 0;
+    color: white;
+    font-size: 16px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    line-height: 24px;
+    margin-bottom: 0;
+    user-select: none;
+}
+
+/* ---------- DIVIDER ---------- */
+.footer-bs-divider {
+    margin-block: 32px;
+    display: flex
+}
+
+.footer-bs-divider__line {
+    border-top: 1px #404040 solid;
+    width: 100%
+}
+
+.footer-bs__divider div {
+    margin-block: 32px;
+    display: flex
+}
+
+/* ---------- BOTTOM ---------- */
+.footer-bs__bottom {
+    align-self: stretch;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.footer-bs__copy {
+    flex: 1 1 0;
+    color: #a8a29e;
+    font-size: 14px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+.footer-bs__link {
+    color: #a8a29e;
+    font-size: 14px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    text-decoration: underline;
+    line-height: 20px;
+}
+
+.footer-bs__link:hover {
+    color: white;
+}
+
 
 /* =========================================================
    Responsive adjustments (Media Queries)
