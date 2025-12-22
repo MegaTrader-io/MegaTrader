@@ -40,7 +40,7 @@
                     </li>
                 </ul>
 
-                <a href="#get-funded" class="testimonials-bs__cta btn mega-btn-md mega-btn-primary-md">
+                <a data-menu="pricing" href="<?= home_url('#pricing') ?>" class="btn-get-funded-now testimonials-bs__cta btn mega-btn-md mega-btn-primary-md">
                     GET FUNDED NOW
                 </a>
             </div>

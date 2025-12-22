@@ -42,7 +42,7 @@ $payouts_items = [
                 </ol>
 
                 <div class="d-flex">
-                    <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md payout-bs__btn">
+                    <a data-menu="pricing" href="<?= home_url('#pricing') ?>" class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md payout-bs__btn">
                         Get Funded Now
                     </a>
                 </div>

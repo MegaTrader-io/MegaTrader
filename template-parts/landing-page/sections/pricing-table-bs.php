@@ -471,7 +471,7 @@ HTML;
                     </div>
 
                     <div class="competition__cta">
-                        <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
+                        <a data-menu="pricing" href="<?= home_url('#pricing') ?>" class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
                             Get Funded Now
                         </a>
                     </div>

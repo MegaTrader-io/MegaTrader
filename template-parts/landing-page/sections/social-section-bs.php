@@ -100,7 +100,7 @@
                      class="social-section-bs__feature-item--order-6 social-section-bs__feature-item--last-img">
             </div>
 
-            <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
+            <a data-menu="pricing" href="<?= home_url('#pricing') ?>" class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
                 GET FUNDED NOW
             </a>
         </div>

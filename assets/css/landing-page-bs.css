@@ -2375,7 +2375,7 @@ img.testimonials__image {
 .footer-bs {
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: calc(100% - 32px);
     max-width: 1248px;
     padding: 32px;
     background: #131210;
