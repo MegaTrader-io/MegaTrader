@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const planTypeInputRadio = document.querySelector(`[name="account-type"][value="${values['account-type']}"]`);
 
             if (frequencyPanel) {
-                frequencyPanel.innerText = `${values['account-type'] !== 'funded-plan' ? 'per month' : 'one time fee'}`;
+                frequencyPanel.innerText = `${productionSelected['billingType'] === 'monthly' ? 'per month' : 'one time fee'}`;
             }
 
             if (planTypeInputRadio) {
