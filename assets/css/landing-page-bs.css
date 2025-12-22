@@ -384,6 +384,7 @@
     line-height: 24px;
     word-wrap: break-word;
     margin-bottom: 0;
+    letter-spacing: -0.05em;
 }
 
 /* Media */
@@ -2902,9 +2903,14 @@ a.footer-bs__link:visited {
     }
 
     .payout-bs__content {
+        width: 100%;
         align-items: center;
-        width: 328px;
         margin: auto;
+        padding-inline: 16px;
+    }
+
+    .payout-bs__content .btn-get-funded-now {
+        width: 100%;
     }
 
     .payout-bs__title {
