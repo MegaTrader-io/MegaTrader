@@ -52,7 +52,10 @@ $has_coupon_global = null;
 
 foreach ($mt_account_sizes as $mt_index => $mt_size) {
     $mt_parent_id = $mt_product['id'];
-    $mt_properties = array_values($mt_product[$mt_default_slug][$mt_size][$mt_default_slug][$mt_default_platform])[0];
+    $levelBillingType = array_values($mt_product[$mt_default_slug][$mt_size][$mt_default_slug][$mt_default_platform])[0];
+
+    $billingType = array_key_first($levelBillingType);
+    $mt_properties = $levelBillingType[$billingType];
 
     $mt_id = -1;
     $mt_price = '0.00';
