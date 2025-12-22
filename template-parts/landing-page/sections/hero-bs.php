@@ -14,16 +14,16 @@
 
                 <header class="hero-bs__header">
                     <h1 class="hero-bs__title">
-                        Supercharge your futures trading with UP to $750k
+                        Supercharge your trading with up to $750K in funding
                     </h1>
                 </header>
 
                 <ul class="hero-bs__benefits list-unstyled">
                   <?php
                   $features = [
-                    'Start a challenge or get instant funding',
-                    'Lightning fast payouts in just one hour',
-                    'Journal to track and improve your trades',
+                    'Start a challenge and get instant funding',
+                    'Lightning fast payouts in just a few hours',
+                    'Journal to track and improve your trading',
                   ]
                   ?>
                   <?php foreach ($features as $key => $feature): ?>
