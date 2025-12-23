@@ -399,29 +399,23 @@
 
 .platforms-bs {
     background: #131210;
+    margin-top: 0;
 }
 
 .platforms-bs__list {
     display: flex;
-    justify-content: space-between;
-    padding-bottom: 48px;
-}
-
-.platforms-bs__first-row, .platforms-bs__second-row {
-    display: contents;
+    justify-content: center;
 }
 
 .platforms-bs__item {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-direction: column;
+    padding: 48px;
+    width: 100%;
+    text-align: center;
 }
 
-.platforms-bs__item--available {
-    display: flex;
-    flex-direction: unset;
-    align-items: center;
+.platforms-bs__item img {
+    width: 280px;
+    height: 46px;
 }
 
 /* =========================================================
@@ -2695,9 +2689,13 @@ a.footer-bs__link:visited {
         letter-spacing: -0.05em;
     }
 
-    /* Platforms */
-    .platforms-bs__list {
-        gap: 64px;
+    .platforms-bs__item {
+        padding: 32px;
+    }
+
+    .platforms-bs__item img {
+        width: 168px;
+        height: 28px;
     }
 
     /* Pricing/Comparison */
@@ -3752,48 +3750,6 @@ a.footer-bs__link:visited {
 
     .payout-bs__wrapper_content p {
         /*width: 80dvw;*/
-    }
-
-    /* Platforms Section */
-    .platforms-bs__list {
-        gap: 32px !important;
-        padding-bottom: 0;
-    }
-
-    .platforms-bs__first-row {
-        gap: 32px;
-    }
-
-    .platforms-bs__first-row .platforms-bs__item:last-child {
-        flex: 1;
-    }
-
-    .platforms-bs__second-row {
-        gap: 32px;
-    }
-
-    .platforms-bs__second-row .platforms-bs__item {
-        flex: 1
-    }
-
-    .platforms-bs__first-row .platforms-bs__item:first-child img {
-        width: 161px;
-        height: 26px;
-    }
-
-    .platforms-bs__first-row .platforms-bs__item:last-child img {
-        width: 109px;
-        height: 33px;
-    }
-
-    .platforms-bs__second-row .platforms-bs__item:first-child img {
-        width: 116px;
-        height: 15px;
-    }
-
-    .platforms-bs__second-row .platforms-bs__item:last-child img {
-        width: 104px;
-        height: 23px;
     }
 
     .comparison__cta {
