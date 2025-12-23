@@ -138,7 +138,9 @@ document.addEventListener('DOMContentLoaded', function () {
             autoplay: false,
             hoverpause: false,
             rewind: false,
-            animationDuration: 800
+            animationDuration: 800,
+            swipeThreshold: 80,
+            dragThreshold: 120
         });
 
         verifiedBsCarousel.mount({

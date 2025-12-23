@@ -3,7 +3,7 @@
         <header class="journal-bs__header">
             <div class="badge-duo">
                 <div class="badge-duo__primary">
-                    <div class="badge-duo__text">TRADEIFY EXCLUSIVE</div>
+                    <div class="badge-duo__text">MEGATRADER EXCLUSIVE</div>
                 </div>
                 <div class="badge-duo__secondary">
                     <div class="badge-duo__text">Included in all plans</div>
@@ -11,7 +11,7 @@
             </div>
 
             <h2 class="journal-bs__title">
-                Journal to find your winning strategies
+                Journal to uncover winning strategies
             </h2>
 
             <div class="badge-group journal-bs__badge-group">

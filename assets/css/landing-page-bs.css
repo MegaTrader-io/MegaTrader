@@ -3095,12 +3095,6 @@ a.footer-bs__link:visited {
         flex-direction: column;
     }
 
-    .platforms-bs__first-row, .platforms-bs__second-row {
-        display: flex;
-        justify-content: space-around;
-        gap: 32px;
-    }
-
     /* Pricing/Comparison */
     .mt-select-ac-type {
         display: flex;
