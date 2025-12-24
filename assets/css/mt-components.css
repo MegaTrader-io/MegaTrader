@@ -136,6 +136,10 @@
     .mt-tabs__list a.mt-tabs__item.is-first {
         border: 1px solid rgb(64 64 64 / var(--tw-border-opacity, 1))
     }
+
+    .mt-pricing-table-plan-options__wrapper {
+        display: none;
+    }
 }
 
 @media (min-width: 768px) {
@@ -2937,10 +2941,6 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     .price-table {
         gap: 16px;
         padding-block: 16px;
-    }
-
-    .mt-pricing-table-plan-options__wrapper {
-        display: none;
     }
 
     #pricing.pricing-table-container > .pricing-table-container-options {
