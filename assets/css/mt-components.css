@@ -2416,10 +2416,6 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     margin-top: 32px;
 }
 
-.price-table:has(.price-table__plan--most-popular) .price-table__plan--regular-plan {
-    margin-top: 32px;
-}
-
 .price-table__plan--regular-plan {
     background: #1E1E1E;
     overflow: hidden;
@@ -3032,6 +3028,10 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
         justify-content: space-between;
         align-items: center;
         border: none;
+    }
+
+    .price-table__most-popular-badge-wrapper {
+        padding: 5px;
     }
 
     .price-table__title {
