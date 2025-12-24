@@ -67,13 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updatePoints() {
         let priceTable = document.querySelector('.price-table');
-        let hasPopularPlan = !!priceTable.querySelector('ul.slider__slides li > .price-table__plan--most-popular');
-        let cardActive = priceTable.querySelector('ul.slider__slides li.glide__slide--active') || priceTable.querySelector('ul.slider__slides li:first-child');
         let bottomPoints = 0;
-
-        if (!cardActive.querySelector('.price-table__plan--most-popular')) {
-            bottomPoints = hasPopularPlan ? 24 : 0;
-        }
 
         priceTable.style.setProperty('--current-slider-height', bottomPoints + 'px');
     }
