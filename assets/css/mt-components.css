@@ -2228,7 +2228,6 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     justify-content: flex-start;
     gap: 0.5rem;
     padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
 }
 
 .price-table-attributes .mega-info-row:first-child {
@@ -2934,10 +2933,6 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 
 /* Large devices (max-width: 1024px) - Verified Glide Arrows */
 @media (max-width: 1024px) {
-    .mega-info-row {
-        padding-bottom: 0;
-    }
-
     .price-table {
         gap: 16px;
         padding-block: 16px;
