@@ -2371,7 +2371,7 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
 
 .price-table__glide .glide__bullets {
     position: relative;
-    padding-block: 8px;
+    padding-block: 16px;
 }
 
 .price-table__glide .glide__arrows {
