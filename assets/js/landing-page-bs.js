@@ -469,7 +469,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const defaultMetaInfo = {}
         for (const priceSize in productPlatformDetail) {
-            const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
+            const levelBillingType = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
+            const billingType = Object.keys(levelBillingType).at(0);
+            const attributes = levelBillingType[billingType];
+
             const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
             for (const metaInfoKey in metaInfo) {
                 if (metaInfo[metaInfoKey]) {
@@ -501,7 +504,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const products = [];
         for (const priceSize in productPlatformDetail) {
-            const attributes = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
+            const levelBillingType = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
+            const billingType = Object.keys(levelBillingType).at(0);
+            const attributes = levelBillingType[billingType];
+
             const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
             const productId = attributes.find(item => item['id'])['id'];
 
@@ -542,7 +548,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (frequencyPanel) {
-                frequencyPanel.innerText = ` ${params.accountType !== 'funded-plan' ? 'per month' : 'one time fee'}`;
+                frequencyPanel.innerText = ` ${billingType === 'monthly' ? 'per month' : 'one time fee'}`;
             }
 
             const metaInfoObject = attributes.find(item => item['meta-info']);

@@ -380,15 +380,18 @@ function render_platforms($platforms) {
 
     function updateSelectedProduct(){
         let values = getFormValues(form);
+        const levelBillingType = products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? [];
+        const billingType = Object.keys(levelBillingType).at(0);
+        const attributes = levelBillingType[billingType];
 
-        const selectedProduct = normalizeAttributes(products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? []);
+        const selectedProduct = normalizeAttributes(attributes);
 
         const selectedProductId = selectedProduct.id ?? '';
 
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
         const event = new CustomEvent("product:selected", {
-            detail: { product: Object.values(selectedProduct).length > 0 ? selectedProduct: null, values }
+            detail: { product: Object.values(selectedProduct).length > 0 ? {...selectedProduct, billingType}: null, values }
         });
 
         form.dispatchEvent(event);
