@@ -9,17 +9,20 @@ $mt_account_sizes = [];
 $mt_account_types = [];
 $mt_platforms = [];
 $mt_market_types = [];
-
+$mt_billing_types = [];
 foreach ($mt_attributes as $mt_attr) {
     switch ($mt_attr['taxonomy']) {
+        case 'pa_market-type':
+            $mt_market_types[] = $mt_attr;
+            break;
         case 'pa_account-size':
             $mt_account_sizes[] = $mt_attr['slug'];
             break;
         case 'pa_account-types':
             $mt_account_types[] = $mt_attr;
             break;
-        case 'pa_market-type':
-            $mt_market_types[] = $mt_attr;
+        case 'pa_billing-type':
+            $mt_billing_types[] = $mt_attr;
             break;
         case 'pa_platform':
             $mt_platforms[] = $mt_attr;
@@ -28,24 +31,88 @@ foreach ($mt_attributes as $mt_attr) {
 }
 
 $mt_account_types = array_reverse($mt_account_types);
-
+$mt_default_market_type = $mt_market_types[0];
+$mt_default_platform = $mt_platforms[0];
 $mt_default_account_type = $mt_account_types[0];
+$mt_size = $mt_account_sizes[0];
 $mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'];
 $mt_platform_thumbnail_url = $mt_platforms[0]['thumbnail_url'];
-
-$mt_size = $mt_account_sizes[0];
+$mt_default_account_size = $mt_account_sizes[0];
 $mt_default_slug = $mt_default_account_type['slug'];
-$mt_default_plan_name = $mt_size . ' ' . $mt_default_account_type['name'];
+$mt_default_market_type_slug = $mt_default_market_type;
 
-$mt_filtered_products = array_filter($mt_products_data['products'], function ($mt_product) use ($mt_default_slug) {
-    return $mt_product['slug'] === $mt_default_slug;
+$mt_products = array_filter($mt_products_data['products'], function ($mt_product) use ($mt_default_market_type) {
+    return !str_ends_with($mt_product['slug'], '-fee');
+});
+
+$mt_products = array_values($mt_products);
+
+$mt_filtered_products = array_filter($mt_products, function ($mt_product) use ($mt_default_market_type) {
+    return $mt_product['tree_map']['market-type'] === $mt_default_market_type['slug'];
+});
+
+$mt_filtered_products = array_values($mt_filtered_products);
+
+$tree_map = [];
+foreach ($mt_products as $mt_filtered_product) {
+    $tree_map [] = $mt_filtered_product['tree_map'];
+}
+
+$grouped = [];
+
+foreach ($tree_map as $item) {
+    if (!isset($item['market-type']) || !isset($item['account-types'])) {
+        // Validación: si falta información, se ignora ese registro
+        continue;
+    }
+
+    $marketType = $item['market-type'];
+    $accountType = $item['account-types'];
+
+    if (!isset($grouped[$marketType])) {
+        $grouped[$marketType] = [
+                'market-type' => $marketType,
+                'account-types' => [],
+        ];
+    }
+
+    if (!in_array($accountType, $grouped[$marketType]['account-types'], true)) {
+        $grouped[$marketType]['account-types'][] = $accountType;
+    }
+}
+
+$result = array_values($grouped);
+
+$current_market_type = array_filter($result, function ($mt_product) use ($mt_default_market_type_slug) {
+    return $mt_default_market_type_slug['slug'] === $mt_product['market-type'];
+});
+
+$current_market_type = array_values($current_market_type)[0];
+
+$mt_account_types = array_filter($mt_account_types, function ($mt_account_type) use ($current_market_type) {
+    return in_array($mt_account_type['slug'], $current_market_type['account-types']);
 });
 
 $mt_product = reset($mt_filtered_products) ?: null;
+$account_sizes_allowed = [];
+
+if (!$mt_product[$mt_default_slug][$mt_size]) {
+    $account_type = !$mt_product[$mt_default_slug] ? $mt_product['slug'] : $mt_default_slug;
+
+    foreach ($mt_account_sizes as $account_size) {
+        if ($mt_product[$account_type][$account_size]) {
+            $account_sizes_allowed [] = $account_size;
+        }
+    }
+
+    $mt_size = $account_sizes_allowed[0] !== $mt_size ? $account_sizes_allowed[0] : $mt_size;
+    $mt_default_slug = $account_type;
+    $mt_account_sizes = $account_sizes_allowed;
+}
+
 $mt_product_level = $mt_product[$mt_default_slug][$mt_size][$mt_default_slug];
 $mt_default_platform = array_key_first($mt_product_level);
 $mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
-
 $mt_plan_list = [];
 $mt_default_meta_info = [];
 $has_coupon_global = null;
@@ -118,15 +185,14 @@ HTML;
         </p>
     </header>
 
-    <div class="category-selector-bs">
-        <div class="category-selector-bs__group">
-            <div class="category-selector-bs__item category-selector-bs__item--active">
-                <span class="category-selector-bs__label">Forex</span>
-            </div>
-
-            <div class="category-selector-bs__item">
-                <span class="category-selector-bs__label">Futures</span>
-            </div>
+    <div class="market-type-bs">
+        <div class="market-type-bs__group">
+            <?php foreach ($mt_market_types as $key => $mt_market_type): ?>
+                <div data-slug="<?= $mt_market_type['slug'] ?>"
+                     class="market-type-bs__item <?= $key == 0 ? 'market-type-bs__item--active' : '' ?>">
+                    <span class="market-type-bs__label"><?= $mt_market_type['name'] ?></span>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 

@@ -177,6 +177,8 @@ function get_products_with_attributes() {
                 $structured_data[$product_name_slug] = array();
             }
 
+            $tree_map = [];
+
             // Process variations
             foreach ($variations as $variation) {
                 if (!isset($variation['variation_id'])) {
@@ -213,7 +215,8 @@ function get_products_with_attributes() {
                         
                         // Check if we're at the last attribute
                         $is_last_attribute = $attr_name === end($attribute_names);
-                        
+                        $tree_map[$attr_name] = $attr_value;
+
                         if ($is_last_attribute) {
                             // Parse the price string to extract monthly and sign-up fees
                             $price_parts = explode(' and a ', $price);
@@ -262,6 +265,8 @@ function get_products_with_attributes() {
                 'id' => $product_id,
                 'title' => $product->get_name(),
                 'slug' => $product->get_slug(),
+                'tree_map' => $tree_map,
+                'product_name_slug' => $product_name_slug,
                 // 'attribute_ids' => $product_attribute_ids,
                 $product->get_slug() => isset($structured_data[$product_name_slug]) ? $structured_data[$product_name_slug] : array()
             );
