@@ -2,72 +2,138 @@
 $page_slug = pathinfo(__FILE__, PATHINFO_FILENAME);
 $remember_previous_selection = true;
 
+/**
+ * 1. Cargar data base de WooCommerce
+ */
 $mt_products_data = get_products_with_attributes();
 $mt_attributes = $mt_products_data['attributes'] ?? [];
+$mt_products_raw = $mt_products_data['products'] ?? [];
 
+/**
+ * 2. Clasificar atributos por taxonomía
+ */
 $mt_account_sizes = [];
 $mt_account_types = [];
 $mt_platforms = [];
 $mt_market_types = [];
 $mt_billing_types = [];
-foreach ($mt_attributes as $mt_attr) {
-    switch ($mt_attr['taxonomy']) {
+
+foreach ($mt_attributes as $attr) {
+    switch ($attr['taxonomy']) {
         case 'pa_market-type':
-            $mt_market_types[] = $mt_attr;
+            $mt_market_types[] = $attr;
             break;
         case 'pa_account-size':
-            $mt_account_sizes[] = $mt_attr['slug'];
+            $mt_account_sizes[] = $attr['slug'];
             break;
         case 'pa_account-types':
-            $mt_account_types[] = $mt_attr;
+            $mt_account_types[] = $attr;
             break;
         case 'pa_billing-type':
-            $mt_billing_types[] = $mt_attr;
+            $mt_billing_types[] = $attr;
             break;
         case 'pa_platform':
-            $mt_platforms[] = $mt_attr;
+            $mt_platforms[] = $attr;
             break;
     }
 }
 
-$mt_account_types = array_reverse($mt_account_types);
-$mt_default_market_type = $mt_market_types[0];
-$mt_default_platform = $mt_platforms[0];
-$mt_default_account_type = $mt_account_types[0];
-$mt_size = $mt_account_sizes[0];
-$mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'];
-$mt_platform_thumbnail_url = $mt_platforms[0]['thumbnail_url'];
-$mt_default_account_size = $mt_account_sizes[0];
-$mt_default_slug = $mt_default_account_type['slug'];
-$mt_default_market_type_slug = $mt_default_market_type;
+/**
+ * 3. Definir valores iniciales
+ */
+$mt_default_market_type = $mt_market_types[0] ?? null;
+$mt_default_platform = $mt_platforms[0] ?? null;
+$mt_platform_thumbnail_url = $mt_default_platform['thumbnail_url'] ?? '';
+$mt_default_market_type_slug = $mt_default_market_type ?? [];
+$market_types_allowed = [];
 
-$mt_products = array_filter($mt_products_data['products'], function ($mt_product) use ($mt_default_market_type) {
-    return !str_ends_with($mt_product['slug'], '-fee');
-});
-
-$mt_products = array_values($mt_products);
-
-$mt_filtered_products = array_filter($mt_products, function ($mt_product) use ($mt_default_market_type) {
-    return $mt_product['tree_map']['market-type'] === $mt_default_market_type['slug'];
-});
-
-$mt_filtered_products = array_values($mt_filtered_products);
-
-$tree_map = [];
-foreach ($mt_products as $mt_filtered_product) {
-    $tree_map [] = $mt_filtered_product['tree_map'];
-}
-
-$grouped = [];
-
-foreach ($tree_map as $item) {
-    if (!isset($item['market-type']) || !isset($item['account-types'])) {
-        // Validación: si falta información, se ignora ese registro
-        continue;
+/**
+ * 4. Filtrar productos válidos (excluye -fee)
+ */
+$mt_products = array_values(array_filter($mt_products_raw, function ($product) use (&$market_types_allowed) {
+    $slug = $product['slug'] ?? '';
+    if (str_ends_with($slug, '-fee')) {
+        return false;
     }
 
-    $marketType = $item['market-type'];
-    $accountType = $item['account-types'];
+    $marketType = $product['tree_map']['market-type'] ?? null;
+    if ($marketType && !in_array($marketType, $market_types_allowed, true)) {
+        $market_types_allowed[] = $marketType;
+    }
+
+    return true;
+}));
+
+/**
+ * 5. Filtrar market types según los productos existentes
+ */
+$mt_market_types = array_values(array_filter(
+        $mt_market_types,
+        fn($type) => in_array($type['slug'], $market_types_allowed, true)
+));
+
+/**
+ * 6. Filtrar productos por market-type por defecto
+ */
+$account_sizes_allowed = [];
+$account_types_allowed = [];
+
+$mt_filtered_products = array_values(array_filter($mt_products, function ($product) use (
+        $mt_default_market_type, $mt_account_types, $mt_account_sizes,
+        &$account_sizes_allowed, &$account_types_allowed
+) {
+    $marketType = $product['tree_map']['market-type'] ?? null;
+    if ($marketType !== $mt_default_market_type['slug']) {
+        return false;
+    }
+
+    $slug = $product['slug'];
+    $variants = $product[$slug] ?? [];
+
+    foreach ($mt_account_sizes as $size) {
+        if (!isset($variants[$size])) {
+            continue;
+        }
+
+        if (!in_array($size, $account_sizes_allowed, true)) {
+            $account_sizes_allowed[] = $size;
+        }
+
+        foreach ($mt_account_types as $type) {
+            $type_slug = $type['slug'];
+            if (isset($variants[$size][$type_slug]) && !in_array($type_slug, $account_types_allowed, true)) {
+                $account_types_allowed[] = $type_slug;
+            }
+        }
+    }
+
+    return true;
+}));
+
+/**
+ * 7. Definir account types y sizes finales
+ */
+$mt_account_types = array_values(array_filter(
+        $mt_account_types,
+        fn($type) => in_array($type['slug'], $account_types_allowed, true)
+));
+
+$mt_default_account_type = $mt_account_types[0] ?? [];
+$mt_default_slug = $mt_default_account_type['slug'] ?? '';
+$mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'] ?? '';
+$mt_account_sizes = $account_sizes_allowed;
+$mt_size = $mt_account_sizes[0] ?? '';
+
+/**
+ * 8. Agrupar market-type → account-types (para los tabs)
+ */
+$grouped = [];
+foreach ($mt_products as $product) {
+    $map = $product['tree_map'] ?? [];
+    $marketType = $map['market-type'] ?? null;
+    $accountType = $map['account-types'] ?? null;
+
+    if (!$marketType || !$accountType) continue;
 
     if (!isset($grouped[$marketType])) {
         $grouped[$marketType] = [
@@ -82,85 +148,78 @@ foreach ($tree_map as $item) {
 }
 
 $result = array_values($grouped);
+$current_market_type = array_values(array_filter(
+        $result,
+        fn($item) => $item['market-type'] === $mt_default_market_type_slug['slug']
+))[0] ?? [];
 
-$current_market_type = array_filter($result, function ($mt_product) use ($mt_default_market_type_slug) {
-    return $mt_default_market_type_slug['slug'] === $mt_product['market-type'];
-});
+$mt_account_types = array_values(array_filter(
+        $mt_account_types,
+        fn($type) => in_array($type['slug'], $current_market_type['account-types'] ?? [], true)
+));
 
-$current_market_type = array_values($current_market_type)[0];
-
-$mt_account_types = array_filter($mt_account_types, function ($mt_account_type) use ($current_market_type) {
-    return in_array($mt_account_type['slug'], $current_market_type['account-types']);
-});
-
+/**
+ * 9. Construcción de lista de planes
+ */
 $mt_product = reset($mt_filtered_products) ?: null;
-$account_sizes_allowed = [];
-
-if (!$mt_product[$mt_default_slug][$mt_size]) {
-    $account_type = !$mt_product[$mt_default_slug] ? $mt_product['slug'] : $mt_default_slug;
-
-    foreach ($mt_account_sizes as $account_size) {
-        if ($mt_product[$account_type][$account_size]) {
-            $account_sizes_allowed [] = $account_size;
-        }
-    }
-
-    $mt_size = $account_sizes_allowed[0] !== $mt_size ? $account_sizes_allowed[0] : $mt_size;
-    $mt_default_slug = $account_type;
-    $mt_account_sizes = $account_sizes_allowed;
-}
-
-$mt_product_level = $mt_product[$mt_default_slug][$mt_size][$mt_default_slug];
-$mt_default_platform = array_key_first($mt_product_level);
-$mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
 $mt_plan_list = [];
 $mt_default_meta_info = [];
 $has_coupon_global = null;
 
-foreach ($mt_account_sizes as $mt_index => $mt_size) {
-    $mt_parent_id = $mt_product['id'];
-    $levelBillingType = array_values($mt_product[$mt_default_slug][$mt_size][$mt_default_slug][$mt_default_platform])[0];
+if ($mt_product && isset($mt_product[$mt_product['slug']][$mt_size][$mt_default_slug])) {
+    $mt_product_level = $mt_product[$mt_product['slug']][$mt_size][$mt_default_slug];
+    $mt_default_platform = array_key_first($mt_product_level);
+    $mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
 
-    $billingType = array_key_first($levelBillingType);
-    $mt_properties = $levelBillingType[$billingType];
+    foreach ($mt_account_sizes as $size) {
+        $parent_id = $mt_product['id'];
+        $variants = $mt_product[$mt_product['slug']][$size][$mt_default_slug][$mt_default_platform] ?? [];
 
-    $mt_id = -1;
-    $mt_price = '0.00';
-    $mt_meta_info_list = [];
+        if (empty($variants)) continue;
 
-    foreach ($mt_properties as $mt_property) {
-        foreach ($mt_property as $mt_key => $mt_value) {
-            switch ($mt_key) {
-                case 'id':
-                    $mt_id = $mt_value;
-                    break;
-                case 'price-monthly':
-                    $mt_price = intval(str_replace('$', '', $mt_value));
-                    break;
-                case 'meta-info':
-                    $mt_meta_info_list = $mt_value;
-                    break;
+        $levelBillingType = array_values($variants)[0];
+        $billingType = array_key_first($levelBillingType);
+        $properties = $levelBillingType[$billingType] ?? [];
+
+        $variation_id = -1;
+        $price = '0.00';
+        $meta_info = [];
+
+        foreach ($properties as $property) {
+            foreach ($property as $key => $value) {
+                match ($key) {
+                    'id' => $variation_id = $value,
+                    'price-monthly' => $price = (int)str_replace('$', '', $value),
+                    'meta-info' => $meta_info = $value,
+                    default => null
+                };
             }
         }
-    }
 
-    foreach (Label::PRODUCT_META as $mt_key => $mt_label) {
-        if (isset($mt_meta_info_list[$mt_key]) && $mt_meta_info_list[$mt_key]) {
-            $mt_default_meta_info[$mt_key] = true;
+        foreach (Label::PRODUCT_META as $meta_key => $meta_label) {
+            if (!empty($meta_info[$meta_key])) {
+                $mt_default_meta_info[$meta_key] = true;
+            }
         }
-    }
 
-    $mt_plan_list[] = [
-            'id' => $mt_id,
-            'parent_id' => $mt_parent_id,
-            'price' => $mt_price,
-            'size' => $mt_size,
-            'meta_info_list' => $mt_meta_info_list
-    ];
+        $mt_plan_list[] = [
+                'id' => $variation_id,
+                'parent_id' => $parent_id,
+                'price' => $price,
+                'size' => $size,
+                'meta_info_list' => $meta_info
+        ];
+    }
 }
 
+/**
+ * 10. Productos más populares
+ */
 $mt_best_products = mt_most_popular_products();
 
+/**
+ * 11. Helper de renderizado de meta info
+ */
 function mt_render_template_meta_info($value = '', $label = '', $classes = '')
 {
     return <<<HTML
@@ -234,9 +293,10 @@ HTML;
     </div>
 
     <div class="price-table price-table__glide slider glide"
-         style="--price-table-slide-width: 0px; --price-table-slide-left: 0px;--current-slider-height: 0px">
+         style="--price-table-slide-width: 0px; --price-table-slide-left: 0px;--current-slider-height: 0px;">
         <div class="slider__track glide__track" data-glide-el="track">
-            <ul class="slider__slides glide__slides">
+            <ul class="slider__slides glide__slides"
+                style="grid-template-columns: repeat(<?= count($mt_plan_list) ?>, 1fr);">
                 <?php foreach ($mt_plan_list as $mt_index => $mt_plan) : ?>
                     <?php
                     $mt_id = $mt_plan['id'];
