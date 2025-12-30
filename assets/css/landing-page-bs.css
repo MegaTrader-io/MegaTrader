@@ -2671,13 +2671,19 @@ a.footer-bs__link:visited {
     justify-content: center;
     align-items: center;
     gap: 8px;
+    margin-bottom: 0;
     padding: 12px 16px;
     border-radius: 12px;
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-.market-type-bs__item--active {
+.market-type-bs__group input[type="radio"]:checked + div label.market-type-bs__item {
     background: #FFB34A;
+}
+
+/* Color del texto cuando está activo */
+.market-type-bs__group input[type="radio"]:checked + div label.market-type-bs__item > .market-type-bs__label {
+    color: #020617;
 }
 
 .market-type-bs__label {
@@ -2688,11 +2694,6 @@ a.footer-bs__link:visited {
     line-height: 24px;
     color: #FFB34A;
     word-wrap: break-word;
-}
-
-/* Color del texto cuando está activo */
-.market-type-bs__item--active .market-type-bs__label {
-    color: #020617;
 }
 
 /* =========================================================

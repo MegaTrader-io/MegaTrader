@@ -246,10 +246,21 @@ HTML;
 
     <div class="market-type-bs">
         <div class="market-type-bs__group">
-            <?php foreach ($mt_market_types as $key => $mt_market_type): ?>
-                <div data-slug="<?= $mt_market_type['slug'] ?>"
-                     class="market-type-bs__item <?= $key == 0 ? 'market-type-bs__item--active' : '' ?>">
-                    <span class="market-type-bs__label"><?= $mt_market_type['name'] ?></span>
+            <?php foreach ($mt_market_types as $index => $mt_market_type): ?>
+                <?php
+                $slug = esc_attr($mt_market_type['slug']);
+                $name = esc_html($mt_market_type['name']);
+                $radio_id = esc_attr('market-type-' . $slug);
+                $checked_attr = $index === 0 ? 'checked="true"' : '';
+                ?>
+
+                <input type="radio" name="market-type" value="<?= $slug ?>"
+                       id="<?= $radio_id ?>" <?= $checked_attr ?>/>
+                <div>
+                    <label for="<?= $radio_id ?>" data-slug="<?= $mt_market_type['slug'] ?>"
+                           class="market-type-bs__item">
+                        <span class="market-type-bs__label"><?= $mt_market_type['name'] ?></span>
+                    </label>
                 </div>
             <?php endforeach; ?>
         </div>
