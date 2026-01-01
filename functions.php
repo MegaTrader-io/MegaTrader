@@ -1947,7 +1947,7 @@ add_action( 'template_redirect', function () {
     if ( $changed ) {
         WC()->session->set( 'wc_notices', $notices );
     }
-}, 0 ); 
+}, 0 );
 
 
 add_action('template_redirect', function () {
@@ -1971,7 +1971,7 @@ add_action('template_redirect', function () {
 
   $path = strtolower( trailingslashit( parse_url( $request_uri ?: '/', PHP_URL_PATH ) ?: '/' ) );
 
-  // Allow REST API 
+  // Allow REST API
   if ( strpos($path, '/wp-json/') === 0 ) return;
 
   // ====== White List ======
@@ -1991,7 +1991,10 @@ add_action('template_redirect', function () {
 
   $public_paths = apply_filters('mt_public_paths', $public_paths, $path);
 
-  if ( ! in_array($path, $public_paths, true) ) {
+  // === Soporte para rutas con prefijo "/ref/*/" ===
+  $is_ref_path = preg_match('#^/ref/[^/]+/?$#', $path);
+
+  if ( ! in_array($path, $public_paths, true) && !$is_ref_path) {
     $login_url = home_url('/auth/login/');
     wp_safe_redirect( $login_url, 302 );
     exit;
