@@ -1949,55 +1949,59 @@ add_action( 'template_redirect', function () {
     }
 }, 0 );
 
+
 add_action('template_redirect', function () {
-    if (function_exists('is_order_received_page') && is_order_received_page()) {
-        return;
-    }
 
-    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
-    if (strpos($request_uri, '/checkout/order-received/') !== false) {
-        return;
-    }
+  if ( function_exists('is_order_received_page') && is_order_received_page() ) {
+    return;
+  }
 
-    if (is_user_logged_in()) {
-        nocache_headers();
-        return;
-    }
+  $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+  if ( strpos($request_uri, '/checkout/order-received/') !== false ) {
+    return;
+  }
 
-    if (is_admin() && !wp_doing_ajax()) return;
-    if (wp_doing_ajax() || wp_doing_cron()) return;
+  if ( is_user_logged_in() ) {
+    nocache_headers();
+    return;
+  }
 
-    $path = strtolower(trailingslashit(parse_url($request_uri ?: '/', PHP_URL_PATH) ?: '/'));
+  if ( is_admin() && ! wp_doing_ajax() ) return;
+  if ( wp_doing_ajax() || wp_doing_cron() ) return;
 
-    // Allow REST API
-    if (strpos($path, '/wp-json/') === 0) return;
+  $path = strtolower( trailingslashit( parse_url( $request_uri ?: '/', PHP_URL_PATH ) ?: '/' ) );
 
-    // ====== White List ======
-    $public_paths = [
-            '/',
-            '/privacy-policy/',
-            '/terms-of-service/',
-            '/auth/login/',
-            '/auth/register/',
-            '/auth/lost-password/',
-            '/landing-page-bootstrap/',
-            '/affiliate-area/',
-            '/ref/',
-            '/checkout/',
-            '/subscriptions/',
-    ];
+  // Allow REST API
+  if ( strpos($path, '/wp-json/') === 0 ) return;
 
-    $public_paths = apply_filters('mt_public_paths', $public_paths, $path);
+  // ====== White List ======
+  $public_paths = [
+    '/',                    // Home
+    '/privacy-policy/',     // privacy-policy
+    '/terms-of-service/',   // terms-of-service
+    '/auth/login/',         // login Page
+    '/auth/register/',      // Register Page
+    '/auth/lost-password/', // Lost Password Page
+    '/landing-page-bootstrap/',
+    '/affiliate-area/',
+    '/ref/',
+    '/checkout/',
+    '/subscriptions/',
+  ];
 
-    // === Soporte para rutas con prefijo "/ref/*/" ===
-    $is_ref_path = preg_match('#^/ref/[^/]+/?$#', $path);
+  $public_paths = apply_filters('mt_public_paths', $public_paths, $path);
 
-    if (!in_array($path, $public_paths, true) && !$is_ref_path) {
-        $login_url = home_url('/auth/login/');
-        wp_safe_redirect($login_url, 302);
-        exit;
-    }
+  // === Soporte para rutas con prefijo "/ref/*/" ===
+  $is_ref_path = preg_match('#^/ref/[^/]+/?$#', $path);
+
+  if ( ! in_array($path, $public_paths, true) && !$is_ref_path) {
+    $login_url = home_url('/auth/login/');
+    wp_safe_redirect( $login_url, 302 );
+    exit;
+  }
 }, 0);
+
+
 
 // Render del HTML del modal de éxito
 add_action('wp_ajax_nopriv_mt_render_order_success_modal', 'mt_render_order_success_modal');
