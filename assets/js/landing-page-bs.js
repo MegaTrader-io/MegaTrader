@@ -76,11 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
             const heroGlideInstance = new Glide(heroBsCarouselRoot, {
-                type: 'carousel',
-                focusAt: 'center',
-                gap: 16,
-                perView: 1,
-                autoplay: 3000,
+                type: 'carousel', focusAt: 'center', gap: 16, perView: 1, autoplay: 3000,
             });
 
             heroGlideInstance.mount();
@@ -104,9 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 gap: '16px',
                 perPage: calculatePerPage(),
                 autoScroll: {
-                    speed: 0.2,
-                    pauseOnHover: true,
-                    pauseOnFocus: true,
+                    speed: 0.2, pauseOnHover: true, pauseOnFocus: true,
                 },
             });
 
@@ -191,11 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 Object.defineProperty(Sizes, 'wrapperSize', {
                     get() {
-                        return (
-                            this.slideWidth * this.length +
-                            Components.Gaps.grow +
-                            Components.Clones.grow
-                        );
+                        return (this.slideWidth * this.length + Components.Gaps.grow + Components.Clones.grow);
                     }
                 });
 
@@ -205,19 +195,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         const maxWidth = 990; // el máximo que tú desees
                         const horizontalPadding = 32; // margen lateral en mobile
 
-                        let width =
-                            document.documentElement.clientWidth <= 768
-                                ? document.documentElement.clientWidth - horizontalPadding
-                                : Math.min(document.documentElement.clientWidth * 0.85, maxWidth);
+                        let width = document.documentElement.clientWidth <= 768 ? document.documentElement.clientWidth - horizontalPadding : Math.min(document.documentElement.clientWidth * 0.85, maxWidth);
 
                         // 🔹 Variables CSS opcionales para efectos visuales
                         verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', width + 'px');
 
                         const points = document.querySelector('.verified-bs__glide .slider__bullets');
-                        verifiedBsCarouselRoot.style.setProperty(
-                            '--verified-bs-slide-left',
-                            (points?.getBoundingClientRect().x || 0) + 'px'
-                        );
+                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-left', (points?.getBoundingClientRect().x || 0) + 'px');
 
                         return width;
                     }
@@ -259,11 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 addClassToPriceTable();
                 try {
                     glideInstance = new Glide(priceTable, {
-                        type: 'slider',
-                        gap: 16,
-                        autoplay: false,
-                        rewind: false,
-                        animationDuration: 200
+                        type: 'slider', gap: 16, autoplay: false, rewind: false, animationDuration: 200
                     });
 
                     glideInstance.on(['swipe.start', 'run.after'], () => {
@@ -271,23 +251,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
 
                     glideInstance
-                        .mutate([
-                            function (Glide, Components) {
-                                return {
-                                    modify(translate) {
-                                        const slideWidth = Components.Sizes.slideWidth;
-                                        const gap = Components.Gaps.value;
-                                        const viewportWidth = document.documentElement.clientWidth;
-                                        const offsetToCenter = (viewportWidth - slideWidth) / 2;
-                                        const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
-                                        const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
-                                        const containerGap = viewportWidth <= 1024 ? 0 : 32;
+                        .mutate([function (Glide, Components) {
+                            return {
+                                modify(translate) {
+                                    const slideWidth = Components.Sizes.slideWidth;
+                                    const gap = Components.Gaps.value;
+                                    const viewportWidth = document.documentElement.clientWidth;
+                                    const offsetToCenter = (viewportWidth - slideWidth) / 2;
+                                    const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
+                                    const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
+                                    const containerGap = viewportWidth <= 1024 ? 0 : 32;
 
-                                        return -1 * (adjustedTranslate - containerGap);
-                                    }
-                                };
-                            }
-                        ])
+                                    return -1 * (adjustedTranslate - containerGap);
+                                }
+                            };
+                        }])
                         .mount({
                             Sizes: function CustomSizes(Glide, Components, Events) {
                                 const Sizes = {
@@ -297,11 +275,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                         for (let i = 0; i < slides.length; i++) {
                                             slides[i].style.width = width;
                                         }
-                                    },
-                                    setupWrapper() {
+                                    }, setupWrapper() {
                                         Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
-                                    },
-                                    remove() {
+                                    }, remove() {
                                         const slides = Components.Html.slides;
                                         for (let i = 0; i < slides.length; i++) {
                                             slides[i].style.width = '';
@@ -324,11 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                                 Object.defineProperty(Sizes, 'wrapperSize', {
                                     get() {
-                                        return (
-                                            this.slideWidth * this.length +
-                                            Components.Gaps.grow +
-                                            Components.Clones.grow
-                                        );
+                                        return (this.slideWidth * this.length + Components.Gaps.grow + Components.Clones.grow);
                                     }
                                 });
 
@@ -405,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadChooseYourAccountSize(fn) {
-        function handlerSelection(target) {
+        function handlerSelectByAccountType(target) {
             const input = target.currentTarget || target;
             const accountType = input.value;
 
@@ -416,12 +388,74 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        document.querySelectorAll(`[name="account-type"]`).forEach(btn => {
-            btn.addEventListener('click', handlerSelection);
-        })
+        async function handlerSelectByMarketType(target) {
+            const input = target.currentTarget || target;
+            const marketType = input.value;
+
+            console.info('[MarketType Selected]', marketType);
+
+            try {
+                const endpoint = `/wp-json/custom/v1/pricing-fragment?marketType=${encodeURIComponent(marketType)}`;
+                const response = await fetch(endpoint, {cache: 'no-store'});
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status} al obtener el fragmento`);
+                }
+
+                const data = await response.json();
+                if (!data.success) {
+                    console.error('Backend error:', data.message);
+                    return;
+                }
+
+                const htmlContainer = document.querySelector('.pricing-table-fragment-wrapper');
+                if (!htmlContainer) {
+                    console.warn('No se encontró el contenedor .pricing-table-fragment-wrapper');
+                    return;
+                }
+
+                // 🔄 Inyectar nuevo fragmento
+                htmlContainer.innerHTML = data.html;
+
+                // 🕒 Esperar un tick para asegurar que el DOM esté actualizado
+                await new Promise(resolve => requestAnimationFrame(resolve));
+
+                // ✅ Buscar el primer input[name="account-type"] del nuevo fragmento
+                const firstAccountTypeInput = htmlContainer.querySelector('[name="account-type"]');
+                debugger;
+                if (firstAccountTypeInput) {
+                    console.info('[Auto-select AccountType]', firstAccountTypeInput.value);
+
+                    void fn({
+                        accountType: firstAccountTypeInput.value,
+                        defaultPlatform: firstAccountTypeInput.dataset.defaultPlatform,
+                        defaultMarketType: firstAccountTypeInput.dataset.defaultMarketType,
+                    });
+                } else {
+                    console.warn('No se encontró ningún input[name="account-type"] en el nuevo fragmento.');
+                }
+
+                // 🔁 Reasignar listeners dentro del nuevo HTML renderizado
+                htmlContainer.querySelectorAll('[name="account-type"]').forEach(btn => {
+                    btn.addEventListener('click', handlerSelectByAccountType);
+                });
+
+            } catch (error) {
+                console.error('Error al cargar el fragmento de pricing:', error);
+            }
+        }
+
+        // 📌 Inicializar listeners principales
+        document.querySelectorAll('[name="account-type"]').forEach(btn => {
+            btn.addEventListener('click', handlerSelectByAccountType);
+        });
+
+        document.querySelectorAll('[name="market-type"]').forEach(btn => {
+            btn.addEventListener('click', handlerSelectByMarketType);
+        });
 
         const targetSelection = document.querySelector('[name="account-type"]:checked');
-        handlerSelection(targetSelection)
+        handlerSelectByAccountType(targetSelection)
     }
 
     initializeSwiper();
@@ -668,11 +702,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 lockForm(true);
 
                 const response = await fetch(MG_GLOBAL.adminAjaxApi, {
-                    method: 'POST',
-                    headers: {
+                    method: 'POST', headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
+                    }, body: new URLSearchParams({
                         action: 'subscription_form_submit',
                         nonce: MG_GLOBAL.subscriptionNonce,
                         email: input.value.trim(),

@@ -302,6 +302,7 @@ add_action('wp', function () {
 require_once get_template_directory() . '/inc/mt-navbar.php';
 require_once get_template_directory() . '/inc/landing-page-hooks.php';
 require_once get_template_directory() . '/inc/mt-landing-page-bs.php';
+require_once get_template_directory() . '/inc/mt-pricing-table-fragment.php';
 
 add_action('wp_enqueue_scripts', function () {
     if (
