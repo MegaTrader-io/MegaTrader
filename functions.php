@@ -1973,7 +1973,7 @@ add_action('template_redirect', function () {
 
   // Allow REST API 
   if ( strpos($path, '/wp-json/') === 0 ) return;
-    https://megatrader.io
+
   // ====== White List ======
   $public_paths = [
     '/',                    // Home
