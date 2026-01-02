@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // ✅ Buscar el primer input[name="account-type"] del nuevo fragmento
                 const firstAccountTypeInput = htmlContainer.querySelector('[name="account-type"]');
-                debugger;
+
                 if (firstAccountTypeInput) {
                     console.info('[Auto-select AccountType]', firstAccountTypeInput.value);
 
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function () {
         dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
 
         const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
-        const productSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
+        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType);
         const productPlatformDetail = productSelected[params.accountType];
 
         dropdownAccountTypeOption.querySelector('label').classList.add('selected');

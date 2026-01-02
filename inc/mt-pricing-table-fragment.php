@@ -61,9 +61,6 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
                     case 'pa_account-types':
                         $mt_account_types[] = $attr;
                         break;
-                    case 'pa_billing-type':
-                        $mt_billing_types[] = $attr;
-                        break;
                     case 'pa_platform':
                         $mt_platforms[] = $attr;
                         break;
@@ -142,16 +139,6 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
             $mt_size = $mt_account_sizes[0] ?? '';
 
             /**
-             * 6. Definir valores iniciales
-             */
-            $mt_default_market_type = array_values(array_filter(
-                $mt_market_types,
-                fn($type) => $type['slug'] === $marketTypeSlug
-            ))[0] ?? null;
-
-            $mt_default_platform = $mt_platforms[0] ?? null;
-
-            /**
              * 7. Construcción de lista de planes (idéntico a pricing-table-bs.php)
              */
             if (!function_exists('mt_get_plan_list')) {
@@ -216,12 +203,12 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
                         ];
                     }
 
-                    return [$mt_plan_list, $mt_default_meta_info];
+                    return [$mt_plan_list, $mt_default_meta_info, $mt_default_platform, $mt_default_market_type];
                 }
             }
 
             $mt_product = reset($mt_filtered_products) ?: null;
-            [$mt_plan_list, $mt_default_meta_info] = mt_get_plan_list($mt_product, $mt_account_sizes, $mt_default_slug);
+            [$mt_plan_list, $mt_default_meta_info, $mt_default_platform, $mt_default_market_type] = mt_get_plan_list($mt_product, $mt_account_sizes, $mt_default_slug);
 
             /**
              * 8. Productos más populares
@@ -251,16 +238,12 @@ HTML;
              * 10. Renderizar fragmento
              */
 
-            print_r([
-                'mt_default_platform' => $mt_default_platform,
-                'mt_default_market_type' => $mt_default_market_type,
-            ]);exit;
 
             ob_start();
             get_template_part('template-parts/landing-page/sections/pricing-table-fragment-bs', null, [
                 'mt_account_types' => $mt_account_types,
-                'mt_default_platform' => array_key_first($mt_default_platform),
-                'mt_default_market_type' => $mt_default_market_type['slug'],
+                'mt_default_platform' => $mt_default_platform,
+                'mt_default_market_type' => $mt_default_market_type,
                 'mt_default_slug' => $mt_default_slug,
                 'mt_plan_list' => $mt_plan_list,
                 'mt_default_meta_info' => $mt_default_meta_info,
