@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function () {
         dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
 
         const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
-        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType);
+        const productSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
         const productPlatformDetail = productSelected[params.accountType];
 
         dropdownAccountTypeOption.querySelector('label').classList.add('selected');
@@ -481,7 +481,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const accountTypeText = dropdownAccountTypeOption.querySelector('.mt-dropdown__item-label');
         const accountTypeBadge = dropdownAccountTypeOption.querySelector('.mt-card__badge');
 
-        dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-icon').src = accountTypeIcon.src;
+        if (accountTypeIcon) {
+            dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-icon').src = accountTypeIcon.src;
+        }
         dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-label').innerText = accountTypeText.innerText;
 
         dropdownAccountTypeComponent
