@@ -136,7 +136,7 @@ HTML;
                 ?>
 
                 <?php if (!empty($parsed['data'])): ?>
-                    <div class="mt-pricing-table-benefits" data-account-type-benefits="<?= $slug ?>">
+                    <div class="mt-pricing-table-benefits d-none" data-account-type-benefits="<?= $slug ?>">
                         <?php foreach ($parsed['data'] as $index => $text): ?>
                             <?php if ($index > 0): ?>
                                 <img class="mt-pricing-table-benefits__icon"

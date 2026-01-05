@@ -2006,18 +2006,6 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     flex-shrink: 0;
 }
 
-.pricing-table-container-options:has([name="account-type"][value="funded-plan"]:checked) .mt-pricing-table-benefits[data-account-type-benefits="funded-plan"] {
-    display: flex !important;
-}
-
-.pricing-table-container-options:has([name="account-type"][value="growth-plan"]:checked) .mt-pricing-table-benefits[data-account-type-benefits="growth-plan"] {
-    display: flex !important;
-}
-
-.pricing-table-container-options:has([name="account-type"][value="elite-plan"]:checked) .mt-pricing-table-benefits[data-account-type-benefits="elite-plan"] {
-    display: flex !important;
-}
-
 /* Bloque principal */
 .mt-pricing-table-benefits {
     justify-content: center;
@@ -2025,7 +2013,7 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     gap: 16px;
     padding-left: 16px;
     padding-right: 16px;
-    display: none;
+    display: flex;
 }
 
 /* Texto de beneficio */

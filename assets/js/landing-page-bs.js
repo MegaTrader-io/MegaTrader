@@ -381,6 +381,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = target.currentTarget || target;
             const accountType = input.value;
 
+            document.querySelectorAll('.mt-pricing-table-benefits').forEach(element => {
+                element.classList.add('d-none');
+            });
+
+            document.querySelector(`.mt-pricing-table-benefits[data-account-type-benefits="${accountType}"]`).classList.remove('d-none');
+
             void fn({
                 accountType,
                 defaultPlatform: input.dataset.defaultPlatform,
