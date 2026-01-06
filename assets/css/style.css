@@ -1070,7 +1070,6 @@ textarea.is-invalid {
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
-    text-transform: capitalize;
     color: var(--error-color);
 }
 

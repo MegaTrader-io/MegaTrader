@@ -546,15 +546,14 @@ function mt_create_and_login_customer_before_checkout() {
     if ( $username === '' || $email === '' || $password === '' ) {
         return;
     }
-    if ( email_exists( $email ) || username_exists( $username ) ) {
-        wc_add_notice( '<li data-id="account_username">' .
-        esc_html__( 'An account already exists with this email. Please log in to complete your purchase.', 'megatrader' ) .
-        '</li>',
-      'error'
-);
+   if ( email_exists( $email ) || username_exists( $username ) ) {
+    wc_add_notice(
+        '<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>',
+        'error'
+    );
+    return;
+}
 
-        return;
-    }
     $customer_id = wc_create_new_customer( $email, $username, $password );
 
     if ( is_wp_error( $customer_id ) ) {
@@ -3040,3 +3039,5 @@ if (!function_exists('normalize_email')) {
         return trim(strtolower(sanitize_email($email)));
     }
 }
+
+

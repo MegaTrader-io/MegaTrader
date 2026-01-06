@@ -956,48 +956,58 @@ document.addEventListener("DOMContentLoaded", function () {
   ]);
 
   function migrateGlobalFieldErrors(node) {
-    const errorGroupList = [
-      ...document.getElementsByClassName(Selector.NotificationsErrorGroupClass),
-    ];
+  const errorGroupList = [
+    ...document.getElementsByClassName(Selector.NotificationsErrorGroupClass),
+  ];
 
-    errorGroupList.forEach((errorGroup) => {
-      const inputErrors = Array.from(errorGroup.children).reduce(
-        (messageByField, currentError) => {
-          const fieldName = currentError.getAttribute("data-id");
-          const message = currentError.textContent;
+  errorGroupList.forEach((errorGroup) => {
+    const inputErrors = Array.from(errorGroup.children).reduce(
+      (messageByField, currentError) => {
+        let fieldName = currentError.getAttribute("data-id");
+        let message = currentError.textContent;
 
-          if (fieldName) {
-            messageByField[fieldName] = message;
-            currentError.remove();
-          } else if (errorsBlackList.has(message.trim())) {
-            currentError.remove();
+        // NEW: si el <li> no tiene data-id, buscar dentro (span/a/etc)
+        if (!fieldName) {
+          const tagged = currentError.querySelector("[data-id]");
+          if (tagged) {
+            fieldName = tagged.getAttribute("data-id");
+            message = tagged.textContent;
           }
+        }
 
-          return messageByField;
-        },
-        {}
-      );
+        if (fieldName) {
+          messageByField[fieldName] = (message || "").trim();
+          currentError.remove();
+        } else if (errorsBlackList.has((message || "").trim())) {
+          currentError.remove();
+        }
 
-      if (typeof checkoutForm !== "undefined" && checkoutForm) {
-        const formData = new FormData(checkoutForm);
-        const values = Object.fromEntries(formData.entries());
-        const jsErrors = validateFormFields(values, validationRules);
+        return messageByField;
+      },
+      {}
+    );
 
-        ["account_username", "account_password"].forEach((field) => {
-          if (!inputErrors[field] && jsErrors[field]) {
-            inputErrors[field] = jsErrors[field];
-          }
-        });
-      }
+    if (typeof checkoutForm !== "undefined" && checkoutForm) {
+      const formData = new FormData(checkoutForm);
+      const values = Object.fromEntries(formData.entries());
+      const jsErrors = validateFormFields(values, validationRules);
 
-      showErrors(checkoutForm, inputErrors);
+      ["account_username", "account_password"].forEach((field) => {
+        if (!inputErrors[field] && jsErrors[field]) {
+          inputErrors[field] = jsErrors[field];
+        }
+      });
+    }
 
-      if (!errorGroup.children.length) {
-        errorGroup.remove();
-        stripEmptyNoticeGroups();
-      }
-    });
-  }
+    showErrors(checkoutForm, inputErrors);
+
+    if (!errorGroup.children.length) {
+      errorGroup.remove();
+      stripEmptyNoticeGroups();
+    }
+  });
+}
+
 
   // Elimina grupos de notices vacíos (incluye <div role="alert"></div> sin mensajes)
   function stripEmptyNoticeGroups() {
