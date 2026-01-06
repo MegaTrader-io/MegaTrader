@@ -160,7 +160,7 @@
                     </h2>
                 </header>
 
-                <div class="comparison__grid">
+                <div class="comparison__grid" style="--comparison-margin-top: 33px;">
                     <!-- Left column -->
                     <div class="comparison__col comparison__col--labels">
                         <div class="comparison__spacer"></div>

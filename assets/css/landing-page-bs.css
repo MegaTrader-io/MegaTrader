@@ -1004,6 +1004,10 @@ img.testimonials__image {
     overflow: hidden;
 }
 
+.comparison__col:nth-child(2) > .comparison__content--border, .comparison__col:nth-child(2) > .comparison__content--border .comparison__inner {
+    border-right-width: 0;
+}
+
 .comparison__col--labels {
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
@@ -1074,7 +1078,7 @@ img.testimonials__image {
 }
 
 .comparison__content--border {
-    padding-bottom: 48px;
+    padding-bottom: var(--comparison-margin-top);
     border-right: 2px solid #292524;
 }
 
@@ -1084,7 +1088,7 @@ img.testimonials__image {
 }
 
 .comparison__content--labels {
-    padding-bottom: 48px;
+    padding-bottom: var(--comparison-margin-top);
 }
 
 /* Inner */
@@ -1135,7 +1139,6 @@ img.testimonials__image {
 .comparison__cta {
     align-self: stretch;
     padding: 0 24px;
-    margin-top: 10px;
 }
 
 .comparison__cta a {
@@ -2884,6 +2887,7 @@ a.footer-bs__link:visited {
 
     .comparison__grid {
         padding-bottom: 24px;
+        --comparison-margin-top: 82px !important;
     }
 
     .comparison-stats {
