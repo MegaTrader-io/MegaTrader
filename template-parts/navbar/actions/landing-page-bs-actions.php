@@ -10,6 +10,10 @@
             <a href="/auth/login" class="mt-navbar__auth-link mega-btn-md mega-btn-outline-md text-white w-100">
                 <span class="mt-navbar__auth-link-text">SIGN IN</span>
             </a>
+
+            <a href="/auth/register" class="mega-btn-md mega-btn-default-md">
+                REGISTER
+            </a>
         </div>
     <?php endif ?>
 </div>
