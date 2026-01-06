@@ -232,7 +232,7 @@ HTML;
                                                      xmlns="http://www.w3.org/2000/svg">
                                                     <line x1="0.5" y1="0" x2="0.5" y2="24" stroke="#404040"/>
                                                 </svg>
-                                                <div class="badge-coupon__code tw-uppercase tw-justify-start">
+                                                <div class="badge-coupon__code">
                                                     <?= $mt_has_coupon ? esc_html(strtoupper($mt_coupon['coupon'])) : '' ?>
                                                 </div>
                                             </div>

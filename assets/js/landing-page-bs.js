@@ -17,12 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function buildProductUrl(productId) {
         const CHECKOUT_URL = MG_GLOBAL.CHECKOUT_URL;
-        const GO_TO_URL = MG_GLOBAL.GO_TO_URL;
-        const isUserLoggedIn = Number(MG_GLOBAL.isUserLoggedIn);
-        const checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', productId);
+        let checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', productId);
 
-        if (!isUserLoggedIn) {
-            return GO_TO_URL + encodeURIComponent(checkoutUrl);
+        const couponElement = document.querySelector('.badge-coupon__code');
+        const coupon = couponElement?.innerText?.trim();
+
+        if (coupon) {
+            checkoutUrl = checkoutUrl + '&coupon=' + coupon;
         }
 
         return checkoutUrl;
@@ -525,17 +526,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isValidCoupon = coupon && coupon.valid;
                 priceInformation.querySelector('.price-information__summary').style.display = isValidCoupon ? 'flex' : 'none';
 
+                let couponValue = '';
+
                 if (isValidCoupon) {
                     priceInformation.classList.add('has-coupon');
 
                     couponBeforePrice.querySelector('span').innerText = price;
                     pricePanel.innerText = formatNumber(coupon.final_total);
                     badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
-                    badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon.toUpperCase();
+                    couponValue = coupon.coupon.toUpperCase();
                 } else {
                     priceInformation.classList.remove('has-coupon', 'price-information--min-h-112', 'align-items-center');
                     pricePanel.innerText = price;
                 }
+
+                badgeCoupon.querySelector('.badge-coupon__code').dataset.coupon = couponValue;
+                badgeCoupon.querySelector('.badge-coupon__code').innerText = couponValue;
+
+                const url = buildProductUrl(productId);
+                const link = document.querySelector(`.price-table__footer[data-price="${priceSize}"] a`);
+                link.href = url;
             }
         });
 
