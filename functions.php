@@ -532,7 +532,7 @@ function mt_create_and_login_customer_before_checkout() {
         return;
     }
     $username = isset( $_POST['account_username'] )
-        ? sanitize_user( wp_unslash( $_POST['account_username'] ) )
+        ? sanitize_email( wp_unslash( $_POST['account_username'] ) )
         : '';
 
     $email = isset( $_POST['billing_email'] )
@@ -547,10 +547,12 @@ function mt_create_and_login_customer_before_checkout() {
         return;
     }
     if ( email_exists( $email ) || username_exists( $username ) ) {
-        wc_add_notice(
-            __( 'An account already exists with this email. Please log in to complete your purchase.', 'megatrader' ),
-            'error'
-        );
+        wc_add_notice( '<li data-id="account_username">' .
+        esc_html__( 'An account already exists with this email. Please log in to complete your purchase.', 'megatrader' ) .
+        '</li>',
+      'error'
+);
+
         return;
     }
     $customer_id = wc_create_new_customer( $email, $username, $password );
