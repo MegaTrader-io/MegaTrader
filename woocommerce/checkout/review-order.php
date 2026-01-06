@@ -46,46 +46,45 @@ defined('ABSPATH') || exit;
 
 			foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
 				$_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
+				
 
 				if ($_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters('woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key)) {
 					?>
 					<tr
 						class="<?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
 						<td class="product-name">
-							<?php
-							$platform_label = $_product->get_attribute('pa_platform');
-							$account_size_label = $_product->get_attribute('pa_account-size');
-							$account_size = preg_replace_callback('/\$(\d{1,3}),000(?:\s.*)?/', function ($matches) {
-								return intval($matches[1]) . 'k';
-							}, $account_size_label);
-							if ($account_size) {
-								echo esc_html($platform_label . ' - ' . $account_size);
-							} else {
-								// echo esc_html($_product->get_name());
-					
-								$terms = get_the_terms($_product->get_id(), 'product_cat');
-								$is_activation_fee = false;
-								$is_reset_fee = false;
-								if ($terms && !is_wp_error($terms)) {
-									foreach ($terms as $term) {
-										if ($term->slug === 'activation-fee') {
-											$is_activation_fee = true;
-											break;
-										}
-										if ($term->slug === 'reset-fee') {
-											$is_reset_fee = true;
-											break;
-										}
-									}
-								}
-								if ($is_activation_fee) {
-									echo 'Activation Fee';
-								} else if ($is_reset_fee) {
-									echo 'Reset Fee';
-								}
-							}
-							?>
-						</td>
+  <?php
+  // DEBUG TEMPORAL (visible)
+  echo '<pre style="background:#111;color:#0f0;padding:12px;border-radius:8px;overflow:auto;max-height:400px;font-size:12px;line-height:1.4;">';
+  echo "=== CART ITEM DEBUG ===\n";
+  echo "cart_item_key: " . $cart_item_key . "\n";
+  echo "product_id: " . ($cart_item['product_id'] ?? '') . "\n";
+  echo "variation_id: " . ($cart_item['variation_id'] ?? '') . "\n";
+  echo "quantity: " . ($cart_item['quantity'] ?? '') . "\n";
+
+  if ($_product) {
+      echo "type: " . $_product->get_type() . "\n";
+      echo "get_name(): " . $_product->get_name() . "\n";
+      echo "get_title(): " . $_product->get_title() . "\n";
+      echo "sku: " . $_product->get_sku() . "\n";
+      echo "get_attributes():\n";
+      print_r($_product->get_attributes());
+      echo "\nget_variation_attributes():\n";
+      print_r($_product->get_variation_attributes());
+  }
+
+  echo "\ncart_item raw:\n";
+  print_r($cart_item);
+  echo "\n========================\n";
+  echo '</pre>';
+
+  // TU CÓDIGO ACTUAL SIGUE AQUÍ
+  $platform_label = $_product->get_attribute('pa_platform');
+  $account_size_label = $_product->get_attribute('pa_account-size');
+  ...
+  ?>
+</td>
+
 						<td class="product-total">
 							<?php echo apply_filters('woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal($_product, $cart_item['quantity']), $cart_item, $cart_item_key); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</td>
