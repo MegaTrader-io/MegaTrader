@@ -255,7 +255,7 @@ class Label
         "performance_consistency_progress_text" => "Current Consistency",
         "performance_consistency_progress_text_description" => "(Best Day PnL ÷ Total PnL) x 100 = Consistency %",
         "performance_dll_tooltip_title" => "Daily Loss Limit (DLL)",
-        "performance_dll_tooltip_description" => "If the Daily Loss Limit is reached, trading is paused for the remainder of the trading session. The limit resets on the next trading day.",
+        "performance_dll_tooltip_description" => "When the limit is reached, trading is paused for the session and resets the following day.",
         "performance_dpl_tooltip_title" => "Daily P&L (DPL)",
         "performance_dpl_tooltip_description" => "Realized P&L measured at any time during the trading day (6:00 PM - 4:10 PM EST)",
         "performance_no_data" => "No performance data to render.",
