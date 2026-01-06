@@ -53,38 +53,95 @@ defined('ABSPATH') || exit;
 					<tr
 						class="<?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
 						<td class="product-name">
-  <?php
-  // DEBUG TEMPORAL (visible)
-  echo '<pre style="background:#111;color:#0f0;padding:12px;border-radius:8px;overflow:auto;max-height:400px;font-size:12px;line-height:1.4;">';
-  echo "=== CART ITEM DEBUG ===\n";
-  echo "cart_item_key: " . $cart_item_key . "\n";
-  echo "product_id: " . ($cart_item['product_id'] ?? '') . "\n";
-  echo "variation_id: " . ($cart_item['variation_id'] ?? '') . "\n";
-  echo "quantity: " . ($cart_item['quantity'] ?? '') . "\n";
 
-  if ($_product) {
-      echo "type: " . $_product->get_type() . "\n";
-      echo "get_name(): " . $_product->get_name() . "\n";
-      echo "get_title(): " . $_product->get_title() . "\n";
-      echo "sku: " . $_product->get_sku() . "\n";
-      echo "get_attributes():\n";
-      print_r($_product->get_attributes());
-      echo "\nget_variation_attributes():\n";
-      print_r($_product->get_variation_attributes());
-  }
+						<?php
+$pid = (int) ($cart_item['product_id'] ?? 0);
+$vid = (int) ($cart_item['variation_id'] ?? 0);
 
-  echo "\ncart_item raw:\n";
-  print_r($cart_item);
-  echo "\n========================\n";
+$p_product = $pid ? wc_get_product($pid) : null;      // parent
+$v_product = $vid ? wc_get_product($vid) : null;      // variation
+
+echo '<div style="border:2px dashed #f00;padding:10px;margin:10px 0;background:#fff;">';
+echo '<strong>DEBUG CART ITEM</strong><br>';
+
+echo 'cart_item_key: <code>' . esc_html($cart_item_key) . '</code><br>';
+echo 'product_id: <code>' . esc_html($pid) . '</code><br>';
+echo 'variation_id: <code>' . esc_html($vid) . '</code><br>';
+
+echo '<br><strong>cart_item["variation"]</strong><br><pre style="white-space:pre-wrap">';
+print_r($cart_item['variation'] ?? []);
+echo '</pre>';
+
+echo '<br><strong>PARENT product</strong><br>';
+if ($p_product) {
+  echo 'type: <code>' . esc_html($p_product->get_type()) . '</code><br>';
+  echo 'name: <code>' . esc_html($p_product->get_name()) . '</code><br>';
+  echo 'pa_platform: <code>' . esc_html($p_product->get_attribute('pa_platform')) . '</code><br>';
+  echo 'pa_account-size: <code>' . esc_html($p_product->get_attribute('pa_account-size')) . '</code><br>';
+  echo 'pa_account-types: <code>' . esc_html($p_product->get_attribute('pa_account-types')) . '</code><br>';
+}
+
+echo '<br><strong>VARIATION product</strong><br>';
+if ($v_product) {
+  echo 'type: <code>' . esc_html($v_product->get_type()) . '</code><br>';
+  echo 'name: <code>' . esc_html($v_product->get_name()) . '</code><br>';
+  echo 'pa_platform: <code>' . esc_html($v_product->get_attribute('pa_platform')) . '</code><br>';
+  echo 'pa_account-size: <code>' . esc_html($v_product->get_attribute('pa_account-size')) . '</code><br>';
+  echo 'pa_account-types: <code>' . esc_html($v_product->get_attribute('pa_account-types')) . '</code><br>';
+
+  echo '<br><strong>variation_attributes</strong><br><pre style="white-space:pre-wrap">';
+  print_r($v_product->get_variation_attributes());
   echo '</pre>';
+}
 
-  // TU CÓDIGO ACTUAL SIGUE AQUÍ
-  $platform_label = $_product->get_attribute('pa_platform');
-  $account_size_label = $_product->get_attribute('pa_account-size');
-  ...
-  ?>
-</td>
+echo '</div>';
+?>
 
+							<?php
+$var = $cart_item['variation'] ?? [];
+
+// Labels bonitos (vienen bien desde atributos)
+$platform_label = trim((string) $_product->get_attribute('pa_platform'));
+$plan_label     = trim((string) $_product->get_attribute('pa_account-types'));
+
+// Size: usar el slug del carrito (ej: 50k) -> 50K
+$size_slug = $var['attribute_pa_account-size'] ?? '';
+$size      = $size_slug ? strtoupper(trim($size_slug)) : '';
+
+// Si tenemos lo necesario, imprimimos el formato deseado
+if ($size && $plan_label && $platform_label) {
+    echo esc_html($size . ' ' . $plan_label . ' - ' . $platform_label);
+} else {
+    // Fallback: Activation Fee / Reset Fee (como lo tenías)
+    $terms = get_the_terms($_product->get_id(), 'product_cat');
+    $is_activation_fee = false;
+    $is_reset_fee = false;
+
+    if ($terms && !is_wp_error($terms)) {
+        foreach ($terms as $term) {
+            if ($term->slug === 'activation-fee') {
+                $is_activation_fee = true;
+                break;
+            }
+            if ($term->slug === 'reset-fee') {
+                $is_reset_fee = true;
+                break;
+            }
+        }
+    }
+
+    if ($is_activation_fee) {
+        echo 'Activation Fee';
+    } elseif ($is_reset_fee) {
+        echo 'Reset Fee';
+    } else {
+        // Último fallback: nombre real del producto
+        echo esc_html($_product->get_name());
+    }
+}
+?>
+
+						</td>
 						<td class="product-total">
 							<?php echo apply_filters('woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal($_product, $cart_item['quantity']), $cart_item, $cart_item_key); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						</td>
