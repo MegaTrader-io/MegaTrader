@@ -405,7 +405,7 @@ HTML;
             <div class="competition__wrapper ">
                 <div class="competition__content">
                     <h2 class="competition__title">
-                        JOIN THE WORLD’S FASTEST FUTURES PLATFORM
+                        JOIN THE FASTEST GROWING FIRM
                     </h2>
 
                     <div class="competition__rewards">
@@ -469,7 +469,7 @@ HTML;
                                  alt="checked circle">
 
                             <span class="competition__perk-text">
-          Available Across Elite, Growth & Funded Plans
+          Available across all of our plans
         </span>
                         </div>
                     </div>
@@ -482,7 +482,10 @@ HTML;
                 </div>
 
                 <div class="competition__image">
-                    <div class="competition__image-placeholder"></div>
+                    <div class="competition__image-placeholder">
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/join_usd.png" alt="JOIN THE FASTEST GROWING FIRM IMAGE"/>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-<section class="payouts-and-comparison">
+<section class="payouts-and-comparison mt-0">
     <div class="payouts-and-comparison__container">
         <div class="landing-bs-container">
             <header class="section-header text-center">
