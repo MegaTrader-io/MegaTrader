@@ -862,6 +862,10 @@ img.testimonials__image {
     padding-block: 48px;
 }
 
+.payouts-and-comparison__container .section-header__subtitle {
+    max-width: 702px;
+}
+
 .payouts-and-comparison__image {
     width: 452px; /* Specific dimensions */
     height: 358px;
