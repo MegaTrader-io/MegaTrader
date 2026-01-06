@@ -11,7 +11,7 @@
                 <span class="mt-navbar__auth-link-text">SIGN IN</span>
             </a>
 
-            <a href="/auth/register" class="mega-btn-md mega-btn-default-md">
+            <a href="/auth/register" class="mt-navbar__auth-register-link mega-btn-md mega-btn-default-md">
                 REGISTER
             </a>
         </div>

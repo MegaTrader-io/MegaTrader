@@ -355,6 +355,10 @@ body.admin-bar {
         border: 1px solid var(--colors-gray-700);
     }
 
+    .mt-navbar .mt-navbar__auth  .mt-navbar__auth-register-link {
+        display: none;
+    }
+
     .mt-navbar__auth-link .mt-navbar__auth-link-text {
         color: #fafafa;
         font-size: 13.85px;
