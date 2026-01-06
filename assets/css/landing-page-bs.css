@@ -2799,6 +2799,7 @@ a.footer-bs__link:visited {
         text-transform: uppercase;
         line-height: 40px;
         word-wrap: break-word;
+        text-align: center;
     }
 
     .competition.landing-bs-container {
@@ -3284,6 +3285,10 @@ a.footer-bs__link:visited {
         font-weight: 500;
         line-height: 24px;
         word-wrap: break-word;
+    }
+
+    .competition__image-placeholder img {
+        height: 284px;
     }
 
     /* Payouts & Comparison */
