@@ -46,7 +46,7 @@ defined('ABSPATH') || exit;
 
 			foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
 				$_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
-				
+
 
 				if ($_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters('woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key)) {
 					?>
@@ -54,92 +54,50 @@ defined('ABSPATH') || exit;
 						class="<?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
 						<td class="product-name">
 
-						<?php
-$pid = (int) ($cart_item['product_id'] ?? 0);
-$vid = (int) ($cart_item['variation_id'] ?? 0);
-
-$p_product = $pid ? wc_get_product($pid) : null;      // parent
-$v_product = $vid ? wc_get_product($vid) : null;      // variation
-
-echo '<div style="border:2px dashed #f00;padding:10px;margin:10px 0;background:#fff;">';
-echo '<strong>DEBUG CART ITEM</strong><br>';
-
-echo 'cart_item_key: <code>' . esc_html($cart_item_key) . '</code><br>';
-echo 'product_id: <code>' . esc_html($pid) . '</code><br>';
-echo 'variation_id: <code>' . esc_html($vid) . '</code><br>';
-
-echo '<br><strong>cart_item["variation"]</strong><br><pre style="white-space:pre-wrap">';
-print_r($cart_item['variation'] ?? []);
-echo '</pre>';
-
-echo '<br><strong>PARENT product</strong><br>';
-if ($p_product) {
-  echo 'type: <code>' . esc_html($p_product->get_type()) . '</code><br>';
-  echo 'name: <code>' . esc_html($p_product->get_name()) . '</code><br>';
-  echo 'pa_platform: <code>' . esc_html($p_product->get_attribute('pa_platform')) . '</code><br>';
-  echo 'pa_account-size: <code>' . esc_html($p_product->get_attribute('pa_account-size')) . '</code><br>';
-  echo 'pa_account-types: <code>' . esc_html($p_product->get_attribute('pa_account-types')) . '</code><br>';
-}
-
-echo '<br><strong>VARIATION product</strong><br>';
-if ($v_product) {
-  echo 'type: <code>' . esc_html($v_product->get_type()) . '</code><br>';
-  echo 'name: <code>' . esc_html($v_product->get_name()) . '</code><br>';
-  echo 'pa_platform: <code>' . esc_html($v_product->get_attribute('pa_platform')) . '</code><br>';
-  echo 'pa_account-size: <code>' . esc_html($v_product->get_attribute('pa_account-size')) . '</code><br>';
-  echo 'pa_account-types: <code>' . esc_html($v_product->get_attribute('pa_account-types')) . '</code><br>';
-
-  echo '<br><strong>variation_attributes</strong><br><pre style="white-space:pre-wrap">';
-  print_r($v_product->get_variation_attributes());
-  echo '</pre>';
-}
-
-echo '</div>';
-?>
-
 							<?php
-$var = $cart_item['variation'] ?? [];
+							$var = $cart_item['variation'] ?? [];
 
-// Labels bonitos (vienen bien desde atributos)
-$platform_label = trim((string) $_product->get_attribute('pa_platform'));
-$plan_label     = trim((string) $_product->get_attribute('pa_account-types'));
+							// Labels bonitos (vienen bien desde atributos)
+							$platform_label = trim((string) $_product->get_attribute('pa_platform'));
+							$plan_label = trim((string) $_product->get_attribute('pa_account-types'));
 
-// Size: usar el slug del carrito (ej: 50k) -> 50K
-$size_slug = $var['attribute_pa_account-size'] ?? '';
-$size      = $size_slug ? strtoupper(trim($size_slug)) : '';
+							// Size: usar el slug del carrito (ej: 50k) -> 50K
+							$size_slug = $var['attribute_pa_account-size'] ?? '';
+							$size = $size_slug ? strtoupper(trim($size_slug)) : '';
 
-// Si tenemos lo necesario, imprimimos el formato deseado
-if ($size && $plan_label && $platform_label) {
-    echo esc_html($size . ' ' . $plan_label . ' - ' . $platform_label);
-} else {
-    // Fallback: Activation Fee / Reset Fee (como lo tenías)
-    $terms = get_the_terms($_product->get_id(), 'product_cat');
-    $is_activation_fee = false;
-    $is_reset_fee = false;
+							// Si tenemos lo necesario, imprimimos el formato deseado
+							if ($size && $plan_label && $platform_label) {
+								echo esc_html($size . ' ' . $plan_label . $dash . $platform_label);
 
-    if ($terms && !is_wp_error($terms)) {
-        foreach ($terms as $term) {
-            if ($term->slug === 'activation-fee') {
-                $is_activation_fee = true;
-                break;
-            }
-            if ($term->slug === 'reset-fee') {
-                $is_reset_fee = true;
-                break;
-            }
-        }
-    }
+							} else {
+								// Fallback: Activation Fee / Reset Fee (como lo tenías)
+								$terms = get_the_terms($_product->get_id(), 'product_cat');
+								$is_activation_fee = false;
+								$is_reset_fee = false;
 
-    if ($is_activation_fee) {
-        echo 'Activation Fee';
-    } elseif ($is_reset_fee) {
-        echo 'Reset Fee';
-    } else {
-        // Último fallback: nombre real del producto
-        echo esc_html($_product->get_name());
-    }
-}
-?>
+								if ($terms && !is_wp_error($terms)) {
+									foreach ($terms as $term) {
+										if ($term->slug === 'activation-fee') {
+											$is_activation_fee = true;
+											break;
+										}
+										if ($term->slug === 'reset-fee') {
+											$is_reset_fee = true;
+											break;
+										}
+									}
+								}
+
+								if ($is_activation_fee) {
+									echo 'Activation Fee';
+								} elseif ($is_reset_fee) {
+									echo 'Reset Fee';
+								} else {
+									// Último fallback: nombre real del producto
+									echo esc_html($_product->get_name());
+								}
+							}
+							?>
 
 						</td>
 						<td class="product-total">
@@ -158,11 +116,11 @@ if ($size && $plan_label && $platform_label) {
 
 
 			<?php /* ?>
-	   <tr class="cart-subtotal">
-		   <th class="fw-medium"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
-		   <td><?php wc_cart_totals_subtotal_html(); ?></td>
-	   </tr>
-	   <?php */ ?>
+  <tr class="cart-subtotal">
+	  <th class="fw-medium"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
+	  <td><?php wc_cart_totals_subtotal_html(); ?></td>
+  </tr>
+  <?php */ ?>
 
 			<?php foreach (WC()->cart->get_coupons() as $code => $coupon): ?>
 				<tr class="cart-discount coupon-<?php echo esc_attr(sanitize_title($code)); ?>">
