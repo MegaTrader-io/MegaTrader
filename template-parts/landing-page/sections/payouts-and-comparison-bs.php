@@ -298,7 +298,7 @@
                                 <div class="comparison__row">
                                     <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
                                          alt="">
-                                    <div class="comparison__value">5 contract per $50k in funding</div>
+                                    <div class="comparison__value">4 contract per $50K in funding</div>
                                 </div>
                                 <div class="comparison__row">
                                     <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
@@ -347,7 +347,7 @@
 
                     <div class="comparison-stats__item">
                         <div class="comparison-stats__value">1 Hour</div>
-                        <div class="comparison-stats__label">Average payout time</div>
+                        <div class="comparison-stats__label">payout time</div>
                     </div>
                 </div>
             </div>
