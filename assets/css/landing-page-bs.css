@@ -232,7 +232,7 @@
 /* Glide Slider Overrides for Verified */
 .verified-bs__glide .glide__slide {
     position: relative;
-    max-width: 990px;
+    max-width: 715px;
 }
 
 .verified-bs__glide .glide__track {
@@ -279,13 +279,13 @@
 }
 
 .verified-bs__glide .glide__arrow--prev {
-    left: 20px;
-    top: calc(50% - 28px);
+    left: 0;
+    top: calc(50% - 10px);
 }
 
 .verified-bs__glide .glide__arrow--next {
-    right: calc(100% - var(--verified-bs-slide-width) + 20px);
-    top: calc(50% - 28px);
+    right: calc(100% - var(--verified-bs-slide-width));
+    top: calc(50% - 10px);
 }
 
 .verified-bs__glide .glide__bullets {
@@ -468,10 +468,26 @@
 
 .journal-bs__card {
     background-color: var(--body-bg);
-    height: 500px;
-    opacity: 0.5;
+    height: auto;
     width: 100%;
+    gap: 16px;
 }
+
+.journal-bs__card .mt-card__title {
+    color: #A8A29E;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 32px;
+    word-wrap: break-word
+}
+
+.journal-bs__card .mt-card__body {
+    width: 100%;
+    height: auto;
+    background: #1E1E1E;
+    border-radius: 8px;
+}
+
 
 .journal-bs__media {
     width: 100%;
@@ -3067,7 +3083,7 @@ a.footer-bs__link:visited {
     }
 
     .journal-bs__card {
-        height: 260px;
+        height: auto;
     }
 
     .journal-bs__header .badge-group__text {
@@ -3089,6 +3105,20 @@ a.footer-bs__link:visited {
 
     .journal-bs__badge-group {
         display: none;
+    }
+
+    .journal-bs__title {
+        align-self: stretch;
+        color: white;
+        font-size: 24px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .journal-bs__card .mt-card__title {
+        font-size: 16px;
     }
 
     .journal-bs .journal-bs__content {
@@ -3142,11 +3172,11 @@ a.footer-bs__link:visited {
     }
 
     .verified-bs__glide .glide__arrow--prev {
-        left: 16px;
+        left: 0;
     }
 
     .verified-bs__glide .glide__arrow--next {
-        right: 16px;
+        right: 0;
     }
 
     /* Platforms Section */
