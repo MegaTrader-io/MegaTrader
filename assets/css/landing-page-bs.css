@@ -830,6 +830,7 @@ img.testimonials__image {
     justify-content: flex-start;
     gap: 16px;
     align-self: stretch;
+    max-width: 568px;
 }
 
 .competition__image-placeholder {
@@ -2783,6 +2784,7 @@ a.footer-bs__link:visited {
     .competition__image {
         order: 1;
         width: 100%;
+        max-width: unset;
     }
 
     .competition__content {
