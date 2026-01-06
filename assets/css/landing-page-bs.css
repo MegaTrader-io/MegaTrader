@@ -3862,13 +3862,11 @@ a.footer-bs__link:visited {
         /*width: 80dvw;*/
     }
 
-    .comparison__cta {
-        padding: 0 12px;
-    }
-
-
     .comparison__cta a {
         padding-inline: 0;
+        font-size: 13.85px;
+        padding: 10.39px 8px;
+        min-height: unset;
     }
 
 
