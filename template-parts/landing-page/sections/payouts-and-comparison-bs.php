@@ -3,11 +3,11 @@
         <div class="landing-bs-container">
             <header class="section-header text-center">
                 <h2 class="section-header__title">
-                    TRADE ON <span>WORLD-CLASS</span> FUTURES PLATFORMS
+                    TRADE ON <span>WORLD-CLASS</span> TRADING PLATFORMS
                 </h2>
                 <p class="section-header__subtitle">
-                    Every feature is built for traders who value speed, reliability, and control — delivering a
-                    seamless trading experience from start to finish.
+                    Every feature is built for traders who value speed, reliability, and control — delivering a seamless
+                    trading experience from start to finish.
                 </p>
             </header>
 

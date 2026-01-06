@@ -3238,6 +3238,10 @@ a.footer-bs__link:visited {
         margin-top: 32px;
     }
 
+    .payouts-and-comparison__container {
+        padding-block: 32px;
+    }
+
     .mt-pricing-table-type {
         display: flex;
     }
@@ -3308,7 +3312,7 @@ a.footer-bs__link:visited {
         text-transform: uppercase;
         line-height: 28px;
         word-wrap: break-word;
-        max-width: 226px;
+        max-width: 350px;
         margin: auto;
     }
 
@@ -3328,6 +3332,7 @@ a.footer-bs__link:visited {
         font-size: 16px;
         font-weight: 300;
         line-height: 24px;
+        letter-spacing: -0.025em;
         word-wrap: break-word;
     }
 
