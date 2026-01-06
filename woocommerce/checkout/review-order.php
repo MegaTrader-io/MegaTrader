@@ -67,6 +67,7 @@ defined('ABSPATH') || exit;
 
 							// Si tenemos lo necesario, imprimimos el formato deseado
 							if ($size && $plan_label && $platform_label) {
+								$dash = ' – '; 
 								echo esc_html($size . ' ' . $plan_label . $dash . $platform_label);
 
 							} else {
