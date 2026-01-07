@@ -1828,16 +1828,21 @@ img.testimonials__image {
 }
 
 .trader-benefits-bs__image-placeholder {
-    background: #1e1e1e;
     border-radius: 16px;
     width: 100%;
     height: 100%;
     display: block;
+    overflow: hidden;
+}
+
+.trader-benefits-bs__image-placeholder img {
+    object-fit: cover;
+    height: 100%;
 }
 
 /* =========================================================
-   Resource Section (.resources-bs)
-   ========================================================= */
+Resource Section (.resources-bs)
+========================================================= */
 
 .resources-bs {
     width: 100%;
@@ -3320,7 +3325,7 @@ a.footer-bs__link:visited {
     }
 
     .competition__image-placeholder img {
-        height: 284px;
+        height: unset;
     }
 
     /* Payouts & Comparison */
@@ -3554,8 +3559,13 @@ a.footer-bs__link:visited {
     }
 
     .trader-benefits-bs__image-placeholder {
-        height: 220px;
+        height: 260px;
         width: 100%;
+    }
+
+    .trader-benefits-bs__image-placeholder img {
+        height: auto;
+        border-radius: 16px;
     }
 
     .trader-benefits-bs__image {
@@ -3915,5 +3925,9 @@ a.footer-bs__link:visited {
 
     .trading-status__description {
         font-size: 13px;
+    }
+
+    .competition__image-placeholder img {
+        height: 284px;
     }
 }

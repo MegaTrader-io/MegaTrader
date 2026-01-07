@@ -102,7 +102,9 @@
             </div>
 
             <div class="trader-benefits-bs__image">
-                <div class="trader-benefits-bs__image-placeholder"></div>
+                <div class="trader-benefits-bs__image-placeholder">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/perks.jpg" alt="WHAT YOU GET AS A TRADER"/>
+                </div>
             </div>
         </div>
 
