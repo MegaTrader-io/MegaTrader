@@ -521,64 +521,120 @@ function get_cities_by_country() {
 remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
 
 // Crear usuario y loguearlo antes de procesar el checkout si viene username/password
-add_action( 'woocommerce_checkout_process', 'mt_create_and_login_customer_before_checkout' );
+add_action('woocommerce_checkout_process', 'mt_create_and_login_customer_before_checkout', 5);
+
 function mt_create_and_login_customer_before_checkout() {
 
-    if ( is_user_logged_in() ) {
-        return;
-    }
+  if ( is_user_logged_in() ) {
+    return;
+  }
 
-    if ( empty( $_POST['createaccount'] ) ) {
-        return;
-    }
-    $username = isset( $_POST['account_username'] )
-        ? sanitize_email( wp_unslash( $_POST['account_username'] ) )
-        : '';
+  if ( empty($_POST['createaccount']) ) {
+    return;
+  }
 
-    $email = isset( $_POST['billing_email'] )
-        ? sanitize_email( wp_unslash( $_POST['billing_email'] ) )
-        : '';
+  $email = isset($_POST['billing_email'])
+    ? sanitize_email( wp_unslash($_POST['billing_email']) )
+    : '';
 
-    $password = isset( $_POST['account_password'] )
-        ? (string) $_POST['account_password']
-        : '';
+  $username = isset($_POST['account_username'])
+    ? sanitize_email( wp_unslash($_POST['account_username']) )
+    : '';
 
-    if ( $username === '' || $email === '' || $password === '' ) {
-        return;
-    }
-   if ( email_exists( $email ) || username_exists( $username ) ) {
+  $password = isset($_POST['account_password'])
+    ? (string) wp_unslash($_POST['account_password'])
+    : '';
+
+  $email_norm = strtolower(trim($email));
+  $user_norm  = strtolower(trim($username));
+
+  // 1) Billing email requerido
+  if ( $email_norm === '' ) {
     wc_add_notice(
-        '<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>',
-        'error'
+      '<span data-id="billing_email">Email address is a required field.</span>',
+      'error'
     );
     return;
+  }
+
+  // 2) account_username requerido y debe coincidir con billing_email
+  if ( $user_norm === '' ) {
+    wc_add_notice(
+      '<span data-id="account_username">Email address is a required field.</span>',
+      'error'
+    );
+    return;
+  }
+
+  if ( $user_norm !== $email_norm ) {
+    wc_add_notice(
+      '<span data-id="account_username">Email must match the billing email.</span>',
+      'error'
+    );
+    return;
+  }
+
+  // 3) Password siempre requerido cuando createaccount=1
+  if ( $password === '' ) {
+    wc_add_notice(
+      '<span data-id="account_password">Password is a required field.</span>',
+      'error'
+    );
+    return;
+  }
+
+  // 4) Si el email ya existe -> BLOQUEAR checkout siempre
+  if ( email_exists($email_norm) ) {
+    wc_add_notice(
+      '<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>',
+      'error'
+    );
+    return;
+  }
+
+  // 5) Safety extra (si username existe, mismo mensaje)
+  if ( username_exists($email_norm) ) {
+    wc_add_notice(
+      '<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>',
+      'error'
+    );
+    return;
+  }
+
+  // 6) Crear usuario
+  $customer_id = wc_create_new_customer($email_norm, $email_norm, $password);
+
+  if ( is_wp_error($customer_id) ) {
+    error_log('mt_create_and_login_customer_before_checkout error: ' . $customer_id->get_error_message());
+
+    wc_add_notice(
+      '<span data-id="account_username">We could not create your account. Please check your details and try again.</span>',
+      'error'
+    );
+    return;
+  }
+
+  // 7) Guardar nombre/apellido (si existen)
+  if ( isset($_POST['billing_first_name']) ) {
+    update_user_meta(
+      $customer_id,
+      'first_name',
+      sanitize_text_field( wp_unslash($_POST['billing_first_name']) )
+    );
+  }
+
+  if ( isset($_POST['billing_last_name']) ) {
+    update_user_meta(
+      $customer_id,
+      'last_name',
+      sanitize_text_field( wp_unslash($_POST['billing_last_name']) )
+    );
+  }
+
+  // 8) Loguear
+  wc_set_customer_auth_cookie($customer_id);
 }
 
-    $customer_id = wc_create_new_customer( $email, $username, $password );
-
-    if ( is_wp_error( $customer_id ) ) {
-        error_log(
-            'mt_create_and_login_customer_before_checkout error: ' .
-            $customer_id->get_error_message()
-        );
-        return;
-    }
-    if ( isset( $_POST['billing_first_name'] ) ) {
-        update_user_meta(
-            $customer_id,
-            'first_name',
-            sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) )
-        );
-    }
-    if ( isset( $_POST['billing_last_name'] ) ) {
-        update_user_meta(
-            $customer_id,
-            'last_name',
-            sanitize_text_field( wp_unslash( $_POST['billing_last_name'] ) )
-        );
-    }
-    wc_set_customer_auth_cookie( $customer_id );
-}
 
 
 
