@@ -1584,6 +1584,12 @@ img.testimonials__image {
     /* No tiene reglas directas en el original, se añade para mantener la coherencia si se necesita */
 }
 
+.path-to-payout-bs .section-header__subtitle {
+    max-width: 558px;
+    margin-top: 16px;
+    margin-bottom: 0;
+}
+
 /* Contenedor de pasos (escritorio) */
 .path-to-payout-bs__steps {
     display: flex;
@@ -3870,6 +3876,10 @@ a.footer-bs__link:visited {
 
     .upcoming-bs .upcoming-bs__no_events {
         padding-block: 0;
+    }
+
+    .path-to-payout-bs .section-header__subtitle {
+        max-width: 336px;
     }
 }
 

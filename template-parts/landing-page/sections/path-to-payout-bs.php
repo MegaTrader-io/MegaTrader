@@ -4,6 +4,11 @@
             <h2 class="section-header__title">
                 A CLEAR PATH TO YOUR NEXT <span>PAYOUT</span>
             </h2>
+
+            <p class="section-header__subtitle">
+                Transparent rules, real-time metrics, and clear milestones that show exactly what’s needed to reach your
+                next payout.
+            </p>
         </header>
 
         <div class="path-to-payout-bs__steps" style="--margin-bottom-path-to-payout-item__step: 32px">
@@ -86,7 +91,8 @@
                     </div>
                 </div>
 
-                <a data-menu="pricing" href="<?= home_url('#pricing') ?>" class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
+                <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
+                   class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
                     GET FUNDED NOW
                 </a>
 
