@@ -25,7 +25,9 @@ jQuery(document).ready(function ($) {
 
     let $c = $form.children(".coupon_text").first();
     if (!$c.length) {
-      $c = $('<div class="coupon_text" role="status" aria-live="polite" style="display:none;"></div>');
+      $c = $(
+        '<div class="coupon_text" role="status" aria-live="polite" style="display:none;"></div>'
+      );
       $g.after($c);
     }
     return $c;
@@ -42,7 +44,11 @@ jQuery(document).ready(function ($) {
     clearTimer();
     const $input = getCouponInput();
     const $c = ensureContainer();
-    $c.stop(true, true).css("opacity", 0).hide().text("").removeClass("invalid-text sucefull-text");
+    $c.stop(true, true)
+      .css("opacity", 0)
+      .hide()
+      .text("")
+      .removeClass("invalid-text sucefull-text");
     if ($input.length) $input.removeClass("invalid_coupon");
   }
 
@@ -50,7 +56,7 @@ jQuery(document).ready(function ($) {
     lastNotice = {
       text: String(text || "").trim(),
       type: type === "error" ? "error" : "success",
-      expireAt: Date.now() + COUPON_TTL
+      expireAt: Date.now() + COUPON_TTL,
     };
   }
 
@@ -77,7 +83,8 @@ jQuery(document).ready(function ($) {
 
     clearTimer();
 
-    const txt = String(message || "").trim();
+    const raw = String(message || "").trim();
+    const txt = $("<textarea/>").html(raw).text(); // decodifica &quot; &amp; etc.
 
     // Estado visual input
     if (type === "error") $input.addClass("invalid_coupon");
@@ -115,7 +122,9 @@ jQuery(document).ready(function ($) {
   }
 
   function isGenericRemoved(text) {
-    const t = String(text || "").trim().toLowerCase();
+    const t = String(text || "")
+      .trim()
+      .toLowerCase();
     return t === "coupon has been removed." || t === "coupon has been removed";
   }
 
@@ -130,7 +139,8 @@ jQuery(document).ready(function ($) {
       t.includes("requires") ||
       t.includes("please enter a coupon code") ||
       t.includes("invalid") ||
-      ((t.includes("usage limit") || t.includes("maximum usage")) && t.includes("has been reached"))
+      ((t.includes("usage limit") || t.includes("maximum usage")) &&
+        t.includes("has been reached"))
     );
   }
 
@@ -181,7 +191,9 @@ jQuery(document).ready(function ($) {
     const code = $(this).data("coupon") || $(this).attr("data-coupon") || "";
 
     // ✅ Solo tu mensaje (verde) y NO marca input
-    const fallback = code ? `Coupon "${code}" has been removed.` : `Coupon has been removed.`;
+    const fallback = code
+      ? `Coupon "${code}" has been removed.`
+      : `Coupon has been removed.`;
     showCouponMessage(fallback, "success");
 
     // intenta ocultar cualquier notice visible inmediato
@@ -194,9 +206,9 @@ jQuery(document).ready(function ($) {
     "wc_fragments_loaded",
     "updated_cart_totals",
     "applied_coupon_in_checkout",
-    "removed_coupon_in_checkout"
+    "removed_coupon_in_checkout",
   ];
-  REHYDRATE.forEach(evt => {
+  REHYDRATE.forEach((evt) => {
     $(document.body).on(evt, function () {
       renderWithRemaining();
     });

@@ -955,39 +955,55 @@ document.addEventListener("DOMContentLoaded", function () {
     `Please accept our Terms of Service and Privacy Policy to continue.`,
   ]);
 
-  function migrateGlobalFieldErrors(node) {
-  const errorGroupList = [
-    ...document.getElementsByClassName(Selector.NotificationsErrorGroupClass),
+function migrateGlobalFieldErrors(node) {
+  const groups = [
+    ...document.querySelectorAll(
+      ".woocommerce-NoticeGroup-checkout, .woocommerce-NoticeGroup"
+    ),
   ];
 
-  errorGroupList.forEach((errorGroup) => {
-    const inputErrors = Array.from(errorGroup.children).reduce(
-      (messageByField, currentError) => {
-        let fieldName = currentError.getAttribute("data-id");
-        let message = currentError.textContent;
+  groups.forEach((group) => {
+    const ul = group.querySelector("ul.woocommerce-error");
+    if (!ul) return;
 
-        // NEW: si el <li> no tiene data-id, buscar dentro (span/a/etc)
-        if (!fieldName) {
-          const tagged = currentError.querySelector("[data-id]");
-          if (tagged) {
-            fieldName = tagged.getAttribute("data-id");
-            message = tagged.textContent;
-          }
+    const items = Array.from(ul.querySelectorAll("li"));
+
+  
+    const isCouponNotice = items.some((li) => {
+      const msg = (li.textContent || "").toLowerCase();
+      return (
+        msg.includes("coupon") ||
+        msg.includes("discount") ||
+        msg.includes("promo") ||
+        msg.includes("cupon") ||       
+        msg.includes("cupón")
+      );
+    });
+
+    const inputErrors = items.reduce((messageByField, li) => {
+      let fieldName = li.getAttribute("data-id");
+      let message = li.textContent;
+
+      // Soporta tu caso donde el data-id viene dentro de un nodo hijo
+      if (!fieldName) {
+        const tagged = li.querySelector("[data-id]");
+        if (tagged) {
+          fieldName = tagged.getAttribute("data-id");
+          message = tagged.textContent;
         }
+      }
 
-        if (fieldName) {
-          messageByField[fieldName] = (message || "").trim();
-          currentError.remove();
-        } else if (errorsBlackList.has((message || "").trim())) {
-          currentError.remove();
-        }
+      if (fieldName) {
+        messageByField[fieldName] = (message || "").trim();
+        li.remove();
+      } else if (errorsBlackList.has((message || "").trim())) {
+        li.remove();
+      }
 
-        return messageByField;
-      },
-      {}
-    );
+      return messageByField;
+    }, {});
 
-    if (typeof checkoutForm !== "undefined" && checkoutForm) {
+    if (!isCouponNotice && typeof checkoutForm !== "undefined" && checkoutForm) {
       const formData = new FormData(checkoutForm);
       const values = Object.fromEntries(formData.entries());
       const jsErrors = validateFormFields(values, validationRules);
@@ -1001,8 +1017,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showErrors(checkoutForm, inputErrors);
 
-    if (!errorGroup.children.length) {
-      errorGroup.remove();
+    // Si ya no quedan LI, elimina todo el notice group
+    if (!ul.querySelector("li")) {
+      group.remove();
       stripEmptyNoticeGroups();
     }
   });
