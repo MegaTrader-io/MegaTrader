@@ -1857,6 +1857,11 @@ Resource Section (.resources-bs)
     display: inline-flex;
 }
 
+.resources-bs .section-header__subtitle {
+    margin-bottom: 0;
+    max-width: 610px;
+}
+
 .resources-bs__intro {
     width: 100%;
     padding: 48px;
@@ -1990,9 +1995,15 @@ Resource Section (.resources-bs)
 
 .resources-bs__intro-image {
     width: 100%;
-    height: 252px;
+    height: 348px;
     background: #1e1e1e;
     border-radius: 16px;
+    overflow: hidden;
+}
+
+.resources-bs__intro-image img {
+    object-fit: cover;
+    height: 100%;
 }
 
 .resources-bs__cards {
@@ -2996,6 +3007,33 @@ a.footer-bs__link:visited {
     .upcoming-bs .section-header__subtitle {
         max-width: 558px;
     }
+
+    .resources-bs__intro {
+        gap: 32px;
+    }
+
+    .resources-bs__intro-title {
+        align-self: stretch;
+        color: white;
+        font-size: 20px;
+        font-weight: 500;
+        text-transform: uppercase;
+        line-height: 24px;
+        word-wrap: break-word
+    }
+
+    .resources-bs__intro-paragraph {
+        align-self: stretch;
+        color: #A8A29E;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        word-wrap: break-word
+    }
+
+    .resources-bs__intro-image {
+        height: 272px;
+    }
 }
 
 /* Medium devices (max-width: 991.98px) */
@@ -3685,7 +3723,7 @@ a.footer-bs__link:visited {
 
     .resources-bs__intro {
         display: block;
-        padding: 16px;
+        padding: 48px 16px;
     }
 
     .trading-status {
@@ -3707,7 +3745,7 @@ a.footer-bs__link:visited {
     }
 
     .resources-bs__intro > * + * {
-        margin-top: 16px;
+        margin-top: 48px;
     }
 
     .trader-benefits-bs__description {
@@ -3889,6 +3927,10 @@ a.footer-bs__link:visited {
     }
 
     .path-to-payout-bs .section-header__subtitle {
+        max-width: 336px;
+    }
+
+    .resources-bs .section-header__subtitle {
         max-width: 336px;
     }
 }
