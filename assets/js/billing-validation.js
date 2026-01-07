@@ -404,6 +404,8 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
   };
 
+  const protectedErrors = new Map();
+
   function findFieldElement(field) {
     const elByName = document.querySelector(`[name="${field}"]`);
     const elById = document.getElementById(field);
@@ -413,10 +415,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function isVisibleField(el) {
     if (!el) return false;
-    const rects = el.getClientRects();
+
+    const target = el.closest(".iti") || el;
+
+    const rects = target.getClientRects();
+    const cs = window.getComputedStyle(target);
+
     return !!(
-      (el.offsetWidth || el.offsetHeight || rects.length) &&
-      window.getComputedStyle(el).visibility !== "hidden"
+      (target.offsetWidth || target.offsetHeight || rects.length) &&
+      cs.visibility !== "hidden" &&
+      cs.display !== "none"
     );
   }
 
@@ -429,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Si el campo no existe o está oculto, lo saltamos
       if (!inputEl) continue;
-      if (!isVisibleField(inputEl)) continue;
+      if (field !== "billing_phone" && !isVisibleField(inputEl)) continue;
 
       for (const rule of ruleSet) {
         const result = rule(value);
@@ -459,30 +467,147 @@ document.addEventListener("DOMContentLoaded", function () {
       const input = findFieldElement(field);
       if (!input) continue;
 
+      const itiWrap = input.closest(".iti");
+
       const container =
         input.closest(".form-row") ||
         input.closest(".form-group") ||
+        (itiWrap ? itiWrap.parentElement : null) ||
         input.parentElement;
+
+      if (!container) continue;
+
+      // borra SOLO el error previo de ese field
+      container
+        .querySelectorAll(
+          `.${Selector.ErrorMessageClass}[data-field="${field}"]`
+        )
+        .forEach((n) => n.remove());
 
       const errorNode = document.createElement("div");
       errorNode.className = Selector.ErrorMessageClass;
       errorNode.textContent = message;
+      errorNode.dataset.field = field; // ✅ ahora tu query funciona
 
-      const existingErrorNode = container.querySelector(
-        `.${Selector.ErrorMessageClass}`
-      );
-      if (existingErrorNode) {
-        existingErrorNode.remove();
+      // inserta el mensaje justo debajo del wrapper iti (mejor UX)
+      if (itiWrap && itiWrap.parentElement === container) {
+        itiWrap.insertAdjacentElement("afterend", errorNode);
+      } else {
+        container.appendChild(errorNode);
       }
 
-      container.appendChild(errorNode);
       input.classList.add(Selector.InvalidFieldClass);
+      if (itiWrap) itiWrap.classList.add(Selector.InvalidFieldClass);
+
       protectedErrors.set(field, errorNode);
     }
   }
 
+  function mtHardGateCheckout(e) {
+    const checkoutForm =
+      document.getElementById("checkout-form") ||
+      document.querySelector("form.checkout");
+
+    if (!checkoutForm) return true;
+
+    const formData = new FormData(checkoutForm);
+    const values = Object.fromEntries(formData.entries());
+
+    const errors = validateFormFields(values, validationRules);
+
+    // Extra phone
+    try {
+      const tel = document.getElementById("billing_phone");
+      if (tel) {
+        const raw = (tel.value || "").trim();
+        if (!raw) {
+          errors.billing_phone = "Billing Phone is a required field.";
+        } else if (
+          window.iti &&
+          typeof window.iti.isValidNumber === "function"
+        ) {
+          if (!window.iti.isValidNumber()) {
+            errors.billing_phone = "Please enter a valid phone number.";
+          } else {
+            const full = window.iti.getNumber();
+            if (full) tel.value = full;
+          }
+        }
+      }
+    } catch (_) {}
+
+    // Payment selection
+    try {
+      if (typeof ensurePaymentSelection === "function") {
+        const okPayment = ensurePaymentSelection(e);
+        if (!okPayment) {
+          e.preventDefault();
+          e.stopImmediatePropagation?.();
+          return false;
+        }
+      }
+    } catch (_) {}
+
+    if (Object.keys(errors).length) {
+      e.preventDefault();
+      e.stopImmediatePropagation?.();
+
+      try {
+        clearErrors(checkoutForm);
+      } catch (_) {}
+      try {
+        showErrors(checkoutForm, errors);
+      } catch (_) {}
+
+      try {
+        const first =
+          checkoutForm.querySelector("." + Selector.InvalidFieldClass) ||
+          checkoutForm.querySelector(`[name="${Object.keys(errors)[0]}"]`) ||
+          checkoutForm.querySelector(`#${Object.keys(errors)[0]}`);
+        first?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+        setTimeout(() => first?.focus?.(), 150);
+      } catch (_) {}
+
+      try {
+        if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+      } catch (_) {}
+      try {
+        if (typeof hideSitePreloader === "function") hideSitePreloader();
+      } catch (_) {}
+
+      return false;
+    }
+
+    return true;
+  }
+
+  // Submit CAPTURE
+  ["form.checkout", "#checkout-form"].forEach((sel) => {
+    document.querySelectorAll(sel).forEach((f) => {
+      if (f.dataset.mtHardGate) return;
+      f.dataset.mtHardGate = "1";
+      f.addEventListener("submit", mtHardGateCheckout, true);
+    });
+  });
+
+  // Click CAPTURE en #place_order
+  document.addEventListener(
+    "click",
+    function (e) {
+      const btn = e.target?.closest?.("#place_order");
+      if (!btn) return;
+      mtHardGateCheckout(e);
+    },
+    true
+  );
+
+  window.MT = window.MT || {};
+  window.MT.checkout = window.MT.checkout || {};
+  window.MT.checkout.showErrors = showErrors;
+  window.MT.checkout.clearErrors = clearErrors;
+
   // ========== PROTECT DOM BUGS AGAINST EXTERNAL DELETION ==========
-  const protectedErrors = new Map();
+
 
   function startErrorProtection() {
     const observer = new MutationObserver(() => {
@@ -490,23 +615,35 @@ document.addEventListener("DOMContentLoaded", function () {
         const input = document.querySelector(`[name="${field}"]`);
         if (!input) continue;
 
+        const itiWrap = input.closest(".iti");
+
         const container =
           input.closest(".form-row") ||
           input.closest(".form-group") ||
+          (itiWrap ? itiWrap.parentElement : null) ||
           input.parentElement;
 
-        const existing = container.querySelector(".invalid-feedback");
+        if (!container) continue;
+
+        const existing = container.querySelector(
+          `.${Selector.ErrorMessageClass}[data-field="${field}"]`
+        );
+
         if (!existing) {
-          container.appendChild(node);
-          input.classList.add("is-invalid");
+          // reinsertar en el mismo lugar que showErrors
+          if (itiWrap && itiWrap.parentElement === container) {
+            itiWrap.insertAdjacentElement("afterend", node);
+          } else {
+            container.appendChild(node);
+          }
+
+          input.classList.add(Selector.InvalidFieldClass);
+          if (itiWrap) itiWrap.classList.add(Selector.InvalidFieldClass);
         }
       }
     });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   startErrorProtection();
@@ -1594,14 +1731,22 @@ document.addEventListener("DOMContentLoaded", function () {
       const input = document.getElementById("billing_phone");
       if (!input) return;
 
-      input.classList.remove("is-invalid");
+      input.classList.remove(Selector.InvalidFieldClass);
+
+      const itiWrap = input.closest(".iti");
+      if (itiWrap) itiWrap.classList.remove(Selector.InvalidFieldClass);
 
       const container =
         input.closest(".form-row") ||
         input.closest(".form-group") ||
+        input.closest(".woocommerce-input-wrapper") ||
         input.parentElement;
 
-      const node = container && container.querySelector(".invalid-feedback");
+      if (!container) return;
+
+      const node = container.querySelector(
+        `.${Selector.ErrorMessageClass}[data-field="billing_phone"]`
+      );
       if (node) node.remove();
     }
 
@@ -1631,5 +1776,71 @@ document.addEventListener("DOMContentLoaded", function () {
     phoneInput.addEventListener("change", () => {
       if ((phoneInput.value || "").trim()) clearPhoneError();
     });
+  })();
+
+  // ========== AUTO-CLEAR FIELD ERROR ON INPUT ==========
+  (function setupAutoClearInvalidOnInput() {
+    const form =
+      document.getElementById("checkout-form") ||
+      document.querySelector("form.checkout");
+
+    if (!form) return;
+
+    function clearFieldError(field) {
+      const input =
+        form.querySelector(`[name="${field}"]`) ||
+        document.getElementById(field);
+      if (!input) return;
+
+      input.classList.remove(Selector.InvalidFieldClass);
+
+      const itiWrap = input.closest(".iti");
+      if (itiWrap) itiWrap.classList.remove(Selector.InvalidFieldClass);
+
+      const container =
+        input.closest(".form-row") ||
+        input.closest(".form-group") ||
+        input.closest(".woocommerce-input-wrapper") ||
+        (itiWrap ? itiWrap.parentElement : null) ||
+        input.parentElement;
+
+      if (!container) return;
+
+      container
+        .querySelectorAll(
+          `.${Selector.ErrorMessageClass}[data-field="${field}"]`
+        )
+        .forEach((n) => n.remove());
+
+      try {
+        protectedErrors.delete(field);
+      } catch (_) {}
+    }
+
+    form.addEventListener(
+      "input",
+      function (e) {
+        const el = e.target;
+        if (!el) return;
+
+        if (!["INPUT", "SELECT", "TEXTAREA"].includes(el.tagName)) return;
+
+        const field = el.name || el.id;
+        if (!field) return;
+
+        // 🔑 el phone lo maneja SU bloque específico
+        if (field === "billing_phone") return;
+
+        const val = (el.value || "").trim();
+        if (!val) return;
+
+        const isInvalid =
+          el.classList.contains(Selector.InvalidFieldClass) ||
+          el.closest(".iti")?.classList.contains(Selector.InvalidFieldClass);
+
+        if (isInvalid) clearFieldError(field);
+      },
+      true
+    );
   })();
 });
