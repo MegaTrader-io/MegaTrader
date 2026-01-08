@@ -2031,6 +2031,11 @@ Resource Section (.resources-bs)
     height: 300px;
     min-height: 300px;
     border-radius: 16px;
+    object-fit: cover;
+}
+
+.resources-bs__card-image.resources-bs__card-image--tablet {
+    display: none;
 }
 
 .resources-bs__card-body {
@@ -2958,9 +2963,17 @@ a.footer-bs__link:visited {
     }
 
     .resources-bs__cards .resources-bs__card-image {
-        height: 200px;
+        height: auto;
         object-fit: cover;
         object-position: center;
+    }
+
+    .resources-bs__card-image:not(.resources-bs__card-image--tablet) {
+        display: none;
+    }
+
+    .resources-bs__card-image.resources-bs__card-image--tablet {
+        display: block;
     }
 
     .funding-banner-bs__list {
@@ -3971,5 +3984,16 @@ a.footer-bs__link:visited {
 
     .competition__image-placeholder img {
         height: 284px;
+    }
+
+    .resources-bs__card-image:not(.resources-bs__card-image--tablet) {
+        display: block;
+        height: 300px;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    .resources-bs__card-image.resources-bs__card-image--tablet {
+        display: none;
     }
 }

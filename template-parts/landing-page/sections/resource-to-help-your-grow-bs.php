@@ -1,19 +1,28 @@
 <?php
 $resources_items = [
         [
-                'image' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/london-trader-3.png',
-                'title' => 'Learn how to qualify faster for payouts.',
-                'button_text' => 'View all LIVE trader perks',
-        ],
-        [
-                'image' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/london-trader-1.png',
-                'title' => 'Learn the fix to why most traders blow their account',
+                'image' => [
+                        'default' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-get-free-ebook.png',
+                        'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-get-free-ebook-tablet.png',
+                ],
+                'title' => 'Join 2,000+ active traders in our Discord community.',
                 'button_text' => 'Get FREE eBook',
         ],
         [
-                'image' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/london-trader-2.png',
-                'title' => 'Join 30,000+ active traders on Discord',
+                'image' => [
+                        'default' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-join-discord.png',
+                        'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-join-discord-tablet.png',
+                ],
+                'title' => 'Learn the fix to why most traders blow their account.',
                 'button_text' => 'Join Discord',
+        ],
+        [
+                'image' => [
+                        'default' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-view-all-live-trader.png',
+                        'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-view-all-live-trader-tablet.png',
+                ],
+                'title' => 'Learn how to qualify faster for payouts.',
+                'button_text' => 'View all LIVE trader perks',
         ]
 ];
 
@@ -67,9 +76,11 @@ $resources_items = [
         </div>
 
         <div class="resources-bs__cards">
-            <?php foreach ($resources_items as $item) : ?>
+            <?php foreach ($resources_items as $key => $item) : ?>
                 <div class="resources-bs__card">
-                    <img class="resources-bs__card-image" src="<?= $item['image'] ?>">
+                    <img class="resources-bs__card-image" src="<?= $item['image']['default'] ?>">
+                    <img class="resources-bs__card-image resources-bs__card-image--tablet"
+                         src="<?= $item['image']['tablet'] ?>">
                     <div class="resources-bs__card-body">
                         <div class="resources-bs__card-title">
                             <?= $item['title'] ?>
