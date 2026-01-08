@@ -3946,6 +3946,16 @@ a.footer-bs__link:visited {
     .resources-bs .section-header__subtitle {
         max-width: 336px;
     }
+
+    .funding-banner-bs__text {
+        align-self: stretch;
+        color: white;
+        font-size: 20px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 24px;
+        word-wrap: break-word
+    }
 }
 
 /* Extra small devices (max-width: 575.98px) */
