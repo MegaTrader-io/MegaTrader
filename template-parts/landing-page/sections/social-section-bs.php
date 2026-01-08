@@ -4,6 +4,9 @@
             <h2 class="section-header__title">
                 GET THE LATEST <span>DISCOUNTS</span> ON SOCIALS
             </h2>
+            <p class="section-header__subtitle">
+                Follow our social channels to stay updated on exclusive discounts, promotions, and limited-time offers.
+            </p>
         </header>
 
         <div class="social-section-bs__grid">
@@ -100,7 +103,8 @@
                      class="social-section-bs__feature-item--order-6 social-section-bs__feature-item--last-img">
             </div>
 
-            <a data-menu="pricing" href="<?= home_url('#pricing') ?>" class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
+            <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
+               class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
                 GET FUNDED NOW
             </a>
         </div>

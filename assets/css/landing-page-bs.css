@@ -2297,6 +2297,11 @@ Resource Section (.resources-bs)
     width: 100%;
 }
 
+.social-section-bs .section-header__subtitle {
+    width: 610px;
+    margin-bottom: 0;
+}
+
 .social-section-bs__container {
     display: flex;
     flex-direction: column;
@@ -3960,6 +3965,43 @@ a.footer-bs__link:visited {
         text-transform: uppercase;
         line-height: 24px;
         word-wrap: break-word
+    }
+
+    .accordion__header {
+        align-self: stretch;
+        color: white;
+        font-size: 20px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 24px;
+        word-wrap: break-word
+    }
+
+    .accordion__content {
+        align-self: stretch;
+        color: #A8A29E;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+        word-wrap: break-word
+    }
+
+    .social-section-bs .section-header__title {
+        font-size: 24px;
+        max-width: 312px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 28px;
+        word-wrap: break-word
+    }
+
+    .social-section-bs .section-header__subtitle {
+        width: 312px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 300;
+        letter-spacing: 0em;
+        line-height: 24px;
     }
 }
 
