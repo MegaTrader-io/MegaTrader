@@ -78,8 +78,8 @@ $faqs_list = [
                 Find instant answers in our Help Center, or ask us on Discord.
             </div>
             <div class="support-card__actions">
-                <a href="#" class="mega-btn-md mega-btn-secondary-md w-100">OPEN HELP CENTER</a>
-                <a href="#" class="mega-btn-md mega-btn-default-md w-100">CHECK DISCORD</a>
+                <a href="https://help.megatrader.io/en/" class="mega-btn-md mega-btn-secondary-md w-100">OPEN HELP CENTER</a>
+                <a href="https://discord.com/invite/megatrader" class="mega-btn-md mega-btn-default-md w-100">CHECK DISCORD</a>
             </div>
         </div>
     </div>
