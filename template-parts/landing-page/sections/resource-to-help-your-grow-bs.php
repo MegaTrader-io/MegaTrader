@@ -6,7 +6,10 @@ $resources_items = [
                         'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-get-free-ebook-tablet.png',
                 ],
                 'title' => 'Join 2,000+ active traders in our Discord community.',
-                'button_text' => 'Get FREE eBook',
+                'button' => [
+                        'text' => 'Join Discord',
+                        'link' => 'https://discord.com/invite/megatrader',
+                ]
         ],
         [
                 'image' => [
@@ -14,7 +17,10 @@ $resources_items = [
                         'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-join-discord-tablet.png',
                 ],
                 'title' => 'Learn the fix to why most traders blow their account.',
-                'button_text' => 'Join Discord',
+                'button' => [
+                        'text' => 'Get FREE eBook',
+                        'link' => '',
+                ]
         ],
         [
                 'image' => [
@@ -22,7 +28,10 @@ $resources_items = [
                         'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-view-all-live-trader-tablet.png',
                 ],
                 'title' => 'Learn how to qualify faster for payouts.',
-                'button_text' => 'View all LIVE trader perks',
+                'button' => [
+                        'text' => 'View all LIVE trader perks',
+                        'link' => '',
+                ]
         ]
 ];
 
@@ -85,8 +94,10 @@ $resources_items = [
                         <div class="resources-bs__card-title">
                             <?= $item['title'] ?>
                         </div>
-                        <a href="javascript:void(0);" class="mega-btn-md mega-btn-default-md w-100">
-                            <?= $item['button_text'] ?>
+                        <a href="<?= $item['button']['link'] ?: 'javascript:void(0);' ?>"
+                           target="<?= $item['button']['link'] ? '_blank' : '_parent' ?>"
+                           class="mega-btn-md mega-btn-default-md w-100">
+                            <?= $item['button']['text'] ?>
                         </a>
                     </div>
                 </div>
