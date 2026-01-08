@@ -3808,8 +3808,13 @@ a.footer-bs__link:visited {
     }
 
     .support-card__actions a {
-        padding-inline: 8px;
-        font-size: 14px;
+        padding: 10.39px 13.85px;
+        min-height: auto;
+        font-size: 13.85px;
+        font-weight: 500;
+        text-transform: uppercase;
+        line-height: 21px;
+        word-wrap: break-word;
     }
 
     .social-section-bs__banner-title {
