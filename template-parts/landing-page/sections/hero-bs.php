@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="hero-bs text-white">
+<section id="hero-section" class="hero-bs text-white">
     <div class="landing-bs-container">
         <div class="hero-bs__row">
             <div class="hero-bs__content">

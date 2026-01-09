@@ -59,8 +59,8 @@ final class Mt_Navbar
       ['href' => '#hero-section', 'value' => 'HOME', 'class' => 'navbar__nav-link--active', 'wrapper_attributes' => ['data-menu' => 'hero-section']],
       ['href' => '#how-it-works', 'value' => 'HOW IT WORKS', 'wrapper_attributes' => ['data-menu' => 'how-it-works']],
       ['href' => '#pricing', 'value' => 'PRICING', 'wrapper_attributes' => ['data-menu' => 'pricing']],
-      ['href' => '#features', 'value' => 'FEATURES', 'wrapper_attributes' => ['data-menu' => 'features']],
-      ['href' => '#faq', 'value' => 'FAQ', 'wrapper_attributes' => ['data-menu' => 'faq']],
+      ['href' => 'https://discord.com/invite/megatrader', 'class' => 'mt-navbar__nav-link--external', 'value' => 'Join Discord', 'wrapper_attributes' => ['target' => '_blank']],
+      ['href' => 'https://help.megatrader.io/en/', 'class' => 'mt-navbar__nav-link--external', 'value' => 'Help Center', 'wrapper_attributes' => ['target' => '_blank']],
     ];
   }
 

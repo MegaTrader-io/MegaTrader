@@ -136,11 +136,11 @@ body.admin-bar {
 }
 
 .mt-navbar__nav-link:hover {
-    background-color: var(--mgt-dark)
+    background-color: var(--smoke-color3)
 }
 
 .mt-navbar__nav-link--active {
-    background-color: var(--mgt-dark);
+    background-color: var(--smoke-color3);
 }
 
 /* =========================================================
