@@ -17,5 +17,5 @@
 </div>
 <?php Mt_Navbar::render_navbar_bs(
         section: 'landing-page-bs',
-        classes_navbar: 'mt-navbar--landing-page-bs'
+        classes_navbar: 'mt-navbar--landing-page-bs mt-navbar__links--scrolled'
 ); ?>

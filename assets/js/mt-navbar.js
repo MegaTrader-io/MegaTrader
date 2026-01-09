@@ -61,6 +61,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // handler clicks for landing page
         document.querySelectorAll('.mt-navbar__nav-link,.dropdown-menu__link,.btn-get-funded-now')
             .forEach(btn => {
+                if (btn.target && btn.target === '_blank') {
+                    return;
+                }
+
                 btn.addEventListener('click', (ev) => {
                     ev.preventDefault();
                     ev.stopPropagation();

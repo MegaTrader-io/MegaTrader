@@ -16,7 +16,7 @@ $payouts_items = [
 
 ?>
 
-<section class="payout-bs text-white">
+<section id="how-it-works" class="payout-bs text-white">
     <div class="landing-bs-container">
         <div class="payout-bs__row">
             <div class="payout-bs__content">
