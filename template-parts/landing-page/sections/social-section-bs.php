@@ -74,7 +74,7 @@ $social_list = [
                      alt="flash"
                      width="24" height="24" class="social-section-bs__feature-item--order-2">
 
-                <span class="social-section-bs__feature-item social-section-bs__feature-item--order-3">Get Instant Sim Funding, or take a Challenge</span>
+                <span class="social-section-bs__feature-item social-section-bs__feature-item--order-3">Get Instant Funding or take a Challenge.</span>
                 <img src="<?php echo get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'; ?>"
                      alt="flash"
                      width="24" height="24" class="social-section-bs__feature-item--order-4">
