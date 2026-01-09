@@ -28,7 +28,7 @@ $journal_list = [
                     <div class="badge-duo__text">MEGATRADER EXCLUSIVE</div>
                 </div>
                 <div class="badge-duo__secondary">
-                    <div class="badge-duo__text">Included in all plans.</div>
+                    <div class="badge-duo__text">Included In All Plans.</div>
                 </div>
             </div>
 
