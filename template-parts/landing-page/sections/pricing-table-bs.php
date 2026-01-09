@@ -475,7 +475,8 @@ HTML;
                     </div>
 
                     <div class="competition__cta">
-                        <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
+                        <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
+                           class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
                             Get Funded Now
                         </a>
                     </div>
@@ -483,7 +484,8 @@ HTML;
 
                 <div class="competition__image">
                     <div class="competition__image-placeholder">
-                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/join_usd.png" alt="JOIN THE FASTEST GROWING FIRM IMAGE"/>
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/join_usd.png"
+                             alt="JOIN THE FASTEST GROWING FIRM IMAGE"/>
                     </div>
 
                 </div>
