@@ -49,41 +49,6 @@ $resources_items = [
     </header>
 
     <div class="landing-bs-container">
-        <div class="resources-bs__intro">
-            <div class="resources-bs__intro-content">
-                <div class="trading-status">
-                    <div class="trading-status__badge">
-                        <div class="trading-status__label">
-                            <div class="trading-status__dot"></div>
-                            <div class="trading-status__label-text">
-                                LIVE DATA
-                            </div>
-                        </div>
-                        <div class="trading-status__description text-truncate">
-                            Trading Stats Update In Real Time.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="resources-bs__intro-description">
-                    <div class="resources-bs__intro-title">
-                        TRACK YOUR PERFORMANCE LIVE
-                    </div>
-                    <div class="resources-bs__intro-paragraph">
-                        Monitor your trading stats, consistency, and drawdown in one place. Gain insights to improve
-                        your results and stay payout-ready.
-                    </div>
-                </div>
-                <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
-                   class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
-                    GET FUNDED NOW
-                </a>
-            </div>
-            <div class="resources-bs__intro-image">
-                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/track-performance.jpg'); ?>"/>
-            </div>
-        </div>
-
         <div class="resources-bs__cards">
             <?php foreach ($resources_items as $key => $item) : ?>
                 <div class="resources-bs__card">

@@ -16,6 +16,7 @@ get_header('landing-page-bs');
         <?php get_template_part('template-parts/landing-page/sections/testimonials-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/upcoming-events-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/path-to-payout-bs'); ?>
+        <?php get_template_part('template-parts/landing-page/sections/resource-to-help-your-grow-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/funding-banner-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/faq-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/social-section-bs'); ?>
