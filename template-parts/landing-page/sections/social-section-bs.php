@@ -11,7 +11,7 @@ $social_list = [
         ],
         [
                 'slug' => 'facebook',
-                'link' => 'javascript:void(0);'
+                'link' => '#'
         ],
         [
                 'slug' => 'x',
