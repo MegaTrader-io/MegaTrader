@@ -10,16 +10,24 @@
  */
 
 nocache_headers();
-error_log('[LV] before get_header(landing-page)');
-get_header('landing-page');
-error_log('[LV] after get_header(landing-page)');
 
-
-error_log('[LV] before template-parts/landing-page/main.php');
-require 'template-parts/landing-page/main.php';
-error_log('[LV] after template-parts/landing-page/main.php');
-
-
-error_log('[LV] before get_footer(landing-page)');
-get_footer('landing-page');
-error_log('[LV] after get_footer(landing-page)');
+get_header('landing-page-bs');
+?>
+<main class="landing-bs">
+    <?php get_template_part('template-parts/landing-page/sections/hero-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/verified-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/payout-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/platforms-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/journal-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/pricing-table-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/payouts-and-comparison-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/testimonials-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/upcoming-events-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/path-to-payout-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/resource-to-help-your-grow-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/funding-banner-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/faq-bs'); ?>
+    <?php get_template_part('template-parts/landing-page/sections/social-section-bs'); ?>
+</main>
+<?php require 'template-parts/landing-page/footer-bs.php' ?>
+<?php get_footer(); ?>

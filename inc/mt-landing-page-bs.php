@@ -5,11 +5,11 @@ defined('ABSPATH') || exit;
  * Encola los assets del template landing-page-bs.php
  */
 add_action('wp_enqueue_scripts', function () {
-  global $post;
-
-  if (empty($post) || get_page_template_slug($post->ID) !== 'landing-page-bs.php') {
-    return;
-  }
+    if (
+        !is_front_page()
+    ) {
+        return;
+    }
 
   $theme_dir = get_stylesheet_directory();
   $theme_uri = get_stylesheet_directory_uri();
