@@ -4,8 +4,9 @@ $testimonials_list = [
                 'text' => 'Education is the passport to the future, for tomorrow belongs to those who prepare for it today.',
                 'author' => [
                         'name' => 'Angela Kim',
-                        'country' => 'United States',
-                        'image' => 'https://placehold.co/64x64',
+                        'country' => 'US',
+                        'initials' => 'AK',
+                        'color' => '#FFB34A',
                 ],
         ],
         [
@@ -30,16 +31,18 @@ $testimonials_list = [
                 'text' => 'The only thing that holds you back is the story you tell yourself about why you can\'t.',
                 'author' => [
                         'name' => 'Robert Fox',
-                        'country' => 'United States',
-                        'image' => 'https://placehold.co/64x64',
+                        'country' => 'US',
+                        'initials' => 'RF',
+                        'color' => '#FFB34A',
                 ],
         ],
         [
                 'text' => 'The only thing that will redeem mankind is cooperation.',
                 'author' => [
                         'name' => 'Cody Fisher',
-                        'country' => 'United States',
-                        'image' => 'https://placehold.co/64x64',
+                        'country' => 'US',
+                        'initials' => 'CF',
+                        'color' => '#FFB34A'
                 ],
         ],
         [
@@ -63,8 +66,45 @@ $testimonials_list = [
                 'text' => 'We are not human beings having a spiritual experience; we are spiritual beings having a human experience.',
                 'author' => [
                         'name' => 'Jerome Bell',
-                        'country' => 'United States',
-                        'image' => 'https://placehold.co/64x64',
+                        'country' => 'US',
+                        'initials' => 'JB',
+                        'color' => '#FFB34A',
+                ],
+        ],
+        [
+                'text' => 'Great pricing compared to other prop firms. Clear rules, fair structure, and no unnecessary complexity.',
+                'author' => [
+                        'name' => 'Leo',
+                        'country' => 'US',
+                        'initials' => 'LE',
+                        'color' => '#FFB34A',
+                ],
+        ],
+        [
+                'text' => 'MegaTrader stands out for its organization. From account setup to daily trading, everything was clearly laid out, which allowed me to focus on trading instead of worrying about unclear rules.',
+                'author' => [
+                        'name' => 'Grayson Wilson',
+                        'country' => 'US',
+                        'initials' => 'GW',
+                        'color' => '#FFB34A',
+                ],
+        ],
+        [
+                'text' => 'The evaluation process felt fair and well designed. Performance metrics were easy to follow, and the platform tools helped me manage risk properly throughout my trading sessions.',
+                'author' => [
+                        'name' => 'Alex Watkins',
+                        'country' => 'US',
+                        'initials' => 'AW',
+                        'color' => '#FFB34A',
+                ],
+        ],
+        [
+                'text' => 'What I appreciated most about MegaTrader was the clarity around expectations. Nothing felt hidden or confusing, and the documentation answered most of my questions before I even needed to contact support.',
+                'author' => [
+                        'name' => 'Daniel Wrigh',
+                        'country' => 'US',
+                        'initials' => 'DW',
+                        'color' => '#FFB34A',
                 ],
         ],
 ];
