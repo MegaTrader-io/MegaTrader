@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 element.classList.add('d-none');
             });
 
-            document.querySelector(`.mt-pricing-table-benefits[data-account-type-benefits="${accountType}"]`).classList.remove('d-none');
+            document.querySelector(`.mt-pricing-table-benefits[data-account-type-benefits="${accountType}"]`)?.classList.remove('d-none');
 
             void fn({
                 accountType,
