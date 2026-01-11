@@ -21,4 +21,5 @@ get_header('landing-page-bs');
         <?php get_template_part('template-parts/landing-page/sections/faq-bs'); ?>
         <?php get_template_part('template-parts/landing-page/sections/social-section-bs'); ?>
     </main>
-<?php get_footer('landing-page-bs'); ?>
+<?php require 'template-parts/landing-page/footer-bs.php' ?>
+<?php get_footer(); ?>

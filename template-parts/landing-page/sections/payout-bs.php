@@ -2,11 +2,11 @@
 $payouts_items = [
   [
     'title' => 'Sign up',
-    'description' => 'Go Lightning Funded, or pick and pass a Challenge'
+    'description' => 'Go Funded, or pick and pass a Challenge.'
   ],
   [
-    'title' => 'Trade 5 days',
-    'description' => 'Scale your futures trading with your simulated funds'
+    'title' => 'Trade 7 days',
+    'description' => 'Scale your trading with your simulated funds.'
   ],
   [
     'title' => 'Get paid',
@@ -16,13 +16,13 @@ $payouts_items = [
 
 ?>
 
-<section class="payout-bs text-white">
+<section id="how-it-works" class="payout-bs text-white">
     <div class="landing-bs-container">
         <div class="payout-bs__row">
             <div class="payout-bs__content">
                 <header class="payout-bs__header text-start">
                     <h2 class="payout-bs__title">
-                        EARN YOUR FIRST PAYOUT IN 5 DAYS
+                        Earn your first payout in 7 days
                     </h2>
                 </header>
 
@@ -42,7 +42,7 @@ $payouts_items = [
                 </ol>
 
                 <div class="d-flex">
-                    <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md payout-bs__btn">
+                    <a data-menu="pricing" href="<?= home_url('#pricing') ?>" class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md payout-bs__btn">
                         Get Funded Now
                     </a>
                 </div>

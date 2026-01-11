@@ -17,12 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function buildProductUrl(productId) {
         const CHECKOUT_URL = MG_GLOBAL.CHECKOUT_URL;
-        const GO_TO_URL = MG_GLOBAL.GO_TO_URL;
-        const isUserLoggedIn = Number(MG_GLOBAL.isUserLoggedIn);
-        const checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', productId);
+        let checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', productId);
 
-        if (!isUserLoggedIn) {
-            return GO_TO_URL + encodeURIComponent(checkoutUrl);
+        const couponElement = document.querySelector('.badge-coupon__code');
+        const coupon = couponElement?.innerText?.trim();
+
+        if (coupon) {
+            checkoutUrl = checkoutUrl + '&coupon=' + coupon;
         }
 
         return checkoutUrl;
@@ -67,13 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updatePoints() {
         let priceTable = document.querySelector('.price-table');
-        let hasPopularPlan = !!priceTable.querySelector('ul.slider__slides li > .price-table__plan--most-popular');
-        let cardActive = priceTable.querySelector('ul.slider__slides li.glide__slide--active') || priceTable.querySelector('ul.slider__slides li:first-child');
         let bottomPoints = 0;
-
-        if (!cardActive.querySelector('.price-table__plan--most-popular')) {
-            bottomPoints = hasPopularPlan ? 24 : 0;
-        }
 
         priceTable.style.setProperty('--current-slider-height', bottomPoints + 'px');
     }
@@ -82,11 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
             const heroGlideInstance = new Glide(heroBsCarouselRoot, {
-                type: 'carousel',
-                focusAt: 'center',
-                gap: 16,
-                perView: 1,
-                autoplay: 3000,
+                type: 'carousel', focusAt: 'center', gap: 16, perView: 1, autoplay: 3000,
             });
 
             heroGlideInstance.mount();
@@ -110,9 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 gap: '16px',
                 perPage: calculatePerPage(),
                 autoScroll: {
-                    speed: 0.2,
-                    pauseOnHover: true,
-                    pauseOnFocus: true,
+                    speed: 0.2, pauseOnHover: true, pauseOnFocus: true,
                 },
             });
 
@@ -128,121 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error initializing Splide carousel:', error);
         }
-
-        const verifiedBsCarouselRoot = document.getElementById('verified-bs-id');
-
-        const verifiedBsCarousel = new Glide(verifiedBsCarouselRoot, {
-            type: 'slider',
-            gap: 16,
-            perView: 1,
-            autoplay: false,
-            hoverpause: false,
-            rewind: false,
-            animationDuration: 800
-        });
-
-        verifiedBsCarousel.mount({
-            Sizes: function CustomSizes(Glide, Components, Events) {
-
-                const Sizes = {
-
-                    setupSlides() {
-                        const width = this.slideWidth + 'px';
-                        const slides = Components.Html.slides;
-
-                        for (let i = 0; i < slides.length; i++) {
-                            slides[i].style.width = width;
-                        }
-
-                        // 🔹 Ejemplo: cambiar autoplay dinámicamente
-                        if (document.documentElement.clientWidth <= 768 && !Glide.settings.autoplay) {
-                            Glide.update({autoplay: 3000, type: 'slider', focusAt: 'center'});
-                        } else if (document.documentElement.clientWidth > 768 && Glide.settings.autoplay) {
-                            Glide.update({autoplay: false});
-                        }
-                    },
-
-                    setupWrapper() {
-                        Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
-                    },
-
-                    remove() {
-                        const slides = Components.Html.slides;
-
-                        for (let i = 0; i < slides.length; i++) {
-                            slides[i].style.width = '';
-                        }
-
-                        Components.Html.wrapper.style.width = '';
-                    }
-                };
-
-                // ----------------------------
-                // GETTERS OBLIGATORIOS
-                // ----------------------------
-
-                Object.defineProperty(Sizes, 'length', {
-                    get() {
-                        return Components.Html.slides.length;
-                    }
-                });
-
-                Object.defineProperty(Sizes, 'width', {
-                    get() {
-                        return Components.Html.track.offsetWidth;
-                    }
-                });
-
-                Object.defineProperty(Sizes, 'wrapperSize', {
-                    get() {
-                        return (
-                            this.slideWidth * this.length +
-                            Components.Gaps.grow +
-                            Components.Clones.grow
-                        );
-                    }
-                });
-
-                Object.defineProperty(Sizes, 'slideWidth', {
-                    get() {
-                        // 🔹 Lógica adaptativa + límite máximo
-                        const maxWidth = 990; // el máximo que tú desees
-                        const horizontalPadding = 32; // margen lateral en mobile
-
-                        let width =
-                            document.documentElement.clientWidth <= 768
-                                ? document.documentElement.clientWidth - horizontalPadding
-                                : Math.min(document.documentElement.clientWidth * 0.85, maxWidth);
-
-                        // 🔹 Variables CSS opcionales para efectos visuales
-                        verifiedBsCarouselRoot.style.setProperty('--verified-bs-slide-width', width + 'px');
-
-                        const points = document.querySelector('.verified-bs__glide .slider__bullets');
-                        verifiedBsCarouselRoot.style.setProperty(
-                            '--verified-bs-slide-left',
-                            (points?.getBoundingClientRect().x || 0) + 'px'
-                        );
-
-                        return width;
-                    }
-                });
-
-                // ----------------------------
-                // EVENTOS COMO EN LA LIBRERÍA
-                // ----------------------------
-
-                Events.on(['build.before', 'resize', 'update'], () => {
-                    Sizes.setupSlides();
-                    Sizes.setupWrapper();
-                });
-
-                Events.on('destroy', () => {
-                    Sizes.remove();
-                });
-
-                return Sizes;
-            }
-        });
 
         (function () {
             const priceTable = document.querySelector('.price-table');
@@ -263,11 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 addClassToPriceTable();
                 try {
                     glideInstance = new Glide(priceTable, {
-                        type: 'slider',
-                        gap: 16,
-                        autoplay: false,
-                        rewind: false,
-                        animationDuration: 200
+                        type: 'slider', gap: 16, autoplay: false, rewind: false, animationDuration: 200
                     });
 
                     glideInstance.on(['swipe.start', 'run.after'], () => {
@@ -275,23 +145,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
 
                     glideInstance
-                        .mutate([
-                            function (Glide, Components) {
-                                return {
-                                    modify(translate) {
-                                        const slideWidth = Components.Sizes.slideWidth;
-                                        const gap = Components.Gaps.value;
-                                        const viewportWidth = document.documentElement.clientWidth;
-                                        const offsetToCenter = (viewportWidth - slideWidth) / 2;
-                                        const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
-                                        const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
-                                        const containerGap = viewportWidth <= 1024 ? 0 : 32;
+                        .mutate([function (Glide, Components) {
+                            return {
+                                modify(translate) {
+                                    const slideWidth = Components.Sizes.slideWidth;
+                                    const gap = Components.Gaps.value;
+                                    const viewportWidth = document.documentElement.clientWidth;
+                                    const offsetToCenter = (viewportWidth - slideWidth) / 2;
+                                    const slideIndex = Math.round(Math.abs(translate) / (slideWidth + gap));
+                                    const adjustedTranslate = -(slideIndex * (slideWidth + gap) - offsetToCenter);
+                                    const containerGap = viewportWidth <= 1024 ? 0 : 32;
 
-                                        return -1 * (adjustedTranslate - containerGap);
-                                    }
-                                };
-                            }
-                        ])
+                                    return -1 * (adjustedTranslate - containerGap);
+                                }
+                            };
+                        }])
                         .mount({
                             Sizes: function CustomSizes(Glide, Components, Events) {
                                 const Sizes = {
@@ -301,11 +169,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                         for (let i = 0; i < slides.length; i++) {
                                             slides[i].style.width = width;
                                         }
-                                    },
-                                    setupWrapper() {
+                                    }, setupWrapper() {
                                         Components.Html.wrapper.style.width = `${this.wrapperSize}px`;
-                                    },
-                                    remove() {
+                                    }, remove() {
                                         const slides = Components.Html.slides;
                                         for (let i = 0; i < slides.length; i++) {
                                             slides[i].style.width = '';
@@ -328,11 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                                 Object.defineProperty(Sizes, 'wrapperSize', {
                                     get() {
-                                        return (
-                                            this.slideWidth * this.length +
-                                            Components.Gaps.grow +
-                                            Components.Clones.grow
-                                        );
+                                        return (this.slideWidth * this.length + Components.Gaps.grow + Components.Clones.grow);
                                     }
                                 });
 
@@ -409,9 +271,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadChooseYourAccountSize(fn) {
-        function handlerSelection(target) {
+        function handlerSelectByAccountType(target) {
             const input = target.currentTarget || target;
             const accountType = input.value;
+
+            document.querySelectorAll('.mt-pricing-table-benefits').forEach(element => {
+                element.classList.add('d-none');
+            });
+
+            document.querySelector(`.mt-pricing-table-benefits[data-account-type-benefits="${accountType}"]`).classList.remove('d-none');
 
             void fn({
                 accountType,
@@ -420,12 +288,74 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        document.querySelectorAll(`[name="account-type"]`).forEach(btn => {
-            btn.addEventListener('click', handlerSelection);
-        })
+        async function handlerSelectByMarketType(target) {
+            const input = target.currentTarget || target;
+            const marketType = input.value;
+
+            console.info('[MarketType Selected]', marketType);
+
+            try {
+                const endpoint = `/wp-json/custom/v1/pricing-fragment?marketType=${encodeURIComponent(marketType)}`;
+                const response = await fetch(endpoint, {cache: 'no-store'});
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status} al obtener el fragmento`);
+                }
+
+                const data = await response.json();
+                if (!data.success) {
+                    console.error('Backend error:', data.message);
+                    return;
+                }
+
+                const htmlContainer = document.querySelector('.pricing-table-fragment-wrapper');
+                if (!htmlContainer) {
+                    console.warn('No se encontró el contenedor .pricing-table-fragment-wrapper');
+                    return;
+                }
+
+                // 🔄 Inyectar nuevo fragmento
+                htmlContainer.innerHTML = data.html;
+
+                // 🕒 Esperar un tick para asegurar que el DOM esté actualizado
+                await new Promise(resolve => requestAnimationFrame(resolve));
+
+                // ✅ Buscar el primer input[name="account-type"] del nuevo fragmento
+                const firstAccountTypeInput = htmlContainer.querySelector('[name="account-type"]');
+
+                if (firstAccountTypeInput) {
+                    console.info('[Auto-select AccountType]', firstAccountTypeInput.value);
+
+                    void fn({
+                        accountType: firstAccountTypeInput.value,
+                        defaultPlatform: firstAccountTypeInput.dataset.defaultPlatform,
+                        defaultMarketType: firstAccountTypeInput.dataset.defaultMarketType,
+                    });
+                } else {
+                    console.warn('No se encontró ningún input[name="account-type"] en el nuevo fragmento.');
+                }
+
+                // 🔁 Reasignar listeners dentro del nuevo HTML renderizado
+                htmlContainer.querySelectorAll('[name="account-type"]').forEach(btn => {
+                    btn.addEventListener('click', handlerSelectByAccountType);
+                });
+
+            } catch (error) {
+                console.error('Error al cargar el fragmento de pricing:', error);
+            }
+        }
+
+        // 📌 Inicializar listeners principales
+        document.querySelectorAll('[name="account-type"]').forEach(btn => {
+            btn.addEventListener('click', handlerSelectByAccountType);
+        });
+
+        document.querySelectorAll('[name="market-type"]').forEach(btn => {
+            btn.addEventListener('click', handlerSelectByMarketType);
+        });
 
         const targetSelection = document.querySelector('[name="account-type"]:checked');
-        handlerSelection(targetSelection)
+        handlerSelectByAccountType(targetSelection)
     }
 
     initializeSwiper();
@@ -451,7 +381,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const accountTypeText = dropdownAccountTypeOption.querySelector('.mt-dropdown__item-label');
         const accountTypeBadge = dropdownAccountTypeOption.querySelector('.mt-card__badge');
 
-        dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-icon').src = accountTypeIcon.src;
+        if (accountTypeIcon) {
+            dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-icon').src = accountTypeIcon.src;
+        }
         dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-label').innerText = accountTypeText.innerText;
 
         dropdownAccountTypeComponent
@@ -594,17 +526,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isValidCoupon = coupon && coupon.valid;
                 priceInformation.querySelector('.price-information__summary').style.display = isValidCoupon ? 'flex' : 'none';
 
+                let couponValue = '';
+
                 if (isValidCoupon) {
                     priceInformation.classList.add('has-coupon');
 
                     couponBeforePrice.querySelector('span').innerText = price;
                     pricePanel.innerText = formatNumber(coupon.final_total);
                     badgeCoupon.querySelector('.badge-coupon__discount_total').innerText = formatNumber(coupon.discount_total);
-                    badgeCoupon.querySelector('.badge-coupon__code').innerText = coupon.coupon.toUpperCase();
+                    couponValue = coupon.coupon.toUpperCase();
                 } else {
                     priceInformation.classList.remove('has-coupon', 'price-information--min-h-112', 'align-items-center');
                     pricePanel.innerText = price;
                 }
+
+                badgeCoupon.querySelector('.badge-coupon__code').dataset.coupon = couponValue;
+                badgeCoupon.querySelector('.badge-coupon__code').innerText = couponValue;
+
+                const url = buildProductUrl(productId);
+                const link = document.querySelector(`.price-table__footer[data-price="${priceSize}"] a`);
+                link.href = url;
             }
         });
 
@@ -615,5 +556,127 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         updatePoints();
-    })
+    });
+
+    (function () {
+        const formSubscription = document.getElementById('form-subscription');
+        if (!formSubscription) {
+            return;
+        }
+
+        const input = formSubscription.querySelector('[name="email"]');
+        const emailError = formSubscription.querySelector('#email-error');
+        const submitBtn = formSubscription.querySelector('[type="submit"]');
+        const emailConsent = formSubscription.querySelector('[name="email_consent"]');
+
+        function setErrorMessage(message) {
+            emailError.innerText = message ? message : '';
+
+            submitBtn.disabled = !message;
+
+            if (message) {
+                submitBtn.disabled = true;
+                input.classList.add('invalid_email');
+                emailError.classList.remove('d-none')
+            } else {
+                input.classList.remove('invalid_email');
+                submitBtn.disabled = !emailConsent.checked;
+                emailError.classList.add('d-none');
+            }
+        }
+
+        function lockForm(locked) {
+            input.disabled = locked;
+            submitBtn.disabled = locked;
+            emailConsent.disabled = locked;
+        }
+
+        async function handlerSubmitForm(ev) {
+            ev.preventDefault();
+
+            if (!validateEmail()) {
+                if (!input.value.trim()) {
+                    setErrorMessage("This field is required");
+                    input.focus();
+                }
+
+                return;
+            }
+
+            input?.blur();
+
+            const alertSuccess = document.querySelector('.footer-bs__alert');
+            alertSuccess.classList.add('d-none');
+
+            try {
+                $.preloader.show();
+                lockForm(true);
+
+                const response = await fetch(MG_GLOBAL.adminAjaxApi, {
+                    method: 'POST', headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }, body: new URLSearchParams({
+                        action: 'subscription_form_submit',
+                        nonce: MG_GLOBAL.subscriptionNonce,
+                        email: input.value.trim(),
+                        email_consent: emailConsent.checked
+                    })
+                });
+
+                const responseData = await response.json();
+                const {data} = responseData;
+
+                if (!responseData.success) {
+                    setErrorMessage(data.message);
+                    return;
+                }
+
+                alertSuccess.classList.remove('d-none');
+
+                input.value = '';
+                emailConsent.checked = false;
+
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+                    input.focus();
+                }, 0);
+            } catch (e) {
+            } finally {
+                $.preloader.hide();
+                lockForm(false)
+            }
+        }
+
+        function handlerEmailConsent() {
+            validateEmail();
+
+            if (emailConsent.checked) {
+                submitBtn.disabled = false;
+                return;
+            }
+
+            submitBtn.disabled = true;
+        }
+
+        function validateEmail() {
+            const value = input.value.trim();
+
+            if (value === '') {
+                return;
+            }
+
+            if (!input.validity.valid) {
+                setErrorMessage("Invalid email");
+                return false;
+            }
+
+            setErrorMessage('');
+            return true;
+        }
+
+        input.addEventListener('blur', validateEmail);
+        emailConsent.addEventListener('click', handlerEmailConsent);
+        submitBtn.addEventListener('click', handlerSubmitForm);
+    })();
 });

@@ -60,7 +60,7 @@ defined('ABSPATH') || exit;
                     <label class="label"
                         for="billing_address_1"><?php esc_html_e('Aparment, Suite, Unit, etc, (opcional)', 'megatrader'); ?></label>
                     <input type="text" class="form-control" name="billing_address_1" id="billing_address_1"
-                        placeholder="<?php esc_attr_e('Aparment, Suite, Unit, etc, (opcional)', 'megatrader'); ?>"
+                    placeholder="<?php esc_attr_e('Street address (e.g., 123 Main St)', 'megatrader'); ?>"
                         value="<?php echo esc_attr($checkout->get_value('billing_address_1')); ?>">
                 </div>
             </div>

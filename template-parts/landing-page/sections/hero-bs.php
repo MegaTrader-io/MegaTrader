@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="hero-bs text-white">
+<section id="hero-section" class="hero-bs text-white">
     <div class="landing-bs-container">
         <div class="hero-bs__row">
             <div class="hero-bs__content">
@@ -14,28 +14,29 @@
 
                 <header class="hero-bs__header">
                     <h1 class="hero-bs__title">
-                        Supercharge your futures trading with UP to $750k
+                        Supercharge your trading with up to $750K in funding
                     </h1>
                 </header>
 
                 <ul class="hero-bs__benefits list-unstyled">
-                  <?php
-                  $features = [
-                    'Start a challenge or get instant funding',
-                    'Lightning fast payouts in just one hour',
-                    'Journal to track and improve your trades',
-                  ]
-                  ?>
-                  <?php foreach ($features as $key => $feature): ?>
-                      <li class="hero-bs__benefit d-flex">
-                          <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash.svg'; ?>">
-                          <span class="hero-bs__text"><?= $feature ?></span>
-                      </li>
-                  <?php endforeach; ?>
+                    <?php
+                    $features = [
+                            'Start a challenge and get instant funding',
+                            'Lightning fast payouts in just a few hours',
+                            'Journal to track and improve your trading',
+                    ]
+                    ?>
+                    <?php foreach ($features as $key => $feature): ?>
+                        <li class="hero-bs__benefit d-flex">
+                            <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash.svg'; ?>">
+                            <span class="hero-bs__text"><?= $feature ?></span>
+                        </li>
+                    <?php endforeach; ?>
                 </ul>
 
                 <div class="hero-bs__get-funded-now d-flex">
-                    <a href="#get-funded" class="mega-btn-md mega-btn-primary-md hero-bs__btn">
+                    <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
+                       class="btn-get-funded-now mega-btn-md mega-btn-primary-md hero-bs__btn">
                         <img src="<?= get_template_directory_uri() . '/assets/img/landing-page/flash-icon.svg'; ?>"
                              width="44" height="43">
                         Get funded now
@@ -43,30 +44,30 @@
                 </div>
 
                 <div>
-                  <?php get_template_part('template-parts/landing-page/sections/trustpilot-dummy-bs'); ?>
+                    <?php get_template_part('template-parts/landing-page/sections/trustpilot-dummy-bs'); ?>
                 </div>
             </div>
 
             <div class="hero-bs__media">
                 <div class="hero-bs__media-wrapper">
                     <div class="hero-bs__media-card">
-                      <?php
-                      $skews_images = [
-                        get_template_directory_uri() . '/assets/img/landing-page/skew-01-11.png',
-                        get_template_directory_uri() . '/assets/img/landing-page/skew-02-22.png'
-                      ];
-                      ?>
+                        <?php
+                        $skews_images = [
+                                get_template_directory_uri() . '/assets/img/landing-page/skew-01-11.png',
+                                get_template_directory_uri() . '/assets/img/landing-page/skew-02-22.png'
+                        ];
+                        ?>
 
                         <div id="hero-bs-carousel" class="hero-bs__glide slider glide"
                              style="--hero-bs-slide-width: 0px; --hero-bs-slide-left: 0px;">
                             <div class="slider__track glide__track" data-glide-el="track">
                                 <ul class="slider__slides glide__slides">
-                                  <?php foreach ($skews_images as $key => $skew_image) : ?>
-                                      <li class="slider__frame glide__slide">
-                                          <img src="<?php echo esc_url($skew_image); ?>"
-                                               alt="control left">
-                                      </li>
-                                  <?php endforeach; ?>
+                                    <?php foreach ($skews_images as $key => $skew_image) : ?>
+                                        <li class="slider__frame glide__slide">
+                                            <img src="<?php echo esc_url($skew_image); ?>"
+                                                 alt="control left">
+                                        </li>
+                                    <?php endforeach; ?>
                                 </ul>
                             </div>
 

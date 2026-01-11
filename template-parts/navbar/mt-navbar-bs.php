@@ -63,11 +63,6 @@ $navbar_actions_template = $args['navbar_actions_template'] ?? '';
                         <?php get_template_part($navbar_actions_template); ?>
                     <?php endif; ?>
 
-                    <?php if ($section == 'landing-page-bs'): ?>
-                        <a href="/auth/login" class="mt-navbar__get-funded mega-btn-md mega-btn-primary-md">
-                            GET FUNDED
-                        </a>
-                    <?php endif; ?>
                     <?php if ($section == 'landing-page-bs' || $section == 'checkout'): ?>
                         <div class="mt-menu-container dropdown">
 

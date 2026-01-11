@@ -17,8 +17,8 @@ if (!function_exists('megatrader_landing_page_scripts')) {
         $clipboard_js_version = file_exists($js_path . 'clipboard.min.js') ? filemtime($js_path . 'clipboard.min.js') : null;
 
         wp_enqueue_style('bootstrap', MEGATRADER_CSS . 'bootstrap.min.css', array(), _MEGATRADER_VERSION);
-        wp_enqueue_style( 'megatrader-base',		MEGATRADER_CSS .'style.css', array(), REALTIME_VERSION );
-        wp_enqueue_style( 'megatrader-style',       get_stylesheet_uri(), array(), _MEGATRADER_VERSION );
+        wp_enqueue_style('megatrader-base', MEGATRADER_CSS . 'style.css', array(), REALTIME_VERSION);
+        wp_enqueue_style('megatrader-style', get_stylesheet_uri(), array(), _MEGATRADER_VERSION);
 
         wp_enqueue_style('megatrader-main', $css_uri . 'style-landing-page.css', [], $style_landing_version);
         wp_enqueue_style('megatrader-dev', MEGATRADER_CSS . 'megatrader-dev.css', array('megatrader-style'), REALTIME_VERSION);
@@ -28,7 +28,7 @@ if (!function_exists('megatrader_landing_page_scripts')) {
 
         wp_enqueue_script('nouislider', $js_uri . 'nouislider.min.js', [], $nouislider_js_version, true);
         wp_enqueue_script('clipboard', $js_uri . 'clipboard.min.js', [], $clipboard_js_version, true);
-        wp_enqueue_script( 'mt-tabs',	        MEGATRADER_JS .'mt-tabs.js', array(), REALTIME_VERSION, true);
+        wp_enqueue_script('mt-tabs', MEGATRADER_JS . 'mt-tabs.js', array(), REALTIME_VERSION, true);
         wp_enqueue_script('tw-modal', $js_uri . 'tw-modal.js', [], $tw_modal_js_version, true);
         wp_enqueue_script('megatrader-main', $js_uri . 'landing-page.js', ['mt-tabs'], $landing_js_version, true);
 

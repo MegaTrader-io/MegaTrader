@@ -309,30 +309,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       window.iti = iti;
-
-      phoneInput.addEventListener("blur", function () {
-        const isValid = iti.isValidNumber();
-        let errorContainer = phoneInput
-          .closest(".form-group")
-          ?.querySelector(".invalid-feedback");
-
-        if (!errorContainer) {
-          errorContainer = document.createElement("div");
-          errorContainer.className = "invalid-feedback";
-          errorContainer.textContent = "Invalid phone number.";
-          phoneInput.parentNode.appendChild(errorContainer);
-        }
-
-        if (isValid) {
-          phoneInput.classList.remove("is-invalid");
-          errorContainer.style.display = "none";
-          phoneInput.setCustomValidity("");
-        } else {
-          phoneInput.classList.add("is-invalid");
-          errorContainer.style.display = "block";
-          phoneInput.setCustomValidity("Invalid");
-        }
-      });
     }
 
     function fallbackToIP() {
@@ -428,6 +404,8 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
   };
 
+  const protectedErrors = new Map();
+
   function findFieldElement(field) {
     const elByName = document.querySelector(`[name="${field}"]`);
     const elById = document.getElementById(field);
@@ -437,10 +415,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function isVisibleField(el) {
     if (!el) return false;
-    const rects = el.getClientRects();
+
+    const target = el.closest(".iti") || el;
+
+    const rects = target.getClientRects();
+    const cs = window.getComputedStyle(target);
+
     return !!(
-      (el.offsetWidth || el.offsetHeight || rects.length) &&
-      window.getComputedStyle(el).visibility !== "hidden"
+      (target.offsetWidth || target.offsetHeight || rects.length) &&
+      cs.visibility !== "hidden" &&
+      cs.display !== "none"
     );
   }
 
@@ -453,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Si el campo no existe o está oculto, lo saltamos
       if (!inputEl) continue;
-      if (!isVisibleField(inputEl)) continue;
+      if (field !== "billing_phone" && !isVisibleField(inputEl)) continue;
 
       for (const rule of ruleSet) {
         const result = rule(value);
@@ -483,28 +467,147 @@ document.addEventListener("DOMContentLoaded", function () {
       const input = findFieldElement(field);
       if (!input) continue;
 
+      const itiWrap = input.closest(".iti");
+
       const container =
-        input.closest(".form-group") || input.parentElement || input;
+        input.closest(".form-row") ||
+        input.closest(".form-group") ||
+        (itiWrap ? itiWrap.parentElement : null) ||
+        input.parentElement;
+
+      if (!container) continue;
+
+      // borra SOLO el error previo de ese field
+      container
+        .querySelectorAll(
+          `.${Selector.ErrorMessageClass}[data-field="${field}"]`
+        )
+        .forEach((n) => n.remove());
 
       const errorNode = document.createElement("div");
       errorNode.className = Selector.ErrorMessageClass;
       errorNode.textContent = message;
+      errorNode.dataset.field = field; // ✅ ahora tu query funciona
 
-      const existingErrorNode = container.querySelector(
-        `.${Selector.ErrorMessageClass}`
-      );
-      if (existingErrorNode) {
-        existingErrorNode.remove();
+      // inserta el mensaje justo debajo del wrapper iti (mejor UX)
+      if (itiWrap && itiWrap.parentElement === container) {
+        itiWrap.insertAdjacentElement("afterend", errorNode);
+      } else {
+        container.appendChild(errorNode);
       }
 
-      container.appendChild(errorNode);
       input.classList.add(Selector.InvalidFieldClass);
+      if (itiWrap) itiWrap.classList.add(Selector.InvalidFieldClass);
+
       protectedErrors.set(field, errorNode);
     }
   }
 
+  function mtHardGateCheckout(e) {
+    const checkoutForm =
+      document.getElementById("checkout-form") ||
+      document.querySelector("form.checkout");
+
+    if (!checkoutForm) return true;
+
+    const formData = new FormData(checkoutForm);
+    const values = Object.fromEntries(formData.entries());
+
+    const errors = validateFormFields(values, validationRules);
+
+    // Extra phone
+    try {
+      const tel = document.getElementById("billing_phone");
+      if (tel) {
+        const raw = (tel.value || "").trim();
+        if (!raw) {
+          errors.billing_phone = "Billing Phone is a required field.";
+        } else if (
+          window.iti &&
+          typeof window.iti.isValidNumber === "function"
+        ) {
+          if (!window.iti.isValidNumber()) {
+            errors.billing_phone = "Please enter a valid phone number.";
+          } else {
+            const full = window.iti.getNumber();
+            if (full) tel.value = full;
+          }
+        }
+      }
+    } catch (_) {}
+
+    // Payment selection
+    try {
+      if (typeof ensurePaymentSelection === "function") {
+        const okPayment = ensurePaymentSelection(e);
+        if (!okPayment) {
+          e.preventDefault();
+          e.stopImmediatePropagation?.();
+          return false;
+        }
+      }
+    } catch (_) {}
+
+    if (Object.keys(errors).length) {
+      e.preventDefault();
+      e.stopImmediatePropagation?.();
+
+      try {
+        clearErrors(checkoutForm);
+      } catch (_) {}
+      try {
+        showErrors(checkoutForm, errors);
+      } catch (_) {}
+
+      try {
+        const first =
+          checkoutForm.querySelector("." + Selector.InvalidFieldClass) ||
+          checkoutForm.querySelector(`[name="${Object.keys(errors)[0]}"]`) ||
+          checkoutForm.querySelector(`#${Object.keys(errors)[0]}`);
+        first?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+        setTimeout(() => first?.focus?.(), 150);
+      } catch (_) {}
+
+      try {
+        if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
+      } catch (_) {}
+      try {
+        if (typeof hideSitePreloader === "function") hideSitePreloader();
+      } catch (_) {}
+
+      return false;
+    }
+
+    return true;
+  }
+
+  // Submit CAPTURE
+  ["form.checkout", "#checkout-form"].forEach((sel) => {
+    document.querySelectorAll(sel).forEach((f) => {
+      if (f.dataset.mtHardGate) return;
+      f.dataset.mtHardGate = "1";
+      f.addEventListener("submit", mtHardGateCheckout, true);
+    });
+  });
+
+  // Click CAPTURE en #place_order
+  document.addEventListener(
+    "click",
+    function (e) {
+      const btn = e.target?.closest?.("#place_order");
+      if (!btn) return;
+      mtHardGateCheckout(e);
+    },
+    true
+  );
+
+  window.MT = window.MT || {};
+  window.MT.checkout = window.MT.checkout || {};
+  window.MT.checkout.showErrors = showErrors;
+  window.MT.checkout.clearErrors = clearErrors;
+
   // ========== PROTECT DOM BUGS AGAINST EXTERNAL DELETION ==========
-  const protectedErrors = new Map();
+
 
   function startErrorProtection() {
     const observer = new MutationObserver(() => {
@@ -512,18 +615,35 @@ document.addEventListener("DOMContentLoaded", function () {
         const input = document.querySelector(`[name="${field}"]`);
         if (!input) continue;
 
-        const existing = input.parentNode.querySelector(".invalid-feedback");
+        const itiWrap = input.closest(".iti");
+
+        const container =
+          input.closest(".form-row") ||
+          input.closest(".form-group") ||
+          (itiWrap ? itiWrap.parentElement : null) ||
+          input.parentElement;
+
+        if (!container) continue;
+
+        const existing = container.querySelector(
+          `.${Selector.ErrorMessageClass}[data-field="${field}"]`
+        );
+
         if (!existing) {
-          input.parentElement.appendChild(node);
-          input.classList.add("is-invalid");
+          // reinsertar en el mismo lugar que showErrors
+          if (itiWrap && itiWrap.parentElement === container) {
+            itiWrap.insertAdjacentElement("afterend", node);
+          } else {
+            container.appendChild(node);
+          }
+
+          input.classList.add(Selector.InvalidFieldClass);
+          if (itiWrap) itiWrap.classList.add(Selector.InvalidFieldClass);
         }
       }
     });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   startErrorProtection();
@@ -956,29 +1076,57 @@ document.addEventListener("DOMContentLoaded", function () {
   ]);
 
   function migrateGlobalFieldErrors(node) {
-    const errorGroupList = [
-      ...document.getElementsByClassName(Selector.NotificationsErrorGroupClass),
+    const groups = [
+      ...document.querySelectorAll(
+        ".woocommerce-NoticeGroup-checkout, .woocommerce-NoticeGroup"
+      ),
     ];
 
-    errorGroupList.forEach((errorGroup) => {
-      const inputErrors = Array.from(errorGroup.children).reduce(
-        (messageByField, currentError) => {
-          const fieldName = currentError.getAttribute("data-id");
-          const message = currentError.textContent;
+    groups.forEach((group) => {
+      const ul = group.querySelector("ul.woocommerce-error");
+      if (!ul) return;
 
-          if (fieldName) {
-            messageByField[fieldName] = message;
-            currentError.remove();
-          } else if (errorsBlackList.has(message.trim())) {
-            currentError.remove();
+      const items = Array.from(ul.querySelectorAll("li"));
+
+      const isCouponNotice = items.some((li) => {
+        const msg = (li.textContent || "").toLowerCase();
+        return (
+          msg.includes("coupon") ||
+          msg.includes("discount") ||
+          msg.includes("promo") ||
+          msg.includes("cupon") ||
+          msg.includes("cupón")
+        );
+      });
+
+      const inputErrors = items.reduce((messageByField, li) => {
+        let fieldName = li.getAttribute("data-id");
+        let message = li.textContent;
+
+        // Soporta tu caso donde el data-id viene dentro de un nodo hijo
+        if (!fieldName) {
+          const tagged = li.querySelector("[data-id]");
+          if (tagged) {
+            fieldName = tagged.getAttribute("data-id");
+            message = tagged.textContent;
           }
+        }
 
-          return messageByField;
-        },
-        {}
-      );
+        if (fieldName) {
+          messageByField[fieldName] = (message || "").trim();
+          li.remove();
+        } else if (errorsBlackList.has((message || "").trim())) {
+          li.remove();
+        }
 
-      if (typeof checkoutForm !== "undefined" && checkoutForm) {
+        return messageByField;
+      }, {});
+
+      if (
+        !isCouponNotice &&
+        typeof checkoutForm !== "undefined" &&
+        checkoutForm
+      ) {
         const formData = new FormData(checkoutForm);
         const values = Object.fromEntries(formData.entries());
         const jsErrors = validateFormFields(values, validationRules);
@@ -992,8 +1140,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       showErrors(checkoutForm, inputErrors);
 
-      if (!errorGroup.children.length) {
-        errorGroup.remove();
+      // Si ya no quedan LI, elimina todo el notice group
+      if (!ul.querySelector("li")) {
+        group.remove();
         stripEmptyNoticeGroups();
       }
     });
@@ -1566,229 +1715,132 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   })(jQuery);
 
-  // ========== HIDE AUTOMATIC WOOCOMMERCE ERRORS ==========
-  // TODO: remove block
-  /*
-  const bodyObserver = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      mutation.addedNodes.forEach(function (node) {
-        if (
-          node.nodeType === 1 &&
-          node.classList.contains("woocommerce-NoticeGroup-checkout")
-        ) {
-          node.remove(); // O node.style.display = "none";
+  // ✅ PHONE: validar en tiempo real + antes de enviar checkout
+  (function setupPhoneValidation() {
+    const phoneInput = document.querySelector("#billing_phone");
+    if (!phoneInput) return;
+
+    // helper: pinta/quita error del phone usando TU sistema
+    function setPhoneError(msg) {
+      showErrors(checkoutForm, { billing_phone: msg });
+    }
+
+    function clearPhoneError() {
+      protectedErrors.delete("billing_phone");
+
+      const input = document.getElementById("billing_phone");
+      if (!input) return;
+
+      input.classList.remove(Selector.InvalidFieldClass);
+
+      const itiWrap = input.closest(".iti");
+      if (itiWrap) itiWrap.classList.remove(Selector.InvalidFieldClass);
+
+      const container =
+        input.closest(".form-row") ||
+        input.closest(".form-group") ||
+        input.closest(".woocommerce-input-wrapper") ||
+        input.parentElement;
+
+      if (!container) return;
+
+      const node = container.querySelector(
+        `.${Selector.ErrorMessageClass}[data-field="billing_phone"]`
+      );
+      if (node) node.remove();
+    }
+
+    function isPhoneValid() {
+      const raw = (phoneInput.value || "").trim();
+
+      // requerido: si está vacío -> inválido
+      if (!raw) return { ok: false, msg: "Phone is a required field." };
+
+      // intl-tel-input: usa la instancia ya creada
+      if (window.iti && typeof window.iti.isValidNumber === "function") {
+        if (!window.iti.isValidNumber()) {
+          return { ok: false, msg: "Please enter a valid phone number." };
         }
-      });
-    });
-  });
-
-  bodyObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-  */
-
-  /* TODO: Code Block for Order Success Modal (Thank You)
-  function renderOrderSuccessModal(orderId, redirectUrl, orderKey) {
-    const holder = document.getElementById("mt-order-success-nonce");
-    const ajaxUrl =
-      (window.wc_checkout_params && window.wc_checkout_params.ajax_url) ||
-      "/wp-admin/admin-ajax.php";
-    const nonce = holder ? holder.getAttribute("data-nonce") : "";
-
-    // Limpia un modal previo
-    const prev = document.getElementById("orderSuccessModal");
-    if (prev) prev.remove();
-
-    // LOG
-    mtLog("modal FETCH start", { orderId, orderKey, redirectUrl });
-
-    fetch(ajaxUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-      body: new URLSearchParams({
-        action: "mt_render_order_success_modal",
-        order_id: String(orderId || ""),
-        order_key: String(orderKey || ""),
-        nonce,
-      }).toString(),
-    })
-      .then((r) => r.json())
-      .then((json) => {
-        if (!json || !json.success || !json.data || !json.data.html) {
-          throw new Error(
-            json?.data?.message || "Could not load confirmation."
-          );
-        }
-
-        // Inyecta HTML del modal
-        document.body.insertAdjacentHTML("beforeend", json.data.html);
-        mtLog("modal HTML injected");
-
-        const modalEl = document.getElementById("orderSuccessModal");
-        if (!modalEl) throw new Error("Modal element not found.");
-
-        // UX: desactivar beforeunload y congelar fondo (no navegamos desde billing)
-        try {
-          window.onbeforeunload = null;
-        } catch (_) {}
-        try {
-          jQuery(window).off("beforeunload").off("beforeunload.checkout");
-        } catch (_) {}
-        document.body.classList.add("mt-checkout-frozen");
-
-        // Inicializa lógica del modal externo (redirecciones propias del modal)
-        if (
-          window.MTSuccessModal &&
-          typeof window.MTSuccessModal.init === "function"
-        ) {
-          window.MTSuccessModal.init(modalEl, {
-            redirectUrlFromCheckout: redirectUrl,
-          });
-        }
-
-        // Mostrar modal: apagamos preloader SOLO cuando el modal está visible
-        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
-          const bs = bootstrap.Modal.getOrCreateInstance(modalEl, {
-            backdrop: true,
-            keyboard: true,
-          });
-
-          modalEl.addEventListener(
-            "shown.bs.modal",
-            () => {
-              mtLog("modal SHOWN → hide preloader + unblock");
-              try {
-                if (typeof wcUnblockCheckout === "function")
-                  wcUnblockCheckout();
-              } catch (_) {}
-              try {
-                if (typeof hideSitePreloader === "function")
-                  hideSitePreloader();
-              } catch (_) {}
-            },
-            { once: true }
-          );
-
-          modalEl.addEventListener(
-            "hidden.bs.modal",
-            () => {
-              mtLog("modal HIDDEN → unfreeze");
-              document.body.classList.remove("mt-checkout-frozen");
-              document.body.style.overflow = "";
-            },
-            { once: true }
-          );
-
-          mtLog("modal SHOW() (bootstrap)");
-          bs.show();
-        } else {
-          // Fallback sin Bootstrap
-          modalEl.style.display = "block";
-          modalEl.classList.add("show");
-          document.body.style.overflow = "hidden";
-
-          try {
-            if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
-          } catch (_) {}
-          try {
-            if (typeof hideSitePreloader === "function") hideSitePreloader();
-          } catch (_) {}
-          mtLog("modal SHOW() (fallback)");
-
-          const closeBtn = modalEl.querySelector("[data-bs-dismiss='modal']");
-          if (closeBtn) {
-            closeBtn.addEventListener("click", (e) => {
-              e.preventDefault();
-              modalEl.classList.remove("show");
-              modalEl.style.display = "none";
-              document.body.classList.remove("mt-checkout-frozen");
-              document.body.style.overflow = "";
-            });
-          }
-        }
-      })
-      .catch((err) => {
-        mtLog("modal FETCH ERROR", err && (err.message || err));
-        try {
-          if (typeof hideSitePreloader === "function") hideSitePreloader();
-        } catch (_) {}
-        try {
-          if (typeof unlockPlaceOrderBtn === "function") unlockPlaceOrderBtn();
-        } catch (_) {}
-        alert(
-          err.message ||
-            "Order placed, but we could not show the receipt. Check your email."
-        );
-      });
-  }
-
-  // Intercepta wc-ajax=checkout para NO redirigir y abrir el modal
-  
-  if (typeof jQuery !== "undefined") {
-    jQuery.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-      const url = String(options.url || "");
-      if (url.indexOf("wc-ajax=checkout") !== -1) {
-        mtLog("prefilter HIT", url);
       }
+      return { ok: true };
+    }
 
-      const origSuccess = options.success;
-      options.success = function (data, textStatus, jqXHR2) {
-        try {
-          if (
-            data &&
-            data.result === "success" &&
-            typeof data.redirect === "string"
-          ) {
-            // order_id por path o query
-            const mPath = data.redirect.match(/order-received\/(\d+)/);
-            const mQuery = data.redirect.match(/[?&]order-received=(\d+)/);
-            const orderId =
-              data.order_id || (mPath ? mPath[1] : mQuery ? mQuery[1] : null);
-
-            // order_key (wc_order_…)
-            const k = data.redirect.match(/[?&]key=([^&]+)/);
-            const orderKey = k ? k[1] : null;
-
-            mtLog("prefilter SUCCESS → will render modal", {
-              orderId,
-              orderKey,
-              redirect: data.redirect,
-            });
-
-            // Desbloquea overlay nativo; NO apagamos preloader aquí
-            try {
-              if (typeof wcUnblockCheckout === "function") wcUnblockCheckout();
-            } catch (_) {}
-            try {
-              jQuery(
-                ".woocommerce-NoticeGroup, .woocommerce-error, .woocommerce-message"
-              ).remove();
-            } catch (_) {}
-
-            // Evita popup “Leave site?” y congela fondo
-            try {
-              window.onbeforeunload = null;
-            } catch (_) {}
-            try {
-              jQuery(window).off("beforeunload").off("beforeunload.checkout");
-            } catch (_) {}
-            document.body.classList.add("mt-checkout-frozen");
-
-            // Abrir modal (el JS del modal controla redirecciones)
-            renderOrderSuccessModal(orderId, data.redirect, orderKey);
-            return; // NO redirigir
-          }
-        } catch (e) {
-          mtLog("prefilter ERROR", e && (e.message || e));
-        }
-
-        if (typeof origSuccess === "function")
-          return origSuccess.apply(this, arguments);
-      };
+    phoneInput.addEventListener("input", () => {
+      if ((phoneInput.value || "").trim()) clearPhoneError();
     });
-  }
-  */
+    phoneInput.addEventListener("blur", () => {
+      const r = isPhoneValid();
+      if (!r.ok) setPhoneError(r.msg);
+      else clearPhoneError();
+    });
+    phoneInput.addEventListener("change", () => {
+      if ((phoneInput.value || "").trim()) clearPhoneError();
+    });
+  })();
+
+  // ========== AUTO-CLEAR FIELD ERROR ON INPUT ==========
+  (function setupAutoClearInvalidOnInput() {
+    const form =
+      document.getElementById("checkout-form") ||
+      document.querySelector("form.checkout");
+
+    if (!form) return;
+
+    function clearFieldError(field) {
+      const input =
+        form.querySelector(`[name="${field}"]`) ||
+        document.getElementById(field);
+      if (!input) return;
+
+      input.classList.remove(Selector.InvalidFieldClass);
+
+      const itiWrap = input.closest(".iti");
+      if (itiWrap) itiWrap.classList.remove(Selector.InvalidFieldClass);
+
+      const container =
+        input.closest(".form-row") ||
+        input.closest(".form-group") ||
+        input.closest(".woocommerce-input-wrapper") ||
+        (itiWrap ? itiWrap.parentElement : null) ||
+        input.parentElement;
+
+      if (!container) return;
+
+      container
+        .querySelectorAll(
+          `.${Selector.ErrorMessageClass}[data-field="${field}"]`
+        )
+        .forEach((n) => n.remove());
+
+      try {
+        protectedErrors.delete(field);
+      } catch (_) {}
+    }
+
+    form.addEventListener(
+      "input",
+      function (e) {
+        const el = e.target;
+        if (!el) return;
+
+        if (!["INPUT", "SELECT", "TEXTAREA"].includes(el.tagName)) return;
+
+        const field = el.name || el.id;
+        if (!field) return;
+
+        // 🔑 el phone lo maneja SU bloque específico
+        if (field === "billing_phone") return;
+
+        const val = (el.value || "").trim();
+        if (!val) return;
+
+        const isInvalid =
+          el.classList.contains(Selector.InvalidFieldClass) ||
+          el.closest(".iti")?.classList.contains(Selector.InvalidFieldClass);
+
+        if (isInvalid) clearFieldError(field);
+      },
+      true
+    );
+  })();
 });

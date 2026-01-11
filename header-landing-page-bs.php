@@ -10,8 +10,12 @@
 </head>
 <body <?php body_class('font-roboto antialiased'); ?>>
 <?php wp_body_open(); ?>
-
+<div class="preloader" style="display: block;">
+    <div class="preloader-inner">
+        <span class="loader"></span>
+    </div>
+</div>
 <?php Mt_Navbar::render_navbar_bs(
         section: 'landing-page-bs',
-        classes_navbar: 'mt-navbar--landing-page-bs'
+        classes_navbar: 'mt-navbar--landing-page-bs mt-navbar__links--scrolled'
 ); ?>

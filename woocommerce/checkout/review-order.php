@@ -47,25 +47,35 @@ defined('ABSPATH') || exit;
 			foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
 				$_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
 
+
 				if ($_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters('woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key)) {
 					?>
 					<tr
 						class="<?php echo esc_attr(apply_filters('woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key)); ?>">
 						<td class="product-name">
+
 							<?php
-							$platform_label = $_product->get_attribute('pa_platform');
-							$account_size_label = $_product->get_attribute('pa_account-size');
-							$account_size = preg_replace_callback('/\$(\d{1,3}),000(?:\s.*)?/', function ($matches) {
-								return intval($matches[1]) . 'k';
-							}, $account_size_label);
-							if ($account_size) {
-								echo esc_html($platform_label . ' - ' . $account_size);
+							$var = $cart_item['variation'] ?? [];
+
+							// Labels bonitos (vienen bien desde atributos)
+							$platform_label = trim((string) $_product->get_attribute('pa_platform'));
+							$plan_label = trim((string) $_product->get_attribute('pa_account-types'));
+
+							// Size: usar el slug del carrito (ej: 50k) -> 50K
+							$size_slug = $var['attribute_pa_account-size'] ?? '';
+							$size = $size_slug ? strtoupper(trim($size_slug)) : '';
+
+							// Si tenemos lo necesario, imprimimos el formato deseado
+							if ($size && $plan_label && $platform_label) {
+								$dash = ' – '; 
+								echo esc_html($size . ' ' . $plan_label . $dash . $platform_label);
+
 							} else {
-								// echo esc_html($_product->get_name());
-					
+								// Fallback: Activation Fee / Reset Fee (como lo tenías)
 								$terms = get_the_terms($_product->get_id(), 'product_cat');
 								$is_activation_fee = false;
 								$is_reset_fee = false;
+
 								if ($terms && !is_wp_error($terms)) {
 									foreach ($terms as $term) {
 										if ($term->slug === 'activation-fee') {
@@ -78,13 +88,18 @@ defined('ABSPATH') || exit;
 										}
 									}
 								}
+
 								if ($is_activation_fee) {
 									echo 'Activation Fee';
-								} else if ($is_reset_fee) {
+								} elseif ($is_reset_fee) {
 									echo 'Reset Fee';
+								} else {
+									// Último fallback: nombre real del producto
+									echo esc_html($_product->get_name());
 								}
 							}
 							?>
+
 						</td>
 						<td class="product-total">
 							<?php echo apply_filters('woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal($_product, $cart_item['quantity']), $cart_item, $cart_item_key); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -102,11 +117,11 @@ defined('ABSPATH') || exit;
 
 
 			<?php /* ?>
-	   <tr class="cart-subtotal">
-		   <th class="fw-medium"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
-		   <td><?php wc_cart_totals_subtotal_html(); ?></td>
-	   </tr>
-	   <?php */ ?>
+  <tr class="cart-subtotal">
+	  <th class="fw-medium"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
+	  <td><?php wc_cart_totals_subtotal_html(); ?></td>
+  </tr>
+  <?php */ ?>
 
 			<?php foreach (WC()->cart->get_coupons() as $code => $coupon): ?>
 				<tr class="cart-discount coupon-<?php echo esc_attr(sanitize_title($code)); ?>">

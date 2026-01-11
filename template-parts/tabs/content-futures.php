@@ -357,7 +357,6 @@ function render_platforms($platforms) {
 
     const REMEMBER_PREVIOUS_SELECTION = <?= $remember_previous_selection ? 'true' : 'false' ?>;
     const CHECKOUT_URL = '<?= home_url( '/checkout/?add-to-cart=PRODUCT_ID' ) ?>';
-    const GO_TO_URL = '<?= home_url( '/auth/register/?redirect_to=' ) ?>';
     const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
 
     function normalizeAttributes(data) {

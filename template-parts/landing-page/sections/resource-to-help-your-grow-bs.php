@@ -1,20 +1,38 @@
 <?php
 $resources_items = [
-  [
-    'image' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/london-trader-3.png',
-    'title' => 'Learn how to qualify faster for payouts.',
-    'button_text' => 'View all LIVE trader perks',
-  ],
-  [
-    'image' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/london-trader-1.png',
-    'title' => 'Learn the fix to why most traders blow their account',
-    'button_text' => 'Get FREE eBook',
-  ],
-  [
-    'image' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/london-trader-2.png',
-    'title' => 'Join 30,000+ active traders on Discord',
-    'button_text' => 'Join Discord',
-  ]
+        [
+                'image' => [
+                        'default' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-get-free-ebook.png',
+                        'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-get-free-ebook-tablet.png',
+                ],
+                'title' => 'Join 2,000+ active traders in our Discord community.',
+                'button' => [
+                        'text' => 'Join Discord',
+                        'link' => 'https://discord.com/invite/megatrader',
+                ]
+        ],
+        [
+                'image' => [
+                        'default' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-join-discord.png',
+                        'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-join-discord-tablet.png',
+                ],
+                'title' => 'Learn the fix to why most traders blow their account.',
+                'button' => [
+                        'text' => 'Get FREE eBook',
+                        'link' => '',
+                ]
+        ],
+        [
+                'image' => [
+                        'default' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-view-all-live-trader.png',
+                        'tablet' => get_template_directory_uri() . '/assets/img/landing-page/upcoming-events/track-view-all-live-trader-tablet.png',
+                ],
+                'title' => 'Learn how to qualify faster for payouts.',
+                'button' => [
+                        'text' => 'View all LIVE trader perks',
+                        'link' => '',
+                ]
+        ]
 ];
 
 ?>
@@ -24,55 +42,31 @@ $resources_items = [
         <h2 class="section-header__title">
             ALL THE <SPAN>RESOURCES</SPAN> TO HELP YOU GROW
         </h2>
+        <p class="section-header__subtitle">
+            Access powerful tools, insights, and resources designed to support smarter decisions and consistent growth
+            at every stage.
+        </p>
     </header>
 
     <div class="landing-bs-container">
-        <div class="resources-bs__intro">
-            <div class="resources-bs__intro-content">
-                <div class="trading-status">
-                    <div class="trading-status__badge">
-                        <div class="trading-status__label">
-                            <div class="trading-status__dot"></div>
-                            <div class="trading-status__label-text">
-                                LIVE DATA
-                            </div>
-                        </div>
-                        <div class="trading-status__description text-truncate">
-                            Trading stats update in real time
-                        </div>
-                    </div>
-                </div>
-
-                <div class="resources-bs__intro-description">
-                    <div class="resources-bs__intro-title">
-                        TRACK YOUR PERFORMANCE LIVE
-                    </div>
-                    <div class="resources-bs__intro-paragraph">
-                        Monitor your trading stats, consistency, and drawdown in one place.
-                        Gain insights to improve your results and stay payout-ready.
-                    </div>
-                </div>
-                <a href="#get-funded" class="btn mega-btn-md mega-btn-primary-md">
-                    GET FUNDED NOW
-                </a>
-            </div>
-            <div class="resources-bs__intro-image"></div>
-        </div>
-
         <div class="resources-bs__cards">
-          <?php foreach ($resources_items as $item) : ?>
-              <div class="resources-bs__card">
-                  <img class="resources-bs__card-image" src="<?= $item['image'] ?>">
-                  <div class="resources-bs__card-body">
-                      <div class="resources-bs__card-title">
-                        <?= $item['title'] ?>
-                      </div>
-                      <a href="javascript:void(0);" class="mega-btn-md mega-btn-default-md w-100">
-                        <?= $item['button_text'] ?>
-                      </a>
-                  </div>
-              </div>
-          <?php endforeach; ?>
+            <?php foreach ($resources_items as $key => $item) : ?>
+                <div class="resources-bs__card">
+                    <img class="resources-bs__card-image" src="<?= $item['image']['default'] ?>">
+                    <img class="resources-bs__card-image resources-bs__card-image--tablet"
+                         src="<?= $item['image']['tablet'] ?>">
+                    <div class="resources-bs__card-body">
+                        <div class="resources-bs__card-title">
+                            <?= $item['title'] ?>
+                        </div>
+                        <a href="<?= $item['button']['link'] ?: 'javascript:void(0);' ?>"
+                           target="<?= $item['button']['link'] ? '_blank' : '_parent' ?>"
+                           class="mega-btn-md mega-btn-default-md w-100">
+                            <?= $item['button']['text'] ?>
+                        </a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
