@@ -266,7 +266,7 @@ HTML;
                             <div class="price-table__right-line price-table__footer"
                                  data-price="<?= esc_attr($mt_size) ?>">
                                 <a href="<?= esc_url($mt_get_plan_url) ?>"
-                                   class="mega-btn-md <?= $mt_is_most_popular ? 'mega-btn-primary-md mega-btn-primary--icon-md' : 'mega-btn-default-md' ?> w-100">
+                                   class="proceed-to-checkout-btn mega-btn-md <?= $mt_is_most_popular ? 'mega-btn-primary-md mega-btn-primary--icon-md' : 'mega-btn-default-md' ?> w-100">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <mask id="mask0_18861_2652" style="mask-type:alpha" maskUnits="userSpaceOnUse"
@@ -502,5 +502,47 @@ HTML;
 
     document.addEventListener("DOMContentLoaded", () => {
 
+        setTimeout(() => {
+            const saved = localStorage.getItem(PAGE_KEY);
+
+            if (saved) {
+                const values = JSON.parse(saved);
+
+                const event = new CustomEvent("trigger:select-account-type", {
+                    detail: {
+                        accountType: values['account-type'],
+                        defaultPlatform: values['platform'],
+                        defaultMarketType: values['market-type'],
+                        defaultAccountSize: values['account-size'],
+                    }
+                });
+
+                document.getElementById('pricing').dispatchEvent(event);
+
+                localStorage.removeItem(PAGE_KEY)
+            }
+        }, 0);
+
+
+        const getFundedLinks = document.querySelectorAll('.proceed-to-checkout-btn');
+
+        getFundedLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                const accountSize = e.currentTarget.parentElement.dataset.price;
+
+                const input = document.querySelector('input[name="account-type"]:checked');
+
+                const contentType = input.value;
+
+                const values = {
+                    "market-type": input.dataset.defaultMarketType,
+                    "account-size": accountSize,
+                    "account-type": contentType,
+                    "platform": input.dataset.defaultPlatform
+                }
+
+                localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+            });
+        });
     });
 </script>

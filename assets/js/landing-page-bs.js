@@ -140,6 +140,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         type: 'slider', gap: 16, autoplay: false, rewind: false, animationDuration: 200
                     });
 
+                    window.tableSliderInstance = glideInstance;
+
                     glideInstance.on(['swipe.start', 'run.after'], () => {
                         updatePoints();
                     });
@@ -236,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     try {
                         glideInstance.destroy();
                         glideInstance = null;
+                        window.tableSliderInstance = null;
                         isGlideMounted = false;
                         removeClassToPriceTable();
 
@@ -271,6 +274,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadChooseYourAccountSize(fn) {
+        document.getElementById('pricing')
+            .addEventListener("trigger:select-account-type", (e) => {
+                const {accountType, defaultAccountSize} = e.detail
+                const accountTypeSelected = document.querySelector('input[name="account-type"][value=' + accountType + ']')
+
+                handlerSelectByAccountType(accountTypeSelected);
+
+                const pricingTableGlide = document.querySelector('.price-table.price-table__glide');
+                if (pricingTableGlide) {
+                    const cardPlanSize = pricingTableGlide.querySelector('.price-table__plan[data-price="' + defaultAccountSize + '"]');
+
+                    const items = Array.from(pricingTableGlide.querySelectorAll('.slider__slides > li'));
+
+                    const planSizeIndexSelection = items.indexOf(cardPlanSize.parentElement);
+
+                    if (window.tableSliderInstance && planSizeIndexSelection !== -1) {
+                        window.tableSliderInstance.go(`=${planSizeIndexSelection}`);
+                    }
+                }
+            });
+
+
         function handlerSelectByAccountType(target) {
             const input = target.currentTarget || target;
             const accountType = input.value;
@@ -363,6 +388,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.couponsCache = {};
     loadChooseYourAccountSize(async (params) => {
+        console.info('params', params);
         const priceTable = document.querySelector('.price-table');
         const height = document.querySelector('.price-table .glide__slide--active .price-table__plan--most-popular') || document.querySelector('.price-table .glide__slide--active .price-table__plan--regular-plan') ? 0 : 24;
         priceTable.style.setProperty('--current-slider-height', height + 'px');
