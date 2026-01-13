@@ -155,13 +155,12 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
                     }
 
                     $mt_size = $mt_account_sizes[0] ?? null;
-                    if (!$mt_size || !isset($mt_product[$mt_slug][$mt_size][$mt_default_slug])) {
+                    if (!$mt_size) {
                         return [$mt_plan_list, $mt_default_meta_info];
                     }
 
-                    $mt_product_level = $mt_product[$mt_slug][$mt_size][$mt_default_slug];
-                    $mt_default_platform = array_key_first($mt_product_level);
-                    $mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
+                    $mt_default_platform = $mt_product['tree_map']['platform'] ?? null;
+                    $mt_default_market_type = $mt_product['tree_map']['market-type'] ?? null;
 
                     foreach ($mt_account_sizes as $size) {
                         $parent_id = $mt_product['id'];
@@ -207,7 +206,10 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
                 }
             }
 
-            $mt_product = reset($mt_filtered_products) ?: null;
+            $mt_product = array_find($mt_filtered_products, function ($product) use ($mt_default_slug) {
+                return isset($product['tree_map']) && isset($product['tree_map']['account-types']) && $product['tree_map']['account-types'] === $mt_default_slug;
+            });
+
             [$mt_plan_list, $mt_default_meta_info, $mt_default_platform, $mt_default_market_type] = mt_get_plan_list($mt_product, $mt_account_sizes, $mt_default_slug);
 
             /**

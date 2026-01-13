@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let priceTable = document.querySelector('.price-table');
         let bottomPoints = 0;
 
-        priceTable.style.setProperty('--current-slider-height', bottomPoints + 'px');
+        priceTable?.style.setProperty('--current-slider-height', bottomPoints + 'px');
     }
 
     function initializeSwiper() {
@@ -297,6 +297,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         function handlerSelectByAccountType(target) {
+            if (!target) {
+                return;
+            }
+
             const input = target.currentTarget || target;
             const accountType = input.value;
 
@@ -318,7 +322,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const marketType = input.value;
 
             console.info('[MarketType Selected]', marketType);
-
             try {
                 const endpoint = `/wp-json/custom/v1/pricing-fragment?marketType=${encodeURIComponent(marketType)}`;
                 const response = await fetch(endpoint, {cache: 'no-store'});
@@ -371,16 +374,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // 📌 Inicializar listeners principales
-        document.querySelectorAll('[name="account-type"]').forEach(btn => {
-            btn.addEventListener('click', handlerSelectByAccountType);
-        });
-
-        document.querySelectorAll('[name="market-type"]').forEach(btn => {
-            btn.addEventListener('click', handlerSelectByMarketType);
-        });
+        document.querySelectorAll('[name="account-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByAccountType));
+        document.querySelectorAll('[name="market-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByMarketType));
 
         const targetSelection = document.querySelector('[name="account-type"]:checked');
-        handlerSelectByAccountType(targetSelection)
+        targetSelection && handlerSelectByAccountType(targetSelection);
     }
 
     initializeSwiper();

@@ -31,9 +31,9 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
     <?php
     // Renderizar select de tipos de cuenta
     get_template_part("template-parts/landing-page/sections/select-account-type", null, [
-        'account_types' => $mt_account_types,
-        'mt_default_platform' => $mt_default_platform,
-        'mt_default_market_type' => $mt_default_market_type,
+            'account_types' => $mt_account_types,
+            'mt_default_platform' => $mt_default_platform,
+            'mt_default_market_type' => $mt_default_market_type,
     ]);
     ?>
 
@@ -45,7 +45,8 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
             ?>
 
             <?php if (!empty($parsed['data'])): ?>
-                <div class="mt-pricing-table-benefits" data-account-type-benefits="<?= $slug ?>">
+                <div class="mt-pricing-table-benefits <?= $index > 0 ? 'd-none' : '' ?>"
+                     data-account-type-benefits="<?= $slug ?>">
                     <?php foreach ($parsed['data'] as $index => $text): ?>
                         <?php if ($index > 0): ?>
                             <img class="mt-pricing-table-benefits__icon"
@@ -146,8 +147,8 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
                                     </span>
                                     <span class="frequency-plan" data-price="<?= esc_attr($mt_size) ?>">
                                         <?= $mt_default_slug !== 'funded-plan'
-                                            ? esc_html__('per month', 'megatrader')
-                                            : esc_html__('one time fee', 'megatrader') ?>
+                                                ? esc_html__('per month', 'megatrader')
+                                                : esc_html__('one time fee', 'megatrader') ?>
                                     </span>
                                 </div>
                             </div>
@@ -170,8 +171,8 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
                              data-price="<?= esc_attr($mt_size) ?>">
                             <a href="<?= esc_url($mt_get_plan_url) ?>"
                                class="mega-btn-md <?= $mt_is_most_popular
-                                   ? 'mega-btn-primary-md mega-btn-primary--icon-md'
-                                   : 'mega-btn-default-md' ?> w-100">
+                                       ? 'mega-btn-primary-md mega-btn-primary--icon-md'
+                                       : 'mega-btn-default-md' ?> w-100">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                      xmlns="http://www.w3.org/2000/svg">
                                     <mask id="mask0_18861_2652" style="mask-type:alpha"
