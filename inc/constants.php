@@ -168,7 +168,7 @@ class Label
     ];
 
     public const CHECKOUT_META = [
-        "create_account_title" => "OR, CEATE A NEW ACCOUNT",
+        "create_account_title" => "OR, CREATE A NEW ACCOUNT",
         "create_account_subtitle" => "Set up a new account in just a few steps to start trading instantly.",
         "plan_option_title" => "Customize Your Plan (Optional)",
         "billing_step_1" => "1. Customer information",
