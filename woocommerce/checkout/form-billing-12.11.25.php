@@ -11,7 +11,7 @@ defined('ABSPATH') || exit;
 
 <div class="mb-0">
     <?php if (!is_user_logged_in()): ?>
-        <h5 class="mb-6 text text-theme text-size-24"><?php esc_html_e('OR, CEATE A NEW ACCOUNT', 'megatrader'); ?></h5>
+        <h5 class="mb-6 text text-theme text-size-24"><?php esc_html_e('OR, CREATE A NEW ACCOUNT', 'megatrader'); ?></h5>
         <span><?php esc_html_e(' Set up a new account in just a few steps to start trading instantly.', 'megatrader'); ?></span>
     <?php endif; ?>
     <div class="line-input-no row g-3 <?php if (!is_user_logged_in()): ?>pt-32<?php endif; ?>">
