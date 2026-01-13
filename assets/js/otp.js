@@ -286,4 +286,110 @@ jQuery(document).ready(function ($) {
     }
   });
 
+  // ----------------- COPY ORDER NUMBER (Thank You page) -----------------
+(function initOrderCopyChip() {
+  const COPY_FEEDBACK_MS = 2500;
+
+  function ensureToastStyle() {
+    if (window.__mtCopyToastStyle) return;
+    const css = `
+      #mt-copy-toast{
+        position:fixed;
+        left:0; top:0;
+        transform:translate(-50%,-110%);
+        background:#000;color:#A8A29E;padding:8px 12px;border-radius:8px;
+        font-size:12px;line-height:1;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);
+        opacity:0;transition:opacity .18s ease;pointer-events:none;
+        white-space:nowrap;
+      }
+      #mt-copy-toast.is-visible{opacity:1}
+      .order-chip.is-copied{outline:2px solid rgba(168,162,158,.5)}
+    `;
+    const style = document.createElement("style");
+    style.textContent = css;
+    document.head.appendChild(style);
+    window.__mtCopyToastStyle = true;
+  }
+
+  function showToast(text, anchorEl) {
+    ensureToastStyle();
+    let toast = document.getElementById("mt-copy-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "mt-copy-toast";
+      document.body.appendChild(toast);
+    }
+    toast.textContent = text || "Copied to clipboard";
+
+    const rect =
+      anchorEl && anchorEl.getBoundingClientRect
+        ? anchorEl.getBoundingClientRect()
+        : { left: window.innerWidth / 2, top: window.innerHeight - 24, width: 0 };
+
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const x = clamp(rect.left + rect.width / 2, 16, window.innerWidth - 16);
+    const y = clamp(rect.top - 8, 16, window.innerHeight - 16);
+
+    toast.style.left = `${Math.round(x)}px`;
+    toast.style.top = `${Math.round(y)}px`;
+
+    toast.classList.add("is-visible");
+    clearTimeout(window.__mtCopyToastTimer);
+    window.__mtCopyToastTimer = setTimeout(() => {
+      toast.classList.remove("is-visible");
+    }, COPY_FEEDBACK_MS);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise((resolve) => {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      resolve();
+    });
+  }
+
+  // Click handler (delegated)
+  document.addEventListener("click", (e) => {
+    const chip = e.target.closest(".order-chip[data-order]");
+    if (!chip) return;
+
+    const order = (chip.getAttribute("data-order") || "").trim();
+    if (!order) return;
+
+    copyText(order)
+      .then(() => {
+        chip.classList.add("is-copied");
+        showToast(`Copied: ${order}`, chip);
+        setTimeout(() => chip.classList.remove("is-copied"), 800);
+      })
+      .catch(() => {
+        // Even if clipboard rejects, still give feedback (UX > silence)
+        showToast("Copied to clipboard", chip);
+      });
+  });
+
+  // Keyboard accessibility: Enter/Space
+  document.addEventListener("keydown", (e) => {
+    const chip = e.target && e.target.closest ? e.target.closest(".order-chip[data-order]") : null;
+    if (!chip) return;
+
+    const isEnter = e.key === "Enter";
+    const isSpace = e.key === " " || e.key === "Spacebar";
+    if (!isEnter && !isSpace) return;
+
+    e.preventDefault();
+    chip.click();
+  });
+})();
+
 });

@@ -520,15 +520,25 @@ function get_cities_by_country() {
 
 remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
 
-// Crear usuario y loguearlo antes de procesar el checkout si viene username/password
-add_action('woocommerce_checkout_process', 'mt_create_and_login_customer_before_checkout', 5);
+/**
+ * MT - Create customer ONLY after successful payment
+ * - Collect pending account info during checkout validation
+ * - Attach a token to the order
+ * - On payment_complete, verify token matches order before creating user
+ */
 
+/**
+ * 1) Validate account fields & store pending data in session (NO user creation here)
+ */
+add_action('woocommerce_checkout_process', 'mt_create_and_login_customer_before_checkout', 5);
 function mt_create_and_login_customer_before_checkout() {
 
+  // If already logged in, do nothing.
   if ( is_user_logged_in() ) {
     return;
   }
 
+  // Only when your UI forces createaccount=1.
   if ( empty($_POST['createaccount']) ) {
     return;
   }
@@ -548,91 +558,146 @@ function mt_create_and_login_customer_before_checkout() {
   $email_norm = strtolower(trim($email));
   $user_norm  = strtolower(trim($username));
 
-  // 1) Billing email requerido
+  // 1) Billing email required
   if ( $email_norm === '' ) {
-    wc_add_notice(
-      '<span data-id="billing_email">Email address is a required field.</span>',
-      'error'
-    );
+    wc_add_notice('<span data-id="billing_email">Email address is a required field.</span>', 'error');
     return;
   }
 
-  // 2) account_username requerido y debe coincidir con billing_email
+  // 2) account_username required and must match billing_email
   if ( $user_norm === '' ) {
-    wc_add_notice(
-      '<span data-id="account_username">Email address is a required field.</span>',
-      'error'
-    );
+    wc_add_notice('<span data-id="account_username">Email address is a required field.</span>', 'error');
     return;
   }
 
   if ( $user_norm !== $email_norm ) {
-    wc_add_notice(
-      '<span data-id="account_username">Email must match the billing email.</span>',
-      'error'
-    );
+    wc_add_notice('<span data-id="account_username">Email must match the billing email.</span>', 'error');
     return;
   }
 
-  // 3) Password siempre requerido cuando createaccount=1
+  // 3) Password required
   if ( $password === '' ) {
-    wc_add_notice(
-      '<span data-id="account_password">Password is a required field.</span>',
-      'error'
-    );
+    wc_add_notice('<span data-id="account_password">Password is a required field.</span>', 'error');
     return;
   }
 
-  // 4) Si el email ya existe -> BLOQUEAR checkout siempre
+  // 4) If email exists -> MUST log in
   if ( email_exists($email_norm) ) {
-    wc_add_notice(
-      '<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>',
-      'error'
-    );
+    wc_add_notice('<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>', 'error');
     return;
   }
 
-  // 5) Safety extra (si username existe, mismo mensaje)
+  // 5) Extra safety
   if ( username_exists($email_norm) ) {
-    wc_add_notice(
-      '<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>',
-      'error'
-    );
+    wc_add_notice('<span data-id="account_username">An account already exists with this email. Please log in to complete your purchase.</span>', 'error');
     return;
   }
 
-  // 6) Crear usuario
-  $customer_id = wc_create_new_customer($email_norm, $email_norm, $password);
+  // 6) Store pending data in session + generate token
+  if ( WC()->session ) {
+    $token = wp_generate_uuid4();
 
+    WC()->session->set('mt_pending_account', array(
+      'token'    => $token,
+      'email'    => $email_norm,
+      'username' => $email_norm,
+      'password' => $password,
+      'first'    => isset($_POST['billing_first_name']) ? sanitize_text_field(wp_unslash($_POST['billing_first_name'])) : '',
+      'last'     => isset($_POST['billing_last_name']) ? sanitize_text_field(wp_unslash($_POST['billing_last_name'])) : '',
+    ));
+  }
+}
+
+/**
+ * 2) Attach token to the order at creation time (binds session data to a specific order)
+ */
+add_action('woocommerce_checkout_create_order', 'mt_attach_pending_token_to_order', 10, 1);
+function mt_attach_pending_token_to_order( $order ) {
+
+  if ( ! $order || ! is_a($order, 'WC_Order') ) return;
+  if ( ! WC()->session ) return;
+
+  $pending = WC()->session->get('mt_pending_account');
+  if ( empty($pending['token']) ) return;
+
+  // Save token to order meta to prevent cross-tab mixups.
+  $order->update_meta_data('_mt_pending_token', sanitize_text_field($pending['token']));
+}
+
+/**
+ * 3) Create customer only after payment completes, AND only if token matches.
+ */
+add_action('woocommerce_payment_complete', 'mt_create_customer_on_payment_complete', 10, 1);
+function mt_create_customer_on_payment_complete( $order_id ) {
+
+  $order = wc_get_order($order_id);
+  if ( ! $order ) return;
+
+  // If order already has a customer, just clear pending session.
+  if ( $order->get_customer_id() ) {
+    if ( WC()->session ) WC()->session->set('mt_pending_account', null);
+    return;
+  }
+
+  if ( ! WC()->session ) return;
+
+  $pending = WC()->session->get('mt_pending_account');
+  if ( empty($pending['token']) || empty($pending['email']) || empty($pending['username']) || empty($pending['password']) ) {
+    return;
+  }
+
+  // Verify token matches the order token (CRITICAL)
+  $order_token = (string) $order->get_meta('_mt_pending_token');
+  if ( empty($order_token) || $order_token !== (string) $pending['token'] ) {
+    // Token mismatch -> do not create account (prevents wrong-user creation)
+    WC()->session->set('mt_pending_account', null);
+    return;
+  }
+
+  $email    = strtolower(trim(sanitize_email($pending['email'])));
+  $username = strtolower(trim(sanitize_email($pending['username'])));
+  $password = (string) $pending['password'];
+
+  // Safety: if user now exists, don't duplicate.
+  if ( email_exists($email) || username_exists($username) ) {
+    WC()->session->set('mt_pending_account', null);
+    return;
+  }
+
+  $customer_id = wc_create_new_customer($email, $username, $password);
   if ( is_wp_error($customer_id) ) {
-    error_log('mt_create_and_login_customer_before_checkout error: ' . $customer_id->get_error_message());
-
-    wc_add_notice(
-      '<span data-id="account_username">We could not create your account. Please check your details and try again.</span>',
-      'error'
-    );
+    error_log('mt_create_customer_on_payment_complete error: ' . $customer_id->get_error_message());
+    WC()->session->set('mt_pending_account', null);
     return;
   }
 
-  // 7) Guardar nombre/apellido (si existen)
-  if ( isset($_POST['billing_first_name']) ) {
-    update_user_meta(
-      $customer_id,
-      'first_name',
-      sanitize_text_field( wp_unslash($_POST['billing_first_name']) )
-    );
-  }
+  // Save first/last
+  if ( ! empty($pending['first']) ) update_user_meta($customer_id, 'first_name', sanitize_text_field($pending['first']));
+  if ( ! empty($pending['last']) )  update_user_meta($customer_id, 'last_name',  sanitize_text_field($pending['last']));
 
-  if ( isset($_POST['billing_last_name']) ) {
-    update_user_meta(
-      $customer_id,
-      'last_name',
-      sanitize_text_field( wp_unslash($_POST['billing_last_name']) )
-    );
-  }
+  // Assign order to customer
+  $order->set_customer_id($customer_id);
+  $order->save();
 
-  // 8) Loguear
+  // Log user in
   wc_set_customer_auth_cookie($customer_id);
+
+  // Clear session (DO NOT keep password)
+  WC()->session->set('mt_pending_account', null);
+}
+
+/**
+ * 4) Clear pending account on failure/cancel/other non-success states
+ */
+add_action('woocommerce_order_status_failed',     'mt_clear_pending_account', 10, 1);
+add_action('woocommerce_order_status_cancelled',  'mt_clear_pending_account', 10, 1);
+add_action('woocommerce_order_status_pending',    'mt_clear_pending_account', 10, 1);
+add_action('woocommerce_order_status_on-hold',    'mt_clear_pending_account', 10, 1);
+
+function mt_clear_pending_account( $order_id ) {
+  if ( WC()->session ) {
+    WC()->session->set('mt_pending_account', null);
+  }
 }
 
 

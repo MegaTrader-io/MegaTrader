@@ -82,11 +82,7 @@ $menu_links = [
         'class' => $mt_is_active('referrals', 'active'),
         'text' => 'REFERRALS',
         'icon' => 'mt-icon_people-plus',
-        'is_disabled' => true,
-        'badge' => [
-            'text' => 'COMING SOON',
-            'style' => 'light'
-        ]
+        'href' => '/affiliate-area/',      
     ],
     [
         'class' => $is_subscriptions_billing_endpoint ? 'active' : '',

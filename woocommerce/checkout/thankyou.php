@@ -390,7 +390,7 @@ if (isset($order) && $order && !$order->has_status('failed')):
                         </div>
 
                         <!-- Order Number + Copy -->
-                        <div id="order-copy-chip test-pp"
+                        <div id="order-copy-chip"
                             class="px-3 py-2 bg-1e1e1e outline-dark rounded-2 d-inline-flex align-items-center gap-2 order-chip"
                             data-order="<?php echo esc_attr($order_number); ?>" role="button" tabindex="0"
                             aria-label="Copy order number">
