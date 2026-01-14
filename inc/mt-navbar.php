@@ -64,17 +64,6 @@ final class Mt_Navbar
         ];
     }
 
-    private static function landing_page_zero_plan_nav(): array
-    {
-        return [
-            ['href' => '#hero-section', 'value' => 'HOME', 'class' => 'navbar__nav-link--active', 'wrapper_attributes' => ['data-menu' => 'hero-section']],
-            ['href' => '#how-it-works', 'value' => 'HOW IT WORKS', 'wrapper_attributes' => ['data-menu' => 'how-it-works']],
-            ['href' => '#pricing', 'value' => 'PRICING', 'wrapper_attributes' => ['data-menu' => 'pricing']],
-            ['href' => '#features', 'value' => 'FEATURES', 'wrapper_attributes' => ['data-menu' => 'features']],
-            ['href' => '#faqs-bs', 'value' => 'FAQ', 'wrapper_attributes' => ['data-menu' => 'faqs-bs']],
-        ];
-    }
-
     private static function account_nav(): array
     {
         return [

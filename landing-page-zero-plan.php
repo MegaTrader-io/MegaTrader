@@ -3,7 +3,7 @@
  * Template Name: Landing Page Zero Plan
  */
 
-get_header('landing-page-zero-plan');
+get_header('landing-page-bs');
 ?>
     <main class="landing-bs">
         <?php get_template_part('template-parts/landing-page/sections/hero-bs'); ?>
