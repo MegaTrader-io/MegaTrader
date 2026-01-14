@@ -28,6 +28,10 @@
     padding-block: 48px;
 }
 
+.hero-zero-plan {
+    padding-top: 48px;
+}
+
 .hero-bs__row {
     display: flex;
     gap: 48px;
@@ -3235,6 +3239,10 @@ a.footer-bs__link:visited {
         padding-block: 36px;
     }
 
+    .hero-zero-plan {
+        padding-top: 36px;
+    }
+
     .hero-bs__row {
         flex-direction: column;
         gap: 24px;
@@ -3284,6 +3292,9 @@ a.footer-bs__link:visited {
 
 /* Small devices (max-width: 767px) */
 @media (max-width: 767px) {
+    .hero-zero-plan {
+        padding-block: 36px;
+    }
 
     .hero-bs__zero-title {
         width: 354px;
