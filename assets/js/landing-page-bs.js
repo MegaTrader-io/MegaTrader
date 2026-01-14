@@ -391,7 +391,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const height = document.querySelector('.price-table .glide__slide--active .price-table__plan--most-popular') || document.querySelector('.price-table .glide__slide--active .price-table__plan--regular-plan') ? 0 : 24;
         priceTable.style.setProperty('--current-slider-height', height + 'px');
 
-        const {defaultPlatform, defaultMarketType} = params;
         const dropdownAccountTypeComponent = document.querySelector('.mt-select-ac-type');
 
         dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
@@ -425,9 +424,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const defaultMetaInfo = {}
         for (const priceSize in productPlatformDetail) {
-            const levelBillingType = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
-            const billingType = Object.keys(levelBillingType).at(0);
-            const attributes = levelBillingType[billingType];
+
+            let attributes = null;
+            Object.keys(productSelected?.tree_map || []).forEach(e => {
+                attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
+            });
 
             const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
             for (const metaInfoKey in metaInfo) {
@@ -459,12 +460,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const products = [];
+
+
         for (const priceSize in productPlatformDetail) {
-            const levelBillingType = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
-            const billingType = Object.keys(levelBillingType).at(0);
-            const attributes = levelBillingType[billingType];
+            const billingType = productSelected.tree_map['billing-type'];
+
+            let attributes = null;
+            Object.keys(productSelected?.tree_map || []).forEach(_ => {
+                attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
+            });
 
             const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
+            console.info('priceObject', priceObject);
             const productId = attributes.find(item => item['id'])['id'];
 
             products.push({productId, priceSize, priceObject});
