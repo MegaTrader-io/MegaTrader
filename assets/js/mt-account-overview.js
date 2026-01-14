@@ -216,10 +216,10 @@
       anchorEl && anchorEl.getBoundingClientRect
         ? anchorEl.getBoundingClientRect()
         : {
-          left: window.innerWidth / 2,
-          top: window.innerHeight - 24,
-          width: 0,
-        };
+            left: window.innerWidth / 2,
+            top: window.innerHeight - 24,
+            width: 0,
+          };
 
     const clampNum = (n, min, max) => Math.max(min, Math.min(max, n));
     const centerX = clampNum(
@@ -261,7 +261,7 @@
       ta.select();
       try {
         document.execCommand("copy");
-      } catch (err) { }
+      } catch (err) {}
       document.body.removeChild(ta);
       onDone();
     }
@@ -422,7 +422,9 @@ window.mtGetCurrentOverviewView = function mtGetCurrentOverviewView() {
   }
 
   // Fallback por si acaso
-  var qsView = (new URLSearchParams(window.location.search).get("view") || "metrics").toLowerCase();
+  var qsView = (
+    new URLSearchParams(window.location.search).get("view") || "metrics"
+  ).toLowerCase();
   return qsView === "journal" ? "journal" : "metrics";
 };
 
@@ -433,7 +435,6 @@ window.mtIsJournalView = function mtIsJournalView() {
     return false;
   }
 };
-
 
 /* === Consolidated accountSelected handler (único y seguro) === */
 document.addEventListener("mt:accountSelected", (e) => {
@@ -451,12 +452,12 @@ document.addEventListener("mt:accountSelected", (e) => {
   // Paso 2: chequeo de breach (throttle propio)
   try {
     breachGuardCheck?.(id);
-  } catch (_) { }
+  } catch (_) {}
 
   // Paso 3: re-sincroniza Manage Subscription
   try {
     syncManageSubscription?.();
-  } catch (_) { }
+  } catch (_) {}
 
   // Paso 4/5: re-render del breach modal (si existe)
   try {
@@ -466,9 +467,8 @@ document.addEventListener("mt:accountSelected", (e) => {
       document.querySelector(".mt-breach-modal") ||
       undefined;
     refreshBreachModalUI?.(modalRef);
-  } catch (_) { }
+  } catch (_) {}
 });
-
 
 // ===== Overlay utils (genérico) =====
 window.mtOverlay = (function () {
@@ -541,7 +541,7 @@ window.mtOverlay = (function () {
                 el.style.setProperty("--mt-progress-value", v + "%");
               });
           })(wrap);
-        } catch (_) { }
+        } catch (_) {}
 
         // Re-init tooltips
         if (
@@ -945,7 +945,7 @@ window.mtOverlay = (function () {
 
     try {
       ctrl?.abort();
-    } catch (_) { }
+    } catch (_) {}
     ctrl = new AbortController();
     const myToken = ++reqToken;
 
@@ -1053,11 +1053,11 @@ window.mtOverlay = (function () {
 
         try {
           if (window.applyAgreementMissing) window.applyAgreementMissing();
-        } catch (_) { }
+        } catch (_) {}
 
         try {
           // initDonuts?.(wrap); initDualBars?.(wrap); initProgressBars?.(wrap);
-        } catch (_) { }
+        } catch (_) {}
 
         if (
           window.mtTooltips &&
@@ -1461,7 +1461,8 @@ window.mtOverlay = (function () {
     if (!show) return;
 
     // AJAX config
-    var url = (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
+    var url =
+      (window.mtAccounts && mtAccounts.ajaxUrl) || "/wp-admin/admin-ajax.php";
     var nonce = (window.mtAccounts && mtAccounts.nonce) || "";
 
     var body = new URLSearchParams();
@@ -1478,7 +1479,7 @@ window.mtOverlay = (function () {
           location.reload();
         }
       })
-      .catch(function (_) { });
+      .catch(function (_) {});
   }
 
   // Se dispara cuando el usuario vuelve a la pestaña
@@ -1490,7 +1491,6 @@ window.mtOverlay = (function () {
   window.addEventListener("focus", function () {
     checkAgreementAndReload();
   });
-
 })();
 
 // ===== Modal helper (centrado + backdrop reutilizable) =====
@@ -1536,7 +1536,7 @@ window.mtModal.openCentered = function openCenteredModal(modal, opts) {
 
   try {
     modal.focus();
-  } catch (_) { }
+  } catch (_) {}
 };
 
 window.mtModal.closeCentered = function closeCenteredModal(modal, opts) {
@@ -1559,7 +1559,7 @@ window.mtModal.closeCentered = function closeCenteredModal(modal, opts) {
       fallback && fallback.focus({ preventScroll: true });
       if (needsTab) fallback.removeAttribute("tabindex");
     }
-  } catch (_) { }
+  } catch (_) {}
 
   modal.classList.remove("show");
   modal.setAttribute("aria-hidden", "true");
@@ -1588,7 +1588,6 @@ window.mtModal.closeCentered = function closeCenteredModal(modal, opts) {
     document.body.classList.remove("modal-open");
   }
 };
-
 
 /* ===== Passed & Pending Activation Modal ===== */
 (function () {
@@ -1779,8 +1778,8 @@ window.mtModal.closeCentered = function closeCenteredModal(modal, opts) {
       document.querySelector(sel) ||
       document.querySelector(
         '.subscription-card[data-account-id="' +
-        String(accountId).replace(/"/g, "&quot;") +
-        '"]'
+          String(accountId).replace(/"/g, "&quot;") +
+          '"]'
       );
     if (!card) return "";
     return card.getAttribute("data-activation-id") || "";
@@ -1986,7 +1985,6 @@ window.mtModal.closeCentered = function closeCenteredModal(modal, opts) {
       window.mtModal.closeCentered(modal);
     }
 
-
     // Sanea estado inicial si el HTML vino en estado inconsistente
     (function sanitizeInitial() {
       var ds = modal.getAttribute("data-show");
@@ -2038,7 +2036,6 @@ window.mtModal.closeCentered = function closeCenteredModal(modal, opts) {
     init();
   }
 })();
-
 
 /* === fetchStatus (AJAX) — usado por breachGuard y otros === */
 function fetchStatus(accountId) {
@@ -2125,8 +2122,8 @@ function breachGuardCheck(accountId) {
             (grid.querySelector(".subscription-card.active") ||
               grid.querySelector(
                 '.subscription-card[data-account-id="' +
-                CSS.escape(String(accountId)) +
-                '"]'
+                  CSS.escape(String(accountId)) +
+                  '"]'
               ));
           var resetId = card ? card.getAttribute("data-reset-id") || "" : "";
           var modal = document.getElementById("mt-breach-alert-modal");
@@ -2154,7 +2151,7 @@ function breachGuardCheck(accountId) {
               btn.setAttribute("aria-disabled", "true");
             }
           }
-        } catch (_) { }
+        } catch (_) {}
 
         var modalEl = document.getElementById("mt-breach-alert-modal");
         if (!modalEl || modalEl.classList.contains("show")) return;
@@ -2271,7 +2268,7 @@ function mtBindManageSubsNav() {
     var id = parseInt(raw, 10) || 0;
     try {
       console.debug("[MT][Orders] orderId from data-order-id =", id);
-    } catch (_) { }
+    } catch (_) {}
     return id;
   }
 
@@ -2315,8 +2312,8 @@ function mtBindManageSubsNav() {
       toUrl && toUrl.indexOf("/my-account/orders") !== -1
         ? toUrl
         : window.location.origin
-          ? window.location.origin + "/my-account/orders/"
-          : "/my-account/orders/";
+        ? window.location.origin + "/my-account/orders/"
+        : "/my-account/orders/";
     form.action = action;
 
     var inp1 = form.querySelector('input[name="orderId"]');
@@ -2326,7 +2323,7 @@ function mtBindManageSubsNav() {
 
     try {
       console.debug("[MT][Orders] POST ->", form.action, { orderId });
-    } catch (_) { }
+    } catch (_) {}
     form.submit();
   }
 
@@ -2348,7 +2345,7 @@ function mtBindManageSubsNav() {
     try {
       select.onchange = null;
       select.removeAttribute("onchange");
-    } catch (_) { }
+    } catch (_) {}
     select.addEventListener(
       "change",
       function (e) {
@@ -2455,8 +2452,6 @@ if (document.readyState === "loading") {
   mtBindManageSubsNav();
 }
 
-
-
 // --- POST silencioso al checkout con account_id en el body (sin exponerlo en la URL)
 (function attachMtModalPostCheckout() {
   if (window.__mtModalPostCheckoutBound) return;
@@ -2498,8 +2493,8 @@ if (document.readyState === "loading") {
       var el =
         ev.target && ev.target.closest
           ? ev.target.closest(
-            ".mt-breach-reset-button, #mt-activation-btn, .account-reset-button"
-          )
+              ".mt-breach-reset-button, #mt-activation-btn, .account-reset-button"
+            )
           : null;
       if (!el) return;
 
@@ -2569,13 +2564,13 @@ if (document.readyState === "loading") {
 
       try {
         window.mtTooltips && window.mtTooltips.refresh(wrapper);
-      } catch (_) { }
+      } catch (_) {}
     } else {
       const body = wrapper.querySelector(".mt-tooltip__body");
       if (body) body.textContent = text || "You are up to date.";
       try {
         window.mtTooltips && window.mtTooltips.refresh(wrapper);
-      } catch (_) { }
+      } catch (_) {}
     }
   }
 
@@ -2586,13 +2581,13 @@ if (document.readyState === "loading") {
     if (wrapper) {
       try {
         window.mtTooltips && window.mtTooltips.closeAll();
-      } catch (_) { }
+      } catch (_) {}
       const parent = wrapper.parentNode;
       parent.insertBefore(toggle, wrapper);
       wrapper.remove();
       try {
         window.mtTooltips && window.mtTooltips.refresh(parent || document);
-      } catch (_) { }
+      } catch (_) {}
     }
   }
 
@@ -2632,8 +2627,8 @@ if (document.readyState === "loading") {
         method: "POST",
         credentials: "same-origin",
         body: fd,
-      }).catch(() => { });
-    } catch (_) { }
+      }).catch(() => {});
+    } catch (_) {}
   }
 
   function uidFromBtn(btn, article) {
@@ -2710,7 +2705,7 @@ if (document.readyState === "loading") {
     toggle.setAttribute("aria-expanded", "true");
     try {
       panel.focus({ preventScroll: true });
-    } catch (_) { }
+    } catch (_) {}
 
     document.addEventListener("click", onDocClick, true);
     document.addEventListener("keydown", onKey, true);
@@ -2777,7 +2772,7 @@ if (document.readyState === "loading") {
           closePanel(container);
           try {
             window.mtTooltips && window.mtTooltips.refresh(container);
-          } catch (_) { }
+          } catch (_) {}
         }
       },
       true
@@ -2830,7 +2825,7 @@ if (document.readyState === "loading") {
           closePanel(container);
           try {
             toggle.focus({ preventScroll: true });
-          } catch (_) { }
+          } catch (_) {}
         },
         { capture: true }
       );
@@ -2840,7 +2835,7 @@ if (document.readyState === "loading") {
     syncBell(container);
     try {
       window.mtTooltips && window.mtTooltips.refresh(container);
-    } catch (_) { }
+    } catch (_) {}
   }
 
   function init() {
@@ -2908,8 +2903,7 @@ if (document.readyState === "loading") {
   }
   function statusToBucket(st) {
     st = normalizeStatus(st);
-    if (st === "ACTIVE") return "ACTIVE";
-    if (st === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
+    if (st === "ACTIVE" || st === "PENDING_ACTIVATION") return "ACTIVE";
     if (st === "PASSED" || st === "UPGRADED") return "PASSED";
     if (st === "BREACHED") return "BREACHED";
     return "ACTIVE";
@@ -2952,10 +2946,12 @@ if (document.readyState === "loading") {
         data-logo="${esc(logo)}"
         data-main-id="${esc(a.mainProductId || "")}"
         data-order-id="${esc(a.order || 0)}"
-        data-has-subscription="${a.subscriptionId || a.hasSubscription ? "1" : "0"
+        data-has-subscription="${
+          a.subscriptionId || a.hasSubscription ? "1" : "0"
         }"
         data-subscription-id="${esc(a.subscriptionId || "")}">
-        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${isCur ? "" : "display:none;"
+        <div class="checkmark-icon position-absolute" style="top:10px;right:10px;${
+          isCur ? "" : "display:none;"
         }">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" fill="#FFB34A" />
@@ -2965,13 +2961,13 @@ if (document.readyState === "loading") {
         <div class="subscription-card__header text-center position-relative d-flex flex-column align-items-center">
           <div class="logo-container position-relative d-inline-block">
             <img src="${esc(
-          logo
-        )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
-          FALLBACK_LOGO
-        )}'">
+              logo
+            )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
+        FALLBACK_LOGO
+      )}'">
             <div class="dot-indicator ${esc(dotClass)}" title="${esc(
-          statusRaw
-        )}" style="position:absolute;right:-1px;bottom:-1px;">
+        statusRaw
+      )}" style="position:absolute;right:-1px;bottom:-1px;">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <circle cx="6" cy="6" r="6" fill="white" />
                 <circle cx="6" cy="6" r="4" fill="currentColor" />
@@ -2984,14 +2980,15 @@ if (document.readyState === "loading") {
             ${esc((a.size || "") + " " + (a.name || "Account"))}
           </div>
           <div class="subscription-card__id text-14px-line-20px text-a8a29e text-uppercase text-truncate">#${esc(
-          platId || aid
-        )}</div>
-          ${a.programTypeText && a.programTypeClass
-          ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(
-            a.programTypeClass
-          )}">${esc(a.programTypeText)}</div>`
-          : ""
-        }
+            platId || aid
+          )}</div>
+          ${
+            a.programTypeText && a.programTypeClass
+              ? `<div class="mt-2 badge-mega badge-mega-sm badge-mega-fit-content ${esc(
+                  a.programTypeClass
+                )}">${esc(a.programTypeText)}</div>`
+              : ""
+          }
         </div>
       </div>`;
     }
@@ -3000,7 +2997,7 @@ if (document.readyState === "loading") {
     ric(() => {
       try {
         window.mtTooltips && window.mtTooltips.refresh(grid);
-      } catch (_) { }
+      } catch (_) {}
     });
 
     markActiveInGrid();
@@ -3065,7 +3062,7 @@ if (document.readyState === "loading") {
       ACTIVE: "Active",
       BREACHED: "Breached",
       PASSED: "Passed",
-      PENDING_ACTIVATION: "Pending activation",
+      //PENDING_ACTIVATION: "Pending activation",
     };
     var lbl = document.getElementById("mt-acc-filter-label");
     if (lbl) lbl.textContent = map[wantBucket] || "Active";
@@ -3075,8 +3072,8 @@ if (document.readyState === "loading") {
       var match =
         (wantBucket === "ACTIVE" && st === "ACTIVE") ||
         (wantBucket === "BREACHED" && st === "BREACHED") ||
-        (wantBucket === "PASSED" && st === "PASSED") ||
-        (wantBucket === "PENDING_ACTIVATION" && st === "PENDING_ACTIVATION");
+        (wantBucket === "PASSED" && st === "PASSED");
+
       if (match) {
         card.classList.add("d-flex");
         card.classList.remove("d-none");
@@ -3270,7 +3267,7 @@ if (document.readyState === "loading") {
         $.preloader.show();
         return;
       }
-    } catch (_) { }
+    } catch (_) {}
     const el = document.querySelector(".preloader");
     if (el) el.style.display = "block";
   }
@@ -3293,7 +3290,7 @@ if (document.readyState === "loading") {
         $.preloader.hide();
         return;
       }
-    } catch (_) { }
+    } catch (_) {}
     const el = document.querySelector(".preloader");
     if (el) el.style.display = "none";
   }
@@ -3310,7 +3307,7 @@ if (document.readyState === "loading") {
       if (v === "metrics" || v === "journal") return v;
       if (/trading-journal/i.test(u.pathname)) return "journal";
       if (/trade-area|overview/i.test(u.pathname)) return "metrics";
-    } catch (_) { }
+    } catch (_) {}
     return "";
   }
 
@@ -3412,13 +3409,13 @@ if (document.readyState === "loading") {
         if (accId) {
           try {
             breachGuardCheck?.(accId);
-          } catch (_) { }
+          } catch (_) {}
 
           try {
             passedGuardCheck?.(accId);
-          } catch (_) { }
+          } catch (_) {}
         }
-      } catch (_) { }
+      } catch (_) {}
     }
 
     if (push) {
@@ -3429,7 +3426,6 @@ if (document.readyState === "loading") {
     if (doBlink) blinkPreloader(500);
     currentView = view;
   }
-
 
   function fastToggle(el, show) {
     if (!el) return;
@@ -3478,8 +3474,8 @@ if (document.readyState === "loading") {
     "";
   const perPageAttr = parseInt(
     comp.getAttribute("data-per-page") ||
-    wrap.getAttribute("data-per-page") ||
-    "25",
+      wrap.getAttribute("data-per-page") ||
+      "25",
     10
   );
   const perPage =
@@ -3575,7 +3571,7 @@ if (document.readyState === "loading") {
           detail: { type: "CLOSED", page: 1 },
         })
       );
-      fetchTrades("CLOSED", 1, /*force*/ true).catch(() => { });
+      fetchTrades("CLOSED", 1, /*force*/ true).catch(() => {});
     });
   }
 
@@ -3592,7 +3588,7 @@ if (document.readyState === "loading") {
   };
 
   // Primer fetch por defecto
-  fetchTrades("CLOSED", 1).catch(() => { });
+  fetchTrades("CLOSED", 1).catch(() => {});
 })();
 
 /* =========================
@@ -3677,7 +3673,8 @@ if (document.readyState === "loading") {
   };
 
   const pill = (txt, kind) =>
-    `<span class="mt-pill ${kind === "err" ? "mt-pill--err" : "mt-pill--sec"
+    `<span class="mt-pill ${
+      kind === "err" ? "mt-pill--err" : "mt-pill--sec"
     }">${txt}</span>`;
 
   // empty-state
@@ -3756,8 +3753,8 @@ if (document.readyState === "loading") {
         ? r.net > 0
           ? "text-success"
           : r.net < 0
-            ? "text-danger"
-            : ""
+          ? "text-danger"
+          : ""
         : "";
 
     const status = String(r.status || "").toUpperCase();
@@ -3811,9 +3808,9 @@ if (document.readyState === "loading") {
     const page = Number(payload.page || 1);
     const total = Number(
       payload.total ??
-      (payload.meta && payload.meta.totalCount) ??
-      recs.length ??
-      0
+        (payload.meta && payload.meta.totalCount) ??
+        recs.length ??
+        0
     );
     const pages = Number(
       payload.pages || Math.ceil(total / Math.max(1, perPage))
@@ -4011,14 +4008,14 @@ if (document.readyState === "loading") {
     );
     const START_YEAR = parseInt(
       grid.dataset.startYear ||
-      grid.getAttribute("data-start-year") ||
-      now.getFullYear(),
+        grid.getAttribute("data-start-year") ||
+        now.getFullYear(),
       10
     );
     const START_MONTH = parseInt(
       grid.dataset.startMonth ||
-      grid.getAttribute("data-start-month") ||
-      now.getMonth(),
+        grid.getAttribute("data-start-month") ||
+        now.getMonth(),
       10
     );
 
@@ -4074,7 +4071,7 @@ if (document.readyState === "loading") {
     function createDropdown(ddEl, items, { formatLabel, value, onChange }) {
       if (!ddEl) {
         return {
-          set() { },
+          set() {},
           get() {
             return undefined;
           },
@@ -4086,7 +4083,7 @@ if (document.readyState === "loading") {
       const list = ddEl.querySelector(".mt-dd__panel");
       if (!btn || !lab || !list) {
         return {
-          set() { },
+          set() {},
           get() {
             return undefined;
           },
@@ -4279,7 +4276,8 @@ if (document.readyState === "loading") {
 
         cell.setAttribute(
           "aria-label",
-          `${key}, ${pnl !== null ? "$" + pnl.toFixed(0) : "no data"}, ${tr || 0
+          `${key}, ${pnl !== null ? "$" + pnl.toFixed(0) : "no data"}, ${
+            tr || 0
           } trades`
         );
 
@@ -4856,8 +4854,8 @@ if (document.readyState === "loading") {
     var maxUI =
       Number(
         payload.maxWithdrawalUI ||
-        (payload.meta && payload.meta.maxWithdrawalUI) ||
-        0
+          (payload.meta && payload.meta.maxWithdrawalUI) ||
+          0
       ) || 0;
 
     var minUI =
@@ -4893,8 +4891,6 @@ if (document.readyState === "loading") {
       btn.setAttribute("aria-disabled", "true");
     }
   }
-
-
 
   function fetchEligibility(accountId) {
     if (!accountId) {
@@ -4954,14 +4950,18 @@ if (document.readyState === "loading") {
 
   window.MT_PAYOUT_REFRESH = function (accountId) {
     var root = document.getElementById("mt-account-overview");
-    var currentId = accountId || (root && root.getAttribute("data-account-id")) || "";
+    var currentId =
+      accountId || (root && root.getAttribute("data-account-id")) || "";
     if (!currentId) return;
 
     try {
       if (cache[currentId]) {
         delete cache[currentId];
       }
-      if (window.MT_PAYOUT_ELIGIBILITY_CACHE && window.MT_PAYOUT_ELIGIBILITY_CACHE[currentId]) {
+      if (
+        window.MT_PAYOUT_ELIGIBILITY_CACHE &&
+        window.MT_PAYOUT_ELIGIBILITY_CACHE[currentId]
+      ) {
         delete window.MT_PAYOUT_ELIGIBILITY_CACHE[currentId];
       }
     } catch (e) {
@@ -4970,9 +4970,7 @@ if (document.readyState === "loading") {
 
     fetchEligibility(currentId);
   };
-
 })();
-
 
 // ======= Mostrar/ocultar card de payout según account-type (Funded/Evaluation) =======
 (function () {
@@ -4983,8 +4981,7 @@ if (document.readyState === "loading") {
   function syncPayoutVisibility() {
     var t = (root.getAttribute("data-account-type") || "").toLowerCase();
 
-    var isFunded =
-      t.indexOf("funded") === 0 || t.indexOf("funded") !== -1; // por si viene "Funded Account" o similar
+    var isFunded = t.indexOf("funded") === 0 || t.indexOf("funded") !== -1; // por si viene "Funded Account" o similar
 
     if (isFunded) {
       wrap.classList.remove("d-none");
@@ -4994,7 +4991,9 @@ if (document.readyState === "loading") {
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", syncPayoutVisibility, { once: true });
+    document.addEventListener("DOMContentLoaded", syncPayoutVisibility, {
+      once: true,
+    });
   } else {
     syncPayoutVisibility();
   }
@@ -5009,12 +5008,19 @@ if (document.readyState === "loading") {
 /* ===== Request Payout Modal (desde card Funded) ===== */
 (function () {
   const modal = document.getElementById("mt-request-payout-modal");
-  if (!modal || !window.mtModal || typeof window.mtModal.openCentered !== "function") return;
+  if (
+    !modal ||
+    !window.mtModal ||
+    typeof window.mtModal.openCentered !== "function"
+  )
+    return;
 
   const form = modal.querySelector("#mt-payout-form");
   const amountInput = modal.querySelector("#mt-payout-amount");
   const maxEl = modal.querySelector("#mt-payout-max");
-  const maxValueEl = maxEl ? maxEl.querySelector("[data-role='mt-payout-max-value']") : null;
+  const maxValueEl = maxEl
+    ? maxEl.querySelector("[data-role='mt-payout-max-value']")
+    : null;
   const accHidden = modal.querySelector("#mt-payout-account");
   const errEl = modal.querySelector("#mt-payout-error");
   const btnContinue = modal.querySelector("#mt-payout-continue");
@@ -5038,7 +5044,7 @@ if (document.readyState === "loading") {
       if (window.jQuery && window.jQuery(".preloader").length) {
         window.jQuery(".preloader").fadeIn();
       }
-    } catch (e) { }
+    } catch (e) {}
   }
 
   function hidePreloader() {
@@ -5046,7 +5052,7 @@ if (document.readyState === "loading") {
       if (window.jQuery && window.jQuery(".preloader").length) {
         window.jQuery(".preloader").fadeOut();
       }
-    } catch (e) { }
+    } catch (e) {}
   }
 
   function safeJsonParse(text) {
@@ -5060,7 +5066,10 @@ if (document.readyState === "loading") {
 
   function showGlobalError(headline, message, opts) {
     try {
-      if (window.MEGATRADER && typeof window.MEGATRADER.showError === "function") {
+      if (
+        window.MEGATRADER &&
+        typeof window.MEGATRADER.showError === "function"
+      ) {
         window.MEGATRADER.showError(
           headline || "Request failed",
           message || "Unexpected error.",
@@ -5090,14 +5099,21 @@ if (document.readyState === "loading") {
             if (b) b.classList.add("mt-error");
           }, 0);
         } else {
-          alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+          alert(
+            (headline ? headline + "\n\n" : "") +
+              (message || "Unexpected error.")
+          );
         }
       } else {
-        alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+        alert(
+          (headline ? headline + "\n\n" : "") + (message || "Unexpected error.")
+        );
       }
     } catch (e) {
       console.error("showError failed:", e);
-      alert((headline ? headline + "\n\n" : "") + (message || "Unexpected error."));
+      alert(
+        (headline ? headline + "\n\n" : "") + (message || "Unexpected error.")
+      );
     }
   }
 
@@ -5108,8 +5124,12 @@ if (document.readyState === "loading") {
     if (headerTitle) headerTitle.textContent = "Payout Request";
 
     const congrats = (I18N && I18N.congrats) || "Congrats!";
-    const msg = (I18N && I18N.congratsMessage) || "Your request has been successfully submitted";
-    const subtitle = (I18N && I18N.congratsSubtitle) || "You’ll be notified once your request is approved.";
+    const msg =
+      (I18N && I18N.congratsMessage) ||
+      "Your request has been successfully submitted";
+    const subtitle =
+      (I18N && I18N.congratsSubtitle) ||
+      "You’ll be notified once your request is approved.";
 
     if (body) {
       body.innerHTML =
@@ -5118,9 +5138,15 @@ if (document.readyState === "loading") {
         '  <img decoding="async" class="d-inline-block d-sm-none" src="/wp-content/themes/megatrader-addons/assets/img/thank-you2.png" alt="thank you" width="327" height="132">' +
         "</div>" +
         '<div class="d-flex flex-column align-items-center gap-2 pb-4">' +
-        '  <div class="fw-medium leading-60px text-5xl text-uppercase text-white">' + congrats + "</div>" +
-        '  <div class="text-white fw-medium text-uppercase text-2xl leading-7 text-center">' + msg + "</div>" +
-        '  <div class="fw-medium text-a8a29e text-base text-center">' + subtitle + "</div>" +
+        '  <div class="fw-medium leading-60px text-5xl text-uppercase text-white">' +
+        congrats +
+        "</div>" +
+        '  <div class="text-white fw-medium text-uppercase text-2xl leading-7 text-center">' +
+        msg +
+        "</div>" +
+        '  <div class="fw-medium text-a8a29e text-base text-center">' +
+        subtitle +
+        "</div>" +
         "</div>";
     }
 
@@ -5134,7 +5160,10 @@ if (document.readyState === "loading") {
       closeBtn.addEventListener("click", function (ev) {
         ev.preventDefault();
         try {
-          if (window.mtModal && typeof window.mtModal.closeCentered === "function") {
+          if (
+            window.mtModal &&
+            typeof window.mtModal.closeCentered === "function"
+          ) {
             window.mtModal.closeCentered(modal, { clearDataShow: true });
           }
         } catch (e) {
@@ -5144,12 +5173,19 @@ if (document.readyState === "loading") {
 
       footer.appendChild(closeBtn);
     }
-
   }
 
   /* ---------- Steps helpers ---------- */
   function switchToStep(step) {
-    if (!step1 || !step2 || !btnCancel || !btnBack || !btnContinue || !btnConfirm) return;
+    if (
+      !step1 ||
+      !step2 ||
+      !btnCancel ||
+      !btnBack ||
+      !btnContinue ||
+      !btnConfirm
+    )
+      return;
 
     if (step === 2) {
       step1.classList.add("d-none");
@@ -5228,7 +5264,7 @@ if (document.readyState === "loading") {
       if (!eligible) {
         setError(
           I18N.withdrawalNotEligible ||
-          "This account is not eligible for payout at the moment."
+            "This account is not eligible for payout at the moment."
         );
         return;
       }
@@ -5241,7 +5277,7 @@ if (document.readyState === "loading") {
       if (!Number.isFinite(val) || val <= 0) {
         setError(
           I18N.withdrawalAmountMinorZero ||
-          "Enter a valid amount greater than 0."
+            "Enter a valid amount greater than 0."
         );
         return;
       }
@@ -5249,7 +5285,7 @@ if (document.readyState === "loading") {
       if (max <= 0) {
         setError(
           I18N.withdrawalAmountNotEligible ||
-          "This account is not eligible for payout at the moment."
+            "This account is not eligible for payout at the moment."
         );
         return;
       }
@@ -5257,7 +5293,7 @@ if (document.readyState === "loading") {
       if (val > max) {
         setError(
           I18N.withdrawalAmountError ||
-          "Amount exceeds the maximum allowed for this payout."
+            "Amount exceeds the maximum allowed for this payout."
         );
         return;
       }
@@ -5267,9 +5303,9 @@ if (document.readyState === "loading") {
         setError(
           (I18N.withdrawalAmountBelowMin ||
             "Amount is below the minimum withdrawal for this account.") +
-          " (" +
-          formatMoney(min) +
-          " min)"
+            " (" +
+            formatMoney(min) +
+            " min)"
         );
         return;
       }
@@ -5280,7 +5316,10 @@ if (document.readyState === "loading") {
     }
 
     // input en vivo
-    amountInput.removeEventListener("input", amountInput._mtPayoutHandler || (() => { }));
+    amountInput.removeEventListener(
+      "input",
+      amountInput._mtPayoutHandler || (() => {})
+    );
     amountInput._mtPayoutHandler = validate;
     amountInput.addEventListener("input", validate, { passive: true });
 
@@ -5299,16 +5338,15 @@ if (document.readyState === "loading") {
           const raw = amountInput.value.trim();
           const amount = parseFloat(raw) || 0;
           const fee = Math.round(amount * 0.1 * 100) / 100;
-          const receive = Math.max(
-            0,
-            Math.round((amount - fee) * 100) / 100
-          );
+          const receive = Math.max(0, Math.round((amount - fee) * 100) / 100);
 
           const emailEl = document.getElementById("mt-payout-email");
-          const email = emailEl ? emailEl.value || emailEl.textContent || "" : "";
+          const email = emailEl
+            ? emailEl.value || emailEl.textContent || ""
+            : "";
 
           const methodEl = document.getElementById("mt-payout-method");
-          const method = methodEl ? (methodEl.value || "rise") : "rise";
+          const method = methodEl ? methodEl.value || "rise" : "rise";
 
           // rellenar resumen
           const setTxt = (id, val) => {
@@ -5371,8 +5409,7 @@ if (document.readyState === "loading") {
       if (!account || !amount || !method || !email) {
         if (errEl) {
           errEl.style.display = "";
-          errEl.textContent =
-            "Account, amount, method and email are required.";
+          errEl.textContent = "Account, amount, method and email are required.";
         }
         return;
       }
@@ -5391,7 +5428,6 @@ if (document.readyState === "loading") {
         }
         return base + "?" + q.toString();
       })();
-
 
       const payload = {
         account: String(account),
@@ -5431,7 +5467,7 @@ if (document.readyState === "loading") {
             showGlobalError(
               "Payout unavailable",
               (res && (res.data?.message || res.message)) ||
-              "You already have a payout request in progress.",
+                "You already have a payout request in progress.",
               { code: "409" }
             );
             btnConfirm.disabled = false;
@@ -5465,7 +5501,6 @@ if (document.readyState === "loading") {
             showGlobalError("Request failed", msg2, {});
             btnConfirm.disabled = false;
           }
-
         })
         .catch(function (e) {
           console.error("[PAYOUT] ERR ←", e);
@@ -5513,7 +5548,11 @@ if (document.readyState === "loading") {
       try {
         const cache = window.MT_PAYOUT_ELIGIBILITY_CACHE || {};
         const payload = cache[accountId] || null;
-        if (payload && payload.meta && typeof payload.meta.minWithdrawal === "number") {
+        if (
+          payload &&
+          payload.meta &&
+          typeof payload.meta.minWithdrawal === "number"
+        ) {
           min = payload.meta.minWithdrawal;
         }
       } catch (e) {
@@ -5575,8 +5614,8 @@ if (document.readyState === "loading") {
 
     return document.querySelector(
       '[data-role="mt-request-payout-card"][data-account-id="' +
-      currentId.replace(/"/g, '\\"') +
-      '"]'
+        currentId.replace(/"/g, '\\"') +
+        '"]'
     );
   }
 
@@ -5612,17 +5651,9 @@ if (document.readyState === "loading") {
     });
   }
 
-
   document.addEventListener("keydown", function (ev) {
     if (ev.key === "Escape" && modal.classList.contains("show")) {
       closeModal();
     }
   });
 })();
-
-
-
-
-
-
-
