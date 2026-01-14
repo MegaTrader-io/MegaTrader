@@ -110,7 +110,8 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
             </button>
 
             <?php
-            $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false, 'PENDING_ACTIVATION' => false];
+            //$present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false, 'PENDING_ACTIVATION' => false];
+            $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false];
             foreach ($accounts as $row) {
               $st = strtoupper(trim((string) ($row['status'] ?? '')));
               if ($st === 'ACTIVE')
@@ -119,8 +120,8 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                 $present['BREACHED'] = true;
               if ($st === 'PASSED' || $st === 'UPGRADED')
                 $present['PASSED'] = true;
-              if ($st === 'PENDING_ACTIVATION')
-                $present['PENDING_ACTIVATION'] = true;
+              //if ($st === 'PENDING_ACTIVATION')
+              //  $present['PENDING_ACTIVATION'] = true;
             }
             $curStatus = strtoupper(trim((string) ($current['status'] ?? '')));
             switch ($curStatus) {
@@ -136,19 +137,19 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                 $curFilter = 'PASSED';
                 break;
               case 'PENDING_ACTIVATION':
-                $curFilter = 'PENDING_ACTIVATION';
+                $curFilter = 'ACTIVE';
                 break;
               default:
-                $curFilter = $present['ACTIVE'] ? 'ACTIVE' :
-                  ($present['BREACHED'] ? 'BREACHED' :
-                    ($present['PASSED'] ? 'PASSED' :
-                      ($present['PENDING_ACTIVATION'] ? 'PENDING_ACTIVATION' : 'ACTIVE')));
+                $curFilter = $present['ACTIVE'] ? 'ACTIVE'
+                  : ($present['BREACHED'] ? 'BREACHED'
+                  : ($present['PASSED'] ? 'PASSED' : 'ACTIVE'));
+
             }
             $firstOpt = !empty($present[$curFilter]) ? $curFilter
               : ($present['ACTIVE'] ? 'ACTIVE'
-                : ($present['BREACHED'] ? 'BREACHED'
-                  : ($present['PASSED'] ? 'PASSED'
-                    : ($present['PENDING_ACTIVATION'] ? 'PENDING_ACTIVATION' : 'ACTIVE'))));
+              : ($present['BREACHED'] ? 'BREACHED'
+                : ($present['PASSED'] ? 'PASSED' : 'ACTIVE')));
+
             ?>
 
             <ul class="dropdown-menu w-100 p-0 overflow-hidden rounded-12 mt-1" id="mt-acc-filter-menu">
@@ -163,11 +164,7 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
               <?php if ($present['PASSED']): ?>
                 <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button>
                 </li>
-              <?php endif; ?>
-              <?php if ($present['PENDING_ACTIVATION']): ?>
-                <li><button type="button" class="dropdown-item py-2 mt-filter-option"
-                    data-value="PENDING_ACTIVATION">Pending activation</button></li>
-              <?php endif; ?>
+              <?php endif; ?>        
             </ul>
 
             <select id="mt-acc-filter" class="d-none" aria-hidden="true">
@@ -176,10 +173,7 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
               <?php if ($present['BREACHED']): ?>
                 <option value="BREACHED" <?php selected($firstOpt, 'BREACHED'); ?>>Breached</option><?php endif; ?>
               <?php if ($present['PASSED']): ?>
-                <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option><?php endif; ?>
-              <?php if ($present['PENDING_ACTIVATION']): ?>
-                <option value="PENDING_ACTIVATION" <?php selected($firstOpt, 'PENDING_ACTIVATION'); ?>>Pending activation
-                </option><?php endif; ?>
+                <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option><?php endif; ?>            
             </select>
           </div>
         </div>
@@ -247,7 +241,8 @@ wp_add_inline_script(
   var filterLbl = document.getElementById('mt-acc-filter-label');
   if (!filterSel || !filterLbl) return;
   var val = filterSel.value || (filterSel.querySelector('option') && filterSel.querySelector('option').value) || 'ACTIVE';
-  var map = {ACTIVE:'Active', BREACHED:'Breached', PASSED:'Passed', PENDING_ACTIVATION:'Pending activation'};
+  //var map = {ACTIVE:'Active', BREACHED:'Breached', PASSED:'Passed', PENDING_ACTIVATION:'Pending activation'};
+  var map = {ACTIVE:'Active', BREACHED:'Breached', PASSED:'Passed'};
   filterLbl.textContent = map[val] || 'Active';
 })();
 JS
