@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
  */
 add_action('wp_enqueue_scripts', function () {
     if (
-        !is_front_page()
+        !is_front_page() && !is_page_template('landing-page-zero-plan.php')
     ) {
         return;
     }
