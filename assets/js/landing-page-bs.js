@@ -76,44 +76,46 @@ document.addEventListener('DOMContentLoaded', function () {
     function initializeSwiper() {
         try {
             const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
-            const heroGlideInstance = new Glide(heroBsCarouselRoot, {
-                type: 'carousel', focusAt: 'center', gap: 16, perView: 1, autoplay: 3000,
-            });
+            if (heroBsCarouselRoot) {
+                const heroGlideInstance = new Glide(heroBsCarouselRoot, {
+                    type: 'carousel', focusAt: 'center', gap: 16, perView: 1, autoplay: 3000,
+                });
 
-            heroGlideInstance.mount();
+                heroGlideInstance.mount();
+            }
 
             const carouselSelector = '#verified-bs-carousel';
             const carouselEl = document.querySelector(carouselSelector);
-            if (!carouselEl) throw new Error('Carousel element not found.');
-
-            function calculatePerPage() {
-                const width = carouselEl.clientWidth;
-                const slideWidth = document.documentElement.clientWidth <= 767 ? 276 : 378;
-                return Math.max(1, Math.floor(width / slideWidth));
-            }
-
-            let splide = new Splide(carouselSelector, {
-                type: 'loop',
-                drag: 'free',
-                pagination: false,
-                arrows: false,
-                focus: 'center',
-                gap: '16px',
-                perPage: calculatePerPage(),
-                autoScroll: {
-                    speed: 0.2, pauseOnHover: true, pauseOnFocus: true,
-                },
-            });
-
-            splide.mount(window.splide.Extensions);
-
-            window.addEventListener('resize', () => {
-                const newPerPage = calculatePerPage();
-                if (splide.options.perPage !== newPerPage) {
-                    splide.options = {...splide.options, perPage: newPerPage};
-                    splide.refresh();
+            if (carouselEl) {
+                function calculatePerPage() {
+                    const width = carouselEl.clientWidth;
+                    const slideWidth = document.documentElement.clientWidth <= 767 ? 276 : 378;
+                    return Math.max(1, Math.floor(width / slideWidth));
                 }
-            });
+
+                let splide = new Splide(carouselSelector, {
+                    type: 'loop',
+                    drag: 'free',
+                    pagination: false,
+                    arrows: false,
+                    focus: 'center',
+                    gap: '16px',
+                    perPage: calculatePerPage(),
+                    autoScroll: {
+                        speed: 0.2, pauseOnHover: true, pauseOnFocus: true,
+                    },
+                });
+
+                splide.mount(window.splide.Extensions);
+
+                window.addEventListener('resize', () => {
+                    const newPerPage = calculatePerPage();
+                    if (splide.options.perPage !== newPerPage) {
+                        splide.options = {...splide.options, perPage: newPerPage};
+                        splide.refresh();
+                    }
+                });
+            }
         } catch (error) {
             console.error('Error initializing Splide carousel:', error);
         }

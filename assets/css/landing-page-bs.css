@@ -54,6 +54,17 @@
     word-wrap: break-word
 }
 
+.hero-bs__zero-title {
+    align-self: stretch;
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    margin-bottom: 0;
+    word-wrap: break-word
+}
+
 .hero-bs__text {
     color: #A8A29E;
     font-size: 20px;
@@ -119,6 +130,25 @@
 
 .hero-bs__media-card {
     width: 600px;
+    position: relative;
+}
+
+.hero-bs__media-card img {
+    height: 445px;
+}
+
+.hero-bs__media-card-circle {
+    width: 451px;
+    height: 300px;
+    background: #FB7185;
+    border: 1px solid #000;
+    opacity: 0.3;
+    border-radius: 50%;
+    filter: blur(100px);
+    position: absolute;
+    left: 74px;
+    top: 20px;
+    z-index: -1;
 }
 
 .hero-bs__media-card .hero-bs__glide .slider__bullets.glide__bullets {
@@ -2783,6 +2813,17 @@ a.footer-bs__link:visited {
 
 /* Large devices (max-width: 1024px) */
 @media (max-width: 1024px) {
+    .hero-bs__zero-title {
+        width: 606px;
+        text-align: center;
+        color: white;
+        font-size: 40px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 48px;
+        word-wrap: break-word
+    }
+
     /* Hero */
     .hero-bs__content {
         align-items: center;
@@ -3052,6 +3093,15 @@ a.footer-bs__link:visited {
     .resources-bs__intro-image {
         height: 272px;
     }
+
+    .hero-zero-plan .hero-bs__row {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .hero-zero-plan .hero-bs__media {
+        display: none;
+    }
 }
 
 /* Medium devices (max-width: 991.98px) */
@@ -3127,6 +3177,9 @@ a.footer-bs__link:visited {
         text-align: center;
     }
 
+    .hero-bs__zero-title {
+    }
+
     .hero-bs__text {
         color: #A8A29E;
         font-size: 16px;
@@ -3150,6 +3203,18 @@ a.footer-bs__link:visited {
 
 /* Small devices (max-width: 767px) */
 @media (max-width: 767px) {
+
+    .hero-bs__zero-title {
+        width: 354px;
+        text-align: center;
+        color: white;
+        font-size: 32px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 40px;
+        word-wrap: break-word
+    }
+
     .market-type-bs {
         padding-top: 16px;
     }

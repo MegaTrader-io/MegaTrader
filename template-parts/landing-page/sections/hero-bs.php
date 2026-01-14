@@ -87,12 +87,9 @@
                                 <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </section>

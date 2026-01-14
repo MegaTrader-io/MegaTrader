@@ -1,0 +1,684 @@
+<?php
+$page_slug = pathinfo(__FILE__, PATHINFO_FILENAME);
+$remember_previous_selection = true;
+
+/**
+ * 1. Cargar data base de WooCommerce
+ */
+$mt_products_data = get_products_with_attributes();
+$mt_attributes = $mt_products_data['attributes'] ?? [];
+$mt_products_raw = $mt_products_data['products'] ?? [];
+
+/**
+ * 2. Clasificar atributos por taxonomía
+ */
+$mt_account_sizes = [];
+$mt_account_types = [];
+$mt_platforms = [];
+$mt_market_types = [];
+$mt_billing_types = [];
+
+foreach ($mt_attributes as $attr) {
+    switch ($attr['taxonomy']) {
+        case 'pa_market-type':
+            $mt_market_types[] = $attr;
+            break;
+        case 'pa_account-size':
+            $mt_account_sizes[] = $attr['slug'];
+            break;
+        case 'pa_account-types':
+            $mt_account_types[] = $attr;
+            break;
+        case 'pa_billing-type':
+            $mt_billing_types[] = $attr;
+            break;
+        case 'pa_platform':
+            $mt_platforms[] = $attr;
+            break;
+    }
+}
+
+/**
+ * 3. Definir valores iniciales
+ */
+$mt_default_market_type = $mt_market_types[0] ?? null;
+$mt_default_platform = $mt_platforms[0] ?? null;
+$mt_platform_thumbnail_url = $mt_default_platform['thumbnail_url'] ?? '';
+$mt_default_market_type_slug = $mt_default_market_type ?? [];
+$market_types_allowed = [];
+
+/**
+ * 4. Filtrar productos válidos (excluye -fee)
+ */
+$mt_products = array_values(array_filter($mt_products_raw, function ($product) use (&$market_types_allowed) {
+    $slug = $product['slug'] ?? '';
+    if (str_ends_with($slug, '-fee')) {
+        return false;
+    }
+
+    $marketType = $product['tree_map']['market-type'] ?? null;
+    if ($marketType && !in_array($marketType, $market_types_allowed, true)) {
+        $market_types_allowed[] = $marketType;
+    }
+
+    return true;
+}));
+
+/**
+ * 5. Filtrar market types según los productos existentes
+ */
+
+$mt_market_types = array_values(array_filter(
+        $mt_market_types,
+        fn($type) => in_array($type['slug'], $market_types_allowed, true)
+));
+
+
+/**
+ * 6. Filtrar productos por market-type por defecto
+ */
+$account_sizes_allowed = [];
+$account_types_allowed = [];
+
+$mt_filtered_products = array_values(array_filter($mt_products, function ($product) use (
+        $mt_default_market_type, $mt_account_types, $mt_account_sizes,
+        &$account_sizes_allowed, &$account_types_allowed
+) {
+    $marketType = $product['tree_map']['market-type'] ?? null;
+    if ($marketType !== $mt_default_market_type['slug']) {
+        return false;
+    }
+
+    if ($product['tree_map']['account-types'] != 'zero-plan') {
+        return false;
+    }
+
+    $slug = $product['slug'];
+    $variants = $product[$slug] ?? [];
+
+    foreach ($mt_account_sizes as $size) {
+        if (!isset($variants[$size])) {
+            continue;
+        }
+
+        if (!in_array($size, $account_sizes_allowed, true)) {
+            $account_sizes_allowed[] = $size;
+        }
+
+        foreach ($mt_account_types as $type) {
+            $type_slug = $type['slug'];
+            if (isset($variants[$size][$type_slug]) && !in_array($type_slug, $account_types_allowed, true)) {
+                $account_types_allowed[] = $type_slug;
+            }
+        }
+    }
+
+    return true;
+}));
+
+/**
+ * 7. Definir account types y sizes finales
+ */
+$mt_account_types = array_values(array_filter(
+        $mt_account_types,
+        fn($type) => in_array($type['slug'], $account_types_allowed, true)
+));
+
+$mt_default_account_type = $mt_account_types[0] ?? [];
+$mt_default_slug = $mt_default_account_type['slug'] ?? '';
+$mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'] ?? '';
+$mt_account_sizes = $account_sizes_allowed;
+$mt_size = $mt_account_sizes[0] ?? '';
+
+/**
+ * 8. Agrupar market-type → account-types (para los tabs)
+ */
+$grouped = [];
+foreach ($mt_products as $product) {
+    $map = $product['tree_map'] ?? [];
+    $marketType = $map['market-type'] ?? null;
+    $accountType = $map['account-types'] ?? null;
+
+    if (!$marketType || !$accountType) continue;
+
+    if (!isset($grouped[$marketType])) {
+        $grouped[$marketType] = [
+                'market-type' => $marketType,
+                'account-types' => [],
+        ];
+    }
+
+    if (!in_array($accountType, $grouped[$marketType]['account-types'], true)) {
+        $grouped[$marketType]['account-types'][] = $accountType;
+    }
+}
+
+$result = array_values($grouped);
+$current_market_type = array_values(array_filter(
+        $result,
+        fn($item) => $item['market-type'] === $mt_default_market_type_slug['slug']
+))[0] ?? [];
+
+$mt_account_types = array_values(array_filter(
+        $mt_account_types,
+        fn($type) => in_array($type['slug'], $current_market_type['account-types'] ?? [], true)
+));
+
+/**
+ * 9. Construcción de lista de planes
+ */
+$mt_product = array_find($mt_filtered_products, function ($product) use ($mt_default_slug) {
+    return isset($product['slug']) && $product['slug'] === $mt_default_slug;
+});
+
+$mt_plan_list = [];
+$mt_default_meta_info = [];
+$has_coupon_global = null;
+
+if ($mt_product && isset($mt_product[$mt_product['slug']][$mt_size][$mt_default_slug])) {
+    $mt_product_level = $mt_product[$mt_product['slug']][$mt_size][$mt_default_slug];
+    $mt_default_platform = array_key_first($mt_product_level);
+    $mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
+
+    $mt_slug = $mt_product['slug'] ?? null;
+    $parent_id = $mt_product['id'];
+
+    foreach ($mt_account_sizes as $size) {
+        $properties = [];
+        foreach (array_keys($mt_product['tree_map']) as $attr) {
+            $properties = count($properties) === 0 ? array_values($mt_product[$mt_slug])[0] : array_values($properties)[0];
+        }
+
+        if (count($properties) == 0) continue;
+
+        $variation_id = -1;
+        $price = '0.00';
+        $meta_info = [];
+
+        foreach ($properties as $property) {
+            foreach ($property as $key => $value) {
+                match ($key) {
+                    'id' => $variation_id = $value,
+                    'price-monthly' => $price = (int)str_replace('$', '', $value),
+                    'meta-info' => $meta_info = $value,
+                    default => null
+                };
+            }
+        }
+
+        foreach (Label::PRODUCT_META as $meta_key => $meta_label) {
+            if (!empty($meta_info[$meta_key])) {
+                $mt_default_meta_info[$meta_key] = true;
+            }
+        }
+
+        $mt_plan_list[] = [
+                'id' => $variation_id,
+                'parent_id' => $parent_id,
+                'price' => $price,
+                'size' => $size,
+                'meta_info_list' => $meta_info
+        ];
+    }
+}
+
+/**
+ * 10. Productos más populares
+ */
+$mt_best_products = mt_most_popular_products();
+
+/**
+ * 11. Helper de renderizado de meta info
+ */
+function mt_render_template_meta_info($value = '', $label = '', $classes = '')
+{
+    return <<<HTML
+<div class="mega-info-row {$classes}">
+    <div class="mega-info-row__label">{$label}</div>
+    <div class="mega-info-row__value text-truncate">{$value}</div>
+</div>
+HTML;
+}
+
+?>
+
+<section id="pricing" class="zero-pricing-table pricing-table-container landing-bs-container">
+    <header class="pricing-table-container__header-wrapper text-center">
+        <h2 class="pricing-table-container__title">
+            Choose <span class="pricing-table-container__title--hidden-md text-white">your</span> <span>account</span>
+            type
+        </h2>
+        <p class="pricing-table-container__subtitle">
+            Choose from flexible account sizes and plans tailored to your trading style—whether you're growing your
+            skills or ready to trade real capital with confidence.
+        </p>
+    </header>
+
+    <div class="pricing-table-container-options d-none">
+        <?php
+        get_template_part("template-parts/landing-page/sections/select-account-type", null, [
+                'mt_extra_classes' => 'd-none',
+                'account_types' => $mt_account_types,
+                'mt_default_platform' => $mt_default_platform,
+                'mt_default_market_type' => $mt_default_market_type,
+        ]);
+        ?>
+
+        <div class="mt-pricing-table-plan-options__wrapper">
+            <?php
+            foreach ($mt_account_types as $index => $item) {
+                $slug = esc_attr($item['slug']);
+                $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+
+                ?>
+
+                <?php if (!empty($parsed['data'])): ?>
+                    <div class="mt-pricing-table-benefits d-none" data-account-type-benefits="<?= $slug ?>">
+                        <?php foreach ($parsed['data'] as $index => $text): ?>
+                            <?php if ($index > 0): ?>
+                                <img class="mt-pricing-table-benefits__icon"
+                                     src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'); ?>"
+                                     alt="flash" width="24" height="24">
+                            <?php endif; ?>
+                            <div class="mt-pricing-table-benefits__item"><?php echo esc_html($text) ?></div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php
+            }
+            ?>
+        </div>
+    </div>
+
+    <div class="price-table price-table__glide slider glide"
+         style="--price-table-slide-width: 0px; --price-table-slide-left: 0px;--current-slider-height: 0px">
+        <div class="slider__track glide__track" data-glide-el="track">
+            <ul class="slider__slides glide__slides">
+                <?php foreach ($mt_plan_list as $mt_index => $mt_plan) : ?>
+                    <?php
+                    $mt_id = $mt_plan['id'];
+                    $mt_size = $mt_plan['size'];
+                    $mt_parent_id = $mt_plan['parent_id'];
+                    $mt_price = $mt_plan['price'];
+                    $mt_meta_info_list = $mt_plan['meta_info_list'];
+
+                    $mt_coupon = mt_get_best_coupon_for_variation($mt_id);
+                    $mt_has_coupon = false;
+                    $mt_price_plan = $mt_price;
+
+                    $mt_scan_product = $mt_best_products[$mt_parent_id];
+                    $mt_is_most_popular = $mt_scan_product && $mt_scan_product['variation_id'] == $mt_id;
+
+                    $CHECKOUT_URL = home_url('/checkout/?add-to-cart=' . $mt_id);
+                    $URL_GO_TO = home_url('/auth/register/?redirect_to=');
+
+                    $mt_get_plan_url = $URL_GO_TO . $CHECKOUT_URL;
+                    if (is_user_logged_in()) {
+                        $mt_get_plan_url = $CHECKOUT_URL;
+                    }
+
+                    ?>
+                    <li class="slider__frame glide__slide">
+                        <div class="price-table__plan <?= $mt_is_most_popular ? 'price-table__plan--most-popular' : 'price-table__plan--regular-plan' ?>"
+                             data-price="<?= esc_attr($mt_size) ?>">
+                            <div class="price-table__size">
+                                <div class="price-table__most-popular-badge">
+                                    <div class="price-table__most-popular-badge-wrapper">
+                                        <svg class="price-table__most-popular-badge-icon" width="24" height="24"
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <mask id="mask0_17404_34902" style="mask-type:alpha"
+                                                  maskUnits="userSpaceOnUse"
+                                                  x="0"
+                                                  y="0" width="24" height="24">
+                                                <rect width="24" height="24" fill="#D9D9D9"/>
+                                            </mask>
+                                            <g mask="url(#mask0_17404_34902)">
+                                                <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#FFB34A"/>
+                                            </g>
+                                        </svg>
+                                        <div class="price-table__most-popular-badge-text"><?php esc_html_e('Most popular', 'megatrader'); ?></div>
+                                    </div>
+                                </div>
+                                <div class="price-table__title">
+                                    <?= esc_html($mt_size) ?> Account
+                                </div>
+                            </div>
+
+                            <div class="price-table__right-line price-information"
+                                 data-price="<?= esc_attr($mt_size) ?>">
+                                <div class="w-100">
+                                    <div style="display: none;"
+                                         class="price-information__summary">
+                                        <div class="coupon-before-price" data-price="<?= esc_attr($mt_size) ?>">
+                                            <span></span>
+                                        </div>
+                                        <div class="badge-coupon w-100" data-price="<?= esc_attr($mt_size) ?>">
+                                            <div class="badge-coupon__wrapper">
+                                                <div class="badge-coupon__text text-truncate">
+                                                    <?php esc_html_e('Save', 'megatrader'); ?>
+                                                    <span class="badge-coupon__discount_total">
+                                            <?= $mt_has_coupon ? mt_price_plain($mt_coupon['discount_total']) : 0 ?>
+                                        </span>
+                                                    <?php esc_html_e('with code', 'megatrader'); ?>
+                                                </div>
+                                                <svg width="1" height="24" viewBox="0 0 1 24" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <line x1="0.5" y1="0" x2="0.5" y2="24" stroke="#404040"/>
+                                                </svg>
+                                                <div class="badge-coupon__code">
+                                                    <?= $mt_has_coupon ? esc_html(strtoupper($mt_coupon['coupon'])) : '' ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="price-information__price">
+                            <span class="price-plan" data-price="<?= esc_attr($mt_size) ?>">
+                                <?= mt_price_plain($mt_price_plan) ?>
+                            </span>
+                                        <span class="frequency-plan" data-price="<?= esc_attr($mt_size) ?>">
+                                <?= $mt_default_slug !== 'funded-plan' ? esc_html__('per month', 'megatrader') : esc_html__('one time fee', 'megatrader') ?>
+                            </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <?= mt_render_template_meta_info(classes: 'd-none template-metaInfo') ?>
+
+                            <div class="price-table__right-line price-table-attributes metaInfo"
+                                 data-price="<?= esc_attr($mt_size) ?>">
+                                <?php foreach ($mt_default_meta_info as $mt_field => $mt_value): ?>
+                                    <?php
+                                    $mt_label = Label::PRODUCT_META[$mt_field];
+                                    $mt_value = $mt_meta_info_list[$mt_field];
+                                    echo mt_render_template_meta_info(value: $mt_value, label: $mt_label);
+                                    ?>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="price-table__right-line price-table__footer"
+                                 data-price="<?= esc_attr($mt_size) ?>">
+                                <a href="<?= esc_url($mt_get_plan_url) ?>"
+                                   class="proceed-to-checkout-btn mega-btn-md <?= $mt_is_most_popular ? 'mega-btn-primary-md mega-btn-primary--icon-md' : 'mega-btn-default-md' ?> w-100">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_18861_2652" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                              x="0"
+                                              y="0"
+                                              width="24" height="24">
+                                            <rect width="24" height="24" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_18861_2652)">
+                                            <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#14B8A6"/>
+                                        </g>
+                                    </svg>
+
+                                    <?= esc_html__('GET FUNDED WITH $', 'megatrader') . esc_html($mt_size) ?>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+
+        <div data-glide-el="controls" class="glide__arrows">
+            <button class="glide__arrow glide__arrow--prev" data-glide-dir="<">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-left.svg'); ?>"
+                     alt="control left">
+            </button>
+            <button class="glide__arrow glide__arrow--next" data-glide-dir=">">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-right.svg'); ?>"
+                     alt="control right">
+            </button>
+        </div>
+
+        <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
+            <button class="slider__bullet glide__bullet" data-glide-dir="=0"></button>
+            <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
+            <button class="slider__bullet glide__bullet" data-glide-dir="=2"></button>
+            <button class="slider__bullet glide__bullet" data-glide-dir="=3"></button>
+        </div>
+    </div>
+
+    <div class="testimonials">
+        <div class="testimonials__card">
+            <img
+                    class="testimonials__image"
+                    src="<?= get_template_directory_uri() ?>/assets/img/landing-page/testimonial-1.png"
+                    alt="Angela's Testimony"
+            />
+            <div class="testimonials__content">
+                <p class="testimonials__quote">
+                    The rules are fair and easy to follow. Everything’s clear, and the platform feels built for traders.
+                </p>
+                <div class="testimonials__info">
+                    <div class="testimonials__author">
+                        <span class="testimonials__name">Daniel Ruiz, United States</span>
+                        <svg
+                                class="testimonials__icon"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <mask
+                                    id="mask0_17091_43407"
+                                    style="mask-type:alpha"
+                                    maskUnits="userSpaceOnUse"
+                                    x="0"
+                                    y="0"
+                                    width="20"
+                                    height="20"
+                            >
+                                <rect width="20" height="20" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_17091_43407)">
+                                <path
+                                        d="M4.854 17.5L6.20817 11.6458L1.6665 7.70832L7.6665 7.18749L9.99984 1.66666L12.3332 7.18749L18.3332 7.70832L13.7915 11.6458L15.1457 17.5L9.99984 14.3958L4.854 17.5Z"
+                                        fill="#FFB34A"
+                                />
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="testimonials__role">Professional Trader</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonials__card">
+            <img
+                    class="testimonials__image"
+                    src="<?= get_template_directory_uri() ?>/assets/img/landing-page/testimonial-2.png"
+                    alt="Angela's Testimony"
+            />
+            <div class="testimonials__content">
+                <p class="testimonials__quote">
+                    Got my payout within an hour — no delays, no confusion. Super smooth process.
+                </p>
+                <div class="testimonials__info">
+                    <div class="testimonials__author">
+                        <span class="testimonials__name">Ava Thompson, Canada</span>
+                        <svg
+                                class="testimonials__icon"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <mask
+                                    id="mask0_17091_43407"
+                                    style="mask-type:alpha"
+                                    maskUnits="userSpaceOnUse"
+                                    x="0"
+                                    y="0"
+                                    width="20"
+                                    height="20"
+                            >
+                                <rect width="20" height="20" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_17091_43407)">
+                                <path
+                                        d="M4.854 17.5L6.20817 11.6458L1.6665 7.70832L7.6665 7.18749L9.99984 1.66666L12.3332 7.18749L18.3332 7.70832L13.7915 11.6458L15.1457 17.5L9.99984 14.3958L4.854 17.5Z"
+                                        fill="#FFB34A"
+                                />
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="testimonials__role">Professional Trader</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="competition">
+        <div class="competition landing-bs-container">
+            <div class="competition__wrapper ">
+                <div class="competition__content">
+                    <h2 class="competition__title">
+                        JOIN THE FASTEST GROWING FIRM
+                    </h2>
+
+                    <div class="competition__rewards">
+                        <div class="competition__reward-card">
+                            <div class="competition__reward-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <mask id="mask0_17091_79275" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                          x="0" y="0" width="24" height="24">
+                                        <rect width="24" height="24" fill="#D9D9D9"/>
+                                    </mask>
+                                    <g mask="url(#mask0_17091_79275)">
+                                        <path d="M6 20C4.9 20 3.95833 19.6083 3.175 18.825C2.39167 18.0417 2 17.1 2 16V8C2 6.9 2.39167 5.95833 3.175 5.175C3.95833 4.39167 4.9 4 6 4H18C19.1 4 20.0417 4.39167 20.825 5.175C21.6083 5.95833 22 6.9 22 8V16C22 17.1 21.6083 18.0417 20.825 18.825C20.0417 19.6083 19.1 20 18 20H6ZM6 8H18C18.3667 8 18.7167 8.04167 19.05 8.125C19.3833 8.20833 19.7 8.34167 20 8.525V8C20 7.45 19.8042 6.97917 19.4125 6.5875C19.0208 6.19583 18.55 6 18 6H6C5.45 6 4.97917 6.19583 4.5875 6.5875C4.19583 6.97917 4 7.45 4 8V8.525C4.3 8.34167 4.61667 8.20833 4.95 8.125C5.28333 8.04167 5.63333 8 6 8ZM4.15 11.25L15.275 13.95C15.425 13.9833 15.575 13.9833 15.725 13.95C15.875 13.9167 16.0167 13.85 16.15 13.75L19.625 10.85C19.4417 10.6 19.2083 10.3958 18.925 10.2375C18.6417 10.0792 18.3333 10 18 10H6C5.56667 10 5.1875 10.1125 4.8625 10.3375C4.5375 10.5625 4.3 10.8667 4.15 11.25Z"
+                                              fill="#FFB34A"/>
+                                    </g>
+                                </svg>
+
+                                <span class="competition__reward-amount text-truncate">1 HOUR PAYOUTS</span>
+                            </div>
+                            <p class="competition__reward-label">Average Processing Time</p>
+                        </div>
+
+                        <div class="competition__reward-card">
+                            <div class="competition__reward-header">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <mask id="mask0_17091_79280" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                          x="0" y="0" width="24" height="24">
+                                        <rect width="24" height="24" fill="#D9D9D9"/>
+                                    </mask>
+                                    <g mask="url(#mask0_17091_79280)">
+                                        <path d="M11.1 19H12.85V17.75C13.6833 17.6 14.4 17.275 15 16.775C15.6 16.275 15.9 15.5333 15.9 14.55C15.9 13.85 15.7 13.2083 15.3 12.625C14.9 12.0417 14.1 11.5333 12.9 11.1C11.9 10.7667 11.2083 10.475 10.825 10.225C10.4417 9.975 10.25 9.63333 10.25 9.2C10.25 8.76667 10.4042 8.425 10.7125 8.175C11.0208 7.925 11.4667 7.8 12.05 7.8C12.5833 7.8 13 7.92917 13.3 8.1875C13.6 8.44583 13.8167 8.76667 13.95 9.15L15.55 8.5C15.3667 7.91667 15.0292 7.40833 14.5375 6.975C14.0458 6.54167 13.5 6.3 12.9 6.25V5H11.15V6.25C10.3167 6.43333 9.66667 6.8 9.2 7.35C8.73333 7.9 8.5 8.51667 8.5 9.2C8.5 9.98333 8.72917 10.6167 9.1875 11.1C9.64583 11.5833 10.3667 12 11.35 12.35C12.4 12.7333 13.1292 13.075 13.5375 13.375C13.9458 13.675 14.15 14.0667 14.15 14.55C14.15 15.1 13.9542 15.5042 13.5625 15.7625C13.1708 16.0208 12.7 16.15 12.15 16.15C11.6 16.15 11.1125 15.9792 10.6875 15.6375C10.2625 15.2958 9.95 14.7833 9.75 14.1L8.1 14.75C8.33333 15.55 8.69583 16.1958 9.1875 16.6875C9.67917 17.1792 10.3167 17.5167 11.1 17.7V19ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22Z"
+                                              fill="#FFB34A"/>
+                                    </g>
+                                </svg>
+
+                                <span class="competition__reward-amount text-truncate">90% PROFIT SHARE</span>
+                            </div>
+                            <p class="competition__reward-label">Earn More From Every Trade</p>
+                        </div>
+                    </div>
+
+                    <p class="competition__entry-note">
+                        Experience instant withdrawals, verified through RiseWorks, and enjoy full transparency from
+                        challenge to payout.
+                    </p>
+
+                    <div class="competition__perks">
+                        <div class="competition__perk">
+                            <img class="payouts-and-comparison__checked"
+                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                 alt="checked circle">
+
+                            <span class="competition__perk-text">
+          Trade, Profit, Withdraw — Instantly
+        </span>
+                        </div>
+                        <div class="competition__perk">
+                            <img class="payouts-and-comparison__checked"
+                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                 alt="checked circle">
+
+                            <span class="competition__perk-text">
+          Available across all of our plans
+        </span>
+                        </div>
+                    </div>
+
+                    <div class="competition__cta">
+                        <a data-menu="pricing" href="<?= home_url('#pricing') ?>"
+                           class="btn-get-funded-now btn mega-btn-md mega-btn-primary-md">
+                            Get Funded Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="competition__image">
+                    <div class="competition__image-placeholder">
+                        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/landing-page/join_usd.png"
+                             alt="JOIN THE FASTEST GROWING FIRM IMAGE"/>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const PAGE_KEY = '<?= $page_slug ?>-storage';
+    window[PAGE_KEY] = {
+        screenLoaded: false
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        setTimeout(() => {
+            const saved = localStorage.getItem(PAGE_KEY);
+
+            if (saved) {
+                const values = JSON.parse(saved);
+
+                const event = new CustomEvent("trigger:select-account-type", {
+                    detail: {
+                        accountType: values['account-type'],
+                        defaultPlatform: values['platform'],
+                        defaultMarketType: values['market-type'],
+                        defaultAccountSize: values['account-size'],
+                    }
+                });
+
+                document.getElementById('pricing').dispatchEvent(event);
+
+                localStorage.removeItem(PAGE_KEY)
+            }
+        }, 0);
+
+
+        const getFundedLinks = document.querySelectorAll('.proceed-to-checkout-btn');
+
+        getFundedLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                const accountSize = e.currentTarget.parentElement.dataset.price;
+
+                const input = document.querySelector('input[name="account-type"]:checked');
+
+                const contentType = input.value;
+
+                const values = {
+                    "market-type": input.dataset.defaultMarketType,
+                    "account-size": accountSize,
+                    "account-type": contentType,
+                    "platform": input.dataset.defaultPlatform
+                }
+
+                localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+            });
+        });
+    });
+</script>
