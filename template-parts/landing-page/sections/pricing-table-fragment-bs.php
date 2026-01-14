@@ -61,8 +61,7 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
     </div>
 </div>
 
-<div class="price-table price-table__glide slider glide"
-     style="--price-table-slide-width: 0px; --price-table-slide-left: 0px; --current-slider-height: 0px;">
+<div class="price-table" style="--price-table-slide-width: 0px; --price-table-slide-left: 0px; --current-slider-height: 0px;">
     <div class="slider__track glide__track" data-glide-el="track">
         <ul class="slider__slides glide__slides"
             style="grid-template-columns: repeat(<?= count($mt_plan_list) ?>, 1fr);">

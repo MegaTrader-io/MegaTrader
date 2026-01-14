@@ -396,8 +396,8 @@ document.addEventListener('DOMContentLoaded', function () {
         dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
 
         const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
-        const productSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
-        const productPlatformDetail = productSelected[params.accountType];
+        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType);
+        const productPlatformDetail = productSelected[productSelected.slug];
 
         dropdownAccountTypeOption.querySelector('label').classList.add('selected');
         const accountTypeIcon = dropdownAccountTypeOption.querySelector('img');
@@ -424,7 +424,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const defaultMetaInfo = {}
         for (const priceSize in productPlatformDetail) {
-
             let attributes = null;
             Object.keys(productSelected?.tree_map || []).forEach(e => {
                 attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
