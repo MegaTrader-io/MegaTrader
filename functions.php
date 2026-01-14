@@ -2106,6 +2106,7 @@ add_action('template_redirect', function () {
     '/auth/register/',      // Register Page
     '/auth/lost-password/', // Lost Password Page
     '/landing-page-bootstrap/',
+    '/zero-plan/',
     '/affiliate-area/',
     '/ref/',
     '/checkout/',
