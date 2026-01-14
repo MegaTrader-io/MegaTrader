@@ -160,6 +160,87 @@
     max-width: 504px;
 }
 
+
+/* HOW IT WORKS ZERO PLAN */
+
+/* Bloque principal del grid */
+.zero-plan-grid {
+    width: 100%;
+    padding: 32px 16px;
+    background: #1e1e1e;
+    overflow: hidden;
+    border-radius: 16px;
+    outline: 1px solid #404040;
+    outline-offset: -1px;
+    display: grid;
+    justify-content: space-between;
+    align-items: flex-start;
+    grid-template-columns: repeat(5, 233px);
+    margin-top: 48px;
+}
+
+/* Cada item de la cuadrícula */
+.zero-plan-grid__item {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Valor principal (ej: “2%”, “EoD”, etc.) */
+.zero-plan-grid__value {
+    align-self: stretch;
+    text-align: center;
+    color: #ffb34a;
+    font-size: 60px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 72px;
+    word-wrap: break-word;
+}
+
+/* Título (ej: “Profit Target”) */
+.zero-plan-grid__title {
+    align-self: stretch;
+    text-align: center;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+}
+
+/* Texto descriptivo */
+.zero-plan-grid__text {
+    text-align: center;
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+    max-width: 200px;
+}
+
+.how-it-works-zero-plan {
+    background: #0A0A0A;
+    border-top: 1px #404040 solid;
+    border-bottom: 1px #404040 solid;
+}
+
+.how-it-works-zero-plan .landing-bs-container {
+    margin-block: 48px;
+}
+
+/* Responsividad */
+@media (max-width: 1200px) {
+    .zero-plan-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        row-gap: 24px;
+    }
+}
+
+
 /* =========================================================
    Verified Section (.verified-bs)
    ========================================================= */
