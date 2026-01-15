@@ -93,3 +93,16 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
+        if (heroBsCarouselRoot) {
+            const heroGlideInstance = new Glide(heroBsCarouselRoot, {
+                type: 'carousel', focusAt: 'center', gap: 16, perView: 1, autoplay: 3000,
+            });
+
+            heroGlideInstance.mount();
+        }
+    });
+</script>
