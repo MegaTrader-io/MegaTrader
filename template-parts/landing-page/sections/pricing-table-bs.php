@@ -252,7 +252,7 @@ HTML;
         </p>
     </header>
 
-    <div class="market-type-bs">
+    <div class="market-type-bs d-none">
         <div class="market-type-bs__group">
             <?php foreach ($mt_market_types as $index => $mt_market_type): ?>
                 <?php
