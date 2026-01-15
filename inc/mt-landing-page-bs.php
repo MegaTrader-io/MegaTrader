@@ -71,7 +71,17 @@ add_action('wp_enqueue_scripts', function () {
   );
 
   $products_data = get_products_with_attributes();
+  $mt_products_raw = $products_data['products'] ?? [];
   $products_with_best_coupons = [];
+
+  $mt_products = array_values(array_filter($mt_products_raw, function ($product) use (&$market_types_allowed) {
+        $slug = $product['slug'] ?? '';
+        if (str_ends_with($slug, '-fee')) {
+            return false;
+        }
+
+        return true;
+  }));
 
   // Pasar datos al JS (opcional)
   wp_localize_script('mt-landing-page-bs', 'MG_GLOBAL', [
@@ -79,7 +89,7 @@ add_action('wp_enqueue_scripts', function () {
     'baseApi' => esc_url_raw(rest_url('megatrader/v1')),
     'nonce' => wp_create_nonce('wp_rest'),
     'subscriptionNonce' => wp_create_nonce('subscription_action'),
-    'products' => $products_data['products'] ?? [],
+    'products' => $mt_products,
     'productsWithBestCoupons' => $products_with_best_coupons ?? [],
     'productMetaLabel' => Label::PRODUCT_META,
     'isUserLoggedIn' => is_user_logged_in(),

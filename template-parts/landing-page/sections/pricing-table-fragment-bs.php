@@ -61,7 +61,8 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
     </div>
 </div>
 
-<div class="price-table" style="--price-table-slide-width: 0px; --price-table-slide-left: 0px; --current-slider-height: 0px;">
+<div class="price-table"
+     style="--price-table-slide-width: 0px; --price-table-slide-left: 0px; --current-slider-height: 0px;">
     <div class="slider__track glide__track" data-glide-el="track">
         <ul class="slider__slides glide__slides"
             style="grid-template-columns: repeat(<?= count($mt_plan_list) ?>, 1fr);">
@@ -169,7 +170,7 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
                         <div class="price-table__right-line price-table__footer"
                              data-price="<?= esc_attr($mt_size) ?>">
                             <a href="<?= esc_url($mt_get_plan_url) ?>"
-                               class="mega-btn-md <?= $mt_is_most_popular
+                               class="proceed-to-checkout-btn mega-btn-md <?= $mt_is_most_popular
                                        ? 'mega-btn-primary-md mega-btn-primary--icon-md'
                                        : 'mega-btn-default-md' ?> w-100">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"

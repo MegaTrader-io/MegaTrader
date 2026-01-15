@@ -121,7 +121,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         (function () {
-            const priceTable = document.querySelector('.price-table');
+            let priceTable = document.querySelector('.price-table');
+
+            document.addEventListener('mt:refreshSliderPricingTable', function () {
+                priceTable = document.querySelector('.price-table');
+                destroyGlide();
+                handleResize();
+            });
+
+            document.addEventListener('mt:destroySliderPricingTable', function () {
+                priceTable = document.querySelector('.price-table');
+                destroyGlide();
+            });
+
             let glideInstance = null;
             let isGlideMounted = false;
             const parentGlideClasses = ['price-table__glide', 'slider', 'glide'];
@@ -236,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             function destroyGlide() {
+                console.info('glideInstance && isGlideMounted', glideInstance && isGlideMounted);
                 if (glideInstance && isGlideMounted) {
                     try {
                         glideInstance.destroy();
@@ -277,9 +290,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadChooseYourAccountSize(fn) {
         document.getElementById('pricing')
-            .addEventListener("trigger:select-account-type", (e) => {
-                const {accountType, defaultAccountSize} = e.detail
+            .addEventListener("trigger:select-account-type", async (e) => {
+                const firstMarketType = document.querySelector('.market-type-bs [name="market-type"]:nth-child(1)').value;
+                const {accountType, defaultAccountSize, defaultMarketType} = e.detail
+
+                if (firstMarketType !== defaultMarketType) {
+                    const target = document.querySelector(`.market-type-bs [name="market-type"][value="${defaultMarketType}"]`)
+                    target.checked = true;
+                    await handlerSelectByMarketType(target, accountType);
+                }
+
                 const accountTypeSelected = document.querySelector('input[name="account-type"][value=' + accountType + ']')
+                accountTypeSelected.checked = true;
 
                 handlerSelectByAccountType(accountTypeSelected);
 
@@ -319,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        async function handlerSelectByMarketType(target) {
+        async function handlerSelectByMarketType(target, accountType = null) {
             const input = target.currentTarget || target;
             const marketType = input.value;
 
@@ -344,6 +366,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
 
+                document.dispatchEvent(new CustomEvent('mt:destroySliderPricingTable', {detail: {}}));
+
                 // 🔄 Inyectar nuevo fragmento
                 htmlContainer.innerHTML = data.html;
 
@@ -351,7 +375,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 await new Promise(resolve => requestAnimationFrame(resolve));
 
                 // ✅ Buscar el primer input[name="account-type"] del nuevo fragmento
-                const firstAccountTypeInput = htmlContainer.querySelector('[name="account-type"]');
+                let firstAccountTypeInput = htmlContainer.querySelector('[name="account-type"]');
+                if (accountType) {
+                    firstAccountTypeInput = htmlContainer.querySelector(`[name="account-type"][value="${accountType}"]`);
+                }
+
+                document.dispatchEvent(new CustomEvent('mt:refreshSliderPricingTable', {detail: {}}))
 
                 if (firstAccountTypeInput) {
                     console.info('[Auto-select AccountType]', firstAccountTypeInput.value);
@@ -369,7 +398,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 htmlContainer.querySelectorAll('[name="account-type"]').forEach(btn => {
                     btn.addEventListener('click', handlerSelectByAccountType);
                 });
-
             } catch (error) {
                 console.error('Error al cargar el fragmento de pricing:', error);
             }
@@ -398,8 +426,9 @@ document.addEventListener('DOMContentLoaded', function () {
         dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
 
         const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
-        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType);
+        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType && product.tree_map['market-type'] === params.defaultMarketType);
         const productPlatformDetail = productSelected[productSelected.slug];
+
 
         dropdownAccountTypeOption.querySelector('label').classList.add('selected');
         const accountTypeIcon = dropdownAccountTypeOption.querySelector('img');
@@ -461,8 +490,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const products = [];
-
-
         for (const priceSize in productPlatformDetail) {
             const billingType = productSelected.tree_map['billing-type'];
 

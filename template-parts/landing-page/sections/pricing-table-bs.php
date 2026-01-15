@@ -121,7 +121,6 @@ $mt_account_types = array_values(array_filter(
         fn($type) => in_array($type['slug'], $account_types_allowed, true)
 ));
 
-
 $mt_default_account_type = $mt_account_types[0] ?? [];
 $mt_default_slug = $mt_default_account_type['slug'] ?? '';
 $mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'] ?? '';
@@ -166,7 +165,7 @@ $mt_account_types = array_values(array_filter(
  * 9. Construcción de lista de planes
  */
 $mt_product = array_find($mt_filtered_products, function ($product) use ($mt_default_slug) {
-    return isset($product['slug']) && $product['slug'] === $mt_default_slug;
+    return isset($product['tree_map']) && isset($product['tree_map']['account-types']) && $product['tree_map']['account-types'] === $mt_default_slug;
 });
 
 $mt_plan_list = [];
@@ -252,7 +251,7 @@ HTML;
         </p>
     </header>
 
-    <div class="market-type-bs d-none">
+    <div class="market-type-bs">
         <div class="market-type-bs__group">
             <?php foreach ($mt_market_types as $index => $mt_market_type): ?>
                 <?php
@@ -517,31 +516,43 @@ HTML;
                 });
 
                 document.getElementById('pricing').dispatchEvent(event);
-
                 localStorage.removeItem(PAGE_KEY)
             }
         }, 0);
 
 
-        const getFundedLinks = document.querySelectorAll('.proceed-to-checkout-btn');
+        document.addEventListener('click', function (e) {
+            const target = e.target.closest('.proceed-to-checkout-btn');
+            if (!target) return; // Ignora clicks fuera del botón deseado
 
-        getFundedLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                const accountSize = e.currentTarget.parentElement.dataset.price;
-
+            try {
+                const parent = target.parentElement;
+                const accountSize = parent?.dataset?.price;
                 const input = document.querySelector('input[name="account-type"]:checked');
 
-                const contentType = input.value;
+                if (!input) {
+                    console.warn('No account type selected.');
+                    return;
+                }
 
                 const values = {
-                    "market-type": input.dataset.defaultMarketType,
-                    "account-size": accountSize,
-                    "account-type": contentType,
-                    "platform": input.dataset.defaultPlatform
+                    'market-type': input.dataset.defaultMarketType || null,
+                    'account-size': accountSize || null,
+                    'account-type': input.value || null,
+                    'platform': input.dataset.defaultPlatform || null
+                };
+
+                // Validación mínima antes de guardar
+                if (!values['account-size'] || !values['account-type']) {
+                    console.error('Incomplete data to save in localStorage', values);
+                    return;
                 }
 
                 localStorage.setItem(PAGE_KEY, JSON.stringify(values));
-            });
+                console.info('Saved to localStorage:', values);
+            } catch (err) {
+                console.error('Error handling proceed-to-checkout click:', err);
+            }
         });
     });
 </script>
