@@ -7,9 +7,11 @@ $mt_default_platform = $args['mt_default_platform'] ?? '';
 
 /** @var string $mt_default_market_type */
 $mt_default_market_type = $args['mt_default_market_type'] ?? '';
+
+$mt_extra_classes = $args['mt_extra_classes'] ?? '';
 ?>
 
-<div class="mt-pricing-table-plan-options">
+<div class="mt-pricing-table-plan-options <?= $mt_extra_classes ?>">
     <?php foreach ($account_types as $index => $item): ?>
         <?php
         $slug = esc_attr($item['slug']);
@@ -37,9 +39,7 @@ $mt_default_market_type = $args['mt_default_market_type'] ?? '';
 
     <?php endforeach; ?>
 </div>
-
-
-<div class="mt-select-ac-type mt-dropdown dropdown w-100" style="margin-inline: 16px;max-width: calc(100% - 32px);">
+<div class="mt-select-ac-type mt-dropdown dropdown w-100 <?= $mt_extra_classes ?>" style="margin-inline: 16px;max-width: calc(100% - 32px);">
     <button class="btn w-100 mega-btn-md mega-btn-secondary-md dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"

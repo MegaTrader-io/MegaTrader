@@ -142,7 +142,7 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
              * 7. Construcción de lista de planes (idéntico a pricing-table-bs.php)
              */
             if (!function_exists('mt_get_plan_list')) {
-                function mt_get_plan_list(array $mt_product, array $mt_account_sizes, string $mt_default_slug): array
+                function mt_get_plan_list(array $mt_product, array $mt_account_sizes): array
                 {
                     $mt_plan_list = [];
                     $mt_default_meta_info = [];
@@ -155,23 +155,22 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
                     }
 
                     $mt_size = $mt_account_sizes[0] ?? null;
-                    if (!$mt_size || !isset($mt_product[$mt_slug][$mt_size][$mt_default_slug])) {
+                    if (!$mt_size) {
                         return [$mt_plan_list, $mt_default_meta_info];
                     }
 
-                    $mt_product_level = $mt_product[$mt_slug][$mt_size][$mt_default_slug];
-                    $mt_default_platform = array_key_first($mt_product_level);
-                    $mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
+                    $mt_default_platform = $mt_product['tree_map']['platform'] ?? null;
+                    $mt_default_market_type = $mt_product['tree_map']['market-type'] ?? null;
+                    $parent_id = $mt_product['id'];
 
                     foreach ($mt_account_sizes as $size) {
-                        $parent_id = $mt_product['id'];
-                        $variants = $mt_product[$mt_slug][$size][$mt_default_slug][$mt_default_platform] ?? [];
 
-                        if (empty($variants)) continue;
+                        $properties = [];
+                        foreach (array_keys($mt_product['tree_map']) as $attr) {
+                            $properties = count($properties) === 0 ? array_values($mt_product[$mt_slug])[0] : array_values($properties)[0];
+                        }
 
-                        $levelBillingType = array_values($variants)[0];
-                        $billingType = array_key_first($levelBillingType);
-                        $properties = $levelBillingType[$billingType] ?? [];
+                        if (count($properties) == 0) continue;
 
                         $variation_id = -1;
                         $price = '0.00';
@@ -207,8 +206,11 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
                 }
             }
 
-            $mt_product = reset($mt_filtered_products) ?: null;
-            [$mt_plan_list, $mt_default_meta_info, $mt_default_platform, $mt_default_market_type] = mt_get_plan_list($mt_product, $mt_account_sizes, $mt_default_slug);
+            $mt_product = array_find($mt_filtered_products, function ($product) use ($mt_default_slug) {
+                return isset($product['tree_map']) && isset($product['tree_map']['account-types']) && $product['tree_map']['account-types'] === $mt_default_slug;
+            });
+
+            [$mt_plan_list, $mt_default_meta_info, $mt_default_platform, $mt_default_market_type] = mt_get_plan_list($mt_product, $mt_account_sizes);
 
             /**
              * 8. Productos más populares

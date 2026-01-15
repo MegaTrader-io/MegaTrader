@@ -28,6 +28,10 @@
     padding-block: 48px;
 }
 
+.hero-zero-plan {
+    padding-top: 48px;
+}
+
 .hero-bs__row {
     display: flex;
     gap: 48px;
@@ -44,6 +48,17 @@
 }
 
 .hero-bs__title {
+    align-self: stretch;
+    color: white;
+    font-size: 40px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 48px;
+    margin-bottom: 0;
+    word-wrap: break-word
+}
+
+.hero-bs__zero-title {
     align-self: stretch;
     color: white;
     font-size: 40px;
@@ -119,6 +134,25 @@
 
 .hero-bs__media-card {
     width: 600px;
+    position: relative;
+}
+
+.hero-bs__media-card .hero-bs__media-icon-zero-plan {
+    height: 445px;
+}
+
+.hero-bs__media-card-circle {
+    width: 451px;
+    height: 300px;
+    background: #FB7185;
+    border: 1px solid #000;
+    opacity: 0.3;
+    border-radius: 50%;
+    filter: blur(100px);
+    position: absolute;
+    left: 74px;
+    top: 20px;
+    z-index: -1;
 }
 
 .hero-bs__media-card .hero-bs__glide .slider__bullets.glide__bullets {
@@ -129,6 +163,119 @@
 .hero-bs__glide .slider__frame img {
     max-width: 504px;
 }
+
+
+/* HOW IT WORKS ZERO PLAN */
+
+/* Bloque principal del grid */
+.zero-plan-grid {
+    padding: 32px 16px;
+    background: #1E1E1E;
+    overflow: hidden;
+    border-radius: 16px;
+    outline: 1px #404040 solid;
+    outline-offset: -1px;
+    justify-content: space-between;
+    align-items: flex-start;
+    display: inline-flex;
+    margin-top: 48px;
+}
+
+/* Cada item de la cuadrícula */
+.zero-plan-grid__item {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Valor principal (ej: “2%”, “EoD”, etc.) */
+.zero-plan-grid__value {
+    align-self: stretch;
+    text-align: center;
+    color: #ffb34a;
+    font-size: 60px;
+    font-weight: 300;
+    text-transform: uppercase;
+    line-height: 72px;
+    word-wrap: break-word;
+}
+
+/* Título (ej: “Profit Target”) */
+.zero-plan-grid__title {
+    align-self: stretch;
+    text-align: center;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 32px;
+    word-wrap: break-word;
+}
+
+/* Texto descriptivo */
+.zero-plan-grid__text {
+    text-align: center;
+    color: #a8a29e;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    word-wrap: break-word;
+    max-width: 200px;
+}
+
+.how-it-works-zero-plan {
+    background: #0A0A0A;
+    border-top: 1px #404040 solid;
+    border-bottom: 1px #404040 solid;
+}
+
+.how-it-works-zero-plan .landing-bs-container {
+    margin-block: 48px;
+}
+
+.how-it-works-zero-plan .glide__bullet.glide__bullet--active {
+    background-color: #8C8C8C;
+}
+
+.how-it-works-zero-plan .glide__bullets {
+    bottom: 13.67px;
+}
+
+.how-it-works-zero-plan .glide__bullet {
+    width: 14.67px;
+    height: 14.67px;
+    background: #3D3D3D;
+}
+
+/* Responsividad */
+@media (max-width: 1200px) {
+    .zero-plan-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        row-gap: 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .zero-plan-grid .slider__track {
+        width: 100%;
+    }
+
+    .zero-plan-grid .slider__slides {
+        display: grid;
+        grid-template-columns: repeat(5, 233px);
+        justify-content: space-between;
+    }
+
+    .zero-plan-grid__item {
+        width: 100%;
+    }
+
+    .zero-plan-grid .slider__bullets {
+        display: none;
+    }
+}
+
 
 /* =========================================================
    Verified Section (.verified-bs)
@@ -2783,6 +2930,26 @@ a.footer-bs__link:visited {
 
 /* Large devices (max-width: 1024px) */
 @media (max-width: 1024px) {
+    .zero-plan-grid__item {
+        width: 100%;
+        gap: 9.78px;
+    }
+
+    .zero-plan-grid {
+        padding: 16px 12px 58px 12px
+    }
+
+    .hero-bs__zero-title {
+        width: 606px;
+        text-align: center;
+        color: white;
+        font-size: 40px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 48px;
+        word-wrap: break-word
+    }
+
     /* Hero */
     .hero-bs__content {
         align-items: center;
@@ -3052,6 +3219,15 @@ a.footer-bs__link:visited {
     .resources-bs__intro-image {
         height: 272px;
     }
+
+    .hero-zero-plan .hero-bs__row {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .hero-zero-plan .hero-bs__media {
+        display: none;
+    }
 }
 
 /* Medium devices (max-width: 991.98px) */
@@ -3104,6 +3280,10 @@ a.footer-bs__link:visited {
         padding-block: 36px;
     }
 
+    .hero-zero-plan {
+        padding-top: 36px;
+    }
+
     .hero-bs__row {
         flex-direction: column;
         gap: 24px;
@@ -3125,6 +3305,9 @@ a.footer-bs__link:visited {
         line-height: 40px;
         word-wrap: break-word;
         text-align: center;
+    }
+
+    .hero-bs__zero-title {
     }
 
     .hero-bs__text {
@@ -3150,6 +3333,21 @@ a.footer-bs__link:visited {
 
 /* Small devices (max-width: 767px) */
 @media (max-width: 767px) {
+    .hero-zero-plan {
+        padding-block: 36px;
+    }
+
+    .hero-bs__zero-title {
+        width: 354px;
+        text-align: center;
+        color: white;
+        font-size: 32px;
+        font-weight: 300;
+        text-transform: uppercase;
+        line-height: 40px;
+        word-wrap: break-word
+    }
+
     .market-type-bs {
         padding-top: 16px;
     }

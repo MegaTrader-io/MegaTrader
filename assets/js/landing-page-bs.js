@@ -70,50 +70,52 @@ document.addEventListener('DOMContentLoaded', function () {
         let priceTable = document.querySelector('.price-table');
         let bottomPoints = 0;
 
-        priceTable.style.setProperty('--current-slider-height', bottomPoints + 'px');
+        priceTable?.style.setProperty('--current-slider-height', bottomPoints + 'px');
     }
 
     function initializeSwiper() {
         try {
             const heroBsCarouselRoot = document.getElementById('hero-bs-carousel');
-            const heroGlideInstance = new Glide(heroBsCarouselRoot, {
-                type: 'carousel', focusAt: 'center', gap: 16, perView: 1, autoplay: 3000,
-            });
+            if (heroBsCarouselRoot) {
+                const heroGlideInstance = new Glide(heroBsCarouselRoot, {
+                    type: 'carousel', focusAt: 'center', gap: 16, perView: 1, autoplay: 3000,
+                });
 
-            heroGlideInstance.mount();
+                heroGlideInstance.mount();
+            }
 
             const carouselSelector = '#verified-bs-carousel';
             const carouselEl = document.querySelector(carouselSelector);
-            if (!carouselEl) throw new Error('Carousel element not found.');
-
-            function calculatePerPage() {
-                const width = carouselEl.clientWidth;
-                const slideWidth = document.documentElement.clientWidth <= 767 ? 276 : 378;
-                return Math.max(1, Math.floor(width / slideWidth));
-            }
-
-            let splide = new Splide(carouselSelector, {
-                type: 'loop',
-                drag: 'free',
-                pagination: false,
-                arrows: false,
-                focus: 'center',
-                gap: '16px',
-                perPage: calculatePerPage(),
-                autoScroll: {
-                    speed: 0.2, pauseOnHover: true, pauseOnFocus: true,
-                },
-            });
-
-            splide.mount(window.splide.Extensions);
-
-            window.addEventListener('resize', () => {
-                const newPerPage = calculatePerPage();
-                if (splide.options.perPage !== newPerPage) {
-                    splide.options = {...splide.options, perPage: newPerPage};
-                    splide.refresh();
+            if (carouselEl) {
+                function calculatePerPage() {
+                    const width = carouselEl.clientWidth;
+                    const slideWidth = document.documentElement.clientWidth <= 767 ? 276 : 378;
+                    return Math.max(1, Math.floor(width / slideWidth));
                 }
-            });
+
+                let splide = new Splide(carouselSelector, {
+                    type: 'loop',
+                    drag: 'free',
+                    pagination: false,
+                    arrows: false,
+                    focus: 'center',
+                    gap: '16px',
+                    perPage: calculatePerPage(),
+                    autoScroll: {
+                        speed: 0.2, pauseOnHover: true, pauseOnFocus: true,
+                    },
+                });
+
+                splide.mount(window.splide.Extensions);
+
+                window.addEventListener('resize', () => {
+                    const newPerPage = calculatePerPage();
+                    if (splide.options.perPage !== newPerPage) {
+                        splide.options = {...splide.options, perPage: newPerPage};
+                        splide.refresh();
+                    }
+                });
+            }
         } catch (error) {
             console.error('Error initializing Splide carousel:', error);
         }
@@ -297,6 +299,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         function handlerSelectByAccountType(target) {
+            if (!target) {
+                return;
+            }
+
             const input = target.currentTarget || target;
             const accountType = input.value;
 
@@ -318,7 +324,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const marketType = input.value;
 
             console.info('[MarketType Selected]', marketType);
-
             try {
                 const endpoint = `/wp-json/custom/v1/pricing-fragment?marketType=${encodeURIComponent(marketType)}`;
                 const response = await fetch(endpoint, {cache: 'no-store'});
@@ -371,16 +376,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // 📌 Inicializar listeners principales
-        document.querySelectorAll('[name="account-type"]').forEach(btn => {
-            btn.addEventListener('click', handlerSelectByAccountType);
-        });
-
-        document.querySelectorAll('[name="market-type"]').forEach(btn => {
-            btn.addEventListener('click', handlerSelectByMarketType);
-        });
+        document.querySelectorAll('[name="account-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByAccountType));
+        document.querySelectorAll('[name="market-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByMarketType));
 
         const targetSelection = document.querySelector('[name="account-type"]:checked');
-        handlerSelectByAccountType(targetSelection)
+        targetSelection && handlerSelectByAccountType(targetSelection);
     }
 
     initializeSwiper();
@@ -393,14 +393,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const height = document.querySelector('.price-table .glide__slide--active .price-table__plan--most-popular') || document.querySelector('.price-table .glide__slide--active .price-table__plan--regular-plan') ? 0 : 24;
         priceTable.style.setProperty('--current-slider-height', height + 'px');
 
-        const {defaultPlatform, defaultMarketType} = params;
         const dropdownAccountTypeComponent = document.querySelector('.mt-select-ac-type');
 
         dropdownAccountTypeComponent.querySelector('.selected')?.classList.remove('selected');
 
         const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
-        const productSelected = MG_GLOBAL.products.find(product => product.slug === params.accountType);
-        const productPlatformDetail = productSelected[params.accountType];
+        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType);
+        const productPlatformDetail = productSelected[productSelected.slug];
 
         dropdownAccountTypeOption.querySelector('label').classList.add('selected');
         const accountTypeIcon = dropdownAccountTypeOption.querySelector('img');
@@ -427,9 +426,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const defaultMetaInfo = {}
         for (const priceSize in productPlatformDetail) {
-            const levelBillingType = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
-            const billingType = Object.keys(levelBillingType).at(0);
-            const attributes = levelBillingType[billingType];
+            let attributes = null;
+            Object.keys(productSelected?.tree_map || []).forEach(e => {
+                attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
+            });
 
             const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
             for (const metaInfoKey in metaInfo) {
@@ -461,12 +461,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const products = [];
+
+
         for (const priceSize in productPlatformDetail) {
-            const levelBillingType = productPlatformDetail[priceSize][params.accountType][defaultPlatform][defaultMarketType];
-            const billingType = Object.keys(levelBillingType).at(0);
-            const attributes = levelBillingType[billingType];
+            const billingType = productSelected.tree_map['billing-type'];
+
+            let attributes = null;
+            Object.keys(productSelected?.tree_map || []).forEach(_ => {
+                attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
+            });
 
             const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
+            console.info('priceObject', priceObject);
             const productId = attributes.find(item => item['id'])['id'];
 
             products.push({productId, priceSize, priceObject});

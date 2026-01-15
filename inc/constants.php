@@ -297,6 +297,8 @@ class Label
         'passed_modal_body_subtitle_no_activation_id' => "Your account is being prepared and will unlock automatically.",
         'account_chart_overlay_no_data' => 'There is not enough data to generate the graph.',
         'account_daily_journal_overlay_no_data' => 'There is not enough data to display this table.',
+        'payment_verify_description' => 'Before requesting a payout, you must complete identity verification to proceed.',
+        'payment_verify_button' => 'Get Verified',
 
     ];
 

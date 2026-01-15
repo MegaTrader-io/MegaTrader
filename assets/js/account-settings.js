@@ -91,6 +91,9 @@ function displayGlobalMessage(form, message, type = 'success') {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    const __open = (new URLSearchParams(window.location.search).get('open') || '').toLowerCase();
+
     function initPhoneInput(phoneInput, countryCode = 'us') {
         const phoneName = phoneInput.name
         if (window.itiRefs && window.itiRefs[phoneName]) {
@@ -110,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         if (!window.itiRefs) {
-            window.itiRefs = {[phoneName]: instance}
+            window.itiRefs = { [phoneName]: instance }
         } else {
             window.itiRefs[phoneName] = instance
         }
@@ -218,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const {is_verified, personal_information: personalInformationData} = await response.json();
+            const { is_verified, personal_information: personalInformationData } = await response.json();
 
             const verifiedInformationList = document.querySelectorAll('.mt-verified');
             const personalInformationBtn = document.querySelector('[name=account-settings__personal-information-button]');
@@ -289,7 +292,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         element.value = state;
                         $('#api_billing_state_wrapper').empty().append(element);
                     });
-                    bootstrap.Collapse.getOrCreateInstance(document.getElementById('collapseOnePersonalInformation')).show();
+                    if (!__open) {
+                        bootstrap.Collapse.getOrCreateInstance(document.getElementById('collapseOnePersonalInformation')).show();
+                    }
                     avatarContainer.querySelector('.mt-avatar__user-information > div:nth-child(2)').innerText = document.querySelector('[name=api_billing_country] option:checked')?.text?.replace('(US)', '')?.trim();
                 } else {
                     bootstrap.Collapse.getOrCreateInstance(document.getElementById('collapseBillingInformationOne')).show();
@@ -304,4 +309,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 .forEach(element => element.classList.remove('mt-skeleton-pulse'));
         }
     })();
+
+    (function openAccordionFromURL() {
+        if (!__open) return;
+
+        const map = {
+            verification: 'collapseTwo',
+        };
+
+        const targetId = map[__open];
+        if (!targetId) return;
+
+        const panel = document.getElementById(targetId);
+        if (!panel || !window.bootstrap?.Collapse) return;
+
+        window.bootstrap.Collapse.getOrCreateInstance(panel).show();
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })();
+
+
 });

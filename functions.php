@@ -2106,6 +2106,7 @@ add_action('template_redirect', function () {
     '/auth/register/',      // Register Page
     '/auth/lost-password/', // Lost Password Page
     '/landing-page-bootstrap/',
+    '/zero-plan/',
     '/affiliate-area/',
     '/ref/',
     '/checkout/',
@@ -3161,4 +3162,13 @@ if (!function_exists('normalize_email')) {
     }
 }
 
-
+if (!function_exists('array_find')) {
+    function array_find(array $array, callable $callback) {
+        foreach ($array as $value) {
+            if ($callback($value)) {
+                return $value;
+            }
+        }
+        return null;
+    }
+}

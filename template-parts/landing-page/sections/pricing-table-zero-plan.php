@@ -89,6 +89,10 @@ $mt_filtered_products = array_values(array_filter($mt_products, function ($produ
         return false;
     }
 
+    if ($product['tree_map']['account-types'] != 'zero-plan') {
+        return false;
+    }
+
     $slug = $product['slug'];
     $variants = $product[$slug] ?? [];
 
@@ -112,7 +116,6 @@ $mt_filtered_products = array_values(array_filter($mt_products, function ($produ
     return true;
 }));
 
-
 /**
  * 7. Definir account types y sizes finales
  */
@@ -120,7 +123,6 @@ $mt_account_types = array_values(array_filter(
         $mt_account_types,
         fn($type) => in_array($type['slug'], $account_types_allowed, true)
 ));
-
 
 $mt_default_account_type = $mt_account_types[0] ?? [];
 $mt_default_slug = $mt_default_account_type['slug'] ?? '';
@@ -240,7 +242,7 @@ HTML;
 
 ?>
 
-<section id="pricing" class="pricing-table-container landing-bs-container">
+<section id="pricing" class="zero-pricing-table pricing-table-container landing-bs-container">
     <header class="pricing-table-container__header-wrapper text-center">
         <h2 class="pricing-table-container__title">
             Choose <span class="pricing-table-container__title--hidden-md text-white">your</span> <span>account</span>
@@ -252,59 +254,194 @@ HTML;
         </p>
     </header>
 
-    <div class="market-type-bs">
-        <div class="market-type-bs__group">
-            <?php foreach ($mt_market_types as $index => $mt_market_type): ?>
-                <?php
-                $slug = esc_attr($mt_market_type['slug']);
-                $name = esc_html($mt_market_type['name']);
-                $radio_id = esc_attr('market-type-' . $slug);
-                $checked_attr = $index === 0 ? 'checked="true"' : '';
+    <div class="pricing-table-container-options d-none">
+        <?php
+        get_template_part("template-parts/landing-page/sections/select-account-type", null, [
+                'mt_extra_classes' => 'd-none',
+                'account_types' => $mt_account_types,
+                'mt_default_platform' => $mt_default_platform,
+                'mt_default_market_type' => $mt_default_market_type,
+        ]);
+        ?>
+
+        <div class="mt-pricing-table-plan-options__wrapper">
+            <?php
+            foreach ($mt_account_types as $index => $item) {
+                $slug = esc_attr($item['slug']);
+                $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+
                 ?>
 
-                <input type="radio" name="market-type" value="<?= $slug ?>"
-                       id="<?= $radio_id ?>" <?= $checked_attr ?>/>
-                <div>
-                    <label for="<?= $radio_id ?>" data-slug="<?= $mt_market_type['slug'] ?>"
-                           class="market-type-bs__item">
-                        <span class="market-type-bs__label"><?= $mt_market_type['name'] ?></span>
-                    </label>
-                </div>
-            <?php endforeach; ?>
+                <?php if (!empty($parsed['data'])): ?>
+                    <div class="mt-pricing-table-benefits d-none" data-account-type-benefits="<?= $slug ?>">
+                        <?php foreach ($parsed['data'] as $index => $text): ?>
+                            <?php if ($index > 0): ?>
+                                <img class="mt-pricing-table-benefits__icon"
+                                     src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/quick-flash.svg'); ?>"
+                                     alt="flash" width="24" height="24">
+                            <?php endif; ?>
+                            <div class="mt-pricing-table-benefits__item"><?php echo esc_html($text) ?></div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php
+            }
+            ?>
         </div>
     </div>
 
-    <div class="pricing-table-fragment-wrapper">
-        <?php
+    <div class="price-table price-table__glide slider glide"
+         style="--price-table-slide-width: 0px; --price-table-slide-left: 0px;--current-slider-height: 0px">
+        <div class="slider__track glide__track" data-glide-el="track">
+            <ul class="slider__slides glide__slides">
+                <?php foreach ($mt_plan_list as $mt_index => $mt_plan) : ?>
+                    <?php
+                    $mt_id = $mt_plan['id'];
+                    $mt_size = $mt_plan['size'];
+                    $mt_parent_id = $mt_plan['parent_id'];
+                    $mt_price = $mt_plan['price'];
+                    $mt_meta_info_list = $mt_plan['meta_info_list'];
 
-        get_template_part(
-                'template-parts/landing-page/sections/pricing-table-fragment-bs',
-                null,
-                [
-                    // principales de control
-                        'mt_account_types' => $mt_account_types,
-                        'mt_default_platform' => $mt_default_platform,
-                        'mt_default_market_type' => $mt_default_market_type,
-                        'mt_default_slug' => $mt_default_slug,
+                    $mt_coupon = mt_get_best_coupon_for_variation($mt_id);
+                    $mt_has_coupon = false;
+                    $mt_price_plan = $mt_price;
 
-                    // planes
-                        'mt_plan_list' => $mt_plan_list,
-                        'mt_default_meta_info' => $mt_default_meta_info,
-                        'mt_best_products' => $mt_best_products,
+                    $mt_scan_product = $mt_best_products[$mt_parent_id];
+                    $mt_is_most_popular = $mt_scan_product && $mt_scan_product['variation_id'] == $mt_id;
 
-                    // funciones helpers
-                        'mt_render_template_meta_info' => 'mt_render_template_meta_info',
+                    $CHECKOUT_URL = home_url('/checkout/?add-to-cart=' . $mt_id);
+                    $URL_GO_TO = home_url('/auth/register/?redirect_to=');
 
-                    // datos visuales
-                        'mt_size' => $mt_size,
-                        'mt_product' => $mt_product,
-                        'mt_account_sizes' => $mt_account_sizes,
+                    $mt_get_plan_url = $URL_GO_TO . $CHECKOUT_URL;
+                    if (is_user_logged_in()) {
+                        $mt_get_plan_url = $CHECKOUT_URL;
+                    }
 
-                    // utilidades opcionales usadas en el loop
-                        'mt_product_data' => $mt_products_data,
-                ]
-        );
-        ?>
+                    ?>
+                    <li class="slider__frame glide__slide">
+                        <div class="price-table__plan <?= $mt_is_most_popular ? 'price-table__plan--most-popular' : 'price-table__plan--regular-plan' ?>"
+                             data-price="<?= esc_attr($mt_size) ?>">
+                            <div class="price-table__size">
+                                <div class="price-table__most-popular-badge">
+                                    <div class="price-table__most-popular-badge-wrapper">
+                                        <svg class="price-table__most-popular-badge-icon" width="24" height="24"
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <mask id="mask0_17404_34902" style="mask-type:alpha"
+                                                  maskUnits="userSpaceOnUse"
+                                                  x="0"
+                                                  y="0" width="24" height="24">
+                                                <rect width="24" height="24" fill="#D9D9D9"/>
+                                            </mask>
+                                            <g mask="url(#mask0_17404_34902)">
+                                                <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#FFB34A"/>
+                                            </g>
+                                        </svg>
+                                        <div class="price-table__most-popular-badge-text"><?php esc_html_e('Most popular', 'megatrader'); ?></div>
+                                    </div>
+                                </div>
+                                <div class="price-table__title">
+                                    <?= esc_html($mt_size) ?> Account
+                                </div>
+                            </div>
+
+                            <div class="price-table__right-line price-information"
+                                 data-price="<?= esc_attr($mt_size) ?>">
+                                <div class="w-100">
+                                    <div style="display: none;"
+                                         class="price-information__summary">
+                                        <div class="coupon-before-price" data-price="<?= esc_attr($mt_size) ?>">
+                                            <span></span>
+                                        </div>
+                                        <div class="badge-coupon w-100" data-price="<?= esc_attr($mt_size) ?>">
+                                            <div class="badge-coupon__wrapper">
+                                                <div class="badge-coupon__text text-truncate">
+                                                    <?php esc_html_e('Save', 'megatrader'); ?>
+                                                    <span class="badge-coupon__discount_total">
+                                            <?= $mt_has_coupon ? mt_price_plain($mt_coupon['discount_total']) : 0 ?>
+                                        </span>
+                                                    <?php esc_html_e('with code', 'megatrader'); ?>
+                                                </div>
+                                                <svg width="1" height="24" viewBox="0 0 1 24" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg">
+                                                    <line x1="0.5" y1="0" x2="0.5" y2="24" stroke="#404040"/>
+                                                </svg>
+                                                <div class="badge-coupon__code">
+                                                    <?= $mt_has_coupon ? esc_html(strtoupper($mt_coupon['coupon'])) : '' ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="price-information__price">
+                            <span class="price-plan" data-price="<?= esc_attr($mt_size) ?>">
+                                <?= mt_price_plain($mt_price_plan) ?>
+                            </span>
+                                        <span class="frequency-plan" data-price="<?= esc_attr($mt_size) ?>">
+                                <?= $mt_default_slug !== 'funded-plan' ? esc_html__('per month', 'megatrader') : esc_html__('one time fee', 'megatrader') ?>
+                            </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <?= mt_render_template_meta_info(classes: 'd-none template-metaInfo') ?>
+
+                            <div class="price-table__right-line price-table-attributes metaInfo"
+                                 data-price="<?= esc_attr($mt_size) ?>">
+                                <?php foreach ($mt_default_meta_info as $mt_field => $mt_value): ?>
+                                    <?php
+                                    $mt_label = Label::PRODUCT_META[$mt_field];
+                                    $mt_value = $mt_meta_info_list[$mt_field];
+                                    echo mt_render_template_meta_info(value: $mt_value, label: $mt_label);
+                                    ?>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="price-table__right-line price-table__footer"
+                                 data-price="<?= esc_attr($mt_size) ?>">
+                                <a href="<?= esc_url($mt_get_plan_url) ?>"
+                                   class="proceed-to-checkout-btn mega-btn-md <?= $mt_is_most_popular ? 'mega-btn-primary-md mega-btn-primary--icon-md' : 'mega-btn-default-md' ?> w-100">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_18861_2652" style="mask-type:alpha" maskUnits="userSpaceOnUse"
+                                              x="0"
+                                              y="0"
+                                              width="24" height="24">
+                                            <rect width="24" height="24" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_18861_2652)">
+                                            <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#14B8A6"/>
+                                        </g>
+                                    </svg>
+
+                                    <?= esc_html__('GET FUNDED WITH $', 'megatrader') . esc_html($mt_size) ?>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+
+        <div data-glide-el="controls" class="glide__arrows">
+            <button class="glide__arrow glide__arrow--prev" data-glide-dir="<">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-left.svg'); ?>"
+                     alt="control left">
+            </button>
+            <button class="glide__arrow glide__arrow--next" data-glide-dir=">">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/arrow-right.svg'); ?>"
+                     alt="control right">
+            </button>
+        </div>
+
+        <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
+            <button class="slider__bullet glide__bullet" data-glide-dir="=0"></button>
+            <button class="slider__bullet glide__bullet" data-glide-dir="=1"></button>
+            <button class="slider__bullet glide__bullet" data-glide-dir="=2"></button>
+            <button class="slider__bullet glide__bullet" data-glide-dir="=3"></button>
+        </div>
     </div>
 
     <div class="testimonials">
