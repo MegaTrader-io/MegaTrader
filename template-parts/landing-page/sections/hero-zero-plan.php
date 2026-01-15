@@ -52,7 +52,8 @@
                 <div class="hero-bs__media-wrapper">
                     <div class="hero-bs__media-card">
                         <div class="hero-bs__media-card-circle"></div>
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/zero-icon.png'); ?>"
+                        <img class="hero-bs__media-icon-zero-plan"
+                             src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/zero-icon.png'); ?>"
                              alt="control left">
                     </div>
                 </div>
