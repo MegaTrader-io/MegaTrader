@@ -2945,6 +2945,7 @@ if (!function_exists('mt_prepare_ui_payout')) {
         'eligible' => $eligibleBase,
         'eligibleForPayout' => $eligibleForPayout,
         'meta' => [
+          'userKYCVerified' => !empty($status['userKYCVerified']),
           'maxWithdrawal' => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
           'maxWithdrawalApi' => is_numeric($maxWithdrawalApi) ? ($maxWithdrawalApi + 0) : null,
           'maxWithdrawalUI' => $maxWithdrawalUI,
@@ -3071,6 +3072,7 @@ if (!function_exists('mt_get_account_payout_eligibility')) {
       'eligibleForPayout' => $eligibleForPayout,
       'maxWithdrawalUI' => $maxWithdrawalUI,
       'meta' => [
+        'userKYCVerified' => !empty($status['userKYCVerified']),
         'maxWithdrawal' => $maxWithdrawalApi,
         'maxWithdrawalApi' => $maxWithdrawalApi,
         'maxWithdrawalUI' => $maxWithdrawalUI,
