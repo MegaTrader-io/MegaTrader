@@ -718,6 +718,34 @@ HTML;
             }
         }, 0);
 
+        function getDefaultMetaInfo(productSelected, productPlatformDetail) {
+            const defaultMetaInfo = {}
+            for (const priceSize in productPlatformDetail) {
+                let attributes = null;
+                Object.keys(productSelected?.tree_map || []).forEach(_ => {
+                    attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
+                });
+
+                const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
+                for (const metaInfoKey in metaInfo) {
+                    if (metaInfo[metaInfoKey]) {
+                        defaultMetaInfo[metaInfoKey] = true;
+                    }
+                }
+            }
+
+            const validMetaInfo = Object.keys(defaultMetaInfo);
+            let metaInfoList = [];
+            Object.keys(MG_GLOBAL.productMetaLabel).forEach(key => {
+                if (validMetaInfo.includes(key)) {
+                    metaInfoList.push({key, label: MG_GLOBAL.productMetaLabel[key]})
+                }
+            });
+
+            return metaInfoList;
+        }
+
+
         document.addEventListener('click', function (e) {
             const target = e.target.closest('.proceed-to-checkout-btn');
             if (!target) return;
@@ -752,32 +780,6 @@ HTML;
             }
         });
 
-        function getDefaultMetaInfo(productSelected, productPlatformDetail) {
-            const defaultMetaInfo = {}
-            for (const priceSize in productPlatformDetail) {
-                let attributes = null;
-                Object.keys(productSelected?.tree_map || []).forEach(_ => {
-                    attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
-                });
-
-                const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
-                for (const metaInfoKey in metaInfo) {
-                    if (metaInfo[metaInfoKey]) {
-                        defaultMetaInfo[metaInfoKey] = true;
-                    }
-                }
-            }
-
-            const validMetaInfo = Object.keys(defaultMetaInfo);
-            let metaInfoList = [];
-            Object.keys(MG_GLOBAL.productMetaLabel).forEach(key => {
-                if (validMetaInfo.includes(key)) {
-                    metaInfoList.push({key, label: MG_GLOBAL.productMetaLabel[key]})
-                }
-            });
-
-            return metaInfoList;
-        }
 
         function loadChooseYourAccountSize(fn) {
             document.getElementById('pricing')
@@ -818,6 +820,7 @@ HTML;
 
                 const input = target.currentTarget || target;
                 const accountType = input.value;
+
                 resetIndexPaginationForPricingTable();
 
                 document.querySelectorAll('.mt-pricing-table-benefits').forEach(element => {
@@ -826,11 +829,8 @@ HTML;
 
                 document.querySelector(`.mt-pricing-table-benefits[data-account-type-benefits="${accountType}"]`)?.classList.remove('d-none');
 
-                void fn({
-                    accountType,
-                    defaultPlatform: input.dataset.defaultPlatform,
-                    defaultMarketType: input.dataset.defaultMarketType,
-                });
+
+                rerenderPriceTable(movePricingCards('init'));
             }
 
             function resetIndexPaginationForPricingTable() {
@@ -1306,17 +1306,13 @@ HTML;
             return [marketType, accountType, platform];
         }
 
-        function movePricingCards(orientation) {
+        function movePricingCards(orientation = 'init') {
             const [marketType, accountType] = marketTypeAndAccountTypeSelect();
             const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
             const productPlatformDetail = Object.keys(productSelected[productSelected.slug]);
 
             try {
                 const totalItems = productPlatformDetail.length;
-
-                if (totalItems === 4) {
-                    return;
-                }
 
                 if (totalItems <= VISIBLE_COUNT) {
                     console.warn('No hay suficientes elementos para desplazar.');
