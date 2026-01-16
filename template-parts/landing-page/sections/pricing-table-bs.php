@@ -818,6 +818,7 @@ HTML;
 
                 const input = target.currentTarget || target;
                 const accountType = input.value;
+                resetIndexPaginationForPricingTable();
 
                 document.querySelectorAll('.mt-pricing-table-benefits').forEach(element => {
                     element.classList.add('d-none');
@@ -832,9 +833,15 @@ HTML;
                 });
             }
 
+            function resetIndexPaginationForPricingTable() {
+                currentIndex = 0;
+            }
+
             async function handlerSelectByMarketType(target, accountType = null) {
                 const input = target.currentTarget || target;
                 const marketType = input.value;
+
+                resetIndexPaginationForPricingTable();
 
                 console.info('[MarketType Selected]', marketType);
                 try {
@@ -894,6 +901,30 @@ HTML;
                 }
             }
 
+            document.querySelector('.mt-prices-left')?.addEventListener('click', e => {
+                e.preventDefault();
+                rerenderPriceTable(movePricingCards('left'));
+            });
+
+            document.querySelector('.mt-prices-right')?.addEventListener('click', e => {
+                e.preventDefault();
+                rerenderPriceTable(movePricingCards('right'));
+            });
+
+            function rerenderPriceTable(prices = []) {
+                console.info('prices', prices);
+                document.querySelector('.price-table ul').innerHTML = buildPricesCardsHTML(prices);
+
+                const [marketType, accountType, platform] = marketTypeAndAccountTypeSelect();
+
+                void fn({
+                    accountType,
+                    defaultPlatform: platform,
+                    defaultMarketType: marketType,
+                    prices
+                });
+            }
+
             // 📌 Inicializar listeners principales
             document.querySelectorAll('[name="account-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByAccountType));
             document.querySelectorAll('[name="market-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByMarketType));
@@ -905,6 +936,8 @@ HTML;
         window.couponsCache = {};
         loadChooseYourAccountSize(async (params) => {
             const priceTable = getPriceTable();
+            const {prices} = params;
+
             const height = document.querySelector('.price-table .glide__slide--active .price-table__plan--most-popular') || document.querySelector('.price-table .glide__slide--active .price-table__plan--regular-plan') ? 0 : 24;
             priceTable.style.setProperty('--current-slider-height', height + 'px');
 
@@ -914,7 +947,19 @@ HTML;
 
             const dropdownAccountTypeOption = dropdownAccountTypeComponent.querySelector('.dropdown-item__wrapper[data-account-type-slug=' + params['accountType'] + ']');
             const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType && product.tree_map['market-type'] === params.defaultMarketType);
-            const productPlatformDetail = productSelected[productSelected.slug];
+            let productPlatformDetail = productSelected[productSelected.slug];
+
+            if (prices) {
+                const tmpPrices = {};
+                prices.forEach(price => {
+                    const priceFound = productPlatformDetail[price];
+                    if (priceFound) {
+                        tmpPrices[price] = priceFound;
+                    }
+                })
+
+                productPlatformDetail = tmpPrices;
+            }
 
             dropdownAccountTypeOption.querySelector('label').classList.add('selected');
             const accountTypeIcon = dropdownAccountTypeOption.querySelector('img');
@@ -1254,9 +1299,11 @@ HTML;
 
         function marketTypeAndAccountTypeSelect() {
             const marketType = document.querySelector('[name="market-type"]:checked').value;
-            const accountType = document.querySelector('[name="account-type"]:checked').value;
+            const accountTypeInput = document.querySelector('[name="account-type"]:checked');
+            const accountType = accountTypeInput.value;
+            const platform = accountTypeInput.dataset.defaultPlatform;
 
-            return [marketType, accountType];
+            return [marketType, accountType, platform];
         }
 
         function movePricingCards(orientation) {
@@ -1332,21 +1379,5 @@ HTML;
 
             return html;
         }
-
-        document.querySelector('.mt-prices-left')?.addEventListener('click', e => {
-            e.preventDefault();
-            const prices = movePricingCards('left');
-            const html = buildPricesCardsHTML(prices);
-            document.querySelector('.price-table ul').innerHTML = html;
-        });
-
-        document.querySelector('.mt-prices-right')?.addEventListener('click', e => {
-            e.preventDefault();
-            const prices = movePricingCards('right');
-            const html = buildPricesCardsHTML(prices);
-            document.querySelector('.price-table ul').innerHTML = html;
-        });
-
-        console.info(productPlatformDetail.slice(currentIndex, currentIndex + VISIBLE_COUNT));
     });
 </script>
