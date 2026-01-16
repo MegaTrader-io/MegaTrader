@@ -307,7 +307,7 @@ HTML;
     </div>
 
     <div class="pb-5">
-        <a href="javascript:void(0);" class="mt-prices-left">
+        <a href="javascript:void(0);" class="mt-prices-left d-none">
             <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20.0049 39.7468C9.23617 39.6122 0.615466 30.7734 0.750007 20.0047C0.884548 9.23597 9.72338 0.615275 20.4921 0.749816C31.2608 0.884357 39.8815 9.72319 39.747 20.4919C39.6124 31.2606 30.7736 39.8813 20.0049 39.7468Z"
                       fill="#1E1E1E"/>
@@ -325,7 +325,7 @@ HTML;
             </svg>
         </a>
 
-        <a href="javascript:void(0);" class="mt-prices-right">
+        <a href="javascript:void(0);" class="mt-prices-right d-none">
             <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 0.5C30.7696 0.5 39.5 9.23045 39.5 20C39.5 30.7696 30.7696 39.5 20 39.5C9.23045 39.5 0.5 30.7696 0.5 20C0.5 9.23045 9.23045 0.5 20 0.5Z"
                       fill="#1E1E1E"/>
@@ -821,14 +821,13 @@ HTML;
                 const input = target.currentTarget || target;
                 const accountType = input.value;
 
-                resetIndexPaginationForPricingTable();
-
                 document.querySelectorAll('.mt-pricing-table-benefits').forEach(element => {
                     element.classList.add('d-none');
                 });
 
                 document.querySelector(`.mt-pricing-table-benefits[data-account-type-benefits="${accountType}"]`)?.classList.remove('d-none');
 
+                resetIndexPaginationForPricingTable();
 
                 rerenderPriceTable(movePricingCards('init'));
             }
@@ -883,10 +882,15 @@ HTML;
                     if (firstAccountTypeInput) {
                         console.info('[Auto-select AccountType]', firstAccountTypeInput.value);
 
+                        const {pricesKeys} = getPricesInfoByAccountTypeAndMarketType(firstAccountTypeInput.value, firstAccountTypeInput.dataset.defaultMarketType)
+
+                        toggleArrowsToMovePrices(pricesKeys.length > 4);
+
                         void fn({
                             accountType: firstAccountTypeInput.value,
                             defaultPlatform: firstAccountTypeInput.dataset.defaultPlatform,
                             defaultMarketType: firstAccountTypeInput.dataset.defaultMarketType,
+                            prices: pricesKeys.splice(0, VISIBLE_COUNT)
                         });
                     } else {
                         console.warn('No se encontró ningún input[name="account-type"] en el nuevo fragmento.');
@@ -912,7 +916,6 @@ HTML;
             });
 
             function rerenderPriceTable(prices = []) {
-                console.info('prices', prices);
                 document.querySelector('.price-table ul').innerHTML = buildPricesCardsHTML(prices);
 
                 const [marketType, accountType, platform] = marketTypeAndAccountTypeSelect();
@@ -1259,7 +1262,6 @@ HTML;
         }
 
         function destroyGlide() {
-            console.info('glideInstance && isGlideMounted', glideInstance && isGlideMounted);
             if (glideInstance && isGlideMounted) {
                 try {
                     glideInstance.destroy();
@@ -1306,23 +1308,48 @@ HTML;
             return [marketType, accountType, platform];
         }
 
+        function toggleArrowsToMovePrices(showArrows = true) {
+            console.info('showArrows', showArrows);
+            const leftBtn = document.querySelector('.mt-prices-left');
+            const rightBtn = document.querySelector('.mt-prices-right');
+
+            if (showArrows) {
+                leftBtn.classList.remove('d-none');
+                rightBtn.classList.remove('d-none');
+
+                return;
+            }
+
+            leftBtn.classList.add('d-none');
+            rightBtn.classList.add('d-none');
+        }
+
+        function getPricesInfoByAccountTypeAndMarketType(accountType, marketType) {
+            const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
+            const productPlatformDetail = productSelected[productSelected.slug]
+            const pricesKeys = Object.keys(productPlatformDetail);
+
+            return {productSelected, productPlatformDetail, pricesKeys};
+        }
+
         function movePricingCards(orientation = 'init') {
             const [marketType, accountType] = marketTypeAndAccountTypeSelect();
-            const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
-            const productPlatformDetail = Object.keys(productSelected[productSelected.slug]);
+            const {pricesKeys} = getPricesInfoByAccountTypeAndMarketType(accountType, marketType);
+
+            toggleArrowsToMovePrices(pricesKeys.length > 4);
 
             try {
-                const totalItems = productPlatformDetail.length;
+                const totalItems = pricesKeys.length;
 
                 if (totalItems <= VISIBLE_COUNT) {
                     console.warn('No hay suficientes elementos para desplazar.');
-                    return productPlatformDetail.slice(0, VISIBLE_COUNT);
+                    return pricesKeys.slice(0, VISIBLE_COUNT);
                 }
 
                 if (orientation === 'right') {
                     if (currentIndex + VISIBLE_COUNT >= totalItems) {
                         console.info('Ya estás en el final, no puedes mover más a la derecha.');
-                        return productPlatformDetail.slice(currentIndex, currentIndex + VISIBLE_COUNT);
+                        return pricesKeys.slice(currentIndex, currentIndex + VISIBLE_COUNT);
                     }
                     currentIndex++;
                 }
@@ -1330,12 +1357,12 @@ HTML;
                 if (orientation === 'left') {
                     if (currentIndex === 0) {
                         console.info('Ya estás en el inicio, no puedes mover más a la izquierda.');
-                        return productPlatformDetail.slice(0, VISIBLE_COUNT);
+                        return pricesKeys.slice(0, VISIBLE_COUNT);
                     }
                     currentIndex--;
                 }
 
-                return productPlatformDetail.slice(currentIndex, currentIndex + VISIBLE_COUNT);
+                return pricesKeys.slice(currentIndex, currentIndex + VISIBLE_COUNT);
             } catch (err) {
                 console.error('Error en movePricingCards:', err);
                 return [];
@@ -1352,10 +1379,6 @@ HTML;
             prices.forEach(price => {
                 products[price] = productPlatformDetail[price];
             });
-
-            const metaInfoList = getDefaultMetaInfo(productSelected, productPlatformDetail);
-
-            console.info('products', products, metaInfoList);
 
             let html = '';
 
