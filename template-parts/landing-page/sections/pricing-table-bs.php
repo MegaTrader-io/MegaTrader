@@ -536,6 +536,8 @@ HTML;
     };
 
     document.addEventListener("DOMContentLoaded", () => {
+        const VISIBLE_COUNT = 4;
+        let currentIndex = 0;
 
         /**
          * Genera el bloque HTML de un plan de la tabla de precios (versión fiel al markup original).
@@ -1257,17 +1259,17 @@ HTML;
             return [marketType, accountType];
         }
 
-        const [marketType, accountType] = marketTypeAndAccountTypeSelect();
-        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
-        const productPlatformDetail = Object.keys(productSelected[productSelected.slug]);
-
-        const VISIBLE_COUNT = 4;
-
-        let currentIndex = 0;
-
         function movePricingCards(orientation) {
+            const [marketType, accountType] = marketTypeAndAccountTypeSelect();
+            const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
+            const productPlatformDetail = Object.keys(productSelected[productSelected.slug]);
+
             try {
                 const totalItems = productPlatformDetail.length;
+
+                if (totalItems === 4) {
+                    return;
+                }
 
                 if (totalItems <= VISIBLE_COUNT) {
                     console.warn('No hay suficientes elementos para desplazar.');
