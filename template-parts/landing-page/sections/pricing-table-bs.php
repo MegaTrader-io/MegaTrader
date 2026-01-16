@@ -306,6 +306,43 @@ HTML;
         ?>
     </div>
 
+    <div class="pb-5">
+        <a href="javascript:void(0);" class="mt-prices-left">
+            <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.0049 39.7468C9.23617 39.6122 0.615466 30.7734 0.750007 20.0047C0.884548 9.23597 9.72338 0.615275 20.4921 0.749816C31.2608 0.884357 39.8815 9.72319 39.747 20.4919C39.6124 31.2606 30.7736 39.8813 20.0049 39.7468Z"
+                      fill="#1E1E1E"/>
+                <path d="M20.0049 39.7468C9.23617 39.6122 0.615466 30.7734 0.750007 20.0047C0.884548 9.23597 9.72338 0.615275 20.4921 0.749816C31.2608 0.884357 39.8815 9.72319 39.747 20.4919C39.6124 31.2606 30.7736 39.8813 20.0049 39.7468Z"
+                      stroke="#404040"/>
+                <mask id="mask0_19096_9613" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="8" y="8" width="25"
+                      height="25">
+                    <rect width="24" height="24"
+                          transform="matrix(0.0124927 -0.999922 -0.999922 -0.0124927 32.0977 32.3973)" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask0_19096_9613)">
+                    <path d="M14.2488 20.1733L20.1734 26.2478L21.5908 24.8654L18.036 21.2207L27.2353 21.3357L27.2603 19.3358L18.061 19.2209L21.7057 15.6661L20.3233 14.2488L14.2488 20.1733Z"
+                          fill="white"/>
+                </g>
+            </svg>
+        </a>
+
+        <a href="javascript:void(0);" class="mt-prices-right">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 0.5C30.7696 0.5 39.5 9.23045 39.5 20C39.5 30.7696 30.7696 39.5 20 39.5C9.23045 39.5 0.5 30.7696 0.5 20C0.5 9.23045 9.23045 0.5 20 0.5Z"
+                      fill="#1E1E1E"/>
+                <path d="M20 0.5C30.7696 0.5 39.5 9.23045 39.5 20C39.5 30.7696 30.7696 39.5 20 39.5C9.23045 39.5 0.5 30.7696 0.5 20C0.5 9.23045 9.23045 0.5 20 0.5Z"
+                      stroke="#404040"/>
+                <mask id="mask0_19005_11909" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="8" y="8" width="24"
+                      height="24">
+                    <rect width="24" height="24" transform="matrix(0 1 1 0 8 8)" fill="#D9D9D9"/>
+                </mask>
+                <g mask="url(#mask0_19005_11909)">
+                    <path d="M26 20L20 14L18.6 15.4L22.2 19H13V21H22.2L18.6 24.6L20 26L26 20Z" fill="white"/>
+                </g>
+            </svg>
+        </a>
+    </div>
+
+
     <div class="testimonials">
         <div class="testimonials__card">
             <img
@@ -499,6 +536,133 @@ HTML;
     };
 
     document.addEventListener("DOMContentLoaded", () => {
+
+        /**
+         * Genera el bloque HTML de un plan de la tabla de precios (versión fiel al markup original).
+         *
+         * @param {Object} data - Objeto de configuración.
+         * @param {string} data.size - Ejemplo: "50k".
+         * @param {boolean} data.isMostPopular - Muestra o no la etiqueta "Most popular".
+         * @param {boolean} data.hasCoupon - Si tiene cupón o no.
+         * @param {Object} [data.coupon] - Información del cupón (si aplica).
+         * @param {string} [data.coupon.code]
+         * @param {string|number} [data.coupon.discountTotal]
+         * @param {string} data.price - Precio mostrado, ej: "$120".
+         * @param {string} data.frequencyText - Texto de frecuencia ("per month" o "one time fee").
+         * @param {Array<{key:string,label:string,value:string}>} data.metaInfo - Lista de atributos.
+         * @param {string} data.checkoutUrl - URL completa del checkout.
+         * @param {string} [data.assetsUrl='/wp-content/themes/megatrader-addons/assets/img/landing-page']
+         * @returns {string} HTML raw del plan.
+         */
+        function createPriceTablePlan(data) {
+            try {
+                const {
+                    size,
+                    isMostPopular = false,
+                    hasCoupon = false,
+                    coupon = {},
+                    price,
+                    frequencyText,
+                    metaInfo = [],
+                    checkoutUrl,
+                    assetsUrl = '/wp-content/themes/megatrader-addons/assets/img/landing-page',
+                } = data || {};
+
+                const planClass = 'price-table__plan--regular-plan';
+                const btnClass = 'mega-btn-default-md';
+
+                const mostPopularHTML = `
+      <div class="price-table__most-popular-badge" style="${isMostPopular ? '' : 'display:none;'}">
+        <div class="price-table__most-popular-badge-wrapper">
+          <img src="${assetsUrl}/flash.svg"
+               class="price-table__most-popular-badge-icon"
+               alt="flash" width="24" height="24">
+          <div class="price-table__most-popular-badge-text">
+            Most popular
+          </div>
+        </div>
+      </div>
+    `;
+
+                const couponHTML = `
+      <div style="${hasCoupon ? '' : 'display:none;'}" class="price-information__summary">
+        <div class="coupon-before-price" data-price="${size}">
+          <span></span>
+        </div>
+        <div class="badge-coupon w-100" data-price="${size}">
+          <div class="badge-coupon__wrapper">
+            <div class="badge-coupon__text text-truncate">
+              Save
+              <span class="badge-coupon__discount_total">
+                ${hasCoupon ? coupon.discountTotal || '' : ''}
+              </span>
+              with code
+            </div>
+            <svg width="1" height="24" viewBox="0 0 1 24" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+              <line x1="0.5" y1="0" x2="0.5" y2="24" stroke="#404040"></line>
+            </svg>
+            <div class="badge-coupon__code tw-uppercase tw-justify-start">
+              ${hasCoupon ? coupon.code || '' : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+                const metaRowsHTML = metaInfo
+                    .map(
+                        ({key, label, value}) => `
+      <div class="mega-info-row">
+        <div class="mega-info-row__label" data-key="${key}">${label}</div>
+        <div class="mega-info-row__value text-truncate">${value || ''}</div>
+      </div>`
+                    )
+                    .join('');
+
+                return `
+<li class="slider__frame glide__slide">
+  <div class="price-table__plan ${planClass}" data-price="${size}">
+    <div class="price-table__size">
+      ${mostPopularHTML}
+      <div class="price-table__title">${size} Account</div>
+    </div>
+
+    <div class="price-table__right-line price-information" data-price="${size}">
+      <div class="w-100">
+        ${couponHTML}
+        <div class="price-information__price">
+          <span class="price-plan" data-price="${size}">${price}</span>
+          <span class="frequency-plan" data-price="${size}"> ${frequencyText}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mega-info-row d-none template-metaInfo">
+      <div class="mega-info-row__label"></div>
+      <div class="mega-info-row__value text-truncate"></div>
+    </div>
+
+    <div class="price-table__right-line price-table-attributes metaInfo" data-price="${size}">
+      ${metaRowsHTML}
+    </div>
+
+    <div class="price-table__right-line price-table__footer" data-price="${size}">
+      <a href="${checkoutUrl}"
+         class="proceed-to-checkout-btn mega-btn-md ${btnClass} w-100">
+        <img src="${assetsUrl}/flash-teal.svg" alt="flash teal" width="24" height="24">
+        GET FUNDED WITH $${size}
+      </a>
+    </div>
+  </div>
+</li>
+`;
+            } catch (err) {
+                console.error('Error al crear el HTML del plan:', err);
+                return '';
+            }
+        }
+
         async function fetchCouponInBatch(productIds) {
             const couponURL = `/wp-json/custom/v1/best-coupon-in-batch?ids=${productIds}`;
             if (!couponsCache[couponURL]) {
@@ -528,10 +692,8 @@ HTML;
         }
 
         function updatePoints() {
-            let priceTable = document.querySelector('.price-table');
             let bottomPoints = 0;
-
-            priceTable?.style.setProperty('--current-slider-height', bottomPoints + 'px');
+            getPriceTable().style.setProperty('--current-slider-height', bottomPoints + 'px');
         }
 
         setTimeout(() => {
@@ -588,7 +750,32 @@ HTML;
             }
         });
 
-        let priceTable = document.querySelector('.price-table');
+        function getDefaultMetaInfo(productSelected, productPlatformDetail) {
+            const defaultMetaInfo = {}
+            for (const priceSize in productPlatformDetail) {
+                let attributes = null;
+                Object.keys(productSelected?.tree_map || []).forEach(_ => {
+                    attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
+                });
+
+                const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
+                for (const metaInfoKey in metaInfo) {
+                    if (metaInfo[metaInfoKey]) {
+                        defaultMetaInfo[metaInfoKey] = true;
+                    }
+                }
+            }
+
+            const validMetaInfo = Object.keys(defaultMetaInfo);
+            let metaInfoList = [];
+            Object.keys(MG_GLOBAL.productMetaLabel).forEach(key => {
+                if (validMetaInfo.includes(key)) {
+                    metaInfoList.push({key, label: MG_GLOBAL.productMetaLabel[key]})
+                }
+            });
+
+            return metaInfoList;
+        }
 
         function loadChooseYourAccountSize(fn) {
             document.getElementById('pricing')
@@ -715,8 +902,7 @@ HTML;
 
         window.couponsCache = {};
         loadChooseYourAccountSize(async (params) => {
-            console.info('params', params);
-            const priceTable = document.querySelector('.price-table');
+            const priceTable = getPriceTable();
             const height = document.querySelector('.price-table .glide__slide--active .price-table__plan--most-popular') || document.querySelector('.price-table .glide__slide--active .price-table__plan--regular-plan') ? 0 : 24;
             priceTable.style.setProperty('--current-slider-height', height + 'px');
 
@@ -728,7 +914,6 @@ HTML;
             const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === params.accountType && product.tree_map['market-type'] === params.defaultMarketType);
             const productPlatformDetail = productSelected[productSelected.slug];
 
-
             dropdownAccountTypeOption.querySelector('label').classList.add('selected');
             const accountTypeIcon = dropdownAccountTypeOption.querySelector('img');
             const accountTypeText = dropdownAccountTypeOption.querySelector('.mt-dropdown__item-label');
@@ -737,6 +922,7 @@ HTML;
             if (accountTypeIcon) {
                 dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-icon').src = accountTypeIcon.src;
             }
+
             dropdownAccountTypeComponent.querySelector('.mt-dropdown__btn-label').innerText = accountTypeText.innerText;
 
             dropdownAccountTypeComponent
@@ -752,28 +938,7 @@ HTML;
                     .appendChild(badge);
             }
 
-            const defaultMetaInfo = {}
-            for (const priceSize in productPlatformDetail) {
-                let attributes = null;
-                Object.keys(productSelected?.tree_map || []).forEach(e => {
-                    attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
-                });
-
-                const metaInfo = attributes.find(item => item['meta-info'])['meta-info'];
-                for (const metaInfoKey in metaInfo) {
-                    if (metaInfo[metaInfoKey]) {
-                        defaultMetaInfo[metaInfoKey] = true;
-                    }
-                }
-            }
-
-            const validMetaInfo = Object.keys(defaultMetaInfo);
-            let metaInfoList = [];
-            Object.keys(MG_GLOBAL.productMetaLabel).forEach(key => {
-                if (validMetaInfo.includes(key)) {
-                    metaInfoList.push({key, label: MG_GLOBAL.productMetaLabel[key]})
-                }
-            })
+            const metaInfoList = getDefaultMetaInfo(productSelected, productPlatformDetail);
 
             const mostPopularElement = document.querySelector('.price-table__plan.price-table__plan--most-popular');
 
@@ -804,7 +969,11 @@ HTML;
                 products.push({productId, priceSize, priceObject});
 
                 const isMostPopular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
-                const priceCard = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
+                const priceCard = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`);
+
+                if (!priceCard) {
+                    return;
+                }
 
                 if (isMostPopular) {
                     priceCard.classList.add('price-table__plan--most-popular');
@@ -916,15 +1085,12 @@ HTML;
             updatePoints();
         });
 
-
         document.addEventListener('mt:refreshSliderPricingTable', function () {
-            priceTable = document.querySelector('.price-table');
             destroyGlide();
             handleResize();
         });
 
         document.addEventListener('mt:destroySliderPricingTable', function () {
-            priceTable = document.querySelector('.price-table');
             destroyGlide();
         });
 
@@ -932,19 +1098,23 @@ HTML;
         let isGlideMounted = false;
         const parentGlideClasses = ['price-table__glide', 'slider', 'glide'];
 
+        function getPriceTable() {
+            return document.querySelector('.price-table');
+        }
+
         function addClassToPriceTable() {
-            parentGlideClasses.map(className => priceTable.classList.add(className));
+            parentGlideClasses.map(className => getPriceTable().classList.add(className));
         }
 
         function removeClassToPriceTable(extraClasses = ['glide--swipeable']) {
-            (parentGlideClasses.concat(extraClasses)).map(className => priceTable.classList.remove(className));
+            (parentGlideClasses.concat(extraClasses)).map(className => getPriceTable().classList.remove(className));
         }
 
         function initGlide() {
             if (glideInstance || isGlideMounted) return;
             addClassToPriceTable();
             try {
-                glideInstance = new Glide(priceTable, {
+                glideInstance = new Glide(getPriceTable(), {
                     type: 'slider', gap: 16, autoplay: false, rewind: false, animationDuration: 200
                 });
 
@@ -1017,7 +1187,7 @@ HTML;
                                         cardWidth = 320;
                                     }
 
-                                    priceTable.style.setProperty('--price-table-slide-width', cardWidth + 'px');
+                                    getPriceTable().style.setProperty('--price-table-slide-width', cardWidth + 'px');
 
                                     return cardWidth;
                                 }
@@ -1079,5 +1249,104 @@ HTML;
 
         handleResize();
         updatePoints();
+
+        function marketTypeAndAccountTypeSelect() {
+            const marketType = document.querySelector('[name="market-type"]:checked').value;
+            const accountType = document.querySelector('[name="account-type"]:checked').value;
+
+            return [marketType, accountType];
+        }
+
+        const [marketType, accountType] = marketTypeAndAccountTypeSelect();
+        const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
+        const productPlatformDetail = Object.keys(productSelected[productSelected.slug]);
+
+        const VISIBLE_COUNT = 4;
+
+        let currentIndex = 0;
+
+        function movePricingCards(orientation) {
+            try {
+                const totalItems = productPlatformDetail.length;
+
+                if (totalItems <= VISIBLE_COUNT) {
+                    console.warn('No hay suficientes elementos para desplazar.');
+                    return productPlatformDetail.slice(0, VISIBLE_COUNT);
+                }
+
+                if (orientation === 'right') {
+                    if (currentIndex + VISIBLE_COUNT >= totalItems) {
+                        console.info('Ya estás en el final, no puedes mover más a la derecha.');
+                        return productPlatformDetail.slice(currentIndex, currentIndex + VISIBLE_COUNT);
+                    }
+                    currentIndex++;
+                }
+
+                if (orientation === 'left') {
+                    if (currentIndex === 0) {
+                        console.info('Ya estás en el inicio, no puedes mover más a la izquierda.');
+                        return productPlatformDetail.slice(0, VISIBLE_COUNT);
+                    }
+                    currentIndex--;
+                }
+
+                return productPlatformDetail.slice(currentIndex, currentIndex + VISIBLE_COUNT);
+            } catch (err) {
+                console.error('Error en movePricingCards:', err);
+                return [];
+            }
+        }
+
+        function buildPricesCardsHTML(prices = []) {
+            const [marketType, accountType] = marketTypeAndAccountTypeSelect();
+            const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
+            const productPlatformDetail = productSelected[productSelected.slug];
+
+            let products = {};
+
+            prices.forEach(price => {
+                products[price] = productPlatformDetail[price];
+            });
+
+            const metaInfoList = getDefaultMetaInfo(productSelected, productPlatformDetail);
+
+            console.info('products', products, metaInfoList);
+
+            let html = '';
+
+            for (const priceSize in products) {
+                const planExample = {
+                    size: priceSize,
+                    isMostPopular: false,
+                    hasCoupon: false,
+                    price: '',
+                    frequencyText: '',
+                    metaInfo: [],
+                    checkoutUrl: '',
+                    assetsUrl: '',
+                };
+
+                // Generar el HTML y usarlo como quieras
+                html += createPriceTablePlan(planExample);
+            }
+
+            return html;
+        }
+
+        document.querySelector('.mt-prices-left')?.addEventListener('click', e => {
+            e.preventDefault();
+            const prices = movePricingCards('left');
+            const html = buildPricesCardsHTML(prices);
+            document.querySelector('.price-table ul').innerHTML = html;
+        });
+
+        document.querySelector('.mt-prices-right')?.addEventListener('click', e => {
+            e.preventDefault();
+            const prices = movePricingCards('right');
+            const html = buildPricesCardsHTML(prices);
+            document.querySelector('.price-table ul').innerHTML = html;
+        });
+
+        console.info(productPlatformDetail.slice(currentIndex, currentIndex + VISIBLE_COUNT));
     });
 </script>

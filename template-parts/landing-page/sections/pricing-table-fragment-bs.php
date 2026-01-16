@@ -65,9 +65,12 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
      style="--price-table-slide-width: 0px; --price-table-slide-left: 0px; --current-slider-height: 0px;">
     <div class="slider__track glide__track" data-glide-el="track">
         <ul class="slider__slides glide__slides"
-            style="grid-template-columns: repeat(<?= count($mt_plan_list) ?>, 1fr);">
+            style="grid-template-columns: repeat(<?= min(count($mt_plan_list), 4) ?>, 1fr);">
             <?php foreach ($mt_plan_list as $mt_index => $mt_plan): ?>
                 <?php
+                if ($mt_index > 3) {
+                    continue;
+                }
                 $mt_id = $mt_plan['id'];
                 $mt_size = $mt_plan['size'];
                 $mt_parent_id = $mt_plan['parent_id'];
@@ -92,18 +95,11 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
                         <div class="price-table__size">
                             <div class="price-table__most-popular-badge">
                                 <div class="price-table__most-popular-badge-wrapper">
-                                    <svg class="price-table__most-popular-badge-icon" width="24" height="24"
-                                         viewBox="0 0 24 24" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <mask id="mask0_17404_34902" style="mask-type:alpha"
-                                              maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                                            <rect width="24" height="24" fill="#D9D9D9"/>
-                                        </mask>
-                                        <g mask="url(#mask0_17404_34902)">
-                                            <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z"
-                                                  fill="#FFB34A"/>
-                                        </g>
-                                    </svg>
+                                    <img src="<?php echo get_template_directory_uri() . '/assets/img/landing-page/flash.svg'; ?>"
+                                         class="price-table__most-popular-badge-icon"
+                                         alt="flash"
+                                         width="24"
+                                         height="24">
                                     <div class="price-table__most-popular-badge-text">
                                         <?php esc_html_e('Most popular', 'megatrader'); ?>
                                     </div>
@@ -173,17 +169,10 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
                                class="proceed-to-checkout-btn mega-btn-md <?= $mt_is_most_popular
                                        ? 'mega-btn-primary-md mega-btn-primary--icon-md'
                                        : 'mega-btn-default-md' ?> w-100">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <mask id="mask0_18861_2652" style="mask-type:alpha"
-                                          maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                                        <rect width="24" height="24" fill="#D9D9D9"/>
-                                    </mask>
-                                    <g mask="url(#mask0_18861_2652)">
-                                        <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z"
-                                              fill="#14B8A6"/>
-                                    </g>
-                                </svg>
+                                <img src="<?php echo get_template_directory_uri() . '/assets/img/landing-page/flash-teal.svg'; ?>"
+                                     alt="flash teal"
+                                     width="24"
+                                     height="24">
                                 <?= esc_html__('GET FUNDED WITH $', 'megatrader') . esc_html($mt_size) ?>
                             </a>
                         </div>
@@ -206,6 +195,11 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
 
     <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
         <?php foreach ($mt_plan_list as $key => $item): ?>
+            <?php
+            if ($key > 3) {
+                continue;
+            }
+            ?>
             <button class="slider__bullet glide__bullet" data-glide-dir="=<?= esc_attr($key) ?>"></button>
         <?php endforeach; ?>
     </div>

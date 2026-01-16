@@ -320,20 +320,11 @@ HTML;
                             <div class="price-table__size">
                                 <div class="price-table__most-popular-badge">
                                     <div class="price-table__most-popular-badge-wrapper">
-                                        <svg class="price-table__most-popular-badge-icon" width="24" height="24"
-                                             viewBox="0 0 24 24"
-                                             fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <mask id="mask0_17404_34902" style="mask-type:alpha"
-                                                  maskUnits="userSpaceOnUse"
-                                                  x="0"
-                                                  y="0" width="24" height="24">
-                                                <rect width="24" height="24" fill="#D9D9D9"/>
-                                            </mask>
-                                            <g mask="url(#mask0_17404_34902)">
-                                                <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#FFB34A"/>
-                                            </g>
-                                        </svg>
+                                        <img src="<?php echo get_template_directory_uri() . '/assets/img/landing-page/flash.svg'; ?>"
+                                             class="price-table__most-popular-badge-icon"
+                                             alt="flash"
+                                             width="24"
+                                             height="24">
                                         <div class="price-table__most-popular-badge-text"><?php esc_html_e('Most popular', 'megatrader'); ?></div>
                                     </div>
                                 </div>
@@ -398,19 +389,10 @@ HTML;
                                  data-price="<?= esc_attr($mt_size) ?>">
                                 <a href="<?= esc_url($mt_get_plan_url) ?>"
                                    class="proceed-to-checkout-btn mega-btn-md <?= $mt_is_most_popular ? 'mega-btn-primary-md mega-btn-primary--icon-md' : 'mega-btn-default-md' ?> w-100">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <mask id="mask0_18861_2652" style="mask-type:alpha" maskUnits="userSpaceOnUse"
-                                              x="0"
-                                              y="0"
-                                              width="24" height="24">
-                                            <rect width="24" height="24" fill="#D9D9D9"/>
-                                        </mask>
-                                        <g mask="url(#mask0_18861_2652)">
-                                            <path d="M8 22L9 15H4L13 2H15L14 10H20L10 22H8Z" fill="#14B8A6"/>
-                                        </g>
-                                    </svg>
-
+                                    <img src="<?php echo get_template_directory_uri() . '/assets/img/landing-page/flash-teal.svg'; ?>"
+                                         alt="flash teal"
+                                         width="24"
+                                         height="24">
                                     <?= esc_html__('GET FUNDED WITH $', 'megatrader') . esc_html($mt_size) ?>
                                 </a>
                             </div>
