@@ -1322,8 +1322,6 @@ HTML;
                     price: '',
                     frequencyText: '',
                     metaInfo: [],
-                    checkoutUrl: '',
-                    assetsUrl: '',
                 };
 
                 // Generar el HTML y usarlo como quieras
