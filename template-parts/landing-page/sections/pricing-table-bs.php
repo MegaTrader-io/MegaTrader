@@ -306,42 +306,6 @@ HTML;
         ?>
     </div>
 
-    <div class="pb-5">
-        <a href="javascript:void(0);" class="mt-prices-left d-none">
-            <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20.0049 39.7468C9.23617 39.6122 0.615466 30.7734 0.750007 20.0047C0.884548 9.23597 9.72338 0.615275 20.4921 0.749816C31.2608 0.884357 39.8815 9.72319 39.747 20.4919C39.6124 31.2606 30.7736 39.8813 20.0049 39.7468Z"
-                      fill="#1E1E1E"/>
-                <path d="M20.0049 39.7468C9.23617 39.6122 0.615466 30.7734 0.750007 20.0047C0.884548 9.23597 9.72338 0.615275 20.4921 0.749816C31.2608 0.884357 39.8815 9.72319 39.747 20.4919C39.6124 31.2606 30.7736 39.8813 20.0049 39.7468Z"
-                      stroke="#404040"/>
-                <mask id="mask0_19096_9613" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="8" y="8" width="25"
-                      height="25">
-                    <rect width="24" height="24"
-                          transform="matrix(0.0124927 -0.999922 -0.999922 -0.0124927 32.0977 32.3973)" fill="#D9D9D9"/>
-                </mask>
-                <g mask="url(#mask0_19096_9613)">
-                    <path d="M14.2488 20.1733L20.1734 26.2478L21.5908 24.8654L18.036 21.2207L27.2353 21.3357L27.2603 19.3358L18.061 19.2209L21.7057 15.6661L20.3233 14.2488L14.2488 20.1733Z"
-                          fill="white"/>
-                </g>
-            </svg>
-        </a>
-
-        <a href="javascript:void(0);" class="mt-prices-right d-none">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 0.5C30.7696 0.5 39.5 9.23045 39.5 20C39.5 30.7696 30.7696 39.5 20 39.5C9.23045 39.5 0.5 30.7696 0.5 20C0.5 9.23045 9.23045 0.5 20 0.5Z"
-                      fill="#1E1E1E"/>
-                <path d="M20 0.5C30.7696 0.5 39.5 9.23045 39.5 20C39.5 30.7696 30.7696 39.5 20 39.5C9.23045 39.5 0.5 30.7696 0.5 20C0.5 9.23045 9.23045 0.5 20 0.5Z"
-                      stroke="#404040"/>
-                <mask id="mask0_19005_11909" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="8" y="8" width="24"
-                      height="24">
-                    <rect width="24" height="24" transform="matrix(0 1 1 0 8 8)" fill="#D9D9D9"/>
-                </mask>
-                <g mask="url(#mask0_19005_11909)">
-                    <path d="M26 20L20 14L18.6 15.4L22.2 19H13V21H22.2L18.6 24.6L20 26L26 20Z" fill="white"/>
-                </g>
-            </svg>
-        </a>
-    </div>
-
 
     <div class="testimonials">
         <div class="testimonials__card">
@@ -905,15 +869,28 @@ HTML;
                 }
             }
 
-            document.querySelector('.mt-prices-left')?.addEventListener('click', e => {
-                e.preventDefault();
-                rerenderPriceTable(movePricingCards('left'));
+
+            document.addEventListener('click', function (e) {
+                const leftBtn = e.target.closest('.mt-prices-left');
+                const rightBtn = e.target.closest('.mt-prices-right');
+                if (!leftBtn && !rightBtn) return;
+
+                if (leftBtn) {
+                    rerenderPriceTable(movePricingCards('left'));
+                } else {
+                    rerenderPriceTable(movePricingCards('right'));
+                }
             });
 
-            document.querySelector('.mt-prices-right')?.addEventListener('click', e => {
-                e.preventDefault();
-                rerenderPriceTable(movePricingCards('right'));
-            });
+            // document.querySelector('.mt-prices-left')?.addEventListener('click', e => {
+            //     e.preventDefault();
+            //     rerenderPriceTable(movePricingCards('left'));
+            // });
+            //
+            // document.querySelector('.mt-prices-right')?.addEventListener('click', e => {
+            //     e.preventDefault();
+            //     rerenderPriceTable(movePricingCards('right'));
+            // });
 
             function rerenderPriceTable(prices = []) {
                 document.querySelector('.price-table ul').innerHTML = buildPricesCardsHTML(prices);
