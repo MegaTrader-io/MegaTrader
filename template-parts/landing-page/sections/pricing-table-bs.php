@@ -630,13 +630,24 @@ HTML;
         }
 
         async function fetchCouponInBatch(productIds) {
-            const couponURL = `/wp-json/custom/v1/best-coupon-in-batch?ids=${productIds}`;
-            if (!couponsCache[couponURL]) {
-                const responseCoupons = await fetch(couponURL);
-                couponsCache[couponURL] = await responseCoupons.json();
+            const URL = `/wp-json/custom/v1/best-coupon-in-batch?ids=${productIds}`;
+            if (!mtCache[URL]) {
+                const responseCoupons = await fetch(URL);
+                mtCache[URL] = await responseCoupons.json();
             }
 
-            return couponsCache[couponURL];
+            return mtCache[URL];
+        }
+
+        async function fetchPricingFragment(marketType) {
+            const URL = `/wp-json/custom/v1/pricing-fragment?marketType=${encodeURIComponent(marketType)}`;
+
+            if (!mtCache[URL]) {
+                const _response = await fetch(URL, {cache: 'no-store'});
+                mtCache[URL] = await _response.json();
+            }
+
+            return mtCache[URL];
         }
 
         function buildProductUrl(productId) {
@@ -808,14 +819,8 @@ HTML;
 
                 console.info('[MarketType Selected]', marketType);
                 try {
-                    const endpoint = `/wp-json/custom/v1/pricing-fragment?marketType=${encodeURIComponent(marketType)}`;
-                    const response = await fetch(endpoint, {cache: 'no-store'});
+                    const data = await fetchPricingFragment(marketType);
 
-                    if (!response.ok) {
-                        throw new Error(`Error ${response.status} al obtener el fragmento`);
-                    }
-
-                    const data = await response.json();
                     if (!data.success) {
                         console.error('Backend error:', data.message);
                         return;
@@ -903,7 +908,7 @@ HTML;
             targetSelection && handlerSelectByAccountType(targetSelection);
         }
 
-        window.couponsCache = {};
+        window.mtCache = {};
         loadChooseYourAccountSize(async (params) => {
             const priceTable = getPriceTable();
             const {prices} = params;
