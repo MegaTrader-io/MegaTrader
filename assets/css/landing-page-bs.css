@@ -2946,6 +2946,14 @@ a.footer-bs__link:visited {
 
 /* Large devices (max-width: 1024px) */
 @media (max-width: 1024px) {
+    .pricing-table-fragment-wrapper .mt-prices-left {
+        display: none !important;
+    }
+
+    .pricing-table-fragment-wrapper .mt-prices-right {
+        display: none !important;
+    }
+
     .zero-plan-grid__item {
         width: 100%;
         gap: 9.78px;
