@@ -876,14 +876,20 @@ HTML;
 
 
             document.addEventListener('click', function (e) {
-                const leftBtn = e.target.closest('.mt-prices-left');
-                const rightBtn = e.target.closest('.mt-prices-right');
-                if (!leftBtn && !rightBtn) return;
+                const btn = e.target.closest('.mt-prices-left, .mt-prices-right');
+                if (!btn) return;
 
-                if (leftBtn) {
-                    rerenderPriceTable(movePricingCards('left'));
-                } else {
-                    rerenderPriceTable(movePricingCards('right'));
+                const direction = btn.classList.contains('mt-prices-left') ? 'left' : 'right';
+
+                if (btn.classList.contains('mt-prices-disabled')) {
+                    return;
+                }
+
+                try {
+                    const prices = movePricingCards(direction);
+                    rerenderPriceTable(prices);
+                } catch (err) {
+                    console.error(`[Navigation] Error moviendo precios hacia ${direction}:`, err);
                 }
             });
 
@@ -1286,6 +1292,7 @@ HTML;
             if (showArrows) {
                 leftBtn.classList.add('mt-prices-disabled');
                 rightBtn.classList.remove('mt-prices-disabled');
+
                 leftBtn.classList.remove('d-none');
                 rightBtn.classList.remove('d-none');
 
