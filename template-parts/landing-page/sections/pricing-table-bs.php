@@ -985,15 +985,12 @@ HTML;
                 });
 
                 const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
-                console.info('priceObject', priceObject);
                 const productId = attributes.find(item => item['id'])['id'];
 
                 products.push({productId, priceSize, priceObject});
 
                 const isMostPopular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
                 const priceCard = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`);
-
-                console.info('isMostPopular', isMostPopular);
 
                 if (!priceCard) {
                     return;
@@ -1283,11 +1280,12 @@ HTML;
         }
 
         function toggleArrowsToMovePrices(showArrows = true) {
-            console.info('showArrows', showArrows);
             const leftBtn = document.querySelector('.mt-prices-left');
             const rightBtn = document.querySelector('.mt-prices-right');
 
             if (showArrows) {
+                leftBtn.classList.add('mt-prices-disabled');
+                rightBtn.classList.remove('mt-prices-disabled');
                 leftBtn.classList.remove('d-none');
                 rightBtn.classList.remove('d-none');
 
@@ -1321,19 +1319,23 @@ HTML;
                 }
 
                 if (orientation === 'right') {
-                    if (currentIndex + VISIBLE_COUNT >= totalItems) {
-                        console.info('Ya estás en el final, no puedes mover más a la derecha.');
-                        return pricesKeys.slice(currentIndex, currentIndex + VISIBLE_COUNT);
-                    }
                     currentIndex++;
+                    if (currentIndex + VISIBLE_COUNT >= totalItems) {
+                        document.querySelector('.mt-prices-right').classList.add('mt-prices-disabled');
+                        document.querySelector('.mt-prices-left').classList.remove('mt-prices-disabled');
+                    } else {
+                        document.querySelector('.mt-prices-right').classList.remove('mt-prices-disabled');
+                    }
                 }
 
                 if (orientation === 'left') {
-                    if (currentIndex === 0) {
-                        console.info('Ya estás en el inicio, no puedes mover más a la izquierda.');
-                        return pricesKeys.slice(0, VISIBLE_COUNT);
-                    }
                     currentIndex--;
+                    if (currentIndex === 0) {
+                        document.querySelector('.mt-prices-left').classList.add('mt-prices-disabled');
+                        document.querySelector('.mt-prices-right').classList.remove('mt-prices-disabled');
+                    } else {
+                        document.querySelector('.mt-prices-left').classList.remove('mt-prices-disabled');
+                    }
                 }
 
                 return pricesKeys.slice(currentIndex, currentIndex + VISIBLE_COUNT);
@@ -1366,7 +1368,6 @@ HTML;
                     metaInfo: [],
                 };
 
-                // Generar el HTML y usarlo como quieras
                 html += createPriceTablePlan(planExample);
             }
 

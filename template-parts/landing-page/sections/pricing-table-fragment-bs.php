@@ -193,7 +193,7 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
         </button>
     </div>
 
-    <a href="javascript:void(0);" class="mt-prices-left d-none">
+    <a href="javascript:void(0);" class="mt-prices-left mt-prices-disabled d-none">
         <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M20.0049 39.7468C9.23617 39.6122 0.615466 30.7734 0.750007 20.0047C0.884548 9.23597 9.72338 0.615275 20.4921 0.749816C31.2608 0.884357 39.8815 9.72319 39.747 20.4919C39.6124 31.2606 30.7736 39.8813 20.0049 39.7468Z"
                   fill="#1E1E1E"/>
