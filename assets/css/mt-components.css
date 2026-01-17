@@ -2398,7 +2398,7 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     right: calc(((100dvw - var(--price-table-slide-width)) / 2) - 20px);
 }
 
-.mega-btn-primary--icon-md svg {
+.mega-btn-primary--icon-md img {
     filter: brightness(0) saturate(100%) invert(0%) sepia(1%) saturate(7456%) hue-rotate(356deg) brightness(105%) contrast(98%);
 }
 

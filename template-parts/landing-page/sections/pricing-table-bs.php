@@ -538,7 +538,7 @@ HTML;
                 const btnClass = 'mega-btn-default-md';
 
                 const mostPopularHTML = `
-      <div class="price-table__most-popular-badge" style="${isMostPopular ? '' : 'display:none;'}">
+      <div class="price-table__most-popular-badge">
         <div class="price-table__most-popular-badge-wrapper">
           <img src="${assetsUrl}/flash.svg"
                class="price-table__most-popular-badge-icon"
@@ -882,16 +882,6 @@ HTML;
                 }
             });
 
-            // document.querySelector('.mt-prices-left')?.addEventListener('click', e => {
-            //     e.preventDefault();
-            //     rerenderPriceTable(movePricingCards('left'));
-            // });
-            //
-            // document.querySelector('.mt-prices-right')?.addEventListener('click', e => {
-            //     e.preventDefault();
-            //     rerenderPriceTable(movePricingCards('right'));
-            // });
-
             function rerenderPriceTable(prices = []) {
                 document.querySelector('.price-table ul').innerHTML = buildPricesCardsHTML(prices);
 
@@ -997,6 +987,8 @@ HTML;
 
                 const isMostPopular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
                 const priceCard = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`);
+
+                console.info('isMostPopular', isMostPopular);
 
                 if (!priceCard) {
                     return;
