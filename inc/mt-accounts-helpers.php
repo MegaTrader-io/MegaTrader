@@ -450,30 +450,49 @@ if (!function_exists('mt_program_plan')) {
     $label = is_array($programOrLabel)
       ? (string) ($programOrLabel['label'] ?? $programOrLabel['description'] ?? '')
       : (string) $programOrLabel;
-    $label = trim(preg_replace('/\s+/', ' ', $label));
-    if ($label === '')
-      return $default;
 
-    if (stripos($label, 'Funded') !== false)
+    $label = trim(preg_replace('/\s+/', ' ', $label));
+
+    if ($label === '') {
+      return $default !== '' ? $default : 'Default';
+    }
+
+    if (stripos($label, 'Zero') !== false) {
+      return 'Zero';
+    }
+    if (stripos($label, 'Funded') !== false) {
       return 'Funded';
-    if (stripos($label, 'Elite') !== false)
+    }
+    if (stripos($label, 'Elite') !== false) {
       return 'Elite';
-    if (stripos($label, 'Growth') !== false)
+    }
+    if (stripos($label, 'Growth') !== false) {
       return 'Growth';
-    return $default;
+    }
+
+    return $default !== '' ? $default : 'Default';
   }
 }
+
 if (!function_exists('mt_program_rules_url')) {
   function mt_program_rules_url($programOrLabel)
   {
-    $plan = mt_program_plan($programOrLabel, '');
-    $map = [];
-    if (class_exists('Label') && defined('Label::PLAN_RULES_URLS')) {
-      $map = Label::PLAN_RULES_URLS;
+    $plan = mt_program_plan($programOrLabel, 'Default');
+
+    if (!class_exists('Label') || !defined('Label::PLAN_RULES_URLS')) {
+      return '';
     }
-    return $map[$plan] ?? '';
+
+    $map = Label::PLAN_RULES_URLS;
+
+    if (!empty($map[$plan])) {
+      return $map[$plan];
+    }
+
+    return $map['Default'] ?? '';
   }
 }
+
 
 if (!function_exists('mt__get')) {
   function mt__get($arr, array $path, $default = null)
