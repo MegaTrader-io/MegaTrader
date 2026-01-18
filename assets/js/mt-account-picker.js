@@ -95,15 +95,17 @@
 
     function normalizeStatus(s) {
       var st = (s || "").toString().trim().toUpperCase();
+      st = st.replace(/[^A-Z0-9]+/g, "_").replace(/^_+|_+$/g, "");
       return st === "ACTIVATION_PENDING" ? "PENDING_ACTIVATION" : st;
     }
+
     function statusToBucket(st) {
       st = normalizeStatus(st);
       if (st === "ACTIVE" || st === "PENDING_ACTIVATION") return "ACTIVE";
       //if (st === "PENDING_ACTIVATION") return "PENDING_ACTIVATION";
       if (st === "PASSED" || st === "UPGRADED") return "PASSED";
       //if (st === "BREACHED" || st === "RESET") return "BREACHED";
-      if (st === "BREACHED") return "BREACHED";
+      if (st === "BREACHED" || st === "RESET") return "BREACHED";
       return "ACTIVE";
     }
 
@@ -168,7 +170,7 @@
         var match =
           (want === "ACTIVE" &&
             (st === "ACTIVE" || st === "PENDING_ACTIVATION")) ||
-          (want === "BREACHED" && st === "BREACHED") ||
+          (want === "BREACHED" && (st === "BREACHED" || st === "RESET")) ||
           (want === "PASSED" && (st === "PASSED" || st === "UPGRADED"));
 
         if (match) {
@@ -301,6 +303,25 @@
       }
       return false;
     }
+
+    document.addEventListener("mt:renderGridFromData", function () {
+      // Re-aplica filtro actual cuando el grid se re-renderiza
+      var bucket =
+        (filterSel && (filterSel.value || ""))
+          .toString()
+          .trim()
+          .toUpperCase() || "ACTIVE";
+
+      // Safety: si viene pending_activation, lo tratamos como ACTIVE
+      if (bucket === "PENDING_ACTIVATION") bucket = "ACTIVE";
+
+      setFilterUI(bucket);
+      applyFilter(bucket);
+
+      // Reintenta seleccionar el ID preferido si existe
+      var wantId = loadLastAccountId() || selectedId || CFG.currentId || null;
+      if (wantId) selectByIdAndSync(wantId);
+    });
 
     // ===== Cabecera + CTAs =====
     function titleCase(s) {
