@@ -52,6 +52,9 @@ class Label
         'Growth' => 'https://help.megatrader.io/en/articles/10753687-growth-plan-rules-risk-parameters',
         'Elite' => 'https://help.megatrader.io/en/articles/10753681-elite-plan-rules-risk-parameters',
         'Consistency' => 'https://help.megatrader.io/en/articles/10753780-consistency-rule-for-payouts',
+        'Zero' => 'https://help.megatrader.io/en/articles/10753681-zero-plan-rules-risk-parameters',
+        'Default' => 'https://help.megatrader.io/en/articles/10753737-trailing-max-drawdown-intraday-eod-differences',
+
     ];
 
 

@@ -114,7 +114,7 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
             $present = ['ACTIVE' => false, 'BREACHED' => false, 'PASSED' => false];
             foreach ($accounts as $row) {
               $st = strtoupper(trim((string) ($row['status'] ?? '')));
-              if ($st === 'ACTIVE')
+              if ($st === 'ACTIVE' || $st === 'PENDING_ACTIVATION')
                 $present['ACTIVE'] = true;
               if ($st === 'BREACHED' || $st === 'RESET')
                 $present['BREACHED'] = true;
@@ -145,6 +145,9 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
                   : ($present['PASSED'] ? 'PASSED' : 'ACTIVE'));
 
             }
+            if (!empty($present['ACTIVE'])) {
+              $curFilter = 'ACTIVE';
+            }
             $firstOpt = !empty($present[$curFilter]) ? $curFilter
               : ($present['ACTIVE'] ? 'ACTIVE'
               : ($present['BREACHED'] ? 'BREACHED'
@@ -164,7 +167,7 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
               <?php if ($present['PASSED']): ?>
                 <li><button type="button" class="dropdown-item py-2 mt-filter-option" data-value="PASSED">Passed</button>
                 </li>
-              <?php endif; ?>        
+              <?php endif; ?>
             </ul>
 
             <select id="mt-acc-filter" class="d-none" aria-hidden="true">
@@ -173,7 +176,7 @@ $badgeClass = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
               <?php if ($present['BREACHED']): ?>
                 <option value="BREACHED" <?php selected($firstOpt, 'BREACHED'); ?>>Breached</option><?php endif; ?>
               <?php if ($present['PASSED']): ?>
-                <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option><?php endif; ?>            
+                <option value="PASSED" <?php selected($firstOpt, 'PASSED'); ?>>Passed</option><?php endif; ?>
             </select>
           </div>
         </div>
@@ -240,7 +243,9 @@ wp_add_inline_script(
   var filterSel = document.getElementById('mt-acc-filter');
   var filterLbl = document.getElementById('mt-acc-filter-label');
   if (!filterSel || !filterLbl) return;
-  var val = filterSel.value || (filterSel.querySelector('option') && filterSel.querySelector('option').value) || 'ACTIVE';
+  var val = (filterSel.value || (filterSel.querySelector('option') && filterSel.querySelector('option').value) || 'ACTIVE');
+  val = String(val || 'ACTIVE').trim().toUpperCase();
+  if (val !== 'ACTIVE' && val !== 'BREACHED' && val !== 'PASSED') val = 'ACTIVE';
   //var map = {ACTIVE:'Active', BREACHED:'Breached', PASSED:'Passed', PENDING_ACTIVATION:'Pending activation'};
   var map = {ACTIVE:'Active', BREACHED:'Breached', PASSED:'Passed'};
   filterLbl.textContent = map[val] || 'Active';
