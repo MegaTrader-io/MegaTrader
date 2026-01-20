@@ -333,7 +333,7 @@ if (function_exists('WC') && WC()->session) {
                             <div class="mt-coupon-card mt-card h-auto">
                                 <?php wc_get_template('checkout/review-order.php'); ?>
                             </div>
-                            <?php if (function_exists('WC') && WC()->cart && !$mt_is_activation): ?>
+                            <?php if (function_exists('WC') && WC()->cart): ?>
                                 <?php $has_subscription = true;
                                 if (!WC()->cart->is_empty()) {
                                     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
