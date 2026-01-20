@@ -47,15 +47,17 @@ $instance = new MT_PRICESManager(
 );
 
 $marketType = $instance->marketTypes()->getFirst();
+$marketTypeSlug = $marketType['slug'];
 
 $accountTypes = $instance->accountTypesByMarketType($marketType['slug']);
 
-$accountType = $accountTypes[0];
+$accountType = $accountTypes[0] ?? null;
 
-$marketTypeSlug = $marketType['slug'];
-$accountTypeSlug = $accountTypes['slug'];
+$accountTypeSlug = $accountType['slug'];
 
-$accountSizes = $instance->accountSizesByAccountType($marketTypeSlug, $accountTypeSlug);
+$mt_product = $instance->productByMarketTypeAndAccountType($marketTypeSlug, $accountTypeSlug);
+$accountSizes = $instance->accountSizesByMarketTypeAndAccountType($marketTypeSlug, $accountTypeSlug);
+
 ?>
 
     <div class="container">
@@ -105,7 +107,6 @@ $accountSizes = $instance->accountSizesByAccountType($marketTypeSlug, $accountTy
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">2. Account Type</span>
                             </h2>
-
                             <div class="product-section__list product-section__list_grid">
                                 <?php foreach ($accountTypes as $key => $item): ?>
                                     <?php
@@ -148,6 +149,62 @@ $accountSizes = $instance->accountSizesByAccountType($marketTypeSlug, $accountTy
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">3. Account Size</span>
                             </h2>
+                            <div class="product-section__list product-section__list_grid">
+                                <?php foreach ($accountSizes as $key => $item): ?>
+                                    <?php
+                                    $input_id = 'account-size-' . $item['slug'];
+                                    $checked = $key == 0 ? 'checked' : '';
+                                    $slug = esc_attr($item['slug']);
+                                    $name = '$' . esc_html($item['slug']);
+                                    $doesNotHaveItems = $item['count'] == 0;
+                                    $description = esc_html($item['description']);
+                                    $thumbnail = esc_url($item['thumbnail_url']);
+
+                                    $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
+                                    $config = isset($parsed['config']) ? $parsed['config'] : [];
+                                    $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
+
+                                    $properties = [];
+                                    foreach (array_keys($mt_product['tree_map']) as $attr) {
+                                        $properties = count($properties) === 0 ? array_values($mt_product[$mt_product['slug']])[0] : array_values($properties)[0];
+                                    }
+
+                                    $frequency = $mt_product['tree_map']['billing-type'] == 'one-time' ? 'OT' : 'MO';
+
+                                    if (count($properties) == 0) continue;
+
+                                    $variation_id = -1;
+                                    $price = '0.00';
+                                    $meta_info = [];
+
+                                    foreach ($properties as $property) {
+                                        foreach ($property as $key => $value) {
+                                            match ($key) {
+                                                'id' => $variation_id = $value,
+                                                'price-monthly' => $price = (int)str_replace('$', '', $value),
+                                                'meta-info' => $meta_info = $value,
+                                                default => null
+                                            };
+                                        }
+                                    }
+                                    ?>
+                                    <input type="radio"
+                                           name="account-size" <?= $doesNotHaveItems ? 'disabled="disabled"' : '' ?>
+                                           value="<?= $slug ?>"
+                                           id="<?= $input_id ?>" <?= $checked ?> class="mt-circle-radio">
+                                    <div class="radio__label__wrapper">
+                                        <label class="mt-card mt-card-dark mt-card-radio" for="<?= $input_id ?>">
+                                            <div class="mt-card__header">
+                                                <i class="mt-card__radio"></i>
+                                            </div>
+                                            <div class="mt-card__title">
+                                                <span class="mt-card__title__text text-uppercase"><?= $name ?></span>
+                                                <div class="mt-dropdown__badge mt-card__badge mt-badge mt-badge-rounded mt-badge-gray"><?= mt_price_plain($price) . '/' . $frequency ?></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </section>
                         <section class="product-section">
                             <h2 class="product-section__header mb-3">

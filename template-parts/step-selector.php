@@ -84,21 +84,21 @@ $step = get_query_var('step');
             <div class="steps">
                 <b class="step-selector__step__indicator">1</b>
             </div>
-            <div class="steppersteps-title d-none d-md-block">Set up</div>
+            <div class="steppersteps-title d-none d-md-block">Select Plan</div>
         </div>
 		<div class="step-selector__separator"></div>
         <div class="step-selector__step step-future">
             <div class="steps2">
                 <b class="step-selector__step__indicator">2</b>
             </div>
-            <div class="step-selector__step__title d-none d-md-block">Review and Pay</div>
+            <div class="step-selector__step__title d-none d-md-block">Checkout</div>
         </div>
 		<div class="step-selector__separator"></div>
         <div class="step-selector__step step-future">
             <div class="steps2">
                 <b class="step-selector__step__indicator">3</b>
             </div>
-            <div class="step-selector__step__title d-none d-md-block">Finished</div>
+            <div class="step-selector__step__title d-none d-md-block">Confirmation</div>
         </div>
     </div>
 
