@@ -13,7 +13,7 @@ $auth_paths = [
         '/auth/lost-password/',
 ];
 
-$is_checkout_flow =
+$is_checkout_flow = is_page_template('page-subscriptions.php') ||
   function_exists('is_checkout') && is_checkout()
   || function_exists('is_order_received_page') && is_order_received_page();
 
