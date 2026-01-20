@@ -17,21 +17,21 @@ $products_data = get_products_with_attributes();
 $attributes = $products_data['attributes'] ?? [];
 $mt_products_raw = $products_data['products'] ?? [];
 
-$market_types = $mt_account_sizes = $platforms = [];
+$mtAccountTypes = $mtMarketTypes = $mtAccountSizes = $mtPlatforms = [];
 
 foreach ($attributes as $attr) {
     switch ($attr['taxonomy']) {
         case 'pa_market-type':
-            $market_types[] = $attr;
+            $mtMarketTypes[] = $attr;
             break;
         case 'pa_account-types':
-            $mt_account_types[] = $attr;
+            $mtAccountTypes[] = $attr;
             break;
         case 'pa_account-size':
-            $account_sizes[] = $attr;
+            $mtAccountSizes[] = $attr;
             break;
         case 'pa_platform':
-            $platforms[] = $attr;
+            $mtPlatforms[] = $attr;
             break;
     }
 }
@@ -39,24 +39,22 @@ foreach ($attributes as $attr) {
 require_once get_template_directory() . '/mt_prices_manager.php';
 
 $instance = new MT_PRICESManager(
-        products: $mt_products_raw,
-        marketTypes: $market_types,
-        accountTypes: $mt_account_types,
-        sizes: $account_sizes,
-        platforms: $platforms,
+        products: $mt_products_raw, marketTypes: $mtMarketTypes, accountTypes: $mtAccountTypes, sizes: $mtAccountSizes, platforms: $mtPlatforms,
 );
 
 $marketType = $instance->marketTypes()->getFirst();
 $marketTypeSlug = $marketType['slug'];
-
 $accountTypes = $instance->accountTypesByMarketType($marketType['slug']);
-
 $accountType = $accountTypes[0] ?? null;
-
 $accountTypeSlug = $accountType['slug'];
 
 $mt_product = $instance->productByMarketTypeAndAccountType($marketTypeSlug, $accountTypeSlug);
 $accountSizes = $instance->accountSizesByMarketTypeAndAccountType($marketTypeSlug, $accountTypeSlug);
+$platforms = $instance->platformsByMarketTypeAccountTypeAndSizes($marketTypeSlug, $accountTypeSlug);
+
+while (count($platforms) < 4) {
+    $platforms [] = ['id' => 'empty'];
+}
 
 ?>
 
@@ -72,7 +70,7 @@ $accountSizes = $instance->accountSizesByMarketTypeAndAccountType($marketTypeSlu
                             </h2>
 
                             <div class="product-section__list product-section__list_grid">
-                                <?php foreach ($market_types as $key => $item): ?>
+                                <?php foreach ($mtMarketTypes as $key => $item): ?>
                                     <?php
                                     $input_id = 'market-type-' . $item['slug'];
                                     $checked = $key == 0 ? 'checked' : '';
@@ -210,12 +208,51 @@ $accountSizes = $instance->accountSizesByMarketTypeAndAccountType($marketTypeSlu
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">4. Broker</span>
                             </h2>
+                            <div class="product-section__list product-section__list_grid">
+                                <?php foreach ($platforms as $key => $item): ?>
+                                    <?php if ($item['id'] == 'empty'): ?>
+                                        <div></div>
+                                        <?php continue; ?>
+                                    <?php endif; ?>
+                                    <?php
+                                    $input_id = 'platform-' . $item['slug'];
+                                    $checked = $key == 0 ? 'checked' : '';
+                                    $slug = esc_attr($item['slug']);
+                                    $name = esc_html($item['slug']);
+                                    $doesNotHaveItems = $item['count'] == 0;
+                                    $description = esc_html($item['description']);
+                                    $thumbnail = esc_url($item['thumbnail_url']);
+                                    ?>
+                                    <input type="radio"
+                                           name="platform" <?= $doesNotHaveItems ? 'disabled="disabled"' : '' ?>
+                                           value="<?= $slug ?>"
+                                           id="<?= $input_id ?>" <?= $checked ?> class="mt-circle-radio">
+                                    <div class="radio__label__wrapper">
+                                        <label class="mt-card mt-card-dark mt-card-radio" for="<?= $input_id ?>">
+                                            <div class="mt-card__header">
+                                                <i class="mt-card__radio"></i>
+                                            </div>
+                                            <div class="mt-card__title">
+                                                <span class="mt-card__title__text"><?= ucfirst($name) ?></span>
+                                                <?php if ($thumbnail): ?>
+                                                    <img class="mt-card__title__image" src="<?= $thumbnail; ?>"
+                                                         alt="Icon">
+                                                <?php endif; ?>
+                                            </div>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </section>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        window.MT_PRICING_DATA = <?= wp_json_encode($instance->toJSON()); ?>;
+    </script>
 
 <?php
 get_footer();

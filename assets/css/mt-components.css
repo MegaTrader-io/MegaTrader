@@ -2970,6 +2970,10 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     width: 100%;
 }
 
+.mt-checkout-first .product-section__list{
+    gap: 16px;
+}
+
 .mt-checkout-first > * + * {
     margin-top: 32px;
 }

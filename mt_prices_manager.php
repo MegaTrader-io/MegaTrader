@@ -87,6 +87,55 @@ class MT_ProductManager extends Items
             )
         );
     }
+
+    public function extractPlatformsFromProduct(array $product, array $accountSizes): array
+    {
+        $treeMap = $product['tree_map'] ?? [];
+
+        if (!isset($treeMap['platform'])) {
+            return [];
+        }
+
+        $indexAttribute = array_search('platform', array_keys($treeMap), true);
+
+        if ($indexAttribute === false) {
+            return [];
+        }
+
+        $productSlug = $product['slug'];
+        $variationData = $product[$productSlug] ?? [];
+
+        $platformsFound = [];
+
+        foreach ($accountSizes as $accountSize) {
+            $sizeSlug = $accountSize['slug'] ?? null;
+
+            if (!$sizeSlug || !isset($variationData[$sizeSlug])) {
+                continue;
+            }
+
+            $level = 1;
+            $properties = [];
+
+            while ($level <= $indexAttribute) {
+                $properties = empty($properties)
+                    ? array_values($variationData[$sizeSlug])[0]
+                    : array_values($properties)[0];
+
+                if ($indexAttribute - 1 === $level) {
+                    $platformSlug = array_key_first($properties);
+
+                    if ($platformSlug && !in_array($platformSlug, $platformsFound, true)) {
+                        $platformsFound[] = $platformSlug;
+                    }
+                }
+
+                $level++;
+            }
+        }
+
+        return $platformsFound;
+    }
 }
 
 /*
@@ -100,6 +149,10 @@ class MT_MarketTypeManager extends Items
 }
 
 class MT_AccountTypeManager extends Items
+{
+}
+
+class MT_PlatformManager extends Items
 {
 }
 
@@ -119,6 +172,7 @@ class MT_PRICESManager
     private MT_MarketTypeManager $marketTypes;
     private MT_AccountTypeManager $accountTypes;
     private MT_AccountSizeManager $accountSizes;
+    private MT_PlatformManager $platforms;
 
     public function __construct(
         array $products = [],
@@ -132,6 +186,7 @@ class MT_PRICESManager
         $this->marketTypes = new MT_MarketTypeManager($marketTypes);
         $this->accountTypes = new MT_AccountTypeManager($accountTypes);
         $this->accountSizes = new MT_AccountSizeManager($sizes);
+        $this->platforms = new MT_PlatformManager($platforms);
     }
 
     /*
@@ -197,5 +252,94 @@ class MT_PRICESManager
         return $this->accountSizes->filtered(
             fn($size) => in_array($size['slug'] ?? null, $allowedSizes, true)
         );
+    }
+
+    public function platformsByMarketTypeAccountTypeAndSizes(
+        string $marketTypeSlug,
+        string $accountTypeSlug
+    ): array
+    {
+        $product = $this->productByMarketTypeAndAccountType(
+            $marketTypeSlug,
+            $accountTypeSlug
+        );
+
+        if (!$product) {
+            return [];
+        }
+
+        $sizes = $this->accountSizesByMarketTypeAndAccountType(
+            $marketTypeSlug,
+            $accountTypeSlug
+        );
+
+        $platformsKeys = $this->products->extractPlatformsFromProduct($product, $sizes);
+
+        return $this->platforms->filtered(function ($platform) use ($platformsKeys) {
+            return in_array($platform['slug'], $platformsKeys, true);
+        });
+    }
+
+    public function toJSON(): array
+    {
+        $result = [];
+
+        foreach ($this->marketTypes->getList() as $marketType) {
+            $marketTypeSlug = $marketType['slug'] ?? null;
+
+            if (!$marketTypeSlug) {
+                continue;
+            }
+
+            $accountTypes = $this->accountTypesByMarketType($marketTypeSlug);
+
+            if (empty($accountTypes)) {
+                continue;
+            }
+
+            $accountTypeData = [];
+
+            foreach ($accountTypes as $accountType) {
+                $accountTypeSlug = $accountType['slug'] ?? null;
+
+                if (!$accountTypeSlug) {
+                    continue;
+                }
+
+                $sizes = $this->accountSizesByMarketTypeAndAccountType(
+                    $marketTypeSlug,
+                    $accountTypeSlug
+                );
+
+                if (empty($sizes)) {
+                    continue;
+                }
+
+                $accountTypeData[] = [
+                    'slug' => $accountType['slug'],
+                    'name' => $accountType['name'] ?? '',
+                    'sizes' => array_map(function ($size) {
+                        return [
+                            'slug' => $size['slug'],
+                            'name' => '$' . $size['slug'],
+                        ];
+                    }, $sizes),
+                ];
+            }
+
+            if (empty($accountTypeData)) {
+                continue;
+            }
+
+            $result[] = [
+                'slug' => $marketType['slug'],
+                'name' => $marketType['name'] ?? '',
+                'accountTypes' => $accountTypeData,
+            ];
+        }
+
+        return [
+            'marketTypes' => $result,
+        ];
     }
 }
