@@ -34,7 +34,8 @@ foreach ($attributes as $attr) {
     }
 }
 
-function render_account_sizes($account_sizes) {
+function render_account_sizes($account_sizes)
+{
     if (empty($account_sizes)) return;
 
     $is_active_assigned = false;
@@ -51,14 +52,14 @@ function render_account_sizes($account_sizes) {
         $radio_id = esc_attr('account-size-' . $slug);
 
         $checked_attr = '';
-        if( ! $is_disabled && ! $is_active_assigned){
+        if (!$is_disabled && !$is_active_assigned) {
             // $checked_attr = 'checked="true"';
             $is_active_assigned = true;
         }
         ?>
         <input type="radio" name="account-size" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>>
         <div class="radio__label__wrapper">
-            <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $disabled_class?>"
+            <label class="mt-card mt-card-dark mt-card-radio <?= $slug . $disabled_class ?>"
                    for="<?= $radio_id ?>"
                    data-value="<?= $slug ?>"
                    title="<?= $description ?>"
@@ -66,8 +67,8 @@ function render_account_sizes($account_sizes) {
                 <div class="mt-card__header">
                     <i class="mt-card__radio disabled-target"></i>
                     <?php if ($badge):
-                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+                        $badge_style_class = isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                        $badge_text = isset($badge['text']) ? $badge['text'] : '';
                         ?>
                         <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
                     <?php endif; ?>
@@ -91,7 +92,8 @@ function render_account_sizes($account_sizes) {
     }
 }
 
-function render_account_types($account_types) {
+function render_account_types($account_types)
+{
     if (empty($account_types)) return;
 
     foreach ($account_types as $index => $item) {
@@ -112,7 +114,7 @@ function render_account_types($account_types) {
         <li>
             <input type="radio" name="account-type" hidden value="<?= $slug ?>" id="<?= $radio_id ?>"/>
             <div class="radio__label__wrapper">
-                <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
+                <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class ?>"
                        for="<?= $radio_id ?>"
                        data-value="<?= $slug ?>"
                        title="<?= $description ?>"
@@ -120,8 +122,8 @@ function render_account_types($account_types) {
                     <div class="mt-card__header">
                         <i class="mt-card__radio disabled-target"></i>
                         <?php if ($badge):
-                            $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                            $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+                            $badge_style_class = isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                            $badge_text = isset($badge['text']) ? $badge['text'] : '';
                             ?>
                             <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
                         <?php endif; ?>
@@ -149,7 +151,8 @@ function render_account_types($account_types) {
     }
 }
 
-function render_platforms($platforms) {
+function render_platforms($platforms)
+{
     if (empty($platforms)) return;
 
     $is_active_assigned = false;
@@ -178,14 +181,14 @@ function render_platforms($platforms) {
         $radio_id = esc_attr('platform-' . $slug);
 
         $checked_attr = '';
-        if( ! $is_disabled && ! $is_active_assigned){
+        if (!$is_disabled && !$is_active_assigned) {
             // $checked_attr = 'checked="true"';
             $is_active_assigned = true;
         }
         ?>
         <input type="radio" name="platform" hidden value="<?= $slug ?>" id="<?= $radio_id ?>" <?= $checked_attr ?>/>
         <div class="radio__label__wrapper">
-            <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class?>"
+            <label class="mt-card mt-card-dark mt-card-md mt-card-radio <?= $slug . $disabled_class ?>"
                    for="<?= $radio_id ?>"
                    data-value="<?= $slug ?>"
                    title="<?= $description ?>"
@@ -193,8 +196,8 @@ function render_platforms($platforms) {
                 <div class="mt-card__header">
                     <i class="mt-card__radio disabled-target"></i>
                     <?php if ($badge):
-                        $badge_style_class =  isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
-                        $badge_text =  isset($badge['text']) ? $badge['text'] : '';
+                        $badge_style_class = isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
+                        $badge_text = isset($badge['text']) ? $badge['text'] : '';
                         ?>
                         <div class="mt-card__badge mt-badge <?= $badge_style_class ?>"><?= $badge_text ?></div>
                     <?php endif; ?>
@@ -222,10 +225,10 @@ function render_platforms($platforms) {
                             ?>
                             <a class="mt-card__links__item" href="<?= esc_attr($href); ?>">
                                 <div class="mt-badge mt-badge-md mt-badge-pill mt-badge-dark">
-                                    <?php if(isset($link['icon'])): ?>
+                                    <?php if (isset($link['icon'])): ?>
                                         <i class="mt-icon mt-icon_<?= esc_attr($link['icon']) ?>"></i>
                                     <?php endif; ?>
-                                    <?php if(isset($link['text'])): ?>
+                                    <?php if (isset($link['text'])): ?>
                                         <span class="mt-card__links__text"><?= esc_html($link['text']); ?></span>
                                     <?php endif; ?>
                                 </div>
@@ -242,7 +245,7 @@ function render_platforms($platforms) {
 ?>
 
 <form class="futures-form d-flex flex-column gap-32" id="futures-form">
-    <input type="hidden" name="market-type" value="futures" />
+    <input type="hidden" name="market-type" value="futures"/>
     <section class="product-section" id="account-size">
         <h2 class="product-section__header mb-3">
             <i class="mt-icon mt-icon_wallet mt-icon-md mt-icon-primary" aria-hidden="true"></i>
@@ -279,20 +282,20 @@ function render_platforms($platforms) {
     <?php if ($layoutType === LayoutType::MyAccount): ?>
         <?php
         $plan_includes_list = Label::FUTURES['plan_includes_list'];
-        if (!empty($plan_includes_list) && count($plan_includes_list) > 0): ?>
-            <section class="plan-includes">
-                <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
-                <ul class="plan-includes__list row list-reboot">
-                    <?php foreach ($plan_includes_list as $item) : ?>
-                        <li class="plan-includes-list__item col-12 col-md-6 py-2 d-flex align-items-center gap-2">
-                            <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0"
-                               aria-hidden="true"></i>
-                            <span><?= htmlspecialchars($item['text']); ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </section>
-        <?php endif; ?>
+    if (!empty($plan_includes_list) && count($plan_includes_list) > 0): ?>
+        <section class="plan-includes">
+            <h2 class="plan-includes__title mb-3"><?= Label::FUTURES['plan_includes_title']; ?></h2>
+            <ul class="plan-includes__list row list-reboot">
+                <?php foreach ($plan_includes_list as $item) : ?>
+                    <li class="plan-includes-list__item col-12 col-md-6 py-2 d-flex align-items-center gap-2">
+                        <i class="mt-icon mt-icon_<?= htmlspecialchars($item['icon']); ?> mt-icon-primary flex-shrink-0"
+                           aria-hidden="true"></i>
+                        <span><?= htmlspecialchars($item['text']); ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </section>
+    <?php endif; ?>
         <section class="futures-form__footer d-flex flex-column gap-32 pb-4 mb-n4 bg-1e1e1e">
             <hr class="m-0">
             <a class="mega-btn-md mega-btn-primary-md" id="proceed-to-checkout-btn"
@@ -356,14 +359,14 @@ function render_platforms($platforms) {
     };
 
     const REMEMBER_PREVIOUS_SELECTION = <?= $remember_previous_selection ? 'true' : 'false' ?>;
-    const CHECKOUT_URL = '<?= home_url( '/checkout/?add-to-cart=PRODUCT_ID' ) ?>';
-    const products = <?= wp_json_encode( $products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ); ?>;
+    const CHECKOUT_URL = '<?= home_url('/checkout/?add-to-cart=PRODUCT_ID') ?>';
+    const products = <?= wp_json_encode($products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
 
     function normalizeAttributes(data) {
         if (!data || !Array.isArray(data)) return {};
 
         return data.reduce((acc, item) => {
-            return { ...acc, ...item };
+            return {...acc, ...item};
         }, {});
     }
 
@@ -377,7 +380,7 @@ function render_platforms($platforms) {
         return data;
     }
 
-    function updateSelectedProduct(){
+    function updateSelectedProduct() {
         let values = getFormValues(form);
         const levelBillingType = products.find(product => product.slug === values['account-type'])?.[values['account-type']]?.[values['account-size']]?.[values['account-type']]?.[values['platform']]?.[values['market-type']] ?? [];
         const billingType = Object.keys(levelBillingType).at(0);
@@ -390,7 +393,10 @@ function render_platforms($platforms) {
         const checkoutBtn = document.getElementById('proceed-to-checkout-btn');
 
         const event = new CustomEvent("product:selected", {
-            detail: { product: Object.values(selectedProduct).length > 0 ? {...selectedProduct, billingType}: null, values }
+            detail: {
+                product: Object.values(selectedProduct).length > 0 ? {...selectedProduct, billingType} : null,
+                values
+            }
         });
 
         form.dispatchEvent(event);
@@ -443,7 +449,6 @@ function render_platforms($platforms) {
                 }
             }
 
-
             updateSelectedProduct();
 
             const btnCheckout = document.getElementById('proceed-to-checkout-btn');
@@ -471,7 +476,7 @@ function render_platforms($platforms) {
                     }
                 });
             },
-            { threshold: 0.9 } // adjust sensitivity
+            {threshold: 0.9} // adjust sensitivity
         );
         observer.observe(stickyFooter);
     }

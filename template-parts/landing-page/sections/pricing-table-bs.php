@@ -455,7 +455,7 @@ HTML;
                     <div class="competition__perks">
                         <div class="competition__perk">
                             <img class="payouts-and-comparison__checked"
-                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                  alt="checked circle">
 
                             <span class="competition__perk-text">
@@ -464,7 +464,7 @@ HTML;
                         </div>
                         <div class="competition__perk">
                             <img class="payouts-and-comparison__checked"
-                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                  alt="checked circle">
 
                             <span class="competition__perk-text">
@@ -1366,16 +1366,14 @@ HTML;
             let html = '';
 
             for (const priceSize in products) {
-                const planExample = {
+                html += createPriceTablePlan({
                     size: priceSize,
                     isMostPopular: false,
                     hasCoupon: false,
                     price: '',
                     frequencyText: '',
                     metaInfo: [],
-                };
-
-                html += createPriceTablePlan(planExample);
+                });
             }
 
             return html;
