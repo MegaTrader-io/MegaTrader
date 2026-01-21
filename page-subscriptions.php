@@ -43,20 +43,25 @@ $instance = new MT_PRICESManager(
         products: $mt_products_raw, marketTypes: $mtMarketTypes, accountTypes: $mtAccountTypes, sizes: $mtAccountSizes, platforms: $mtPlatforms,
 );
 
-$marketType = $instance->marketTypes()->getFirst();
-$marketTypeSlug = $marketType['slug'];
+$marketTypes = $instance->marketTypes()->filtered(function ($marketType) {
+    return $marketType['count'] > 0;
+});
+
+$marketType = $marketTypes[0] ?? null;
+$marketTypeSlug = $marketType['slug'] ?? null;
 $accountTypes = $instance->accountTypesByMarketType($marketType['slug']);
+
 $accountType = $accountTypes[0] ?? null;
-$accountTypeSlug = $accountType['slug'];
+$accountTypeSlug = $accountType['slug'] ?? '';
 
 $mt_product = $instance->productByMarketTypeAndAccountType($marketTypeSlug, $accountTypeSlug);
+
 $accountSizes = $instance->accountSizesByMarketTypeAndAccountType($marketTypeSlug, $accountTypeSlug);
 $platforms = $instance->platformsByMarketTypeAccountTypeAndSizes($marketTypeSlug, $accountTypeSlug);
 
 while (count($platforms) < 4) {
     $platforms [] = ['id' => 'empty'];
 }
-
 
 $metaInfo = [
         [
@@ -105,10 +110,19 @@ $metaInfo = [
                             </h2>
 
                             <div class="product-section__list product-section__list_grid">
+                                <?php
+                                $selected = false;
+                                $checked = '';
+                                ?>
                                 <?php foreach ($mtMarketTypes as $key => $item): ?>
                                     <?php
                                     $input_id = 'market-type-' . $item['slug'];
-                                    $checked = $key == 0 ? 'checked' : '';
+                                    $checked = '';
+                                    if (!$selected && $item['count'] > 0) {
+                                        $checked = 'checked';
+                                        $selected = true;
+                                    }
+
                                     $slug = esc_attr($item['slug']);
                                     $name = esc_html($item['name']);
                                     $doesNotHaveItems = $item['count'] == 0;
@@ -136,7 +150,7 @@ $metaInfo = [
                                 <?php endforeach; ?>
                             </div>
                         </section>
-                        <section class="product-section">
+                        <section id="market-type-section" class="product-section">
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">2. Account Type</span>
                             </h2>
@@ -178,7 +192,7 @@ $metaInfo = [
                                 <?php endforeach; ?>
                             </div>
                         </section>
-                        <section class="product-section">
+                        <section id="account-type-section" class="product-section">
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">3. Account Size</span>
                             </h2>
@@ -239,7 +253,7 @@ $metaInfo = [
                                 <?php endforeach; ?>
                             </div>
                         </section>
-                        <section class="product-section">
+                        <section id="account-size-section" class="product-section">
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">4. Broker</span>
                             </h2>
@@ -279,7 +293,7 @@ $metaInfo = [
                                 <?php endforeach; ?>
                             </div>
                         </section>
-                        <section class="plan-card">
+                        <section id="plan-detail-section" class="plan-card">
                             <div class="mt-card plan-card__container">
                                 <div class="mt-card__header plan-card__header">
                                     <div class="plan-card__title-group">
@@ -385,9 +399,12 @@ $metaInfo = [
 
         const REMEMBER_PREVIOUS_SELECTION = true;
         const CHECKOUT_URL = '<?= home_url('/checkout/?add-to-cart=PRODUCT_ID') ?>';
-        const products = <?= wp_json_encode($products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>;
-        MT_PRICING_DATA = <?= wp_json_encode($instance->toJSON()); ?>;
         const MG_GLOBAL = {
+            products: <?= wp_json_encode($products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>,
+            accountTypes: <?= wp_json_encode($instance->accountTypes()->getList(), JSON_PRETTY_PRINT) ?>,
+            accountSizes: <?= wp_json_encode($instance->accountSizes()->getList(), JSON_PRETTY_PRINT) ?>,
+            platforms: <?= wp_json_encode($instance->platforms()->getList(), JSON_PRETTY_PRINT) ?>,
+            pricingData: <?= wp_json_encode($instance->toJSON()); ?>,
             productMetaLabel: <?= wp_json_encode(Label::PRODUCT_META); ?>
         };
 
@@ -439,36 +456,210 @@ $metaInfo = [
         }
 
         function getProduct({accountType, marketType}) {
-            let productSelected = products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
+            let productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
             if (!productSelected) {
-                productSelected = products.find(product => product.tree_map['market-type'] === marketType);
+                productSelected = MG_GLOBAL.products.find(product => product.tree_map['market-type'] === marketType);
             }
 
             let productPlatformDetail = productSelected[productSelected.slug];
             return {productSelected, productPlatformDetail};
         }
 
-        function updateSelectedProduct() {
+        async function handleFormChanges() {
             let values = getFormValues(form);
             const marketType = values['market-type'];
             const accountType = values['account-type'];
 
             const {productSelected, productPlatformDetail} = getProduct({accountType, marketType});
-
-            const metaInfoList = getDefaultMetaInfo(productSelected, productPlatformDetail);
-
-            console.info('values', {productSelected, productPlatformDetail, metaInfoList});
         }
 
-        form.addEventListener("change", updateSelectedProduct);
-
-        function renderCheckoutOptions(planDetail) {
-            console.info('planDetail', planDetail);
+        function renderOptions({productSelected, productPlatformDetail}) {
         }
+
+        function parseAttributeMeta(input = []) {
+            const result = {
+                data: [],
+                config: {}
+            };
+
+            if (!Array.isArray(input)) {
+                console.warn('[parseAttributeMeta] input must be an array');
+                return result;
+            }
+
+            input.forEach(rawItem => {
+                if (typeof rawItem !== 'string') return;
+
+                const item = rawItem.trim();
+
+                // Config entry (starts with @)
+                if (item.startsWith('@')) {
+                    const match = item.match(/^@([a-zA-Z0-9_-]+)\s*(.*)$/);
+                    if (!match) return;
+
+                    const key = match[1];
+                    let payload = match[2]?.trim() ?? '';
+
+                    // Normalize smart quotes (same as PHP)
+                    payload = payload.replace(/[“”]/g, '"');
+
+                    let value = payload;
+
+                    if (payload !== '') {
+                        try {
+                            value = JSON.parse(payload);
+                        } catch (error) {
+                            console.error(
+                                `[parseAttributeMeta] JSON decode error "${error.message}" on payload:`,
+                                payload
+                            );
+                        }
+                    }
+
+                    result.config[key] = value;
+                }
+                // Plain data entry
+                else {
+                    result.data.push(item);
+                }
+            });
+
+            return result;
+        }
+
+
+        function buildBadge({
+                                text = '',
+                                style = 'light'
+                            }) {
+            if (!text) return '';
+
+            const styleClass = style
+                ? `mt-badge-${style}`
+                : 'mt-badge-light';
+
+            return `
+<div class="mt-dropdown__badge mt-card__badge mt-badge mt-badge-rounded-sm ${styleClass}">
+    ${text}
+</div>
+`.trim();
+        }
+
+        function buildRadioButton({
+                                      isDisabled = false,
+                                      id,
+                                      name,
+                                      value,
+                                      title,
+                                      checked = false,
+                                      rightElementHTML = ''
+                                  }) {
+            if (!id || !name) {
+                console.warn('buildRadioButton: id and name are required');
+                return '';
+            }
+
+            const checkedAttr = checked ? 'checked="checked"' : '';
+            const disabledAttr = isDisabled ? 'disabled="disabled"' : '';
+
+            return `
+<input
+    type="radio"
+    name="${name}"
+    value="${value ?? ''}"
+    id="${id}"
+    ${checkedAttr}
+    ${disabledAttr}
+    class="mt-circle-radio"
+/>
+<div class="radio__label__wrapper">
+    <label class="mt-card mt-card-dark mt-card-radio" for="${id}">
+        <div class="mt-card__header">
+            <i class="mt-card__radio"></i>
+        </div>
+        <div class="mt-card__title">
+            <span class="mt-card__title__text">${title ?? ''}</span>
+            ${rightElementHTML || ''}
+        </div>
+    </label>
+</div>
+`.trim();
+        }
+
+        function renderAccountTypes({marketType}) {
+            const marketTypeData = MG_GLOBAL.pricingData.marketTypes.find(mt => mt.slug == marketType);
+
+            const container = document.querySelector('#market-type-section .product-section__list');
+
+            let fragmentHTML = '';
+            marketTypeData.accountTypes
+                .forEach(({name, slug: slugAccountType}, index) => {
+                    const data = MG_GLOBAL.accountTypes.find(at => at.slug == slugAccountType) || {slug: '', name: ''};
+                    if (!data.slug) {
+                        return;
+                    }
+
+                    const checked = index == 0;
+                    const parsed = parseAttributeMeta(data.attribute_meta ?? []);
+                    const config = parsed?.config ?? {};
+                    const badge = config?.badge ?? {};
+
+                    let badgeHTML;
+
+                    if (badge) {
+                        badgeHTML = buildBadge({
+                            text: badge?.text,
+                            style: badge?.style
+                        });
+                    }
+
+                    fragmentHTML += buildRadioButton({
+                        id: `account-type-${data.slug}`,
+                        name: 'account-type',
+                        value: slugAccountType,
+                        title: name,
+                        checked: checked,
+                        rightElementHTML: badgeHTML
+                    });
+                });
+
+            container.innerHTML = fragmentHTML;
+        }
+
+        function renderAccountSizes() {
+            const marketType = document.querySelector('[name="market-type"]:checked').value;
+            const accountType = document.querySelector('[name="account-type"]:checked').value;
+            const {productSelected, productPlatformDetail} = getProduct({marketType, accountType});
+
+            for (const priceSize in productPlatformDetail) {
+                console.info(productSelected)
+            }
+
+        }
+
+        function renderBrokers() {
+
+        }
+
+        function renderPlanDetail() {
+
+        }
+
+        form.addEventListener("change", handleFormChanges);
+
+        form.querySelectorAll('[name="market-type"]').forEach(element => {
+            element.addEventListener("change", function (e) {
+                const marketType = e.currentTarget.value;
+                const {productSelected, productPlatformDetail} = getProduct({marketType});
+
+                renderAccountTypes({marketType});
+                renderAccountSizes({productSelected, productPlatformDetail});
+            });
+        })
 
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
-                updateSelectedProduct();
+                handleFormChanges();
             }, 0);
         });
     </script>

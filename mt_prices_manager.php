@@ -232,6 +232,21 @@ class MT_PRICESManager
         });
     }
 
+    public function accountTypes(): MT_AccountTypeManager
+    {
+        return $this->accountTypes;
+    }
+
+    public function platforms(): MT_PlatformManager
+    {
+        return $this->platforms;
+    }
+
+    public function accountSizes(): MT_AccountSizeManager
+    {
+        return $this->accountSizes;
+    }
+
     public function accountSizesByMarketTypeAndAccountType(
         string $marketTypeSlug,
         string $accountTypeSlug
