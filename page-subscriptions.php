@@ -301,7 +301,7 @@ $metaInfo = [
                                         <div class="plan-card__subtitle">on MegaTraderX</div>
                                     </div>
                                     <div class="plan-card__pricing-group">
-                                        <div class="mt-card__badge mt-badge mt-badge-rounded mt-badge-secondary">
+                                        <div class="plan-card__coupon mt-card__badge mt-badge mt-badge-rounded mt-badge-secondary">
                                             SAVE $42 WITH CODE DEC
                                         </div>
                                         <div class="plan-card__pricing">
@@ -312,8 +312,8 @@ $metaInfo = [
                                     </div>
                                 </div>
                                 <div class="mt-card__body plan-card__body">
+                                    <div class="plan-card__rules-header">Funded Rules</div>
                                     <div class="plan-card__rules">
-                                        <div class="plan-card__rules-header">Funded Rules</div>
                                         <?php foreach ($metaInfo as $key => $metaInfoRow): ?>
                                             <div class="plan-card__rule">
                                                 <div class="plan-card__rule-label">
@@ -392,6 +392,8 @@ $metaInfo = [
     </div>
 
     <script>
+        window.mtCache = {};
+
         const TREE_MAP_KEYS = Object.freeze({
             ACCOUNT_SIZE: 'account-size',
             ACCOUNT_TYPES: 'account-types',
@@ -404,10 +406,9 @@ $metaInfo = [
         window[PAGE_KEY] = {
             screenLoaded: false
         };
-
         const REMEMBER_PREVIOUS_SELECTION = true;
-        const CHECKOUT_URL = '<?= home_url('/checkout/?add-to-cart=PRODUCT_ID') ?>';
         const MG_GLOBAL = {
+            CHECKOUT_URL: '<?= home_url('/checkout/?add-to-cart=PRODUCT_ID') ?>',
             products: <?= wp_json_encode($products_data['products'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES); ?>,
             accountTypes: <?= wp_json_encode($instance->accountTypes()->getList(), JSON_PRETTY_PRINT) ?>,
             accountSizes: <?= wp_json_encode($instance->accountSizes()->getList(), JSON_PRETTY_PRINT) ?>,
@@ -455,15 +456,30 @@ $metaInfo = [
             return metaInfoList;
         }
 
-        function getFormValues(formEl) {
-            const data = {};
-            const formData = new FormData(formEl);
+        function buildProductUrl(productId) {
+            const CHECKOUT_URL = MG_GLOBAL.CHECKOUT_URL;
+            let checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', productId);
 
-            for (const [key, value] of formData.entries()) {
-                data[key] = value;
+            const couponElement = document.querySelector('.plan-card__coupon');
+            const coupon = couponElement?.dataset?.coupon || '';
+
+            if (coupon) {
+                checkoutUrl = checkoutUrl + '&coupon=' + coupon;
             }
-            return data;
+
+            return checkoutUrl;
         }
+
+        async function fetchCouponInBatch(productIds) {
+            const URL = `/wp-json/custom/v1/best-coupon-in-batch?ids=${productIds}`;
+            if (!mtCache[URL]) {
+                const responseCoupons = await fetch(URL);
+                mtCache[URL] = await responseCoupons.json();
+            }
+
+            return mtCache[URL];
+        }
+
 
         function getProduct({accountType, marketType}) {
             let productSelected = MG_GLOBAL.products.find(product => product.tree_map[TREE_MAP_KEYS.ACCOUNT_TYPES] === accountType && product.tree_map[TREE_MAP_KEYS.MARKET_TYPE] === marketType);
@@ -473,17 +489,6 @@ $metaInfo = [
 
             let productPlatformDetail = productSelected[productSelected.slug];
             return {productSelected, productPlatformDetail};
-        }
-
-        async function handleFormChanges() {
-            let values = getFormValues(form);
-            const marketType = values['market-type'];
-            const accountType = values['account-type'];
-
-            const {productSelected, productPlatformDetail} = getProduct({accountType, marketType});
-        }
-
-        function renderOptions({productSelected, productPlatformDetail}) {
         }
 
         function parseAttributeMeta(input = []) {
@@ -527,9 +532,7 @@ $metaInfo = [
                     }
 
                     result.config[key] = value;
-                }
-                // Plain data entry
-                else {
+                } else {
                     result.data.push(item);
                 }
             });
@@ -640,7 +643,8 @@ $metaInfo = [
             }
         }
 
-        function renderAccountTypes({marketType}) {
+        function renderAccountTypes() {
+            const marketType = document.querySelector('[name="market-type"]:checked').value;
             const marketTypeData = MG_GLOBAL.pricingData.marketTypes.find(mt => mt.slug === marketType);
 
             const container = document.querySelector('#account-type-section .product-section__list');
@@ -705,7 +709,7 @@ $metaInfo = [
                     return;
                 }
 
-                const {priceObject, productId} = getPriceObject(sizeSlug);
+                const {priceObject} = getPriceObject(sizeSlug);
                 const billingType = findValueByTreeData(sizeSlug, TREE_MAP_KEYS.BILLING_TYPE);
 
                 let checked = false;
@@ -796,18 +800,141 @@ $metaInfo = [
             container.innerHTML = fragmentHTML;
         }
 
-        function renderPlanDetail() {
-
+        function addRule({label, value}) {
+            return `
+<div class="plan-card__rule">
+    <div class="plan-card__rule-label">
+        <div class="plan-card__label-wrapper">
+            ${label}
+        </div>
+    </div>
+    <div class="plan-card__rule-value">${value}</div>
+</div>
+            `;
         }
 
-        form.addEventListener("change", handleFormChanges);
+        async function renderPlanDetail() {
+            const marketType = document.querySelector('[name="market-type"]:checked').value;
+            const accountType = document.querySelector('[name="account-type"]:checked').value;
+            const accountSize = document.querySelector('[name="account-size"]:checked').value;
+            const platform = document.querySelector('[name="platform"]:checked')?.value || '';
+
+            const {productSelected, productPlatformDetail} = getProduct({accountType, marketType});
+
+            const {getPriceObject, findValueByTreeData} = prepareHelperFunctions(
+                productSelected,
+                productPlatformDetail
+            );
+
+            const {priceObject, productId} = getPriceObject(accountSize);
+            const billingType = findValueByTreeData(accountSize, TREE_MAP_KEYS.BILLING_TYPE);
+
+            let price = formatNumber(priceObject);
+
+            let frequency = billingType === 'monthly' ? 'per month' : 'one time fee';
+            const accountTypeName = MG_GLOBAL.accountTypes.find((item) => item.slug === accountType)?.name || ''
+            const platformName = MG_GLOBAL.platforms.find(p => p.slug === platform)?.name || ''
+
+            const container = document.querySelector('#plan-detail-section .mt-card');
+
+            const planTitle = `${accountTypeName} ${accountSize.toUpperCase()}`;
+
+            container.querySelector('.plan-card__title').innerText = planTitle;
+            container.querySelector('.plan-card__subtitle').innerText = `on ${platformName}`
+
+            const metaInfoList = getDefaultMetaInfo(productSelected, productPlatformDetail);
+
+            let attributes = null;
+            Object.keys(productSelected?.tree_map || []).forEach(_ => {
+                attributes = !attributes ? productPlatformDetail[accountSize] : Object.values(attributes).at(0);
+            });
+
+            const metaInfoObject = attributes.find(item => item['meta-info']);
+            if (metaInfoObject) {
+                const metaInfoContext = metaInfoObject['meta-info'];
+                let html = '';
+                metaInfoList.forEach(metaInfo => {
+                    html += addRule({
+                        label: metaInfo.label,
+                        value: metaInfoContext[metaInfo.key]
+                    })
+                });
+
+                container.querySelector('.plan-card__rules').innerHTML = html;
+            }
+
+            container.querySelector('.plan-card__coupon').style.display = 'none';
+            container.querySelector('.plan-card__old-price').style.display = 'none';
+            container.querySelector('.plan-card__new-price').innerText = price;
+            container.querySelector('.plan-card__period').innerHTML = `per ${frequency}`;
+
+
+            // fetchCouponInBatch([productId]).then(({data: coupons}) => {
+            //     const coupon = coupons[productId] || null;
+            //     if (coupon.valid) {
+            //         container.querySelector('.plan-card__coupon').dataset.coupon = coupon.coupon.toUpperCase();
+            //         container.querySelector('.plan-card__coupon').innerText = `SAVE ${formatNumber(coupon.discount_total)} WITH CODE ${coupon.coupon}`.toUpperCase();
+            //         container.querySelector('.plan-card__coupon').style.display = 'block';
+            //         container.querySelector('.plan-card__old-price').style.display = 'block';
+            //
+            //         container.querySelector('.plan-card__old-price').innerText = price;
+            //         container.querySelector('.plan-card__new-price').innerText = formatNumber(coupon.final_total);
+            //     }
+            // })
+
+            const {data: coupons} = await fetchCouponInBatch([productId]);
+            const coupon = coupons[productId] || null;
+            if (coupon.valid) {
+                container.querySelector('.plan-card__coupon').dataset.coupon = coupon.coupon.toUpperCase();
+                container.querySelector('.plan-card__coupon').innerText = `SAVE ${formatNumber(coupon.discount_total)} WITH CODE ${coupon.coupon}`.toUpperCase();
+                container.querySelector('.plan-card__coupon').style.display = 'block';
+                container.querySelector('.plan-card__old-price').style.display = 'block';
+
+                container.querySelector('.plan-card__old-price').innerText = price;
+                container.querySelector('.plan-card__new-price').innerText = formatNumber(coupon.final_total);
+            }
+
+            const link = container.querySelector('.proceed-to-checkout-btn');
+            link.href = buildProductUrl(productId);
+            link.innerText = `CONTINUE WITH ${planTitle}`;
+        }
+
+        async function initialize() {
+            renderAccountTypes();
+            renderAccountSizes();
+            renderBrokers();
+            await renderPlanDetail();
+
+            const saved = localStorage.getItem(PAGE_KEY);
+
+            if (saved) {
+                const values = JSON.parse(saved);
+
+                const marketType = values['market-type'];
+                const accountType = values['account-type'];
+                const accountSize = values['account-size'];
+                const platform = values['platform'];
+
+                document.querySelector(`[name="market-type"][value="${marketType}"]`).checked = true;
+                renderAccountTypes();
+
+                document.querySelector(`[name="account-type"][value="${accountType}"]`).checked = true;
+                renderAccountSizes();
+
+                document.querySelector(`[name="account-size"][value="${accountSize}"]`).checked = true;
+                renderBrokers();
+
+                document.querySelector(`[name="platform"][value=${platform}]`).checked = true;
+
+                void renderPlanDetail();
+
+                localStorage.removeItem(PAGE_KEY);
+            }
+        }
 
         form.querySelectorAll('[name="market-type"]').forEach(element => {
-            element.addEventListener("change", function (e) {
-                const marketType = e.currentTarget.value;
-                renderAccountTypes({marketType});
-                renderAccountSizes();
-                renderBrokers();
+            element.addEventListener("change", function () {
+                initialize();
             });
         })
 
@@ -821,17 +948,31 @@ $metaInfo = [
             if (inputName === 'account-type') {
                 renderAccountSizes();
                 renderBrokers();
+                renderPlanDetail();
             } else if (inputName === 'account-size') {
                 renderBrokers();
+                renderPlanDetail();
             }
         });
 
+        document.querySelector('.proceed-to-checkout-btn')
+            .addEventListener('click', function () {
+                const marketType = document.querySelector(`[name="market-type"]:checked`).value;
+                const accountType = document.querySelector(`[name="account-type"]:checked`).value;
+                const accountSize = document.querySelector(`[name="account-size"]:checked`).value;
+                const platform = document.querySelector(`[name="platform"]:checked`).value;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
-                handleFormChanges();
-            }, 0);
-        });
+                const values = {
+                    'market-type': marketType || null,
+                    'account-type': accountType || null,
+                    'account-size': accountSize || null,
+                    'platform': platform || null
+                };
+
+                localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+            });
+
+        initialize();
     </script>
 <?php
 get_footer();
