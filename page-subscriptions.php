@@ -868,20 +868,6 @@ $metaInfo = [
             container.querySelector('.plan-card__new-price').innerText = price;
             container.querySelector('.plan-card__period').innerHTML = `per ${frequency}`;
 
-
-            // fetchCouponInBatch([productId]).then(({data: coupons}) => {
-            //     const coupon = coupons[productId] || null;
-            //     if (coupon.valid) {
-            //         container.querySelector('.plan-card__coupon').dataset.coupon = coupon.coupon.toUpperCase();
-            //         container.querySelector('.plan-card__coupon').innerText = `SAVE ${formatNumber(coupon.discount_total)} WITH CODE ${coupon.coupon}`.toUpperCase();
-            //         container.querySelector('.plan-card__coupon').style.display = 'block';
-            //         container.querySelector('.plan-card__old-price').style.display = 'block';
-            //
-            //         container.querySelector('.plan-card__old-price').innerText = price;
-            //         container.querySelector('.plan-card__new-price').innerText = formatNumber(coupon.final_total);
-            //     }
-            // })
-
             const {data: coupons} = await fetchCouponInBatch([productId]);
             const coupon = coupons[productId] || null;
             if (coupon.valid) {
