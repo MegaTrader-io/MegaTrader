@@ -426,6 +426,8 @@ $metaInfo = [
             }, {});
         }
 
+        const firstCharUpper = str => str && str[0].toUpperCase() + str.slice(1);
+
         function getDefaultMetaInfo(productSelected, productPlatformDetail) {
             const defaultMetaInfo = {}
             for (const priceSize in productPlatformDetail) {
@@ -700,7 +702,6 @@ $metaInfo = [
                 const treeData = productPlatformDetail[sizeSlug];
 
                 if (!treeData) {
-                    console.warn('sizeSlug', sizeSlug)
                     return;
                 }
 
@@ -735,7 +736,64 @@ $metaInfo = [
         }
 
         function renderBrokers() {
+            const marketType = document.querySelector('[name="market-type"]:checked').value;
+            const accountType = document.querySelector('[name="account-type"]:checked').value;
+            const accountSize = document.querySelector('[name="account-size"]:checked').value;
 
+            const {productSelected, productPlatformDetail} = getProduct({marketType, accountType});
+
+            const container = document.querySelector('#account-platform-section .product-section__list');
+
+            const {findValueByTreeData} = prepareHelperFunctions(
+                productSelected,
+                productPlatformDetail
+            );
+
+            let fragmentHTML = '';
+
+            let platformsFound = [];
+            for (let priceSize in productPlatformDetail) {
+                let platform = findValueByTreeData(priceSize, TREE_MAP_KEYS.PLATFORM);
+
+                if (!platformsFound.includes(platform)) {
+                    platformsFound.push(platform);
+                }
+            }
+
+            let platforms = [...MG_GLOBAL.platforms.filter(p => platformsFound.includes(p.slug))];
+
+            if (platforms.length < 4) {
+                Array(4 - platforms.length).fill('').forEach(() => {
+                    platforms.push({slug: ''});
+                })
+            }
+
+            let platformSelection = findValueByTreeData(accountSize, TREE_MAP_KEYS.PLATFORM);
+
+            platforms.forEach((platform) => {
+                if (!platform.slug) {
+                    fragmentHTML += `<div></div>`;
+                    return;
+                }
+
+                let icon = '';
+
+                if (platform.thumbnail_url) {
+                    icon = `<img class="mt-card__title__image" src="${platform.thumbnail_url}" alt="Icon">`;
+                }
+
+                fragmentHTML += buildRadioButton({
+                    id: `platform-${platform.slug}`,
+                    name: 'platform',
+                    value: platform.slug,
+                    isDisabled: platformSelection !== platform.slug,
+                    title: firstCharUpper(platform.slug),
+                    checked: platformSelection === platform.slug,
+                    rightElementHTML: icon
+                });
+            });
+
+            container.innerHTML = fragmentHTML;
         }
 
         function renderPlanDetail() {
@@ -747,10 +805,9 @@ $metaInfo = [
         form.querySelectorAll('[name="market-type"]').forEach(element => {
             element.addEventListener("change", function (e) {
                 const marketType = e.currentTarget.value;
-                const {productSelected, productPlatformDetail} = getProduct({marketType});
-
                 renderAccountTypes({marketType});
-                renderAccountSizes({productSelected, productPlatformDetail});
+                renderAccountSizes();
+                renderBrokers();
             });
         })
 
@@ -761,14 +818,11 @@ $metaInfo = [
             }
 
             const inputName = e.target.name;
-            const inputValue = e.target.value;
             if (inputName === 'account-type') {
-                const marketType = document.querySelector('[name="market-type"]:checked').value;
-                const {productSelected, productPlatformDetail} = getProduct({marketType, accountType: inputValue});
-
-                renderAccountSizes({productSelected, productPlatformDetail});
+                renderAccountSizes();
+                renderBrokers();
             } else if (inputName === 'account-size') {
-
+                renderBrokers();
             }
         });
 
