@@ -117,29 +117,30 @@ $metaInfo = [
                                 <?php foreach ($mtMarketTypes as $key => $item): ?>
                                     <?php
                                     $input_id = 'market-type-' . $item['slug'];
+                                    $slug = esc_attr($item['slug']);
+                                    $name = esc_html($item['name']);
+                                    $isDisabled = $item['count'] == 0;
+                                    $description = esc_html($item['description']);
+                                    $thumbnail = esc_url($item['thumbnail_url']);
+
                                     $checked = '';
                                     if (!$selected && $item['count'] > 0) {
                                         $checked = 'checked';
                                         $selected = true;
                                     }
 
-                                    $slug = esc_attr($item['slug']);
-                                    $name = esc_html($item['name']);
-                                    $doesNotHaveItems = $item['count'] == 0;
-                                    $description = esc_html($item['description']);
-                                    $thumbnail = esc_url($item['thumbnail_url']);
                                     ?>
                                     <input type="radio"
-                                           name="market-type" <?= $doesNotHaveItems ? 'disabled="disabled"' : '' ?>
+                                           name="market-type" <?= $isDisabled ? 'disabled="disabled"' : '' ?>
                                            value="<?= $slug ?>"
                                            id="<?= $input_id ?>" <?= $checked ?> class="mt-circle-radio">
                                     <div class="radio__label__wrapper">
                                         <label class="mt-card mt-card-dark mt-card-radio" for="<?= $input_id ?>">
-                                            <div class="mt-card__header">
-                                                <i class="mt-card__radio"></i>
-                                            </div>
-                                            <div class="mt-card__title">
-                                                <span class="mt-card__title__text"><?= $name ?></span>
+                                            <div class="mt-card__header w-100">
+                                                <div class="mt-card__title">
+                                                    <i class="mt-card__radio"></i>
+                                                    <span class="mt-card__title__text"><?= $name ?></span>
+                                                </div>
                                                 <?php if ($thumbnail): ?>
                                                     <img class="mt-card__title__image" src="<?= $thumbnail; ?>"
                                                          alt="Icon">
@@ -158,33 +159,35 @@ $metaInfo = [
                                 <?php foreach ($accountTypes as $key => $item): ?>
                                     <?php
                                     $input_id = 'account-type-' . $item['slug'];
-                                    $checked = $key == 0 ? 'checked' : '';
                                     $slug = esc_attr($item['slug']);
                                     $name = esc_html($item['name']);
-                                    $doesNotHaveItems = $item['count'] == 0;
+                                    $isDisabled = $item['count'] == 0;
                                     $description = esc_html($item['description']);
                                     $thumbnail = esc_url($item['thumbnail_url']);
+
+                                    $checked = $key == 0 ? 'checked' : '';
 
                                     $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
                                     $config = isset($parsed['config']) ? $parsed['config'] : [];
                                     $badge = isset($parsed['config']['badge']) ? $parsed['config']['badge'] : [];
+
                                     ?>
                                     <input type="radio"
-                                           name="account-type" <?= $doesNotHaveItems ? 'disabled="disabled"' : '' ?>
+                                           name="account-type" <?= $isDisabled ? 'disabled="disabled"' : '' ?>
                                            value="<?= $slug ?>"
                                            id="<?= $input_id ?>" <?= $checked ?> class="mt-circle-radio">
                                     <div class="radio__label__wrapper">
                                         <label class="mt-card mt-card-dark mt-card-radio" for="<?= $input_id ?>">
-                                            <div class="mt-card__header">
-                                                <i class="mt-card__radio"></i>
-                                            </div>
-                                            <div class="mt-card__title">
-                                                <span class="mt-card__title__text"><?= $name ?></span>
+                                            <div class="mt-card__header mt-card__header--two-columns">
+                                                <div class="mt-card__title mt-card__title--group">
+                                                    <i class="mt-card__radio"></i>
+                                                    <span class="mt-card__title__text"><?= $name ?></span>
+                                                </div>
                                                 <?php if ($badge):
                                                     $badge_style_class = isset($badge['style']) ? 'mt-badge-' . $badge['style'] : 'mt-badge-light';
                                                     $badge_text = $badge['text'] ?? '';
                                                     ?>
-                                                    <div class="mt-dropdown__badge mt-card__badge mt-badge mt-badge-rounded-sm <?= $badge_style_class ?>"><?= $badge_text ?></div>
+                                                    <div class="mt-card__badge mt-badge mt-badge-rounded <?= $badge_style_class ?>"><?= $badge_text ?></div>
                                                 <?php endif; ?>
                                             </div>
                                         </label>
@@ -200,12 +203,13 @@ $metaInfo = [
                                 <?php foreach ($accountSizes as $key => $item): ?>
                                     <?php
                                     $input_id = 'account-size-' . $item['slug'];
-                                    $checked = $key == 0 ? 'checked' : '';
                                     $slug = esc_attr($item['slug']);
                                     $name = '$' . esc_html($item['slug']);
-                                    $doesNotHaveItems = $item['count'] == 0;
+                                    $isDisabled = $item['count'] == 0;
                                     $description = esc_html($item['description']);
                                     $thumbnail = esc_url($item['thumbnail_url']);
+
+                                    $checked = $key == 0 ? 'checked' : '';
 
                                     $parsed = parse_attribute_meta($item['attribute_meta'] ?? []);
                                     $config = isset($parsed['config']) ? $parsed['config'] : [];
@@ -236,17 +240,17 @@ $metaInfo = [
                                     }
                                     ?>
                                     <input type="radio"
-                                           name="account-size" <?= $doesNotHaveItems ? 'disabled="disabled"' : '' ?>
+                                           name="account-size" <?= $isDisabled ? 'disabled="disabled"' : '' ?>
                                            value="<?= $slug ?>"
                                            id="<?= $input_id ?>" <?= $checked ?> class="mt-circle-radio">
                                     <div class="radio__label__wrapper">
                                         <label class="mt-card mt-card-dark mt-card-radio" for="<?= $input_id ?>">
-                                            <div class="mt-card__header">
-                                                <i class="mt-card__radio"></i>
-                                            </div>
-                                            <div class="mt-card__title">
-                                                <span class="mt-card__title__text text-uppercase"><?= $name ?></span>
-                                                <div class="mt-dropdown__badge mt-card__badge mt-badge mt-badge-rounded mt-badge-gray"><?= mt_price_plain($price) . '/' . $frequency ?></div>
+                                            <div class="mt-card__header mt-card__header--two-columns">
+                                                <div class="mt-card__title mt-card__title--group">
+                                                    <i class="mt-card__radio"></i>
+                                                    <span class="mt-card__title__text"><?= $name ?></span>
+                                                </div>
+                                                <div class="mt-card__badge mt-badge mt-badge-rounded mt-badge-gray"><?= mt_price_plain($price) . '/' . $frequency ?></div>
                                             </div>
                                         </label>
                                     </div>
@@ -265,24 +269,25 @@ $metaInfo = [
                                     <?php endif; ?>
                                     <?php
                                     $input_id = 'platform-' . $item['slug'];
-                                    $checked = $key == 0 ? 'checked' : '';
                                     $slug = esc_attr($item['slug']);
                                     $name = esc_html($item['slug']);
-                                    $doesNotHaveItems = $item['count'] == 0;
+                                    $isDisabled = $item['count'] == 0;
                                     $description = esc_html($item['description']);
                                     $thumbnail = esc_url($item['thumbnail_url']);
+
+                                    $checked = $key == 0 ? 'checked' : '';
                                     ?>
                                     <input type="radio"
-                                           name="platform" <?= $doesNotHaveItems ? 'disabled="disabled"' : '' ?>
+                                           name="platform" <?= $isDisabled ? 'disabled="disabled"' : '' ?>
                                            value="<?= $slug ?>"
                                            id="<?= $input_id ?>" <?= $checked ?> class="mt-circle-radio">
                                     <div class="radio__label__wrapper">
                                         <label class="mt-card mt-card-dark mt-card-radio" for="<?= $input_id ?>">
-                                            <div class="mt-card__header">
-                                                <i class="mt-card__radio"></i>
-                                            </div>
-                                            <div class="mt-card__title">
-                                                <span class="mt-card__title__text"><?= ucfirst($name) ?></span>
+                                            <div class="mt-card__header w-100">
+                                                <div class="mt-card__title">
+                                                    <i class="mt-card__radio"></i>
+                                                    <span class="mt-card__title__text"><?= ucfirst($name) ?></span>
+                                                </div>
                                                 <?php if ($thumbnail): ?>
                                                     <img class="mt-card__title__image" src="<?= $thumbnail; ?>"
                                                          alt="Icon">
@@ -552,7 +557,7 @@ $metaInfo = [
                 : 'mt-badge-light';
 
             return `
-<div class="mt-dropdown__badge mt-card__badge mt-badge mt-badge-rounded-sm ${styleClass}">
+<div class="mt-card__badge mt-badge mt-badge-rounded ${styleClass}">
     ${text}
 </div>
 `.trim();
@@ -586,12 +591,12 @@ $metaInfo = [
     class="mt-circle-radio"
 />
 <div class="radio__label__wrapper">
-    <label class="mt-card mt-card-dark mt-card-radio" for="${id}">
-        <div class="mt-card__header">
-            <i class="mt-card__radio"></i>
-        </div>
-        <div class="mt-card__title">
-            <span class="mt-card__title__text">${title ?? ''}</span>
+     <label class="mt-card mt-card-dark mt-card-radio" for="${id}">
+        <div class="mt-card__header mt-card__header--two-columns">
+            <div class="mt-card__title mt-card__title--group">
+                <i class="mt-card__radio"></i>
+                <span class="mt-card__title__text">${title ?? ''}</span>
+            </div>
             ${rightElementHTML || ''}
         </div>
     </label>
@@ -795,6 +800,9 @@ $metaInfo = [
                     checked: platformSelection === platform.slug,
                     rightElementHTML: icon
                 });
+
+                fragmentHTML = fragmentHTML.replaceAll('mt-card__header--two-columns', 'w-100');
+                fragmentHTML = fragmentHTML.replaceAll('mt-card__title--group', '');
             });
 
             container.innerHTML = fragmentHTML;
@@ -863,8 +871,6 @@ $metaInfo = [
                 container.querySelector('.plan-card__rules').innerHTML = html;
             }
 
-            container.querySelector('.plan-card__coupon').style.display = 'none';
-            container.querySelector('.plan-card__old-price').style.display = 'none';
             container.querySelector('.plan-card__new-price').innerText = price;
             container.querySelector('.plan-card__period').innerHTML = `per ${frequency}`;
 
@@ -878,6 +884,9 @@ $metaInfo = [
 
                 container.querySelector('.plan-card__old-price').innerText = price;
                 container.querySelector('.plan-card__new-price').innerText = formatNumber(coupon.final_total);
+            } else {
+                container.querySelector('.plan-card__coupon').style.display = 'none';
+                container.querySelector('.plan-card__old-price').style.display = 'none';
             }
 
             const link = container.querySelector('.proceed-to-checkout-btn');

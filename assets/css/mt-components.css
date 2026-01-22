@@ -303,10 +303,9 @@ input.mt-circle-radio[type="radio"]:checked + .radio__label__wrapper > label.mt-
     background: var(--body-bg);
 }
 
-input.mt-circle-radio[type="radio"] + .radio__label__wrapper > label.mt-card-radio .mt-card__title {
-    justify-content: space-between;
-    width: 100%;
-}
+/*input.mt-circle-radio[type="radio"] + .radio__label__wrapper > label.mt-card-radio .mt-card__title {*/
+/*    width: 100%;*/
+/*}*/
 
 input.mt-circle-radio[type="radio"]:disabled + .radio__label__wrapper > label.mt-card.mt-card-radio {
     border-radius: var(--Border-Radius-xl, 16px);
@@ -320,7 +319,7 @@ input.mt-circle-radio[type="radio"]:disabled + .radio__label__wrapper > label.mt
 input.mt-circle-radio[type="radio"]:not(:checked) + .radio__label__wrapper > label.mt-card-radio,
 .mt-card.active {
     border-radius: var(--Border-Radius-xl, 16px);
-    border-color: var( --colors-gray-700, #FFB34A);
+    border-color: var(--colors-gray-700, #FFB34A);
     background: var(--body-bg);
 }
 
@@ -2970,12 +2969,56 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     width: 100%;
 }
 
-.mt-checkout-first .product-section__list{
+.mt-checkout-first .product-section__list {
     gap: 16px;
 }
 
 .mt-checkout-first > * + * {
     margin-top: 32px;
+}
+
+.mt-card__header.mt-card__header--two-columns {
+    width: 100%;
+    gap: unset;
+}
+
+#account-platform-section .product-section__list {
+    grid-auto-columns: max-content;
+}
+
+.mt-card__header.mt-card__header--two-columns .mt-card__title.mt-card__title--group {
+    gap: 16px;
+}
+
+@media (max-width: 768px) {
+    .mt-subscriptions .product-section__list.product-section__list_grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .mt-subscriptions .mt-card__header.mt-card__header--two-columns {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .mt-subscriptions .mt-card__header.mt-card__header--two-columns .mt-card__title.mt-card__title--group {
+        order: unset;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .mt-card__header.mt-card__header--two-columns {
+        width: 100%;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: 16px;
+        align-items: normal;
+    }
+
+    .mt-card__header.mt-card__header--two-columns .mt-card__title.mt-card__title--group {
+        order: 2;
+    }
 }
 
 .product-section .mt-card {
