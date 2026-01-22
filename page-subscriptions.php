@@ -104,7 +104,7 @@ $metaInfo = [
                 <div class="mt-subscriptions">
                     <?php render_step_selector(1); ?>
                     <form class="mt-checkout-first" id="checkout-form">
-                        <section class="product-section">
+                        <section id="market-type-section" class="product-section">
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">1. Market Type</span>
                             </h2>
@@ -150,7 +150,7 @@ $metaInfo = [
                                 <?php endforeach; ?>
                             </div>
                         </section>
-                        <section id="market-type-section" class="product-section">
+                        <section id="account-type-section" class="product-section">
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">2. Account Type</span>
                             </h2>
@@ -192,7 +192,7 @@ $metaInfo = [
                                 <?php endforeach; ?>
                             </div>
                         </section>
-                        <section id="account-type-section" class="product-section">
+                        <section id="account-size-section" class="product-section">
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">3. Account Size</span>
                             </h2>
@@ -253,7 +253,7 @@ $metaInfo = [
                                 <?php endforeach; ?>
                             </div>
                         </section>
-                        <section id="account-size-section" class="product-section">
+                        <section id="account-platform-section" class="product-section">
                             <h2 class="product-section__header mb-3">
                                 <span class="product-section__title">4. Broker</span>
                             </h2>
@@ -392,6 +392,14 @@ $metaInfo = [
     </div>
 
     <script>
+        const TREE_MAP_KEYS = Object.freeze({
+            ACCOUNT_SIZE: 'account-size',
+            ACCOUNT_TYPES: 'account-types',
+            BILLING_TYPE: 'billing-type',
+            MARKET_TYPE: 'market-type',
+            PLATFORM: 'platform'
+        });
+
         const PAGE_KEY = '<?= $page_slug ?>-storage';
         window[PAGE_KEY] = {
             screenLoaded: false
@@ -456,9 +464,9 @@ $metaInfo = [
         }
 
         function getProduct({accountType, marketType}) {
-            let productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
+            let productSelected = MG_GLOBAL.products.find(product => product.tree_map[TREE_MAP_KEYS.ACCOUNT_TYPES] === accountType && product.tree_map[TREE_MAP_KEYS.MARKET_TYPE] === marketType);
             if (!productSelected) {
-                productSelected = MG_GLOBAL.products.find(product => product.tree_map['market-type'] === marketType);
+                productSelected = MG_GLOBAL.products.find(product => product.tree_map[TREE_MAP_KEYS.MARKET_TYPE] === marketType);
             }
 
             let productPlatformDetail = productSelected[productSelected.slug];
@@ -586,20 +594,64 @@ $metaInfo = [
 `.trim();
         }
 
-        function renderAccountTypes({marketType}) {
-            const marketTypeData = MG_GLOBAL.pricingData.marketTypes.find(mt => mt.slug == marketType);
+        function formatNumber(value) {
+            return '$' + parseInt(value.toString().replace('$', ''));
+        }
 
-            const container = document.querySelector('#market-type-section .product-section__list');
+        function prepareHelperFunctions(productSelected, productPlatformDetail) {
+            let {tree_map: treeMap} = productSelected || {tree_map: {}};
+            const treeMapKeys = Object.keys(treeMap);
+
+            return {
+                getPriceObject: (sizeSlug) => {
+                    let attributes = null;
+                    Object.keys(treeMap || []).forEach(_ => {
+                        attributes = !attributes ? productPlatformDetail[sizeSlug] : Object.values(attributes).at(0);
+                    });
+
+                    const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
+                    const productId = attributes.find(item => item['id'])['id'];
+
+                    return {priceObject, productId}
+                },
+                findValueByTreeData: (sizeSlug, key) => {
+                    let level = 0;
+                    let properties = null;
+                    let value = '';
+                    const treeData = productPlatformDetail[sizeSlug];
+
+                    const indexAttribute = treeMapKeys.indexOf(key);
+
+                    while (level <= indexAttribute) {
+                        level++;
+
+                        properties = !properties ? treeData : Object.values(properties)[0];
+
+                        if (indexAttribute === level) {
+                            value = Object.keys(properties)[0];
+                            break;
+                        }
+                    }
+
+                    return value;
+                }
+            }
+        }
+
+        function renderAccountTypes({marketType}) {
+            const marketTypeData = MG_GLOBAL.pricingData.marketTypes.find(mt => mt.slug === marketType);
+
+            const container = document.querySelector('#account-type-section .product-section__list');
 
             let fragmentHTML = '';
             marketTypeData.accountTypes
                 .forEach(({name, slug: slugAccountType}, index) => {
-                    const data = MG_GLOBAL.accountTypes.find(at => at.slug == slugAccountType) || {slug: '', name: ''};
+                    const data = MG_GLOBAL.accountTypes.find(at => at.slug === slugAccountType) || {slug: '', name: ''};
                     if (!data.slug) {
                         return;
                     }
 
-                    const checked = index == 0;
+                    const checked = index === 0;
                     const parsed = parseAttributeMeta(data.attribute_meta ?? []);
                     const config = parsed?.config ?? {};
                     const badge = config?.badge ?? {};
@@ -629,12 +681,57 @@ $metaInfo = [
         function renderAccountSizes() {
             const marketType = document.querySelector('[name="market-type"]:checked').value;
             const accountType = document.querySelector('[name="account-type"]:checked').value;
+
             const {productSelected, productPlatformDetail} = getProduct({marketType, accountType});
 
-            for (const priceSize in productPlatformDetail) {
-                console.info(productSelected)
-            }
+            const container = document.querySelector('#account-size-section .product-section__list');
 
+            const {findValueByTreeData, getPriceObject} = prepareHelperFunctions(
+                productSelected,
+                productPlatformDetail
+            );
+
+            let fragmentHTML = '';
+
+            let selected = false;
+
+            MG_GLOBAL.accountSizes.forEach((accountSize) => {
+                const sizeSlug = accountSize.slug;
+                const treeData = productPlatformDetail[sizeSlug];
+
+                if (!treeData) {
+                    console.warn('sizeSlug', sizeSlug)
+                    return;
+                }
+
+                const {priceObject, productId} = getPriceObject(sizeSlug);
+                const billingType = findValueByTreeData(sizeSlug, TREE_MAP_KEYS.BILLING_TYPE);
+
+                let checked = false;
+
+                if (!selected) {
+                    checked = true;
+                    selected = true;
+                }
+
+                let price = formatNumber(priceObject);
+
+                const badgeHTML = buildBadge({
+                    text: `${price}/${billingType === 'monthly' ? 'MO' : 'OT'}`,
+                    style: 'gray'
+                });
+
+                fragmentHTML += buildRadioButton({
+                    id: `account-size-${sizeSlug}`,
+                    name: 'account-size',
+                    value: sizeSlug,
+                    title: `$${sizeSlug.toUpperCase()}`,
+                    checked: checked,
+                    rightElementHTML: badgeHTML
+                });
+            });
+
+            container.innerHTML = fragmentHTML;
         }
 
         function renderBrokers() {
@@ -656,6 +753,25 @@ $metaInfo = [
                 renderAccountSizes({productSelected, productPlatformDetail});
             });
         })
+
+        document.addEventListener('change', function (e) {
+            const type = e.target.type;
+            if (type !== 'radio') {
+                return;
+            }
+
+            const inputName = e.target.name;
+
+            if (inputName === 'account-type') {
+                const marketType = document.querySelector('[name="market-type"]:checked').value;
+                const {productSelected, productPlatformDetail} = getProduct({marketType});
+
+                renderAccountSizes({productSelected, productPlatformDetail});
+            } else if (inputName === 'account-size') {
+
+            }
+        });
+
 
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
