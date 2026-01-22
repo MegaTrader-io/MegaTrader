@@ -595,7 +595,7 @@ $metaInfo = [
         }
 
         function formatNumber(value) {
-            return '$' + parseInt(value.toString().replace('$', ''));
+            return '$' + parseInt(value.toString().replace(',', '').replace('$', ''));
         }
 
         function prepareHelperFunctions(productSelected, productPlatformDetail) {
@@ -761,10 +761,10 @@ $metaInfo = [
             }
 
             const inputName = e.target.name;
-
+            const inputValue = e.target.value;
             if (inputName === 'account-type') {
                 const marketType = document.querySelector('[name="market-type"]:checked').value;
-                const {productSelected, productPlatformDetail} = getProduct({marketType});
+                const {productSelected, productPlatformDetail} = getProduct({marketType, accountType: inputValue});
 
                 renderAccountSizes({productSelected, productPlatformDetail});
             } else if (inputName === 'account-size') {

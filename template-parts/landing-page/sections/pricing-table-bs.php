@@ -665,7 +665,7 @@ HTML;
         }
 
         function formatNumber(value) {
-            return '$' + parseInt(value.toString().replace('$', ''));
+            return '$' + parseInt(value.toString().replace(',', '').replace('$', ''));
         }
 
         function updatePoints() {
