@@ -781,7 +781,7 @@ $metaInfo = [
 
             platforms.forEach((platform) => {
                 if (!platform.slug) {
-                    fragmentHTML += `<div></div>`;
+                    fragmentHTML += `<div class="empty-element"></div>`;
                     return;
                 }
 

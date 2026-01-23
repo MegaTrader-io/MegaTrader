@@ -3035,6 +3035,10 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
         width: auto;
         height: auto;
     }
+
+    .empty-element {
+        display: contents;
+    }
 }
 
 @media (max-width: 1199.98px) {
