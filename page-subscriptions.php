@@ -302,22 +302,22 @@ $metaInfo = [
                             <div class="mt-card plan-card__container">
                                 <div class="mt-card__header plan-card__header">
                                     <div class="plan-card__title-group">
-                                        <div class="plan-card__title">Growth Plan 25K</div>
-                                        <div class="plan-card__subtitle">on MegaTraderX</div>
+                                        <div class="plan-card__title"></div>
+                                        <div class="plan-card__subtitle"></div>
                                     </div>
                                     <div class="plan-card__pricing-group">
-                                        <div class="plan-card__coupon mt-card__badge mt-badge mt-badge-rounded mt-badge-secondary">
-                                            SAVE $42 WITH CODE DEC
+                                        <div style="display: none"
+                                             class="plan-card__coupon mt-card__badge mt-badge mt-badge-rounded mt-badge-secondary">
                                         </div>
                                         <div class="plan-card__pricing">
-                                            <div class="plan-card__old-price">$139</div>
-                                            <div class="plan-card__new-price">$139</div>
-                                            <div class="plan-card__period">per month</div>
+                                            <div class="plan-card__old-price"></div>
+                                            <div class="plan-card__new-price"></div>
+                                            <div class="plan-card__period"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mt-card__body plan-card__body">
-                                    <div class="plan-card__rules-header">Funded Rules</div>
+                                    <div class="plan-card__rules-header">Rules and Objectives</div>
                                     <div class="plan-card__rules">
                                         <?php foreach ($metaInfo as $key => $metaInfoRow): ?>
                                             <div class="plan-card__rule">
@@ -406,6 +406,17 @@ $metaInfo = [
             MARKET_TYPE: 'market-type',
             PLATFORM: 'platform'
         });
+
+        const tooltips = {
+            daily_loss_limit: {
+                title: 'Daily Loss Limit (DLL)',
+                value: 'The maximum loss allowed in a single trading day. If your net PnL reaches this limit, trading is restricted for the remainder of the day to prevent further losses.'
+            },
+            consistency: {
+                title: 'Consistency Rule',
+                value: 'Prevents a single trading day from accounting for too much of your total profit, encouraging steady and balanced trading behavior.'
+            }
+        }
 
         const PAGE_KEY = '<?= $page_slug ?>-storage';
         window[PAGE_KEY] = {
@@ -808,12 +819,28 @@ $metaInfo = [
             container.innerHTML = fragmentHTML;
         }
 
-        function addRule({label, value}) {
+        function addTooltip({title, body}) {
+            return `
+<div class="mt-tooltip">
+    <i class="mt-icon mt-icon-base mt-icon_info-solid"
+       tabindex="0"
+       aria-label="${title} information">
+    </i>
+    <div class="mt-tooltip__panel" role="tooltip">
+        <div class="mt-tooltip__title">${title}</div>
+        <div class="mt-tooltip__body">${body}</div>
+    </div>
+</div>
+`
+        }
+
+        function addRule({label, value, tooltipHTML = ''}) {
             return `
 <div class="plan-card__rule">
     <div class="plan-card__rule-label">
         <div class="plan-card__label-wrapper">
             ${label}
+            ${tooltipHTML}
         </div>
     </div>
     <div class="plan-card__rule-value">${value}</div>
@@ -861,14 +888,25 @@ $metaInfo = [
             if (metaInfoObject) {
                 const metaInfoContext = metaInfoObject['meta-info'];
                 let html = '';
+
                 metaInfoList.forEach(metaInfo => {
+                    const tooltipData = tooltips[metaInfo.key];
+                    let tooltipHTML = '';
+
+                    if (tooltipData) {
+                        tooltipHTML = addTooltip({title: tooltipData.title, body: tooltipData.value});
+                    }
+
                     html += addRule({
                         label: metaInfo.label,
-                        value: metaInfoContext[metaInfo.key]
+                        value: metaInfoContext[metaInfo.key],
+                        tooltipHTML
                     })
                 });
 
                 container.querySelector('.plan-card__rules').innerHTML = html;
+
+                window?.mtTooltips?.refresh(container);
             }
 
             container.querySelector('.plan-card__new-price').innerText = price;
