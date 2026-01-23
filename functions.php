@@ -1010,7 +1010,7 @@ function empty_cart_redirection(){
 
 add_action('template_redirect', function() {
     if (is_page('cart')) {
-        wp_redirect(home_url('/subscriptions/'));
+        wp_redirect(home_url('/select-plan/'));
         exit;
     }
 });
@@ -2110,7 +2110,7 @@ add_action('template_redirect', function () {
     '/affiliate-area/',
     '/ref/',
     '/checkout/',
-    '/subscriptions/',
+    '/select-plan/',
   ];
 
   $public_paths = apply_filters('mt_public_paths', $public_paths, $path);

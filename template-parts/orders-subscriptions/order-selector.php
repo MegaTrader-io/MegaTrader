@@ -20,7 +20,7 @@ if (preg_match('#my-account/view-subscription/(\d+)#', $current_url_path, $match
 do_action('woocommerce_before_account_navigation');
 
 $user_id = get_current_user_id();
-$custom_url = home_url('/subscriptions/');
+$custom_url = home_url('/select-plan/');
 
 if ($user_id) {
 	$all_orders = wc_get_orders([

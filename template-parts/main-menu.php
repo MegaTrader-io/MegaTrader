@@ -250,7 +250,7 @@ $is_overlay = $args['is_overlay'] ?? false;
                         <?php echo esc_html(Label::SIDEBAR_META['plan_description']); ?>
                     </div>
                     <div class="btn-challenge">
-                        <a href="<?php echo esc_url(home_url('/subscriptions')); ?>"
+                        <a href="<?php echo esc_url(home_url('/select-plan')); ?>"
                             class="mega-btn-md mega-btn-default-md w-100">
                             <?php echo esc_html(Label::SIDEBAR_META['plan_button']); ?>
                             <i class="mt-icon mt-icon_caret-right"></i>
@@ -321,7 +321,7 @@ $is_overlay = $args['is_overlay'] ?? false;
             <?php echo esc_html(Label::SIDEBAR_META['plan_description']); ?>
         </div>
         <div class="btn-challenge">
-            <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
+            <a href="<?php echo esc_url(home_url('/select-plan')); ?>" class="mega-btn-md mega-btn-default-md w-100">
                 <?php echo esc_html(Label::SIDEBAR_META['plan_button']); ?>
                 <i class="mt-icon mt-icon_caret-right"></i>
             </a>
@@ -369,7 +369,7 @@ $is_overlay = $args['is_overlay'] ?? false;
         </div>
 
         <span class="mt-tooltip" data-placement="right">
-            <a href="<?php echo esc_url(home_url('/subscriptions')); ?>" class="mega-btn-md mega-btn-default-md w-100">
+            <a href="<?php echo esc_url(home_url('/select-plan')); ?>" class="mega-btn-md mega-btn-default-md w-100">
                 <i class="mt-icon mt-icon_plus"></i>
             </a>
             <span class="mt-tooltip__panel" role="tooltip">
