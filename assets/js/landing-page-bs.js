@@ -480,6 +480,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const isMostPopular = !!Object.values(MG_GLOBAL.bestProducts).find(item => item && item.variation_id === Number(productId))
             const priceCard = document.querySelector(`.price-table__plan[data-price="${priceSize}"]`)
 
+            if (!priceCard) {
+                return;
+            }
+
             if (isMostPopular) {
                 priceCard.classList.add('price-table__plan--most-popular');
                 priceCard.classList.remove('price-table__plan--regular-plan');

@@ -312,7 +312,7 @@ $GLOBALS['mt_chart'] = $mt_chart ?? [];
 $GLOBALS['mt_active_order_id'] = isset($__active_order_id) ? (int) $__active_order_id : 0;
 
 if (empty($mt_account_ui['accounts'])) {
-  wp_safe_redirect(trailingslashit(home_url('/subscriptions')));
+  wp_safe_redirect(trailingslashit(home_url('/select-plan')));
   exit;
 }
 
@@ -581,7 +581,7 @@ get_header();
   data-evaluation-title="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_body_description_evaluation']); ?>"
   data-btn-default="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button']); ?>"
   data-btn-no-reset="<?php echo esc_attr(Label::META_ACCOUNT_OVERVIEW['breach_modal_button_no_reset']); ?>"
-  data-subscriptions-url="/subscriptions/">
+  data-subscriptions-url="/select-plan/">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content gap-32">
       <div class="modal-header w-100 border-0 justify-content-between align-items-center p-0">

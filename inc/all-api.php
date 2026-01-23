@@ -300,7 +300,8 @@ function get_products_with_attributes() {
                     'taxonomy_label' => $tax->attribute_label,
                     'description' => $term->description,
                     'thumbnail_url' => $image_url,
-                    'attribute_meta' => $crepeater_values ? $crepeater_values : null
+                    'attribute_meta' => $crepeater_values ? $crepeater_values : null,
+                    'count' => intval($term->count),
                 );
             }
         }

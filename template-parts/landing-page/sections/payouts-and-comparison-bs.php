@@ -60,7 +60,7 @@
                             <?php foreach ($payouts_and_comparison__list as $payouts_and_comparison__value) : ?>
                                 <li>
                                     <img class="payouts-and-comparison__checked"
-                                         src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                         src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="checked circle">
 
                                     <p>
@@ -134,7 +134,7 @@
                             <?php foreach ($payouts_and_comparison__list as $payouts_and_comparison__value) : ?>
                                 <li>
                                     <img class="payouts-and-comparison__checked"
-                                         src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                         src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="checked circle">
 
                                     <p>
@@ -271,47 +271,47 @@
                         <div class="comparison__content comparison__content--mega">
                             <div class="comparison__inner">
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">Instant funding, or 1 day to pass</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">Lightning fast automated payouts</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">No activation fees on Growth</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">Free built-in journal</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">Pass in just 1 day</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">4 contract per $50K in funding</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">1:10 for more control</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">None, full access immediately</div>
                                 </div>
                                 <div class="comparison__row">
-                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                    <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                                          alt="">
                                     <div class="comparison__value">No hidden rules, no payout denials</div>
                                 </div>
