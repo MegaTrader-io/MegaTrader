@@ -409,12 +409,12 @@ $metaInfo = [
 
         const tooltips = {
             daily_loss_limit: {
-                title: 'Daily Loss Limit (DLL)',
-                value: 'The maximum loss allowed in a single trading day. If your net PnL reaches this limit, trading is restricted for the remainder of the day to prevent further losses.'
+                title: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dll_tooltip_title']); ?>',
+                value: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_dll_tooltip_description']); ?>'
             },
             consistency: {
-                title: 'Consistency Rule',
-                value: 'Prevents a single trading day from accounting for too much of your total profit, encouraging steady and balanced trading behavior.'
+                title: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_title']); ?>',
+                value: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_description']); ?>'
             }
         }
 
