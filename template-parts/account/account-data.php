@@ -2,8 +2,7 @@
 /**
  * Template part: Account Data
  */
-if (!defined('ABSPATH'))
-  exit;
+if (!defined('ABSPATH')) exit;
 
 // accountId (string)
 $account_id = isset($args['meta']['accountId']) ? sanitize_text_field($args['meta']['accountId']) : '';
@@ -19,16 +18,107 @@ $login  = $agreement_missing ? 'sample@megatrader.io' : ($data['login'] ?? null)
 $server = ($data['server'] ?? null);
 $pwd    = $agreement_missing ? null : ($data['password'] ?? null);
 
+// =============================
+// Platform dynamic variables
+// =============================
+$platform_key = trim((string)($data['platform'] ?? ''));
 
-$platform_img = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
-if (!empty($args['platform_image'])) {
-  $platform_img = esc_url_raw($args['platform_image']);
+$platform_term = null;
+$platform_icon_url = '';
+$platform_links = [];
+
+// 1) Resolver term por API platform key
+if ($platform_key !== '' && function_exists('mt_platform_term_by_api_key')) {
+  $platform_term = mt_platform_term_by_api_key($platform_key);
 }
 
-$link_web = 'http://trade.megatrader.io';
-$link_appstore = 'https://apps.apple.com/us/app/megatraderx/id6753067261';
-$link_playstore = 'https://play.google.com/store/apps/details?id=com.megatraderxt.mobile';
+// 2) Icon URL desde term
+if ($platform_term && !empty($platform_term->term_id) && function_exists('mt_platform_icon_url_from_term')) {
+  $platform_icon_url = (string) mt_platform_icon_url_from_term($platform_term);
+}
 
+// 3) Links: vienen dentro de term meta "custom_repeater_field" como string que inicia con "@links"
+if ($platform_term && !empty($platform_term->term_id)) {
+  $rep = get_term_meta((int)$platform_term->term_id, 'custom_repeater_field', true);
+
+  if (is_array($rep)) {
+    foreach ($rep as $row) {
+      if (!is_string($row)) continue;
+
+      $row_trim = trim($row);
+
+      // buscamos la línea que empieza con @links
+      if (stripos($row_trim, '@links') !== 0) continue;
+
+      // quitamos "@links" y nos quedamos con el JSON-like
+      $json_like = trim(substr($row_trim, 6)); // 6 = strlen("@links")
+
+      // Normaliza comillas curvas “ ” a comillas normales "
+      $json_like = str_replace(["\u{201C}", "\u{201D}", "“", "”"], '"', $json_like);
+
+      // Intentamos parsear JSON
+      $decoded = json_decode($json_like, true);
+
+      // Si falló, intenta rescatar desde el primer '[' hasta el último ']'
+      if (json_last_error() !== JSON_ERROR_NONE) {
+        $lb = strpos($json_like, '[');
+        $rb = strrpos($json_like, ']');
+        if ($lb !== false && $rb !== false && $rb > $lb) {
+          $slice = substr($json_like, $lb, $rb - $lb + 1);
+          $decoded = json_decode($slice, true);
+        }
+      }
+
+      if (is_array($decoded)) {
+        foreach ($decoded as $btn) {
+          if (!is_array($btn)) continue;
+
+          // IMPORTANT: icon viene ya como clase completa (ej: "mt-icon_download")
+          $icon = trim((string)($btn['icon'] ?? ''));
+          $text = (string)($btn['text'] ?? '');
+          $url  = (string)($btn['url'] ?? '');
+
+          // tu formato: URL como key
+          if ($url === '') {
+            foreach ($btn as $k => $v) {
+              if (is_string($k) && preg_match('#^https?://#i', $k)) { $url = $k; break; }
+            }
+          }
+
+          if ($text !== '' && $url !== '') {
+            $platform_links[] = [
+              'icon' => $icon, // clase directa
+              'text' => $text,
+              'url'  => $url,
+            ];
+          }
+        }
+      }
+
+      // solo usamos el primer @links encontrado
+      break;
+    }
+  }
+}
+
+// =============================
+// Platform image final
+// =============================
+$platform_img = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
+
+// 1) Si alguien pasó platform_image explícito, respétalo
+if (!empty($args['platform_image'])) {
+  $platform_img = esc_url_raw($args['platform_image']);
+} else {
+  // 2) Si no, usa el icon del term si existe
+  if ($platform_icon_url !== '') {
+    $platform_img = $platform_icon_url;
+  }
+}
+
+// =============================
+// Agreement URL
+// =============================
 $agreement_url = '';
 $root = $args['meta']['agreementShow'] ?? null;
 if ($root !== null) {
@@ -37,11 +127,9 @@ if ($root !== null) {
 ?>
 
 <div class="mt-card" data-account-id="<?php echo esc_attr($account_id); ?>">
-  <div
-    class="mt-card-wrapper d-flex align-items-center gap-3 w-100 justify-content-between flex-column flex-lg-row flex-md-row">
+  <div class="mt-card-wrapper d-flex align-items-center gap-3 w-100 justify-content-between flex-column flex-lg-row flex-md-row">
 
-    <div
-      class="mt-card-content d-flex align-items-center gap-3 w-100 justify-content-between flex-column flex-lg-row flex-md-row">
+    <div class="mt-card-content d-flex align-items-center gap-3 w-100 justify-content-between flex-column flex-lg-row flex-md-row">
 
       <div class="d-flex flex-column gap-1 flex-wrap flex-shrink-0">
         <div class="text-white fw-500 text-2xl text-uppercase">
@@ -51,30 +139,27 @@ if ($root !== null) {
           <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_platform_description']); ?>
         </div>
 
-        <div class="d-flex gap-2 pt-3 flex-wrap">
-          <a href="<?php echo esc_url($link_web); ?>" target="_blank" class="text-decoration-none" rel="noopener">
-            <div class="mt-badge mt-badge-apps">
-              <i class="mt-icon mt-icon-sm mt-icon_globe"></i>
-              <span class="mt-card__links__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['web_app']); ?></span>
-            </div>
-          </a>
+        <!-- LINKS DINÁMICOS (solo si existen en @links) -->
+        <?php if (!empty($platform_links)): ?>
+          <div class="d-flex gap-2 pt-3 flex-wrap">
+            <?php foreach ($platform_links as $btn):
+              $btn_icon = trim((string)($btn['icon'] ?? '')); 
+              $btn_text = (string)($btn['text'] ?? '');
+              $btn_url  = (string)($btn['url'] ?? '');
 
-          <a href="<?php echo esc_url($link_appstore); ?>" target="_blank" class="text-decoration-none" rel="noopener">
-            <div class="mt-badge mt-badge-apps">
-              <i class="mt-icon mt-icon-sm mt-icon_app-store"></i>
-              <span
-                class="mt-card__links__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['app_store']); ?></span>
-            </div>
-          </a>
-
-          <a href="<?php echo esc_url($link_playstore); ?>" target="_blank" class="text-decoration-none" rel="noopener">
-            <div class="mt-badge mt-badge-apps">
-              <i class="mt-icon mt-icon-sm mt-icon_google-play"></i>
-              <span
-                class="mt-card__links__text"><?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['play_store']); ?></span>
-            </div>
-          </a>
-        </div>
+              if ($btn_url === '' || $btn_text === '') continue;
+            ?>
+              <a href="<?php echo esc_url($btn_url); ?>" target="_blank" class="text-decoration-none" rel="noopener">
+                <div class="mt-badge mt-badge-apps">
+                  <?php if ($btn_icon !== ''): ?>
+                    <i class="mt-icon mt-icon-sm <?php echo esc_attr($btn_icon); ?>"></i>
+                  <?php endif; ?>
+                  <span class="mt-card__links__text"><?php echo esc_html($btn_text); ?></span>
+                </div>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       </div>
 
       <div class="vr d-none d-md-block"></div>
@@ -82,8 +167,13 @@ if ($root !== null) {
 
       <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0 mt-account-data-credentials">
         <div class="mt-platform-avatar flex-shrink-0">
-          <img src="<?php echo esc_url($platform_img); ?>" alt="DXXT logo" width="64" height="64"
-            style="width:64px;height:64px;border-radius:9999px;object-fit:cover;" />
+          <img
+            src="<?php echo esc_url($platform_img); ?>"
+            alt="Platform logo"
+            width="64"
+            height="64"
+            style="width:64px;height:64px;border-radius:9999px;object-fit:cover;"
+          />
         </div>
 
         <div class="d-flex flex-column gap-2 flex-grow-1 min-w-0">

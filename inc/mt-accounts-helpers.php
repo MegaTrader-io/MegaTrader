@@ -68,11 +68,33 @@ class MT_Accounts
   }
 
   /* ---- Logos centralizados ---- */
-  public static function platform_logo($platformRaw): string
-  {
-    $key = self::norm($platformRaw);
-    return self::PLATFORM_LOGOS[$key] ?? self::DEFAULT_LOGO;
+public static function platform_logo($platformRaw): string
+{
+  $raw = trim((string) $platformRaw);
+
+  // 1) Intento #1: resolver por API key vía taxonomy/term (lo que tú quieres)
+  if (
+    $raw !== ''
+    && function_exists('mt_platform_term_by_api_key')
+    && function_exists('mt_platform_icon_url_from_term')
+  ) {
+    $t = mt_platform_term_by_api_key($raw);
+    if ($t && !empty($t->term_id)) {
+      $u = (string) mt_platform_icon_url_from_term($t);
+      if ($u !== '') return $u;
+    }
   }
+
+  // 2) Intento #2: compatibilidad con datos viejos que traen nombre “NinjaTrader”, etc.
+  $key = self::norm($raw);
+  if ($key !== '' && isset(self::PLATFORM_LOGOS[$key])) {
+    return self::PLATFORM_LOGOS[$key];
+  }
+
+  // 3) Último fallback
+  return self::DEFAULT_LOGO;
+}
+
 
   /* ---- Etiquetas de programa ---- */
   public static function parse_program_label(string $label, $startingBalance = null): array
@@ -1306,7 +1328,7 @@ if (!function_exists('mt_accounts_build_account_data')) {
       $plat = [];
 
     $platformName = (string) ($plat['platform'] ?? $account['platformName'] ?? $account['platform_label'] ?? '');
-    $server = (string) ($plat['server'] ?? $account['server'] ?? '');
+    $server = "testServer";
     $login = (string) ($plat['login'] ?? $account['login'] ?? '');
     $password = (string) ($plat['password'] ?? $account['password'] ?? '');
     $accountId = (string) ($plat['accountId'] ?? $account['accountId'] ?? '');
@@ -3632,6 +3654,62 @@ if (!function_exists('mt_trades_history_fetch')) {
       'pages' => $pages,
       'records' => $records,
     ];
+  }
+}
+// === Platform term resolver (API -> Woo term) ===
+if (!function_exists('mt_platform_term_by_api_key')) {
+  function mt_platform_term_by_api_key(string $api_key) {
+    $api_key = trim($api_key);
+    if ($api_key === '') return null;
+
+    $terms = get_terms([
+      'taxonomy'   => 'pa_platform',
+      'hide_empty' => false,
+      'meta_query' => [
+        [
+          'key'     => 'mt_api_platform_key',
+          'value'   => $api_key,
+          'compare' => '=',
+        ],
+      ],
+      'number' => 1,
+    ]);
+
+    if (is_wp_error($terms) || empty($terms)) return null;
+    return $terms[0];
+  }
+}
+
+if (!function_exists('mt_platform_icon_url_from_term')) {
+  function mt_platform_icon_url_from_term($term): string {
+    if (!$term || empty($term->term_id)) return '';
+
+    // ✅ TU PLUGIN: guarda el attachment ID aquí
+    $image_id = (int) get_term_meta($term->term_id, 'attribute_image_id', true);
+    if ($image_id > 0) {
+      $url = wp_get_attachment_image_url($image_id, 'full');
+      if ($url) return $url;
+    }
+
+    // Intento 1: si algún plugin guarda un attachment_id en una meta
+    $maybe_id = (int) get_term_meta($term->term_id, 'attribute_icon_id', true);
+    if ($maybe_id > 0) {
+      $url = wp_get_attachment_image_url($maybe_id, 'full');
+      if ($url) return $url;
+    }
+
+    // Intento 2: algunos guardan directamente una URL
+    $maybe_url = (string) get_term_meta($term->term_id, 'attribute_icon', true);
+    if ($maybe_url !== '') return esc_url_raw($maybe_url);
+
+    // Intento 3: fallback típico Woo
+    $thumb_id = (int) get_term_meta($term->term_id, 'thumbnail_id', true);
+    if ($thumb_id > 0) {
+      $url = wp_get_attachment_image_url($thumb_id, 'full');
+      if ($url) return $url;
+    }
+
+    return '';
   }
 }
 
