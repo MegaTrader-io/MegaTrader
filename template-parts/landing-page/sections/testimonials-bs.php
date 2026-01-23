@@ -128,17 +128,17 @@ $testimonials_columns = array_chunk($testimonials_list, ceil(count($testimonials
 
                 <ul class="testimonials-bs__features">
                     <li class="testimonials-bs__feature">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                              alt="" class="testimonials-bs__feature-icon"/>
                         <span class="testimonials-bs__feature-text">Instant simulated funding</span>
                     </li>
                     <li class="testimonials-bs__feature">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                              alt="" class="testimonials-bs__feature-icon"/>
                         <span class="testimonials-bs__feature-text">Fastest customer service</span>
                     </li>
                     <li class="testimonials-bs__feature">
-                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                              alt="" class="testimonials-bs__feature-icon"/>
                         <span class="testimonials-bs__feature-text">Clear and straightforward</span>
                     </li>

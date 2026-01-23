@@ -48,7 +48,7 @@
                     <div class="trader-benefits-bs__item">
                         <img
                                 class="trader-benefits-bs__icon"
-                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                         />
                         <div class="trader-benefits-bs__text">
                             <div class="trader-benefits-bs__subtitle">
@@ -63,7 +63,7 @@
                     <div class="trader-benefits-bs__item">
                         <img
                                 class="trader-benefits-bs__icon"
-                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                         />
                         <div class="trader-benefits-bs__text">
                             <div class="trader-benefits-bs__subtitle">
@@ -78,7 +78,7 @@
                     <div class="trader-benefits-bs__item">
                         <img
                                 class="trader-benefits-bs__icon"
-                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/landing-page/checked-circle.svg'); ?>"
+                                src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/checked-circle-warning.svg'); ?>"
                         />
                         <div class="trader-benefits-bs__text">
                             <div class="trader-benefits-bs__subtitle">

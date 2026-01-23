@@ -84,7 +84,7 @@ function mt_build_destination_url($order, $myaccount_url) : ?string {
 
 /** redirección segura en template: SOLO JS (no headers) + <noscript> */
 function mt_echo_client_redirect_and_exit($url) {
-    $url = esc_url_raw($url ?: home_url('/subscriptions/'));
+    $url = esc_url_raw($url ?: home_url('/select-plan/'));
     ?>
     <div class="woocommerce">
       <p class="text-white"><?php echo esc_html__('Redirecting…', 'woocommerce'); ?></p>
@@ -144,7 +144,7 @@ if ($latest instanceof WC_Order) {
 }
 
 // 3) fallback final: si no hay órdenes, mandamos a /subscriptions/
-$subs_url = home_url('/subscriptions/');
+$subs_url = home_url('/select-plan/');
 mt_echo_client_redirect_and_exit($subs_url);
 return;
 

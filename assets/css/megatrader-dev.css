@@ -12,6 +12,7 @@
   --white-color: #ffffff;
   --light-color: #57534e;
   --gray-color: #dee8ff;
+  --slate-400: #94A3B8;
   --yellow-color: #ffb539;
   --success-color: #2dd4bf;
   --error-color: #f43f5e;
@@ -1852,6 +1853,15 @@ input#coupon_code.form-control.invalid_coupon::-ms-input-placeholder {
 .mega-btn-add-icon-md:before {
   content: url('data:image/svg+xml,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0_12273_4451" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="%23D9D9D9"/></mask><g mask="url(%23mask0_12273_4451)"><path d="M11 13H5V11H11V5H13V11H19V13H13V19H11V13Z" fill="black"/></g></svg>');
   display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+
+.mega-btn-next-icon-md:after {
+  content: url('data:image/svg+xml,<svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M4.6 6L0 1.4L1.4 0L7.4 6L1.4 12L0 10.6L4.6 6Z" fill="black"/> </svg>');
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 24px;
   height: 24px;
 }
