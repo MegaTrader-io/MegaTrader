@@ -270,7 +270,7 @@ $metaInfo = [
                                     <?php
                                     $input_id = 'platform-' . $item['slug'];
                                     $slug = esc_attr($item['slug']);
-                                    $name = esc_html($item['slug']);
+                                    $name = esc_html($item['name']);
                                     $isDisabled = $item['count'] == 0;
                                     $description = esc_html($item['description']);
                                     $thumbnail = esc_url($item['thumbnail_url']);
@@ -286,7 +286,7 @@ $metaInfo = [
                                             <div class="mt-card__header w-100">
                                                 <div class="mt-card__title">
                                                     <i class="mt-card__radio"></i>
-                                                    <span class="mt-card__title__text"><?= ucfirst($name) ?></span>
+                                                    <span class="mt-card__title__text"><?= $name ?></span>
                                                 </div>
                                                 <?php if ($thumbnail): ?>
                                                     <img class="mt-card__title__image" src="<?= $thumbnail; ?>"
@@ -796,7 +796,7 @@ $metaInfo = [
                     name: 'platform',
                     value: platform.slug,
                     isDisabled: platformSelection !== platform.slug,
-                    title: firstCharUpper(platform.slug),
+                    title: platform.name,
                     checked: platformSelection === platform.slug,
                     rightElementHTML: icon
                 });
@@ -839,7 +839,7 @@ $metaInfo = [
 
             let price = formatNumber(priceObject);
 
-            let frequency = billingType === 'monthly' ? 'per month' : 'one time fee';
+            let frequency = billingType === 'monthly' ? 'month' : 'one time fee';
             const accountTypeName = MG_GLOBAL.accountTypes.find((item) => item.slug === accountType)?.name || ''
             const platformName = MG_GLOBAL.platforms.find(p => p.slug === platform)?.name || ''
 
@@ -872,7 +872,7 @@ $metaInfo = [
             }
 
             container.querySelector('.plan-card__new-price').innerText = price;
-            container.querySelector('.plan-card__period').innerHTML = `per ${frequency}`;
+            container.querySelector('.plan-card__period').innerHTML = `${frequency}`;
 
             const {data: coupons} = await fetchCouponInBatch([productId]);
             const coupon = coupons[productId] || null;
