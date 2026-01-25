@@ -624,11 +624,21 @@ $metaInfo = [
             const treeMapKeys = Object.keys(treeMap);
 
             return {
-                getPriceObject: (sizeSlug) => {
+                getPriceObject: (sizeSlug, withPlatformSelection = null) => {
                     let attributes = null;
-                    Object.keys(treeMap || []).forEach(_ => {
+                    Object.keys(treeMap || []).forEach((attr) => {
+                        if (withPlatformSelection && attr === 'platform') {
+                            attributes = attributes[withPlatformSelection];
+                            return;
+                        }
+
                         attributes = !attributes ? productPlatformDetail[sizeSlug] : Object.values(attributes).at(0);
                     });
+
+
+                    if (!attributes) {
+                        return {priceObject: null, productId: null}
+                    }
 
                     const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
                     const productId = attributes.find(item => item['id'])['id'];
@@ -655,7 +665,28 @@ $metaInfo = [
                     }
 
                     return value;
-                }
+                },
+                findValueByTreeDataAll: (sizeSlug, key) => {
+                    let level = 0;
+                    let properties = null;
+                    let values = [];
+                    const treeData = productPlatformDetail[sizeSlug];
+
+                    const indexAttribute = treeMapKeys.indexOf(key);
+
+                    while (level <= indexAttribute) {
+                        level++;
+
+                        properties = !properties ? treeData : Object.values(properties)[0];
+
+                        if (indexAttribute === level) {
+                            values = Object.keys(properties);
+                            break;
+                        }
+                    }
+
+                    return values;
+                },
             }
         }
 
@@ -725,8 +756,22 @@ $metaInfo = [
                     return;
                 }
 
-                const {priceObject} = getPriceObject(sizeSlug);
+                const {priceObject} = getPriceObject(sizeSlug, previousPlatformSelected);
                 const billingType = findValueByTreeData(sizeSlug, TREE_MAP_KEYS.BILLING_TYPE);
+
+                if (!priceObject) {
+                    fragmentHTML += buildRadioButton({
+                        id: `account-size-${sizeSlug}`,
+                        name: 'account-size',
+                        value: sizeSlug,
+                        isDisabled: true,
+                        title: `$${sizeSlug.toUpperCase()}`,
+                        checked: false,
+                        rightElementHTML: ''
+                    });
+
+                    return;
+                }
 
                 let checked = false;
 
@@ -764,7 +809,7 @@ $metaInfo = [
 
             const container = document.querySelector('#account-platform-section .product-section__list');
 
-            const {findValueByTreeData} = prepareHelperFunctions(
+            const {findValueByTreeDataAll, findValueByTreeData} = prepareHelperFunctions(
                 productSelected,
                 productPlatformDetail
             );
@@ -773,11 +818,13 @@ $metaInfo = [
 
             let platformsFound = [];
             for (let priceSize in productPlatformDetail) {
-                let platform = findValueByTreeData(priceSize, TREE_MAP_KEYS.PLATFORM);
+                let platforms = findValueByTreeDataAll(priceSize, TREE_MAP_KEYS.PLATFORM);
 
-                if (!platformsFound.includes(platform)) {
-                    platformsFound.push(platform);
-                }
+                platforms.forEach(p => {
+                    if (!platformsFound.includes(p)) {
+                        platformsFound.push(p);
+                    }
+                });
             }
 
             let platforms = [...MG_GLOBAL.platforms.filter(p => platformsFound.includes(p.slug))];
@@ -806,9 +853,8 @@ $metaInfo = [
                     id: `platform-${platform.slug}`,
                     name: 'platform',
                     value: platform.slug,
-                    isDisabled: platformSelection !== platform.slug,
                     title: platform.name,
-                    checked: platformSelection === platform.slug,
+                    checked: platformSelection === platform.slug || previousPlatformSelected && previousPlatformSelected === platform.slug,
                     rightElementHTML: icon
                 });
 
@@ -852,7 +898,7 @@ $metaInfo = [
             const marketType = document.querySelector('[name="market-type"]:checked').value;
             const accountType = document.querySelector('[name="account-type"]:checked').value;
             const accountSize = document.querySelector('[name="account-size"]:checked').value;
-            const platform = document.querySelector('[name="platform"]:checked')?.value || '';
+            const platform = previousPlatformSelected ? previousPlatformSelected : document.querySelector('[name="platform"]:checked')?.value || '';
 
             const {productSelected, productPlatformDetail} = getProduct({accountType, marketType});
 
@@ -861,7 +907,7 @@ $metaInfo = [
                 productPlatformDetail
             );
 
-            const {priceObject, productId} = getPriceObject(accountSize);
+            const {priceObject, productId} = getPriceObject(accountSize, previousPlatformSelected);
             const billingType = findValueByTreeData(accountSize, TREE_MAP_KEYS.BILLING_TYPE);
 
             let price = formatNumber(priceObject);
@@ -967,10 +1013,12 @@ $metaInfo = [
 
         form.querySelectorAll('[name="market-type"]').forEach(element => {
             element.addEventListener("change", function () {
+                previousPlatformSelected = null;
                 initialize();
             });
         })
 
+        let previousPlatformSelected;
         document.addEventListener('change', function (e) {
             const type = e.target.type;
             if (type !== 'radio') {
@@ -979,12 +1027,23 @@ $metaInfo = [
 
             const inputName = e.target.name;
             if (inputName === 'account-type') {
+                previousPlatformSelected = null;
                 renderAccountSizes();
                 renderBrokers();
                 renderPlanDetail();
             } else if (inputName === 'account-size') {
                 renderBrokers();
                 renderPlanDetail();
+            } else if (inputName === 'platform') {
+                if (previousPlatformSelected) {
+                    previousPlatformSelected = null;
+                    renderAccountSizes();
+                    renderPlanDetail();
+                } else {
+                    previousPlatformSelected = e.target.value;
+                    renderAccountSizes();
+                    renderPlanDetail();
+                }
             }
         });
 
