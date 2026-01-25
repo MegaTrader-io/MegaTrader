@@ -32,7 +32,7 @@ if ($platform_key !== '' && function_exists('mt_platform_term_by_api_key')) {
   $platform_term = mt_platform_term_by_api_key($platform_key);
 }
 
-// 2) Icon URL desde term
+// 2) Icon URL desde term (esto ES el logo final)
 if ($platform_term && !empty($platform_term->term_id) && function_exists('mt_platform_icon_url_from_term')) {
   $platform_icon_url = (string) mt_platform_icon_url_from_term($platform_term);
 }
@@ -73,7 +73,7 @@ if ($platform_term && !empty($platform_term->term_id)) {
         foreach ($decoded as $btn) {
           if (!is_array($btn)) continue;
 
-          // IMPORTANT: icon viene ya como clase completa (ej: "mt-icon_download")
+          // icon viene ya como clase completa (ej: "mt-icon_download")
           $icon = trim((string)($btn['icon'] ?? ''));
           $text = (string)($btn['text'] ?? '');
           $url  = (string)($btn['url'] ?? '');
@@ -87,7 +87,7 @@ if ($platform_term && !empty($platform_term->term_id)) {
 
           if ($text !== '' && $url !== '') {
             $platform_links[] = [
-              'icon' => $icon, // clase directa
+              'icon' => $icon,
               'text' => $text,
               'url'  => $url,
             ];
@@ -102,19 +102,10 @@ if ($platform_term && !empty($platform_term->term_id)) {
 }
 
 // =============================
-// Platform image final
+// Skeleton flags (solo logo + links)
 // =============================
-$platform_img = '/wp-content/uploads/2025/07/Stylecolor-Sizelg.svg';
-
-// 1) Si alguien pasó platform_image explícito, respétalo
-if (!empty($args['platform_image'])) {
-  $platform_img = esc_url_raw($args['platform_image']);
-} else {
-  // 2) Si no, usa el icon del term si existe
-  if ($platform_icon_url !== '') {
-    $platform_img = $platform_icon_url;
-  }
-}
+$has_logo  = ($platform_icon_url !== '');
+$has_links = !empty($platform_links);
 
 // =============================
 // Agreement URL
@@ -139,14 +130,13 @@ if ($root !== null) {
           <?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['account_platform_description']); ?>
         </div>
 
-        <!-- LINKS DINÁMICOS (solo si existen en @links) -->
-        <?php if (!empty($platform_links)): ?>
-          <div class="d-flex gap-2 pt-3 flex-wrap">
+        <!-- LINKS: si no vienen (SSR), skeleton; si vienen, render real -->
+        <div class="d-flex gap-2 pt-3 flex-wrap">
+          <?php if ($has_links): ?>
             <?php foreach ($platform_links as $btn):
-              $btn_icon = trim((string)($btn['icon'] ?? '')); 
+              $btn_icon = trim((string)($btn['icon'] ?? ''));
               $btn_text = (string)($btn['text'] ?? '');
               $btn_url  = (string)($btn['url'] ?? '');
-
               if ($btn_url === '' || $btn_text === '') continue;
             ?>
               <a href="<?php echo esc_url($btn_url); ?>" target="_blank" class="text-decoration-none" rel="noopener">
@@ -158,8 +148,13 @@ if ($root !== null) {
                 </div>
               </a>
             <?php endforeach; ?>
-          </div>
-        <?php endif; ?>
+          <?php else: ?>
+            <!-- skeleton only for links -->
+            <span class="mt-skeleton-pulse d-inline-block rounded-pill" style="width:92px;height:28px;"></span>
+            <span class="mt-skeleton-pulse d-inline-block rounded-pill" style="width:92px;height:28px;"></span>
+            <span class="mt-skeleton-pulse d-inline-block rounded-pill" style="width:92px;height:28px;"></span>
+          <?php endif; ?>
+        </div>
       </div>
 
       <div class="vr d-none d-md-block"></div>
@@ -167,13 +162,18 @@ if ($root !== null) {
 
       <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0 mt-account-data-credentials">
         <div class="mt-platform-avatar flex-shrink-0">
-          <img
-            src="<?php echo esc_url($platform_img); ?>"
-            alt="Platform logo"
-            width="64"
-            height="64"
-            style="width:64px;height:64px;border-radius:9999px;object-fit:cover;"
-          />
+          <?php if ($has_logo): ?>
+            <img
+              src="<?php echo esc_url($platform_icon_url); ?>"
+              alt="Platform logo"
+              width="64"
+              height="64"
+              style="width:64px;height:64px;border-radius:9999px;object-fit:cover;"
+            />
+          <?php else: ?>
+            <!-- skeleton only for logo -->
+            <span class="mt-skeleton-pulse d-inline-block" style="width:64px;height:64px;border-radius:9999px;"></span>
+          <?php endif; ?>
         </div>
 
         <div class="d-flex flex-column gap-2 flex-grow-1 min-w-0">

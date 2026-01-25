@@ -1328,7 +1328,7 @@ if (!function_exists('mt_accounts_build_account_data')) {
       $plat = [];
 
     $platformName = (string) ($plat['platform'] ?? $account['platformName'] ?? $account['platform_label'] ?? '');
-    $server = "testServer";
+    $server = (string) ($plat['server'] ?? $account['server'] ?? '');
     $login = (string) ($plat['login'] ?? $account['login'] ?? '');
     $password = (string) ($plat['password'] ?? $account['password'] ?? '');
     $accountId = (string) ($plat['accountId'] ?? $account['accountId'] ?? '');

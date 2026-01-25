@@ -2962,7 +2962,7 @@ if (document.readyState === "loading") {
           <div class="logo-container position-relative d-inline-block">
             <img src="${esc(
               logo
-            )}" alt="platform logo" style="max-height:40px;" onerror="this.onerror=null;this.src='${esc(
+            )}" alt="platform logo" style="max-height:40px; border-radius: 50%;" onerror="this.onerror=null;this.src='${esc(
         FALLBACK_LOGO
       )}'">
             <div class="dot-indicator ${esc(dotClass)}" title="${esc(

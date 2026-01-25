@@ -84,7 +84,7 @@ $badgeClass  = trim($badgeBase . ' badge-mega-' . ($status_key ?: 'default'));
             loading="lazy"
             decoding="async"
             fetchpriority="low"
-            style="width:30px;height:30px;object-fit:contain;border-radius:6px;"
+            style="width:30px;height:30px;object-fit:contain;border-radius:50%;"
             onerror="this.onerror=null;this.src='<?php echo esc_js($fallback_logo); ?>';"
           />
 
