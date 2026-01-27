@@ -4,6 +4,12 @@ enum LayoutType: string
 {
     case MyAccount = 'my_account';
     case LandingPage = 'landing_page';
+    case ZeroPlan = 'zero-plan';
+}
+
+enum AccountType: string
+{
+    case ZERO_PLAN = 'zero-plan';
 }
 
 final class CACHE_KEY

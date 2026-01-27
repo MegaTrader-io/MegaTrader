@@ -19,6 +19,7 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
     {
         try {
             $marketTypeSlug = sanitize_text_field($request->get_param('marketType'));
+            $accountTypeSlug = sanitize_text_field($request->get_param('accountType'));
 
             if (empty($marketTypeSlug)) {
                 return new WP_REST_Response([
@@ -67,14 +68,30 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
                 }
             }
 
+            $marketTypeFound = array_find($mt_market_types, function ($marketType) use ($marketTypeSlug) {
+                return $marketType['slug'] === $marketTypeSlug;
+            });
+
+            if (!$marketTypeFound) {
+                return new WP_REST_Response([
+                    'success' => false,
+                    'message' => 'Wrong marketType parameter.'
+                ], 400);
+            }
+
             /**
              * 3. Filtrar productos válidos (excluye -fee y market-type)
              */
-            $mt_products = array_values(array_filter($mt_products_raw, function ($product) use ($marketTypeSlug) {
+            $mt_products = array_values(array_filter($mt_products_raw, function ($product) use ($marketTypeSlug, $accountTypeSlug) {
                 $slug = $product['slug'] ?? '';
                 if (str_ends_with($slug, '-fee')) {
                     return false;
                 }
+
+                if ($accountTypeSlug && isset($product['tree_map']) && $product['tree_map']['account-types'] != $accountTypeSlug) {
+                    return false;
+                }
+
                 return isset($product['tree_map']['market-type']) &&
                     $product['tree_map']['market-type'] === $marketTypeSlug;
             }));
@@ -243,6 +260,7 @@ HTML;
 
             ob_start();
             get_template_part('template-parts/landing-page/sections/pricing-table-fragment-bs', null, [
+                'layout_type' => $accountTypeSlug && $accountTypeSlug == AccountType::ZERO_PLAN->value ? LayoutType::ZeroPlan->value : 'default',
                 'mt_account_types' => $mt_account_types,
                 'mt_default_platform' => $mt_default_platform,
                 'mt_default_market_type' => $mt_default_market_type,
@@ -279,5 +297,22 @@ add_action('rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'mt_render_pricing_table_fragment',
         'permission_callback' => '__return_true',
+        'args' => [
+            'marketType' => [
+                'required' => true,
+                'type' => 'string',
+                'description' => 'Market type (required)',
+                'sanitize_callback' => 'sanitize_text_field',
+                'validate_callback' => function ($param) {
+                    return !empty($param);
+                },
+            ],
+            'accountType' => [
+                'required' => false,
+                'type' => 'string',
+                'description' => 'Account type slug (optional)',
+                'sanitize_callback' => 'sanitize_text_field',
+            ],
+        ],
     ]);
 });

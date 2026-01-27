@@ -7,6 +7,7 @@
  */
 
 // 1️⃣ Extraer las variables que vienen del get_template_part()
+$mt_layout_type = $args['layout_type'] ?? 'default';
 $mt_account_types = $args['mt_account_types'] ?? [];
 $mt_default_platform = $args['mt_default_platform'] ?? [];
 $mt_default_market_type = $args['mt_default_market_type'] ?? [];
@@ -27,7 +28,7 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
 
 ?>
 
-<div class="pricing-table-container-options">
+<div class="pricing-table-container-options <?= $mt_layout_type == 'default' ? '' : 'd-none' ?>">
     <?php
     // Renderizar select de tipos de cuenta
     get_template_part("template-parts/landing-page/sections/select-account-type", null, [
