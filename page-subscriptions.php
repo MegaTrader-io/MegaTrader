@@ -739,7 +739,7 @@ $metaInfo = [
 
             const container = document.querySelector('#account-size-section .product-section__list');
 
-            const {findValueByTreeData, getPriceObject} = prepareHelperFunctions(
+            const {findValueByTreeData, findValueByTreeDataAll, getPriceObject} = prepareHelperFunctions(
                 productSelected,
                 productPlatformDetail
             );
@@ -756,7 +756,17 @@ $metaInfo = [
                     return;
                 }
 
-                const {priceObject} = getPriceObject(sizeSlug, previousPlatformSelected);
+                let platforms = findValueByTreeDataAll(sizeSlug, TREE_MAP_KEYS.PLATFORM);
+
+                let _previousPlatformSelected = previousPlatformSelected;
+                if (!_previousPlatformSelected) {
+                    const platformFound = MG_GLOBAL.platforms.find(p => platforms.includes(p.slug));
+                    if (platformFound) {
+                        _previousPlatformSelected = platformFound.slug;
+                    }
+                }
+
+                const {priceObject} = getPriceObject(sizeSlug, _previousPlatformSelected);
                 const billingType = findValueByTreeData(sizeSlug, TREE_MAP_KEYS.BILLING_TYPE);
 
                 if (!priceObject) {
@@ -809,7 +819,7 @@ $metaInfo = [
 
             const container = document.querySelector('#account-platform-section .product-section__list');
 
-            const {findValueByTreeDataAll, findValueByTreeData} = prepareHelperFunctions(
+            const {findValueByTreeDataAll} = prepareHelperFunctions(
                 productSelected,
                 productPlatformDetail
             );
@@ -817,6 +827,8 @@ $metaInfo = [
             let fragmentHTML = '';
 
             let platformsFound = [];
+            let _previousPlatformSelected = previousPlatformSelected;
+
             for (let priceSize in productPlatformDetail) {
                 let platforms = findValueByTreeDataAll(priceSize, TREE_MAP_KEYS.PLATFORM);
 
@@ -835,7 +847,14 @@ $metaInfo = [
                 })
             }
 
-            let platformSelection = findValueByTreeData(accountSize, TREE_MAP_KEYS.PLATFORM);
+            let platformSelection;
+            let _platforms = findValueByTreeDataAll(accountSize, TREE_MAP_KEYS.PLATFORM);
+            if (!_previousPlatformSelected) {
+                let platformFound = MG_GLOBAL.platforms.find(p => _platforms.includes(p.slug));
+                if (platformFound) {
+                    platformSelection = platformFound.slug;
+                }
+            }
 
             platforms.forEach((platform) => {
                 if (!platform.slug) {
@@ -854,7 +873,7 @@ $metaInfo = [
                     name: 'platform',
                     value: platform.slug,
                     title: platform.name,
-                    checked: platformSelection === platform.slug || previousPlatformSelected && previousPlatformSelected === platform.slug,
+                    checked: platformSelection === platform.slug || _previousPlatformSelected && _previousPlatformSelected === platform.slug,
                     rightElementHTML: icon
                 });
 
@@ -907,7 +926,7 @@ $metaInfo = [
                 productPlatformDetail
             );
 
-            const {priceObject, productId} = getPriceObject(accountSize, previousPlatformSelected);
+            const {priceObject, productId} = getPriceObject(accountSize, platform);
             const billingType = findValueByTreeData(accountSize, TREE_MAP_KEYS.BILLING_TYPE);
 
             let price = formatNumber(priceObject);

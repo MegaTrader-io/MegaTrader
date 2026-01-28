@@ -72,7 +72,7 @@ $mt_platform_thumbnail_url = $mt_default_platform['thumbnail_url'] ?? '';
 $mt_default_market_type_slug = $mt_default_market_type ?? [];
 $market_types_allowed = [];
 
-$mt_default_account_type = $accountTypes[0] ?? [];
+$mt_default_account_type = $accountTypeZeroPlan[0] ?? [];
 $mt_default_slug = $mt_default_account_type['slug'] ?? '';
 $mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'] ?? '';
 $mt_size = $accountSizes[0] ?? '';
@@ -85,13 +85,15 @@ if ($mt_product) {
     $parent_id = $mt_product['id'];
 
     $indexAttribute = array_search('platform', array_keys($mt_product['tree_map']), true);
+
     foreach ($accountSizes as $size) {
         $properties = [];
         $structured_data = $mt_product[$mt_slug][$size['slug']];
 
         foreach (array_keys($mt_product['tree_map']) as $key => $attr) {
             if ($key === $indexAttribute) {
-                $properties = $properties[$mt_default_platform['slug']];
+                $hasValue = array_keys($properties)[0];
+                $properties = !$hasValue ? array_values($properties)[0] : $properties[$mt_default_platform['slug']];
             } else {
                 $properties = count($properties) === 0 ? array_values($structured_data) : array_values($properties)[0];
             }
@@ -130,9 +132,6 @@ if ($mt_product) {
     }
 }
 
-/**
- * 10. Productos más populares
- */
 $mt_best_products = mt_most_popular_products();
 
 /**
@@ -704,6 +703,11 @@ HTML;
                 document.querySelector('.price-table ul').innerHTML = buildPricesCardsHTML(prices);
 
                 const [marketType, accountType, platform] = marketTypeAndAccountTypeSelect();
+
+                const slides = document.querySelector('.price-table .glide__slides');
+                if (slides) {
+                    slides.style.gridTemplateColumns = `repeat(${prices.length}, 1fr)`;
+                }
 
                 void fn({
                     accountType,
