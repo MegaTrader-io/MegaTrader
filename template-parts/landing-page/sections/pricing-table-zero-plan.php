@@ -225,6 +225,87 @@ HTML;
         screenLoaded: false
     };
 
+    const PLATFORMS = <?= wp_json_encode($instance->platforms()->getList(), JSON_PRETTY_PRINT) ?>;
+
+    const TREE_MAP_KEYS = Object.freeze({
+        ACCOUNT_SIZE: 'account-size',
+        ACCOUNT_TYPES: 'account-types',
+        BILLING_TYPE: 'billing-type',
+        MARKET_TYPE: 'market-type',
+        PLATFORM: 'platform'
+    });
+
+    function prepareHelperFunctions(productSelected, productPlatformDetail) {
+        let {tree_map: treeMap} = productSelected || {tree_map: {}};
+        const treeMapKeys = Object.keys(treeMap);
+
+        return {
+            getPriceObject: (sizeSlug, withPlatformSelection = null) => {
+                let attributes = null;
+                Object.keys(treeMap || []).forEach((attr) => {
+                    if (withPlatformSelection && attr === 'platform') {
+                        attributes = attributes[withPlatformSelection];
+                        return;
+                    }
+
+                    attributes = !attributes ? productPlatformDetail[sizeSlug] : Object.values(attributes).at(0);
+                });
+
+
+                if (!attributes) {
+                    return {priceObject: null, productId: null, attributes: null}
+                }
+
+                const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
+                const productId = attributes.find(item => item['id'])['id'];
+
+                return {priceObject, productId, attributes}
+            },
+            findValueByTreeData: (sizeSlug, key) => {
+                let level = 0;
+                let properties = null;
+                let value = '';
+                const treeData = productPlatformDetail[sizeSlug];
+
+                const indexAttribute = treeMapKeys.indexOf(key);
+
+                while (level <= indexAttribute) {
+                    level++;
+
+                    properties = !properties ? treeData : Object.values(properties)[0];
+
+                    if (indexAttribute === level) {
+                        value = Object.keys(properties)[0];
+                        break;
+                    }
+                }
+
+                return value;
+            },
+            findValueByTreeDataAll: (sizeSlug, key) => {
+                let level = 0;
+                let properties = null;
+                let values = [];
+                const treeData = productPlatformDetail[sizeSlug];
+
+                const indexAttribute = treeMapKeys.indexOf(key);
+
+                while (level <= indexAttribute) {
+                    level++;
+
+                    properties = !properties ? treeData : Object.values(properties)[0];
+
+                    if (indexAttribute === level) {
+                        values = Object.keys(properties);
+                        break;
+                    }
+                }
+
+                return values;
+            },
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const VISIBLE_COUNT = 4;
         let currentIndex = 0;
@@ -708,15 +789,26 @@ HTML;
             }
 
             const products = [];
+
+            const {findValueByTreeData, getPriceObject, findValueByTreeDataAll} = prepareHelperFunctions(
+                productSelected,
+                productPlatformDetail
+            );
+
             for (const priceSize in productPlatformDetail) {
-                const billingType = productSelected.tree_map['billing-type'];
+                const billingType = findValueByTreeData(priceSize, TREE_MAP_KEYS.BILLING_TYPE);
+                const platformsByPrice = findValueByTreeDataAll(priceSize, TREE_MAP_KEYS.PLATFORM);
 
-                let attributes = null;
-                Object.keys(productSelected?.tree_map || []).forEach(_ => {
-                    attributes = !attributes ? productPlatformDetail[priceSize] : Object.values(attributes).at(0);
-                });
+                let defaultPlatform;
+                if (platformsByPrice.length > 1) {
+                    const _platformFound = PLATFORMS.find(p => platformsByPrice.includes(p.slug));
+                    defaultPlatform = _platformFound?.slug;
+                } else {
+                    defaultPlatform = platformsByPrice[0]?.slug || null;
+                }
 
-                const priceObject = attributes.find(item => item['price-monthly'])['price-monthly'] || '$0.00';
+                let {priceObject, attributes} = getPriceObject(priceSize, defaultPlatform);
+
                 const productId = attributes.find(item => item['id'])['id'];
 
                 products.push({productId, priceSize, priceObject});
