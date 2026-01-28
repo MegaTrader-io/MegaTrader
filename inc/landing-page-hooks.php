@@ -149,13 +149,6 @@ if (!function_exists('megatrader_get_market_data')) {
     }
 }
 
-add_action('rest_api_init', function () {
-    register_rest_route('megatrader/v1', '/markets', [
-            'methods' => 'GET',
-            'callback' => 'megatrader_get_market_data',
-    ]);
-});
-
 add_action('wp_ajax_subscription_form_submit', 'handle_subscription_form_submit');
 add_action('wp_ajax_nopriv_subscription_form_submit', 'handle_subscription_form_submit');
 

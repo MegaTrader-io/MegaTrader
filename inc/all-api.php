@@ -270,6 +270,9 @@ function get_products_with_attributes() {
                 // 'attribute_ids' => $product_attribute_ids,
                 $product->get_slug() => isset($structured_data[$product_name_slug]) ? $structured_data[$product_name_slug] : array()
             );
+
+            // reset structure data
+            $structured_data[$product_name_slug] = [];
         }
         wp_reset_postdata();
     }

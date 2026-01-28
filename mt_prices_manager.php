@@ -123,10 +123,11 @@ class MT_ProductManager extends Items
                     : array_values($properties)[0];
 
                 if ($indexAttribute - 1 === $level) {
-                    $platformSlug = array_key_first($properties);
-
-                    if ($platformSlug && !in_array($platformSlug, $platformsFound, true)) {
-                        $platformsFound[] = $platformSlug;
+                    $_platforms = array_keys($properties) ?? [];
+                    foreach($_platforms as $platformSlug) {
+                        if ($platformSlug && !in_array($platformSlug, $platformsFound, true)) {
+                            $platformsFound[] = $platformSlug;
+                        }
                     }
                 }
 

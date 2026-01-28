@@ -24,7 +24,7 @@ foreach ($mt_attributes as $attr) {
             $mt_market_types[] = $attr;
             break;
         case 'pa_account-size':
-            $mt_account_sizes[] = $attr['slug'];
+            $mt_account_sizes[] = $attr;
             break;
         case 'pa_account-types':
             $mt_account_types[] = $attr;
@@ -51,12 +51,11 @@ $marketTypes = $instance->marketTypes()->filtered(function ($marketType) {
 $marketType = $marketTypes[0] ?? null;
 $marketTypeSlug = $marketType['slug'] ?? null;
 $accountTypes = $instance->accountTypesByMarketType($marketType['slug']);
-
 $accountTypeZeroPlan = array_values(array_filter($accountTypes, function ($accountType) {
     return $accountType['slug'] == AccountType::ZERO_PLAN->value;
 }));
 
-$accountType = $accountTypes[0] ?? null;
+$accountType = $accountTypeZeroPlan[0] ?? null;
 $accountTypeSlug = $accountType['slug'] ?? '';
 
 $mt_product = $instance->productByMarketTypeAndAccountType($marketTypeSlug, $accountTypeSlug);
@@ -67,147 +66,35 @@ $platforms = $instance->platformsByMarketTypeAccountTypeAndSizes($marketTypeSlug
 /**
  * 3. Definir valores iniciales
  */
-$mt_default_market_type = $mt_market_types[0] ?? null;
-$mt_default_platform = $mt_platforms[0] ?? null;
+$mt_default_market_type = $marketTypes[0] ?? null;
+$mt_default_platform = $platforms[0] ?? null;
 $mt_platform_thumbnail_url = $mt_default_platform['thumbnail_url'] ?? '';
 $mt_default_market_type_slug = $mt_default_market_type ?? [];
 $market_types_allowed = [];
 
-/**
- * 4. Filtrar productos válidos (excluye -fee)
- */
-$mt_products = array_values(array_filter($mt_products_raw, function ($product) use (&$market_types_allowed) {
-    $slug = $product['slug'] ?? '';
-    if (str_ends_with($slug, '-fee')) {
-        return false;
-    }
-
-    $marketType = $product['tree_map']['market-type'] ?? null;
-    if ($marketType && !in_array($marketType, $market_types_allowed, true)) {
-        $market_types_allowed[] = $marketType;
-    }
-
-    return true;
-}));
-
-/**
- * 5. Filtrar market types según los productos existentes
- */
-
-$mt_market_types = array_values(array_filter(
-        $mt_market_types,
-        fn($type) => in_array($type['slug'], $market_types_allowed, true)
-));
-
-
-/**
- * 6. Filtrar productos por market-type por defecto
- */
-$account_sizes_allowed = [];
-$account_types_allowed = [];
-
-$mt_filtered_products = array_values(array_filter($mt_products, function ($product) use (
-        $mt_default_market_type, $mt_account_types, $mt_account_sizes,
-        &$account_sizes_allowed, &$account_types_allowed
-) {
-    $marketType = $product['tree_map']['market-type'] ?? null;
-    if ($marketType !== $mt_default_market_type['slug']) {
-        return false;
-    }
-
-    $slug = $product['slug'];
-    $variants = $product[$slug] ?? [];
-
-    foreach ($mt_account_sizes as $size) {
-        if (!isset($variants[$size])) {
-            continue;
-        }
-
-        if (!in_array($size, $account_sizes_allowed, true)) {
-            $account_sizes_allowed[] = $size;
-        }
-
-        foreach ($mt_account_types as $type) {
-            $type_slug = $type['slug'];
-            if (isset($variants[$size][$type_slug]) && !in_array($type_slug, $account_types_allowed, true)) {
-                $account_types_allowed[] = $type_slug;
-            }
-        }
-    }
-
-    return true;
-}));
-
-/**
- * 7. Definir account types y sizes finales
- */
-$mt_account_types = array_values(array_filter(
-        $mt_account_types,
-        fn($type) => in_array($type['slug'], $account_types_allowed, true)
-));
-
-$mt_default_account_type = $mt_account_types[0] ?? [];
+$mt_default_account_type = $accountTypes[0] ?? [];
 $mt_default_slug = $mt_default_account_type['slug'] ?? '';
 $mt_account_thumbnail_url = $mt_default_account_type['thumbnail_url'] ?? '';
-$mt_account_sizes = $account_sizes_allowed;
-$mt_size = $mt_account_sizes[0] ?? '';
-
-/**
- * 8. Agrupar market-type → account-types (para los tabs)
- */
-$grouped = [];
-foreach ($mt_products as $product) {
-    $map = $product['tree_map'] ?? [];
-    $marketType = $map['market-type'] ?? null;
-    $accountType = $map['account-types'] ?? null;
-
-    if (!$marketType || !$accountType) continue;
-
-    if (!isset($grouped[$marketType])) {
-        $grouped[$marketType] = [
-                'market-type' => $marketType,
-                'account-types' => [],
-        ];
-    }
-
-    if (!in_array($accountType, $grouped[$marketType]['account-types'], true)) {
-        $grouped[$marketType]['account-types'][] = $accountType;
-    }
-}
-
-$result = array_values($grouped);
-$current_market_type = array_values(array_filter(
-        $result,
-        fn($item) => $item['market-type'] === $mt_default_market_type_slug['slug']
-))[0] ?? [];
-
-$mt_account_types = array_values(array_filter(
-        $mt_account_types,
-        fn($type) => in_array($type['slug'], $current_market_type['account-types'] ?? [], true)
-));
-
-/**
- * 9. Construcción de lista de planes
- */
-$mt_product = array_find($mt_filtered_products, function ($product) use ($mt_default_slug) {
-    return isset($product['tree_map']) && isset($product['tree_map']['account-types']) && $product['tree_map']['account-types'] === $mt_default_slug;
-});
+$mt_size = $accountSizes[0] ?? '';
 
 $mt_plan_list = [];
 $mt_default_meta_info = [];
 
-if ($mt_product && isset($mt_product[$mt_product['slug']][$mt_size][$mt_default_slug])) {
-    $mt_product_level = $mt_product[$mt_product['slug']][$mt_size][$mt_default_slug];
-    $mt_default_platform = array_key_first($mt_product_level);
-    $mt_default_market_type = array_key_first($mt_product_level[$mt_default_platform]);
-
+if ($mt_product) {
     $mt_slug = $mt_product['slug'] ?? null;
     $parent_id = $mt_product['id'];
 
-    foreach ($mt_account_sizes as $size) {
+    $indexAttribute = array_search('platform', array_keys($mt_product['tree_map']), true);
+    foreach ($accountSizes as $size) {
         $properties = [];
-        foreach (array_keys($mt_product['tree_map']) as $attr) {
-            $properties = count($properties) === 0 ? array_values($mt_product[$mt_slug])[0] : array_values($properties)[0];
+        $structured_data = $mt_product[$mt_slug][$size['slug']];
+
+        foreach (array_keys($mt_product['tree_map']) as $key => $attr) {
+            if ($key === $indexAttribute) {
+                $properties = $properties[$mt_default_platform['slug']];
+            } else {
+                $properties = count($properties) === 0 ? array_values($structured_data) : array_values($properties)[0];
+            }
         }
 
         if (count($properties) == 0) continue;
@@ -277,7 +164,7 @@ HTML;
 
     <div class="market-type-bs">
         <div class="market-type-bs__group">
-            <?php foreach ($mt_market_types as $index => $mt_market_type): ?>
+            <?php foreach ($marketTypes as $index => $mt_market_type): ?>
                 <?php
                 $slug = esc_attr($mt_market_type['slug']);
                 $name = esc_html($mt_market_type['name']);
@@ -322,7 +209,7 @@ HTML;
                     // datos visuales
                         'mt_size' => $mt_size,
                         'mt_product' => $mt_product,
-                        'mt_account_sizes' => $mt_account_sizes,
+                        'mt_account_sizes' => $accountSizes,
 
                     // utilidades opcionales usadas en el loop
                         'mt_product_data' => $mt_products_data,
