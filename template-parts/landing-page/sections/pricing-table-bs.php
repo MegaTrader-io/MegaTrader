@@ -399,6 +399,10 @@ HTML;
     </div>
 </section>
 
+<?php get_template_part("template-parts/select-platform-modal", null, [
+        'platforms' => $instance->platforms()->getList()
+]); ?>
+
 <script>
     const PAGE_KEY = '<?= $page_slug ?>-storage';
     window[PAGE_KEY] = {
@@ -637,18 +641,23 @@ HTML;
             return mtCache[URL];
         }
 
-        function buildProductUrl(productId) {
+
+        function baseProductUrl(productId, coupon = null) {
             const CHECKOUT_URL = MG_GLOBAL.CHECKOUT_URL;
             let checkoutUrl = CHECKOUT_URL.replace('PRODUCT_ID', productId);
-
-            const couponElement = document.querySelector('.badge-coupon__code');
-            const coupon = couponElement?.innerText?.trim();
 
             if (coupon) {
                 checkoutUrl = checkoutUrl + '&coupon=' + coupon;
             }
 
             return checkoutUrl;
+        }
+
+        function buildProductUrl(productId) {
+            const couponElement = document.querySelector('.badge-coupon__code');
+            const coupon = couponElement?.innerText?.trim();
+
+            return baseProductUrl(productId, coupon)
         }
 
         function formatNumber(value) {
@@ -707,12 +716,47 @@ HTML;
             return metaInfoList;
         }
 
+        function openSelectPlatformModal(params) {
+            const {items, handlerSelect, selectedId} = params;
+            const modal = document.getElementById("selectPlatformModal");
+            if (!modal) return;
+
+            const myModal = new bootstrap.Modal(modal, {
+                keyboard: false
+            })
+
+            document.dispatchEvent(
+                new CustomEvent("mt:initializePlatformModal", {
+                    detail: {
+                        items: items || [],
+                        selectedId: selectedId,
+                        handlerSelect: handlerSelect || function () {
+                        }
+                    },
+                })
+            );
+
+            myModal.show();
+        }
+
+        function saveOnLocalstorage(values) {
+            localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+        }
 
         document.addEventListener('click', function (e) {
             const target = e.target.closest('.proceed-to-checkout-btn');
             if (!target) return;
 
             try {
+                const [marketType, accountType] = marketTypeAndAccountTypeSelect();
+                const productSelected = MG_GLOBAL.products.find(product => product.tree_map['account-types'] === accountType && product.tree_map['market-type'] === marketType);
+                const productPlatformDetail = productSelected[productSelected.slug];
+
+                const {findValueByTreeDataAll, getPriceObject} = prepareHelperFunctions(
+                    productSelected,
+                    productPlatformDetail
+                );
+
                 const parent = target.parentElement;
                 const accountSize = parent?.dataset?.price;
                 const input = document.querySelector('input[name="account-type"]:checked');
@@ -722,6 +766,8 @@ HTML;
                     return;
                 }
 
+                const platformsByPrice = findValueByTreeDataAll(accountSize, TREE_MAP_KEYS.PLATFORM);
+
                 const values = {
                     'market-type': input.dataset.defaultMarketType || null,
                     'account-size': accountSize || null,
@@ -729,19 +775,54 @@ HTML;
                     'platform': input.dataset.defaultPlatform || null
                 };
 
-                // Validación mínima antes de guardar
                 if (!values['account-size'] || !values['account-type']) {
                     console.error('Incomplete data to save in localStorage', values);
                     return;
                 }
 
-                localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+                if (platformsByPrice.length > 1) {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const items = PLATFORMS.filter(p => platformsByPrice.includes(p.slug))
+                    const selectedId = items[0]?.slug || '';
+
+                    openSelectPlatformModal({
+                        items: items,
+                        selectedId: selectedId,
+                        handlerSelect: async function (platform) {
+                            const {productId} = getPriceObject(accountSize, platform);
+
+                            if (!productId) {
+                                return;
+                            }
+
+                            $.preloader && $.preloader.show();
+
+                            try {
+                                const {data: coupons} = await fetchCouponInBatch([productId]);
+                                const coupon = coupons[productId];
+                                let url = baseProductUrl(productId, coupon?.coupon);
+
+                                localStorage.setItem(PAGE_KEY, JSON.stringify(values));
+
+                                location.href = url;
+                            } catch (e) {
+                                $.preloader && $.preloader.hide();
+                            }
+                        }
+                    });
+
+                    return;
+                }
+
+                saveOnLocalstorage(values);
                 console.info('Saved to localStorage:', values);
             } catch (err) {
                 console.error('Error handling proceed-to-checkout click:', err);
             }
         });
-
 
         function loadChooseYourAccountSize(fn) {
             document.getElementById('pricing')
