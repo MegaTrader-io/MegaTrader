@@ -2440,6 +2440,18 @@ input[type="radio"]:not(:checked) + .mt-pricing-table-plan-options__item > label
     top: calc(53% - 28px);
 }
 
+.pricing-table-fragment-wrapper .mt-prices-left {
+    position: absolute;
+    left: -16px;
+    top: 50%
+}
+
+.pricing-table-fragment-wrapper .mt-prices-right {
+    position: absolute;
+    right: -16px;
+    top: 50%
+}
+
 .price-table__glide .glide__arrow--prev {
     left: calc(((100dvw - var(--price-table-slide-width)) / 2) - 20px);
 }

@@ -252,18 +252,6 @@
     position: relative;
 }
 
-.pricing-table-fragment-wrapper .mt-prices-left {
-    position: absolute;
-    left: -16px;
-    top: 60%
-}
-
-.pricing-table-fragment-wrapper .mt-prices-right {
-    position: absolute;
-    right: -16px;
-    top: 60%
-}
-
 .pricing-table-fragment-wrapper .mt-prices-disabled {
     opacity: .33;
     cursor: not-allowed;
