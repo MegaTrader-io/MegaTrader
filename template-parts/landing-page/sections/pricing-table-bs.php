@@ -873,6 +873,8 @@ HTML;
                 resetIndexPaginationForPricingTable();
 
                 rerenderPriceTable(movePricingCards('init'));
+
+                document.dispatchEvent(new CustomEvent('mt:refreshSliderPricingTable', {detail: {}}));
             }
 
             function resetIndexPaginationForPricingTable() {
