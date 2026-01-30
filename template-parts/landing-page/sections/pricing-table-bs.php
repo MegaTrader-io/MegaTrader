@@ -959,6 +959,7 @@ HTML;
                     console.error(`[Navigation] Error moviendo precios hacia ${direction}:`, err);
                 }
             });
+
             document.addEventListener("mt:refresh-price-table", async () => {
                 const accountType = document.querySelector('[name="account-type"]:checked');
                 changeAccountType(accountType);
@@ -1351,20 +1352,23 @@ HTML;
             }
         }
 
+        let resizeTimeout;
+
         function handleResize() {
-            document.dispatchEvent(new CustomEvent("mt:refresh-price-table"));
+            console.info('handleResize', new Date());
             if (isDesktop()) {
                 destroyGlide();
             } else {
                 initGlide();
             }
+
+            clearTimeout(resizeTimeout);
         }
 
         // Inicializa solo si el viewport es menor o igual a 800
         isMobile() && initGlide();
 
         // Escucha cambios de tamaño con debounce
-        let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(handleResize, 250);

@@ -1171,7 +1171,6 @@ HTML;
         }
 
         function handleResize() {
-            document.dispatchEvent(new CustomEvent("mt:refresh-price-table"));
             if (isDesktop()) {
                 destroyGlide();
             } else {
