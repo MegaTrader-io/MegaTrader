@@ -511,7 +511,7 @@ HTML;
                     }
                 });
 
-                document.getElementById('pricing').dispatchEvent(event);
+                document.dispatchEvent(event);
                 localStorage.removeItem(PAGE_KEY)
             }
         }, 0);
