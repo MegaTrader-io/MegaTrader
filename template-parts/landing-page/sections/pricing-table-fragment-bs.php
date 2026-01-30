@@ -8,6 +8,7 @@
 
 // 1️⃣ Extraer las variables que vienen del get_template_part()
 $mt_layout_type = $args['layout_type'] ?? 'default';
+$mt_view_mode = $args['mt_view_mode'] ?? 'desktop';
 $mt_account_types = $args['mt_account_types'] ?? [];
 $mt_default_platform = $args['mt_default_platform'] ?? [];
 $mt_default_market_type = $args['mt_default_market_type'] ?? [];
@@ -69,9 +70,6 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
             style="grid-template-columns: repeat(<?= min(count($mt_plan_list), 4) ?>, 1fr);">
             <?php foreach ($mt_plan_list as $mt_index => $mt_plan): ?>
                 <?php
-                if ($mt_index > 3) {
-                    continue;
-                }
                 $mt_id = $mt_plan['id'];
                 $mt_size = $mt_plan['size'];
                 $mt_parent_id = $mt_plan['parent_id'];
@@ -230,11 +228,6 @@ if (empty($mt_plan_list) || empty($mt_account_types)) {
 
     <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]">
         <?php foreach ($mt_plan_list as $key => $item): ?>
-            <?php
-            if ($key > 3) {
-                continue;
-            }
-            ?>
             <button class="slider__bullet glide__bullet" data-glide-dir="=<?= esc_attr($key) ?>"></button>
         <?php endforeach; ?>
     </div>

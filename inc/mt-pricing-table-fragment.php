@@ -20,6 +20,7 @@ if (!function_exists('mt_render_pricing_table_fragment')) {
         try {
             $marketTypeSlug = sanitize_text_field($request->get_param('marketType'));
             $accountTypeSlug = sanitize_text_field($request->get_param('accountType'));
+            $viewMode = sanitize_text_field($request->get_param('$viewMode'));
 
             if (empty($marketTypeSlug)) {
                 return new WP_REST_Response([

@@ -490,6 +490,14 @@ HTML;
         }
     }
 
+    function isMobile() {
+        return window.innerWidth <= 1024;
+    }
+
+    function isDesktop() {
+        return !isMobile();
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         const VISIBLE_COUNT = 4;
         let currentIndex = 0;
@@ -675,7 +683,7 @@ HTML;
             if (saved) {
                 const values = JSON.parse(saved);
 
-                const event = new CustomEvent("trigger:select-account-type", {
+                const event = new CustomEvent("mt:select-account-type", {
                     detail: {
                         accountType: values['account-type'],
                         defaultPlatform: values['platform'],
@@ -825,38 +833,7 @@ HTML;
         });
 
         function loadChooseYourAccountSize(fn) {
-            document.getElementById('pricing')
-                .addEventListener("trigger:select-account-type", async (e) => {
-                    const firstMarketType = document.querySelector('.market-type-bs [name="market-type"]:nth-child(1)').value;
-                    const {accountType, defaultAccountSize, defaultMarketType} = e.detail
-
-                    if (firstMarketType !== defaultMarketType) {
-                        const target = document.querySelector(`.market-type-bs [name="market-type"][value="${defaultMarketType}"]`)
-                        target.checked = true;
-                        await handlerSelectByMarketType(target, accountType);
-                    }
-
-                    const accountTypeSelected = document.querySelector('input[name="account-type"][value=' + accountType + ']')
-                    accountTypeSelected.checked = true;
-
-                    handlerSelectByAccountType(accountTypeSelected);
-
-                    const pricingTableGlide = document.querySelector('.price-table.price-table__glide');
-                    if (pricingTableGlide) {
-                        const cardPlanSize = pricingTableGlide.querySelector('.price-table__plan[data-price="' + defaultAccountSize + '"]');
-
-                        const items = Array.from(pricingTableGlide.querySelectorAll('.slider__slides > li'));
-
-                        const planSizeIndexSelection = items.indexOf(cardPlanSize.parentElement);
-
-                        if (window.tableSliderInstance && planSizeIndexSelection !== -1) {
-                            window.tableSliderInstance.go(`=${planSizeIndexSelection}`);
-                        }
-                    }
-                });
-
-
-            function handlerSelectByAccountType(target) {
+            function changeAccountType(target) {
                 if (!target) {
                     return;
                 }
@@ -881,7 +858,7 @@ HTML;
                 currentIndex = 0;
             }
 
-            async function handlerSelectByMarketType(target, accountType = null) {
+            async function changeMarketType(target, accountType = null) {
                 const input = target.currentTarget || target;
                 const marketType = input.value;
 
@@ -929,7 +906,7 @@ HTML;
                             accountType: firstAccountTypeInput.value,
                             defaultPlatform: firstAccountTypeInput.dataset.defaultPlatform,
                             defaultMarketType: firstAccountTypeInput.dataset.defaultMarketType,
-                            prices: pricesKeys.splice(0, VISIBLE_COUNT)
+                            prices: isDesktop() ? pricesKeys.splice(0, VISIBLE_COUNT) : pricesKeys
                         });
                     } else {
                         console.warn('No se encontró ningún input[name="account-type"] en el nuevo fragmento.');
@@ -937,31 +914,14 @@ HTML;
 
                     // 🔁 Reasignar listeners dentro del nuevo HTML renderizado
                     htmlContainer.querySelectorAll('[name="account-type"]').forEach(btn => {
-                        btn.addEventListener('click', handlerSelectByAccountType);
+                        btn.addEventListener('click', changeAccountType);
                     });
+
+                    document.dispatchEvent(new CustomEvent("mt:refresh-price-table"));
                 } catch (error) {
                     console.error('Error al cargar el fragmento de pricing:', error);
                 }
             }
-
-
-            document.addEventListener('click', function (e) {
-                const btn = e.target.closest('.mt-prices-left, .mt-prices-right');
-                if (!btn) return;
-
-                const direction = btn.classList.contains('mt-prices-left') ? 'left' : 'right';
-
-                if (btn.classList.contains('mt-prices-disabled')) {
-                    return;
-                }
-
-                try {
-                    const prices = movePricingCards(direction);
-                    rerenderPriceTable(prices);
-                } catch (err) {
-                    console.error(`[Navigation] Error moviendo precios hacia ${direction}:`, err);
-                }
-            });
 
             function rerenderPriceTable(prices = []) {
                 document.querySelector('.price-table ul').innerHTML = buildPricesCardsHTML(prices);
@@ -982,11 +942,62 @@ HTML;
             }
 
             // 📌 Inicializar listeners principales
-            document.querySelectorAll('[name="account-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByAccountType));
-            document.querySelectorAll('[name="market-type"]').forEach(btn => btn.addEventListener('click', handlerSelectByMarketType));
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.mt-prices-left, .mt-prices-right');
+                if (!btn) return;
+
+                const direction = btn.classList.contains('mt-prices-left') ? 'left' : 'right';
+
+                if (btn.classList.contains('mt-prices-disabled')) {
+                    return;
+                }
+
+                try {
+                    const prices = movePricingCards(direction);
+                    rerenderPriceTable(prices);
+                } catch (err) {
+                    console.error(`[Navigation] Error moviendo precios hacia ${direction}:`, err);
+                }
+            });
+            document.addEventListener("mt:refresh-price-table", async () => {
+                const accountType = document.querySelector('[name="account-type"]:checked');
+                changeAccountType(accountType);
+            });
+
+            document.addEventListener("mt:select-account-type", async (e) => {
+                const firstMarketType = document.querySelector('.market-type-bs [name="market-type"]:nth-child(1)').value;
+                const {accountType, defaultAccountSize, defaultMarketType} = e.detail
+
+                if (firstMarketType !== defaultMarketType) {
+                    const target = document.querySelector(`.market-type-bs [name="market-type"][value="${defaultMarketType}"]`)
+                    target.checked = true;
+                    await changeMarketType(target, accountType);
+                }
+
+                const accountTypeSelected = document.querySelector('input[name="account-type"][value=' + accountType + ']')
+                accountTypeSelected.checked = true;
+
+                changeAccountType(accountTypeSelected);
+
+                const pricingTableGlide = document.querySelector('.price-table.price-table__glide');
+                if (pricingTableGlide) {
+                    const cardPlanSize = pricingTableGlide.querySelector('.price-table__plan[data-price="' + defaultAccountSize + '"]');
+
+                    const items = Array.from(pricingTableGlide.querySelectorAll('.slider__slides > li'));
+
+                    const planSizeIndexSelection = items.indexOf(cardPlanSize.parentElement);
+
+                    if (window.tableSliderInstance && planSizeIndexSelection !== -1) {
+                        window.tableSliderInstance.go(`=${planSizeIndexSelection}`);
+                    }
+                }
+            });
+
+            document.querySelectorAll('[name="account-type"]').forEach(btn => btn.addEventListener('click', changeAccountType));
+            document.querySelectorAll('[name="market-type"]').forEach(btn => btn.addEventListener('click', changeMarketType));
 
             const targetSelection = document.querySelector('[name="account-type"]:checked');
-            targetSelection && handlerSelectByAccountType(targetSelection);
+            targetSelection && changeAccountType(targetSelection);
         }
 
         window.mtCache = {};
@@ -1341,8 +1352,8 @@ HTML;
         }
 
         function handleResize() {
-            const viewportWidth = window.innerWidth;
-            if (viewportWidth > 1024) {
+            document.dispatchEvent(new CustomEvent("mt:refresh-price-table"));
+            if (isDesktop()) {
                 destroyGlide();
             } else {
                 initGlide();
@@ -1350,7 +1361,7 @@ HTML;
         }
 
         // Inicializa solo si el viewport es menor o igual a 800
-        if (window.innerWidth <= 1024) initGlide();
+        isMobile() && initGlide();
 
         // Escucha cambios de tamaño con debounce
         let resizeTimeout;
@@ -1374,6 +1385,10 @@ HTML;
         function toggleArrowsToMovePrices(showArrows = true) {
             const leftBtn = document.querySelector('.mt-prices-left');
             const rightBtn = document.querySelector('.mt-prices-right');
+
+            if (isMobile()) {
+                showArrows = false;
+            }
 
             if (showArrows) {
                 leftBtn.classList.add('mt-prices-disabled');
@@ -1402,6 +1417,10 @@ HTML;
             const {pricesKeys} = getPricesInfoByAccountTypeAndMarketType(accountType, marketType);
 
             toggleArrowsToMovePrices(pricesKeys.length > 4);
+
+            if (isMobile()) {
+                return pricesKeys;
+            }
 
             try {
                 const totalItems = pricesKeys.length;
