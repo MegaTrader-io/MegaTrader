@@ -966,11 +966,11 @@ HTML;
             });
 
             document.addEventListener("mt:select-account-type", async (e) => {
-                const firstMarketType = document.querySelector('.market-type-bs [name="market-type"]:nth-child(1)').value;
+                const firstMarketType = document.querySelector('[name="market-type"]:nth-child(1)').value;
                 const {accountType, defaultAccountSize, defaultMarketType} = e.detail
 
                 if (firstMarketType !== defaultMarketType) {
-                    const target = document.querySelector(`.market-type-bs [name="market-type"][value="${defaultMarketType}"]`)
+                    const target = document.querySelector(`[name="market-type"][value="${defaultMarketType}"]`)
                     target.checked = true;
                     await changeMarketType(target, accountType);
                 }
