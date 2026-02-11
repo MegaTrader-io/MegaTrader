@@ -962,8 +962,16 @@ $metaInfo = [
                         tooltipHTML = addTooltip({title: tooltipData.title, body: tooltipData.value});
                     }
 
+                    let label = metaInfo.label;
+                    if (marketType === 'forex') {
+                        label = {
+                            max_contracts: 'Leverage',
+                            min_trading_days: 'Payout Frequency'
+                        }[metaInfo.key] || metaInfo.label
+                    }
+
                     html += addRule({
-                        label: metaInfo.label,
+                        label: label,
                         value: metaInfoContext[metaInfo.key],
                         tooltipHTML
                     })
