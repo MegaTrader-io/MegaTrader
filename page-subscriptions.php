@@ -417,8 +417,8 @@ $metaInfo = [
                 value: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_description']); ?>'
             },
             forex_consistency: {
-                title: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['futures_performance_consistency_title']); ?>',
-                value: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['futures_performance_consistency_description']); ?>'
+                title: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['forex_performance_consistency_title']); ?>',
+                value: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['forex_performance_consistency_description']); ?>'
             }
         }
 
