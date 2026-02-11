@@ -415,6 +415,10 @@ $metaInfo = [
             consistency: {
                 title: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_title']); ?>',
                 value: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['performance_consistency_description']); ?>'
+            },
+            futures_consistency: {
+                title: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['futures_performance_consistency_title']); ?>',
+                value: '<?php echo esc_html(Label::META_ACCOUNT_OVERVIEW['futures_performance_consistency_description']); ?>'
             }
         }
 
@@ -955,18 +959,29 @@ $metaInfo = [
                 let html = '';
 
                 metaInfoList.forEach(metaInfo => {
-                    const tooltipData = tooltips[metaInfo.key];
+                    let tooltipData = tooltips[metaInfo.key];
                     let tooltipHTML = '';
 
                     if (tooltipData) {
-                        tooltipHTML = addTooltip({title: tooltipData.title, body: tooltipData.value});
+                        if (marketType === 'futures' && metaInfo.key === 'consistency') {
+                            tooltipData = tooltips['futures_consistency'];
+                        }
+
+                        let title = tooltipData.title;
+                        let body = tooltipData.value;
+
+                        tooltipHTML = addTooltip({title, body});
                     }
 
                     let label = metaInfo.label;
                     if (marketType === 'forex') {
                         label = {
                             max_contracts: 'Leverage',
-                            min_trading_days_to_payout: 'Payout Frequency'
+                            min_trading_days_to_payout: 'Payout Frequency',
+                        }[metaInfo.key] || metaInfo.label;
+                    } else if (marketType === 'futures') {
+                        label = {
+                            consistency: 'PRS',
                         }[metaInfo.key] || metaInfo.label;
                     }
 
