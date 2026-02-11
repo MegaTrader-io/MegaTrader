@@ -1147,10 +1147,23 @@ HTML;
                         const row = template.cloneNode(true);
                         row.classList.remove('template-metaInfo', 'd-none');
                         const labelHTML = row.querySelector('.mega-info-row__label');
-                        labelHTML.dataset.key = metaInfo.key;
-                        labelHTML.innerText = metaInfo.label;
 
-                        row.querySelector('.mega-info-row__value').innerText = metaInfoContext[metaInfo.key];
+                        labelHTML.dataset.key = metaInfo.key;
+
+                        let label = metaInfo.label;
+                        let value = metaInfoContext[metaInfo.key];
+
+                        if (params.defaultMarketType === 'forex') {
+                            label = {
+                                max_contracts: 'Leverage',
+                                min_trading_days_to_payout: 'Payout Frequency',
+                                consistency: 'PRS',
+                            }[metaInfo.key] || metaInfo.label;
+                        }
+
+                        labelHTML.innerText = label;
+                        row.querySelector('.mega-info-row__value').innerText = value;
+
                         metaInfoElement.appendChild(row)
                     })
                 }
