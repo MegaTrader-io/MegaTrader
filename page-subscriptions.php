@@ -963,8 +963,8 @@ $metaInfo = [
                     let tooltipHTML = '';
 
                     if (tooltipData) {
-                        if (marketType === 'futures' && metaInfo.key === 'consistency') {
-                            tooltipData = tooltips['futures_consistency'];
+                        if (marketType === 'forex' && metaInfo.key === 'consistency') {
+                            tooltipData = tooltips['forex_consistency'];
                         }
 
                         let title = tooltipData.title;
@@ -978,9 +978,6 @@ $metaInfo = [
                         label = {
                             max_contracts: 'Leverage',
                             min_trading_days_to_payout: 'Payout Frequency',
-                        }[metaInfo.key] || metaInfo.label;
-                    } else if (marketType === 'futures') {
-                        label = {
                             consistency: 'PRS',
                         }[metaInfo.key] || metaInfo.label;
                     }
