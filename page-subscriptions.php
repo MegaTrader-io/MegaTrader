@@ -966,8 +966,8 @@ $metaInfo = [
                     if (marketType === 'forex') {
                         label = {
                             max_contracts: 'Leverage',
-                            min_trading_days: 'Payout Frequency'
-                        }[metaInfo.key] || metaInfo.label
+                            min_trading_days_to_payout: 'Payout Frequency'
+                        }[metaInfo.key] || metaInfo.label;
                     }
 
                     html += addRule({
