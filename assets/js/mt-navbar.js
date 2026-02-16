@@ -123,14 +123,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const adminbar = document.getElementById('wpadminbar');
         trackElementHeight(adminbar, '--admin-bar-height');
 
+        const wrapperNavbar = document.querySelector('.mt-navbar');
+
         const menuNavBar = document.querySelector('.mt-navbar__links');
         trackElementHeight(menuNavBar, '--nav-bar-height');
 
         if (menuNavBar) {
             const toggleScrolled = () => {
                 if (window.scrollY > 14) {
+                    wrapperNavbar.classList.add('mt-navbar__links--scrolled');
                     menuNavBar.classList.add('mt-navbar__links--scrolled');
                 } else {
+                    wrapperNavbar.classList.remove('mt-navbar__links--scrolled');
                     menuNavBar.classList.remove('mt-navbar__links--scrolled');
                 }
             };
