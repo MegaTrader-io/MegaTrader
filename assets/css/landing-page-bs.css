@@ -234,6 +234,10 @@
     margin-block: 48px;
 }
 
+.how-it-works-zero-plan .section-header__subtitle {
+    width: 728px;
+}
+
 .how-it-works-zero-plan .glide__bullet.glide__bullet--active {
     background-color: #8C8C8C;
 }
@@ -2923,6 +2927,10 @@ a.footer-bs__link:visited {
     line-height: 24px;
     color: #FFB34A;
     word-wrap: break-word;
+}
+
+.hero-zero-plan .hero-bs__content{
+    flex: 1;
 }
 
 /* =========================================================

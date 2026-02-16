@@ -14,15 +14,15 @@
 
                 <header class="hero-bs__header">
                     <h1 class="hero-bs__zero-title">
-                        START TRADING TODAY WITH OUR ZERO PLAN FOR JUST $20
+                        Start trading today <br class="d-lg-none d-xl-block">with our Zero Plan
                     </h1>
                 </header>
 
                 <ul class="hero-bs__benefits list-unstyled">
                     <?php
                     $features = [
-                            'Start for just $20 and only pay after you pass',
-                            'Just a 2% profit target makes passing easier',
+                            'Start now and unlock funding after you pass',
+                            'Just a 2% target makes passing much easier',
                             'Fast payouts once funded with quick approval',
                     ]
                     ?>

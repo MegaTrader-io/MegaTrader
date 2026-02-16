@@ -35,8 +35,7 @@ $zero_plan_rules = [
                 <span>ZERO PLAN</span> PROGRAM RULES
             </h2>
             <p class="section-header__subtitle mb-0">
-                Designed to remove barriers while keeping trading rules simple and disciplined.
-                Start for just $20 and earn funding by meeting clear, achievable goals.
+                Designed to remove barriers while keeping trading rules simple and disciplined. Start and earn funding by meeting clear, achievable goals.
             </p>
         </header>
 
