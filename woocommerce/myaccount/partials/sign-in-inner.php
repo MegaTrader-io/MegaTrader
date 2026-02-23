@@ -128,8 +128,8 @@ if (isset($_GET['redirect_to'])) {
             $url = add_query_arg('redirect_to', rawurlencode($_GET['redirect_to']), $url);
         }
         ?>
-        <a class="btn w-100 mega-btn-md mega-btn-secondary-md w-100"
-           href="<?= $url ?>">
+        <a class="disabled btn w-100 mega-btn-md mega-btn-secondary-md w-100"
+           href="#">
             <div class="text-neutral-50 text-base font-medium uppercase leading-normal">Create
                 account
             </div>
