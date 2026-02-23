@@ -368,14 +368,9 @@ $is_overlay = $args['is_overlay'] ?? false;
             </div>
         </div>
 
-        <span class="mt-tooltip" data-placement="right">
-            <a href="<?php echo esc_url(home_url('/select-plan')); ?>" class="mega-btn-md mega-btn-default-md w-100">
-                <i class="mt-icon mt-icon_plus"></i>
-            </a>
-            <span class="mt-tooltip__panel" role="tooltip">
-                <div class="mt-tooltip__body text-uppercase"><?= esc_html(Label::SIDEBAR_META['plan_button']); ?></div>
-            </span>
-        </span>
+        <a href="#" disabled class="disabled mega-btn-md mega-btn-default-md w-100 opacity-25">
+            <i class="mt-icon mt-icon_plus"></i>
+        </a>
 
     </div>
 
