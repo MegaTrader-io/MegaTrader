@@ -1,20 +1,30 @@
 {
-  "name": "landing-page",
-  "version": "1.0.0",
-  "main": "tailwind.config.js",
+  "name": "megatrader-landing",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "npx tailwindcss -i ./assets/tailwindcss/landing-page.css -o ./assets/css/style-landing-page.css --watch",
-    "princing-table": "npx tailwindcss -i ./assets/tailwindcss/pricing-table.css -o ./assets/css/pricing-table.css --watch",
-    "build-theme": "npx tailwindcss -c tailwind.config.mgt-theme.js -i ./assets/tailwindcss/mgt-theme.css -o ./assets/css/mgt-theme.css",
-    "build": "npx tailwindcss -i ./assets/tailwindcss/landing-page.css -o ./assets/css/style-landing-page.css --minify",
-    "navbar": "npx tailwindcss -i ./assets/tailwindcss/mt-navbar.css -o ./assets/css/mt-navbar.css"
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "dependencies": {
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4",
+    "@tailwindcss/postcss": "^4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.2",
+    "lucide-react": "^0.475.0",
+    "embla-carousel-react": "^8.5.1",
+    "embla-carousel-autoplay": "^8.5.1"
+  },
   "devDependencies": {
-    "tailwind-scrollbar": "^3.1.0",
-    "tailwindcss": "^3.4.17"
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
   }
 }
