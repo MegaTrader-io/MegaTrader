@@ -1,8 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
+@theme {
   --color-background: #121212;
   --color-foreground: #FAFAFA;
   --color-card: #1E1E1E;
@@ -24,22 +22,19 @@
   --color-dark: #121212;
   --color-dark-card: #1E1E1E;
   --color-dark-border: #333333;
+  
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom scrollbar */
