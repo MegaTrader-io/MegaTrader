@@ -1,7 +1,8 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  /* Colors */
+:root {
   --color-background: #121212;
   --color-foreground: #FAFAFA;
   --color-card: #1E1E1E;
@@ -17,37 +18,28 @@
   --color-border: #333333;
   --color-input: #333333;
   --color-ring: #FFB34A;
-  
-  /* Custom colors */
   --color-gold: #FFB34A;
   --color-gold-dark: #E69A2E;
   --color-teal: #14B8A6;
   --color-dark: #121212;
   --color-dark-card: #1E1E1E;
   --color-dark-border: #333333;
-
-  /* Font */
-  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
-  
-  /* Radius */
-  --radius-lg: 0.75rem;
-  --radius-md: 0.5rem;
-  --radius-sm: 0.25rem;
 }
 
-* {
-  border-color: var(--color-border);
-}
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-html {
-  scroll-behavior: smooth;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 /* Custom scrollbar */
