@@ -1,0 +1,87 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: "#fff7e6",
+          100: "#ffe8b8",
+          200: "#ffd68a",
+          300: "#ffc766",
+          400: "#ffb34a",
+          500: "#f2a136",
+          600: "#cf851c",
+          700: "#9e660a",
+          800: "#6e4700",
+          900: "#3d2900",
+          DEFAULT: "#ffb34a",
+        },
+        secondary: {
+          50: "#f0fcfa",
+          100: "#ccfaf2",
+          200: "#99f5e3",
+          300: "#5eebd4",
+          400: "#2dd4bf",
+          500: "#14b8a6",
+          600: "#0d9487",
+          700: "#0f756e",
+          800: "#125e59",
+          900: "#124f4a",
+          DEFAULT: "#14b8a6",
+        },
+        gray: {
+          50: "#fafafa",
+          100: "#f5f5f5",
+          200: "#e6e6e6",
+          300: "#d4d4d4",
+          400: "#a8a39e",
+          500: "#78706b",
+          600: "#57544f",
+          700: "#404040",
+          800: "#292624",
+          850: "#1f1f1f",
+          900: "#1c1a17",
+          925: "#12120f",
+          950: "#0a0a0a",
+        },
+        background: "#0a0a0a",
+        foreground: "#ffffff",
+        muted: {
+          DEFAULT: "#a8a39e",
+          foreground: "#78706b",
+        },
+        card: {
+          DEFAULT: "#1e1e1e",
+          foreground: "#ffffff",
+        },
+        border: "#404040",
+        input: "#1e1e1e",
+        ring: "#ffb34a",
+        error: {
+          400: "#fb7185",
+          500: "#f5405e",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-roboto)", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
+      borderRadius: {
+        sm: "4px",
+        md: "8px",
+        lg: "12px",
+        xl: "16px",
+        "2xl": "24px",
+        full: "64px",
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;
