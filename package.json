@@ -1,6 +1,6 @@
 {
   "name": "megatrader",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "dev": "next dev -p 4200",
@@ -9,21 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "15.3.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "class-variance-authority": "0.7.1",
-    "clsx": "2.1.1",
-    "tailwind-merge": "3.0.2",
-    "lucide-react": "0.475.0",
-    "embla-carousel-react": "8.5.1",
-    "embla-carousel-autoplay": "8.5.1"
+    "next": "^15.2.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.2",
+    "lucide-react": "^0.475.0",
+    "embla-carousel-react": "^8.5.1",
+    "embla-carousel-autoplay": "^8.5.1"
   },
   "devDependencies": {
-    "@types/node": "22.13.5",
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4",
-    "typescript": "5.7.3",
+    "@types/node": "^22.13.5",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "typescript": "^5.7.3",
     "tailwindcss": "^3.4.17",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49"
