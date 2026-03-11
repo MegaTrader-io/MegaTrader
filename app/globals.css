@@ -56,7 +56,7 @@
   --color-error-500: #f5405e;
 
   /* Font Family */
-  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
 
   /* Border Radius */
   --radius-sm: 4px;
